@@ -1,26 +1,26 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.ColorData;
 import mara.mybox.db.TableColorData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -50,10 +50,18 @@ public class ColorImportController extends BaseController {
                     controller.setParentController(this);
                     controller.getMyStage().toFront();
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             });
             popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ImportColorsInCSVFile"));
+            menu.setOnAction((ActionEvent event) -> {
+                importCSV();
+            });
+            popMenu.getItems().add(menu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
 
             if (AppVariables.devMode) {
@@ -81,6 +89,13 @@ public class ColorImportController extends BaseController {
                 importColors("japanese");
             });
             popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImportColorhexaColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                importColors("colorhexa");
+            });
+            popMenu.getItems().add(menu);
+
             popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("PopupClose"));
@@ -94,13 +109,53 @@ public class ColorImportController extends BaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void importCSV() {
+        FileChooser fileChooser = new FileChooser();
+        File path = AppVariables.getUserConfigPath(sourcePathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
+        fileChooser.getExtensionFilters().addAll(CommonFxValues.TextExtensionFilter);
+        final File file = fileChooser.showOpenDialog(getMyStage());
+        if (file == null) {
+            return;
+        }
+        recordFileOpened(file);
+
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                @Override
+                protected boolean handle() {
+                    List<ColorData> data = ColorData.readCSV(file);
+                    if (data == null) {
+                        return false;
+                    }
+                    TableColorData.writeData(data, false);
+                    return writeInterface(data);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                }
+            };
+            parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
     protected void importColors(String type) {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -119,7 +174,8 @@ public class ColorImportController extends BaseController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -130,7 +186,7 @@ public class ColorImportController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -168,7 +224,8 @@ public class ColorImportController extends BaseController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -187,21 +244,7 @@ public class ColorImportController extends BaseController {
             });
         } else if (p.contains("ColorPaletteManageController")) {
             ColorPaletteManageController pController = (ColorPaletteManageController) parentController;
-            List<Color> palette = new ArrayList<>();
-            for (Node node : pController.colorsPane.getChildren()) {
-                Rectangle rect = (Rectangle) node;
-                palette.add((Color) rect.getFill());
-            }
-            List<ColorData> newColors = new ArrayList<>();
-            for (ColorData color : data) {
-                if (!palette.contains(color.getColor())) {
-                    newColors.add(color);
-                }
-            }
-            TableColorData.addDataInPalette(newColors, true);
-            Platform.runLater(() -> {
-                pController.load();
-            });
+            pController.addData(data);
 
         } else {
             return false;

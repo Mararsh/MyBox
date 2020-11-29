@@ -13,7 +13,7 @@ import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.fxml.TableColorCell;
 import mara.mybox.fxml.TableTableMessageCell;
 import mara.mybox.fxml.TableTimeFormatCell;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -70,7 +70,7 @@ public class DatasetController extends DataAnalysisController<Dataset> {
             commentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -83,7 +83,7 @@ public class DatasetController extends DataAnalysisController<Dataset> {
             setButtons();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -97,7 +97,7 @@ public class DatasetController extends DataAnalysisController<Dataset> {
             queryButton.requestFocus();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -137,7 +137,7 @@ public class DatasetController extends DataAnalysisController<Dataset> {
             DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
             controller.initEditor(this, null);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -152,7 +152,7 @@ public class DatasetController extends DataAnalysisController<Dataset> {
             DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
             controller.initEditor(this, selected);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -25,6 +25,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
@@ -37,7 +38,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
@@ -77,7 +77,7 @@ public class PdfOcrBatchController extends PdfBatchController {
     @FXML
     protected TextField separatorInput;
     @FXML
-    protected ComboBox<String> enhancementSelector, rotateSelector,
+    protected ComboBox<String> algorithmSelector, rotateSelector,
             binarySelector, scaleSelector;
     @FXML
     protected RadioButton convertRadio, extractRadio;
@@ -100,7 +100,7 @@ public class PdfOcrBatchController extends PdfBatchController {
             ocrOptionsController.setValues(this, false, false);
             FxmlControl.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -191,11 +191,14 @@ public class PdfOcrBatchController extends PdfBatchController {
                 }
             });
 
-            enhancementSelector.getItems().addAll(Arrays.asList(
+            algorithmSelector.getItems().addAll(Arrays.asList(
+                    message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert"),
+                    message("EdgeDetection") + "-" + message("EightNeighborLaplace"),
                     message("HSBHistogramEqualization"), message("GrayHistogramEqualization"),
                     message("GrayHistogramStretching"), message("GrayHistogramShifting"),
                     message("UnsharpMasking"),
-                    message("FourNeighborLaplace"), message("EightNeighborLaplace"),
+                    message("Enhancement") + "-" + message("EightNeighborLaplace"),
+                    message("Enhancement") + "-" + message("FourNeighborLaplace"),
                     message("GaussianBlur"), message("AverageBlur")
             ));
 
@@ -227,7 +230,7 @@ public class PdfOcrBatchController extends PdfBatchController {
             deskewCheck.setSelected(AppVariables.getUserConfigBoolean("ImageOCRDeskew", false));
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -311,7 +314,7 @@ public class PdfOcrBatchController extends PdfBatchController {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -323,7 +326,7 @@ public class PdfOcrBatchController extends PdfBatchController {
             renderer = new PDFRenderer(doc);
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -354,7 +357,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                     = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, ImageType.RGB);    // 0-based
             text = ocr(bufferedImage);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         if (text != null) {
             String s = message("Page") + ":" + currentParameters.currentPage + "   "
@@ -402,7 +405,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         if (!text.isBlank()) {
             String s = message("Page") + ":" + currentParameters.currentPage + "   "
@@ -430,61 +433,72 @@ public class PdfOcrBatchController extends PdfBatchController {
                 lastImage = ImageManufacture.scaleImageByScale(lastImage, scale);
             }
 
-            String enhance = enhancementSelector.getValue();
-            if (enhance == null || enhance.trim().isEmpty()) {
-            } else if (message("GrayHistogramEqualization").equals(enhance)) {
+            String algorithm = algorithmSelector.getValue();
+            if (algorithm == null || algorithm.trim().isEmpty()) {
+            } else if (message("GrayHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
                 lastImage = imageContrast.operateImage();
 
-            } else if (message("GrayHistogramStretching").equals(enhance)) {
+            } else if (message("GrayHistogramStretching").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
                 imageContrast.setIntPara1(100);
                 imageContrast.setIntPara2(100);
                 lastImage = imageContrast.operateImage();
 
-            } else if (message("GrayHistogramShifting").equals(enhance)) {
+            } else if (message("GrayHistogramShifting").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
                 imageContrast.setIntPara1(80);
                 lastImage = imageContrast.operateImage();
 
-            } else if (message("HSBHistogramEqualization").equals(enhance)) {
+            } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
                 lastImage = imageContrast.operateImage();
 
-            } else if (message("UnsharpMasking").equals(enhance)) {
+            } else if (message("UnsharpMasking").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if (message("FourNeighborLaplace").equals(enhance)) {
+            } else if ((message("Enhancement") + "-" + "FourNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if (message("EightNeighborLaplace").equals(enhance)) {
+            } else if ((message("Enhancement") + "-" + "EightNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if (message("GaussianBlur").equals(enhance)) {
+            } else if (message("GaussianBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if (message("AverageBlur").equals(enhance)) {
+            } else if (message("AverageBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
+            } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
+                ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
+                lastImage = imageConvolution.operateImage();
+
+            } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
+                ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
+                lastImage = imageConvolution.operateImage();
             }
 
             if (deskewCheck.isSelected()) {
@@ -502,19 +516,10 @@ public class PdfOcrBatchController extends PdfBatchController {
                 lastImage = pixelsOperation.operateImage();
             }
 
-            if (deskewCheck.isSelected()) {
-                ImageDeskew id = new ImageDeskew(bufferedImage);
-                double imageSkewAngle = id.getSkewAngle();
-                if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
-                        || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
-                    lastImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
-                }
-            }
-
             return lastImage;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -565,13 +570,13 @@ public class PdfOcrBatchController extends PdfBatchController {
             File textFile = new File(fileBase + ".txt");
             if (textFile.exists()) {
                 String texts = FileTools.readTexts(textFile);
-                textFile.delete();
+                FileTools.delete(textFile);
                 return texts;
             } else {
                 updateLogs(message("Failed" + ":" + outputs), true, true);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return null;
     }
@@ -586,7 +591,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                 targetFileGenerated(tFile);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

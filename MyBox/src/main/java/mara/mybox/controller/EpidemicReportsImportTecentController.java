@@ -27,7 +27,7 @@ import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -77,7 +77,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                          BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pageFile))) {
                     byte[] buf = new byte[CommonValues.IOBufferLength];
                     int len;
-                    while ((len = inStream.read(buf)) != -1) {
+                    while ((len = inStream.read(buf)) > 0) {
                         outputStream.write(buf, 0, len);
                     }
                 }
@@ -113,7 +113,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                              BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pageFile))) {
                         byte[] buf = new byte[CommonValues.IOBufferLength];
                         int len;
-                        while ((len = inStream.read(buf)) != -1) {
+                        while ((len = inStream.read(buf)) > 0) {
                             outputStream.write(buf, 0, len);
                         }
                     }
@@ -232,7 +232,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return provinceReports;
     }
@@ -321,7 +321,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
 
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return citiesReports;
     }

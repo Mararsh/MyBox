@@ -33,7 +33,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -82,7 +82,7 @@ public class FileUnarchiveController extends FilesTreeController {
 //                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
 //            );
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -152,7 +152,7 @@ public class FileUnarchiveController extends FilesTreeController {
 
             readEntries();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -273,7 +273,7 @@ public class FileUnarchiveController extends FilesTreeController {
             isSettingValues = false;
             return rootItem;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -295,7 +295,7 @@ public class FileUnarchiveController extends FilesTreeController {
                 checkSelection(child);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -376,7 +376,7 @@ public class FileUnarchiveController extends FilesTreeController {
                 while ((entry = in.getNextEntry()) != null) {
                     if (!in.canReadEntryData(entry)) {
                         archiveFail++;
-//                        logger.debug(message("CanNotReadEntryData" + ":" + entry.getName()));
+//                        MyBoxLog.debug(message("CanNotReadEntryData" + ":" + entry.getName()));
                         continue;
                     }
                     if (entry.isDirectory() || !selected.contains(entry.getName())) {
@@ -389,7 +389,7 @@ public class FileUnarchiveController extends FilesTreeController {
                     File parent = file.getParentFile();
                     if (!parent.isDirectory() && !parent.mkdirs()) {
                         archiveFail++;
-//                        logger.debug(message("FailOpenFile" + ":" + file));
+//                        MyBoxLog.debug(message("FailOpenFile" + ":" + file));
                         continue;
                     }
                     try ( OutputStream o = Files.newOutputStream(file.toPath())) {
@@ -426,13 +426,13 @@ public class FileUnarchiveController extends FilesTreeController {
                     File parent = file.getParentFile();
                     if (!parent.isDirectory() && !parent.mkdirs()) {
                         archiveFail++;
-//                        logger.debug(message("FailOpenFile" + ":" + file));
+//                        MyBoxLog.debug(message("FailOpenFile" + ":" + file));
                         continue;
                     }
                     try ( FileOutputStream out = new FileOutputStream(file)) {
                         int length;
                         byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((length = sevenZFile.read(buf)) != -1) {
+                        while ((length = sevenZFile.read(buf)) > 0) {
                             out.write(buf, 0, length);
                         }
                     }

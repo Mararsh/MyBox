@@ -12,7 +12,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.db.TableMedia;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -41,7 +41,7 @@ public class FFmpegMediasTableController extends MediaTableController {
             examples.add("http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -136,7 +136,7 @@ public class FFmpegMediasTableController extends MediaTableController {
 
         } catch (Exception e) {
             popError(message("FailOpenMedia"));
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

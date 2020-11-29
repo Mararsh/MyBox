@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import mara.mybox.image.file.ImageFileReaders;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import org.krysalis.barcode4j.ChecksumMode;
 import org.krysalis.barcode4j.HumanReadablePlacement;
 import org.krysalis.barcode4j.impl.AbstractBarcodeBean;
@@ -130,7 +130,7 @@ public class BarcodeTools {
             return qrImage;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -157,7 +157,7 @@ public class BarcodeTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -183,7 +183,7 @@ public class BarcodeTools {
             return MatrixToImageWriter.toBufferedImage(bitMatrix);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -200,7 +200,7 @@ public class BarcodeTools {
             return MatrixToImageWriter.toBufferedImage(bitMatrix);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -252,7 +252,7 @@ public class BarcodeTools {
             return canvas.getBufferedImage();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -286,7 +286,7 @@ public class BarcodeTools {
             return canvas.getBufferedImage();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -21,7 +21,7 @@ public class ImagePopupController extends ImageViewerController {
 
             saveAsType = SaveAsType.Open;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

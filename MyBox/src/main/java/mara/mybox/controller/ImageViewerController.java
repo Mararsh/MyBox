@@ -37,18 +37,19 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -71,7 +72,7 @@ public class ImageViewerController extends ImageShapesController {
     @FXML
     protected VBox contentBox, fileBox;
     @FXML
-    protected HBox operationBox, fileHBox, widthHBox;
+    protected HBox operationBox, widthHBox;
     @FXML
     protected CheckBox selectAreaCheck, deleteConfirmCheck, saveConfirmCheck;
     @FXML
@@ -96,7 +97,7 @@ public class ImageViewerController extends ImageShapesController {
             initOperationBox();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -107,9 +108,6 @@ public class ImageViewerController extends ImageShapesController {
             }
             if (saveButton != null && imageView != null) {
                 saveButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
-            if (fileHBox != null && sampledView != null) {
-                fileHBox.getChildren().remove(sampledView);
             }
 
             loadWidth = defaultLoadWidth;
@@ -168,7 +166,7 @@ public class ImageViewerController extends ImageShapesController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -185,7 +183,7 @@ public class ImageViewerController extends ImageShapesController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -383,7 +381,7 @@ public class ImageViewerController extends ImageShapesController {
             }
 
             if (saveAsButton != null && saveAsButton.isVisible() && !saveAsButton.isDisabled()) {
-                menu = new MenuItem(message("SaveAs") + "  F11 / CTRL+f ");
+                menu = new MenuItem(message("SaveAs") + "  F11");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     saveAsAction();
                 });
@@ -484,7 +482,7 @@ public class ImageViewerController extends ImageShapesController {
             return superItems;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -502,7 +500,7 @@ public class ImageViewerController extends ImageShapesController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -525,11 +523,13 @@ public class ImageViewerController extends ImageShapesController {
                 nextButton.setDisable(sourceFile == null);
             }
 
-            sortMode = FileTools.FileSortMode.ModifyTimeDesc;
+            String saveMode = AppVariables.getUserConfigValue(baseName + "SortMode",
+                    FileTools.FileSortMode.NameAsc.name());
+            sortMode = FileTools.sortMode(saveMode);
             if (sortGroup != null) {
                 sortGroup.selectedToggleProperty().addListener(
                         (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
-                            if (newValue == null) {
+                            if (newValue == null || isSettingValues) {
                                 return;
                             }
                             String selected = ((RadioButton) newValue).getText();
@@ -539,14 +539,21 @@ public class ImageViewerController extends ImageShapesController {
                                     break;
                                 }
                             }
-                            if (!isSettingValues) {
-                                makeImageNevigator();
-                            }
+                            AppVariables.setUserConfigValue(baseName + "SortMode", sortMode.name());
+                            makeImageNevigator();
                         });
+                for (Toggle toggle : sortGroup.getToggles()) {
+                    RadioButton button = (RadioButton) toggle;
+                    if (button.getText().equals(message(saveMode))) {
+                        isSettingValues = true;
+                        button.fire();
+                        isSettingValues = false;
+                    }
+                }
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -561,7 +568,7 @@ public class ImageViewerController extends ImageShapesController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -592,7 +599,7 @@ public class ImageViewerController extends ImageShapesController {
                 FxmlControl.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -718,7 +725,7 @@ public class ImageViewerController extends ImageShapesController {
             refinePane();
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             imageView.setImage(null);
             alertInformation(AppVariables.message("NotSupported"));
             return false;
@@ -774,7 +781,7 @@ public class ImageViewerController extends ImageShapesController {
             nextFile = null;
             nextButton.setDisable(true);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -938,7 +945,7 @@ public class ImageViewerController extends ImageShapesController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -1113,7 +1120,7 @@ public class ImageViewerController extends ImageShapesController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -1184,7 +1191,7 @@ public class ImageViewerController extends ImageShapesController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -1232,7 +1239,7 @@ public class ImageViewerController extends ImageShapesController {
                 return false;
             }
         }
-        if (sfile.delete()) {
+        if (FileTools.delete(sfile)) {
             popSuccessful();
             return true;
         } else {
@@ -1247,26 +1254,32 @@ public class ImageViewerController extends ImageShapesController {
             if (imageChanged) {
                 saveAction();
             }
-            File file = renameFile(sourceFile);
-            if (file == null) {
+            File newFile = renameFile(sourceFile);
+            if (newFile == null) {
                 return;
             }
-            sourceFile = file;
-            if (imageInformation != null) {
-                ImageFileInformation finfo = imageInformation.getImageFileInformation();
-                if (finfo != null) {
-                    finfo.setFile(file);
-                    finfo.setFileName(file.getAbsolutePath());
-                }
-                imageInformation.setFileName(file.getAbsolutePath());
-            }
+            sourceFile = newFile;
+            changeFile(imageInformation, newFile);
             updateLabelTitle();
             makeImageNevigator();
-
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
+            popError(e.toString());
         }
 
+    }
+
+    public void changeFile(ImageInformation info, File file) {
+        if (info == null || file == null) {
+            return;
+        }
+        ImageFileInformation finfo = info.getImageFileInformation();
+        if (finfo != null) {
+            finfo.setFile(file);
+            finfo.setFileName(file.getAbsolutePath());
+        }
+        info.setFileName(file.getAbsolutePath());
+        info.setFile(file);
     }
 
     public File renameFile(File srcFile) {
@@ -1291,6 +1304,24 @@ public class ImageViewerController extends ImageShapesController {
                 newName = result.get();
                 if (newName == null || newName.isBlank()) {
                     return null;
+                }
+                File newFile = new File(srcFile.getParent() + File.separator + newName);
+                if (newFile.exists()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle(message("Rename"));
+                    alert.setContentText(message("SureReplaceExistedFile"));
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+                    ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+                    alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+                    Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    alertStage.setAlwaysOnTop(true);
+                    alertStage.toFront();
+
+                    Optional<ButtonType> alertResult = alert.showAndWait();
+                    if (alertResult.get() != buttonSure) {
+                        continue;
+                    }
                 }
                 if (FileTools.getFileSuffix(newName).equals(FileTools.getFileSuffix(srcFile.getName()))) {
                     break;
@@ -1317,12 +1348,7 @@ public class ImageViewerController extends ImageShapesController {
             }
             recordFileOpened(newFile);
 
-            if (newFile.exists()) {
-                if (!newFile.delete()) {
-                    popFailed();
-                }
-            }
-            if (srcFile.renameTo(newFile)) {
+            if (FileTools.rename(srcFile, newFile)) {
                 popSuccessful();
                 return newFile;
             } else {
@@ -1331,10 +1357,10 @@ public class ImageViewerController extends ImageShapesController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
+            popError(e.toString());
             return null;
         }
-
     }
 
     @FXML
@@ -1424,6 +1450,14 @@ public class ImageViewerController extends ImageShapesController {
     }
 
     @FXML
+    public void convertAction() {
+        ImageConverterBatchController controller = (ImageConverterBatchController) FxmlStage.openStage(CommonValues.ImageConverterBatchFxml);
+        if (sourceFile != null) {
+            controller.tableController.addFile(sourceFile);
+        }
+    }
+
+    @FXML
     public void settings() {
         SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
         controller.setParentController(this);
@@ -1477,6 +1511,14 @@ public class ImageViewerController extends ImageShapesController {
             });
             popMenu.getItems().add(menu);
 
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Convert"));
+                menu.setOnAction((ActionEvent event) -> {
+                    convertAction();
+                });
+                popMenu.getItems().add(menu);
+            }
+
             if (imageInformation != null) {
                 popMenu.getItems().add(new SeparatorMenuItem());
 
@@ -1522,7 +1564,7 @@ public class ImageViewerController extends ImageShapesController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

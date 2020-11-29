@@ -15,7 +15,7 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -38,7 +38,7 @@ public class TextEditerController extends FileEditerController {
             super.initControls();
             initCharsetTab();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -109,7 +109,7 @@ public class TextEditerController extends FileEditerController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -125,7 +125,7 @@ public class TextEditerController extends FileEditerController {
             }
             targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

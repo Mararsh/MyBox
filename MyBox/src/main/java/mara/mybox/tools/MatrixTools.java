@@ -1,7 +1,7 @@
 package mara.mybox.tools;
 
 import java.util.Random;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -302,7 +302,7 @@ public class MatrixTools {
             }
             return result;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -548,7 +548,7 @@ public class MatrixTools {
             }
             return minor;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -574,7 +574,7 @@ public class MatrixTools {
             }
             return adjoint;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -605,7 +605,7 @@ public class MatrixTools {
             }
             return v;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             throw e;
         }
 
@@ -630,7 +630,7 @@ public class MatrixTools {
             }
             return det;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             throw e;
         }
 
@@ -651,7 +651,7 @@ public class MatrixTools {
             }
             return result;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -672,7 +672,7 @@ public class MatrixTools {
             }
             return result;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -711,7 +711,7 @@ public class MatrixTools {
             }
             return result;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -738,7 +738,7 @@ public class MatrixTools {
 
             return result;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -781,7 +781,7 @@ public class MatrixTools {
             }
             return i;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             throw e;
         }
 

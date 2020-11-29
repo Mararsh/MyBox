@@ -113,11 +113,7 @@ public class ColumnDefinition {
         return sql;
     }
 
-
     /*
-        static methods
-     */
- /*
         customized get/set
      */
     public String getLabel() {

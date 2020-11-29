@@ -15,11 +15,10 @@ import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.db.ColumnDefinition.ColumnType;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import static mara.mybox.db.DerbyBase.stringValue;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -230,8 +229,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             statement.executeUpdate(sql);
             return gcid;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -260,8 +258,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             statement.setString(fromIndex + 6, lname);
             statement.setString(fromIndex + 7, lname);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -365,8 +362,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             return earth(conn);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -381,8 +377,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             return China(conn);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -397,8 +392,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             return queryCode(conn, sql, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -424,8 +418,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
             return code;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -440,8 +433,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             return readCode(conn, coordinateSystem, longitude, latitude, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -462,8 +454,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
             return code;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -476,8 +467,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             return readCode(conn, gcid, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -494,8 +484,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
             return code;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -508,8 +497,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             return readCode(conn, level, name, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -527,8 +515,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
             return code;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -541,8 +528,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             return readCode(conn, code, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -578,11 +564,10 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             statement.setString(14, name);
             statement.setString(15, name);
 
-            logger.debug(name);
+            MyBoxLog.debug(name);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -681,8 +666,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 return queryCode(conn, sql, decodeAncestors);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -707,8 +691,8 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
             return code;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -724,8 +708,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
             return code;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -738,8 +721,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             decodeAncestors(conn, code);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return code;
     }
@@ -836,8 +818,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
 
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -855,8 +836,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -902,8 +882,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             code.setBuilding(results.getLong("building"));
             return code;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -914,8 +893,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             codes = queryCodes(conn, sql, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return codes;
     }
@@ -926,8 +904,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.setReadOnly(true);
             codes = queryCodes(conn, sql, max, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return codes;
     }
@@ -952,8 +929,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 decodeAncestors(conn, code);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return codes;
     }
@@ -973,8 +949,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 codes = readCodes(conn, statement, decodeAncestors);
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return codes;
     }
@@ -989,8 +964,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 codes = readCodes(conn, statement, decodeAncestors);
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return codes;
     }
@@ -1008,8 +982,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 decodeAncestors(conn, code);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return codes;
     }
@@ -1028,8 +1001,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return codes;
     }
@@ -1041,8 +1013,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return write(conn, code);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1061,8 +1032,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1074,8 +1044,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return write(conn, codes);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1099,8 +1068,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1112,8 +1080,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return insert(conn, code);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1205,8 +1172,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                     break;
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1288,9 +1254,8 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                     );
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            logger.debug(code.getLevelName() + " " + code.getName());
+            MyBoxLog.error(e);
+            MyBoxLog.debug(code.getLevelName() + " " + code.getName());
         }
     }
 
@@ -1301,8 +1266,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         try ( PreparedStatement statement = conn.prepareStatement(Insert)) {
             return insert(conn, statement, code);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return false;
     }
@@ -1316,9 +1280,8 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 return statement.executeUpdate() > 0;
             }
         } catch (Exception e) {
-//            failed(e);
-            logger.debug(e.toString());
-            logger.debug(code.getLevelName() + " " + code.getName() + " " + code.getGcid() + " " + code.getOwner());
+//            MyBoxLog.error(e);
+            MyBoxLog.debug(code.getLevelName() + " " + code.getName() + " " + code.getGcid() + " " + code.getOwner());
         }
         return false;
     }
@@ -1419,8 +1382,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             statement.setShort(32, code.getCoordinateSystem().intValue());
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1432,8 +1394,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         try ( PreparedStatement statement = conn.prepareStatement(Update)) {
             return update(conn, statement, code);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1453,8 +1414,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             setUpdate(conn, statement, code);
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1551,8 +1511,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             statement.setLong(32, code.getGcid());
             return true;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1566,8 +1525,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 return delete(conn, statement, code);
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1584,8 +1542,8 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
             statement.setLong(1, exist.getGcid());
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+
             return false;
         }
     }
@@ -1625,8 +1583,8 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 conn.commit();
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+
         }
         return count;
     }
@@ -1656,8 +1614,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return haveChildren;
     }

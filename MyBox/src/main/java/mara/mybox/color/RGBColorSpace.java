@@ -9,7 +9,7 @@ import static mara.mybox.color.ChromaticAdaptation.matrix;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -457,7 +457,7 @@ public class RGBColorSpace extends CIEData {
                 return adaptedPrimaries;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

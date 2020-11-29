@@ -21,7 +21,7 @@ import mara.mybox.fxml.Logarithmic10Coordinate;
 import mara.mybox.fxml.LogarithmicECoordinate;
 import mara.mybox.fxml.SquareRootCoordinate;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Roland
@@ -120,7 +120,7 @@ public class LabeledBarChart<X, Y> extends BarChart<X, Y> {
                 this.getPlotChildren().add(textFlow);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.AlarmClock;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -118,7 +118,7 @@ public class AlarmClockTableController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

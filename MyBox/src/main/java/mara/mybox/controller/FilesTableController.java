@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -37,7 +37,7 @@ public class FilesTableController extends BatchTableController<FileInformation> 
                 });
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

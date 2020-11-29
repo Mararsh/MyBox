@@ -31,6 +31,7 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageBlend;
 import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
 import mara.mybox.image.ImageColor;
@@ -42,7 +43,6 @@ import mara.mybox.image.ImageScope;
 import mara.mybox.image.ImageScope.ScopeType;
 import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.PixelsOperation;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -207,7 +207,7 @@ public class FxmlImageManufacture {
             WritableImage newImage = group.snapshot(parameters, null);
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -254,7 +254,7 @@ public class FxmlImageManufacture {
             return newImage;
 
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
 
@@ -286,7 +286,7 @@ public class FxmlImageManufacture {
             return newImage;
 
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
 
@@ -340,7 +340,7 @@ public class FxmlImageManufacture {
             WritableImage newImage = group.snapshot(parameters, null);
             return newImage;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
 
@@ -403,7 +403,7 @@ public class FxmlImageManufacture {
             }
             return newImage;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return image;
         }
     }
@@ -457,7 +457,7 @@ public class FxmlImageManufacture {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -480,7 +480,7 @@ public class FxmlImageManufacture {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -670,7 +670,7 @@ public class FxmlImageManufacture {
 
             return newImage;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -715,7 +715,7 @@ public class FxmlImageManufacture {
 
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -778,7 +778,7 @@ public class FxmlImageManufacture {
                 }
                 imageWidth = view.getBoundsInParent().getWidth();
                 imageHeight = view.getBoundsInParent().getHeight();
-//                logger.debug(imageWidth + " " + imageHeight);
+//                MyBoxLog.debug(imageWidth + " " + imageHeight);
                 group.getChildren().add(view);
 
                 x = imageCombine.getMarginsValue();
@@ -800,7 +800,7 @@ public class FxmlImageManufacture {
             WritableImage newImage = group.snapshot(parameters, null);
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -849,7 +849,7 @@ public class FxmlImageManufacture {
                     view.setFitWidth(imageCombine.getEachWidthValue());
                 } else if (sizeType == ImageCombine.CombineSizeType.EachHeight) {
                     view.setFitHeight(imageCombine.getEachHeightValue());
-                    logger.debug("EachHeight");
+                    MyBoxLog.debug("EachHeight");
                 } else if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                     view.setFitHeight(maxHeight);
                 } else if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
@@ -857,7 +857,7 @@ public class FxmlImageManufacture {
                 }
                 imageWidth = (int) view.getBoundsInParent().getWidth();
                 imageHeight = (int) view.getBoundsInParent().getHeight();
-//                logger.debug(imageWidth + " " + imageHeight);
+//                MyBoxLog.debug(imageWidth + " " + imageHeight);
                 group.getChildren().add(view);
 
                 x += imageWidth + imageCombine.getIntervalValue();
@@ -881,7 +881,7 @@ public class FxmlImageManufacture {
 
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -925,7 +925,7 @@ public class FxmlImageManufacture {
             WritableImage newImage = group.snapshot(parameters, null);
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -998,6 +998,9 @@ public class FxmlImageManufacture {
     }
 
     public static int calculateColorDistance2(Color color1, Color color2) {
+        if (color1 == null || color2 == null) {
+            return Integer.MAX_VALUE;
+        }
         double redDiff = (color1.getRed() - color2.getRed()) * 255;
         double greenDiff = (color1.getGreen() - color2.getGreen()) * 255;
         double blueDiff = (color1.getBlue() - color2.getBlue()) * 255;
@@ -1010,6 +1013,9 @@ public class FxmlImageManufacture {
     // distance2 = Math.pow(distance, 2)
     // distance: 0-255
     public static boolean isColorMatch2(Color color1, Color color2, int distance2) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         if (color1.equals(color2)) {
             return true;
         } else if (distance2 == 0
@@ -1073,7 +1079,7 @@ public class FxmlImageManufacture {
             }
             return cropOutsideFx(image, left, top, right, bottom);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 
@@ -1085,7 +1091,7 @@ public class FxmlImageManufacture {
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
             PixelReader pixelReader = image.getPixelReader();
-//            logger.debug(width + " " + height);
+//            MyBoxLog.debug(width + " " + height);
 
             int top = 0, bottom = height - 1, left = 0, right = width - 1;
             int distance2 = colorDistance * colorDistance;
@@ -1104,7 +1110,7 @@ public class FxmlImageManufacture {
                     }
                 }
             }
-//            logger.debug("top: " + top);
+//            MyBoxLog.debug("top: " + top);
             if (top < 0) {
                 return null;
             }
@@ -1123,7 +1129,7 @@ public class FxmlImageManufacture {
                     }
                 }
             }
-//            logger.debug("bottom: " + bottom);
+//            MyBoxLog.debug("bottom: " + bottom);
             if (bottom < 0) {
                 return null;
             }
@@ -1142,7 +1148,7 @@ public class FxmlImageManufacture {
                     }
                 }
             }
-//            logger.debug("left: " + left);
+//            MyBoxLog.debug("left: " + left);
             if (left < 0) {
                 return null;
             }
@@ -1161,16 +1167,16 @@ public class FxmlImageManufacture {
                     }
                 }
             }
-//            logger.debug("right: " + right);
+//            MyBoxLog.debug("right: " + right);
             if (right < 0) {
                 return null;
             }
 
-//            logger.debug(left + " " + top + " " + right + " " + bottom);
+//            MyBoxLog.debug(left + " " + top + " " + right + " " + bottom);
             return cropOutsideFx(image, left, top, right, bottom);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 
@@ -1202,15 +1208,15 @@ public class FxmlImageManufacture {
             if (addBottom) {
                 totalHegiht += MarginWidth;
             }
-//            logger.debug(width + "  " + totalWidth);
+//            MyBoxLog.debug(width + "  " + totalWidth);
 
             PixelReader pixelReader = image.getPixelReader();
             WritableImage newImage = new WritableImage(totalWidth, totalHegiht);
             PixelWriter pixelWriter = newImage.getPixelWriter();
             pixelWriter.setPixels(x1, y1, width, height, pixelReader, 0, 0);
 
-//            logger.debug(x1 + "  " + y1);
-//            logger.debug(totalWidth + "  " + totalHegiht);
+//            MyBoxLog.debug(x1 + "  " + y1);
+//            MyBoxLog.debug(totalWidth + "  " + totalHegiht);
             if (addLeft) {
                 for (int x = 0; x < MarginWidth; x++) {
                     for (int y = 0; y < totalHegiht; y++) {
@@ -1243,7 +1249,7 @@ public class FxmlImageManufacture {
             return newImage;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
 
@@ -1280,7 +1286,7 @@ public class FxmlImageManufacture {
             return newImage;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
 
@@ -1330,7 +1336,7 @@ public class FxmlImageManufacture {
             return newImage;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
 

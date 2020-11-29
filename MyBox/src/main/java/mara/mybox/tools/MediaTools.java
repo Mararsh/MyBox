@@ -19,7 +19,7 @@ import javafx.scene.media.MediaPlayer;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -32,10 +32,10 @@ public class MediaTools {
     public static void audioSystem() {
         Mixer.Info[] infos = AudioSystem.getMixerInfo();
         for (Mixer.Info info : infos) {
-            logger.debug(info.getName() + " " + info.getVendor() + " " + info.getVersion() + " " + info.getDescription());
+            MyBoxLog.debug(info.getName() + " " + info.getVendor() + " " + info.getVersion() + " " + info.getDescription());
         }
         AudioFileFormat.Type[] formats = AudioSystem.getAudioFileTypes();
-        logger.debug(Arrays.asList(formats));
+        MyBoxLog.debug(Arrays.asList(formats).toString());
     }
 
     public static MediaPlayer play(File file, double volumn, int cycle) {
@@ -119,7 +119,7 @@ public class MediaTools {
                 long now = System.currentTimeMillis();
                 if (lastReportTs + 1000 < now) {
                     long percent = 100 * progress.getTimeMillis() / duration.get();
-                    logger.debug("Progress: " + percent + "%");
+                    MyBoxLog.debug("Progress: " + percent + "%");
                 }
             }
         };

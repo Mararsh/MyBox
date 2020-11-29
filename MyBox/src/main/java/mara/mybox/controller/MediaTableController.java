@@ -22,11 +22,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import static mara.mybox.controller.MediaPlayerController.MiaoGuaiGuaiBenBen;
-import mara.mybox.data.BaseTask;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.TableMedia;
 import mara.mybox.db.TableMediaList;
 import mara.mybox.fxml.FxmlControl;
@@ -35,9 +35,8 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.TableDurationCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -103,7 +102,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -114,7 +113,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             readMediaInfo(info);
             return info;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             popError(message("FailOpenMedia"));
             return null;
         }
@@ -126,13 +125,15 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             if (info != null) {
                 return info;
             }
-            parentController.popInformation(message("ReadingStreamMedia...") + "\n" + address, 6000);
+            Platform.runLater(() -> {
+                parentController.popInformation(message("ReadingStreamMedia...") + "\n" + address, 6000);
+            });
             info = new MediaInformation(address);
             readMediaInfo(info);
             return info;
         } catch (Exception e) {
             popError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -190,7 +191,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
 
                                     } catch (Exception e) {
                                         popError(message("FailOpenMedia"));
-                                        logger.debug(e.toString());
+                                        MyBoxLog.debug(e.toString());
                                     }
                                 }
                             });
@@ -215,15 +216,17 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                     }
 
                 };
-                parentController.openHandlingStage(infoTask, Modality.WINDOW_MODAL,
-                        message("ReadingMedia...") + "\n" + info.getURI().toString());
+                Platform.runLater(() -> {
+                    parentController.openHandlingStage(infoTask, Modality.WINDOW_MODAL,
+                            message("ReadingMedia...") + "\n" + info.getURI().toString());
+                });
                 Thread thread = new Thread(infoTask);
                 thread.setDaemon(true);
                 thread.start();
 
             } catch (Exception e) {
                 popError(message("FailOpenMedia"));
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         }
     }
@@ -297,7 +300,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             return true;
         } catch (Exception e) {
             popError(message("FailOpenMedia"));
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             info.setFinish(true);
             return false;
         }
@@ -501,7 +504,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             addLink(address);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -524,7 +527,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             VisitHistoryTools.visitStreamMedia(address);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -661,24 +664,6 @@ public class MediaTableController extends BatchTableController<MediaInformation>
 
                     @Override
                     protected boolean handle() {
-
-//                        MediaList list = TableMediaList.read(MiaoGuaiGuaiBenBen);
-//                        if (list != null && list.getMedias() != null && !list.getMedias().isEmpty()) {
-//                            Platform.runLater(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    task = null;
-//                                    mediaListName = null;
-//                                    tableLabel.setText(message("MiaoSounds"));
-//                                    isSettingValues = true;
-//                                    tableData.addAll(list.getMedias());
-//                                    tableView.refresh();
-//                                    isSettingValues = false;
-//                                    tableChanged();
-//                                }
-//                            });
-//                            return true;
-//                        }
                         miaos = new ArrayList();
                         miaos.add(FxmlControl.getInternalFile("/sound/guaiMiao1.mp3", "sound", "guaiMiao1.mp3"));
                         miaos.add(FxmlControl.getInternalFile("/sound/guaiMiao2.mp3", "sound", "guaiMiao2.mp3"));
@@ -706,7 +691,6 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                             miaosInfo.add(new MediaInformation(file));
                         }
                         TableMediaList.set(MiaoGuaiGuaiBenBen, miaosInfo);
-
                         return true;
                     }
 
@@ -730,7 +714,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
 
             } catch (Exception e) {
                 popError(message("FailOpenMedia"));
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         }
 

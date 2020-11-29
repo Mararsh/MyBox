@@ -27,7 +27,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import thridparty.TableAutoCommitCell;
 
@@ -78,7 +78,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(badStyle));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -165,7 +165,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             deadColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -244,7 +244,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             }
             return reports;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -268,7 +268,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             }
             return reports;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

@@ -12,9 +12,9 @@ import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -36,7 +36,7 @@ public class ImageQuantization extends PixelsOperation {
     // Each channel is 4 bit depth and reigons size = 16 *16 * 16 = 4096
     // When ditDepth is larger than 4, the results maybe worse due to
     // similiar selected colors  by too small regions.
-    protected int bitDepth = 4;
+    protected int bitDepth = 4, intValue;
     protected boolean recordCount;
     protected Map<Color, Long> counts;
     protected List<ColorCount> sortedCounts;
@@ -168,7 +168,7 @@ public class ImageQuantization extends PixelsOperation {
             }
             return table;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -216,7 +216,7 @@ public class ImageQuantization extends PixelsOperation {
             redOffset = redMod / 2;
             greenOffset = greenMod / 2;
             blueOffset = blueMod / 2;
-//            logger.debug(quantizationSize + "  " + redMod + " " + greenMod + " " + blueMod);
+//            MyBoxLog.debug(quantizationSize + "  " + redMod + " " + greenMod + " " + blueMod);
             if (redMod <= 0 || greenMod <= 0 || blueMod <= 0) {
                 throw new Exception(AppVariables.message("InvalidParameters"));
             }
@@ -338,14 +338,14 @@ public class ImageQuantization extends PixelsOperation {
             try {
                 int channelSize = (int) Math.pow(2, bitDepth);
                 int regionsSize = (int) Math.pow(channelSize, 3);
-//                logger.debug(bitDepth + "  " + channelSize + "  " + regionsSize);
+//                MyBoxLog.debug(bitDepth + "  " + channelSize + "  " + regionsSize);
                 large = image.getWidth() * image.getHeight() > regionsSize;
                 if (large) {
                     rgbPalette = RGBUniformQuantization.create();
                     rgbPalette.setQuantizationSize(regionsSize).setRecordCount(false).build();
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
 
             return this;
@@ -478,7 +478,7 @@ public class ImageQuantization extends PixelsOperation {
                     counts = new HashMap<>();
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
             return this;
         }
@@ -576,6 +576,17 @@ public class ImageQuantization extends PixelsOperation {
             Color mappedColor = kmeans.map(color);
             countColor(mappedColor);
             return mappedColor;
+        }
+
+        /*
+            get/set
+         */
+        public ImageRGBKMeans getKmeans() {
+            return kmeans;
+        }
+
+        public void setKmeans(ImageRGBKMeans kmeans) {
+            this.kmeans = kmeans;
         }
 
     }
@@ -958,6 +969,14 @@ public class ImageQuantization extends PixelsOperation {
 
     public void setTotalCount(long totalCount) {
         this.totalCount = totalCount;
+    }
+
+    public int getIntValue() {
+        return intValue;
+    }
+
+    public void setIntValue(int intValue) {
+        this.intValue = intValue;
     }
 
 }

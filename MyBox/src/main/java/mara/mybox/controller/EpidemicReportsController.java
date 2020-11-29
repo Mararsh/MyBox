@@ -50,7 +50,7 @@ import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -150,7 +150,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             initOrder();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -183,7 +183,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -246,7 +246,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                             FxmlControl.setEditorNormal(chartMaxSelector);
                             adjustOrderList();
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     });
 
@@ -255,7 +255,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             isSettingValues = false;
             adjustOrderList();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -295,7 +295,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             loadTrees(false);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -330,7 +330,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                             times = TableEpidemicReport.times(conn);
                             return true;
                         } catch (Exception e) {
-                            logger.debug(count + "  " + e.toString());
+                            MyBoxLog.debug(count + "  " + e.toString());
                             try {
                                 Thread.sleep(1000 * count);
                             } catch (Exception ex) {
@@ -429,7 +429,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -626,7 +626,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                     }
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
 
             if (loading != null) {
@@ -642,7 +642,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             if (loading != null) {
                 loading.setInfo(e.toString());
             }
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -714,7 +714,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             controller.reportsController = this;
             controller.loadReport(selected);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -836,7 +836,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -847,7 +847,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                     = (EpidemicReportsEditController) openScene(null, CommonValues.EpidemicReportsEditFxml);
             controller.load(this, true);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -858,7 +858,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                     = (EpidemicReportsEditController) openScene(null, CommonValues.EpidemicReportsEditFxml);
             controller.load(this, false);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -870,7 +870,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                     = (EpidemicReportEditController) openScene(null, CommonValues.EpidemicReportEditFxml);
             controller.reportsController = this;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -970,7 +970,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

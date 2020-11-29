@@ -5,7 +5,7 @@ import java.util.List;
 import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.fxml.ConditionNode;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -28,7 +28,7 @@ public class EpidemicReportsSourceController extends ControlConditionTree {
             s.add(message("Dataset"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -94,7 +94,7 @@ public class EpidemicReportsSourceController extends ControlConditionTree {
             }
             treeView.setSelection();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

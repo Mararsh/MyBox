@@ -14,7 +14,7 @@ import static mara.mybox.color.ColorBase.arrayDouble;
 import static mara.mybox.color.ColorBase.clipRGB;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.tools.DoubleTools.scale;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -271,7 +271,7 @@ public class CIEData {
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -289,7 +289,7 @@ public class CIEData {
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -307,7 +307,7 @@ public class CIEData {
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -325,7 +325,7 @@ public class CIEData {
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -461,7 +461,7 @@ public class CIEData {
             }
             return null;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -478,7 +478,7 @@ public class CIEData {
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -497,7 +497,7 @@ public class CIEData {
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -510,7 +510,7 @@ public class CIEData {
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -528,7 +528,7 @@ public class CIEData {
             List<CIEData> data = read(file);
             return cieString(data, null, file.getAbsolutePath());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -542,7 +542,7 @@ public class CIEData {
             List<CIEData> data = read(file, cs);
             return cieString(data, cs, file.getAbsolutePath());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -603,7 +603,7 @@ public class CIEData {
             }
             return s.toString();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

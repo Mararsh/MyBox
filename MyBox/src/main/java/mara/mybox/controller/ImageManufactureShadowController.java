@@ -13,7 +13,7 @@ import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -73,7 +73,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
             shadowBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageShadowSize", 10) + "");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

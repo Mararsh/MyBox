@@ -41,7 +41,7 @@ import mara.mybox.tools.NetworkTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -102,7 +102,7 @@ public class WebBrowserBoxController extends BaseController {
             initURLBox();
             initWebEngine();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -124,7 +124,7 @@ public class WebBrowserBoxController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -156,7 +156,7 @@ public class WebBrowserBoxController extends BaseController {
             webEngine.setPromptHandler(new Callback< PromptData, String>() {
                 @Override
                 public String call(PromptData p) {
-                    logger.debug(p.getMessage());
+                    MyBoxLog.debug(p.getMessage());
                     popInformation(p.getMessage() + " " + p.getDefaultValue());
                     return p.getDefaultValue();
                 }
@@ -165,14 +165,14 @@ public class WebBrowserBoxController extends BaseController {
                 @Override
                 public void handle(WebEvent<String> ev) {
                     FxmlStage.alertError(getMyStage(), ev.getData());
-                    logger.debug(ev.getData());
+                    MyBoxLog.debug(ev.getData());
                 }
             });
             webEngine.setConfirmHandler(new Callback< String, Boolean>() {
                 @Override
                 public Boolean call(String message) {
                     try {
-                        logger.debug(message);
+                        MyBoxLog.debug(message);
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle(myStage.getTitle());
                         alert.setHeaderText(null);
@@ -185,7 +185,7 @@ public class WebBrowserBoxController extends BaseController {
                         Optional<ButtonType> result = alert.showAndWait();
                         return result.get() == ButtonType.YES;
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
 
@@ -196,14 +196,14 @@ public class WebBrowserBoxController extends BaseController {
                 @Override
                 public void handle(WebErrorEvent event) {
                     popError(event.getMessage());
-                    logger.debug(event.getMessage());
+                    MyBoxLog.debug(event.getMessage());
                 }
             });
             webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
                     bottomLabel.setText(ev.getData());
-//                    logger.debug(ev.getData());
+//                    MyBoxLog.debug(ev.getData());
                 }
             });
 
@@ -229,7 +229,7 @@ public class WebBrowserBoxController extends BaseController {
                         }
 
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
 
                 }
@@ -286,7 +286,7 @@ public class WebBrowserBoxController extends BaseController {
                         }
                     } catch (Exception e) {
                         popError(e.toString());
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             });
@@ -299,7 +299,7 @@ public class WebBrowserBoxController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -325,14 +325,14 @@ public class WebBrowserBoxController extends BaseController {
                             urlBox.getEditor().setStyle(badStyle);
                         }
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         urlBox.getEditor().setStyle(badStyle);
                     }
                 }
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -402,7 +402,7 @@ public class WebBrowserBoxController extends BaseController {
 
             TableBrowserHistory.write(his);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -469,7 +469,7 @@ public class WebBrowserBoxController extends BaseController {
             }
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

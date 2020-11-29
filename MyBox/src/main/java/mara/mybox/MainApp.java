@@ -9,7 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -35,7 +35,7 @@ public class MainApp extends Application {
                 MyBoxLoading(stage);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             stage.close();
         }
     }
@@ -57,7 +57,7 @@ public class MainApp extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             stage.close();
         }
     }
@@ -81,7 +81,7 @@ public class MainApp extends Application {
             MyBoxLoadingController loadController = (MyBoxLoadingController) fxmlLoader.getController();
             loadController.run();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             stage.close();
         }
     }

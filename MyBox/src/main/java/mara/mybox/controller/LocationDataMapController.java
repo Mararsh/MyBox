@@ -49,7 +49,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -146,7 +146,7 @@ public class LocationDataMapController extends MapBaseController {
             centerCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Center", false));
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -312,7 +312,7 @@ public class LocationDataMapController extends MapBaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -549,7 +549,7 @@ public class LocationDataMapController extends MapBaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -693,7 +693,7 @@ public class LocationDataMapController extends MapBaseController {
             }
             frameCompleted = true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -718,7 +718,7 @@ public class LocationDataMapController extends MapBaseController {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -810,7 +810,7 @@ public class LocationDataMapController extends MapBaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -853,7 +853,7 @@ public class LocationDataMapController extends MapBaseController {
                         return file.exists();
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
 
@@ -1032,7 +1032,7 @@ public class LocationDataMapController extends MapBaseController {
                         }
 
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     snapEnd = true;
                 }
@@ -1040,7 +1040,7 @@ public class LocationDataMapController extends MapBaseController {
             }, 0, 100);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

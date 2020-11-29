@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.data.GeographyCode;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -23,7 +23,7 @@ public class GeographyCodeUserController extends BaseController {
             selectedCode = null;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -34,7 +34,7 @@ public class GeographyCodeUserController extends BaseController {
             locationController.loadTree(this);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -45,7 +45,7 @@ public class GeographyCodeUserController extends BaseController {
             }
             selectedCode = code;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

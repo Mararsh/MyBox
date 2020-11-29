@@ -47,6 +47,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -56,7 +57,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -135,7 +135,7 @@ public class PdfViewController extends ImageViewerController {
             infoLoaded = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -152,7 +152,7 @@ public class PdfViewController extends ImageViewerController {
                 FxmlControl.setTooltip(tipsView, new Tooltip(message("PDFComments") + "\n\n" + message("PdfViewTips")));
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -285,7 +285,7 @@ public class PdfViewController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -304,7 +304,7 @@ public class PdfViewController extends ImageViewerController {
                         double deltaY = event.getDeltaY();
                         if (event.isControlDown()) {
 //                        event.consume();
-//                        logger.debug(event.isConsumed());
+//                        MyBoxLog.debug(event.isConsumed());
 //                        if (deltaY > 0) {
 //                            zoomIn();
 //                        } else {
@@ -344,7 +344,7 @@ public class PdfViewController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -403,7 +403,7 @@ public class PdfViewController extends ImageViewerController {
             }
             mainPane.layout();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -453,7 +453,7 @@ public class PdfViewController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -608,7 +608,7 @@ public class PdfViewController extends ImageViewerController {
                         return doc != null;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }
@@ -625,7 +625,7 @@ public class PdfViewController extends ImageViewerController {
                         }
                         doc.close();
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
 
@@ -678,7 +678,7 @@ public class PdfViewController extends ImageViewerController {
                 childOutlineItem = childOutlineItem.getNextSibling();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -732,7 +732,7 @@ public class PdfViewController extends ImageViewerController {
                                     Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
                                     images.put(i, thumb);
                                 } catch (Exception e) {
-                                    logger.debug(e.toString());
+                                    MyBoxLog.debug(e.toString());
                                 }
                             }
                             doc.close();
@@ -740,7 +740,7 @@ public class PdfViewController extends ImageViewerController {
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }
@@ -826,7 +826,7 @@ public class PdfViewController extends ImageViewerController {
             final PdfInformationController controller = (PdfInformationController) openStage(CommonValues.PdfInformationFxml);
             controller.setInformation(pdfInformation);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1006,7 +1006,7 @@ public class PdfViewController extends ImageViewerController {
                     File txtFile = new File(fileBase + ".txt");
                     if (txtFile.exists()) {
                         texts = FileTools.readTexts(txtFile);
-                        txtFile.delete();
+                        FileTools.delete(txtFile);
                     } else {
                         texts = null;
                     }
@@ -1038,7 +1038,7 @@ public class PdfViewController extends ImageViewerController {
                     });
 
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -1095,7 +1095,7 @@ public class PdfViewController extends ImageViewerController {
                         return texts != null;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }

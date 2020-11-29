@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                  <children>
                                     <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="830.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                        <children>
-                                          <Label text="%FontFile" />
+                                          <Label minWidth="-Infinity" text="%FontFile" />
                                           <ComboBox fx:id="ttfSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                        </children>
                                     </HBox>

@@ -30,7 +30,7 @@ import mara.mybox.db.TableBase;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -73,7 +73,7 @@ public class TableManageController<P> extends BaseController {
             super.initValues();
             setTableDefinition();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -85,7 +85,7 @@ public class TableManageController<P> extends BaseController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -140,7 +140,7 @@ public class TableManageController<P> extends BaseController {
             initPagination();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -194,7 +194,7 @@ public class TableManageController<P> extends BaseController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -254,7 +254,7 @@ public class TableManageController<P> extends BaseController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -382,7 +382,7 @@ public class TableManageController<P> extends BaseController {
             }
             isSettingValues = false;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -404,7 +404,7 @@ public class TableManageController<P> extends BaseController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -414,7 +414,7 @@ public class TableManageController<P> extends BaseController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -425,7 +425,7 @@ public class TableManageController<P> extends BaseController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

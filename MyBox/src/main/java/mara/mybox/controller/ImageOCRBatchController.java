@@ -21,6 +21,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageContrast;
@@ -31,7 +32,6 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import net.sourceforge.tess4j.ITessAPI.TessPageIteratorLevel;
 import net.sourceforge.tess4j.ITesseract;
@@ -175,7 +175,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -241,7 +241,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
             textFiles = new ArrayList<>();
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -279,7 +279,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 return AppVariables.message("Failed");
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -387,7 +387,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
             }
             return lastImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -420,11 +420,9 @@ public class ImageOCRBatchController extends ImagesBatchController {
             if (ocrOptionsController.htmlCheck.isSelected()) {
                 File hocrFile = new File(prefix + ".hocr");
                 File htmlFile = new File(prefix + ".html");
-                if (htmlFile.exists()) {
-                    htmlFile.delete();
+                if (FileTools.rename(hocrFile, htmlFile)) {
+                    targetFileGenerated(htmlFile);
                 }
-                hocrFile.renameTo(htmlFile);
-                targetFileGenerated(htmlFile);
             }
 
             if (ocrOptionsController.pdfCheck.isSelected()) {
@@ -484,7 +482,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -534,11 +532,9 @@ public class ImageOCRBatchController extends ImagesBatchController {
             if (ocrOptionsController.htmlCheck.isSelected()) {
                 File hocrFile = new File(fileBase + ".hocr");
                 File htmlFile = new File(fileBase + ".html");
-                if (htmlFile.exists()) {
-                    htmlFile.delete();
+                if (FileTools.rename(hocrFile, htmlFile)) {
+                    targetFileGenerated(htmlFile);
                 }
-                hocrFile.renameTo(htmlFile);
-                targetFileGenerated(htmlFile);
             }
 
             if (ocrOptionsController.pdfCheck.isSelected()) {
@@ -551,7 +547,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -563,7 +559,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
             namePrefix = namePrefix.replace(" ", "_");
             return makeTargetFile(namePrefix, ".txt", targetPath);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

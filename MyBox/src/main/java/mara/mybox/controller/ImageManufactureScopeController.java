@@ -48,6 +48,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.TableColorData;
 import mara.mybox.db.TableImageScope;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -67,7 +68,6 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -123,6 +123,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             rectangleLabel;
 
     public ImageManufactureScopeController() {
+        baseTitle = AppVariables.message("ImageManufacture");
         needNotContextMenu = true;
     }
 
@@ -133,6 +134,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
         this.parentController = parent;
         imageController = parent;
         baseName = imageController.baseName;
+        baseTitle = imageController.baseTitle;
         sourceFile = imageController.sourceFile;
         imageInformation = imageController.imageInformation;
         image = imageController.image;
@@ -161,7 +163,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                         AppVariables.setUserConfigValue(baseName + "ScopePanePosition", newValue.doubleValue() + "");
                     });
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -178,7 +180,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -186,7 +188,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -225,7 +227,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -287,7 +289,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -326,7 +328,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             FxmlControl.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -359,7 +361,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -397,7 +399,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                     AppVariables.getUserConfigValue(baseName + "ScopeTransparency", message("ScopeTransparency0.5")));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -443,7 +445,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -576,7 +578,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             setScopeControls();
             setScopeValues();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -630,7 +632,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -673,7 +675,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             }
         } catch (Exception e) {
             FxmlControl.setEditorBadStyle(scopeDistanceSelector);
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             valid = false;
         }
         return valid;
@@ -777,7 +779,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -854,7 +856,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -886,7 +888,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                         }
                         return scopedImage != null;
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
                 }
@@ -948,7 +950,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
             pickColorCheck.setSelected(false);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1015,7 +1017,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             indicateScope();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1065,7 +1067,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             indicateScope();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1275,7 +1277,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1360,7 +1362,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             useScopeButton.disableProperty().bind(deleteScopesButton.disableProperty());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1434,7 +1436,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 setGraphic(view);
                 setText(s);
             } catch (Exception e) {
-                logger.error(e.toString());
+                MyBoxLog.error(e.toString());
                 setText(null);
                 setGraphic(null);
             }
@@ -1450,7 +1452,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -1621,7 +1623,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
     }
 
     public void showScope(ImageScope scope) {
-        logger.debug("here");
+        MyBoxLog.debug("here");
         if (scope == null || scope.getScopeType() == null) {
             return;
         }
@@ -1738,7 +1740,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -1768,7 +1770,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -1803,7 +1805,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -1833,7 +1835,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             scopeDistanceSelector.getItems().addAll(vList);
             scopeDistanceSelector.getSelectionModel().select(distance + "");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1856,7 +1858,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             recordFileOpened(file);
             loadOutlineSource(file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1918,7 +1920,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                         bufferedImage = ImageFileReaders.readImage(file);
                         return bufferedImage != null;
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
                 }
@@ -1991,7 +1993,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                             }
                             return outline != null;
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                             return false;
                         }
                     }
@@ -2020,7 +2022,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2041,7 +2043,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                         outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
                         return outlineImage != null;
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
                 }

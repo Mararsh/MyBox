@@ -23,7 +23,7 @@ import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -64,7 +64,7 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
             initAdaptation();
             initMatrices();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -205,7 +205,7 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
             calculateArea.appendText((String) rgb2xyz.get("procedure"));
             calculateArea.home();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

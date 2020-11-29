@@ -63,8 +63,8 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     public boolean same(DoubleRectangle rect) {
-//        logger.debug(smallX + " " + smallY + " " + bigX + " " + bigY);
-//        logger.debug(rect.getSmallX() + " " + rect.getSmallY() + " " + rect.getBigX() + " " + rect.getBigY());
+//        MyBoxLog.debug(smallX + " " + smallY + " " + bigX + " " + bigY);
+//        MyBoxLog.debug(rect.getSmallX() + " " + rect.getSmallY() + " " + rect.getBigX() + " " + rect.getBigY());
         return rect != null
                 && smallX == rect.getSmallX() && smallY == rect.getSmallY()
                 && bigX == rect.getBigX() && bigY == rect.getBigY();

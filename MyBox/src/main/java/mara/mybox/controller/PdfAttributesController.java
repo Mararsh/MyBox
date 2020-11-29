@@ -25,7 +25,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -339,7 +339,7 @@ public class PdfAttributesController extends BaseController {
             controller.setInformation(pdfInfo);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

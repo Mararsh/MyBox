@@ -8,7 +8,7 @@ import java.util.Map;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -135,7 +135,7 @@ public class OCRTools {
             AppVariables.setUserConfigValue(TessDataPath, path.getAbsolutePath());
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -167,7 +167,7 @@ public class OCRTools {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return data;
     }

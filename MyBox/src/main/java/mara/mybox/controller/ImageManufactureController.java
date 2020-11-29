@@ -32,6 +32,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -42,10 +43,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import mara.mybox.data.BaseTask;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.TableImageHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -60,7 +61,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -154,7 +154,7 @@ public class ImageManufactureController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -177,7 +177,7 @@ public class ImageManufactureController extends ImageViewerController {
             scopeController.imageView.fitHeightProperty().bind(imageView.fitHeightProperty());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -228,7 +228,7 @@ public class ImageManufactureController extends ImageViewerController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -327,7 +327,7 @@ public class ImageManufactureController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -338,7 +338,7 @@ public class ImageManufactureController extends ImageViewerController {
             undoButton.setDisable(true);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -392,7 +392,7 @@ public class ImageManufactureController extends ImageViewerController {
             mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -400,9 +400,13 @@ public class ImageManufactureController extends ImageViewerController {
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
+
+            FxmlControl.setTooltip(imagePaneControl, new Tooltip("F7"));
+            FxmlControl.setTooltip(scopePaneControl, new Tooltip("F8"));
+
             hideScopePane();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -452,7 +456,7 @@ public class ImageManufactureController extends ImageViewerController {
             updateBottom(message("Loaded"));
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -529,7 +533,7 @@ public class ImageManufactureController extends ImageViewerController {
         } catch (Exception e) {
             mainSplitPane.setDividerPosition(0, 0.7);
         }
-        ControlStyle.setIcon(imagePaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+        ControlStyle.setIconName(imagePaneControl, "iconDoubleLeft.png");
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
         if (scopeController.scopeAllRadio.isSelected()) {
             scopeController.scopeRectangleRadio.fire();
@@ -548,7 +552,7 @@ public class ImageManufactureController extends ImageViewerController {
         isSettingValues = true;
         mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
         mainSplitPane.getItems().remove(scopePane);
-        ControlStyle.setIcon(imagePaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        ControlStyle.setIconName(imagePaneControl, "iconDoubleRight.png");
         fitSize();
         mainSplitPane.applyCss();
         isSettingValues = false;
@@ -578,7 +582,7 @@ public class ImageManufactureController extends ImageViewerController {
         } catch (Exception e) {
             mainSplitPane.setDividerPosition(0, 0.7);
         }
-        ControlStyle.setIcon(scopePaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        ControlStyle.setIconName(scopePaneControl, "iconDoubleRight.png");
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
         fitSize();
         mainSplitPane.applyCss();
@@ -594,7 +598,7 @@ public class ImageManufactureController extends ImageViewerController {
         isSettingValues = true;
         mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
         mainSplitPane.getItems().remove(imagePane);
-        ControlStyle.setIcon(scopePaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+        ControlStyle.setIconName(scopePaneControl, "iconDoubleLeft.png");
         mainSplitPane.applyCss();
         isSettingValues = false;
     }
@@ -666,7 +670,7 @@ public class ImageManufactureController extends ImageViewerController {
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }
@@ -806,7 +810,7 @@ public class ImageManufactureController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -829,7 +833,7 @@ public class ImageManufactureController extends ImageViewerController {
                 his.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -874,7 +878,7 @@ public class ImageManufactureController extends ImageViewerController {
                         hisDesc = DateTools.datetimeToString(his.getOperationTime()) + " " + message(his.getUpdateType());
                         return true;
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }
@@ -968,7 +972,7 @@ public class ImageManufactureController extends ImageViewerController {
             popSuccessful();
             loadImageHistories();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1128,7 +1132,7 @@ public class ImageManufactureController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -1157,7 +1161,7 @@ public class ImageManufactureController extends ImageViewerController {
             }
             updateImage(newImage, info);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1173,7 +1177,7 @@ public class ImageManufactureController extends ImageViewerController {
             popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
             updateBottom(info);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1187,7 +1191,7 @@ public class ImageManufactureController extends ImageViewerController {
             updateLabelTitle();
             updateBottom(operation);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1217,7 +1221,7 @@ public class ImageManufactureController extends ImageViewerController {
             }
             bottomLabel.setText(bottom);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1264,7 +1268,7 @@ public class ImageManufactureController extends ImageViewerController {
 
     public void applyKernel(ConvolutionKernel kernel) {
         operationsController.enhancementPane.setExpanded(true);
-        operationsController.enhancementController.applyKernel(kernel);
+        operationsController.enhancementController.optionsController.applyKernel(kernel);
     }
 
     /*

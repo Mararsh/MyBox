@@ -75,7 +75,7 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import thridparty.TableAutoCommitCell;
@@ -197,7 +197,7 @@ public class GameElimniationController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -344,7 +344,7 @@ public class GameElimniationController extends BaseController {
             okChessesAction();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -398,7 +398,7 @@ public class GameElimniationController extends BaseController {
             scoreColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -655,7 +655,7 @@ public class GameElimniationController extends BaseController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -773,7 +773,7 @@ public class GameElimniationController extends BaseController {
             newGame(true);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -884,7 +884,7 @@ public class GameElimniationController extends BaseController {
             }
             selectSoundFile(file);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1060,7 +1060,7 @@ public class GameElimniationController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1105,7 +1105,7 @@ public class GameElimniationController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1129,7 +1129,7 @@ public class GameElimniationController extends BaseController {
             findAdjacentAndEliminate();
             countScore = true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1149,7 +1149,7 @@ public class GameElimniationController extends BaseController {
             firstClick = null;
             isEliminating = false;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1242,7 +1242,7 @@ public class GameElimniationController extends BaseController {
             vbox2.getChildren().add(node2);
             return null;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1270,7 +1270,7 @@ public class GameElimniationController extends BaseController {
             }
             return null;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1299,7 +1299,7 @@ public class GameElimniationController extends BaseController {
             }
             return new Adjacent(i1, j, i2, j);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1328,7 +1328,7 @@ public class GameElimniationController extends BaseController {
             }
             return new Adjacent(i, j1, i, j2);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -1381,7 +1381,7 @@ public class GameElimniationController extends BaseController {
             afterElimination((int) node.getUserData(), adjacent.getLength());
             findAdjacentAndEliminate();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1432,7 +1432,7 @@ public class GameElimniationController extends BaseController {
             afterElimination((int) node.getUserData(), adjacent.getLength());
             findAdjacentAndEliminate();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1474,7 +1474,7 @@ public class GameElimniationController extends BaseController {
             }
             checkDeadlock();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1558,7 +1558,7 @@ public class GameElimniationController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return null;
     }
@@ -1606,7 +1606,7 @@ public class GameElimniationController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1652,7 +1652,7 @@ public class GameElimniationController extends BaseController {
             findAdjacentAndEliminate();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1678,7 +1678,7 @@ public class GameElimniationController extends BaseController {
                 popInformation(message("DeadlockDetectChance"));
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1715,7 +1715,7 @@ public class GameElimniationController extends BaseController {
             Node node = getImageNode(i, j);
             return (int) (node.getUserData());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return -1;
         }
     }
@@ -1742,7 +1742,7 @@ public class GameElimniationController extends BaseController {
             int index = selectedChesses.get(random.nextInt(boardSize));
             setImageNode(i, j, imagesListview.getItems().get(index));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1753,7 +1753,7 @@ public class GameElimniationController extends BaseController {
             vbox.getChildren().clear();
             vbox.getChildren().add(node);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1770,7 +1770,7 @@ public class GameElimniationController extends BaseController {
             fade.setNode(chessBoard.get(i + "-" + j));
             fade.play();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1792,7 +1792,7 @@ public class GameElimniationController extends BaseController {
             pathTransition.play();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1801,7 +1801,7 @@ public class GameElimniationController extends BaseController {
             final VBox vbox1 = chessBoard.get(i + "-" + j);
             vbox1.setStyle(focusStyle);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1810,7 +1810,7 @@ public class GameElimniationController extends BaseController {
             final VBox vbox1 = chessBoard.get(i + "-" + j);
             vbox1.setStyle(currentStyle);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1862,7 +1862,7 @@ public class GameElimniationController extends BaseController {
         }
 
         public void print() {
-            logger.debug(starti + "," + startj + " -- " + endi + "," + endj);
+            MyBoxLog.debug(starti + "," + startj + " -- " + endi + "," + endj);
         }
 
     }

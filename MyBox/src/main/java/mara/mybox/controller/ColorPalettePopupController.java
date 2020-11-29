@@ -15,12 +15,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.data.ColorData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -69,13 +67,13 @@ public class ColorPalettePopupController extends BaseController {
                 try {
                     addColor(data, false);
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             }
             label.setText(message("Count") + ": " + colorsPane.getChildren().size());
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -101,7 +99,7 @@ public class ColorPalettePopupController extends BaseController {
                         FxmlControl.setTooltip(setController.rect, data.display());
                         setController.hidePopup();
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
 
                 });
@@ -142,12 +140,12 @@ public class ColorPalettePopupController extends BaseController {
 
     @FXML
     public void managePalette() {
-        FxmlStage.openStage(CommonValues.ColorPaletteManageFxml);
+        ColorPaletteManageController.oneOpen();
     }
 
     @FXML
     public void dataAction() {
-        FxmlStage.openStage(CommonValues.ManageColorsFxml);
+        ColorsManageController.oneOpen();
     }
 
     @FXML

@@ -35,13 +35,13 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Label text="%WeiboAddress" />
+                                                <Label minWidth="-Infinity" text="%WeiboAddress" />
                                                 <ComboBox fx:id="addressBox" editable="true" maxWidth="1.7976931348623157E308" visibleRowCount="15" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="wowButton" mnemonicParsing="false" onAction="#exampleAction">
+                                                <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconWOW.png" />
+                                                                <Image url="@../buttons/iconExamples.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -107,7 +107,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <CheckBox fx:id="closeWindowCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%CloseWindowAfterSnap" />
                                                 <CheckBox fx:id="openPathCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenPathWhenStop" />
-                                                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true">
+                                                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

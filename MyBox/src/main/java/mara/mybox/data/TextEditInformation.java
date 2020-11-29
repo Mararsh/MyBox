@@ -7,11 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -42,16 +42,14 @@ public class TextEditInformation extends FileEditInformation {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                Runtime r = Runtime.getRuntime();
-                long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-                int textSize = (int) Math.min(file.length(), availableMem / 16);
+                int textSize = FileTools.bufSize(file);
                 char[] textBuf = new char[textSize];
                 char[] charBuf = new char[1];
                 boolean crlf = lineBreak.equals(Line_Break.CRLF);
                 long charIndex = 0, lineIndex = 1, pageIndex = 0;
                 int textLen, readLen = textSize;
                 String text;
-                while ((textLen = reader.read(textBuf, 0, readLen)) != -1) {
+                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
                     charIndex += textLen;
                     text = new String(textBuf, 0, textLen);
                     if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
@@ -74,7 +72,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -107,7 +105,7 @@ public class TextEditInformation extends FileEditInformation {
                     findStart = findReplace.getFileRange().getStart();
                     findEnd = findReplace.getFileRange().getEnd();
                 }
-                while ((textLen = reader.read(textBuf, 0, readLen)) != -1) {
+                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
                     text = new String(textBuf, 0, textLen);
                     if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                         text += new String(charBuf, 0, 1);
@@ -124,7 +122,7 @@ public class TextEditInformation extends FileEditInformation {
                         if (findStart >= pageStart && findStart < pageEnd && findEnd > pageEnd) {
                             char[] findBuf = new char[(int) (findEnd - pageEnd)];
                             int findLen;
-                            if ((findLen = reader.read(findBuf)) != -1) {
+                            if ((findLen = reader.read(findBuf)) > 0) {
                                 String findText = new String(findBuf, 0, findLen);
                                 pageText += findText;
                                 pageEnd += findLen;
@@ -155,7 +153,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             return pageText;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -180,7 +178,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -220,7 +218,7 @@ public class TextEditInformation extends FileEditInformation {
                 int bufSize = sourceInfo.getPageSize(), readLen = bufSize, textLen, pageIndex = 1;
                 char[] textBuf = new char[bufSize];
                 char[] charBuf = new char[1];
-                while ((textLen = reader.read(textBuf, 0, readLen)) != -1) {
+                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
                     if (pageIndex == pageNumber) {
                         if (lineBreak != Line_Break.LF) {
                             writer.write(pageText.replaceAll("\n", lineBreakValue));
@@ -246,12 +244,11 @@ public class TextEditInformation extends FileEditInformation {
                 }
             }
             if (sourceInfo.getFile().equals(file)) {
-                file.delete();
-                targetFile.renameTo(file);
+                FileTools.rename(targetFile, file);
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -274,7 +271,7 @@ public class TextEditInformation extends FileEditInformation {
                 boolean crlf = lineBreak.equals(Line_Break.CRLF);
                 int textLen, readLen = pageSize;
                 String text;
-                while ((textLen = reader.read(textBuf, 0, readLen)) != -1) {
+                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
                     text = new String(textBuf, 0, textLen);
                     if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                         text += new String(charBuf, 0, 1);
@@ -307,7 +304,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             return pageText;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -335,7 +332,7 @@ public class TextEditInformation extends FileEditInformation {
                 boolean crlf = lineBreak.equals(Line_Break.CRLF);
                 int textLen, readLen = pageSize;
                 String text, crossString = "";
-                while ((textLen = reader.read(textBuf, 0, readLen)) != -1) {
+                while ((textLen = reader.read(textBuf, 0, readLen)) > 0) {
                     text = new String(textBuf, 0, textLen);
                     if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                         text += new String(charBuf, 0, 1);
@@ -386,7 +383,7 @@ public class TextEditInformation extends FileEditInformation {
 
             return targetFile;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 

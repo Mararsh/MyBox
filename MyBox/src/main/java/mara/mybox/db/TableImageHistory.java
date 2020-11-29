@@ -8,12 +8,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageHistory;
 import mara.mybox.image.ImageScope;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -90,8 +90,7 @@ public class TableImageHistory extends DerbyBase {
             }
 
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -105,21 +104,17 @@ public class TableImageHistory extends DerbyBase {
         try ( Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(sql);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
+            MyBoxLog.debug(sql);
+            MyBoxLog.debug(e.toString());
         }
         try {
             File hisFile = new File(hisname);
-            if (hisFile.exists()) {
-                hisFile.delete();
-            }
+            FileTools.delete(hisFile);
             File thumbFile = new File(FileTools.appendName(hisname, "_thumbnail"));
-            if (thumbFile.exists()) {
-                thumbFile.delete();
-            }
+            FileTools.delete(thumbFile);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -160,12 +155,11 @@ public class TableImageHistory extends DerbyBase {
                 }
             }
             String sql = "INSERT INTO image_history(" + fields + ") VALUES(" + values + ")";
-//            logger.debug(sql);
+//            MyBoxLog.debug(sql);
             conn.createStatement().executeUpdate(sql);
             return read(image);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return read(image);
         }
     }
@@ -183,8 +177,7 @@ public class TableImageHistory extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -194,8 +187,7 @@ public class TableImageHistory extends DerbyBase {
             deleteRecord(conn, image, hisname);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -207,11 +199,7 @@ public class TableImageHistory extends DerbyBase {
             String sql = " SELECT history_location FROM image_history";
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
-                    try {
-                        new File(results.getString("history_location")).delete();
-                    } catch (Exception e) {
-                        failed(e);
-                    }
+                    FileTools.delete(results.getString("history_location"));
                 }
             }
             String imageHistoriesPath = AppVariables.getImageHisPath();
@@ -220,7 +208,7 @@ public class TableImageHistory extends DerbyBase {
                 File[] files = path.listFiles();
                 if (files != null) {
                     for (File f : files) {
-                        f.delete();
+                        FileTools.delete(f);
                     }
                 }
             }
@@ -228,8 +216,7 @@ public class TableImageHistory extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

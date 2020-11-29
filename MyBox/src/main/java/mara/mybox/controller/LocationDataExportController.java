@@ -11,8 +11,8 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data.Location;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVPrinter;
@@ -31,7 +31,7 @@ public class LocationDataExportController extends DataExportController {
     protected FlowPane fieldsPane;
 
     public LocationDataExportController() {
-        baseTitle = message("Export") + " - " + message("LocationData");
+        baseTitle = message("LocationData") + " " + message("Export");
         baseName = "LocationData";
     }
 
@@ -57,7 +57,7 @@ public class LocationDataExportController extends DataExportController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -82,7 +82,7 @@ public class LocationDataExportController extends DataExportController {
             Location data = (Location) (dataController.tableDefinition.readData(results));
             printer.printRecord(Location.externalValues(columnNames, data));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -147,7 +147,7 @@ public class LocationDataExportController extends DataExportController {
             s.append(" />\n");
             writer.write(s.toString());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -273,7 +273,7 @@ public class LocationDataExportController extends DataExportController {
             }
             return s.toString();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -292,7 +292,7 @@ public class LocationDataExportController extends DataExportController {
                 cell.setCellValue(row.get(j));
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -305,7 +305,7 @@ public class LocationDataExportController extends DataExportController {
             Location data = (Location) (dataController.tableDefinition.readData(results));
             return Location.externalValues(columnNames, data);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

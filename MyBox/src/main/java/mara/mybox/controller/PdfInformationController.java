@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -67,7 +67,7 @@ public class PdfInformationController extends BaseController {
             firstPageSize.setText(info.getFirstPageSize());
             firstPageSize2.setText(info.getFirstPageSize2());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

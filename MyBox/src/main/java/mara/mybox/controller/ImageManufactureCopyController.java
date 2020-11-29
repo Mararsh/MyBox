@@ -14,7 +14,7 @@ import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageScope;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -62,7 +62,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
             marginsCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "CopyCutMargins", true));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -115,7 +115,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                         }
                         return ImageClipboard.add(newImage, copyToSystemClipboardCheck.isSelected()) != null;
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         error = e.toString();
                         return false;
                     }

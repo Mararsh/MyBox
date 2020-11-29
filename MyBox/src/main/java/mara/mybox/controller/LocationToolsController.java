@@ -27,7 +27,7 @@ import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
 import static mara.mybox.tools.LocationTools.longitudeToDmsString;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import thridparty.CoordinateConverter;
@@ -271,7 +271,7 @@ public class LocationToolsController extends MapBaseController {
                             decimalInput.setStyle(badStyle);
                         }
                     } catch (Exception e) {
-//                        logger.debug(e.toString());
+//                        MyBoxLog.debug(e.toString());
                         decimalInput.setStyle(badStyle);
                     }
                 }
@@ -333,7 +333,7 @@ public class LocationToolsController extends MapBaseController {
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -348,7 +348,7 @@ public class LocationToolsController extends MapBaseController {
             csConvert();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -431,7 +431,7 @@ public class LocationToolsController extends MapBaseController {
             webEngine.loadContent(table.html());
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -566,7 +566,7 @@ public class LocationToolsController extends MapBaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -576,7 +576,7 @@ public class LocationToolsController extends MapBaseController {
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
             controller.loadCoordinate(this, longitude, latitude);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -598,7 +598,7 @@ public class LocationToolsController extends MapBaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

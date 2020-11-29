@@ -17,15 +17,15 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableBase;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -90,13 +90,13 @@ public class DataImportController<D> extends FilesBatchController {
                 FxmlControl.removeTooltip(csvEditController.inputButton);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     public void setLink() {
         link.setText(CommonValues.MyBoxInternetDataPath
-                + (AppVariables.isChinese() ? "" : "/tree/master/en"));
+                + (AppVariables.isChinese() ? "" : "/tree/master/md/en"));
     }
 
     @Override
@@ -110,7 +110,7 @@ public class DataImportController<D> extends FilesBatchController {
                 );
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -206,7 +206,7 @@ public class DataImportController<D> extends FilesBatchController {
                 return AppVariables.message("Failed");
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -217,7 +217,7 @@ public class DataImportController<D> extends FilesBatchController {
             conn.commit();
             return ret;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return -1;
     }
@@ -296,7 +296,7 @@ public class DataImportController<D> extends FilesBatchController {
                 conn.commit();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             updateLogs(e.toString(), true);
         }
         updateLogs(message("Imported") + ":" + importCount + "  " + file + "\n"

@@ -8,11 +8,11 @@ import javafx.fxml.FXML;
 import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -44,7 +44,7 @@ public class TextReplaceBatchController extends FilesBatchController {
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -73,7 +73,7 @@ public class TextReplaceBatchController extends FilesBatchController {
                     .setWrap(false);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -108,14 +108,15 @@ public class TextReplaceBatchController extends FilesBatchController {
             if (!replace.file() || !tmpFile.exists()) {
                 return message("Failed");
             }
-            if (target.exists()) {
-                target.delete();
+            if (FileTools.rename(tmpFile, target)) {
+                targetFileGenerated(target);
+                return MessageFormat.format(message("ReplaceAllOk"), replace.getCount());
+            } else {
+                return message("Failed");
             }
-            tmpFile.renameTo(target);
-            targetFileGenerated(target);
-            return MessageFormat.format(message("ReplaceAllOk"), replace.getCount());
+
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return message("Failed");
         }
     }

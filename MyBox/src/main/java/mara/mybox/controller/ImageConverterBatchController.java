@@ -11,7 +11,7 @@ import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
 
@@ -56,7 +56,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -93,7 +93,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
             appendQualityCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConverterAppendQuality"));
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -123,7 +123,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
                 return AppVariables.message("Failed");
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -156,7 +156,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
             }
             return makeTargetFile(namePrefix, nameSuffix, targetPath);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

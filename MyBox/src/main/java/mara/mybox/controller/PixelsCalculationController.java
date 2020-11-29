@@ -28,7 +28,7 @@ import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -101,7 +101,7 @@ public class PixelsCalculationController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -748,7 +748,7 @@ public class PixelsCalculationController extends BaseController {
                 useButton.setDisable(true);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -820,7 +820,7 @@ public class PixelsCalculationController extends BaseController {
 
         } catch (Exception e) {
             cp_density = 0;
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -875,7 +875,7 @@ public class PixelsCalculationController extends BaseController {
 
         } catch (Exception e) {
             cs_density = 0;
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

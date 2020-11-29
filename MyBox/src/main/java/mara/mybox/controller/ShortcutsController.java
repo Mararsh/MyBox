@@ -7,9 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -56,7 +56,7 @@ public class ShortcutsController extends HtmlViewerController {
             html = HtmlTools.html(message("Shortcuts"), htmlStyle, StringTable.tableDiv(table));
             webView.getEngine().loadContent​(html);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -94,7 +94,7 @@ public class ShortcutsController extends HtmlViewerController {
             key("CTRL", "s", message("Save"), "F2 / ALT+s");
             key("CTRL", "f", message("Find"), "ALT+f");
             key("CTRL", "h", message("Replace"), "ALT+h");
-            key("CTRL", "r", message("Recover") + " / " + message("Clear"), "F11 / ALT+r");
+            key("CTRL", "r", message("Recover") + " / " + message("Clear"), "ALT+r");
             key("CTRL", "n", message("Create"), "");
             key("CTRL", "a", message("SelectAll"), "ALT+a");
             key("CTRL", "o", message("SelectNone"), "ALT+o");
@@ -125,7 +125,7 @@ public class ShortcutsController extends HtmlViewerController {
             key("f / F", "", message("FullScreen"), "");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

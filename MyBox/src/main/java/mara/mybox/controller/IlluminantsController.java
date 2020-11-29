@@ -18,7 +18,7 @@ import mara.mybox.color.Illuminant;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -65,7 +65,7 @@ public class IlluminantsController extends ChromaticityBaseController {
             initData();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -172,7 +172,7 @@ public class IlluminantsController extends ChromaticityBaseController {
             adaptationArea.appendText((String) run.get("procedure"));
             adaptationArea.home();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

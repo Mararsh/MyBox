@@ -4,14 +4,14 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.3.5</version>
+    <version>6.3.6</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
     </properties>
 
     <organization>
@@ -22,44 +22,43 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>14.0.1</version>
+            <version>15.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>14.0.1</version>
+            <version>15.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>14.0.1</version>
+            <version>15.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <!--14.0.1 of this module can cause WebView not work for map and snapping -->
             <version>13.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>14.0.1</version>
+            <version>15.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>14.0.1</version>
+            <version>15.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>14.0.1</version>
+            <version>15.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -67,6 +66,7 @@
             <artifactId>pdfbox</artifactId>
             <version>2.0.21</version>
         </dependency>
+
         <dependency>
             <groupId>net.sf.cssbox</groupId>
             <artifactId>pdf2dom</artifactId>
@@ -86,11 +86,6 @@
             <groupId>com.googlecode.soundlibs</groupId>
             <artifactId>mp3spi</artifactId>
             <version>1.9.5.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.13.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
@@ -212,6 +207,11 @@
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.8.0</version>
         </dependency>
     </dependencies>
 

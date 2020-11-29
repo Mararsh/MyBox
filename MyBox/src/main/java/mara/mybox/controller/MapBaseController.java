@@ -15,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
@@ -26,9 +25,10 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
-import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
@@ -38,9 +38,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.LocationTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -108,7 +106,7 @@ public class MapBaseController extends BaseController {
             interval = 200;
             if (intervalSelector != null) {
                 intervalSelector.getItems().addAll(Arrays.asList(
-                        "200", "500", "1000", "50", "100", "300", "800", "1500", "2000", "3000", "5000", "10000"
+                        "200", "500", "1000", "50", "5", "3", "1", "10", "100", "300", "800", "1500", "2000", "3000", "5000", "10000"
                 ));
                 intervalSelector.getSelectionModel().selectedItemProperty().addListener(
                         (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -126,7 +124,7 @@ public class MapBaseController extends BaseController {
                                     FxmlControl.setEditorBadStyle(intervalSelector);
                                 }
                             } catch (Exception e) {
-                                logger.error(e.toString());
+                                MyBoxLog.error(e.toString());
                             }
                         });
                 isSettingValues = true;
@@ -147,7 +145,7 @@ public class MapBaseController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -195,6 +193,8 @@ public class MapBaseController extends BaseController {
             if (mapView == null) {
                 return;
             }
+
+            // SSL handshake still fails even when above certficates imported! This is workaround
             webEngine = mapView.getEngine();
             webEngine.setJavaScriptEnabled(true);
 //            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
@@ -227,7 +227,7 @@ public class MapBaseController extends BaseController {
 //                                    break;
 //                            }
 //                        } catch (Exception e) {
-//                            logger.debug(e.toString());
+//                            MyBoxLog.debug(e.toString());
 //                        }
 //                    });
 //            webEngine.getLoadWorker().exceptionProperty().addListener(
@@ -242,14 +242,14 @@ public class MapBaseController extends BaseController {
 //                        bottomLabel.setText(newv);
 //                    });
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
 
     public void mapEvents(String data) {
         try {
-//            logger.debug(data);
+//            MyBoxLog.debug(data);
             if (data.equals("Loaded")) {
                 mapOptionsController.mapLoaded();
                 return;
@@ -281,7 +281,7 @@ public class MapBaseController extends BaseController {
                 bottomLabel.setText(data);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -297,7 +297,7 @@ public class MapBaseController extends BaseController {
             String pInfo = jsString(mapOptionsController.popInfoCheck.isSelected() ? info : null);
             String pImage = markerImage;
             pImage = (pImage == null || pImage.trim().isBlank())
-                    ? "null" : "'" + FindReplaceString.replaceAll(pImage, "\\", "/") + "'";
+                    ? "null" : "'" + pImage.replaceAll("\\\\", "/") + "'";
             String pColor = textColor == null ? "null" : "'" + FxmlColor.color2rgb(textColor) + "'";
             webEngine.executeScript("addMarker("
                     + longitude + "," + latitude
@@ -306,7 +306,7 @@ public class MapBaseController extends BaseController {
                     + ", " + mapOptionsController.textSize
                     + ", " + pColor + ", " + mapOptionsController.boldCheck.isSelected() + ");");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -424,7 +424,7 @@ public class MapBaseController extends BaseController {
                         return htmlFile.exists();
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
 
@@ -468,14 +468,12 @@ public class MapBaseController extends BaseController {
             return;
         }
         if (setAsPaused) {
-            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPlay.png"));
-            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Continue")));
+            ControlStyle.setNameIcon(pauseButton, message("Continue"), "iconPlay.png");
             previousButton.setDisable(false);
             nextButton.setDisable(false);
             pauseButton.setUserData("paused");
         } else {
-            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
-            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Pause")));
+            ControlStyle.setNameIcon(pauseButton, message("Pause"), "iconPause.png");
             previousButton.setDisable(true);
             nextButton.setDisable(true);
             pauseButton.setUserData("playing");
@@ -559,7 +557,7 @@ public class MapBaseController extends BaseController {
             File htmFile = HtmlTools.writeHtml(table.html());
             FxmlStage.browseURI(getMyStage(), htmFile.toURI());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

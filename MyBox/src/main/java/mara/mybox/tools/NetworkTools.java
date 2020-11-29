@@ -34,8 +34,8 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
 import mara.mybox.data.CertificateBypass;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -125,12 +125,12 @@ public class NetworkTools {
                         if (line.contains(" " + host)
                                 || line.contains("www." + host)
                                 || line.contains("*." + host)) {
-//                            logger.debug(host + "  " + line);
+//                            MyBoxLog.debug(host + "  " + line);
                             return;
                         }
                     }
                 }
-//                logger.debug(cert.toString());
+//                MyBoxLog.debug(cert.toString());
             }
             tm.checkClientTrusted(chain, authType);
         }
@@ -153,12 +153,12 @@ public class NetworkTools {
                         if (line.contains(" " + host)
                                 || line.contains("www." + host)
                                 || line.contains("*." + host)) {
-//                            logger.debug(host + "  " + line);
+//                            MyBoxLog.debug(host + "  " + line);
                             return;
                         }
                     }
                 }
-//                logger.debug(cert.toString());
+//                MyBoxLog.debug(cert.toString());
             }
             tm.checkServerTrusted(chain, authType);
         }
@@ -171,7 +171,7 @@ public class NetworkTools {
             sc.init(null, new TrustManager[]{new MyBoxTrustManager()}, new SecureRandom());
             return sc.getSocketFactory();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return AppVariables.defaultSSLSocketFactory;
         }
 
@@ -193,7 +193,7 @@ public class NetworkTools {
 
             return ctx.getSocketFactory();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return AppVariables.defaultSSLSocketFactory;
         }
 
@@ -204,16 +204,16 @@ public class NetworkTools {
             @Override
             public boolean verify(String hostname, SSLSession session) {
 //                return true;
-                logger.debug(hostname);
+                MyBoxLog.debug(hostname);
 //                List<String> bypass = CertificateBypass.bypass();
 //                for (String host : bypass) {
 //                    if (hostname.equals(" " + host)
 //                            || hostname.equals("www." + host)
 //                            || hostname.equals("*." + host)) {
-//                        logger.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
+//                        MyBoxLog.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
 //                        return true;
 //                    }
-//                    logger.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
+//                    MyBoxLog.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
 //                }
                 return AppVariables.defaultHostnameVerifier.verify(hostname, session);
             }
@@ -225,50 +225,50 @@ public class NetworkTools {
 
         @Override
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-//            logger.debug("here");
+//            MyBoxLog.debug("here");
             return null;
         }
 
         @Override
         public void checkClientTrusted(X509Certificate[] certs, String authType) {
-//            logger.debug((certs != null) + " " + authType);
+//            MyBoxLog.debug((certs != null) + " " + authType);
         }
 
         @Override
         public void checkServerTrusted(X509Certificate[] certs, String authType) {
-//            logger.debug(certs.length + " " + authType);
+//            MyBoxLog.debug(certs.length + " " + authType);
 //            for (X509Certificate cert : certs) {
-//                logger.debug(cert);
+//                MyBoxLog.debug(cert);
 //            }
         }
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType,
                 Socket socket) throws CertificateException {
-//            logger.debug((chain != null) + " " + authType);
+//            MyBoxLog.debug((chain != null) + " " + authType);
         }
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType,
                 Socket socket) throws CertificateException {
-//            logger.debug(chain.length + " " + authType);
+//            MyBoxLog.debug(chain.length + " " + authType);
 //            for (X509Certificate cert : chain) {
-//                logger.debug(cert);
+//                MyBoxLog.debug(cert);
 //            }
         }
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType,
                 SSLEngine engine) throws CertificateException {
-//            logger.debug((chain != null) + " " + authType);
+//            MyBoxLog.debug((chain != null) + " " + authType);
         }
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType,
                 SSLEngine engine) throws CertificateException {
-//            logger.debug(chain.length + " " + authType);
+//            MyBoxLog.debug(chain.length + " " + authType);
 //            for (X509Certificate cert : chain) {
-//                logger.debug(cert);
+//                MyBoxLog.debug(cert);
 //            }
         }
 
@@ -294,9 +294,9 @@ public class NetworkTools {
 
                 @Override
                 public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                    logger.debug(certs.length + " " + authType);
+                    MyBoxLog.debug(certs.length + " " + authType);
                     for (X509Certificate cert : certs) {
-                        logger.debug(cert);
+                        MyBoxLog.debug(cert.toString());
                     }
                 }
             }
@@ -306,7 +306,7 @@ public class NetworkTools {
 
     public static HostnameVerifier trustAllVerifier() {
         HostnameVerifier allHostsValid = (String hostname, SSLSession session) -> {
-//            logger.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
+//            MyBoxLog.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
             return true;
         };
         return allHostsValid;
@@ -322,7 +322,7 @@ public class NetworkTools {
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(trustAllVerifier());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -340,7 +340,7 @@ public class NetworkTools {
             uc.setHostnameVerifier(trustAllVerifier());
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -348,7 +348,7 @@ public class NetworkTools {
         try {
             HttpsURLConnection.setDefaultHostnameVerifier(trustAllVerifier());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -366,7 +366,7 @@ public class NetworkTools {
             };
             HttpsURLConnection.setDefaultHostnameVerifier(verifier);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -375,7 +375,7 @@ public class NetworkTools {
             HttpsURLConnection.setDefaultSSLSocketFactory(AppVariables.defaultSSLSocketFactory);
             HttpsURLConnection.setDefaultHostnameVerifier(AppVariables.defaultHostnameVerifier);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -398,7 +398,7 @@ public class NetworkTools {
             char[] passphrase = passwprd.toCharArray();
             File cacerts = new File(keyStoreFile);
             KeyStore keyStore;
-            //        logger.debug("Loading KeyStore " + cacerts + "...");
+            //        MyBoxLog.debug("Loading KeyStore " + cacerts + "...");
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(cacerts))) {
                 keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
                 keyStore.load(in, passphrase);
@@ -453,7 +453,7 @@ public class NetworkTools {
                 return e.toString();
             }
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return e.toString();
         }
     }
@@ -494,15 +494,29 @@ public class NetworkTools {
         }
     }
 
-    public static String installCertificateByHost(String host, String alias)
-            throws Exception {
-        return installCertificateByHost(SystemTools.keystore(), SystemTools.keystorePassword(), host, alias);
+    public static void installCertificate(List<String> hosts) {
+        if (hosts == null) {
+            return;
+        }
+        String keyStoreFile = SystemTools.keystore();
+        String passwprd = SystemTools.keystorePassword();
+        for (String host : hosts) {
+            installCertificateByHost(keyStoreFile, passwprd, host, host);
+        }
+    }
+
+    public static String installCertificateByHost(String host, String alias) {
+        try {
+            return installCertificateByHost(SystemTools.keystore(), SystemTools.keystorePassword(), host, alias);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+            return e.toString();
+        }
     }
 
     // https://github.com/escline/InstallCert/blob/master/InstallCert.java
     public static String installCertificateByHost(String keyStoreFile,
-            String passwprd,
-            String host, String alias) throws Exception {
+            String passwprd, String host, String alias) {
         try {
             int port = 443;
             char[] passphrase = passwprd.toCharArray();
@@ -522,10 +536,10 @@ public class NetworkTools {
             try {
                 socket.startHandshake();
                 socket.close();
-                logger.debug(host + " AlreadyInstalled");
+//                MyBoxLog.debug(host + " AlreadyInstalled");
                 return "AlreadyInstalled";
             } catch (SSLException e) {
-//                logger.debug(e.toString());
+//                MyBoxLog.debug(e.toString());
             }
             X509Certificate[] chain = tm.chain;
             if (chain == null) {
@@ -545,10 +559,9 @@ public class NetworkTools {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.console(e.toString());
             return e.toString();
         }
-
     }
 
     public static boolean isHostCertificateInstalled(String host)
@@ -580,11 +593,11 @@ public class NetworkTools {
                 socket.close();
                 return true;
             } catch (SSLException e) {
-//                logger.debug(e.toString());
+//                MyBoxLog.debug(e.toString());
                 return false;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -614,7 +627,7 @@ public class NetworkTools {
                 return e.toString();
             }
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return e.toString();
         }
     }
@@ -636,14 +649,14 @@ public class NetworkTools {
     public static InetAddress localHost() {
         try {
             InetAddress candidateAddress = null;
-            logger.debug("InetAddress.getLocalHost():" + InetAddress.getLocalHost());
+            MyBoxLog.debug("InetAddress.getLocalHost():" + InetAddress.getLocalHost());
             for (Enumeration ifaces = NetworkInterface.getNetworkInterfaces();
                     ifaces.hasMoreElements();) {
                 NetworkInterface iface = (NetworkInterface) ifaces.nextElement();
                 for (Enumeration inetAddrs = iface.getInetAddresses();
                         inetAddrs.hasMoreElements();) {
                     InetAddress inetAddr = (InetAddress) inetAddrs.nextElement();
-                    logger.debug("inetAddr.getHostAddress:" + inetAddr.getHostAddress());
+                    MyBoxLog.debug("inetAddr.getHostAddress:" + inetAddr.getHostAddress());
                     if (!inetAddr.isLoopbackAddress()) {
                         if (inetAddr.isSiteLocalAddress()) {
                             return inetAddr;

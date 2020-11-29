@@ -7,7 +7,7 @@ import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -60,7 +60,7 @@ public class HtmlToUTF8Controller extends FilesBatchController {
             targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }

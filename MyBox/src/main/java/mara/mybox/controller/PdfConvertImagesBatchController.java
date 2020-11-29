@@ -13,7 +13,7 @@ import mara.mybox.image.ImageConvert;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
 import org.apache.pdfbox.rendering.ImageType;
@@ -60,7 +60,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -106,7 +106,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
             appendDensityCheck.setSelected(AppVariables.getUserConfigBoolean("PdfConverterAppendDensity"));
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -126,7 +126,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
         try {
             renderer = new PDFRenderer(doc);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             renderer = null;
         }
         return renderer != null;
@@ -158,7 +158,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
                 return 1;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return 0;
         }
     }
@@ -192,7 +192,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
 
             return makeTargetFile(namePrefix, nameSuffix, currentParameters.currentTargetPath);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

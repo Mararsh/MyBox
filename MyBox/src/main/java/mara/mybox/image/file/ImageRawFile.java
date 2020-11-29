@@ -18,9 +18,9 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -53,7 +53,7 @@ public class ImageRawFile {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -63,7 +63,7 @@ public class ImageRawFile {
         try {
             return writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -84,18 +84,9 @@ public class ImageRawFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
-
-            return true;
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -108,21 +99,18 @@ public class ImageRawFile {
             byte[] rawData;
             try ( BufferedInputStream fileInput = new BufferedInputStream(new FileInputStream(file))) {
                 rawData = new byte[fileInput.available()];
-                logger.debug(fileInput.available());
                 fileInput.read(rawData);
                 fileInput.close();
-                logger.debug(rawData.length);
 
                 // convert byte array back to BufferedImage
                 InputStream in = new ByteArrayInputStream(rawData);
-                logger.debug(in.available());
 
                 reader.setInput(in);
                 return reader.read(0);
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -132,11 +120,8 @@ public class ImageRawFile {
             byte[] rawData;
             try ( BufferedInputStream fileInput = new BufferedInputStream(new FileInputStream(file))) {
                 rawData = new byte[fileInput.available()];
-                logger.debug(fileInput.available());
                 fileInput.read(rawData);
             }
-
-            logger.debug(rawData.length);
             InputStream in = new ByteArrayInputStream(rawData);
             BufferedImage image = ImageIO.read(in);
             in.close();
@@ -145,7 +130,7 @@ public class ImageRawFile {
             ImageIO.write(image, "png", newFile);
             return newFile;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

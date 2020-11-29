@@ -12,7 +12,7 @@ import mara.mybox.data.CertificateBypass;
 import mara.mybox.db.TableBrowserBypassSSL;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -39,7 +39,7 @@ public class SecurityCertificatesBypassController extends TableManageController<
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
             timeColumn.setCellFactory(new TableTimeCell());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -109,7 +109,7 @@ public class SecurityCertificatesBypassController extends TableManageController<
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

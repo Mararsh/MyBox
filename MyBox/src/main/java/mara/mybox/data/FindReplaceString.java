@@ -3,7 +3,7 @@ package mara.mybox.data;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.scene.control.IndexRange;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -74,7 +74,7 @@ public class FindReplaceString {
         if (lastMatch != null || !wrap) {
             return true;
         }
-//        logger.debug(operation + " " + wrap);
+//        MyBoxLog.debug(operation + " " + wrap);
         switch (operation) {
             case FindNext:
             case ReplaceFirst:
@@ -109,10 +109,10 @@ public class FindReplaceString {
 
     public boolean run(int start, int end) {
         try {
-//            logger.debug(operation + " start:" + start + " end:" + end + " findString:>>" + findString + "<<  unit:" + unit);
-//            logger.debug("findString.length()：" + findString.length());
-//            logger.debug("replaceString:>>" + replaceString + "<<");
-//            logger.debug("\n------\n" + inputString + "\n-----");
+//            MyBoxLog.debug(operation + " start:" + start + " end:" + end + " findString:>>" + findString + "<<  unit:" + unit);
+//            MyBoxLog.debug("findString.length()：" + findString.length());
+//            MyBoxLog.debug("replaceString:>>" + replaceString + "<<");
+//            MyBoxLog.debug("\n------\n" + inputString + "\n-----");
             reset();
             int mode = (isRegex ? 0x00 : Pattern.LITERAL)
                     | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
@@ -125,15 +125,15 @@ public class FindReplaceString {
             if (replaceString != null && !replaceString.isBlank()) {
                 replaceString = Matcher.quoteReplacement(replaceString);
             }
-//            logger.debug("\n---inputString---\n" + inputString + "\n-----");
+//            MyBoxLog.debug("\n---inputString---\n" + inputString + "\n-----");
             while (matcher.find()) {
-//                logger.debug(matcher.regionStart() + " " + matcher.regionEnd());
+//                MyBoxLog.debug(matcher.regionStart() + " " + matcher.regionEnd());
                 count++;
                 lastMatch = matcher.group();
                 lastStart = matcher.start();
                 lastEnd = matcher.end();
-//                logger.debug(count + " " + matcher.start() + " " + matcher.end() + " " + lastMatch);
-//                logger.debug(orignialString.substring(0, matcher.start()) + "\n----------------");
+//                MyBoxLog.debug(count + " " + matcher.start() + " " + matcher.end() + " " + lastMatch);
+//                MyBoxLog.debug(orignialString.substring(0, matcher.start()) + "\n----------------");
                 if (operation == Operation.FindNext) {
                     break;
                 } else if (operation == Operation.ReplaceFirst) {
@@ -141,7 +141,7 @@ public class FindReplaceString {
                     break;
                 } else if (operation == Operation.ReplaceAll) {
                     matcher.appendReplacement(s, replaceString);
-//                    logger.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
+//                    MyBoxLog.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
                 } else {
                     if (matcher.start() >= end) {
                         break;
@@ -149,24 +149,24 @@ public class FindReplaceString {
                     matcher.region(lastStart + unit, end);
                 }
             }
-//            logger.debug("count:" + count);
+//            MyBoxLog.debug("count:" + count);
             if (lastMatch != null) {
                 stringRange = new IndexRange(lastStart, lastEnd);
                 if (operation == Operation.ReplaceAll || operation == Operation.ReplaceFirst) {
                     String replacedPart = s.toString();
                     lastReplacedLength = replacedPart.length();
-//                    logger.debug("lastReplacedLength:" + lastReplacedLength);
+//                    MyBoxLog.debug("lastReplacedLength:" + lastReplacedLength);
                     matcher.appendTail(s);
                     outputString = s.toString();
-//                    logger.debug("\n---outputString---\n" + outputString + "\n-----");
-//                    logger.debug("orignialString:" + orignialString.length() + " resultString:" + resultString.length());
+//                    MyBoxLog.debug("\n---outputString---\n" + outputString + "\n-----");
+//                    MyBoxLog.debug("orignialString:" + orignialString.length() + " resultString:" + resultString.length());
                 }
-//                logger.debug(operation + " stringRange:" + stringRange.getStart() + " " + stringRange.getEnd() + " len:" + stringRange.getLength()
+//                MyBoxLog.debug(operation + " stringRange:" + stringRange.getStart() + " " + stringRange.getEnd() + " len:" + stringRange.getLength()
 //                        + " findString:>>" + findString + "<< lastMatch:>>" + lastMatch + "<<");
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             error = e.toString();
             return false;
         }

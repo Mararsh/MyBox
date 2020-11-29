@@ -68,7 +68,7 @@ License:    Apache License Version 2.0
                                                         </CheckBox>
                                                     </children>
                                                 </FlowPane>
-                                                <HBox fx:id="navBox1" alignment="CENTER_LEFT" spacing="5.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Label text="%Scale" />
                                                         <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />

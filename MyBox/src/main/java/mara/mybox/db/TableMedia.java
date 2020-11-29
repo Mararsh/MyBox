@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -65,8 +65,8 @@ public class TableMedia extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return null;
     }
@@ -80,8 +80,8 @@ public class TableMedia extends DerbyBase {
             conn.setReadOnly(true);
             medias = read(conn, addresses);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return medias;
     }
@@ -113,8 +113,8 @@ public class TableMedia extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return medias;
     }
@@ -135,8 +135,8 @@ public class TableMedia extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -148,8 +148,8 @@ public class TableMedia extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return write(conn, medias);
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -174,8 +174,7 @@ public class TableMedia extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -187,8 +186,8 @@ public class TableMedia extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return delete(conn, addresses);
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -207,8 +206,8 @@ public class TableMedia extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -220,8 +219,8 @@ public class TableMedia extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }

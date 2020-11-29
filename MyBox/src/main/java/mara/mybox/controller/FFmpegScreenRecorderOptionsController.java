@@ -18,11 +18,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -192,12 +192,15 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     protected void checkAudioDeviceWin() {
         try {
+            if (executable == null) {
+                return;
+            }
             // ffmpeg -list_devices true -f dshow -i dummy
             ProcessBuilder pb = new ProcessBuilder(
                     executable.getAbsolutePath(),
@@ -236,12 +239,15 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                 audioCheck.setSelected(false);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     protected void checkDevicesMac() {
         try {
+            if (executable == null) {
+                return;
+            }
             // ffmpeg -f avfoundation -list_devices true -i ""
             ProcessBuilder pb = new ProcessBuilder(
                     executable.getAbsolutePath(),
@@ -272,7 +278,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                             audioCheck.setDisable(false);
                         }
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                 }
             }
@@ -288,7 +294,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                 audioCheck.setSelected(false);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -308,7 +314,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                             audioThreadQueueSizeInput.setStyle(badStyle);
                         }
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         audioThreadQueueSizeInput.setStyle(badStyle);
                     }
 
@@ -330,7 +336,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                             videoThreadQueueSizeInput.setStyle(badStyle);
                         }
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         videoThreadQueueSizeInput.setStyle(badStyle);
                     }
                 }
@@ -338,7 +344,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
             videoThreadQueueSizeInput.setText(AppVariables.getUserConfigValue("FFmpegVideoThreadQueueSize", "128"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -357,7 +363,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
 
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -428,24 +434,6 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
         fullscreenRadio.fire();
         audioThreadQueueSizeInput.setText("128");
         videoThreadQueueSizeInput.setText("128");
-        boolean nvenc = false;
-        for (String item : videoEncoderSelector.getItems()) {
-            if (item.contains("nvenc")) {
-                videoEncoderSelector.getSelectionModel().select(item);
-                nvenc = true;
-                break;
-            }
-        }
-        if (!nvenc) {
-            for (String item : videoEncoderSelector.getItems()) {
-                if (item.contains("libx264rgb")) {
-                    videoEncoderSelector.getSelectionModel().select(item);
-                    x264presetSelector.getSelectionModel().select("ultrafast  " + message("Ultrafast"));
-//                    crfSelector.getSelectionModel().select("18");
-                    break;
-                }
-            }
-        }
         delayController.select(5);
         durationController.select(-1);
     }

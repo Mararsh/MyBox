@@ -13,13 +13,13 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -128,7 +128,7 @@ public class HtmlViewerController extends BaseController {
             html = HtmlTools.html(title, htmlStyle, body);
             displayHtml(html);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -217,7 +217,7 @@ public class HtmlViewerController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -239,10 +239,22 @@ public class HtmlViewerController extends BaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    /*
+        get/set
+     */
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
 }

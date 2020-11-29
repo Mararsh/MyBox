@@ -18,13 +18,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.ControlStyle;
-import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
@@ -32,7 +30,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -171,7 +169,7 @@ public class ImageGifViewerController extends ImageViewerController {
             speedSelector.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -248,7 +246,7 @@ public class ImageGifViewerController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -271,21 +269,19 @@ public class ImageGifViewerController extends ImageViewerController {
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
 
     protected void setPauseButton(boolean setAsPaused) {
         if (setAsPaused) {
-            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPlay.png"));
-            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Continue")));
+            ControlStyle.setNameIcon(pauseButton, message("Continue"), "iconPlay.png");
             previousButton.setDisable(false);
             nextButton.setDisable(false);
             pauseButton.setUserData("Paused");
         } else {
-            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
-            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Pause")));
+            ControlStyle.setNameIcon(pauseButton, message("Pause"), "iconPause.png");
             previousButton.setDisable(true);
             nextButton.setDisable(true);
             pauseButton.setUserData("Playing");
@@ -306,7 +302,7 @@ public class ImageGifViewerController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -316,7 +312,7 @@ public class ImageGifViewerController extends ImageViewerController {
         try {
             showGifFrame(currentIndex - 2);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -326,7 +322,7 @@ public class ImageGifViewerController extends ImageViewerController {
         try {
             showGifFrame(currentIndex);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -371,7 +367,7 @@ public class ImageGifViewerController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -382,7 +378,7 @@ public class ImageGifViewerController extends ImageViewerController {
                     = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);
             controller.selectSourceFile(sourceFile);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -407,7 +403,7 @@ public class ImageGifViewerController extends ImageViewerController {
                 }
             }, currentDelay);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -424,7 +420,7 @@ public class ImageGifViewerController extends ImageViewerController {
             setPauseButton(true);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -449,7 +445,7 @@ public class ImageGifViewerController extends ImageViewerController {
 
             currentIndex++;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -504,7 +500,7 @@ public class ImageGifViewerController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

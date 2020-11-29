@@ -11,10 +11,10 @@ import java.nio.charset.Charset;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.TextTools.bomBytes;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -65,7 +65,7 @@ public class FindReplaceFile extends FindReplaceString {
             return false;
         }
         fileInfo.setFindReplace(this);
-//        logger.debug("operation:" + operation + " isWhole:" + isWhole + " unit:" + unit
+//        MyBoxLog.debug("operation:" + operation + " isWhole:" + isWhole + " unit:" + unit
 //                + " anchor:" + anchor + " position:" + position + " page:" + fileInfo.getCurrentPage());
         if (!multiplePages) {
             return run();
@@ -80,9 +80,9 @@ public class FindReplaceFile extends FindReplaceString {
                 lastMatch = findReplaceString.getLastMatch();
                 outputString = findReplaceString.getOutputString();
                 lastReplacedLength = findReplaceString.getLastReplacedLength();
-//                logger.debug("stringRange:" + stringRange.getStart() + " " + stringRange.getEnd());
+//                MyBoxLog.debug("stringRange:" + stringRange.getStart() + " " + stringRange.getEnd());
                 fileRange = fileRange(this, inputString);
-//                logger.debug("fileRange:" + fileRange.getStart() + " " + fileRange.getEnd());
+//                MyBoxLog.debug("fileRange:" + fileRange.getStart() + " " + fileRange.getEnd());
                 return true;
             }
         }
@@ -96,23 +96,23 @@ public class FindReplaceFile extends FindReplaceString {
             return false;
         }
         fileInfo.setFindReplace(this);
-//        logger.debug("operation:" + operation + " isWhole:" + isWhole + " unit:" + unit
+//        MyBoxLog.debug("operation:" + operation + " isWhole:" + isWhole + " unit:" + unit
 //                + " anchor:" + anchor + " position:" + position + " page:" + fileInfo.getCurrentPage());
         if (!multiplePages) {
             return run();
         }
 
-//        logger.debug("findString.length()：" + findString.length());
-//        logger.debug(fileInfo.getEditType());
+//        MyBoxLog.debug("findString.length()：" + findString.length());
+//        MyBoxLog.debug(fileInfo.getEditType());
         fileFindString = findString;
         fileReplaceString = replaceString;
-//        logger.debug("findString.length()：" + findString.length());
+//        MyBoxLog.debug("findString.length()：" + findString.length());
         if (fileInfo.getEditType() != Edit_Type.Bytes) {
             fileFindString = findString.replaceAll("\n", fileInfo.getLineBreakValue());
             if (replaceString != null && !replaceString.isEmpty()) {
                 fileReplaceString = replaceString.replaceAll("\n", fileInfo.getLineBreakValue());
             }
-//            logger.debug("fileFindString.length()：" + fileFindString.length());
+//            MyBoxLog.debug("fileFindString.length()：" + fileFindString.length());
             switch (operation) {
                 case Count:
                     return countText(fileInfo, this);
@@ -167,30 +167,28 @@ public class FindReplaceFile extends FindReplaceString {
             if (sourceInfo.isWithBom()) {
                 byte[] bytes = bomBytes(sourceInfo.getCharset().name());
                 inputStream.skip(bytes.length);
-//                logger.debug(bytes.length);
+//                MyBoxLog.debug(bytes.length);
             }
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(sourceFile.length(), availableMem / 16);
-//            logger.debug(availableMem + " " + sourceFile.length() + " " + pageSize);
+            int pageSize = FileTools.bufSize(sourceFile);
+//            MyBoxLog.debug(availableMem + " " + sourceFile.length() + " " + pageSize);
             char[] textBuf = new char[pageSize];
             char[] charBuf = new char[1];
             boolean crlf = sourceInfo.getLineBreak().equals(Line_Break.CRLF);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
-//            logger.debug("findString.length()：" + findString.length());
+//            MyBoxLog.debug("findString.length()：" + findString.length());
             int findLen = findReplaceFile.isRegex ? pageSize : findString.length();
             int crossFrom, textLen;
             String text, crossString = "", checkedString;
-            while ((textLen = reader.read(textBuf)) != -1) {
+            while ((textLen = reader.read(textBuf)) > 0) {
                 text = new String(textBuf, 0, textLen);
                 if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                     text += new String(charBuf, 0, 1);
                     textLen++;
                 }
                 checkedString = crossString + text;
-//                logger.debug(pagelen + " " + checkedString.length());
+//                MyBoxLog.debug(pagelen + " " + checkedString.length());
                 findReplaceString.setInputString(checkedString).run();
                 IndexRange lastRange = findReplaceString.getStringRange();
                 if (lastRange != null) {
@@ -211,13 +209,13 @@ public class FindReplaceFile extends FindReplaceString {
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
 
     public static LongIndex findNextTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
-//        logger.debug(sourceInfo.getFile());
+//        MyBoxLog.debug(sourceInfo.getFile());
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
                 || findReplaceFile == null || findReplaceFile.getFileFindString() == null
@@ -241,13 +239,11 @@ public class FindReplaceFile extends FindReplaceString {
                     return null;
                 }
             }
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(sourceFile.length(), availableMem / 16);
-//            logger.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
+            int pageSize = FileTools.bufSize(sourceFile);
+//            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
 //            String findString = findReplaceFile.getFileFindString().replaceAll("\n", sourceInfo.getLineBreakValue());
             String findString = findReplaceFile.getFileFindString();
-//            logger.debug("findString.length()：" + findString.length());
+//            MyBoxLog.debug("findString.length()：" + findString.length());
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
             int findLen = findReplaceFile.isRegex ? pageSize : findString.length();
@@ -257,23 +253,23 @@ public class FindReplaceFile extends FindReplaceString {
                 if (sourceInfo.isWithBom()) {
                     byte[] bytes = bomBytes(sourceInfo.getCharset().name());
                     inputStream.skip(bytes.length);
-//                    logger.debug(bytes.length);
+//                    MyBoxLog.debug(bytes.length);
                 }
                 if (position > 0) {
                     reader.skip(position);
                 }
                 int bufSize = (int) Math.min(pageSize, fileLength - position);
-//                logger.debug("bufSize:" + bufSize + " position:" + position);
+//                MyBoxLog.debug("bufSize:" + bufSize + " position:" + position);
                 char[] textBuf = new char[bufSize];
                 char[] charBuf = new char[1];
                 boolean crlf = sourceInfo.getLineBreak().equals(Line_Break.CRLF);
-//                logger.debug(pageSize + " " + findReplaceFile.getPosition());
+//                MyBoxLog.debug(pageSize + " " + findReplaceFile.getPosition());
                 IndexRange range;
                 String text, crossString = "", checkedString;
                 int textLen, crossFrom;
                 long textStart = position;
-//                logger.debug("pageStart:" + textStart);
-                while ((textLen = reader.read(textBuf)) != -1) {
+//                MyBoxLog.debug("pageStart:" + textStart);
+                while ((textLen = reader.read(textBuf)) > 0) {
                     text = new String(textBuf, 0, textLen);
                     if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                         text += new String(charBuf, 0, 1);
@@ -281,21 +277,21 @@ public class FindReplaceFile extends FindReplaceString {
                     }
                     checkedString = crossString + text;
 //                    checkedString = checkedString.replaceAll(sourceInfo.getLineBreakValue(), sourceInfo.getLineBreakValue());
-//                    logger.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
-//                    logger.debug(checkedString + "\n--------------------\n ");
+//                    MyBoxLog.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
+//                    MyBoxLog.debug(checkedString + "\n--------------------\n ");
                     findReplaceString.setInputString(checkedString).setAnchor(0).run();
                     range = findReplaceString.getStringRange();
                     if (range != null) {
                         found = new LongIndex();
-//                        logger.debug(range.getStart());
+//                        MyBoxLog.debug(range.getStart());
                         found.start = textStart + range.getStart() - crossString.length();
                         found.end = found.start + range.getLength();
-//                        logger.debug(found.start + " " + found.end);
+//                        MyBoxLog.debug(found.start + " " + found.end);
                         break;
                     } else {
                         crossFrom = Math.max(1, textLen - findLen + 1);
                         crossString = text.substring(crossFrom, textLen);
-//                        logger.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
+//                        MyBoxLog.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
                     }
                     textStart += textLen;
                 }
@@ -313,9 +309,9 @@ public class FindReplaceFile extends FindReplaceString {
                     } else {
                         end = position + findLen - 1;
                     }
-//                    logger.debug(end + " " + findReplaceFile.getPosition());
+//                    MyBoxLog.debug(end + " " + findReplaceFile.getPosition());
                     int bufSize = (int) Math.min(pageSize, end);
-//                    logger.debug("bufSize:" + bufSize + " end:" + end);
+//                    MyBoxLog.debug("bufSize:" + bufSize + " end:" + end);
                     char[] textBuf = new char[bufSize];
                     char[] charBuf = new char[1];
                     boolean crlf = sourceInfo.getLineBreak().equals(Line_Break.CRLF);
@@ -324,8 +320,8 @@ public class FindReplaceFile extends FindReplaceString {
                     long textStart = 0;
                     int textLen, crossFrom;
                     boolean reachEnd = false;
-//                    logger.debug("pageStart:" + pageStart + " end:" + end);
-                    while ((textLen = reader.read(textBuf)) != -1) {
+//                    MyBoxLog.debug("pageStart:" + pageStart + " end:" + end);
+                    while ((textLen = reader.read(textBuf)) > 0) {
                         text = new String(textBuf, 0, textLen);
                         if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                             text += new String(charBuf, 0, 1);
@@ -335,19 +331,19 @@ public class FindReplaceFile extends FindReplaceString {
                             text = text.substring(0, (int) (end - textStart));
                             textLen = text.length();
                             reachEnd = true;
-//                            logger.debug(pageStart + " " + pageLen + " " + end);
+//                            MyBoxLog.debug(pageStart + " " + pageLen + " " + end);
                         }
                         checkedString = crossString + text;
-//                        logger.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
-//                        logger.debug(pageLen + " " + checkedString.length());
-//                        logger.debug(checkedString + "\n--------------------\n ");
+//                        MyBoxLog.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
+//                        MyBoxLog.debug(pageLen + " " + checkedString.length());
+//                        MyBoxLog.debug(checkedString + "\n--------------------\n ");
                         findReplaceString.setInputString(checkedString).setAnchor(0).run();
                         range = findReplaceString.getStringRange();
                         if (range != null) {
                             found = new LongIndex();
                             found.start = textStart + range.getStart() - crossString.length();
                             found.end = found.start + range.getLength();
-//                            logger.debug(found.start + " " + found.end);
+//                            MyBoxLog.debug(found.start + " " + found.end);
                             break;
                         }
                         if (reachEnd) {
@@ -355,16 +351,16 @@ public class FindReplaceFile extends FindReplaceString {
                         }
                         crossFrom = Math.max(1, textLen - findLen + 1);
                         crossString = text.substring(crossFrom, textLen);
-//                        logger.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
+//                        MyBoxLog.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
                         textStart += textLen;
-//                        logger.debug(pageStart + " " + crossString.length());
+//                        MyBoxLog.debug(pageStart + " " + crossString.length());
                     }
                 }
             }
             findReplaceFile.setFileRange(found);
             return found;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
             return null;
         }
@@ -376,8 +372,8 @@ public class FindReplaceFile extends FindReplaceString {
             if (found == null) {
                 return findReplaceFile != null && findReplaceFile.getError() == null;
             }
-//            logger.debug("(findReplaceFile.getFileRange() != null) :" + (findReplaceFile.getFileRange() != null));
-//            logger.debug("found.getStart() :" + found.getStart() + " found.getEnd():" + found.getEnd());
+//            MyBoxLog.debug("(findReplaceFile.getFileRange() != null) :" + (findReplaceFile.getFileRange() != null));
+//            MyBoxLog.debug("found.getStart() :" + found.getStart() + " found.getEnd():" + found.getEnd());
             long pageSize = sourceInfo.getPageSize();
             int pageNumber = (int) (found.getStart() / pageSize + 1);
             String pageText = sourceInfo.readPage(pageNumber);
@@ -389,20 +385,20 @@ public class FindReplaceFile extends FindReplaceString {
                 findReplaceFile.setError(message("InvalidData"));
                 return false;
             }
-//            logger.debug("stringRange.getStart() :" + stringRange.getStart() + " stringRange.getEnd():" + stringRange.getEnd());
+//            MyBoxLog.debug("stringRange.getStart() :" + stringRange.getStart() + " stringRange.getEnd():" + stringRange.getEnd());
             findReplaceFile.setFileRange(found);
             findReplaceFile.setStringRange(stringRange);
             findReplaceFile.setOuputString(pageText);
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
 
     public static LongIndex findPreviousTextRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
-//        logger.debug(sourceInfo.getFile());
+//        MyBoxLog.debug(sourceInfo.getFile());
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || sourceInfo.getCharset() == null || sourceInfo.getLineBreakValue() == null
                 || findReplaceFile == null || findReplaceFile.getFileFindString() == null
@@ -418,7 +414,7 @@ public class FindReplaceFile extends FindReplaceString {
             File sourceFile = sourceInfo.getFile();
             long fileLength = sourceFile.length();
             long position = findReplaceFile.getPosition();
-//            logger.debug("pageSize:" + pageSize + " position:" + position);
+//            MyBoxLog.debug("pageSize:" + pageSize + " position:" + position);
             if (position <= 0 || position > fileLength) {
                 if (findReplaceFile.isWrap()) {
                     position = fileLength;
@@ -427,10 +423,8 @@ public class FindReplaceFile extends FindReplaceString {
                     return null;
                 }
             }
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(fileLength, availableMem / 16);
-//            logger.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
+            int pageSize = FileTools.bufSize(sourceFile);
+//            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
@@ -442,20 +436,20 @@ public class FindReplaceFile extends FindReplaceString {
                 if (sourceInfo.isWithBom()) {
                     byte[] bytes = bomBytes(sourceInfo.getCharset().name());
                     inputStream.skip(bytes.length);
-//                    logger.debug(bytes.length);
+//                    MyBoxLog.debug(bytes.length);
                 }
                 int bufSize = (int) Math.min(pageSize, position);
                 char[] textBuf = new char[bufSize];
                 char[] charBuf = new char[1];
                 boolean crlf = sourceInfo.getLineBreak().equals(Line_Break.CRLF);
-//                logger.debug("bufSize:" + bufSize + " getPosition:" + position);
+//                MyBoxLog.debug("bufSize:" + bufSize + " getPosition:" + position);
                 IndexRange range;
                 String text, crossString = "", checkedString;
                 long pageStart = 0;
                 int textLen, crossFrom;
                 boolean reachEnd = false;
-//                logger.debug(pageStart);
-                while ((textLen = reader.read(textBuf)) != -1) {
+//                MyBoxLog.debug(pageStart);
+                while ((textLen = reader.read(textBuf)) > 0) {
                     text = new String(textBuf, 0, textLen);
                     if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                         text += new String(charBuf, 0, 1);
@@ -465,25 +459,25 @@ public class FindReplaceFile extends FindReplaceString {
                         text = text.substring(0, (int) (position - pageStart));
                         textLen = text.length();
                         reachEnd = true;
-//                        logger.debug("pageStart:" + pageStart + " pageLen:" + pageLen + " end:" + position);
+//                        MyBoxLog.debug("pageStart:" + pageStart + " pageLen:" + pageLen + " end:" + position);
                     }
                     checkedString = crossString + text;
-//                    logger.debug("pageLen:" + pageLen + " checkedString.length():" + checkedString.length());
-//                    logger.debug(checkedString + "\n--------------------\n ");
+//                    MyBoxLog.debug("pageLen:" + pageLen + " checkedString.length():" + checkedString.length());
+//                    MyBoxLog.debug(checkedString + "\n--------------------\n ");
                     findReplaceString.setInputString(checkedString).setAnchor(checkedString.length()).run();
                     range = findReplaceString.getStringRange();
                     if (range != null) {
-//                        logger.debug(range.getStart());
+//                        MyBoxLog.debug(range.getStart());
                         foundStart = pageStart + range.getStart() - crossString.length();
                         foundEnd = foundStart + range.getLength();
-//                        logger.debug("foundStart:" + foundStart + " " + foundEnd + " crossString.length():" + crossString.length());
+//                        MyBoxLog.debug("foundStart:" + foundStart + " " + foundEnd + " crossString.length():" + crossString.length());
                         if (range.getEnd() == checkedString.length()) {
                             crossString = "";
                         } else {
                             crossFrom = Math.max(1, textLen - findLen + 1);
-//                            logger.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
+//                            MyBoxLog.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
                             crossFrom = Math.max(range.getStart() - crossString.length() + 1, crossFrom);
-//                            logger.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
+//                            MyBoxLog.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
                             crossString = text.substring(crossFrom, textLen);
                         }
                     } else {
@@ -493,7 +487,7 @@ public class FindReplaceFile extends FindReplaceString {
                     if (reachEnd) {
                         break;
                     }
-//                        logger.debug(crossFrom + " " + crossString);
+//                        MyBoxLog.debug(crossFrom + " " + crossString);
                     pageStart += textLen;
                 }
             }
@@ -514,36 +508,36 @@ public class FindReplaceFile extends FindReplaceString {
                     }
                     inputStream.skip(pageStart);
                     int bufSize = (int) Math.min(pageSize, fileLength - pageStart);
-//                    logger.debug("bufSize:" + bufSize + " getPosition:" + pageStart);
+//                    MyBoxLog.debug("bufSize:" + bufSize + " getPosition:" + pageStart);
                     char[] textBuf = new char[bufSize];
                     char[] charBuf = new char[1];
                     boolean crlf = sourceInfo.getLineBreak().equals(Line_Break.CRLF);
                     IndexRange range;
                     String text, crossString = "", checkedString;
                     int textLen, crossFrom;
-//                    logger.debug(pageStart);
-                    while ((textLen = reader.read(textBuf)) != -1) {
+//                    MyBoxLog.debug(pageStart);
+                    while ((textLen = reader.read(textBuf)) > 0) {
                         text = new String(textBuf, 0, textLen);
                         if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                             text += new String(charBuf, 0, 1);
                             textLen++;
                         }
                         checkedString = crossString + text;
-//                        logger.debug(pageLen + " " + checkedString.length());
-//                        logger.debug(checkedString + "\n--------------------\n ");
+//                        MyBoxLog.debug(pageLen + " " + checkedString.length());
+//                        MyBoxLog.debug(checkedString + "\n--------------------\n ");
                         findReplaceString.setInputString(checkedString).setAnchor(checkedString.length()).run();
                         range = findReplaceString.getStringRange();
                         if (range != null) {
                             foundStart = pageStart + range.getStart() - crossString.length();
                             foundEnd = foundStart + range.getLength();
-//                            logger.debug("foundStart:" + foundStart + " " + foundEnd + " crossString.length():" + crossString.length());
+//                            MyBoxLog.debug("foundStart:" + foundStart + " " + foundEnd + " crossString.length():" + crossString.length());
                             if (range.getEnd() == checkedString.length()) {
                                 crossString = "";
                             } else {
                                 crossFrom = Math.max(1, textLen - findLen + 1);
-//                                logger.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
+//                                MyBoxLog.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
                                 crossFrom = Math.max(range.getStart() - crossString.length() + 1, crossFrom);
-//                                logger.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
+//                                MyBoxLog.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
                                 crossString = text.substring(crossFrom, textLen);
                             }
                         } else {
@@ -551,22 +545,22 @@ public class FindReplaceFile extends FindReplaceString {
                             crossString = text.substring(crossFrom, textLen);
                         }
                         pageStart += textLen;
-//                        logger.debug(pageStart + " " + crossString.length());
+//                        MyBoxLog.debug(pageStart + " " + crossString.length());
                     }
                 }
                 if (foundStart >= 0) {
                     found = new LongIndex(foundStart, foundEnd);
-//                    logger.debug("found:" + foundStart + " " + foundEnd);
+//                    MyBoxLog.debug("found:" + foundStart + " " + foundEnd);
                 }
             }
 //            if (found != null) {
-//                logger.debug("found:" + found.getStart() + " " + found.getEnd());
+//                MyBoxLog.debug("found:" + found.getStart() + " " + found.getEnd());
 //            }
             findReplaceFile.setFileRange(found);
             return found;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -593,7 +587,7 @@ public class FindReplaceFile extends FindReplaceString {
             findReplaceFile.setOuputString(pageText);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -621,7 +615,7 @@ public class FindReplaceFile extends FindReplaceString {
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -640,11 +634,9 @@ public class FindReplaceFile extends FindReplaceString {
             sourceInfo.setFindReplace(findReplaceFile);
             findReplaceFile.setFileInfo(sourceInfo);
             File sourceFile = sourceInfo.getFile();
-//            logger.debug(sourceFile);
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(sourceFile.length(), availableMem / 16);
-//            logger.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
+//            MyBoxLog.debug(sourceFile);
+            int pageSize = FileTools.bufSize(sourceFile);
+//            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             String replaceString = findReplaceFile.getFileReplaceString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
@@ -664,19 +656,19 @@ public class FindReplaceFile extends FindReplaceString {
                 char[] textBuf = new char[pageSize];
                 char[] charBuf = new char[1];
                 boolean crlf = sourceInfo.getLineBreak().equals(Line_Break.CRLF);
-//                logger.debug("pageSize:" + pageSize);
+//                MyBoxLog.debug("pageSize:" + pageSize);
                 IndexRange range;
                 String text, crossString = "", checkedString, replacedString;
                 int textLen, crossFrom, lastReplacedLength;
-                while ((textLen = reader.read(textBuf)) != -1) {
+                while ((textLen = reader.read(textBuf)) > 0) {
                     text = new String(textBuf, 0, textLen);
                     if (crlf && text.endsWith("\r") && reader.read(charBuf) == 1) {
                         text += new String(charBuf, 0, 1);
                         textLen++;
                     }
                     checkedString = crossString + text;
-//                    logger.debug("pageLen:" + textLen + " checkedString.length:" + checkedString.length());
-//                    logger.debug(checkedString + "\n--------------------\n ");
+//                    MyBoxLog.debug("pageLen:" + textLen + " checkedString.length:" + checkedString.length());
+//                    MyBoxLog.debug(checkedString + "\n--------------------\n ");
                     findReplaceString.setInputString(checkedString).setAnchor(0).run();
                     range = findReplaceString.getStringRange();
                     if (range != null) {
@@ -685,39 +677,36 @@ public class FindReplaceFile extends FindReplaceString {
                         writer.write(replacedString.substring(0, lastReplacedLength));
                         crossString = replacedString.substring(lastReplacedLength, replacedString.length());
                         total += findReplaceString.getCount();
-//                        logger.debug("replacedString:" + replacedString.length() + " lastReplacedLength:" + lastReplacedLength + " total:" + total);
+//                        MyBoxLog.debug("replacedString:" + replacedString.length() + " lastReplacedLength:" + lastReplacedLength + " total:" + total);
                         break;
                     } else {
                         if (!crossString.isEmpty()) {
                             writer.write(crossString);
-//                            logger.debug("crossString:" + crossString.length());
+//                            MyBoxLog.debug("crossString:" + crossString.length());
                         }
                         crossFrom = Math.max(1, textLen - findLen + 1);
                         crossString = text.substring(crossFrom, textLen);
                         writer.write(text.substring(0, crossFrom));
-//                        logger.debug("crossFrom:" + crossFrom);
+//                        MyBoxLog.debug("crossFrom:" + crossFrom);
                     }
                 }
                 if (!crossString.isEmpty()) {
                     writer.write(crossString);
-//                    logger.debug("crossString:" + crossString.length());
+//                    MyBoxLog.debug("crossString:" + crossString.length());
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
                 findReplaceFile.setError(e.toString());
                 return false;
             }
             findReplaceFile.setCount(total);
             if (total > 0 && tmpFile != null && tmpFile.exists()) {
-//                logger.debug(tmpFile);
-                sourceFile.delete();
-                tmpFile.renameTo(sourceFile);
-//                logger.debug(sourceFile);
+                FileTools.rename(tmpFile, sourceFile);
             }
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -734,42 +723,42 @@ public class FindReplaceFile extends FindReplaceString {
                 int stringLength = string.length();
                 long pageSize = fileInfo.getPageSize();
                 int startPageNumber = (int) (fileRange.getStart() / pageSize + 1);
-//                logger.debug("startPageNumber:" + startPageNumber + " pageSize:" + pageSize
+//                MyBoxLog.debug("startPageNumber:" + startPageNumber + " pageSize:" + pageSize
 //                        + "  fileRange:" + fileRange.getStart() + " " + fileRange.getEnd() + " len:" + fileRange.getLength()
 //                        + " getCurrentPage:" + fileInfo.getCurrentPage());
                 if (startPageNumber == fileInfo.getCurrentPage()) {
                     int pageStart = (int) (fileRange.getStart() - fileInfo.getCurrentPageObjectStart());
                     int pageEnd = (int) (pageStart + fileRange.getLength());
-//                    logger.debug("pageSize:" + pageSize + " pageStart:" + pageStart + " pageEnd:" + pageEnd);
+//                    MyBoxLog.debug("pageSize:" + pageSize + " pageStart:" + pageStart + " pageEnd:" + pageEnd);
                     if (pageStart > 0 && fileInfo.getLineBreak() == FileEditInformation.Line_Break.CRLF) {
                         String sub;
                         int startLinesNumber, endLinesNumber;
                         if (pageStart < stringLength) {
                             sub = string.substring(0, pageStart).replaceAll("\n", "\r\n").substring(0, pageStart);
                             startLinesNumber = FindReplaceString.count(sub, "\n");
-//                            logger.debug("startLinesNumber:" + startLinesNumber);
+//                            MyBoxLog.debug("startLinesNumber:" + startLinesNumber);
                         } else {
                             startLinesNumber = FindReplaceString.count(string, "\n");
-//                            logger.debug("startLinesNumber:" + startLinesNumber);
+//                            MyBoxLog.debug("startLinesNumber:" + startLinesNumber);
                         }
                         if (pageEnd < stringLength) {
                             sub = string.substring(0, pageEnd).replaceAll("\n", "\r\n").substring(0, pageEnd);
                             endLinesNumber = FindReplaceString.count(sub, "\n");
-//                            logger.debug("endLinesNumber:" + endLinesNumber);
+//                            MyBoxLog.debug("endLinesNumber:" + endLinesNumber);
                         } else {
                             endLinesNumber = FindReplaceString.count(string, "\n");
-//                            logger.debug("endLinesNumber:" + endLinesNumber);
+//                            MyBoxLog.debug("endLinesNumber:" + endLinesNumber);
                         }
                         pageStart -= startLinesNumber;
                         pageEnd -= endLinesNumber;
-//                        logger.debug("pageStart:" + pageStart + " pageEnd:" + pageEnd);
+//                        MyBoxLog.debug("pageStart:" + pageStart + " pageEnd:" + pageEnd);
                     }
                     range = new IndexRange(pageStart, pageEnd);
-//                    logger.debug("stringRange:" + range.getStart() + " " + range.getEnd() + " len:" + range.getLength());
+//                    MyBoxLog.debug("stringRange:" + range.getStart() + " " + range.getEnd() + " len:" + range.getLength());
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             findReplace.setError(e.toString());
         }
         findReplace.setStringRange(range);
@@ -785,7 +774,7 @@ public class FindReplaceFile extends FindReplaceString {
         if (string != null && stringRange != null && findReplace.getFileInfo() != null) {
             int start = stringRange.getStart();
             FileEditInformation fileInfo = findReplace.getFileInfo();
-//            logger.debug("stringRange:" + stringRange.getStart() + " " + stringRange.getEnd() + " getCurrentPage:" + fileInfo.getCurrentPage());
+//            MyBoxLog.debug("stringRange:" + stringRange.getStart() + " " + stringRange.getEnd() + " getCurrentPage:" + fileInfo.getCurrentPage());
             long fileStart = start;
             if (fileInfo.getEditType() != Edit_Type.Bytes && fileInfo.getLineBreak().equals(Line_Break.CRLF)) {
                 String sub = string.substring(0, start);
@@ -794,7 +783,7 @@ public class FindReplaceFile extends FindReplaceString {
             }
             fileStart += fileInfo.getCurrentPageObjectStart() * findReplace.getUnit();
             fileRange = new LongIndex(fileStart, fileStart + stringRange.getLength());
-//            logger.debug("fileRange:" + fileRange.getStart() + " " + fileRange.getEnd());
+//            MyBoxLog.debug("fileRange:" + fileRange.getStart() + " " + fileRange.getEnd());
         }
         findReplace.setFileRange(fileRange);
         return fileRange;
@@ -812,12 +801,12 @@ public class FindReplaceFile extends FindReplaceString {
         findReplaceFile.setFileInfo(sourceInfo);
         int count = 0;
         File sourceFile = sourceInfo.getFile();
-//        logger.debug("sourceFile:" + sourceFile);
+//        MyBoxLog.debug("sourceFile:" + sourceFile);
         try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile))) {
             Runtime r = Runtime.getRuntime();
             long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
             int pageSize = (int) Math.min(sourceFile.length(), availableMem / 48);
-//            logger.debug(availableMem + " " + sourceFile.length() + " " + pageSize);
+//            MyBoxLog.debug(availableMem + " " + sourceFile.length() + " " + pageSize);
             byte[] pageBytes = new byte[pageSize];
             // findString should have been in hex format
             String findString = findReplaceFile.getFileFindString();
@@ -826,14 +815,14 @@ public class FindReplaceFile extends FindReplaceString {
                     .setFindString(findString).setAnchor(0).setWrap(false);
             int crossFrom, pageLen;
             String pageHex, crossString = "", checkedString;
-            while ((pageLen = inputStream.read(pageBytes)) != -1) {
+            while ((pageLen = inputStream.read(pageBytes)) > 0) {
                 if (pageLen < pageSize) {
                     pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                 }
                 pageHex = ByteTools.bytesToHexFormat(pageBytes);
                 pageLen = pageHex.length();
                 checkedString = crossString + pageHex;
-//                logger.debug(pageLen + " " + checkedString.length());
+//                MyBoxLog.debug(pageLen + " " + checkedString.length());
                 findReplaceString.setInputString(checkedString).run();
                 IndexRange lastRange = findReplaceString.getStringRange();
                 if (lastRange != null) {
@@ -853,7 +842,7 @@ public class FindReplaceFile extends FindReplaceString {
             findReplaceFile.setCount(count);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -886,7 +875,7 @@ public class FindReplaceFile extends FindReplaceString {
             Runtime r = Runtime.getRuntime();
             long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
             int pageSize = (int) Math.min(fileLength, availableMem / 48);
-//            logger.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
+//            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
@@ -898,36 +887,36 @@ public class FindReplaceFile extends FindReplaceString {
                     inputStream.skip(bytesPosition);
                 }
                 int bufSize = (int) Math.min(pageSize, fileLength - bytesPosition);
-//                logger.debug("bufSize:" + bufSize + " position:" + position);
+//                MyBoxLog.debug("bufSize:" + bufSize + " position:" + position);
                 byte[] pageBytes = new byte[bufSize];
-//                logger.debug(pageSize + " " + findReplaceFile.getPosition());
+//                MyBoxLog.debug(pageSize + " " + findReplaceFile.getPosition());
                 IndexRange range;
                 String pageHex, crossString = "", checkedString;
                 long pageStart = position;
                 int pageLen, crossFrom;
-//                logger.debug("pageStart:" + pageStart);
-                while ((pageLen = inputStream.read(pageBytes)) != -1) {
+//                MyBoxLog.debug("pageStart:" + pageStart);
+                while ((pageLen = inputStream.read(pageBytes)) > 0) {
                     if (pageLen < pageSize) {
                         pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                     }
                     pageHex = ByteTools.bytesToHexFormat(pageBytes);
                     pageLen = pageHex.length();
                     checkedString = crossString + pageHex;
-//                    logger.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
-//                    logger.debug(checkedString + "\n--------------------\n ");
+//                    MyBoxLog.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
+//                    MyBoxLog.debug(checkedString + "\n--------------------\n ");
                     findReplaceString.setInputString(checkedString).setAnchor(0).run();
                     range = findReplaceString.getStringRange();
                     if (range != null) {
                         found = new LongIndex();
-//                        logger.debug(range.getStart());
+//                        MyBoxLog.debug(range.getStart());
                         found.start = pageStart + range.getStart() - crossString.length();
                         found.end = found.start + range.getLength();
-//                        logger.debug(found.start + " " + found.end);
+//                        MyBoxLog.debug(found.start + " " + found.end);
                         break;
                     } else {
                         crossFrom = Math.max(3, pageLen - findLen + 3);
                         crossString = pageHex.substring(crossFrom, pageLen);
-//                        logger.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
+//                        MyBoxLog.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
                     }
                     pageStart += pageLen;
                 }
@@ -947,7 +936,7 @@ public class FindReplaceFile extends FindReplaceString {
                     long pageStart = 0;
                     int pageLen, crossFrom;
                     boolean reachEnd = false;
-                    while ((pageLen = inputStream.read(pageBytes)) != -1) {
+                    while ((pageLen = inputStream.read(pageBytes)) > 0) {
                         if (pageLen < pageSize) {
                             pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                         }
@@ -957,19 +946,19 @@ public class FindReplaceFile extends FindReplaceString {
                             pageHex = pageHex.substring(0, (int) (end - pageStart));
                             pageLen = pageHex.length();
                             reachEnd = true;
-//                            logger.debug(pageStart + " " + pageLen + " " + end);
+//                            MyBoxLog.debug(pageStart + " " + pageLen + " " + end);
                         }
                         checkedString = crossString + pageHex;
-//                        logger.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
-//                        logger.debug(pageLen + " " + checkedString.length());
-//                        logger.debug(checkedString + "\n--------------------\n ");
+//                        MyBoxLog.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
+//                        MyBoxLog.debug(pageLen + " " + checkedString.length());
+//                        MyBoxLog.debug(checkedString + "\n--------------------\n ");
                         findReplaceString.setInputString(checkedString).setAnchor(0).run();
                         range = findReplaceString.getStringRange();
                         if (range != null) {
                             found = new LongIndex();
                             found.start = pageStart + range.getStart() - crossString.length();
                             found.end = found.start + range.getLength();
-//                            logger.debug(found.start + " " + found.end);
+//                            MyBoxLog.debug(found.start + " " + found.end);
                             break;
                         }
                         if (reachEnd) {
@@ -977,9 +966,9 @@ public class FindReplaceFile extends FindReplaceString {
                         }
                         crossFrom = Math.max(3, pageLen - findLen + 3);
                         crossString = pageHex.substring(crossFrom, pageLen);
-//                        logger.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
+//                        MyBoxLog.debug("crossFrom:" + crossFrom + " >>>" + crossString + "<<<");
                         pageStart += pageLen;
-//                        logger.debug(pageStart + " " + crossString.length());
+//                        MyBoxLog.debug(pageStart + " " + crossString.length());
                     }
                 }
             }
@@ -987,7 +976,7 @@ public class FindReplaceFile extends FindReplaceString {
             return found;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1015,7 +1004,7 @@ public class FindReplaceFile extends FindReplaceString {
             findReplaceFile.setOuputString(pageText);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -1036,7 +1025,7 @@ public class FindReplaceFile extends FindReplaceString {
             long fileLength = sourceFile.length();
             long position = (findReplaceFile.getPosition() / 3) * 3;
             long bytesPosition = position / 3;
-//            logger.debug("position:" + position + " bytesPosition:" + bytesPosition);
+//            MyBoxLog.debug("position:" + position + " bytesPosition:" + bytesPosition);
             if (bytesPosition <= 0 || bytesPosition > fileLength) {
                 if (findReplaceFile.isWrap()) {
                     position = fileLength * 3;
@@ -1046,60 +1035,60 @@ public class FindReplaceFile extends FindReplaceString {
                     return null;
                 }
             }
-//            logger.debug("position:" + position + " bytesPosition:" + bytesPosition);
+//            MyBoxLog.debug("position:" + position + " bytesPosition:" + bytesPosition);
             Runtime r = Runtime.getRuntime();
             long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(fileLength, availableMem / 64);
-//            logger.debug("pageSize:" + pageSize + " fileLength:" + fileLength + " availableMem:" + availableMem);
+            int pageSize = (int) Math.min(fileLength, availableMem / 48);
+//            MyBoxLog.debug("pageSize:" + pageSize + " fileLength:" + fileLength + " availableMem:" + availableMem);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
                     .setFindString(findString).setAnchor(0).setWrap(false);
             // findString should have been in hex format
             int findLen = findReplaceFile.isRegex ? pageSize * 3 : findString.length();
-//            logger.debug("findLen:" + findLen);
+//            MyBoxLog.debug("findLen:" + findLen);
             LongIndex found = null;
             long foundStart = -1, foundEnd = -1;
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile))) {
                 int bufSize = (int) Math.min(pageSize, bytesPosition);
-//                logger.debug("bufSize:" + bufSize + " bytesPosition:" + bytesPosition);
+//                MyBoxLog.debug("bufSize:" + bufSize + " bytesPosition:" + bytesPosition);
                 byte[] pageBytes = new byte[bufSize];
                 IndexRange range;
                 String pageHex, crossString = "", checkedString;
                 long pageStart = 0;
                 int pageLen, crossFrom;
                 boolean reachEnd = false;
-//                logger.debug("pageStart:" + pageStart + " FindString:" + findReplaceFile.getFileFindString());
-                while ((pageLen = inputStream.read(pageBytes)) != -1) {
+//                MyBoxLog.debug("pageStart:" + pageStart + " FindString:" + findReplaceFile.getFileFindString());
+                while ((pageLen = inputStream.read(pageBytes)) > 0) {
                     if (pageLen < pageSize) {
                         pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                     }
-//                    logger.debug("pageLen:" + pageLen + " pageSize:" + pageSize + " position:" + position);
+//                    MyBoxLog.debug("pageLen:" + pageLen + " pageSize:" + pageSize + " position:" + position);
                     pageHex = ByteTools.bytesToHexFormat(pageBytes);
                     pageLen = pageHex.length();
                     if (pageStart + pageLen >= position) {
-//                        logger.debug("pageStart:" + pageStart + " pageLen:" + pageLen + " position:" + position);
+//                        MyBoxLog.debug("pageStart:" + pageStart + " pageLen:" + pageLen + " position:" + position);
                         pageHex = pageHex.substring(0, (int) (position - pageStart));
                         pageLen = pageHex.length();
                         reachEnd = true;
-//                        logger.debug("pageStart:" + pageStart + " pageLen:" + pageLen + " position:" + position);
+//                        MyBoxLog.debug("pageStart:" + pageStart + " pageLen:" + pageLen + " position:" + position);
                     }
                     checkedString = crossString + pageHex;
-//                    logger.debug("pageLen:" + pageLen + " checkedString.length():" + checkedString.length());
-//                    logger.debug(checkedString + "\n--------------------\n ");
+//                    MyBoxLog.debug("pageLen:" + pageLen + " checkedString.length():" + checkedString.length());
+//                    MyBoxLog.debug(checkedString + "\n--------------------\n ");
                     findReplaceString.setInputString(checkedString).setAnchor(checkedString.length()).run();
                     range = findReplaceString.getStringRange();
                     if (range != null) {
-//                        logger.debug(range.getStart());
+//                        MyBoxLog.debug(range.getStart());
                         foundStart = pageStart + range.getStart() - crossString.length();
                         foundEnd = foundStart + range.getLength();
-//                        logger.debug("foundStart:" + foundStart + "," + foundEnd + " crossString.length():" + crossString.length());
+//                        MyBoxLog.debug("foundStart:" + foundStart + "," + foundEnd + " crossString.length():" + crossString.length());
                         if (range.getEnd() == checkedString.length()) {
                             crossString = "";
                         } else {
                             crossFrom = Math.max(3, pageLen - findLen + 3);
-//                            logger.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
+//                            MyBoxLog.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
                             crossFrom = Math.max(range.getStart() - crossString.length() + 3, crossFrom);
-//                            logger.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
+//                            MyBoxLog.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
                             crossString = pageHex.substring(crossFrom, pageLen);
                         }
                     } else {
@@ -1109,7 +1098,7 @@ public class FindReplaceFile extends FindReplaceString {
                     if (reachEnd) {
                         break;
                     }
-//                        logger.debug(crossFrom + " " + crossString);
+//                        MyBoxLog.debug(crossFrom + " " + crossString);
                     pageStart += pageLen;
                 }
             }
@@ -1125,34 +1114,34 @@ public class FindReplaceFile extends FindReplaceString {
                     }
                     inputStream.skip(pageStart / 3);
                     int bufSize = (int) Math.min(pageSize, fileLength - pageStart / 3);
-//                    logger.debug("bufSize:" + bufSize + " pageStart:" + pageStart);
+//                    MyBoxLog.debug("bufSize:" + bufSize + " pageStart:" + pageStart);
                     byte[] pageBytes = new byte[bufSize];
                     IndexRange range;
                     String pageHex, crossString = "", checkedString;
                     int pageLen, crossFrom;
-//                    logger.debug(pageStart);
-                    while ((pageLen = inputStream.read(pageBytes)) != -1) {
+//                    MyBoxLog.debug(pageStart);
+                    while ((pageLen = inputStream.read(pageBytes)) > 0) {
                         if (pageLen < pageSize) {
                             pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                         }
                         pageHex = ByteTools.bytesToHexFormat(pageBytes);
                         pageLen = pageHex.length();
                         checkedString = crossString + pageHex;
-//                        logger.debug(pageLen + " " + checkedString.length());
-//                        logger.debug(checkedString + "\n--------------------\n ");
+//                        MyBoxLog.debug(pageLen + " " + checkedString.length());
+//                        MyBoxLog.debug(checkedString + "\n--------------------\n ");
                         findReplaceString.setInputString(checkedString).setAnchor(checkedString.length()).run();
                         range = findReplaceString.getStringRange();
                         if (range != null) {
                             foundStart = pageStart + range.getStart() - crossString.length();
                             foundEnd = foundStart + range.getLength();
-//                            logger.debug("foundStart:" + foundStart + " " + foundEnd + " crossString.length():" + crossString.length());
+//                            MyBoxLog.debug("foundStart:" + foundStart + " " + foundEnd + " crossString.length():" + crossString.length());
                             if (range.getEnd() == checkedString.length()) {
                                 crossString = "";
                             } else {
                                 crossFrom = Math.max(3, pageLen - findLen + 3);
-//                                logger.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
+//                                MyBoxLog.debug("crossFrom:" + crossFrom + " pageLen:" + pageLen + " findLen:" + findLen);
                                 crossFrom = Math.max(range.getStart() - crossString.length() + 3, crossFrom);
-//                                logger.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
+//                                MyBoxLog.debug("range.getStart() :" + range.getStart() + " crossString.length():" + crossString.length() + " crossFrom:" + crossFrom);
                                 crossString = pageHex.substring(crossFrom, pageLen);
                             }
                         } else {
@@ -1160,22 +1149,22 @@ public class FindReplaceFile extends FindReplaceString {
                             crossString = pageHex.substring(crossFrom, pageLen);
                         }
                         pageStart += pageLen;
-//                        logger.debug(pageStart + " " + crossString.length());
+//                        MyBoxLog.debug(pageStart + " " + crossString.length());
                     }
                 }
                 if (foundStart >= 0) {
                     found = new LongIndex(foundStart, foundEnd);
-//                    logger.debug("found:" + foundStart + " " + foundEnd);
+//                    MyBoxLog.debug("found:" + foundStart + " " + foundEnd);
                 }
             }
 //            if (found != null) {
-//                logger.debug("found:" + found.getStart() + " " + found.getEnd());
+//                MyBoxLog.debug("found:" + found.getStart() + " " + found.getEnd());
 //            }
             findReplaceFile.setFileRange(found);
             return found;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1203,7 +1192,7 @@ public class FindReplaceFile extends FindReplaceString {
             findReplaceFile.setOuputString(pageText);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -1239,7 +1228,7 @@ public class FindReplaceFile extends FindReplaceString {
             return true;
         } catch (Exception e) {
             findReplaceFile.setError(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -1259,8 +1248,8 @@ public class FindReplaceFile extends FindReplaceString {
             File sourceFile = sourceInfo.getFile();
             Runtime r = Runtime.getRuntime();
             long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(sourceFile.length(), availableMem / 64);
-//            logger.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
+            int pageSize = (int) Math.min(sourceFile.length(), availableMem / 48);
+//            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             String replaceString = findReplaceFile.getFileReplaceString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
@@ -1272,19 +1261,19 @@ public class FindReplaceFile extends FindReplaceString {
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                 byte[] pageBytes = new byte[pageSize];
-//                logger.debug("pageSize:" + pageSize);
+//                MyBoxLog.debug("pageSize:" + pageSize);
                 IndexRange range;
                 String pageHex, crossString = "", checkedString, replacedString;
                 int pageLen, crossFrom, lastReplacedLength;
-                while ((pageLen = inputStream.read(pageBytes)) != -1) {
+                while ((pageLen = inputStream.read(pageBytes)) > 0) {
                     if (pageLen < pageSize) {
                         pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                     }
                     pageHex = ByteTools.bytesToHexFormat(pageBytes);
                     pageLen = pageHex.length();
                     checkedString = crossString + pageHex;
-//                    logger.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
-//                    logger.debug(checkedString + "\n--------------------\n ");
+//                    MyBoxLog.debug("pageLen:" + pageLen + " checkedString.length:" + checkedString.length());
+//                    MyBoxLog.debug(checkedString + "\n--------------------\n ");
                     findReplaceString.setInputString(checkedString).setAnchor(0).run();
                     range = findReplaceString.getStringRange();
                     if (range != null) {
@@ -1294,41 +1283,38 @@ public class FindReplaceFile extends FindReplaceString {
                         outputStream.write(replacedBytes);
                         crossString = replacedString.substring(lastReplacedLength, replacedString.length());
                         total += findReplaceString.getCount();
-//                        logger.debug("replacedString:" + replacedString.length() + " lastReplacedLength:" + lastReplacedLength + " total:" + total);
+//                        MyBoxLog.debug("replacedString:" + replacedString.length() + " lastReplacedLength:" + lastReplacedLength + " total:" + total);
                         break;
                     } else {
                         if (!crossString.isEmpty()) {
                             byte[] crossBytes = ByteTools.hexFormatToBytes(crossString);
                             outputStream.write(crossBytes);
-//                            logger.debug("crossString:" + crossString.length());
+//                            MyBoxLog.debug("crossString:" + crossString.length());
                         }
                         crossFrom = Math.max(3, pageLen - findLen + 3);
                         crossString = pageHex.substring(crossFrom, pageLen);
                         byte[] passBytes = ByteTools.hexFormatToBytes(pageHex.substring(0, crossFrom));
                         outputStream.write(passBytes);
-//                        logger.debug("crossFrom:" + crossFrom);
+//                        MyBoxLog.debug("crossFrom:" + crossFrom);
                     }
                 }
                 if (!crossString.isEmpty()) {
                     byte[] crossBytes = ByteTools.hexFormatToBytes(crossString);
                     outputStream.write(crossBytes);
-//                    logger.debug("crossString:" + crossString.length());
+//                    MyBoxLog.debug("crossString:" + crossString.length());
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
                 findReplaceFile.setError(e.toString());
                 return false;
             }
             findReplaceFile.setCount(total);
             if (total > 0 && tmpFile != null && tmpFile.exists()) {
-//                logger.debug(tmpFile);
-                sourceFile.delete();
-                tmpFile.renameTo(sourceFile);
-//                logger.debug(sourceFile);
+                FileTools.rename(tmpFile, sourceFile);
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             findReplaceFile.setError(e.toString());
             return false;
         }
@@ -1346,19 +1332,19 @@ public class FindReplaceFile extends FindReplaceString {
                 long pageSize = fileInfo.getPageSize();
                 long bytesStart = fileRange.getStart() / 3;
                 int startPageNumber = (int) (bytesStart / pageSize + 1);
-//                logger.debug("startPageNumber:" + startPageNumber + " pageSize:" + pageSize + " bytesStart:" + bytesStart
+//                MyBoxLog.debug("startPageNumber:" + startPageNumber + " pageSize:" + pageSize + " bytesStart:" + bytesStart
 //                        + "  fileRange:" + fileRange.getStart() + " " + fileRange.getEnd() + " len:" + fileRange.getLength()
 //                        + " getCurrentPage:" + fileInfo.getCurrentPage());
                 if (startPageNumber == fileInfo.getCurrentPage()) {
                     int pageStart = (int) (bytesStart % pageSize) * 3;
                     int pageEnd = (int) (pageStart + fileRange.getLength());
-//                    logger.debug("pageSize:" + pageSize + " pageStart:" + pageStart + " pageEnd:" + pageEnd);
+//                    MyBoxLog.debug("pageSize:" + pageSize + " pageStart:" + pageStart + " pageEnd:" + pageEnd);
                     range = new IndexRange(pageStart, pageEnd);
-//                    logger.debug("stringRange:" + range.getStart() + " " + range.getEnd() + " len:" + range.getLength());
+//                    MyBoxLog.debug("stringRange:" + range.getStart() + " " + range.getEnd() + " len:" + range.getLength());
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         findReplace.setStringRange(range);
         return range;

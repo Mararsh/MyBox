@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.BrowserHistory;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -58,8 +58,7 @@ public class TableBrowserHistory extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return recent;
     }
@@ -87,8 +86,7 @@ public class TableBrowserHistory extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return his;
     }
@@ -144,8 +142,7 @@ public class TableBrowserHistory extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -160,8 +157,7 @@ public class TableBrowserHistory extends DerbyBase {
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -187,8 +183,7 @@ public class TableBrowserHistory extends DerbyBase {
             }
             conn.commit();
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return count;
     }

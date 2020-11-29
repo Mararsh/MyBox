@@ -41,7 +41,7 @@ import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -76,7 +76,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             executableDefault = "win".equals(SystemTools.os()) ? "D:\\Programs\\ffmpeg\\bin\\ffprobe.exe" : "/home/ffprobe";
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -95,7 +95,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             FxmlControl.setTooltip(packetsIntervalInput, message("FFmpegIntervalComments"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -318,7 +318,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -700,7 +700,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -853,7 +853,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

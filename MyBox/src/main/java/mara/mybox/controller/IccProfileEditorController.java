@@ -51,7 +51,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import static mara.mybox.value.CommonValues.Indent;
@@ -147,7 +147,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             initOptions();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -189,7 +189,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 //            saveAsButton.disableProperty().bind(saveButton.disableProperty()
 //            );
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -549,7 +549,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
             });
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -692,7 +692,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             profile = new IccProfile(data);
             displayProfileData();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -776,7 +776,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -906,7 +906,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             summaryArea.setText(s);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
 
         }
 
@@ -953,7 +953,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             subclassVersionInput.setText(header.value("ProfileSubclassVersion") + "");
             isSettingValues = false;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
 
         }
     }
@@ -967,7 +967,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             tagsTable.addAll(tags.getTags());
             tagsTableView.refresh();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
 
         }
     }
@@ -1051,7 +1051,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             FxmlControl.refreshStyle(tagDataBox);
             isSettingValues = false;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
 
         }
     }

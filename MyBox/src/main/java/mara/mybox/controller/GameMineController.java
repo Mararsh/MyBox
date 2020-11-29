@@ -43,13 +43,13 @@ import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.StringValues;
 import mara.mybox.db.TableStringValues;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -120,7 +120,7 @@ public class GameMineController extends BaseController {
             historiesNumber = AppVariables.getUserConfigInt(baseName + "HistoriesNumber", 50);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -154,7 +154,7 @@ public class GameMineController extends BaseController {
             createAction();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -320,7 +320,7 @@ public class GameMineController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -435,7 +435,7 @@ public class GameMineController extends BaseController {
     protected void loadRecords() {
         hisView.getEngine().loadContent("");
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -475,7 +475,8 @@ public class GameMineController extends BaseController {
                 }
             };
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -489,7 +490,7 @@ public class GameMineController extends BaseController {
     @FXML
     public void clearHistories() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -505,7 +506,8 @@ public class GameMineController extends BaseController {
                 }
             };
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -707,7 +709,7 @@ public class GameMineController extends BaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -789,7 +791,7 @@ public class GameMineController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -805,7 +807,8 @@ public class GameMineController extends BaseController {
                 }
             };
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

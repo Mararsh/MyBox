@@ -29,18 +29,12 @@ License:    Apache License Version 2.0
                         <Image url="@../img/MyBox.png" />
                     </image>
                 </ImageView>
-                <Label maxWidth="1.7976931348623157E308" text="%AppTitle" HBox.hgrow="ALWAYS">
-                    <HBox.margin>
-                        <Insets left="20.0" />
-                    </HBox.margin>
+                <Label maxWidth="1.7976931348623157E308" text="%AppTitle" HBox.hgrow="ALWAYS" >
                     <font>
-                        <Font size="24.0" />
+                        <Font size="18.0" />
                     </font>
                 </Label>
                 <CheckBox fx:id="imageCheck" mnemonicParsing="false" text="%ViewImage">
-                    <HBox.margin>
-                        <Insets right="30.0" />
-                    </HBox.margin>
                 </CheckBox>
             </children>
             <padding>
@@ -212,9 +206,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
-                     <cursor>
-                        <Cursor fx:constant="OPEN_HAND" />
-                     </cursor>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                     </children>
                 </HBox>

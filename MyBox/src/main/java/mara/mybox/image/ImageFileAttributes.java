@@ -2,7 +2,7 @@ package mara.mybox.image;
 
 import java.awt.color.ColorSpace;
 import java.io.File;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -46,7 +46,7 @@ public class ImageFileAttributes {
 
     public void setColorSpace(ColorSpace colorSpace) {
         if (colorSpace != null) {
-            logger.debug(colorSpace.getType());
+            MyBoxLog.debug(colorSpace.getType() + "");
         }
         this.colorSpace = colorSpace;
     }

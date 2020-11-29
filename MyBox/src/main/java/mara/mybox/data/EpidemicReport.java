@@ -6,7 +6,7 @@ import mara.mybox.db.TableBase;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -167,7 +167,7 @@ public class EpidemicReport extends TableData {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

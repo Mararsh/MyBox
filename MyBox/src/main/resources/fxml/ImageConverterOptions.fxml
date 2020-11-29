@@ -35,12 +35,11 @@ License:    Apache License Version 2.0
                         <RadioButton mnemonicParsing="false" text="jpg" toggleGroup="$formatGroup" />
                         <RadioButton layoutX="10.0" layoutY="60.0" mnemonicParsing="false" text="tif" toggleGroup="$formatGroup" />
                         <RadioButton layoutX="176.0" layoutY="10.0" mnemonicParsing="false" text="gif" toggleGroup="$formatGroup" />
-                        <RadioButton layoutX="10.0" layoutY="92.0" mnemonicParsing="false" text="pcx" toggleGroup="$formatGroup" />
+                        <RadioButton  fx:id="pcxRadio" layoutX="10.0" layoutY="92.0" mnemonicParsing="false" text="pcx" toggleGroup="$formatGroup" />
                         <RadioButton layoutX="10.0" layoutY="51.0" mnemonicParsing="false" text="pnm" toggleGroup="$formatGroup" />
                         <RadioButton layoutX="10.0" layoutY="92.0" mnemonicParsing="false" text="bmp" toggleGroup="$formatGroup" />
                         <RadioButton layoutX="176.0" layoutY="10.0" mnemonicParsing="false" text="wbmp" toggleGroup="$formatGroup" />
                         <RadioButton layoutX="123.0" layoutY="92.0" mnemonicParsing="false" text="ico" toggleGroup="$formatGroup" />
-                        <Label fx:id="formatCommentsLabel" />
                     </children>
                 </FlowPane>
             </children>
@@ -50,8 +49,8 @@ License:    Apache License Version 2.0
 
                 <Label fx:id="csLabel" text="%ColorSpace" />
                 <FlowPane fx:id="colorspacePane" hgap="5.0" vgap="5.0" />
-            <HBox fx:id="profileBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-               <children>
+                <HBox fx:id="profileBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
                         <TextField fx:id="profileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <Button fx:id="iccSelectButton" mnemonicParsing="false" onAction="#selectIccAction" onMouseEntered="#popIccFile">
                             <graphic>
@@ -62,8 +61,8 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-               </children>
-            </HBox>
+                    </children>
+                </HBox>
                 <CheckBox fx:id="embedProfileCheck" mnemonicParsing="false" text="%EmbedIccProfile" />
             </children>
         </VBox>
@@ -90,7 +89,7 @@ License:    Apache License Version 2.0
         <VBox fx:id="compressBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
 
-                        <Label text="%CompressionType" />
+                <Label text="%CompressionType" />
                 <FlowPane fx:id="compressPane" hgap="5.0" layoutX="10.0" layoutY="194.0" vgap="5.0" />
                 <FlowPane fx:id="qualityPane" hgap="5.0" vgap="5.0">
                     <children>

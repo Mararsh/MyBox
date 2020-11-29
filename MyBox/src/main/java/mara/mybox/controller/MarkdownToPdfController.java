@@ -13,7 +13,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -60,7 +60,7 @@ public class MarkdownToPdfController extends HtmlToPdfController {
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -95,7 +95,7 @@ public class MarkdownToPdfController extends HtmlToPdfController {
             return result;
         } catch (Exception e) {
             return e.toString();
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
 //            return AppVariables.message("Failed");
         }
     }

@@ -32,6 +32,7 @@ public class TableImageCell<T> extends TableCell<T, ImageInformation>
                     return;
                 }
                 imageview.setImage(item.loadThumbnail());
+                imageview.setRotate(item.getThumbnailRotation());
                 setGraphic(imageview);
             }
         };

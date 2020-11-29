@@ -15,7 +15,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -84,7 +84,7 @@ public class ImageInformationController extends HtmlViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -119,7 +119,7 @@ public class ImageInformationController extends HtmlViewerController {
             }
             return StringTable.tableDiv(table);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return "";
         }
     }
@@ -242,7 +242,7 @@ public class ImageInformationController extends HtmlViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -336,7 +336,7 @@ public class ImageInformationController extends HtmlViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -351,7 +351,7 @@ public class ImageInformationController extends HtmlViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -372,7 +372,7 @@ public class ImageInformationController extends HtmlViewerController {
             controller.externalData(name, iInfo.getIccProfile());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -10,7 +10,7 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -81,7 +81,7 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
                 return AppVariables.message("Failed");
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }

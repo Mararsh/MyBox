@@ -16,7 +16,7 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -274,7 +274,7 @@ public class ImageScope {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -305,7 +305,7 @@ public class ImageScope {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -337,7 +337,7 @@ public class ImageScope {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -393,7 +393,7 @@ public class ImageScope {
                         texts.add(w + "x" + h);
                         xs.add(cols.get(j) + w / 3);
                         ys.add(rows.get(i) + h / 3);
-//                    logger.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
+//                    MyBoxLog.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
                     }
                 }
 
@@ -408,7 +408,7 @@ public class ImageScope {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -455,7 +455,7 @@ public class ImageScope {
             targetScope.setOutline(sourceScope.getOutline());
             targetScope.setEightNeighbor(sourceScope.isEightNeighbor());
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -466,7 +466,7 @@ public class ImageScope {
             ImageScope.cloneValues(newScope, sourceScope);
             return newScope;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return sourceScope;
         }
     }

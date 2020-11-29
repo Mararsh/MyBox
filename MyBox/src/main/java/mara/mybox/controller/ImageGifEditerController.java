@@ -14,7 +14,7 @@ import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -75,7 +75,7 @@ public class ImageGifEditerController extends ImagesListController {
             viewButton.disableProperty().bind(saveButton.disableProperty());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -140,7 +140,7 @@ public class ImageGifEditerController extends ImagesListController {
                                     = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
                             controller.loadImage(outFile.getAbsolutePath());
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     }
                 }
@@ -166,7 +166,7 @@ public class ImageGifEditerController extends ImagesListController {
                 saveAsAction();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

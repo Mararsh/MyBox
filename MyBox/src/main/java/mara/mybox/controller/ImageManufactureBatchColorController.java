@@ -18,7 +18,7 @@ import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -66,7 +66,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -111,7 +111,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             checkColorActionType();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -309,7 +309,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             BufferedImage target = pixelsOperation.operate();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 

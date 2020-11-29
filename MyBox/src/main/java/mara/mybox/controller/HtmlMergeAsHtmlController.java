@@ -13,10 +13,10 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -66,7 +66,7 @@ public class HtmlMergeAsHtmlController extends FilesBatchController {
             targetFileInput = targetFileController.fileInput;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -98,7 +98,7 @@ public class HtmlMergeAsHtmlController extends FilesBatchController {
             super.initControls();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -115,7 +115,7 @@ public class HtmlMergeAsHtmlController extends FilesBatchController {
                     + headArea.getText().replace("####title####", titleInput.getText()) + "\n"
                     + "    <body>\n");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
         return super.makeMoreParameters();
@@ -140,7 +140,7 @@ public class HtmlMergeAsHtmlController extends FilesBatchController {
             writer.write(body + "\n");
             return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -158,14 +158,14 @@ public class HtmlMergeAsHtmlController extends FilesBatchController {
                 for (int i = sources.size() - 1; i >= 0; --i) {
                     try {
                         FileInformation source = sources.get(i);
-                        source.getFile().delete();
+                        FileTools.delete(source.getFile());
                         tableData.remove(i);
                     } catch (Exception e) {
                     }
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

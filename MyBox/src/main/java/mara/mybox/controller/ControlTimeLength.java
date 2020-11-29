@@ -60,7 +60,7 @@ public class ControlTimeLength extends BaseController {
 
     public ControlTimeLength init(String name, long defaultValue) {
         this.name = name;
-//        logger.debug(name + " " + defaultValue + " " + value);
+//        MyBoxLog.debug(name + " " + defaultValue + " " + value);
         lengthSelector.getItems().clear();
         if (permitNotSetting) {
             lengthSelector.getItems().add(message("NotSetting"));
@@ -122,12 +122,12 @@ public class ControlTimeLength extends BaseController {
                     } else {
                         lengthSelector.getEditor().setStyle(null);
                     }
-//                    logger.debug(name + " " + this.defaultValue + " " + value);
+//                    MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
                     changed.set(true);
                 });
         isSettingValues = true;
         value = this.defaultValue;
-//        logger.debug(name + " " + this.defaultValue + " " + value);
+//        MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
         if (name != null) {
             String saved = AppVariables.getUserConfigValue(name, this.defaultValue + "");
             if ("-1".equals(saved) || message("NotSetting").equals(saved)) {
@@ -146,7 +146,7 @@ public class ControlTimeLength extends BaseController {
                 }
             }
         }
-//        logger.debug(name + " " + this.defaultValue + " " + value);
+//        MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
         isSettingValues = false;
         return this;
     }

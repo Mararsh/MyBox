@@ -19,6 +19,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -26,7 +27,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -103,7 +103,7 @@ public class FilesArrangeController extends FilesBatchController {
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -280,7 +280,7 @@ public class FilesArrangeController extends FilesBatchController {
             return true;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -295,7 +295,7 @@ public class FilesArrangeController extends FilesBatchController {
 
             updateInterface("Started");
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -322,13 +322,14 @@ public class FilesArrangeController extends FilesBatchController {
                         updateInterface("Failed");
                     }
                 };
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
         } catch (Exception e) {
             updateInterface("Failed");
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -350,7 +351,7 @@ public class FilesArrangeController extends FilesBatchController {
                             operationBarController.statusLabel.setText(message("Handling...") + " "
                                     + message("StartTime")
                                     + ": " + DateTools.datetimeToString(processStartTime));
-                            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                            ControlStyle.setNameIcon(startButton, message("Stop"), "iconStop.png");
                             startButton.applyCss();
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -360,8 +361,8 @@ public class FilesArrangeController extends FilesBatchController {
                             });
                             operationBarController.pauseButton.setVisible(true);
                             operationBarController.pauseButton.setDisable(false);
-                            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
-                            pauseButton.applyCss();
+                            ControlStyle.setNameIcon(operationBarController.pauseButton, message("Pause"), "iconPause.png");
+                            operationBarController.pauseButton.applyCss();
                             operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -375,7 +376,7 @@ public class FilesArrangeController extends FilesBatchController {
                         case "Done":
                         default:
                             if (paused) {
-                                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                                ControlStyle.setNameIcon(startButton, message("Stop"), "iconStop.png");
                                 startButton.applyCss();
                                 startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -385,8 +386,8 @@ public class FilesArrangeController extends FilesBatchController {
                                 });
                                 operationBarController.pauseButton.setVisible(true);
                                 operationBarController.pauseButton.setDisable(false);
-                                ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconStart.png"));
-                                pauseButton.applyCss();
+                                ControlStyle.setNameIcon(operationBarController.pauseButton, message("Start"), "iconStart.png");
+                                operationBarController.pauseButton.applyCss();
                                 operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
@@ -395,7 +396,7 @@ public class FilesArrangeController extends FilesBatchController {
                                 });
                                 disableControls(true);
                             } else {
-                                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                                ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
                                 startButton.applyCss();
                                 startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -412,7 +413,7 @@ public class FilesArrangeController extends FilesBatchController {
                     }
 
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             }
         });
@@ -482,7 +483,7 @@ public class FilesArrangeController extends FilesBatchController {
         try {
             browseURI(new File(targetPathInput.getText()).toURI());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -602,7 +603,7 @@ public class FilesArrangeController extends FilesBatchController {
                             StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
 
                     if (!isCopy) {
-                        srcFile.delete();
+                        FileTools.delete(srcFile);
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strDeleteSuccessfully + srcFileName, true, true);
@@ -624,7 +625,7 @@ public class FilesArrangeController extends FilesBatchController {
 
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 

@@ -9,7 +9,7 @@ import mara.mybox.data.BrowserHistory;
 import mara.mybox.db.TableBrowserHistory;
 import mara.mybox.fxml.TableImageFileCell;
 import mara.mybox.fxml.TableTimeCell;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -42,7 +42,7 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
             timeColumn.setCellFactory(new TableTimeCell());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

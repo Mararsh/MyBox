@@ -66,6 +66,7 @@ import javax.sound.sampled.FloatControl;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
@@ -74,7 +75,6 @@ import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -92,6 +92,8 @@ public class FxmlControl {
     public static String darkRedText = "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
     public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
     public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
+    public static String errorData = "-fx-background-color: #fbe5e5";
+    public static String selectedData = "-fx-background-color:  #0096C9; -fx-text-background-color: white";
 
     public enum LabelType {
         NotDisplay, NameAndValue, Value, Name, Pop
@@ -534,13 +536,10 @@ public class FxmlControl {
             if (tmpFile == null) {
                 return null;
             }
-            if (file.exists()) {
-                file.delete();
-            }
             FileTools.copyFile(tmpFile, file);
             return file;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -555,13 +554,13 @@ public class FxmlControl {
             OutputStream out = new FileOutputStream(file);
             int read;
             byte[] bytes = new byte[1024];
-            while ((read = input.read(bytes)) != -1) {
+            while ((read = input.read(bytes)) > 0) {
                 out.write(bytes, 0, read);
             }
             file.deleteOnExit();
             return file;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -614,9 +613,9 @@ public class FxmlControl {
             double xOffset = pNnode.getWidth() - node.getBoundsInLocal().getWidth();
 
             if (xOffset > 0) {
-//                logger.debug(pNnode.getWidth() + " " + node.getBoundsInLocal().getWidth());
+//                MyBoxLog.debug(pNnode.getWidth() + " " + node.getBoundsInLocal().getWidth());
                 node.setLayoutX(pNnode.getLayoutX() + xOffset / 2);
-//                logger.debug(pNnode.getLayoutX() + " " + xOffset / 2 + " " + node.getLayoutX());
+//                MyBoxLog.debug(pNnode.getLayoutX() + " " + xOffset / 2 + " " + node.getLayoutX());
             } else {
                 node.setLayoutX(0);
             }
@@ -677,7 +676,7 @@ public class FxmlControl {
             FxmlControl.moveXCenter(sPane, iView);
             iView.setLayoutY(10);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -692,7 +691,7 @@ public class FxmlControl {
             FxmlControl.moveXCenter(sPane, iView);
             iView.setLayoutY(10);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -833,7 +832,7 @@ public class FxmlControl {
                     0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
                     true, true, true, true, true, true, null));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -897,7 +896,7 @@ public class FxmlControl {
             snapshot = node.snapshot(snapPara, snapshot);
             return snapshot;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -967,7 +966,7 @@ public class FxmlControl {
                 String name = series.getName();
                 String color = locationColors.get(name);
                 if (color == null) {
-                    logger.debug(name);
+                    MyBoxLog.debug(name);
                 } else {
                     node.setStyle("-fx-stroke: " + color + ";");
                 }
@@ -988,7 +987,7 @@ public class FxmlControl {
                         if (name.equals(legendLabel.getText())) {
                             String color = locationColors.get(name);
                             if (color == null) {
-                                logger.debug(name);
+                                MyBoxLog.debug(name);
                             } else {
                                 legend.setStyle("-fx-background-color: " + color);
                                 break;
@@ -1145,7 +1144,7 @@ public class FxmlControl {
 
             return popMenu;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1222,7 +1221,7 @@ public class FxmlControl {
 
             return popMenu;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1286,7 +1285,7 @@ public class FxmlControl {
                             html = HtmlTools.setStyle(html, style);
                             webEngine.loadContent(html);
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     }
                 });
@@ -1307,7 +1306,7 @@ public class FxmlControl {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
             return popMenu;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

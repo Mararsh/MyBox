@@ -7,7 +7,7 @@ import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.image.file.ImageFileReaders;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -132,7 +132,7 @@ public class ImageBinary extends PixelsOperation {
             graphics.drawImage(image, 0, 0, null);
             return binImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
     }
@@ -158,7 +158,7 @@ public class ImageBinary extends PixelsOperation {
             }
             return binImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
     }
@@ -169,7 +169,7 @@ public class ImageBinary extends PixelsOperation {
             bm = byteBinary(bm);
             return SwingFXUtils.toFXImage(bm, null);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
     }
@@ -227,11 +227,11 @@ public class ImageBinary extends PixelsOperation {
                     threshold = gray;
                 }
             }
-//            logger.debug("threshold:" + threshold);
+//            MyBoxLog.debug("threshold:" + threshold);
             return threshold;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return -1;
         }
     }
@@ -241,7 +241,7 @@ public class ImageBinary extends PixelsOperation {
             BufferedImage bufferImage = ImageFileReaders.readImage(file);
             return OTSU(ImageGray.byteGray(bufferImage));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return -1;
         }
     }
@@ -251,7 +251,7 @@ public class ImageBinary extends PixelsOperation {
             BufferedImage grayImage = ImageGray.byteGray(image);
             return OTSU(grayImage);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return -1;
         }
     }
@@ -261,7 +261,7 @@ public class ImageBinary extends PixelsOperation {
             BufferedImage bm = SwingFXUtils.fromFXImage(image, null);
             return calculateThreshold(bm);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return -1;
         }
     }

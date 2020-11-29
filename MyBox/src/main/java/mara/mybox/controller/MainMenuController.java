@@ -27,13 +27,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.data.BaseTask;
-import mara.mybox.dev.devTools;
+import mara.mybox.dev.DevTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -93,7 +93,7 @@ public class MainMenuController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -253,6 +253,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    protected void MyBoxLogs(ActionEvent event) {
+        openStage(CommonValues.MyBoxLogsFxml);
+    }
+
+    @FXML
     protected void Shortcuts(ActionEvent event) {
         openStage(CommonValues.ShortcutsFxml);
     }
@@ -327,7 +332,7 @@ public class MainMenuController extends BaseController {
                 }
             }, 0, memoryMonitorInterval);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -420,7 +425,7 @@ public class MainMenuController extends BaseController {
                 }
             }, 0, cpuMonitorInterval);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -652,7 +657,7 @@ public class MainMenuController extends BaseController {
                 parentController.setInterfaceStyle(style);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -684,7 +689,7 @@ public class MainMenuController extends BaseController {
                 return parentController.loadScene(newFxml);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -992,6 +997,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openDeleteEmptyDirectories(ActionEvent event) {
         loadScene(CommonValues.FilesDeleteEmptyDirFxml);
+    }
+
+    @FXML
+    private void openDeleteSysTempPath(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteSysTempFxml);
     }
 
     @FXML
@@ -1355,7 +1365,7 @@ public class MainMenuController extends BaseController {
             if (iconTask != null && !iconTask.isQuit()) {
                 return;
             }
-            iconTask = devTools.makeIconsTask(parentController);
+            iconTask = DevTools.makeIconsTask(parentController);
             if (iconTask == null) {
                 return;
             }

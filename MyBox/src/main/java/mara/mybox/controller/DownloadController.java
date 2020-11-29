@@ -26,12 +26,12 @@ import javafx.stage.Stage;
 import mara.mybox.data.DownloadItem;
 import mara.mybox.data.DownloadTask;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableDurationCell;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -69,7 +69,7 @@ public class DownloadController extends BaseController {
             super.initValues();
             downloadPath = AppVariables.MyBoxDownloadsPath;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -106,7 +106,7 @@ public class DownloadController extends BaseController {
             speedColumn.setCellValueFactory(new PropertyValueFactory<>("speed"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -133,7 +133,7 @@ public class DownloadController extends BaseController {
             item.setTask(dtask);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -157,7 +157,7 @@ public class DownloadController extends BaseController {
             download(address);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -176,7 +176,7 @@ public class DownloadController extends BaseController {
         for (DownloadItem item : selected) {
             DownloadTask dtask = item.getTask();
             if (dtask != null) {
-                logger.debug(dtask.getState());
+                MyBoxLog.debug(dtask.getState() + "");
             }
             if (dtask != null && dtask.isRunning()) {
                 continue;
@@ -193,7 +193,7 @@ public class DownloadController extends BaseController {
         for (DownloadItem item : selected) {
             DownloadTask dtask = item.getTask();
             if (dtask != null) {
-                logger.debug(dtask.getState());
+                MyBoxLog.debug(dtask.getState() + "");
                 dtask.cancel();
             }
         }
@@ -208,7 +208,7 @@ public class DownloadController extends BaseController {
         for (DownloadItem item : items) {
             DownloadTask dtask = item.getTask();
             if (dtask != null) {
-                logger.debug(dtask.getState());
+                MyBoxLog.debug(dtask.getState() + "");
                 dtask.cancel();
             }
         }

@@ -8,7 +8,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -153,7 +153,7 @@ public class ImageConvolution extends PixelsOperation {
             }
             return color;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 

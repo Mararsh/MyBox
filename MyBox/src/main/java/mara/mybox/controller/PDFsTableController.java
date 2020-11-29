@@ -23,7 +23,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import thridparty.TableAutoCommitCell;
@@ -116,7 +116,7 @@ public class PdfsTableController extends BatchTableController<PdfInformation> {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -194,7 +194,7 @@ public class PdfsTableController extends BatchTableController<PdfInformation> {
             toColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

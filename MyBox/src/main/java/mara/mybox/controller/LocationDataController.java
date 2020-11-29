@@ -40,7 +40,7 @@ import mara.mybox.fxml.TableLatitudeCell;
 import mara.mybox.fxml.TableLongitudeCell;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonValues;
@@ -140,7 +140,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
             imageColumn.setCellValueFactory(new PropertyValueFactory<>("image"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -155,7 +155,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
             loadTrees(false);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -266,7 +266,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                 DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
                 controller.initEditor(this, null);
             } catch (Exception e) {
-                logger.error(e.toString());
+                MyBoxLog.error(e.toString());
             }
         }
     }
@@ -392,7 +392,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                     = (LocationDataEditController) openScene(null, CommonValues.LocationDataEditFxml);
             controller.initEditor(this, null);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -408,7 +408,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                     = (LocationDataEditController) openScene(null, CommonValues.LocationDataEditFxml);
             controller.initEditor(this, selected);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -433,7 +433,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                     = (LocationInMapController) openScene(null, CommonValues.LocationInMapFxml);
             controller.loadCoordinate(null, selected.getLongitude(), selected.getLatitude());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -502,7 +502,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -532,7 +532,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                                 .setImage(image);
                         tableDataset.insertData(conn, dataset);
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     String lang = AppVariables.isChinese() ? "zh" : "en";
                     file = FxmlControl.getInternalFile("/data/db/Location_Data_ChineseHistoricalCapitals_" + lang + ".csv",
@@ -613,7 +613,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                                 .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
                         tableDataset.insertData(conn, dataset);
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     String lang = AppVariables.isChinese() ? "zh" : "en";
                     file = FxmlControl.getInternalFile("/data/db/Location_Data_EuropeanGadwalls_" + lang + ".csv",
@@ -689,7 +689,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                                 .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
                         tableDataset.insertData(conn, dataset);
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     String lang = AppVariables.isChinese() ? "zh" : "en";
                     file = FxmlControl.getInternalFile("/data/db/Location_Data_SpermWhales_" + lang + ".csv",

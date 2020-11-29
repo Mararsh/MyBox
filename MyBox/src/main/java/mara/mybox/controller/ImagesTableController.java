@@ -23,7 +23,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -127,7 +127,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -252,7 +252,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
             }
             FxmlStage.openImageViewer(info);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

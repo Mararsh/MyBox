@@ -45,6 +45,8 @@ import mara.mybox.color.ChromaticityDiagram.DataType;
 import mara.mybox.color.ColorValue;
 import mara.mybox.color.SRGB;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -55,9 +57,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -158,7 +158,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             initDiagram();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -331,7 +331,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -340,7 +340,6 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    logger.debug("here");
                     calculateColor();
                 }
             });
@@ -374,7 +373,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -513,7 +512,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -686,7 +685,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     private void initCIEData() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -765,7 +764,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             FxmlControl.refreshStyle(tableBox);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -793,7 +792,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1083,7 +1082,6 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     protected void calculateColor() {
-        logger.debug(isSettingValues);
         CIEData d = new CIEData((Color) colorSetController.rect.getFill());
         isSettingValues = true;
         XInput.setText(scale(d.getX(), 8) + "");
@@ -1114,7 +1112,6 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     private void displayCalculatedValued() {
-        logger.debug(isSettingValues);
         if (x >= 0 && x <= 1 && y > 0 && y <= 1 && (x + y) <= 1) {
             double[] srgb = CIEColorSpace.XYZd50toSRGBd65(X, Y, Z);
             if (!isSettingValues) {
@@ -1123,7 +1120,6 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                 colorSetController.rect.setFill(pColor);
                 isSettingValues = false;
             }
-            logger.debug(isSettingValues);
             Color pColor = (Color) colorSetController.rect.getFill();
             calculateColor = new java.awt.Color((float) pColor.getRed(), (float) pColor.getGreen(), (float) pColor.getBlue());
 
@@ -1190,15 +1186,13 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     private void displayChromaticityDiagram() {
-        logger.debug(isSettingValues);
         if (isSettingValues) {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
-            logger.debug(isSettingValues);
             task = new SingletonTask<Void>() {
                 private Image image;
 
@@ -1239,7 +1233,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     return image != null;
                 }
@@ -1275,7 +1269,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         recordFileWritten(file, VisitHistory.FileType.Image);
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1314,7 +1308,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         recordFileWritten(file, VisitHistory.FileType.Text);
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {

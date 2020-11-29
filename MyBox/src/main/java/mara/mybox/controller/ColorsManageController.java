@@ -22,19 +22,20 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory.FileType;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.TableColorData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableColorCell;
 import mara.mybox.image.ImageColor;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import thridparty.TableAutoCommitCell;
@@ -126,7 +127,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             LCHuvColumn.setCellValueFactory(new PropertyValueFactory<>("lchuv"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -163,7 +164,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             checkColumns();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -191,7 +192,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -243,7 +244,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -259,7 +260,8 @@ public class ColorsManageController extends TableManageController<ColorData> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -272,7 +274,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -288,7 +290,8 @@ public class ColorsManageController extends TableManageController<ColorData> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -369,7 +372,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -404,7 +407,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
         }
         recordFileWritten(file, FileType.Text);
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -426,7 +429,8 @@ public class ColorsManageController extends TableManageController<ColorData> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -474,7 +478,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -501,7 +505,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
                     displayHtml(title, rows);
                 } else {
                     synchronized (this) {
-                        if (task != null && !task.isQuit() ) {
+                        if (task != null && !task.isQuit()) {
                             return;
                         }
                         task = new SingletonTask<Void>() {
@@ -520,7 +524,8 @@ public class ColorsManageController extends TableManageController<ColorData> {
                             }
                         };
                         openHandlingStage(task, Modality.WINDOW_MODAL);
-                        task.setSelf(task);Thread thread = new Thread(task);
+                        task.setSelf(task);
+                        Thread thread = new Thread(task);
                         thread.setDaemon(true);
                         thread.start();
                     }
@@ -528,7 +533,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -602,13 +607,13 @@ public class ColorsManageController extends TableManageController<ColorData> {
             table.editHtml();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
     public void managePalette() {
-        FxmlStage.openStage(CommonValues.ColorPaletteManageFxml);
+        ColorPaletteManageController.oneOpen();
     }
 
     @FXML
@@ -616,6 +621,24 @@ public class ColorsManageController extends TableManageController<ColorData> {
     public void closePopup(KeyEvent event) {
         super.closePopup(event);
         colorImportController.closePopup(event);
+    }
+
+    public static ColorsManageController oneOpen() {
+        ColorsManageController controller = null;
+        Stage stage = FxmlStage.findStage(message("ManageColors"));
+        if (stage != null && stage.getUserData() != null) {
+            try {
+                controller = (ColorsManageController) stage.getUserData();
+            } catch (Exception e) {
+            }
+        }
+        if (controller == null) {
+            controller = (ColorsManageController) FxmlStage.openStage(CommonValues.ManageColorsFxml);
+        }
+        if (controller != null) {
+            controller.getMyStage().toFront();
+        }
+        return controller;
     }
 
 }

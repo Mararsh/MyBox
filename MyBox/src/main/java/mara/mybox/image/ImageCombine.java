@@ -1,7 +1,7 @@
 package mara.mybox.image;
 
 import javafx.scene.paint.Color;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 
 /**

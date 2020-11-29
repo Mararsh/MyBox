@@ -25,7 +25,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -89,7 +89,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -221,7 +221,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             checkPositionType();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -386,7 +386,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 

@@ -13,11 +13,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -90,7 +90,7 @@ public class HtmlToPdfController extends FilesBatchController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -106,7 +106,7 @@ public class HtmlToPdfController extends FilesBatchController {
                     .toImmutable();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -139,7 +139,7 @@ public class HtmlToPdfController extends FilesBatchController {
             return result;
         } catch (Exception e) {
             return e.toString();
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
 //            return AppVariables.message("Failed");
         }
     }
@@ -151,7 +151,7 @@ public class HtmlToPdfController extends FilesBatchController {
                 try {
                     html = PdfConverterExtension.embedCss(html, css);
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             }
             try {
@@ -159,7 +159,7 @@ public class HtmlToPdfController extends FilesBatchController {
                 if (!target.exists()) {
                     return AppVariables.message("Failed");
                 } else if (target.length() == 0) {
-                    target.delete();
+                    FileTools.delete(target);
                     return AppVariables.message("Failed");
                 }
                 return AppVariables.message("Successful");
@@ -168,7 +168,7 @@ public class HtmlToPdfController extends FilesBatchController {
             }
         } catch (Exception e) {
             return e.toString();
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 

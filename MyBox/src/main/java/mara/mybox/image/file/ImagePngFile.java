@@ -13,6 +13,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.color.CIEData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageConvert;
@@ -20,7 +21,6 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageInformationPng;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 import org.w3c.dom.NodeList;
 
 /**
@@ -54,7 +54,7 @@ public class ImagePngFile {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -70,7 +70,7 @@ public class ImagePngFile {
 //                            && metaData.isStandardMetadataFormatSupported()) {
 //                        try {
 //                            String standardFormat = IIOMetadataFormatImpl.standardMetadataFormatName; // "javax_imageio_1.0"
-//                            logger.error(standardFormat);
+//                            MyBoxLog.error(standardFormat);
 //                            IIOMetadataNode standardTree = (IIOMetadataNode) metaData.getAsTree(standardFormat);
 //                            NodeList TransparencyNode = standardTree.getElementsByTagName("Transparency");
 //                            IIOMetadataNode Transparency, Alpha;
@@ -85,7 +85,7 @@ public class ImagePngFile {
 //                            Transparency.appendChild(Alpha);
 //                            metaData.mergeTree(standardFormat, standardTree);
 //                        } catch (Exception e) {
-//                            logger.error(e.toString());
+//                            MyBoxLog.error(e.toString());
 //                        }
 //                    }
             String nativeFormat = metaData.getNativeMetadataFormatName(); // "javax_imageio_png_1.0"
@@ -121,7 +121,7 @@ public class ImagePngFile {
             metaData.mergeTree(nativeFormat, nativeTree);
             return metaData;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -139,17 +139,10 @@ public class ImagePngFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -165,7 +158,7 @@ public class ImagePngFile {
                 return;
             }
             ImageInformationPng pngInfo = (ImageInformationPng) info;
-//            logger.debug("explainPngMetaData");
+//            MyBoxLog.debug("explainPngMetaData");
             Map<String, List<Map<String, Object>>> javax_imageio_png = metaData.get("javax_imageio_png_1.0");
             if (javax_imageio_png.containsKey("IHDR")) {
                 Map<String, Object> IHDR = javax_imageio_png.get("IHDR").get(0);
@@ -260,7 +253,7 @@ public class ImagePngFile {
                         } else {
                             pngInfo.setXDpi(v);
                         }
-//                        logger.debug("pixelsPerUnitXAxis:" + pngInfo.gethResolution());
+//                        MyBoxLog.debug("pixelsPerUnitXAxis:" + pngInfo.gethResolution());
                     }
                     if (pHYs.containsKey("pixelsPerUnitYAxis")) {
                         int v = Integer.valueOf((String) pHYs.get("pixelsPerUnitYAxis"));
@@ -270,7 +263,7 @@ public class ImagePngFile {
                         } else {
                             pngInfo.setYDpi(v);
                         }
-//                        logger.debug("pixelsPerUnitYAxis:" + pngInfo.getvResolution());
+//                        MyBoxLog.debug("pixelsPerUnitYAxis:" + pngInfo.getvResolution());
                     }
                 }
             }

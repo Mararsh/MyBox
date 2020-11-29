@@ -46,7 +46,7 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -116,7 +116,7 @@ public class MarkdownEditerController extends TextEditerController {
                 tabPane.getTabs().remove(linksTab);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -128,7 +128,7 @@ public class MarkdownEditerController extends TextEditerController {
 
             htmlTab.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -137,7 +137,7 @@ public class MarkdownEditerController extends TextEditerController {
         try {
             textTab.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -145,7 +145,7 @@ public class MarkdownEditerController extends TextEditerController {
         try {
             tocTab.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -153,7 +153,7 @@ public class MarkdownEditerController extends TextEditerController {
         try {
             linksTab.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -162,7 +162,7 @@ public class MarkdownEditerController extends TextEditerController {
         try {
             codesTab.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -248,7 +248,7 @@ public class MarkdownEditerController extends TextEditerController {
             styleSelector.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -312,7 +312,7 @@ public class MarkdownEditerController extends TextEditerController {
 //                    HeadingExtension.create()).toMutable()
 //                    .set(HtmlRenderer.INDENT_SIZE, 2);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -325,7 +325,7 @@ public class MarkdownEditerController extends TextEditerController {
             textCollectingVisitor = new TextCollectingVisitor();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -447,7 +447,7 @@ public class MarkdownEditerController extends TextEditerController {
                         }
 
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         webEngine.getLoadWorker().cancel();
                     }
 
@@ -487,7 +487,7 @@ public class MarkdownEditerController extends TextEditerController {
             String html = HtmlTools.html(null, style, StringTable.tableDiv(table));
             linksWebview.getEngine().loadContent(html);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -556,7 +556,7 @@ public class MarkdownEditerController extends TextEditerController {
                         }
 
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         webEngine.getLoadWorker().cancel();
                     }
 
@@ -838,7 +838,7 @@ public class MarkdownEditerController extends TextEditerController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1070,7 +1070,7 @@ public class MarkdownEditerController extends TextEditerController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

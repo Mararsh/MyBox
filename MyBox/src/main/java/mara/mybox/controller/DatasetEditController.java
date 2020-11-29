@@ -19,7 +19,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonFxValues;
@@ -77,7 +77,7 @@ public class DatasetEditController extends BaseController {
 
             initColors();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -115,7 +115,7 @@ public class DatasetEditController extends BaseController {
             loadData(dataset);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -194,7 +194,7 @@ public class DatasetEditController extends BaseController {
             datasetInput.requestFocus();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -211,7 +211,7 @@ public class DatasetEditController extends BaseController {
             datasetInput.requestFocus();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -295,7 +295,7 @@ public class DatasetEditController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

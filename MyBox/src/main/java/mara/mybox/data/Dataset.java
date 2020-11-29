@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.TableBase;
 import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.FxmlColor;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -102,7 +102,7 @@ public class Dataset extends TableData {
                     return true;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return false;
     }
@@ -136,7 +136,7 @@ public class Dataset extends TableData {
                     return comments;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return null;
     }

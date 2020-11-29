@@ -31,7 +31,7 @@ import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
+
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
@@ -42,7 +42,7 @@ import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -85,7 +85,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             addressInput.setText(Address);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -111,7 +111,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pageFile))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = inStream.read(buf)) != -1) {
+                while ((len = inStream.read(buf)) > 0) {
                     if (task == null || task.isCancelled()) {
                         return false;
                     }
@@ -148,7 +148,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
                 char[] buf = new char[1024];
                 String bufStr;
                 int len;
-                while ((len = reader.read(buf)) != -1) {
+                while ((len = reader.read(buf)) > 0) {
                     if (task == null || task.isCancelled()) {
                         return;
                     }
@@ -199,13 +199,13 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
                 }
 
             } catch (Exception e) {
-                failed(e);
-                logger.debug(e.toString());
+                MyBoxLog.error(e);
+                MyBoxLog.debug(e.toString());
                 updateLogs(e.toString(), true);
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             updateLogs(e.toString(), true);
         }
     }
@@ -286,7 +286,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             updateLogs(e.toString(), true);
         }
     }
@@ -319,7 +319,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             updateLogs(e.toString(), true);
         }
     }
@@ -401,7 +401,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
 
             return cityReport;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             updateLogs(e.toString(), true);
 
         }

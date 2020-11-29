@@ -1,7 +1,7 @@
 rem Unzip source package. Edit this script to change directories as your env.
-set version=6.3.5
-set jpackagePath=D:\Programs\Java\openjdk-14.0.1\bin
-set jdkPath=D:\Programs\Java\openjdk-14.0.1
+set version=6.3.6
+set jpackagePath=D:\Programs\Java\openjdk-15.0.1\bin
+set jdkPath=D:\Programs\Java\openjdk-15.0.1
 
 rd/Q/S    app\
 del *.jar

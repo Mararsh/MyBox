@@ -22,24 +22,23 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import mara.mybox.data.BaseTask;
 import mara.mybox.data.QueryCondition;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.TableData;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.ColumnDefinition;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import org.apache.commons.csv.CSVFormat;
@@ -122,7 +121,7 @@ public class DataExportController extends DataQueryController {
         try {
             printer.printRecord(columnLabels());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -130,7 +129,7 @@ public class DataExportController extends DataQueryController {
         try {
             TableData data = (TableData) (dataController.tableDefinition.readData(results));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -158,7 +157,7 @@ public class DataExportController extends DataQueryController {
             initExportOptions();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -254,9 +253,9 @@ public class DataExportController extends DataQueryController {
 
             }
 
-            if (okButton != null && targetPathInput != null) {
-                okButton.disableProperty().unbind();
-                okButton.disableProperty().bind(
+            if (startButton != null && targetPathInput != null) {
+                startButton.disableProperty().unbind();
+                startButton.disableProperty().bind(
                         Bindings.isEmpty(targetPathInput.textProperty())
                                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                 );
@@ -264,7 +263,7 @@ public class DataExportController extends DataQueryController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -304,7 +303,7 @@ public class DataExportController extends DataQueryController {
     }
 
     @Override
-    public void okAction() {
+    public void startAction() {
         if (targetPath == null) {
             popError(message("InvalidTargetPath"));
             return;
@@ -323,20 +322,20 @@ public class DataExportController extends DataQueryController {
             }
         }
         Platform.runLater(() -> {
-            if (okButton.getUserData() == null) {
+            if (startButton.getUserData() == null) {
                 start();
-                ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconCancel.png"));
-                okButton.applyCss();
-                okButton.setUserData("cancel");
+                ControlStyle.setNameIcon(startButton, message("Stop"), "iconStop.png");
+                startButton.applyCss();
+                startButton.setUserData("stop");
             } else {
                 cancelled = true;
                 if (task != null) {
                     task.cancel();
                     task = null;
                 }
-                ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconOK.png"));
-                okButton.applyCss();
-                okButton.setUserData(null);
+                ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
+                startButton.applyCss();
+                startButton.setUserData(null);
             }
         });
     }
@@ -408,7 +407,7 @@ public class DataExportController extends DataQueryController {
                         error = e.toString();
                         updateLogs(error);
                         return false;
-//                        logger.debug(e.toString());
+//                        MyBoxLog.debug(e.toString());
                     }
                 }
 
@@ -844,9 +843,9 @@ public class DataExportController extends DataQueryController {
                 if (!cancelled) {
                     updateLogs(message("MissionCompleted"));
                 }
-                ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconOK.png"));
-                okButton.applyCss();
-                okButton.setUserData(null);
+                ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
+                startButton.applyCss();
+                startButton.setUserData(null);
             }
         }
     }
@@ -877,7 +876,7 @@ public class DataExportController extends DataQueryController {
                 }
             });
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

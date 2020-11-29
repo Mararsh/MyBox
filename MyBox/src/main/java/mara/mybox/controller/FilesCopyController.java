@@ -8,7 +8,7 @@ import java.nio.file.StandardCopyOption;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -47,7 +47,7 @@ public class FilesCopyController extends FilesBatchController {
             return AppVariables.message("Successful");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }

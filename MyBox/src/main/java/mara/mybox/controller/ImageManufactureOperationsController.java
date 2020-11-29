@@ -8,8 +8,9 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -47,6 +48,7 @@ public class ImageManufactureOperationsController extends ImageBaseController {
             marginsPane, arcPane, penPane, textPane, richTextPane;
 
     public ImageManufactureOperationsController() {
+        baseTitle = AppVariables.message("ImageManufacture");
     }
 
     @Override
@@ -61,7 +63,7 @@ public class ImageManufactureOperationsController extends ImageBaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -183,7 +185,7 @@ public class ImageManufactureOperationsController extends ImageBaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -206,7 +208,7 @@ public class ImageManufactureOperationsController extends ImageBaseController {
                 return controller;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return null;
     }

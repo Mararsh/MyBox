@@ -27,7 +27,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -63,7 +63,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             targetFileInput = targetFileController.fileInput;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -110,7 +110,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -136,7 +136,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             return;
         }
         if (startButton.getUserData() != null) {
-            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+            ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
             cancelAction();
@@ -147,7 +147,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 return;
             }
             initLogs();
-            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+            ControlStyle.setNameIcon(startButton, message("Stop"), "iconStop.png");
             startButton.applyCss();
             startButton.setUserData("started");
             tabPane.getSelectionModel().select(logsTab);
@@ -260,7 +260,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return true;
     }
@@ -313,7 +313,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return true;
     }
@@ -340,7 +340,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return true;
     }
@@ -472,7 +472,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 });
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return true;
     }
@@ -492,7 +492,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                     new OutputStreamWriter(recorder.getOutputStream(), Charset.forName("UTF-8")));) {
                 writer.append('q');
             } catch (Exception e) {
-                logger.error(e.toString());
+                MyBoxLog.error(e.toString());
             }
         }
     }

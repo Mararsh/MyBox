@@ -27,7 +27,7 @@ import mara.mybox.fxml.TableLatitudeCell;
 import mara.mybox.fxml.TableLongitudeCell;
 import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.tools.HtmlTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -102,7 +102,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -136,7 +136,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             inputtedColorSetController.init(this, baseName + "InputtedColor", Color.WHITE);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -148,7 +148,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             mapController.initMap(this);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -171,7 +171,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     @Override
     public List<GeographyCode> readPageData() {
         setPageSQL();
-//        logger.debug(dataQuerySQL);
+//        MyBoxLog.debug(dataQuerySQL);
         return TableGeographyCode.queryCodes(pageQuerySQL, true);
     }
 
@@ -270,7 +270,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             controller.load(this, null);
             controller.getMyStage().toFront();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -286,7 +286,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             controller.load(this, selected);
             controller.getMyStage().toFront();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -310,7 +310,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
             controller.loadCoordinate(null, code.getLongitude(), code.getLatitude());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -395,7 +395,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -488,7 +488,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

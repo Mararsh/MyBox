@@ -6,7 +6,6 @@ import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.image.file.ImageFileReaders;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -241,7 +240,6 @@ public class ImageContrast extends PixelsOperation {
 
             int width = colorImage.getWidth();
             int height = colorImage.getHeight();
-            logger.debug(width);
 //            int[] lumaHistogram = new int[256];
 //            for (int y = 0; y < height; y++) {
 //                for (int x = 0; x < width; x++) {

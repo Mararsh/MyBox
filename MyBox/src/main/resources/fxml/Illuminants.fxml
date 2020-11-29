@@ -56,8 +56,7 @@ License:    Apache License Version 2.0
                                                 </RadioButton>
                                                 <RadioButton mnemonicParsing="false" text="XYZ Scaling" toggleGroup="$algorithmGroup" />
                                                 <RadioButton mnemonicParsing="false" text="Von Kries" toggleGroup="$algorithmGroup" />
-                                                <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction"
-                                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -93,7 +92,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </ScrollPane>
-                                                <TitledPane  maxWidth="1.7976931348623157E308" text="%TargetColor">
+                                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetColor">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                             <children>

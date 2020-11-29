@@ -10,7 +10,7 @@ import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -56,7 +56,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
             super.initValues();
             pdfsTableController = (PdfsTableController) tableController;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -72,7 +72,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -172,7 +172,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
             }
             currentParameters.startPage = 1;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
         updateInterface("CompleteFile");

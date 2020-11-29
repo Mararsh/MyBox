@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import mara.mybox.data.StringValues;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -45,8 +45,8 @@ public class TableStringValues extends DerbyBase {
             conn.setReadOnly(true);
             return read(conn, name);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return records;
     }
@@ -64,8 +64,8 @@ public class TableStringValues extends DerbyBase {
                 records.add(results.getString("string_value"));
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return records;
     }
@@ -79,8 +79,8 @@ public class TableStringValues extends DerbyBase {
             conn.setReadOnly(true);
             return values(conn, name);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return records;
     }
@@ -101,8 +101,8 @@ public class TableStringValues extends DerbyBase {
                 records.add(record);
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return records;
     }
@@ -124,8 +124,8 @@ public class TableStringValues extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return value;
     }
@@ -162,8 +162,8 @@ public class TableStringValues extends DerbyBase {
                 conn.commit();
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return records;
     }
@@ -176,8 +176,7 @@ public class TableStringValues extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return add(conn, name, value);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -204,9 +203,8 @@ public class TableStringValues extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-//            logger.debug(sql);
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(sql);
             return false;
         }
     }
@@ -223,8 +221,8 @@ public class TableStringValues extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -242,8 +240,8 @@ public class TableStringValues extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -260,8 +258,8 @@ public class TableStringValues extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -273,8 +271,8 @@ public class TableStringValues extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }

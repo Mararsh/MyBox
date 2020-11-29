@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.data.QueryCondition;
 import mara.mybox.data.QueryCondition.DataOperation;
-import static mara.mybox.db.DerbyBase.failed;
+
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -73,7 +73,7 @@ public class TableQueryCondition extends DerbyBase {
             conn.setReadOnly(true);
             return read(conn, dataName, dataOperation, max);
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
             return new ArrayList();
         }
     }
@@ -98,8 +98,8 @@ public class TableQueryCondition extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return conditions;
     }
@@ -123,8 +123,7 @@ public class TableQueryCondition extends DerbyBase {
 
             return condition;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -137,7 +136,7 @@ public class TableQueryCondition extends DerbyBase {
             conn.setReadOnly(true);
             return read(conn, qcid);
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -149,7 +148,7 @@ public class TableQueryCondition extends DerbyBase {
         try ( PreparedStatement statement = conn.prepareStatement(QCidQeury)) {
             return read(statement, qcid);
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -167,7 +166,7 @@ public class TableQueryCondition extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -180,7 +179,7 @@ public class TableQueryCondition extends DerbyBase {
             conn.setReadOnly(true);
             return read(conn, queryCondition);
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -205,8 +204,7 @@ public class TableQueryCondition extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -218,8 +216,7 @@ public class TableQueryCondition extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return write(conn, condition, checkEqual);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -245,8 +242,7 @@ public class TableQueryCondition extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -280,8 +276,7 @@ public class TableQueryCondition extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -293,8 +288,7 @@ public class TableQueryCondition extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return insert(conn, condition);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -306,8 +300,7 @@ public class TableQueryCondition extends DerbyBase {
         try ( PreparedStatement statement = conn.prepareStatement(Insert)) {
             return insert(statement, condition);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -328,8 +321,7 @@ public class TableQueryCondition extends DerbyBase {
             statement.setString(9, DateTools.datetimeToString(new Date()));
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -341,8 +333,7 @@ public class TableQueryCondition extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return update(conn, condition);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -355,8 +346,7 @@ public class TableQueryCondition extends DerbyBase {
         try ( PreparedStatement statement = conn.prepareStatement(Update)) {
             return update(statement, condition);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -379,8 +369,7 @@ public class TableQueryCondition extends DerbyBase {
             statement.setLong(10, condition.getQcid());
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -399,8 +388,8 @@ public class TableQueryCondition extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return delete(conn, qcid);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -413,8 +402,8 @@ public class TableQueryCondition extends DerbyBase {
             statement.setLong(1, qcid);
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -434,8 +423,8 @@ public class TableQueryCondition extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }

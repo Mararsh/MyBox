@@ -7,7 +7,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 
 /**
@@ -30,7 +30,7 @@ public class ImageWbmpFile {
                 return metadata;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

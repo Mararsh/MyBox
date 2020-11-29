@@ -24,6 +24,10 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-text-overrun: leading-ellipsis ;
 }*/
 
+.appTitle {
+    -fx-font-size: 1.8em;
+}
+
 .title, .title:focused {
     -fx-font-weight: bolder;
     -fx-font-size: 1.5em;
@@ -106,6 +110,9 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-padding: 5 5 5 5;
 }
 
+/*
+    style set by codes
+*/
 .big {
 }
 

@@ -44,13 +44,13 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -225,7 +225,7 @@ public class MediaPlayerController extends BaseController {
             msCheck.setSelected(AppVariables.getUserConfigBoolean("MediaPlayerShowMS", true));
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -333,8 +333,7 @@ public class MediaPlayerController extends BaseController {
             currentMedia = null;
             currentIndex = 0;
             randomPlayed = null;
-            ControlStyle.setIcon(playButton, ControlStyle.getIcon("iconPlay.png"));
-            FxmlControl.setTooltip(playButton, new Tooltip(message("Start") + "\nF1 / s / S"));
+            ControlStyle.setIconTooltips(playButton, "iconPlay.png", message("Start") + "\nF1 / s / S");
             playButton.applyCss();
             playButton.setUserData(null);
 
@@ -351,7 +350,7 @@ public class MediaPlayerController extends BaseController {
             tableController.markFileHandling(-1);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -360,12 +359,10 @@ public class MediaPlayerController extends BaseController {
             player.setMute(soundButton.isSelected());
         }
         if (soundButton.isSelected()) {
-            ControlStyle.setIcon(soundButton, ControlStyle.getIcon("iconAudio.png"));
-            FxmlControl.setTooltip(soundButton, new Tooltip(message("Sound") + "\nm / M"));
+            ControlStyle.setIconTooltips(soundButton, "iconAudio.png", message("Sound") + "\nm / M");
             soundButton.applyCss();
         } else {
-            ControlStyle.setIcon(soundButton, ControlStyle.getIcon("iconMute.png"));
-            FxmlControl.setTooltip(soundButton, new Tooltip(message("Mute") + "\nm / M"));
+            ControlStyle.setIconTooltips(soundButton, "iconMute.png", message("Mute") + "\nm / M");
             soundButton.applyCss();
         }
     }
@@ -401,8 +398,7 @@ public class MediaPlayerController extends BaseController {
         playerControlBox.setVisible(false);
 
         fullScreenButton.setSelected(true);
-        ControlStyle.setIcon(fullScreenButton, ControlStyle.getIcon("iconShrink.png"));
-        FxmlControl.setTooltip(fullScreenButton, new Tooltip(message("Recover") + "\nESC / f / F"));
+        ControlStyle.setIconTooltips(fullScreenButton, "iconShrink.png", message("Recover") + "\nESC / f / F");
         fullScreenButton.applyCss();
 
         thisPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -428,8 +424,7 @@ public class MediaPlayerController extends BaseController {
         thisPane.setOnMouseClicked(null);
         mediaView.setOnMouseClicked(null);
         fullScreenButton.setSelected(false);
-        ControlStyle.setIcon(fullScreenButton, ControlStyle.getIcon("iconExpand.png"));
-        FxmlControl.setTooltip(fullScreenButton, new Tooltip(message("FullScreen") + "\nf / F"));
+        ControlStyle.setIconTooltips(fullScreenButton, "iconExpand.png", message("FullScreen") + "\nf / F");
         fullScreenButton.applyCss();
 
         if (!leftBox.getChildren().contains(playerControlBox)) {
@@ -506,7 +501,7 @@ public class MediaPlayerController extends BaseController {
             tableData.clear();
             tableController.addFile(file);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -522,8 +517,7 @@ public class MediaPlayerController extends BaseController {
                             atEndOfMedia = false;
                         }
                         player.pause();
-                        ControlStyle.setIcon(playButton, ControlStyle.getIcon("iconPlay.png"));
-                        FxmlControl.setTooltip(playButton, new Tooltip(message("Continue") + "\nF1 / s / S"));
+                        ControlStyle.setIconTooltips(playButton, "iconPlay.png", message("Continue") + "\nF1 / s / S");
                         playButton.applyCss();
                         break;
                     case PAUSED:
@@ -531,8 +525,7 @@ public class MediaPlayerController extends BaseController {
                         player.setVolume(volumeSlider.getValue() / 100.0);
                         player.setRate(speed);
                         player.play();
-                        ControlStyle.setIcon(playButton, ControlStyle.getIcon("iconPause.png"));
-                        FxmlControl.setTooltip(playButton, new Tooltip(message("Pause") + "\nF1 / s / S"));
+                        ControlStyle.setIconTooltips(playButton, "iconPause.png", message("Pause") + "\nF1 / s / S");
                         playButton.applyCss();
                         break;
                     default:
@@ -543,7 +536,7 @@ public class MediaPlayerController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -600,7 +593,7 @@ public class MediaPlayerController extends BaseController {
         }
         synchronized (this) {
             try {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 if (player != null) {
@@ -710,7 +703,7 @@ public class MediaPlayerController extends BaseController {
                             player.setOnStopped(new Runnable() {
                                 @Override
                                 public void run() {
-//                                    logger.debug("Stopped");
+//                                    MyBoxLog.debug("Stopped");
                                     Platform.runLater(new Runnable() {
                                         @Override
                                         public void run() {
@@ -740,11 +733,12 @@ public class MediaPlayerController extends BaseController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             } catch (Exception e) {
-                logger.error(e.toString());
+                MyBoxLog.error(e.toString());
             }
         }
 
@@ -792,8 +786,7 @@ public class MediaPlayerController extends BaseController {
             public void run() {
 
                 player.play();
-                ControlStyle.setIcon(playButton, ControlStyle.getIcon("iconPause.png"));
-                FxmlControl.setTooltip(playButton, new Tooltip(message("Pause") + "\nF1 / s / S"));
+                ControlStyle.setIconTooltips(playButton, "iconPause.png", message("Pause") + "\nF1 / s / S");
                 playButton.setUserData("Playing");
                 playButton.applyCss();
 
@@ -871,7 +864,7 @@ public class MediaPlayerController extends BaseController {
                         }
                     });
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                     popMediaError(e.toString());
                 }
             }
@@ -939,14 +932,13 @@ public class MediaPlayerController extends BaseController {
             controller.setPlayerController(this);
             controller.loadList(tableController.mediaListName);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
     public void catAction() {
         tableController.loadMiaoSounds();
-
     }
 
     public void loadFile(File file) {

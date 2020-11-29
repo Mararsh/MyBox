@@ -17,6 +17,7 @@ import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.ImageScope.ColorScopeType;
 import mara.mybox.image.ImageScope.ScopeType;
@@ -84,8 +85,7 @@ public class TableImageScope extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -111,8 +111,7 @@ public class TableImageScope extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -141,8 +140,7 @@ public class TableImageScope extends DerbyBase {
                 scope = null;
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             scope = null;
         }
         return scope;
@@ -223,8 +221,7 @@ public class TableImageScope extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -247,7 +244,7 @@ public class TableImageScope extends DerbyBase {
                         try {
                             colors.add(new Color((int) Double.parseDouble(item)));
                         } catch (Exception e) {
-                            failed(e);
+                            MyBoxLog.error(e);
                         }
                     }
                     scope.setColors(colors);
@@ -255,8 +252,7 @@ public class TableImageScope extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -277,8 +273,8 @@ public class TableImageScope extends DerbyBase {
             scope.setOutlineSource(image);
             return image != null;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -327,11 +323,10 @@ public class TableImageScope extends DerbyBase {
                         + DateTools.datetimeToString(new Date()) + "', '"
                         + DateTools.datetimeToString(new Date()) + "')";
             }
-//            logger.debug(sql);
+//            MyBoxLog.debug(sql);
             statement.executeUpdate(sql);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return read(scope.getFile());
     }
@@ -399,8 +394,7 @@ public class TableImageScope extends DerbyBase {
             }
 
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             s = "";
         }
         return s;
@@ -429,8 +423,7 @@ public class TableImageScope extends DerbyBase {
                     }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             s = "";
         }
         return s;
@@ -455,8 +448,7 @@ public class TableImageScope extends DerbyBase {
             }
 
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             s = "";
         }
         return s;
@@ -469,8 +461,7 @@ public class TableImageScope extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -483,8 +474,7 @@ public class TableImageScope extends DerbyBase {
             statement.executeUpdate();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -505,8 +495,7 @@ public class TableImageScope extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

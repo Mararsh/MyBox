@@ -20,7 +20,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -72,7 +72,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -111,7 +111,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             FxmlControl.setTooltip(ListInput, new Tooltip(message("StartEndComments")));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -249,7 +249,7 @@ public class PdfSplitBatchController extends PdfBatchController {
                 doc.close();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
@@ -266,7 +266,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             List<PDDocument> docs = splitter.split(source);
             return writeFiles(docs);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return 0;
         }
     }
@@ -288,7 +288,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             List<PDDocument> docs = splitter.split(source);
             return writeFiles(docs);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return 0;
         }
     }
@@ -314,7 +314,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             }
             return writeFiles(docs);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return 0;
         }
     }
@@ -352,7 +352,7 @@ public class PdfSplitBatchController extends PdfBatchController {
                 targetFileGenerated(tFile);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return index - 1;
     }

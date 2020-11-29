@@ -27,7 +27,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -78,7 +78,7 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
             targetFileInput = targetFileController.fileInput;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -111,7 +111,7 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -198,7 +198,7 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
 
         } catch (Exception e) {
             updateInterface("Failed");
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -241,7 +241,7 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
                         s.append("duration  ").append(info.getDuration() / 1000.00f).append("\n");
                     }
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
             }
             if (lastFile == null) {
@@ -253,7 +253,7 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
             FileTools.writeFile(imagesListFile, s.toString(), Charset.forName("utf-8"));
             return imagesListFile;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -283,7 +283,7 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
             FileTools.writeFile(audiosListFile, s.toString(), Charset.forName("utf-8"));
             return audiosListFile;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

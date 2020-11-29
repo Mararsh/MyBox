@@ -10,7 +10,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -64,7 +64,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             FileTools.writeFile(imagesListFile, imageFileString.toString(), Charset.forName("utf-8"));
             return imagesListFile;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 }
 
             } catch (Exception e) {
-//                logger.debug(e.toString());
+//                MyBoxLog.debug(e.toString());
             }
             return AppVariables.message("Done");
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             }
             return AppVariables.message("Done");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }

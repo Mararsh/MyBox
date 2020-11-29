@@ -21,10 +21,10 @@ import mara.mybox.data.QueryCondition;
 import mara.mybox.data.QueryCondition.DataOperation;
 import mara.mybox.db.ColumnDefinition;
 import mara.mybox.db.TableQueryCondition;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -104,26 +104,7 @@ public class DataQueryController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public String buttonName() {
-        try {
-            switch (dataOperation) {
-                case QueryData:
-                    return message("Query");
-                case ClearData:
-                    return message("Clear");
-                case UpdateData:
-                    return message("UpdateData");
-                case ExportData:
-                    return message("Export");
-                default:
-                    return message("OK");
-            }
-        } catch (Exception e) {
-            return null;
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -137,6 +118,7 @@ public class DataQueryController extends BaseController {
             this.dataController = dataController;
             this.initCondition = initCondition;
             this.baseName = dataController.baseName;
+            this.baseTitle = dataController.baseTitle + " " + baseTitle;
             dataOperation = initCondition.getDataOperation();
             qcid = initCondition.getQcid();
 
@@ -156,13 +138,13 @@ public class DataQueryController extends BaseController {
                 FxmlControl.setTooltip(topInput, message("TopNumberComments"));
                 topInput.setText(initCondition.getTop() + "");
             }
-            ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconOK.png"));
-            okButton.applyCss();
-            okButton.setUserData(null);
+            ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
+            startButton.applyCss();
+            startButton.setUserData(null);
             titleInput.requestFocus();
-            getMyStage().setTitle(baseTitle + " - " + dataController.baseTitle + " - " + okButton.getText());
+            getMyStage().setTitle(dataController.baseTitle + " " + baseTitle);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -186,7 +168,7 @@ public class DataQueryController extends BaseController {
                 listView.getItems().add(node);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -290,7 +272,7 @@ public class DataQueryController extends BaseController {
 
     @FXML
     @Override
-    public void okAction() {
+    public void startAction() {
         savedCondition = save();
         if (savedCondition == null) {
             return;
@@ -349,7 +331,7 @@ public class DataQueryController extends BaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -467,7 +449,7 @@ public class DataQueryController extends BaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -518,7 +500,7 @@ public class DataQueryController extends BaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

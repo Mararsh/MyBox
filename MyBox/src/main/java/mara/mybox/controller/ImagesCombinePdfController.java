@@ -29,7 +29,7 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -77,7 +77,7 @@ public class ImagesCombinePdfController extends ImagesListController {
             initOptionsSection();
             initTargetSection();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

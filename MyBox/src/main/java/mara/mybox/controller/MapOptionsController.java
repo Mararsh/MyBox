@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -23,15 +25,15 @@ import javafx.scene.web.WebEngine;
 import javafx.stage.FileChooser;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.TableBrowserBypassSSL;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -97,6 +99,7 @@ public class MapOptionsController extends BaseController {
         this.mapController = mapController;
         this.webEngine = mapController.webEngine;
         this.baseName = mapController.baseName;
+        this.baseTitle = mapController.baseTitle + " " + baseTitle;
         initOptions();
         setMap();
     }
@@ -617,7 +620,7 @@ public class MapOptionsController extends BaseController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -632,12 +635,18 @@ public class MapOptionsController extends BaseController {
         try {
             if (gaodeRadio != null && gaodeRadio.isSelected()) {
                 mapName = MapName.GaoDe;
-                NetworkTools.myBoxSSL();
-                TableBrowserBypassSSL.write("amap.com");
-                TableBrowserBypassSSL.write("webapi.amap.com");
-                TableBrowserBypassSSL.write("vdata.amap.com");
-                TableBrowserBypassSSL.write("restapi.amap.com");
-                TableBrowserBypassSSL.write("is.autonavi.com");
+                try {
+                    List<String> hosts = new ArrayList<>();
+                    hosts.addAll(Arrays.asList(
+                            "amap.com", "webapi.amap.com", "vdata.amap.com", "restapi.amap.com"
+                    ));
+                    NetworkTools.installCertificate(hosts);
+                    hosts.add("is.autonavi.com");
+                    TableBrowserBypassSSL.write(hosts);
+                    NetworkTools.myBoxSSL();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
 
                 File map = FxmlControl.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", true);
                 String html = FileTools.readTexts(map);
@@ -703,7 +712,7 @@ public class MapOptionsController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         isSettingValues = false;
         initMap();
@@ -802,7 +811,7 @@ public class MapOptionsController extends BaseController {
                 webEngine.executeScript("setLanguage(\"zh_cn\");");
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -822,7 +831,7 @@ public class MapOptionsController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -859,7 +868,7 @@ public class MapOptionsController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -881,7 +890,7 @@ public class MapOptionsController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -903,7 +912,7 @@ public class MapOptionsController extends BaseController {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -926,7 +935,7 @@ public class MapOptionsController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -946,7 +955,7 @@ public class MapOptionsController extends BaseController {
             }
             markerImageInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 

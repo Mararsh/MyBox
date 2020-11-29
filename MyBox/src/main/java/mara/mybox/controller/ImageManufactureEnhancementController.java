@@ -3,50 +3,28 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.ConvolutionKernel;
-import mara.mybox.db.TableConvolutionKernel;
-import mara.mybox.fxml.ControlStyle;
-import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageContrast;
 import mara.mybox.image.ImageContrast.ContrastAlgorithm;
 import mara.mybox.image.ImageConvolution;
-import mara.mybox.image.ImageConvolution.SharpenAlgorithm;
-import mara.mybox.image.ImageConvolution.SmoothAlgorithm;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageScope;
-import mara.mybox.image.PixelsOperation.OperationType;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -58,73 +36,21 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageManufactureEnhancementController extends ImageManufactureOperationController {
 
-    private OperationType enhanceType;
-    protected int intPara1, intPara2, intPara3;
-    private List<ConvolutionKernel> kernels;
-    private ConvolutionKernel kernel, loadedKernel;
-    private ContrastAlgorithm contrastAlgorithm;
-    private SmoothAlgorithm smoothAlgorithm;
-    private SharpenAlgorithm sharpenAlgorithm;
-    private ChangeListener<String> intBoxListener, stringBoxListener,
-            intInput1Listener, intInput2Listener;
-    private ChangeListener<Number> numberBoxListener;
-    private ImageView manageView;
-
     @FXML
-    protected ToggleGroup enhancementGroup, blurGroup, sharpenGroup, contrastGroup;
+    protected ImageManufactureEnhancementOptionsController optionsController;
     @FXML
-    protected RadioButton ContrastRadio, smoothRadio, SharpenRadio, ConvolutionRadio;
+    protected Label commentsLabel;
     @FXML
-    protected TextField intInput1, intInput2;
-    @FXML
-    protected VBox setBox, blurABox, sharpenABox, contrastABox;
-    @FXML
-    protected FlowPane stringSelectorPane, intSelectorPane, intInput1Pane, intInput2Pane;
-    @FXML
-    protected ComboBox<String> intSelector, stringSelector;
-    @FXML
-    protected CheckBox valueCheck;
-    @FXML
-    protected Label intListLabel, stringLabel, intLabel1, intLabel2, commentsLabel;
-    @FXML
-    protected Button button, demoButton;
+    protected Button demoButton;
 
     @Override
     public void initPane() {
         try {
 
-            enhancementGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkEnhanceType();
-                }
-            });
-
-            blurGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkSmoothAlgorithm();
-                }
-            });
-
-            sharpenGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkSharpenAlgorithm();
-                }
-            });
-
-            contrastGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkContrastAlgorithm();
-                }
-            });
-
-            manageView = new ImageView();
+            optionsController.setValues(this);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -132,408 +58,17 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
     @Override
     protected void paneExpanded() {
         imageController.showRightPane();
-        checkEnhanceType();
-    }
-
-    protected void checkEnhanceType() {
-        try {
-            imageController.resetImagePane();
-            clearValues();
-            if (enhancementGroup.getSelectedToggle() == null) {
-                okButton.setDisable(true);
-                return;
-            }
-            RadioButton selected = (RadioButton) enhancementGroup.getSelectedToggle();
-            if (ContrastRadio.equals(selected)) {
-                imageController.showImagePane();
-                imageController.hideScopePane();
-                commentsLabel.setText(message("ManufactureWholeImage"));
-                enhanceType = OperationType.Contrast;
-                makeContrastBox();
-
-            } else {
-                imageController.showScopePane();
-                imageController.hideImagePane();
-                commentsLabel.setText(message("DefineScopeAndManufacture"));
-
-                if (smoothRadio.equals(selected)) {
-                    enhanceType = OperationType.Smooth;
-                    makeSmoothBox();
-
-                } else if (SharpenRadio.equals(selected)) {
-                    enhanceType = OperationType.Sharpen;
-                    makeSharpenBox();
-
-                } else if (ConvolutionRadio.equals(selected)) {
-                    enhanceType = OperationType.Convolution;
-                    makeConvolutionBox();
-
-                }
-            }
-
-            FxmlControl.refreshStyle(setBox);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void clearValues() {
-        setBox.getChildren().clear();
-        if (stringBoxListener != null) {
-            stringSelector.getSelectionModel().selectedItemProperty().removeListener(stringBoxListener);
-        }
-        if (numberBoxListener != null) {
-            stringSelector.getSelectionModel().selectedIndexProperty().removeListener(numberBoxListener);
-        }
-        if (intBoxListener != null) {
-            intSelector.getSelectionModel().selectedItemProperty().removeListener(intBoxListener);
-        }
-        if (intInput1Listener != null) {
-            intInput1.textProperty().removeListener(intInput1Listener);
-        }
-        if (intInput2Listener != null) {
-            intInput2.textProperty().removeListener(intInput2Listener);
-        }
-        valueCheck.setDisable(false);
-        button.setOnAction(null);
-        button.disableProperty().unbind();
-        button.setDisable(false);
-        okButton.disableProperty().unbind();
-        okButton.setDisable(false);
-        stringSelector.getItems().clear();
-        stringSelector.getEditor().setStyle(null);
-        intSelector.getItems().clear();
-        intSelector.getEditor().setStyle(null);
-        intInput1.setStyle(null);
-        intInput2.setStyle(null);
-        stringSelector.setEditable(false);
-        intSelector.setEditable(false);
-        intSelector.setDisable(false);
-        commentsLabel.setText("");
-        kernel = null;
-    }
-
-    protected void makeSmoothBox() {
-        try {
-            intPara1 = 10;
-            intListLabel.setText(message("Intensity"));
-            intSelector.setEditable(true);
-            intBoxListener = new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            intPara1 = v;
-                            FxmlControl.setEditorNormal(intSelector);
-                        } else {
-                            FxmlControl.setEditorBadStyle(intSelector);
-                        }
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(intSelector);
-                    }
-                }
-            };
-            intSelector.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
-            intSelector.getItems().addAll(Arrays.asList("3", "5", "10", "2", "1", "8", "15", "20", "30"));
-            intSelector.getSelectionModel().select(0);
-
-            setBox.getChildren().addAll(blurABox, intSelectorPane);
-            okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(badStyle));
-
-            checkSmoothAlgorithm();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void makeSharpenBox() {
-        try {
-            intPara1 = 2;
-            intListLabel.setText(message("Intensity"));
-            intSelector.setEditable(true);
-            intBoxListener = new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            intPara1 = v;
-                            FxmlControl.setEditorNormal(intSelector);
-                        } else {
-                            FxmlControl.setEditorBadStyle(intSelector);
-                        }
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(intSelector);
-                    }
-                }
-            };
-            intSelector.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
-            intSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5"));
-            intSelector.getSelectionModel().select(0);
-
-            setBox.getChildren().addAll(sharpenABox, intSelectorPane);
-            okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(badStyle));
-
-            checkSharpenAlgorithm();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void makeContrastBox() {
-        try {
-            contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
-            setBox.getChildren().addAll(contrastABox);
-
-            checkContrastAlgorithm();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void makeConvolutionBox() {
-        stringLabel.setText(message("ConvolutionKernel"));
-        kernel = null;
-        synchronized (this) {
-            if (task != null && !task.isQuit() ) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                @Override
-                protected boolean handle() {
-                    if (kernels == null) {
-                        kernels = TableConvolutionKernel.read();
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    try {
-                        loadKernelsList(kernels);
-                        numberBoxListener = new ChangeListener<Number>() {
-                            @Override
-                            public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                                int index = newValue.intValue();
-                                if (index < 0 || index >= kernels.size()) {
-                                    kernel = null;
-                                    FxmlControl.setEditorBadStyle(stringSelector);
-                                    return;
-                                }
-                                kernel = kernels.get(index);
-                                FxmlControl.setEditorNormal(stringSelector);
-                            }
-                        };
-                        stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
-
-                        manageView.setImage(new Image(ControlStyle.getIcon("iconSetting.png")));
-                        manageView.setFitWidth(20);
-                        manageView.setFitHeight(20);
-                        button.setGraphic(manageView);
-                        button.setText("");
-                        FxmlControl.setTooltip(button, new Tooltip(message("ManageDot")));
-                        button.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent event) {
-                                BaseController c = openStage(CommonValues.ConvolutionKernelManagerFxml);
-                                c.setParentController(myController);
-                                c.setParentFxml(myFxml);
-                            }
-                        });
-
-                        setBox.getChildren().addAll(stringSelectorPane, button);
-                        okButton.disableProperty().bind(stringSelector.getEditor().styleProperty().isEqualTo(badStyle));
-
-                        if (loadedKernel != null) {
-                            kernel = loadedKernel;
-                            stringSelector.getSelectionModel().select(kernel.getName());
-                            okAction();
-                        }
-                    } catch (Exception e) {
-                        logger.error(e.toString());
-                    }
-                }
-            };
-            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    protected void checkSmoothAlgorithm() {
-        try {
-            RadioButton selected = (RadioButton) blurGroup.getSelectedToggle();
-            String name = selected.getText();
-            for (SmoothAlgorithm a : SmoothAlgorithm.values()) {
-                if (message(a.name()).equals(name)) {
-                    smoothAlgorithm = a;
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            smoothAlgorithm = SmoothAlgorithm.AverageBlur;
-        }
-
-    }
-
-    protected void checkSharpenAlgorithm() {
-        try {
-            RadioButton selected = (RadioButton) sharpenGroup.getSelectedToggle();
-            String name = selected.getText();
-            for (SharpenAlgorithm a : SharpenAlgorithm.values()) {
-                if (message(a.name()).equals(name)) {
-                    sharpenAlgorithm = a;
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            sharpenAlgorithm = SharpenAlgorithm.UnsharpMasking;
-        }
-        intSelector.setDisable(sharpenAlgorithm != SharpenAlgorithm.UnsharpMasking);
-    }
-
-    protected void checkContrastAlgorithm() {
-        try {
-            RadioButton selected = (RadioButton) contrastGroup.getSelectedToggle();
-            String name = selected.getText();
-            if (setBox.getChildren() != null) {
-                if (setBox.getChildren().contains(intInput1Pane)) {
-                    setBox.getChildren().removeAll(intInput1Pane);
-                }
-                if (setBox.getChildren().contains(intInput2Pane)) {
-                    setBox.getChildren().removeAll(intInput2Pane);
-                }
-            }
-            okButton.disableProperty().unbind();
-            if (message("GrayHistogramEqualization").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Equalization;
-
-            } else if (message("GrayHistogramStretching").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Stretching;
-                intPara1 = 100;
-                intLabel1.setText(message("LeftThreshold"));
-                intInput1.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable,
-                            String oldValue, String newValue) {
-                        try {
-                            int v = Integer.valueOf(intInput1.getText());
-                            if (v >= 0) {
-                                intPara1 = v;
-                                intInput1.setStyle(null);
-                            } else {
-                                intInput1.setStyle(badStyle);
-                            }
-                        } catch (Exception e) {
-                            intInput1.setStyle(badStyle);
-                        }
-                    }
-                });
-                intInput1.setText("100");
-
-                intPara2 = 100;
-                intLabel2.setText(message("RightThreshold"));
-                intInput2.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable,
-                            String oldValue, String newValue) {
-                        try {
-                            int v = Integer.valueOf(intInput2.getText());
-                            if (v >= 0) {
-                                intPara2 = v;
-                                intInput2.setStyle(null);
-                            } else {
-                                intInput2.setStyle(badStyle);
-                            }
-                        } catch (Exception e) {
-                            intInput2.setStyle(badStyle);
-                        }
-                    }
-                });
-                intInput2.setPrefWidth(100);
-                intInput2.setText("100");
-
-                setBox.getChildren().addAll(intInput1Pane, intInput2Pane);
-                okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(badStyle)
-                        .or(intInput2.styleProperty().isEqualTo(badStyle))
-                );
-
-            } else if (message("GrayHistogramShifting").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Shifting;
-                intPara1 = 80;
-                intLabel1.setText(message("Offset"));
-                intInput1.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable,
-                            String oldValue, String newValue) {
-                        try {
-                            int v = Integer.valueOf(intInput1.getText());
-                            if (v >= -255 && v <= 255) {
-                                intPara1 = v;
-                                intInput1.setStyle(null);
-                            } else {
-                                intInput1.setStyle(badStyle);
-                                popError("-255 ~ 255");
-                            }
-                        } catch (Exception e) {
-                            intInput1.setStyle(badStyle);
-                            popError("-255 ~ 255");
-                        }
-                    }
-                });
-                intInput1.setText("10");
-                FxmlControl.setTooltip(intInput1, new Tooltip("-255 ~ 255"));
-                setBox.getChildren().addAll(intInput1Pane);
-                okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(badStyle));
-
-            } else if (message("HSBHistogramEqualization").equals(name)) {
-                contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
-
-            }
-
-        } catch (Exception e) {
-            smoothAlgorithm = SmoothAlgorithm.AverageBlur;
-        }
-
-    }
-
-    public void applyKernel(ConvolutionKernel kernel) {
-        loadedKernel = kernel;
-        ConvolutionRadio.fire();
-        checkEnhanceType();
-    }
-
-    public void loadKernelsList(List<ConvolutionKernel> records) {
-        if (enhanceType != OperationType.Convolution || stringSelector == null) {
-            return;
-        }
-        kernels = records;
-        stringSelector.getItems().clear();
-        if (kernels != null && !kernels.isEmpty()) {
-            List<String> names = new ArrayList<>();
-            for (ConvolutionKernel k : kernels) {
-                names.add(k.getName());
-            }
-            stringSelector.getItems().addAll(names);
-            stringSelector.getSelectionModel().select(0);
-            FxmlControl.setEditorNormal(stringSelector);
-        } else {
-            FxmlControl.setEditorBadStyle(stringSelector);
-        }
+        optionsController.checkEnhanceType();
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (imageController == null || enhanceType == null) {
+        if (imageController == null || optionsController.enhanceType == null) {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -544,64 +79,64 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                 @Override
                 protected boolean handle() {
                     ImageConvolution imageConvolution;
-                    switch (enhanceType) {
+                    switch (optionsController.enhanceType) {
                         case Contrast:
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(), contrastAlgorithm);
-                            imageContrast.setIntPara1(intPara1);
-                            imageContrast.setIntPara2(intPara2);
+                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(), optionsController.contrastAlgorithm);
+                            imageContrast.setIntPara1(optionsController.intPara1);
+                            imageContrast.setIntPara2(optionsController.intPara2);
                             newImage = imageContrast.operateFxImage();
                             break;
                         case Convolution:
-                            if (kernel == null) {
-                                int index = stringSelector.getSelectionModel().getSelectedIndex();
-                                if (kernels == null || kernels.isEmpty() || index < 0) {
+                            if (optionsController.kernel == null) {
+                                int index = optionsController.stringSelector.getSelectionModel().getSelectedIndex();
+                                if (optionsController.kernels == null || optionsController.kernels.isEmpty() || index < 0) {
                                     return false;
                                 }
-                                kernel = kernels.get(index);
+                                optionsController.kernel = optionsController.kernels.get(index);
                             }
                             imageConvolution = ImageConvolution.create().
                                     setImage(imageView.getImage()).setScope(scopeController.scope).
-                                    setKernel(kernel);
+                                    setKernel(optionsController.kernel);
                             newImage = imageConvolution.operateFxImage();
-                            loadedKernel = null;
+                            optionsController.loadedKernel = null;
                             break;
                         case Smooth:
-                            switch (smoothAlgorithm) {
+                            switch (optionsController.smoothAlgorithm) {
                                 case AverageBlur:
-                                    kernel = ConvolutionKernel.makeAverageBlur(intPara1);
+                                    optionsController.kernel = ConvolutionKernel.makeAverageBlur(optionsController.intPara1);
                                     break;
                                 case GaussianBlur:
-                                    kernel = ConvolutionKernel.makeGaussBlur(intPara1);
+                                    optionsController.kernel = ConvolutionKernel.makeGaussBlur(optionsController.intPara1);
                                     break;
                                 case MotionBlur:
-                                    kernel = ConvolutionKernel.makeMotionBlur(intPara1);
+                                    optionsController.kernel = ConvolutionKernel.makeMotionBlur(optionsController.intPara1);
                                     break;
                                 default:
                                     return false;
                             }
                             imageConvolution = ImageConvolution.create().
                                     setImage(imageView.getImage()).setScope(scopeController.scope).
-                                    setKernel(kernel);
+                                    setKernel(optionsController.kernel);
                             newImage = imageConvolution.operateFxImage();
-                            value = intPara1 + "";
+                            value = optionsController.intPara1 + "";
                             break;
                         case Sharpen:
-                            switch (sharpenAlgorithm) {
+                            switch (optionsController.sharpenAlgorithm) {
                                 case EightNeighborLaplace:
-                                    kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
+                                    optionsController.kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                                     break;
                                 case FourNeighborLaplace:
-                                    kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+                                    optionsController.kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                                     break;
                                 case UnsharpMasking:
-                                    kernel = ConvolutionKernel.makeUnsharpMasking(intPara1);
+                                    optionsController.kernel = ConvolutionKernel.makeUnsharpMasking(optionsController.intPara1);
                                     break;
                                 default:
                                     return false;
                             }
                             imageConvolution = ImageConvolution.create().
                                     setImage(imageView.getImage()).setScope(scopeController.scope).
-                                    setKernel(kernel);
+                                    setKernel(optionsController.kernel);
                             newImage = imageConvolution.operateFxImage();
                             break;
                         default:
@@ -616,11 +151,12 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                 @Override
                 protected void whenSucceeded() {
                     imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Effects, enhanceType.name(), value, newImage, cost);
+                    imageController.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -766,7 +302,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                                     = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     }
                 });

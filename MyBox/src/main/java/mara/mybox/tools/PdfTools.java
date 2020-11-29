@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.WeiboSnapParameters;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageBinary;
@@ -20,7 +21,6 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -103,7 +103,7 @@ public class PdfTools {
             document.save(file);
             targetDoc = document;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return targetDoc;
     }
@@ -116,7 +116,7 @@ public class PdfTools {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -210,13 +210,13 @@ public class PdfTools {
                         content.showText(header.trim());
                         content.endText();
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                 }
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -290,7 +290,7 @@ public class PdfTools {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -357,7 +357,7 @@ public class PdfTools {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -387,7 +387,7 @@ public class PdfTools {
                     bufferedImage = ImageFileReaders.readImage(file);
                     imageInPdf(document, bufferedImage, p, ++count, total, font);
                     if (deleteFiles) {
-                        file.delete();
+                        FileTools.delete(file);
                     }
                 }
 
@@ -406,7 +406,7 @@ public class PdfTools {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -474,12 +474,12 @@ public class PdfTools {
                     return PDType1Font.TIMES_ROMAN;
             }
             if (fontFile != null) {
-//                logger.debug(fontFile);
+//                MyBoxLog.debug(fontFile);
                 font = PDType0Font.load(document, new File(fontFile));
             }
         } catch (Exception e) {
         }
-//        logger.debug(font.getName());
+//        MyBoxLog.debug(font.getName());
         return font;
     }
 
@@ -570,17 +570,9 @@ public class PdfTools {
                 document.save(tmpFile);
                 document.close();
             }
-            try {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                tmpFile.renameTo(targetFile);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+            return FileTools.rename(tmpFile, targetFile);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -626,7 +618,7 @@ public class PdfTools {
                 return image;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -668,7 +660,7 @@ public class PdfTools {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }

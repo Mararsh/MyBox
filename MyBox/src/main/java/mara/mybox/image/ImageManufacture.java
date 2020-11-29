@@ -35,12 +35,12 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageCombine.CombineSizeType;
 import mara.mybox.image.ImageMosaic.MosaicType;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.SystemTools;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -134,7 +134,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -157,7 +157,7 @@ public class ImageManufacture {
             return new BufferedImage(cm, source.copyData(null), cm.isAlphaPremultiplied(), properties)
                     .getSubimage(0, 0, source.getWidth(), source.getHeight());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -357,7 +357,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -394,7 +394,7 @@ public class ImageManufacture {
             }
             g.setTransform(saveAT);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -423,7 +423,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -457,7 +457,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -549,7 +549,7 @@ public class ImageManufacture {
 
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -606,7 +606,7 @@ public class ImageManufacture {
 
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -696,7 +696,7 @@ public class ImageManufacture {
             BufferedImage target = cropOutside(source, left, top, right, bottom);
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -727,7 +727,7 @@ public class ImageManufacture {
             }
             return cropOutside(source, x1, y1, x2, y2);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -771,7 +771,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -825,7 +825,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -876,7 +876,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -946,7 +946,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -973,7 +973,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1005,7 +1005,7 @@ public class ImageManufacture {
             target = ImageManufacture.cutMargins(target, bgColor, true, true, true, true);
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1071,7 +1071,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1100,7 +1100,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1134,7 +1134,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1167,7 +1167,7 @@ public class ImageManufacture {
 
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1182,7 +1182,7 @@ public class ImageManufacture {
             bufferedImage = scaleImage(bufferedImage, width, height);
             return bufferedImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1196,25 +1196,24 @@ public class ImageManufacture {
     }
 
     public static javafx.scene.image.Image combineSingleColumn(ImageCombine imageCombine,
-            List<ImageInformation> images, boolean isPart, boolean careTotal) {
-        if (imageCombine == null || images == null) {
+            List<ImageInformation> imageInfos, boolean isPart, boolean careTotal) {
+        if (imageCombine == null || imageInfos == null) {
             return null;
         }
         try {
-            int x = imageCombine.getMarginsValue(), y = imageCombine.getMarginsValue(), imageWidth, imageHeight;
+            int x = imageCombine.getMarginsValue(), y = x, imageWidth, imageHeight;
             int totalWidth = 0, totalHeight = 0, maxWidth = 0, minWidth = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
             if (sizeType == CombineSizeType.AlignAsBigger) {
-                for (ImageInformation image : images) {
-                    imageWidth = (int) image.loadImage().getWidth();
+                for (ImageInformation imageInfo : imageInfos) {
+                    imageWidth = imageInfo.getWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
                     }
                 }
-            }
-            if (sizeType == CombineSizeType.AlignAsSmaller) {
-                for (ImageInformation image : images) {
-                    imageWidth = (int) image.loadImage().getWidth();
+            } else if (sizeType == CombineSizeType.AlignAsSmaller) {
+                for (ImageInformation imageInfo : imageInfos) {
+                    imageWidth = imageInfo.getWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
                     }
@@ -1224,11 +1223,9 @@ public class ImageManufacture {
             List<Integer> ys = new ArrayList<>();
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
-            for (int i = 0; i < images.size(); ++i) {
-                ImageInformation imageInfo = images.get(i);
-                javafx.scene.image.Image image = imageInfo.loadImage();
-                imageWidth = (int) image.getWidth();
-                imageHeight = (int) image.getHeight();
+            for (ImageInformation imageInfo : imageInfos) {
+                imageWidth = imageInfo.getWidth();
+                imageHeight = imageInfo.getHeight();
                 if (sizeType == CombineSizeType.KeepSize
                         || sizeType == CombineSizeType.TotalWidth
                         || sizeType == CombineSizeType.TotalHeight) {
@@ -1267,7 +1264,7 @@ public class ImageManufacture {
             totalWidth += 2 * imageCombine.getMarginsValue();
             totalHeight = y + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
 
-            javafx.scene.image.Image newImage = combineImages(images, totalWidth, totalHeight,
+            javafx.scene.image.Image newImage = combineImages(imageInfos, totalWidth, totalHeight,
                     FxmlImageManufacture.toAwtColor(imageCombine.getBgColor()),
                     xs, ys, widths, heights,
                     imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
@@ -1276,7 +1273,7 @@ public class ImageManufacture {
 
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1295,15 +1292,15 @@ public class ImageManufacture {
                 y = 0;
             }
             if (sizeType == CombineSizeType.AlignAsBigger) {
-                for (ImageInformation image : images) {
-                    imageHeight = (int) image.loadImage().getHeight();
+                for (ImageInformation imageInfo : images) {
+                    imageHeight = imageInfo.getHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
                     }
                 }
             } else if (sizeType == CombineSizeType.AlignAsSmaller) {
-                for (ImageInformation image : images) {
-                    imageHeight = (int) image.loadImage().getHeight();
+                for (ImageInformation imageInfo : images) {
+                    imageHeight = imageInfo.getHeight();
                     if (imageHeight < minHeight) {
                         minHeight = imageHeight;
                     }
@@ -1313,11 +1310,9 @@ public class ImageManufacture {
             List<Integer> ys = new ArrayList<>();
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
-            for (int i = 0; i < images.size(); ++i) {
-                ImageInformation imageInfo = images.get(i);
-                javafx.scene.image.Image image = imageInfo.loadImage();
-                imageWidth = (int) image.getWidth();
-                imageHeight = (int) image.getHeight();
+            for (ImageInformation imageInfo : images) {
+                imageWidth = imageInfo.getWidth();
+                imageHeight = imageInfo.getHeight();
                 if (sizeType == CombineSizeType.KeepSize
                         || sizeType == CombineSizeType.TotalWidth
                         || sizeType == CombineSizeType.TotalHeight) {
@@ -1362,19 +1357,18 @@ public class ImageManufacture {
 
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
 
     public static javafx.scene.image.Image combineImages(
-            List<ImageInformation> images,
+            List<ImageInformation> imageInfos,
             int totalWidth, int totalHeight, Color bgColor,
-            List<Integer> xs, List<Integer> ys, List<Integer> widths,
-            List<Integer> heights,
+            List<Integer> xs, List<Integer> ys, List<Integer> widths, List<Integer> heights,
             int trueTotalWidth, int trueTotalHeight,
             boolean isTotalWidth, boolean isTotalHeight) {
-        if (images == null || xs == null || ys == null || widths == null || heights == null) {
+        if (imageInfos == null || xs == null || ys == null || widths == null || heights == null) {
             return null;
         }
         try {
@@ -1385,8 +1379,8 @@ public class ImageManufacture {
             g.setColor(bgColor);
             g.fillRect(0, 0, totalWidth, totalHeight);
 
-            for (int i = 0; i < images.size(); ++i) {
-                ImageInformation imageInfo = images.get(i);
+            for (int i = 0; i < imageInfos.size(); ++i) {
+                ImageInformation imageInfo = imageInfos.get(i);
                 javafx.scene.image.Image image = imageInfo.loadImage();
                 BufferedImage source = SwingFXUtils.fromFXImage(image, null);
                 g.drawImage(source, xs.get(i), ys.get(i), widths.get(i), heights.get(i), null);
@@ -1401,7 +1395,7 @@ public class ImageManufacture {
             javafx.scene.image.Image newImage = SwingFXUtils.toFXImage(target, null);
             return newImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1466,7 +1460,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1521,7 +1515,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1577,7 +1571,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1629,7 +1623,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1672,7 +1666,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1723,7 +1717,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1779,7 +1773,7 @@ public class ImageManufacture {
             g.dispose();
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1851,17 +1845,16 @@ public class ImageManufacture {
             gt.drawImage(source, 0, 0, width, height, null);
             gt.dispose();
             List<Line> dlines = penData.directLines();
-            logger.debug(dlines.size());
             int pixel;
             for (Line line : dlines) {
                 int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
                 int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
                 int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));
                 int y2 = Math.min(height, Math.max(0, (int) line.getEndY()));
-//                logger.debug(x1 + "," + y1 + "    " + x2 + "," + y2);
+//                MyBoxLog.debug(x1 + "," + y1 + "    " + x2 + "," + y2);
                 if (x1 == x2) {
                     if (y2 > y1) {
-//                        logger.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
+//                        MyBoxLog.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
                         for (int x = Math.max(0, x1 - strokeWidth);
                                 x <= Math.min(width, x1 + strokeWidth); x++) {
 
@@ -1872,7 +1865,7 @@ public class ImageManufacture {
                             }
                         }
                     } else {
-//                        logger.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
+//                        MyBoxLog.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
                         for (int x = Math.max(0, x1 - strokeWidth);
                                 x <= Math.min(width, x1 + strokeWidth); x++) {
                             for (int y = y2; y <= y1; y++) {
@@ -1883,11 +1876,11 @@ public class ImageManufacture {
                     }
 
                 } else if (x2 > x1) {
-//                    logger.debug(x1 + "," + x2);
+//                    MyBoxLog.debug(x1 + "," + x2);
                     for (int x = x1; x <= x2; x++) {
                         int y0 = (x - x1) * (y2 - y1) / (x2 - x1) + y1;
                         int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
-//                        logger.debug(y0 + "," + offset);
+//                        MyBoxLog.debug(y0 + "," + offset);
                         for (int y = Math.max(0, y0 - offset);
                                 y <= Math.min(height, y0 + offset); y++) {
                             pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
@@ -1896,11 +1889,11 @@ public class ImageManufacture {
                     }
 
                 } else {
-//                    logger.debug(x2 + "," + x1);
+//                    MyBoxLog.debug(x2 + "," + x1);
                     for (int x = x2; x <= x1; x++) {
                         int y0 = (x - x2) * (y1 - y2) / (x1 - x2) + y2;
                         int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
-//                        logger.debug(y0 + "," + offset);
+//                        MyBoxLog.debug(y0 + "," + offset);
                         for (int y = Math.max(0, y0 - offset);
                                 y <= Math.min(height, y0 + offset); y++) {
                             pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
@@ -1924,7 +1917,7 @@ public class ImageManufacture {
 //            }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -1958,7 +1951,7 @@ public class ImageManufacture {
             bfs[1] = alphaImage;
             return bfs;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1983,7 +1976,7 @@ public class ImageManufacture {
             }
             return alphaImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2043,7 +2036,7 @@ public class ImageManufacture {
             ret[1] = target;
             return ret;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2084,7 +2077,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2114,7 +2107,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2151,7 +2144,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -2170,7 +2163,7 @@ public class ImageManufacture {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return source;
         }
     }
@@ -2212,7 +2205,7 @@ public class ImageManufacture {
 
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return backImage;
         }
     }
@@ -2258,7 +2251,7 @@ public class ImageManufacture {
 
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return backImage;
         }
     }
@@ -2301,7 +2294,7 @@ public class ImageManufacture {
 
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return backImage;
         }
     }

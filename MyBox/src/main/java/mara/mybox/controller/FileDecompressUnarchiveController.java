@@ -12,7 +12,7 @@ import javafx.stage.Modality;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -119,7 +119,7 @@ public class FileDecompressUnarchiveController extends BaseController {
             sourceFile = file;
             readFile();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

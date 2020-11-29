@@ -23,7 +23,7 @@ import mara.mybox.data.GeographyCode;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -115,7 +115,7 @@ public class EpidemicReportsSettingsController extends BaseController {
             widthSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportSnapWidth", "800"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -182,7 +182,7 @@ public class EpidemicReportsSettingsController extends BaseController {
                 locationColorsBox.getChildren().add(line);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -343,7 +343,7 @@ public class EpidemicReportsSettingsController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -357,7 +357,7 @@ public class EpidemicReportsSettingsController extends BaseController {
             Color color = Color.web(AppVariables.getUserConfigValue(controllerName, Color.GREY.toString()));
             return FxmlColor.color2rgb(color);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

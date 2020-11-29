@@ -11,9 +11,9 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -60,7 +60,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
             targetFileInput = targetFileController.fileInput;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -73,7 +73,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
             }
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
         return super.makeMoreParameters();
@@ -90,7 +90,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
             writer.write(text + "\n");
             return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -107,14 +107,14 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
                 for (int i = sources.size() - 1; i >= 0; --i) {
                     try {
                         FileInformation source = sources.get(i);
-                        source.getFile().delete();
+                        FileTools.delete(source.getFile());
                         tableData.remove(i);
                     } catch (Exception e) {
                     }
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

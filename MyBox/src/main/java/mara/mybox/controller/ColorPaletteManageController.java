@@ -30,14 +30,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+import mara.mybox.data.BaseTask;
 import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.TableColorData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageColor;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -79,7 +82,7 @@ public class ColorPaletteManageController extends BaseController {
     protected TextField nameInput;
 
     public ColorPaletteManageController() {
-        baseTitle = AppVariables.message("ColorPalette");
+        baseTitle = AppVariables.message("ColorPaletteManage");
     }
 
     @Override
@@ -111,7 +114,7 @@ public class ColorPaletteManageController extends BaseController {
             htmlButton.disableProperty().bind(Bindings.isEmpty(colorsPane.getChildren()));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -140,7 +143,7 @@ public class ColorPaletteManageController extends BaseController {
             myStage.setHeight(baseHeight + scrollPane.getHeight());
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -148,10 +151,7 @@ public class ColorPaletteManageController extends BaseController {
     public void load() {
         colorsPane.getChildren().clear();
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
+            BaseTask loadTask = new BaseTask<Void>() {
 
                 protected List<ColorData> colors;
 
@@ -168,15 +168,16 @@ public class ColorPaletteManageController extends BaseController {
                         try {
                             addColor(data, false);
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     }
                     isSettingValues = false;
                     updateSizeLabel();
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            openHandlingStage(loadTask, Modality.WINDOW_MODAL);
+            loadTask.setSelf(loadTask);
+            Thread thread = new Thread(loadTask);
             thread.setDaemon(true);
             thread.start();
         }
@@ -303,7 +304,7 @@ public class ColorPaletteManageController extends BaseController {
                         nameInput.setText(sourceData.getColorName());
                         selectedArea.setText(sourceData.display());
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     isSettingValues = false;
 
@@ -331,7 +332,7 @@ public class ColorPaletteManageController extends BaseController {
                         dragboard.setContent(content);
                         event.consume();
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             });
@@ -343,7 +344,7 @@ public class ColorPaletteManageController extends BaseController {
                         event.acceptTransferModes(TransferMode.ANY);
                         event.consume();
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             });
@@ -358,7 +359,7 @@ public class ColorPaletteManageController extends BaseController {
                         int targetIndex = findIndex(color);
                         nodes.add(targetIndex + 1, source);
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     event.setDropCompleted(true);
                     event.consume();
@@ -421,7 +422,7 @@ public class ColorPaletteManageController extends BaseController {
     @Override
     public void saveAction() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -445,7 +446,8 @@ public class ColorPaletteManageController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -475,7 +477,7 @@ public class ColorPaletteManageController extends BaseController {
             updateSizeLabel();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -492,7 +494,7 @@ public class ColorPaletteManageController extends BaseController {
             TableColorData.clearPalette();
             updateSizeLabel();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -547,13 +549,67 @@ public class ColorPaletteManageController extends BaseController {
             table.editHtml();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
     public void dataAction() {
-        openStage(CommonValues.ManageColorsFxml);
+        ColorsManageController.oneOpen();
+    }
+
+    public boolean addData(List<ColorData> data) {
+        List<Color> palette = new ArrayList<>();
+        for (Node node : colorsPane.getChildren()) {
+            Rectangle rect = (Rectangle) node;
+            palette.add((Color) rect.getFill());
+        }
+        List<ColorData> newColors = new ArrayList<>();
+        for (ColorData color : data) {
+            if (!palette.contains(color.getColor())) {
+                newColors.add(color);
+            }
+        }
+        TableColorData.addDataInPalette(newColors, true);
+        Platform.runLater(() -> {
+            load();
+        });
+        return true;
+    }
+
+    public void addColors(List<Color> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+        synchronized (this) {
+            BaseTask addTask = new BaseTask<Void>() {
+                @Override
+                protected boolean handle() {
+                    List<Color> palette = new ArrayList<>();
+                    for (Node node : colorsPane.getChildren()) {
+                        Rectangle rect = (Rectangle) node;
+                        palette.add((Color) rect.getFill());
+                    }
+                    List<Color> newColors = new ArrayList<>();
+                    for (Color color : data) {
+                        if (!palette.contains(color)) {
+                            newColors.add(color);
+                        }
+                    }
+                    return TableColorData.addColorsInPalette(newColors);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    load();
+                }
+            };
+            addTask.setSelf(addTask);
+            Thread thread = new Thread(addTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
     }
 
     @FXML
@@ -583,6 +639,24 @@ public class ColorPaletteManageController extends BaseController {
             }
         }
         return true;
+    }
+
+    public static ColorPaletteManageController oneOpen() {
+        ColorPaletteManageController controller = null;
+        Stage stage = FxmlStage.findStage(message("ColorPaletteManage"));
+        if (stage != null && stage.getUserData() != null) {
+            try {
+                controller = (ColorPaletteManageController) stage.getUserData();
+            } catch (Exception e) {
+            }
+        }
+        if (controller == null) {
+            controller = (ColorPaletteManageController) FxmlStage.openStage(CommonValues.ColorPaletteManageFxml);
+        }
+        if (controller != null) {
+            controller.getMyStage().toFront();
+        }
+        return controller;
     }
 
 }

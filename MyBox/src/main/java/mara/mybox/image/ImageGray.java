@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -69,7 +69,7 @@ public class ImageGray extends PixelsOperation {
             graphics.drawImage(image, 0, 0, null);
             return grayImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
     }
@@ -86,7 +86,7 @@ public class ImageGray extends PixelsOperation {
             }
             return grayImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
     }
@@ -97,7 +97,7 @@ public class ImageGray extends PixelsOperation {
             bm = intGray(bm);
             return SwingFXUtils.toFXImage(bm, null);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
     }

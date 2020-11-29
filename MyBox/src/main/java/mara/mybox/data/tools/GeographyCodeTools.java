@@ -41,7 +41,7 @@ import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
@@ -100,7 +100,7 @@ public class GeographyCodeTools {
                         final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(jsonFile))) {
                     byte[] buf = new byte[CommonValues.IOBufferLength];
                     int len;
-                    while ((len = inStream.read(buf)) != -1) {
+                    while ((len = inStream.read(buf)) > 0) {
                         outputStream.write(buf, 0, len);
                     }
                 }
@@ -204,12 +204,12 @@ public class GeographyCodeTools {
                     final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(jsonFile))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = inStream.read(buf)) != -1) {
+                while ((len = inStream.read(buf)) > 0) {
                     outputStream.write(buf, 0, len);
                 }
             }
             String data = FileTools.readTexts(jsonFile);
-//            logger.debug(data);
+//            MyBoxLog.debug(data);
             String flag = "\"formatted_address\":\"";
             int pos = data.indexOf(flag);
             if (pos >= 0) {
@@ -391,7 +391,7 @@ public class GeographyCodeTools {
             }
             return geographyCode;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -416,11 +416,11 @@ public class GeographyCodeTools {
                     final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(xmlFile))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = inStream.read(buf)) != -1) {
+                while ((len = inStream.read(buf)) > 0) {
                     outputStream.write(buf, 0, len);
                 }
             }
-//            logger.debug(FileTools.readTexts(xmlFile));
+//            MyBoxLog.debug(FileTools.readTexts(xmlFile));
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("formatted_address");
             if (nodes != null && nodes.getLength() > 0) {
@@ -564,7 +564,7 @@ public class GeographyCodeTools {
             }
             return geographyCode;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -577,7 +577,7 @@ public class GeographyCodeTools {
                  PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
             return encode(conn, geoInsert, code, true);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return null;
     }
@@ -596,14 +596,14 @@ public class GeographyCodeTools {
                     code.getName(), true, decodeAncestors);
             conn.commit();
 //            if (codeRet.get("message") != null) {
-//                logger.error((String) codeRet.get("message"));
+//                MyBoxLog.error((String) codeRet.get("message"));
 //            }
             if (codeRet.get("code") != null) {
                 GeographyCode encoded = (GeographyCode) codeRet.get("code");
                 return encoded;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return null;
     }
@@ -1201,7 +1201,7 @@ public class GeographyCodeTools {
             ret.put("code", poiCode);
             return ret;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             ret.put("message", e.toString());
             return ret;
         }
@@ -1223,7 +1223,7 @@ public class GeographyCodeTools {
             try (final Connection conn1 = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login)) {
                 importPredefined(conn1, loading);
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
             return;
         }
@@ -1238,7 +1238,7 @@ public class GeographyCodeTools {
                     String sql = "UPDATE Geography_Code SET comments=null WHERE level=3 AND predefined=1";
                     conn.prepareStatement(sql).executeUpdate();
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
             }
             file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_provinces_internal.csv", "data", "Geography_Code_china_provinces_internal.csv", true);
@@ -1251,7 +1251,7 @@ public class GeographyCodeTools {
             importInternalCSV(conn, loading, file, true);
             conn.commit();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             if (loading != null) {
                 loading.setInfo(e.toString());
             }
@@ -1264,7 +1264,7 @@ public class GeographyCodeTools {
         try (final Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login)) {
             importInternalCSV(conn, loading, file, predefined);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1331,7 +1331,7 @@ public class GeographyCodeTools {
                 conn.commit();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1346,7 +1346,7 @@ public class GeographyCodeTools {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return codes;
     }
@@ -1477,7 +1477,7 @@ public class GeographyCodeTools {
             }
             return code;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1800,7 +1800,7 @@ public class GeographyCodeTools {
             }
             return code;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1828,13 +1828,13 @@ public class GeographyCodeTools {
                     code = new GeographyCode();
                     code.setEnglishName(country);
                     code.setLevelCode(new GeographyCodeLevel(3));
-                    logger.debug(record.get("ISO-3166-alpha3") + " " + country + " " + record.get("Area") + " " + record.get("Population") + " " + record.get("Continent"));
+                    MyBoxLog.debug(record.get("ISO-3166-alpha3") + " " + country + " " + record.get("Area") + " " + record.get("Population") + " " + record.get("Continent"));
                 } else {
                     if (code.getEnglishName() == null) {
                         code.setEnglishName(country);
-                        logger.debug(code.getChineseName() + " " + country);
+                        MyBoxLog.debug(code.getChineseName() + " " + country);
                     } else if (!code.getEnglishName().equals(country)) {
-                        logger.debug(code.getChineseName() + " " + code.getEnglishName() + " " + country);
+                        MyBoxLog.debug(code.getChineseName() + " " + code.getEnglishName() + " " + country);
                         if (code.getAlias1() == null || code.getAlias1().equals(country)) {
                             code.setAlias1(country);
                         } else if (code.getAlias2() == null || code.getAlias2().equals(country)) {
@@ -1861,7 +1861,7 @@ public class GeographyCodeTools {
             List<GeographyCode> codes = TableGeographyCode.queryCodes(conn, sql, false);
             writeInternalCSV(new File("D:\\tmp\\1\\Geography_Code_countries_internal.csv"), codes);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1887,7 +1887,7 @@ public class GeographyCodeTools {
                     //                    encode = new GeographyCode();
                     //                    encode.setEnglishName(country);
                     //                    encode.setLevel(new GeographyCodeLevel(3));
-                    logger.debug(city + " " + longitude + " " + latitude);
+                    MyBoxLog.debug(city + " " + longitude + " " + latitude);
                 } else {
                     code.setLongitude(longitude);
                     code.setLatitude(latitude);
@@ -1895,7 +1895,7 @@ public class GeographyCodeTools {
                     code.setCode2(record.get("code2"));
                     code.setCode3(record.get("code3"));
                     TableGeographyCode.write(conn, code);
-                    //                    logger.debug(country + " " + encode.getLongitude() + " " + encode.getLatitude() + " " + longitude + " " + latitude);
+                    //                    MyBoxLog.debug(country + " " + encode.getLongitude() + " " + encode.getLatitude() + " " + longitude + " " + latitude);
                 }
             }
             conn.commit();
@@ -1903,7 +1903,7 @@ public class GeographyCodeTools {
             List<GeographyCode> codes = TableGeographyCode.queryCodes(conn, sql, false);
             writeInternalCSV(new File("D:\\tmp\\1\\Geography_Code_china_cities_internal.csv"), codes);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1929,12 +1929,12 @@ public class GeographyCodeTools {
                     //                    encode = new GeographyCode();
                     //                    encode.setEnglishName(country);
                     //                    encode.setLevel(new GeographyCodeLevel(3));
-                    logger.debug(country + " " + longitude + " " + latitude);
+                    MyBoxLog.debug(country + " " + longitude + " " + latitude);
                 } else {
                     code.setLongitude(DoubleTools.scale(longitude, 6));
                     code.setLatitude(DoubleTools.scale(latitude, 6));
                     TableGeographyCode.write(conn, code);
-                    //                    logger.debug(country + " " + encode.getLongitude() + " " + encode.getLatitude() + " " + longitude + " " + latitude);
+                    //                    MyBoxLog.debug(country + " " + encode.getLongitude() + " " + encode.getLatitude() + " " + longitude + " " + latitude);
                 }
             }
             conn.commit();
@@ -1942,7 +1942,7 @@ public class GeographyCodeTools {
             List<GeographyCode> codes = TableGeographyCode.queryCodes(conn, sql, false);
             writeInternalCSV(new File("D:\\tmp\\1\\Geography_Code_countries_internal.csv"), codes);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1968,7 +1968,7 @@ public class GeographyCodeTools {
             sql = "SELECT * FROM Geography_Code WHERE level=6 AND country=100 ORDER BY gcid";
             writeInternalCSV(conn, file, sql);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1979,7 +1979,7 @@ public class GeographyCodeTools {
                     "area", "population", "owner", "continentid", "countryid", "provinceid", "cityid",
                     "countyid", "townid", "villageid", "buildingid", "comments");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1988,7 +1988,7 @@ public class GeographyCodeTools {
             conn.setReadOnly(true);
             writeInternalCSV(conn, file, sql);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -2002,7 +2002,7 @@ public class GeographyCodeTools {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -2020,7 +2020,7 @@ public class GeographyCodeTools {
                 writeInternalCSV(printer, code);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -2056,7 +2056,7 @@ public class GeographyCodeTools {
                     code.getBuilding() > 0 ? code.getBuilding() : "",
                     code.getComments() == null ? "" : code.getComments());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -2100,7 +2100,7 @@ public class GeographyCodeTools {
         try {
             printer.printRecord(new TableGeographyCode().importAllFields());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -2118,7 +2118,7 @@ public class GeographyCodeTools {
                 writeExternalCSV(printer, code);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -2126,7 +2126,7 @@ public class GeographyCodeTools {
         try {
             printer.printRecord(GeographyCodeTools.externalValues(code));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -2210,7 +2210,7 @@ public class GeographyCodeTools {
             }
             writer.write("]}\n");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2304,7 +2304,7 @@ public class GeographyCodeTools {
             }
             return s;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2323,7 +2323,7 @@ public class GeographyCodeTools {
             }
             writer.write("</GeographyCodes>\n");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2418,7 +2418,7 @@ public class GeographyCodeTools {
             s.append(" />\n");
             writer.write(s.toString());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2650,7 +2650,7 @@ public class GeographyCodeTools {
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(xmlFile))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = inStream.read(buf)) != -1) {
+                while ((len = inStream.read(buf)) > 0) {
                     outputStream.write(buf, 0, len);
                 }
             }

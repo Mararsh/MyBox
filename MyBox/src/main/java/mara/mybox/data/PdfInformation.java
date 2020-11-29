@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -49,7 +49,7 @@ public class PdfInformation extends FileInformation {
             }
             infoLoaded = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -61,7 +61,7 @@ public class PdfInformation extends FileInformation {
             doc = null;
             infoLoaded = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -116,7 +116,7 @@ public class PdfInformation extends FileInformation {
             outline = doc.getDocumentCatalog().getDocumentOutline();
             infoLoaded = true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -129,7 +129,7 @@ public class PdfInformation extends FileInformation {
             loadInformation();
             closeDocument();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

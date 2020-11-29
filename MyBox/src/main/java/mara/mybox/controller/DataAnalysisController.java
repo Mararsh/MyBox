@@ -28,10 +28,10 @@ import mara.mybox.db.ColumnDefinition;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableBase;
 import mara.mybox.db.TableQueryCondition;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -270,7 +270,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -295,7 +295,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             orderByList.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -327,7 +327,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -342,7 +342,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 geoController.loadTree();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -374,7 +374,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -419,7 +419,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             infoView.getEngine().loadContent​(html);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -444,7 +444,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
     @Override
     public int readDataSize() {
-//        logger.debug(sizeQuerySQL);
+//        MyBoxLog.debug(sizeQuerySQL);
         return DerbyBase.size(sizeQuerySQL);
     }
 
@@ -594,7 +594,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -673,7 +673,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -733,7 +733,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         }
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -763,7 +763,8 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -802,7 +803,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -823,7 +824,8 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -920,7 +922,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

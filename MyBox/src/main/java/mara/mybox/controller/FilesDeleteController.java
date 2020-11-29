@@ -6,8 +6,9 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -33,7 +34,7 @@ public class FilesDeleteController extends FilesBatchController {
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -46,7 +47,7 @@ public class FilesDeleteController extends FilesBatchController {
                     Bindings.isEmpty(tableView.getItems())
             );
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -60,7 +61,7 @@ public class FilesDeleteController extends FilesBatchController {
             boolean ok;
             String msg;
             if (deleteRadio.isSelected()) {
-                ok = srcFile.delete();
+                ok = FileTools.delete(srcFile);
                 msg = message("FileDeletedSuccessfully") + ": " + srcFile.getAbsolutePath();
             } else {
                 ok = Desktop.getDesktop().moveToTrash(srcFile);
@@ -75,7 +76,7 @@ public class FilesDeleteController extends FilesBatchController {
                 return AppVariables.message("Failed");
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -96,7 +97,7 @@ public class FilesDeleteController extends FilesBatchController {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -110,7 +111,7 @@ public class FilesDeleteController extends FilesBatchController {
             File[] files = sourcePath.listFiles();
             if (files == null || files.length == 0) {
                 if (deleteRadio.isSelected()) {
-                    if (sourcePath.delete()) {
+                    if (FileTools.deleteDir(sourcePath)) {
                         if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(message("DirectoryDeletedSuccessfully") + ": " + sourcePath.getAbsolutePath());
                         }
@@ -124,7 +125,7 @@ public class FilesDeleteController extends FilesBatchController {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

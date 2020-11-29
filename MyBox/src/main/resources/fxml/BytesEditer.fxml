@@ -57,10 +57,16 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
+                                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                    </image>
+                                                                </ImageView>
                                                             </children>
                                                         </FlowPane>
                                                         <CheckBox fx:id="closeRightPaneCheck" mnemonicParsing="false" text="%CloseRightPane" />
                                                         <Label fx:id="savedLabel" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
+                                                        <Label fx:id="numbersLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -288,11 +294,6 @@ License:    Apache License Version 2.0
                                         <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconDoubleLeft.png" />
-                                            </image>
-                                        </ImageView>
-                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconTips.png" />
                                             </image>
                                         </ImageView>
                                         <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />

@@ -29,7 +29,7 @@ import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -103,7 +103,7 @@ public class BytesEditerController extends FileEditerController {
             checkLineBreakGroup();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -143,7 +143,7 @@ public class BytesEditerController extends FileEditerController {
 
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -399,7 +399,7 @@ public class BytesEditerController extends FileEditerController {
                     browseURI(new URI("https://www.ascii-code.com/"));
 //           browseURI(new URI("https://en.wikipedia.org/wiki/ASCII"));  // this address is unavaliable to someones
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             });
             popMenu.getItems().add(menuItem);
@@ -417,7 +417,7 @@ public class BytesEditerController extends FileEditerController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -456,7 +456,7 @@ public class BytesEditerController extends FileEditerController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -495,7 +495,7 @@ public class BytesEditerController extends FileEditerController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -546,7 +546,7 @@ public class BytesEditerController extends FileEditerController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

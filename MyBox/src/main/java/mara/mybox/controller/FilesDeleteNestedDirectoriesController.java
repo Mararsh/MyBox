@@ -5,7 +5,7 @@ import javafx.scene.control.RadioButton;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -33,7 +33,7 @@ public class FilesDeleteNestedDirectoriesController extends FilesBatchController
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -68,7 +68,7 @@ public class FilesDeleteNestedDirectoriesController extends FilesBatchController
             totalItemsHandled++;
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

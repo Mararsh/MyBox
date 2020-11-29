@@ -18,7 +18,7 @@ import mara.mybox.db.TableStringValues;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -79,7 +79,7 @@ public class ImageClipboard {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return thumbnails;
     }
@@ -126,7 +126,7 @@ public class ImageClipboard {
             return ImageClipboard.create().setInfo(info).setImage(image).setImageFile(imageFile).
                     setThumbnailFile(thumbFile).setThumbnail(thumbImage);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -159,7 +159,7 @@ public class ImageClipboard {
         try {
             return add(SwingFXUtils.fromFXImage(image, null), putSystemClipboard);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -173,7 +173,7 @@ public class ImageClipboard {
             BufferedImage bufferImage = ImageFileReaders.readImage(file);
             return add(bufferImage, true);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -217,7 +217,7 @@ public class ImageClipboard {
 
             return filename + ".png";
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -232,7 +232,7 @@ public class ImageClipboard {
             TableStringValues.clear(TableKey);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

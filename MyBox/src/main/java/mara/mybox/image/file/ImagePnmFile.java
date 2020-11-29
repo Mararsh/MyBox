@@ -15,9 +15,9 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -49,7 +49,7 @@ public class ImagePnmFile {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class ImagePnmFile {
             PNMMetadata metaData = (PNMMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
             return metaData;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -72,25 +72,16 @@ public class ImagePnmFile {
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
-            try {
-                File file = new File(outFile);
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
-
-            return true;
+            File file = new File(outFile);
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -98,14 +89,14 @@ public class ImagePnmFile {
     public static PNMMetadata getPnmMetadata(File file) {
         try {
             PNMImageReader reader = new PNMImageReader(new PNMImageReaderSpi());
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 PNMMetadata metadata = (PNMMetadata) reader.getImageMetadata(0);
                 reader.dispose();
                 return metadata;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

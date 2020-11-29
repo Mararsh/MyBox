@@ -8,13 +8,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -71,7 +71,7 @@ public class PdfImagesConvertBatchController extends PdfBatchController {
                 );
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -102,7 +102,7 @@ public class PdfImagesConvertBatchController extends PdfBatchController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             targetDoc = null;
         }
         return targetDoc != null;
@@ -146,7 +146,7 @@ public class PdfImagesConvertBatchController extends PdfBatchController {
                 targetDoc.addPage(sourcePage);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return count;
 
@@ -169,7 +169,7 @@ public class PdfImagesConvertBatchController extends PdfBatchController {
             }
             return newObject;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -181,14 +181,12 @@ public class PdfImagesConvertBatchController extends PdfBatchController {
                 targetDoc.save(tmpFile);
                 targetDoc.close();
                 File tFile = new File(currentTargetFile);
-                if (tFile.exists()) {
-                    tFile.delete();
+                if (FileTools.rename(tmpFile, tFile)) {
+                    targetFileGenerated(tFile);
                 }
-                tmpFile.renameTo(tFile);
-                targetFileGenerated(tFile);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         targetDoc = null;
     }

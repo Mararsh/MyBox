@@ -29,7 +29,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -92,7 +92,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
             filtersData = FXCollections.observableArrayList();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -125,7 +125,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
             startButton.disableProperty().bind(executableInput.styleProperty().isEqualTo(badStyle));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -204,7 +204,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
             filterCommandColumn.setCellFactory(new TableBooleanCell());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -494,7 +494,8 @@ public class FFmpegInformationController extends FFmpegOptionsController {
     }
 
     @FXML
-    protected void queryAction() {
+    @Override
+    public void goAction() {
         String[] args = StringTools.splitBySpace(queryInput.getText());
         if (args.length == 0) {
             return;

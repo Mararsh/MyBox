@@ -15,12 +15,11 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.ColumnDefinition.ColumnType;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlTools;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonValues;
@@ -66,16 +65,14 @@ public abstract class TableBase<D> {
         if (conn == null || data == null) {
             return null;
         }
-        try {
-            try ( PreparedStatement statement = conn.prepareStatement(queryStatement())) {
-                if (setColumnsValues(statement, primaryColumns, data, 1) < 0) {
-                    return null;
-                }
-                return query(conn, statement);
+        String sql = queryStatement();
+        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            if (setColumnsValues(statement, primaryColumns, data, 1) < 0) {
+                return null;
             }
+            return query(conn, statement);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, sql);
             return null;
         }
     }
@@ -101,8 +98,7 @@ public abstract class TableBase<D> {
             }
             return data;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
         }
         return null;
     }
@@ -136,37 +132,12 @@ public abstract class TableBase<D> {
                 case Date:
                     return results.getDate(column.name);
                 default:
-                    logger.debug(column.name + " " + column.getType());
+                    MyBoxLog.debug(column.name + " " + column.getType());
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString(), tableName + " " + column.name);
         }
         return null;
-    }
-
-    public List<D> readData(String sql) {
-        return readData(sql, -1);
-    }
-
-    public List<D> readData(String sql, int max) {
-//        logger.debug(sql + " " + max);
-        List<D> dataList = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (max > 0) {
-                statement.setMaxRows(max);
-            }
-            try ( ResultSet results = statement.executeQuery(sql)) {
-                while (results.next()) {
-                    D data = readData(results);
-                    dataList.add(data);
-                }
-            }
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-        }
-        return dataList;
     }
 
     public boolean setColumnValue(PreparedStatement statement, ColumnDefinition column, D data, int index) {
@@ -175,7 +146,7 @@ public abstract class TableBase<D> {
         }
         try {
             Object value = getValue(data, column.name);
-//            logger.error(index + " " + column.name + " " + column.type + " " + value);
+//            MyBoxLog.error(index + " " + column.name + " " + column.type + " " + value);
             switch (column.type) {
                 case String:
                 case Text:
@@ -259,13 +230,12 @@ public abstract class TableBase<D> {
                     }
                     break;
                 default:
-                    logger.debug(column.name + " " + column.getType() + " " + value.toString());
+                    MyBoxLog.debug(column.name + " " + column.getType() + " " + value.toString());
                     return false;
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString(), tableName + " " + column.name);
             return false;
         }
     }
@@ -285,8 +255,7 @@ public abstract class TableBase<D> {
             }
             return index;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return -1;
         }
     }
@@ -305,8 +274,7 @@ public abstract class TableBase<D> {
             }
             return index;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return -1;
         }
     }
@@ -329,8 +297,7 @@ public abstract class TableBase<D> {
             }
             return setColumnsValues(statement, primaryColumns, data, index) > 0;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return false;
         }
     }
@@ -445,7 +412,7 @@ public abstract class TableBase<D> {
                     sql += "DATE";
                     break;
                 default:
-                    logger.debug(column.getName() + " " + column.getType());
+                    MyBoxLog.debug(column.getName() + " " + column.getType());
                     return null;
             }
             if (column.isNotNull()) {
@@ -473,38 +440,36 @@ public abstract class TableBase<D> {
             }
         }
         sql += "\n)";
-//        logger.debug(sql);
+//        MyBoxLog.debug(sql);
         return sql;
     }
 
     public boolean createTable(Connection conn) {
+        if (conn == null) {
+            return false;
+        }
+        String sql = null;
         try {
-            if (conn == null) {
-                return false;
-            }
-            String sql = createTableStatement();
-//            logger.debug(sql);
+            sql = createTableStatement();
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, sql);
             return false;
         }
     }
 
     public boolean dropTable(Connection conn) {
+        if (conn == null) {
+            return false;
+        }
+        String sql = null;
         try {
-            if (conn == null) {
-                return false;
-            }
-            String sql = "DROP TABLE " + tableName;
-//            logger.debug(sql);
+            sql = "DROP TABLE " + tableName;
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, sql);
             return false;
         }
     }
@@ -513,23 +478,22 @@ public abstract class TableBase<D> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return clearData(conn);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return false;
         }
     }
 
     public boolean clearData(Connection conn) {
+        if (conn == null) {
+            return false;
+        }
+        String sql = null;
         try {
-            if (conn == null) {
-                return false;
-            }
-            String sql = "DELETE FROM " + tableName;
+            sql = "DELETE FROM " + tableName;
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e, sql);
             return false;
         }
     }
@@ -559,25 +523,26 @@ public abstract class TableBase<D> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return size(conn);
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e, tableName);
             return 0;
         }
     }
 
     public int size(Connection conn) {
+        if (conn == null) {
+            return 0;
+        }
+        String sql = null;
         try {
-            conn.setReadOnly(true);
-            String sql = sizeStatement();
+            sql = sizeStatement();
             ResultSet results = conn.createStatement().executeQuery(sql);
             if (results.next()) {
                 return results.getInt(1);
-            } else {
-                return 0;
             }
         } catch (Exception e) {
-            failed(e);
-            return 0;
+            MyBoxLog.error(e, sql);
         }
+        return 0;
     }
 
     public String queryStatement() {
@@ -789,8 +754,7 @@ public abstract class TableBase<D> {
             conn.setReadOnly(true);
             return readData(conn, data);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return null;
         }
     }
@@ -811,8 +775,7 @@ public abstract class TableBase<D> {
             }
             return data;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return null;
         }
     }
@@ -834,9 +797,7 @@ public abstract class TableBase<D> {
             }
             return data;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            logger.debug(value);
+            MyBoxLog.error(e, tableName + " " + value);
             return null;
         }
     }
@@ -857,9 +818,7 @@ public abstract class TableBase<D> {
             }
             return dataList;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            logger.debug(value);
+            MyBoxLog.error(e, tableName + " " + value);
         }
         return dataList;
     }
@@ -874,27 +833,41 @@ public abstract class TableBase<D> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
         }
         return dataList;
     }
 
     public List<D> query(String sql) {
+        return query(sql, -1);
+    }
+
+    public List<D> query(String sql, int max) {
         List<D> dataList = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
             conn.setReadOnly(true);
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            if (max > 0) {
+                statement.setMaxRows(max);
+            }
+            try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     D data = readData(results);
                     dataList.add(data);
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e, sql);
         }
         return dataList;
+    }
+
+    public List<D> readData(String sql) {
+        return query(sql);
+    }
+
+    public List<D> readData(String sql, int max) {
+        return query(sql, max);
     }
 
     public D writeData(D data) {
@@ -904,8 +877,7 @@ public abstract class TableBase<D> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return writeData(conn, data);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return null;
         }
     }
@@ -925,8 +897,7 @@ public abstract class TableBase<D> {
                 return insertData(conn, data);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return null;
         }
     }
@@ -935,11 +906,11 @@ public abstract class TableBase<D> {
         if (conn == null || !valid(data)) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(insertStatement())) {
+        String sql = insertStatement();
+        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
             return insertData(conn, statement, data);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, sql);
         }
         return null;
     }
@@ -955,8 +926,7 @@ public abstract class TableBase<D> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(tableName + " " + e.toString());
+            MyBoxLog.error(e, tableName);
         }
         return null;
     }
@@ -968,8 +938,7 @@ public abstract class TableBase<D> {
         try ( PreparedStatement statement = conn.prepareStatement(updateStatement())) {
             return updateData(conn, statement, data);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return null;
         }
     }
@@ -986,8 +955,7 @@ public abstract class TableBase<D> {
                 return data;
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
         }
         return null;
     }
@@ -998,8 +966,7 @@ public abstract class TableBase<D> {
             setDeleteStatement(conn, statement, data);
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
             return false;
         }
     }
@@ -1038,8 +1005,7 @@ public abstract class TableBase<D> {
                 conn.commit();
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
         }
         return count;
     }
@@ -1052,9 +1018,7 @@ public abstract class TableBase<D> {
             statement.setString(1, value);
             return statement.executeUpdate();
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            logger.debug(value);
+            MyBoxLog.error(e, tableName + " " + value);
             return 0;
         }
     }
@@ -1067,20 +1031,17 @@ public abstract class TableBase<D> {
             statement.setString(1, "%" + value);
             return statement.executeUpdate();
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            logger.debug(value);
+            MyBoxLog.error(e, tableName + " " + value);
             return 0;
         }
     }
 
     public TableBase readDefinitionFromDB(String tableName) {
+        this.tableName = tableName;
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return readDefinitionFromDB(conn, tableName);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
-            this.tableName = tableName;
+            MyBoxLog.error(e, tableName);
             return this;
         }
     }
@@ -1133,21 +1094,20 @@ public abstract class TableBase<D> {
                                     column.setLength(Integer.parseInt(type.substring(type.indexOf("(") + 1, type.indexOf(")"))));
                                     column.setType(ColumnType.String);
                                 } catch (Exception e) {
-                                    logger.debug(type);
+                                    MyBoxLog.debug(type);
                                     column.setType(ColumnType.Unknown);
                                 }
                             } else {
                                 column.setType(ColumnType.Unknown);
-                                logger.debug(type);
+                                MyBoxLog.debug(type);
                             }
                     }
                     addColumn(column);
-//                    logger.debug(column.getIndex() + " " + column.getName() + " " + column.getType().name() + " " + column.getLength());
+//                    MyBoxLog.debug(column.getIndex() + " " + column.getName() + " " + column.getType().name() + " " + column.getLength());
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e, tableName);
         }
         return this;
     }

@@ -76,74 +76,78 @@ License:    Apache License Version 2.0
                                             <Insets top="5.0" />
                                         </VBox.margin>
                                         <content>
-                                            <VBox fx:id="conditionsBox" spacing="10.0">
-                                                <children>
-                                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                        <children>
-                                                            <RadioButton mnemonicParsing="false" selected="true" text="%CopyConditionally">
-                                                                <toggleGroup>
-                                                                    <ToggleGroup fx:id="copyGroup" />
-                                                                </toggleGroup>
-                                                            </RadioButton>
-                                                            <RadioButton mnemonicParsing="false" text="%ClearTargetThenCopy" toggleGroup="$copyGroup" />
-                                                        </children>
-                                                    </HBox>
-                                                    <VBox fx:id="condBox" spacing="10.0">
-                                                        <children>
-                                                            <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                                <children>
-                                                                    <CheckBox fx:id="copySubdirCheck" mnemonicParsing="false" selected="true" text="%CopySubdirectoies" />
-                                                                    <CheckBox fx:id="copyEmptyCheck" mnemonicParsing="false" selected="true" text="%CopyEmpty" />
-                                                                    <CheckBox fx:id="copyNewCheck" mnemonicParsing="false" selected="true" text="%CopyNewFiles" />
-                                                                    <CheckBox fx:id="copyHiddenCheck" mnemonicParsing="false" selected="true" text="%CopyHiddenFiles" />
-                                                                    <CheckBox fx:id="copyReadonlyCheck" mnemonicParsing="false" text="%OnlyCopyReadOnly" />
-                                                                </children>
-                                                                <VBox.margin>
-                                                                    <Insets />
-                                                                </VBox.margin>
-                                                            </HBox>
-                                                            <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                                <children>
-                                                                    <CheckBox fx:id="copyExistedCheck" mnemonicParsing="false" selected="true" text="%CopyExistedFiles" />
-                                                                    <CheckBox fx:id="copyModifiedCheck" mnemonicParsing="false" selected="true" text="%OnlyCopyModifiedFiles" />
-                                                                </children>
-                                                            </HBox>
-                                                            <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                                <children>
-                                                                    <Label text="%OnlyCopyModifiedAfter">
-                                                                        <HBox.margin>
-                                                                            <Insets left="160.0" />
-                                                                        </HBox.margin>
-                                                                    </Label>
-                                                                    <DatePicker fx:id="modifyAfterInput" />
-                                                                    <Label text="%CopyExistedComments" />
-                                                                </children>
-                                                            </HBox>
-                                                            <HBox alignment="CENTER_LEFT">
-                                                                <children>
-                                                                    <CheckBox fx:id="deleteNonExistedCheck" mnemonicParsing="false" text="%DeleteNotExistedinSource" />
-                                                                </children>
-                                                            </HBox>
-                                                            <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                                <children>
-                                                                    <CheckBox fx:id="notCopyCheck" mnemonicParsing="false" text="%NotCopyInclude" HBox.hgrow="NEVER" />
-                                                                    <TextField fx:id="notCopyInput" maxWidth="1.7976931348623157E308" promptText="%SeparateByComma" HBox.hgrow="ALWAYS" />
-                                                                </children>
-                                                            </HBox>
-                                                        </children>
-                                                        <padding>
-                                                            <Insets left="40.0" top="10.0" />
-                                                        </padding>
-                                                    </VBox>
-                                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                        <children>
-                                                            <CheckBox fx:id="copyAttrCheck" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" />
-                                                            <CheckBox fx:id="continueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
-                                                <CheckBox fx:id="deleteSourceCheck" layoutX="208.0" layoutY="10.0" mnemonicParsing="false" text="%DeleteSourcePathAfterComplete" />
-                                                        </children>
-                                                    </HBox>
-                                                </children>
-                                            </VBox>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="404.0" prefViewportWidth="1632.0">
+                                       <content>
+                                                  <VBox fx:id="conditionsBox" spacing="10.0">
+                                                      <children>
+                                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                              <children>
+                                                                  <RadioButton mnemonicParsing="false" selected="true" text="%CopyConditionally">
+                                                                      <toggleGroup>
+                                                                          <ToggleGroup fx:id="copyGroup" />
+                                                                      </toggleGroup>
+                                                                  </RadioButton>
+                                                                  <RadioButton mnemonicParsing="false" text="%ClearTargetThenCopy" toggleGroup="$copyGroup" />
+                                                              </children>
+                                                          </HBox>
+                                                          <VBox fx:id="condBox" spacing="10.0">
+                                                              <children>
+                                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                                      <children>
+                                                                          <CheckBox fx:id="copySubdirCheck" mnemonicParsing="false" selected="true" text="%CopySubdirectoies" />
+                                                                          <CheckBox fx:id="copyEmptyCheck" mnemonicParsing="false" selected="true" text="%CopyEmpty" />
+                                                                          <CheckBox fx:id="copyNewCheck" mnemonicParsing="false" selected="true" text="%CopyNewFiles" />
+                                                                          <CheckBox fx:id="copyHiddenCheck" mnemonicParsing="false" selected="true" text="%CopyHiddenFiles" />
+                                                                          <CheckBox fx:id="copyReadonlyCheck" mnemonicParsing="false" text="%OnlyCopyReadOnly" />
+                                                                      </children>
+                                                                      <VBox.margin>
+                                                                          <Insets />
+                                                                      </VBox.margin>
+                                                                  </HBox>
+                                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                                      <children>
+                                                                          <CheckBox fx:id="copyExistedCheck" mnemonicParsing="false" selected="true" text="%CopyExistedFiles" />
+                                                                          <CheckBox fx:id="copyModifiedCheck" mnemonicParsing="false" selected="true" text="%OnlyCopyModifiedFiles" />
+                                                                      </children>
+                                                                  </HBox>
+                                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                                      <children>
+                                                                          <Label text="%OnlyCopyModifiedAfter">
+                                                                              <HBox.margin>
+                                                                                  <Insets left="160.0" />
+                                                                              </HBox.margin>
+                                                                          </Label>
+                                                                          <DatePicker fx:id="modifyAfterInput" />
+                                                                          <Label text="%CopyExistedComments" />
+                                                                      </children>
+                                                                  </HBox>
+                                                                  <HBox alignment="CENTER_LEFT">
+                                                                      <children>
+                                                                          <CheckBox fx:id="deleteNonExistedCheck" mnemonicParsing="false" text="%DeleteNotExistedinSource" />
+                                                                      </children>
+                                                                  </HBox>
+                                                                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                                      <children>
+                                                                          <CheckBox fx:id="notCopyCheck" mnemonicParsing="false" text="%NotCopyInclude" HBox.hgrow="NEVER" />
+                                                                          <TextField fx:id="notCopyInput" maxWidth="1.7976931348623157E308" promptText="%SeparateByComma" HBox.hgrow="ALWAYS" />
+                                                                      </children>
+                                                                  </HBox>
+                                                              </children>
+                                                              <padding>
+                                                                  <Insets left="40.0" top="10.0" />
+                                                              </padding>
+                                                          </VBox>
+                                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                              <children>
+                                                                  <CheckBox fx:id="copyAttrCheck" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" />
+                                                                  <CheckBox fx:id="continueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
+                                                      <CheckBox fx:id="deleteSourceCheck" layoutX="208.0" layoutY="10.0" mnemonicParsing="false" text="%DeleteSourcePathAfterComplete" />
+                                                              </children>
+                                                          </HBox>
+                                                      </children>
+                                                  </VBox>
+                                       </content>
+                                    </ScrollPane>
                                         </content>
                                     </TitledPane>
                                 </children>

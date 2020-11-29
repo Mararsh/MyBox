@@ -35,6 +35,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
@@ -45,7 +46,6 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -125,7 +125,7 @@ public class ImageBaseController extends BaseController {
             checkCoordinate();
             setMaskStroke();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -136,7 +136,7 @@ public class ImageBaseController extends BaseController {
             fitSize();
             drawMaskControls();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -154,7 +154,7 @@ public class ImageBaseController extends BaseController {
             xZoomStep = yZoomStep = 50;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -187,7 +187,7 @@ public class ImageBaseController extends BaseController {
             initMaskPane();
             initMaskControls(false);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -257,7 +257,7 @@ public class ImageBaseController extends BaseController {
                 });
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -316,7 +316,7 @@ public class ImageBaseController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -329,7 +329,7 @@ public class ImageBaseController extends BaseController {
             maskPane.prefHeightProperty().bind(imageView.fitHeightProperty());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -338,7 +338,7 @@ public class ImageBaseController extends BaseController {
             drawMaskRulerX();
             drawMaskRulerY();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -522,7 +522,7 @@ public class ImageBaseController extends BaseController {
             drawMaskRulerX();
             drawMaskRulerY();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -603,7 +603,7 @@ public class ImageBaseController extends BaseController {
             FxmlControl.imageSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -616,7 +616,7 @@ public class ImageBaseController extends BaseController {
             FxmlControl.paneSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -633,7 +633,7 @@ public class ImageBaseController extends BaseController {
             }
             refinePane();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -743,7 +743,7 @@ public class ImageBaseController extends BaseController {
                 }
 
             };
-            loadingController = openHandlingStage(loadTask, Modality.WINDOW_MODAL);
+            openHandlingStage(loadTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(loadTask);
             thread.setDaemon(true);
             thread.start();
@@ -768,7 +768,7 @@ public class ImageBaseController extends BaseController {
                 loadImage(sourceFile);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -854,7 +854,7 @@ public class ImageBaseController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -930,7 +930,7 @@ public class ImageBaseController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -991,7 +991,7 @@ public class ImageBaseController extends BaseController {
 
     @FXML
     public void imageClicked(MouseEvent event) {
-//        logger.debug("imageClicked");
+//        MyBoxLog.debug("imageClicked");
     }
 
     @FXML
@@ -1058,13 +1058,13 @@ public class ImageBaseController extends BaseController {
     }
 
     protected Color pickColor(MouseEvent event, ImageView view) {
-//        logger.debug("pickColor");
+//        MyBoxLog.debug("pickColor");
         DoublePoint p = FxmlControl.getImageXY(event, view);
         return pickColor(p, imageView);
     }
 
     protected Color pickColor(DoublePoint p, ImageView view) {
-//        logger.debug("pickColor");
+//        MyBoxLog.debug("pickColor");
         Color color = FxmlControl.imagePixel(p, imageView);
         if (color != null) {
             startPickingColor();
@@ -1077,7 +1077,7 @@ public class ImageBaseController extends BaseController {
 
     protected void startPickingColor() {
         if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = (ColorPaletteManageController) openStage(CommonValues.ColorPaletteManageFxml);
+            paletteController = ColorPaletteManageController.oneOpen();
             paletteController.parentController = this;
             popInformation(message("PickingColorsNow"));
             paletteController.myStage.setX(0);
@@ -1174,7 +1174,7 @@ public class ImageBaseController extends BaseController {
             return items;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

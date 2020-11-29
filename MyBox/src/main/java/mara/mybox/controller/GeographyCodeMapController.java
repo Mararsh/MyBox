@@ -11,7 +11,7 @@ import mara.mybox.data.GeographyCode;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.TableGeographyCode;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -39,7 +39,7 @@ public class GeographyCodeMapController extends MapBaseController {
             mapOptionsController.dataColorRadio.setVisible(false);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -132,7 +132,7 @@ public class GeographyCodeMapController extends MapBaseController {
                                         }
                                         frameEnd = true;
                                     } catch (Exception e) {
-//                                        logger.debug(e.toString());
+//                                        MyBoxLog.debug(e.toString());
                                     }
                                 });
                             }
@@ -150,7 +150,7 @@ public class GeographyCodeMapController extends MapBaseController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

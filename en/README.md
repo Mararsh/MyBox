@@ -4,22 +4,20 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
 ## What's New
-2020-11-18 v6.3.5        
--  Improve: Handle regular expression in pages for document find/replace; Opitimize algorithms of image reading; Deal big image more smoothly; 
-Adjust interface of Html Editor. 
--  Add: Each version has itself's configuration file; Menu buttons; Document convertors; Encode/decode URL; Download first level links. 
--  Remove: Can not change derby mode when start the tool; Delete function "Manage downloads".    
--  Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list; 
-Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.         
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)          
-Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues/781).        
-
+2020-11-29 v6.3.6        
+-  Codes: Upgrade to java 15.0.1 and javafx 15.0.1(Except for mudole "javafx-web").  MyBox logs are managed by self and does not depend on log4j2 now.             
+-  File: Improve robustness of files deleting, renaming, and moving.  Function to delete files under system temporary path.           
+-  Color: Results of quantization can be imported to Color Palette.  Maimum loop can be set for Kmeans cluster quantization.  
+User's CSV file can be imported in Color Palette.  "rgb" can be key to imprt colors.                  
+-  Major issues solved: Errors pop when visit  histories include deleted files.  Wrong happens when set column number for combining images.                  
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6)          
+  
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Source Codes   
-[MyBox-6.3.5-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-src.zip)   35M        
+[MyBox-6.3.6-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-src.zip)   35M        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) and 
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)                       
@@ -30,28 +28,28 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-win-exe.zip)  | 286MB | MyBox.exe |       
-| linux | [MyBox-6.3.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-linux.tar.gz)  | 292MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-mac.dmg)  | 297MB  |  MyBox-6.3.5.app   |   
+| win x64 | [MyBox-6.3.6-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-win-exe.zip)  | 285MB | MyBox.exe |       
+| linux x64 | [MyBox-6.3.6-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-linux.tar.gz)  | 292MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.6-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-mac.dmg)  | 298MB  |  MyBox-6.3.6.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
 
 ### Jar 
-When JRE or JDK 14 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
+When JRE or JDK 15 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-win-jar.zip)  | 148MB | Java 14.0.1 or higher |    
-| linux | [MyBox-6.3.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-linux-jar.zip)  | 155MB  | Java 14.0.1 or higher |    
-| mac | [MyBox-6.3.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-mac-jar.zip)  |  151MB  | Java 14.0.1 or higher |    
+| win | [MyBox-6.3.6-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-win-jar.zip)  | 146MB | Java 15.0.1 or higher |    
+| linux | [MyBox-6.3.6-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-linux-jar.zip)  | 153MB  | Java 15.0.1 or higher |    
+| mac | [MyBox-6.3.6-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-mac-jar.zip)  |  150MB  | Java 15.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.5.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.6.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.5.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.6.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -66,7 +64,13 @@ A bug has been reported to jpackage dev team:
 Each version has itself's configuration file. New version can copy parameters from existed versions.      
 
 ## Configuration <a id="Config"></a>     
-Configuration file `MyBox_v<Version>.ini` is under "User Home". Example, `C:\Users\mara\mybox\` or `/home/mara/mybox/` .        
+Configuration file `MyBox_v<Version>.ini` is under "User Home":                        
+| Platform | Path of MyBox Configuration File |        
+| --- | --- |        
+| win | `C:\users\User Name\mybox\`  |       
+| linux | `/home/User Name/mybox/` |       
+| mac | `/Users/User Name/mybox/` |           
+
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.         
 Function "Settings" can be used to change configuration values.       
 
@@ -85,7 +89,7 @@ Function "Settings" can be used to change configuration values.
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.5 | 2020-11-18 | [html](#devLog) |
+| Development Logs | 6.3.6 | 2020-11-18 | [html](#devLog) |
 | Shortcuts | 6.3.5 | 2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -101,19 +105,18 @@ MyBox is based on following open sources:
 
 | Name | Role | Link |    
 | --- | --- | --- |    
-| JDK | Java | http://jdk.java.net/14/   |      
+| JDK | Java | http://jdk.java.net/   |      
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |        
 |  JavaFx | GUI |  https://gluonhq.com/products/javafx/ |     
 |   |   |  https://docs.oracle.com/javafx/2/  |     
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |     
 | NetBeans | IDE| https://netbeans.org/ |     
-| jpackage | self-contain package| http://jdk.java.net/jpackage/ |     
-| maven | build sources | https://maven.apache.org/ |     
+| jpackage | pack | https://docs.oracle.com/en/java/javase/15/docs/specs/man/jpackage.html |     
+| maven | build | https://maven.apache.org/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   
 | javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml |    
-| log4j | Log manufacture | https://logging.apache.org/log4j/2.x/ |      
 | Derby | Database | http://db.apache.org/derby/ |   
 | GifDecoder | Decode broken gif  | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
@@ -148,9 +151,11 @@ MyBox is based on following open sources:
 | movebank | Location data | https://www.datarepository.movebank.org |      
 | CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |      
 | JavaMail | email | https://javaee.github.io/javamail/ |    
- 
+| Commons IO | File IO | https://commons.apache.org/proper/commons-io/ |      
+| colorhexa | Color data | https://www.colorhexa.com/color-names |      
+
 # Current Version
-Current version is 6.3.5. Its features are mentioned below in summary:   
+Current version is 6.3.6. Its features are mentioned below in summary:   
  
 * [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -214,7 +219,8 @@ Current version is 6.3.5. Its features are mentioned below in summary:
 * [Helps](#helps)
 * [Configuration](#Config)     
 * [Supporting HiDPI](#Hidpig)    
-* [Dev Mode](#DevMode)    
+* [Dev Mode](#DevMode)       
+* [MyBox Logs](#MyBoxLogs)      
   
 ## Cross Platforms <a id="Cross-platform"></a>       
 
@@ -344,7 +350,7 @@ Versions before v5.3 are based on Java 8.
 
 ## Image Tools <a id="imageTools"></a>     
 
-### View Image <a id="viewImage"></a>     
+### View Image <a id="viewImage"></a>      
 
 1. "Load Width". Read image file with "Original Size" or with defined width.
 2. "Select Mode". When in this mode, Crop, Copy, and Save As are against the selected area. Or else these operations are against whole image.
@@ -354,6 +360,7 @@ Versions before v5.3 are based on Java 8.
 6. Image attributes and image meta. ICC profile embedded in image can be decoded.
 7. Navigation of images under same directory.
 8. Context menu.
+9. "Crop", "Copy", "Save As", and all operations are for current image in memory.         
 
 ![Snap-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer-en.jpg)       
 
@@ -373,9 +380,11 @@ Versions before v5.3 are based on Java 8.
 1. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
 2. Channels of histograms can be selected.
 3. Statistic against selected area.
-4. Calculate mostly different colors in image by K-Means Clustering.
-5. Calculate mostly occurred colors in image by Popularity Quantization.
-6. Image data can be saved as html file.
+4. Count dominant colors:        
+	- Calculate mostly different colors in image by K-Means Clustering. Maximum loop can be set.      
+	- Calculate mostly occurred colors in image by Popularity Quantization.       
+	- Results can be imported in Color Palette.      
+5. Image data can be saved as html file.
 
 ![Snap-imageAnanlyse](https://mararsh.github.io/MyBox/snap-imageAnanlyse-en.jpg)     
 
@@ -391,11 +400,11 @@ Versions before v5.3 are based on Java 8.
  	-  Set background color.
 3. Clipboard
 	-  Clip sources:    
-	   -  "Copy"(CTRL+c) against whole image or selected part of image    
-	   - Cutted part of image     
-	   - System clipboard    
-	   -  Image files in system    
-	   -  Example clips      
+		-  "Copy"(CTRL+c) against whole image or selected part of image    
+		- Cutted part of image     
+		- System clipboard    
+		-  Image files in system    
+		-  Example clips      
 	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
 	-  Click button "Paste"(CTRL+v) anytime while editing image, to paste the first image in clipboard onto current edited image. Or double click item in the clipboard to paste it.
 	-  Drag and move pasted clip on current edited image, to adjust clip's size and location.
@@ -459,7 +468,8 @@ Versions before v5.3 are based on Java 8.
 ### Part image <a id="imagePart"></a>     
 1. Split image. By number, by size, or by customizing. Results can be saved as image files, multiple frames Tiff file, or PDF file.
 2. Subsample image. Options like sample region and sample ratio.
-3. Extract Alpha channel.
+3. When image file includes too many pixels and loaded as sampled image, splitting and subsampling handle the original image in file instead of the loaded image in memory.
+4. Extract Alpha channel.
 
 ### Image Conversion <a id="imageConvert"></a>       
 1. Formats of image file: png, jpg, bmp, tif, gif, ico, wbmp, pnm, pcx, raw.
@@ -515,10 +525,22 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 	-  The first line defines data headers which are delimited by English commas.
 	-  Followed each line defines one data row. Data fields are delimited by English commas.
 	-  Following fields are necessary:              
-                 rgba              
+                 rgba  or rgb                      
 	-  Following fields are optional:              
                  name              
-8. User can input colors list. Examples are provided.       
+8. User can input colors list. Examples are provided.         
+Valid color value is like:              
+ 	  	 	  	orange [Web Colors](http://mararsh.github.io/MyBox_data/colors/WebColors.html)               
+ 	  	 	  	0xff668840             
+ 	  	 	  	0xff6688         
+ 	  	 	  	#ff6688            
+ 	  	 	  	#f68            
+ 	  	 	  	rgb(255,102,136)             
+ 	  	 	  	rgb(100%,50%,50%)                         
+ 	  	 	  	rgba(255,102,136,0.25)             
+ 	  	 	  	rgba(255,50%,50%,0.25)             
+ 	  	 	  	hsl(240,100%,100%)             
+ 	  	 	  	hsla(120,0%,0%,0.25)             
 
 ### Color Palette <a id="ColorPalette"></a>     
 1. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
@@ -1003,15 +1025,6 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 2. Support MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512.    
 
 
-
-### Fetch Data About "New Coronavirus Pneumonia"<a id="epidemicReportFetch" />
-1. Extract data in Baidu page and get latest in-time data of chinese provinces/cities/districts and other countries. Suggest run it daily.  
-2. Query historical data of Chinese provinces/cities/districts since 2020-1-20 from TengXun api.  Example data includes data between 1-20 and 2-21.   
-3. Location attributes are added in each data row.
-4. Data are trimmed in 3 formated: html、json、xml，and can be saved as files.  Saved formats include xlsx(Excel2007).    
-5. Button "Import": to import the data into table "Epidemic Reports".       
-Notice: The 2 data sources may change or become invalid in future.       
-
 ## File Tools <a id="fileTools"></a>     
 
 ### Manage Files/Directories <a id="directoriesArrange"></a>     
@@ -1020,6 +1033,7 @@ Notice: The 2 data sources may change or become invalid in future.
 3. Arrange files and reorganize them under new directories by modifed time. This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
 4. Delete all empty sub-directories under directory.
 5. Delete "infinite-nested directory" which is created by bug of some softwares, like MyBox v6.0, and can not be deleted by normal way.         
+6. Delete files under system temporary path.           
 
 ### Archive/Compress/Decompress/Unarchive<a id="archiveCompress" />  
 1. Archiving is the process to collect multiple files/directories as single file. Some archive formats like zip and 7z implement compression too. Unarchiving is the inverse process of archiving.    
@@ -1165,10 +1179,10 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 ### Encode/Decode URL<a id="encodeDecodeURL" />        
 This tool helps to convert a string from/to the application/x-www-form-urlencoded MIME format.      
 The following rules are applied for encoding:                    
--  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
--  The special characters ".", "-", "*", and "_" remain the same.
--  The space character "   " is converted into a plus sign "+".
--  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.           
+-  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.     
+-  The special characters ".", "-", "*", and "_" remain the same.     
+-  The space character "   " is converted into a plus sign "+".     
+-  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.                
    Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.        
 
 Decoding does reverse conversion.         
@@ -1235,41 +1249,57 @@ Decoding does reverse conversion.
 Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.   
 MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.   
 
-Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
+Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.         
 
+## Dev Mode<a id="DevMode" />           
+1. Open/Close "Dev Mode" in Settings function.                      
+2. Following functions are visible only in Dev Mode:                      
+	-  Menu Item: "Help" - "Make Icrons"                      
+	-  Menu Item of Colors Management: "Input MyBox Colors"                 
+3. "Debug" logs are written in database only in Dev Mode.                           
 
+## MyBox Logs<a id="MyBoxLogs" />  
+1. Types of MyBox logs: Error, Info, Debug, Console.                
+	-  All logs will be displayed on console.               
+	- "Error" and "Info" are always written in database.           
+	- "Debug" are written in database only in Dev Mode.           
+	- "Console" are never written in database.               
+2. Fields: ID, time, type, file, class, method, line, callers, comments.                      
+3. "Callers" is the calling chain. Each line is one node and records: file, class, method, line. Calling chains only include methods of MyBox itself.      
+4. "Error" will cause interface of MyBox Logs Viewer is popped.                 
 
-## Dev Mode<a id="DevMode" />  
-1. Open/Close "Dev Mode" in Settings function.
-2. Following functions are visible only in Dev Mode:
-	-  Menu Item: "Help" - "Make Icrons"
-	-  Menu Item of Colors Management: "Input MyBox Colors"
-
-
-# Development Logs <a id="devLog"></a>        
+# Development Logs <a id="devLog"></a>         
+2020-11-29 v6.3.6        
+-  Codes: Upgrade to java 15.0.1 and javafx 15.0.1(Except for mudole "javafx-web").  MyBox logs are managed by itself and does not depend on log4j2 now.             
+-  File: Improve robustness of files' deleting, renaming, and moving.  New function to delete files under system temporary path.           
+-  Color: Results of quantization can be imported to Color Palette.  Maimum loop can be set for Kmeans cluster quantization.  
+User's CSV file can be imported in Color Palette.  "rgb" can be key to imprt colors.                  
+-  Major issues solved: Errors pop when visit  histories include deleted files.  Wrong happens when set column number for combining images.                  
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6)          
+  
 2020-11-18 v6.3.5        
 -  Improve: Handle regular expression in pages for document find/replace; Opitimize algorithms of image reading; Deal big image more smoothly; 
-Adjust interface of Html Editor. 
--  Add: Each version has itself's configuration file; Menu buttons; Document convertors; Encode/decode URL; Download first level links. 
--  Remove: Can not change derby mode when start the tool; Delete function "Manage downloads".    
--  Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list; 
+Adjust interface of Html Editor.      
+-  Add: Each version has itself's configuration file; Menu buttons; Document convertors; Encode/decode URL; Download first level links.      
+-  Remove: Can not change derby mode when start the tool; Delete function "Manage downloads".         
+-  Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list;      
 Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.         
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)          
 Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues/781).        
 
-2020-10-11 v6.3.5        
--  Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.
--  OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.
--  Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.     
--  Game "Mine": Set size of grid and number of mines, and provide examlpes; Help to see all mines; Recover game when trigger mine.   
--  Major issues solved: Locate regular expression incorrectly for Find/Replace in Editor; Incorrect logic in version migration.       
+2020-10-11 v6.3.4        
+-  Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.     
+-  OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.     
+-  Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.          
+-  Game "Mine": Set size of grid and number of mines, and provide examlpes; Help to see all mines; Recover game when trigger mine.        
+-  Major issues solved: Locate regular expression incorrectly for Find/Replace in Editor; Incorrect logic in version migration.            
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.4)                
 
 2020-9-27 v6.3.3        
--  Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter "invert" for convolution kernel.
--  Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.
+-  Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter "invert" for convolution kernel.     
+-  Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.     
 -  Color: User can input colors list; Separated interfaces for setting color, picking color, and managing palette; Adjust colors order in palette.     
--  Others: Context menu for table and image; Auto-save periodically in editors; Delay for Screen Recorder; Screen Recorder on Linux; Dev Mode.   
+-  Others: Context menu for table and image; Auto-save periodically in editors; Delay for Screen Recorder; Screen Recorder on Linux; Dev Mode.        
 -  Major issues solved:  "Clear personal settings" is to delete user configuration data instead of all data; Wrong statements for some tabes;  Shortcuts do not work on Linux; Location Data can not be created for new Data Set.        
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3)          
  

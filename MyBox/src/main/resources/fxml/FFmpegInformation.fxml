@@ -138,7 +138,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <ComboBox fx:id="querySelector" prefWidth="200.0" />
                                                         <TextField fx:id="queryInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                        <Button fx:id="runButton" mnemonicParsing="false" onAction="#queryAction">
+                                                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                     <image>

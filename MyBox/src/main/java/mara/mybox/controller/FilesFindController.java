@@ -17,7 +17,7 @@ import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -56,7 +56,7 @@ public class FilesFindController extends FilesBatchController {
             done = AppVariables.message("Done");
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -95,7 +95,7 @@ public class FilesFindController extends FilesBatchController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -166,7 +166,7 @@ public class FilesFindController extends FilesBatchController {
             }
             return done;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return done;
         }
     }

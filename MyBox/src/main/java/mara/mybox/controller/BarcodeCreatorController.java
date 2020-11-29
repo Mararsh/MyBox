@@ -26,7 +26,7 @@ import mara.mybox.tools.BarcodeTools.BarcodeType;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -102,7 +102,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             initDataMatrixParaBox();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -200,7 +200,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     AppVariables.getUserConfigValue("BarcodeType", BarcodeType.QR_Code.name()));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -373,7 +373,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             FxmlControl.setTooltip(quietWidthInput, message("Millimeters"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -473,7 +473,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -588,7 +588,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     AppVariables.getUserConfigValue("PDF417ErrorCorrection", message("PDF417ErrorCorrection3")));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -637,7 +637,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             FxmlControl.setTooltip(dmHeightInput, message("Pixels"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -803,7 +803,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -849,7 +849,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

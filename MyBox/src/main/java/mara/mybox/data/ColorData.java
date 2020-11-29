@@ -29,7 +29,7 @@ import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -81,7 +81,7 @@ public class ColorData {
             rgb = FxmlColor.color2rgb(color);
             bindInPalette();
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -91,7 +91,7 @@ public class ColorData {
         }
         inPalette.addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
             try {
-//                logger.debug(colorName + " " + rgba + " " + newVal);
+//                MyBoxLog.debug(colorName + " " + rgba + " " + newVal);
                 if (isSettingValues) {
                     return;
                 }
@@ -105,7 +105,7 @@ public class ColorData {
                     TableColorData.removeFromPalette(rgba);
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         });
     }
@@ -264,6 +264,9 @@ public class ColorData {
             case "japanese":
                 return readCSV(FxmlControl.getInternalFile("/data/db/ColorsJapanese.csv",
                         "data", "ColorsJapanese.csv", false));
+            case "colorhexa":
+                return readCSV(FxmlControl.getInternalFile("/data/db/ColorsColorhexa.csv",
+                        "data", "ColorsColorhexa.csv", false));
             default:
                 return readCSV(FxmlControl.getInternalFile("/data/db/ColorsWeb.csv",
                         "data", "ColorsWeb.csv", false));
@@ -275,21 +278,25 @@ public class ColorData {
         try ( CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
                 CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             List<String> names = parser.getHeaderNames();
-            if (names == null || !names.contains("rgba")) {
+            if (names == null || (!names.contains("rgba") && !names.contains("rgb"))) {
                 return null;
             }
             for (CSVRecord record : parser) {
                 try {
                     ColorData item = new ColorData();
-                    item.setWeb(record.get("rgba"));
                     if (names.contains("name")) {
                         item.setColorName(record.get("name"));
+                    }
+                    if (names.contains("rgba")) {
+                        item.setWeb(record.get("rgba"));
+                    }
+                    if (names.contains("rgb")) {
+                        item.setRgb(record.get("rgb"));
                     }
                     if (names.contains("PaletteIndex")) {
                         item.setPaletteIndex(Double.parseDouble(record.get("PaletteIndex")));
                     }
                     try {
-                        item.setRgb(record.get("rgb"));
                         item.setColorValue(Integer.parseInt(record.get("value")));
                         item.setSrgb(record.get("SRGB"));
                         item.setHsb(record.get("HSB"));
@@ -312,11 +319,11 @@ public class ColorData {
                     }
                     data.add(item);
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return data;
     }
@@ -336,7 +343,7 @@ public class ColorData {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -348,7 +355,7 @@ public class ColorData {
                 printRow(printer, row, data);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -362,7 +369,7 @@ public class ColorData {
                     "CalculatedCMYK", "EciCMYK", "AdobeCMYK", "XYZ", "CieLab", "Lchab", "CieLuv", "Lchuv",
                     "PaletteIndex");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -395,7 +402,7 @@ public class ColorData {
             row.add((long) data.getPaletteIndex() + "");
             printer.printRecord(row);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

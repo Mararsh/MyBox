@@ -51,6 +51,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
@@ -58,7 +59,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -105,7 +105,8 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     protected ControlTimeLength autoSaveDurationController;
     @FXML
-    protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel, filterCommentsLabel, savedLabel;
+    protected Label editLabel, bomLabel, numbersLabel,
+            pageLabel, charsetLabel, selectionLabel, filterCommentsLabel, savedLabel;
     @FXML
     protected Button panesMenuButton, pagePreviousButton, pageNextButton,
             charactersButton, linesButton, exampleFilterButton,
@@ -214,7 +215,7 @@ public abstract class FileEditerController extends BaseController {
             initToolBar();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -298,6 +299,7 @@ public abstract class FileEditerController extends BaseController {
             sourceInformation.setFindReplace(null);
 
             bottomLabel.setText("");
+            numbersLabel.setText("");
             selectionLabel.setText("");
             if (pageBox != null) {
                 pageBox.setVisible(false);
@@ -366,7 +368,7 @@ public abstract class FileEditerController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             isSettingValues = false;
         }
     }
@@ -374,7 +376,7 @@ public abstract class FileEditerController extends BaseController {
     protected void initFileTab() {
         try {
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -431,7 +433,7 @@ public abstract class FileEditerController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -446,7 +448,7 @@ public abstract class FileEditerController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -468,6 +470,7 @@ public abstract class FileEditerController extends BaseController {
                     || !autoSaveCheck.isSelected() || autoSaveDurationController.value <= 0) {
                 return;
             }
+            long interval = autoSaveDurationController.value * 1000;
             autoSaveTimer = new Timer();
             autoSaveTimer.schedule(new TimerTask() {
                 @Override
@@ -477,10 +480,10 @@ public abstract class FileEditerController extends BaseController {
                         saveAction();
                     });
                 }
-            }, 0, autoSaveDurationController.value * 1000);
+            }, interval, interval);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -496,7 +499,7 @@ public abstract class FileEditerController extends BaseController {
                     });
             breakLinePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "BreakLinePane", false));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -527,7 +530,7 @@ public abstract class FileEditerController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -579,7 +582,7 @@ public abstract class FileEditerController extends BaseController {
                 });
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -638,7 +641,7 @@ public abstract class FileEditerController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -709,7 +712,7 @@ public abstract class FileEditerController extends BaseController {
                     });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -742,7 +745,7 @@ public abstract class FileEditerController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -799,7 +802,7 @@ public abstract class FileEditerController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -841,7 +844,7 @@ public abstract class FileEditerController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -892,7 +895,7 @@ public abstract class FileEditerController extends BaseController {
                 topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -908,7 +911,7 @@ public abstract class FileEditerController extends BaseController {
                 }
             });
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1448,6 +1451,7 @@ public abstract class FileEditerController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
+                    bottomLabel.setText("");
                     if (text != null) {
                         isSettingValues = true;
                         mainArea.setText(text);
@@ -1492,6 +1496,7 @@ public abstract class FileEditerController extends BaseController {
 
     protected void updateControls(boolean changed) {
         fileChanged.set(changed);
+        bottomLabel.setText("");
         if (getMyStage() == null || sourceInformation == null) {
             return;
         }
@@ -1561,7 +1566,7 @@ public abstract class FileEditerController extends BaseController {
             if (range != null) {
                 mainArea.requestFocus();
                 mainArea.deselect();
-//                logger.debug("pageText.length():" + pageText.length() + " range.getEnd():" + range.getEnd());
+//                MyBoxLog.debug("pageText.length():" + pageText.length() + " range.getEnd():" + range.getEnd());
                 int start = range.getStart(), end = pageText.length();
                 if (findReplaceFile.getOperation() == Operation.ReplaceFirst) {
                     end = Math.min(end, start + findReplaceFile.getReplaceString().length());
@@ -1607,8 +1612,8 @@ public abstract class FileEditerController extends BaseController {
             setLines(1, linesNumber);
             sourceInformation.setObjectsNumber(objectsNumber);
             sourceInformation.setLinesNumber(linesNumber);
-            bottomLabel.setText(objectNumberName + ": " + objectsNumber + "    "
-                    + AppVariables.message("LinesNumber") + ": " + linesNumber);
+            numbersLabel.setText(objectNumberName + ":" + objectsNumber + "\n"
+                    + AppVariables.message("LinesNumber") + ":" + linesNumber);
         } else {
             if (!sourceInformation.isTotalNumberRead()) {
                 saveButton.setDisable(true);
@@ -1616,7 +1621,7 @@ public abstract class FileEditerController extends BaseController {
                     saveAsButton.setDisable(true);
                 }
                 setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
-                bottomLabel.setText(objectName + ": "
+                numbersLabel.setText(objectName + ":"
                         + (sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
                         + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + ")  "
                         + AppVariables.message("CountingTotalNumber"));
@@ -1659,11 +1664,11 @@ public abstract class FileEditerController extends BaseController {
 
                 if (!changed) {
                     setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
-                    bottomLabel.setText(objectName + ": "
+                    numbersLabel.setText(objectName + ":"
                             + (sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
                             + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + ")/"
-                            + sourceInformation.getObjectsNumber() + "    "
-                            + AppVariables.message("Lines") + ": "
+                            + sourceInformation.getObjectsNumber() + "\n"
+                            + AppVariables.message("Lines") + ":"
                             + (sourceInformation.getCurrentPageLineEnd() - sourceInformation.getCurrentPageLineStart() + 1) + "("
                             + sourceInformation.getCurrentPageLineStart() + "-" + sourceInformation.getCurrentPageLineEnd() + ")/"
                             + sourceInformation.getLinesNumber());
@@ -1675,7 +1680,7 @@ public abstract class FileEditerController extends BaseController {
                     long linesTotal = sourceInformation.getLinesNumber()
                             + (linesNumber - (sourceInformation.getCurrentPageLineEnd() - sourceInformation.getCurrentPageLineStart() + 1));
                     setLines(sourceInformation.getCurrentPageLineStart(), linesTo);
-                    bottomLabel.setText(objectName + ": "
+                    numbersLabel.setText(objectName + ":"
                             + objectsNumber + "(" + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + charsTo + ")/"
                             + charsTotal + "  " + AppVariables.message("Lines") + ":" + linesNumber + "("
                             + sourceInformation.getCurrentPageLineStart() + "-" + linesTo + ")/" + linesTotal);
@@ -1709,14 +1714,12 @@ public abstract class FileEditerController extends BaseController {
             @Override
             public void run() {
                 Platform.runLater(() -> {
-                    isSettingValues = true;
                     if (lastScrollLeft >= 0) {
                         mainArea.setScrollLeft(lastScrollLeft);
                     }
                     if (lastScrollTop >= 0) {
                         mainArea.setScrollTop(lastScrollTop);
                     }
-                    isSettingValues = false;
                     resetCursor();
                 });
             }
@@ -1911,7 +1914,7 @@ public abstract class FileEditerController extends BaseController {
             initPage(null);
             updateInterface(false);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -1999,7 +2002,7 @@ public abstract class FileEditerController extends BaseController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

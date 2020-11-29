@@ -61,7 +61,7 @@ public class ControlSaveAs extends BaseController {
             sourceExtensionFilter = CommonFxValues.IccProfileExtensionFilter;
         } else if (fileType == VisitHistory.FileType.Certificate) {
             sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.TextEditHistory) {
+        } else if (fileType == VisitHistory.FileType.FileHistory) {
             sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         } else {
             sourceExtensionFilter = CommonFxValues.AllExtensionFilter;

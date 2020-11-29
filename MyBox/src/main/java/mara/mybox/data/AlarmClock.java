@@ -17,7 +17,7 @@ import mara.mybox.db.TableAlarmClock;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.executorService;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 
 /**
@@ -80,7 +80,7 @@ public final class AlarmClock {
                         AlarmClock alarm = new AlarmClock();
                         alarm.setKey(Long.valueOf((String) key));
                         String[] fields = values.getProperty((String) key).split(AlarmValueSeprator);
-//                        logger.debug(Arrays.asList(fields));
+//                        MyBoxLog.debug(Arrays.asList(fields));
                         if (fields.length != 12) {
                             continue;
                         }
@@ -107,7 +107,7 @@ public final class AlarmClock {
             }
             return alarms;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -274,7 +274,7 @@ public final class AlarmClock {
             }
             return -1;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return -1;
         }
     }
@@ -294,7 +294,7 @@ public final class AlarmClock {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -315,7 +315,7 @@ public final class AlarmClock {
             scheduledTasks = new HashMap<>();
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -355,7 +355,7 @@ public final class AlarmClock {
             }
             scheduledTasks.put(alarm.getKey(), newFuture);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

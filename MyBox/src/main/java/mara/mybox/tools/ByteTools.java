@@ -10,7 +10,7 @@ import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.FindReplaceString;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -299,8 +299,8 @@ public class ByteTools {
             System.arraycopy(bytes, off, newBytes, 0, length);
             return newBytes;
         } catch (Exception e) {
-            logger.debug(bytes.length + " " + off + " " + length);
-            logger.debug(e.toString());
+            MyBoxLog.debug(bytes.length + " " + off + " " + length);
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -312,7 +312,7 @@ public class ByteTools {
             System.arraycopy(bytes2, 0, bytes3, bytes1.length, bytes2.length);
             return bytes3;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

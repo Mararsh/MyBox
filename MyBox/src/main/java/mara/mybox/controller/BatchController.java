@@ -36,7 +36,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -182,7 +182,7 @@ public abstract class BatchController<T> extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -243,7 +243,7 @@ public abstract class BatchController<T> extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -283,7 +283,7 @@ public abstract class BatchController<T> extends BaseController {
             initTargetSection();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -380,7 +380,7 @@ public abstract class BatchController<T> extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -388,7 +388,7 @@ public abstract class BatchController<T> extends BaseController {
     @Override
     public void keyEventsHandler(KeyEvent event) {
         super.keyEventsHandler(event);
-//        logger.debug(event.getCode() + " " + event.getText());
+//        MyBoxLog.debug(event.getCode() + " " + event.getText());
         if (tableController != null) {
             tableController.keyEventsHandler(event); // pass event to table pane
         }
@@ -630,7 +630,7 @@ public abstract class BatchController<T> extends BaseController {
 
         } catch (Exception e) {
             updateInterface("Failed");
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -693,7 +693,7 @@ public abstract class BatchController<T> extends BaseController {
             }
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -851,7 +851,7 @@ public abstract class BatchController<T> extends BaseController {
             }
             return MessageFormat.format(AppVariables.message("DirHandledSummary"), dirFilesNumber, dirFilesHandled);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -900,7 +900,7 @@ public abstract class BatchController<T> extends BaseController {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -1014,7 +1014,7 @@ public abstract class BatchController<T> extends BaseController {
                 });
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1061,7 +1061,7 @@ public abstract class BatchController<T> extends BaseController {
             switch (newStatus) {
 
                 case "Started":
-                    ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                    ControlStyle.setNameIcon(startButton, message("Stop"), "iconStop.png");
                     startButton.applyCss();
                     startButton.setOnAction((ActionEvent event) -> {
                         cancelProcess(event);
@@ -1069,7 +1069,7 @@ public abstract class BatchController<T> extends BaseController {
                     if (allowPaused) {
                         pauseButton.setVisible(true);
                         pauseButton.setDisable(false);
-                        ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
+                        ControlStyle.setNameIcon(pauseButton, message("Pause"), "iconPause.png");
                         startButton.applyCss();
                         pauseButton.setOnAction((ActionEvent event) -> {
                             pauseProcess(event);
@@ -1085,21 +1085,21 @@ public abstract class BatchController<T> extends BaseController {
                 case "Done":
                 default:
                     if (paused) {
-                        ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                        ControlStyle.setNameIcon(startButton, message("Stop"), "iconStop.png");
                         startButton.applyCss();
                         startButton.setOnAction((ActionEvent event) -> {
                             cancelProcess(event);
                         });
                         pauseButton.setVisible(true);
                         pauseButton.setDisable(false);
-                        ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconStart.png"));
+                        ControlStyle.setNameIcon(pauseButton, message("Start"), "iconStart.png");
                         pauseButton.applyCss();
                         pauseButton.setOnAction((ActionEvent event) -> {
                             startAction();
                         });
                         disableControls(true);
                     } else {
-                        ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                        ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
                         startButton.applyCss();
                         startButton.setOnAction((ActionEvent event) -> {
                             startAction();

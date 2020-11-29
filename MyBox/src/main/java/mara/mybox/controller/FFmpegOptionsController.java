@@ -23,13 +23,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -92,7 +92,7 @@ public class FFmpegOptionsController extends BaseController {
             executableDefault = "win".equals(SystemTools.os()) ? "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe" : "/home/ffmpeg";
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -516,7 +516,7 @@ public class FFmpegOptionsController extends BaseController {
                 tipsArea.setText(message("FFmpegArgumentsTips"));
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -531,7 +531,7 @@ public class FFmpegOptionsController extends BaseController {
             recordFileOpened(file);
             executableInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -566,7 +566,7 @@ public class FFmpegOptionsController extends BaseController {
         try {
             browseURI(new URI("http://ffmpeg.org/download.html"));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -653,7 +653,7 @@ public class FFmpegOptionsController extends BaseController {
                 process.waitFor();
 
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
                 popError(e.toString());
             } finally {
                 muxerTask = null;
@@ -752,7 +752,8 @@ public class FFmpegOptionsController extends BaseController {
                             videoEncoderSelector.getItems().add(0, AppVariables.message("CopyVideo"));
                             videoEncoderSelector.getItems().add(0, AppVariables.message("NotSetting"));
                             videoEncoderSelector.getSelectionModel().select(
-                                    AppVariables.getUserConfigValue("ffmpegDefaultVideoEncoder", "libx264"));
+                                    AppVariables.getUserConfigValue("ffmpegDefaultVideoEncoder", defaultVideoEcodec()));
+
                         }
                         if (subtitleEncoderSelector != null) {
                             subtitleEncoderSelector.getItems().addAll(sEncoders);
@@ -779,7 +780,7 @@ public class FFmpegOptionsController extends BaseController {
                 process.waitFor();
 
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
                 popError(e.toString());
             } finally {
                 encoderTask = null;
@@ -889,9 +890,31 @@ public class FFmpegOptionsController extends BaseController {
 
     }
 
+    public String defaultVideoEcodec() {
+        if (videoEncoderSelector != null) {
+            for (String item : videoEncoderSelector.getItems()) {
+                if (item.contains("nvenc")) {
+                    return item;
+                }
+            }
+            for (String item : videoEncoderSelector.getItems()) {
+                if (item.toLowerCase().contains("videotoolbox")) {
+                    return item;
+                }
+            }
+            for (String item : videoEncoderSelector.getItems()) {
+                if (item.contains("x264") || item.contains("h264")) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
     @FXML
     public void defaultAction() {
         try {
+
             if (muxerSelector != null) {
                 for (String item : muxerSelector.getItems()) {
                     if (item.toLowerCase().contains("mp4")) {
@@ -909,22 +932,7 @@ public class FFmpegOptionsController extends BaseController {
                 }
             }
             if (videoEncoderSelector != null) {
-                boolean nvenc = false;
-                for (String item : videoEncoderSelector.getItems()) {
-                    if (item.contains("nvenc")) {
-                        videoEncoderSelector.getSelectionModel().select(item);
-                        nvenc = true;
-                        break;
-                    }
-                }
-                if (!nvenc) {
-                    for (String item : videoEncoderSelector.getItems()) {
-                        if (item.contains("x264")) {
-                            videoEncoderSelector.getSelectionModel().select(item);
-                            break;
-                        }
-                    }
-                }
+                videoEncoderSelector.getSelectionModel().select(defaultVideoEcodec());
             }
             if (crfSelector != null) {
                 crfSelector.getSelectionModel().select(null);
@@ -964,7 +972,7 @@ public class FFmpegOptionsController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -984,7 +992,7 @@ public class FFmpegOptionsController extends BaseController {
             FxmlStage.browseURI(getMyStage(), htmFile.toURI());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -995,9 +1003,9 @@ public class FFmpegOptionsController extends BaseController {
                     = (FFmpegInformationController) openStage(CommonValues.FFmpegInformationFxml);
             controller.queryInput.setText("-h");
             controller.tabPane.getSelectionModel().select(controller.queryTab);
-            controller.queryAction();
+            controller.goAction();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

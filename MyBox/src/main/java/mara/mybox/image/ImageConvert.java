@@ -20,10 +20,10 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.image.file.ImageFileReaders.readBrokenImage;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sf.image4j.codec.ico.ICODecoder;
@@ -103,7 +103,7 @@ public class ImageConvert {
             }
             return bufferedImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return bufferedImage;
         }
     }
@@ -132,7 +132,7 @@ public class ImageConvert {
             bufferedImage = ImageBinary.byteBinary(bufferedImage);
             return bufferedImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return bufferedImage;
         }
     }
@@ -178,7 +178,7 @@ public class ImageConvert {
             BufferedImage targetImage = c.filter(tmpImage, null);
             return targetImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -242,18 +242,10 @@ public class ImageConvert {
                 reader.dispose();
             }
             writer.dispose();
-            try {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                tmpFile.renameTo(targetFile);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+            return FileTools.rename(tmpFile, targetFile);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -288,7 +280,7 @@ public class ImageConvert {
             ICOEncoder.write(images, targetFile);
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -302,7 +294,7 @@ public class ImageConvert {
             ICOEncoder.write(icoImage, targetFile);
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -322,7 +314,7 @@ public class ImageConvert {
             BufferedImage icoImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
             return icoImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -371,18 +363,11 @@ public class ImageConvert {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                tmpFile.renameTo(targetFile);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+
+            return FileTools.rename(tmpFile, targetFile);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }

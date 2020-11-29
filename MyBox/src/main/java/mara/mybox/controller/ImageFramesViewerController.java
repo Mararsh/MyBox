@@ -17,7 +17,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -65,7 +65,7 @@ public class ImageFramesViewerController extends ImagesListController {
                 );
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -147,7 +147,7 @@ public class ImageFramesViewerController extends ImagesListController {
                 controller.loadFile(sourceFile, tableData);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -220,7 +220,7 @@ public class ImageFramesViewerController extends ImagesListController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

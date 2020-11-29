@@ -45,7 +45,7 @@ public class OperationController extends BaseController {
 
             }
         });
-        miaoCheck.setSelected(AppVariables.getUserConfigBoolean("Miao"));
+        miaoCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Miao", true));
 
         openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -54,7 +54,7 @@ public class OperationController extends BaseController {
 
             }
         });
-        openCheck.setSelected(AppVariables.getUserConfigBoolean("OpenWhenComplete"));
+        openCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "OpenWhenComplete", true));
 
     }
 

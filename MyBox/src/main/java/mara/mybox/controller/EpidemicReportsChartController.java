@@ -72,7 +72,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -145,7 +145,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             initMapOptions();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -288,7 +288,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -299,7 +299,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     mapOptionsController.dataBox, mapOptionsController.markerImageBox);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -622,10 +622,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }, 0, interval);
 
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -660,7 +660,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -684,7 +684,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             List<EpidemicReport> timeReports = timesReports.get(time);
             drawChart(time, timeReports);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -736,7 +736,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -798,7 +798,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
             FxmlControl.setPieColors(pie, palette, legendSide != null);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -925,7 +925,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 drawValueLines(valueName, lineChart, time, vertical);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -977,7 +977,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
             FxmlControl.setLineChartColors(lineChart, palette, legendSide != null);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1079,7 +1079,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             }
             FxmlControl.setBarChartColors(barChart, palette, legendSide != null);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1121,7 +1121,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
             FxmlControl.setBarChartColors(barChart, palette, legendSide != null);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1238,7 +1238,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 //                webEngine.executeScript("map.setFitView();");
 //            }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1326,7 +1326,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1369,7 +1369,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         return file.exists();
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
 
@@ -1560,7 +1560,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         }
 
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                     snapEnd = true;
                 }
@@ -1568,7 +1568,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             }, 0, 100);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

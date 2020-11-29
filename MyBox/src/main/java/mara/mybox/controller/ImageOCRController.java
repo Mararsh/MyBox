@@ -40,6 +40,7 @@ import javafx.stage.Modality;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -55,7 +56,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -142,7 +142,7 @@ public class ImageOCRController extends ImageViewerController {
             rightPane.disableProperty().bind(originalView.imageProperty().isNull());
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -177,7 +177,7 @@ public class ImageOCRController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -208,7 +208,7 @@ public class ImageOCRController extends ImageViewerController {
             recoverAction();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -237,7 +237,7 @@ public class ImageOCRController extends ImageViewerController {
         try {
             FxmlControl.paneSize(originalScrollPane, originalView);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -249,7 +249,7 @@ public class ImageOCRController extends ImageViewerController {
         try {
             FxmlControl.imageSize(originalScrollPane, originalView);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -342,7 +342,7 @@ public class ImageOCRController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -504,7 +504,7 @@ public class ImageOCRController extends ImageViewerController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -783,7 +783,7 @@ public class ImageOCRController extends ImageViewerController {
                                     = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     }
                 });
@@ -1008,7 +1008,7 @@ public class ImageOCRController extends ImageViewerController {
                     File txtFile = new File(fileBase + ".txt");
                     if (txtFile.exists()) {
                         texts = FileTools.readTexts(txtFile);
-                        txtFile.delete();
+                        FileTools.delete(txtFile);
                     } else {
                         texts = null;
                     }
@@ -1016,7 +1016,7 @@ public class ImageOCRController extends ImageViewerController {
                     File htmlFile = new File(fileBase + ".hocr");
                     if (htmlFile.exists()) {
                         html = FileTools.readTexts(htmlFile);
-                        htmlFile.delete();
+                        FileTools.delete(htmlFile);
                     } else {
                         html = null;
                     }
@@ -1050,7 +1050,7 @@ public class ImageOCRController extends ImageViewerController {
                     });
 
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -1114,16 +1114,16 @@ public class ImageOCRController extends ImageViewerController {
 
                         File tmpFile = File.createTempFile("MyboxOCR", "");
                         String tmp = File.createTempFile("MyboxOCR", "").getAbsolutePath();
-                        tmpFile.delete();
+                        FileTools.delete(tmpFile);
                         instance.createDocumentsWithResults​(bufferedImage, null,
                                 tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
                         File txtFile = new File(tmp + ".txt");
                         texts = FileTools.readTexts(txtFile);
-                        txtFile.delete();
+                        FileTools.delete(txtFile);
 
                         File htmlFile = new File(tmp + ".hocr");
                         html = FileTools.readTexts(htmlFile);
-                        htmlFile.delete();
+                        FileTools.delete(htmlFile);
 
                         if (ocrOptionsController.wordLevel >= 0) {
                             words = instance.getWords(bufferedImage, ocrOptionsController.wordLevel);
@@ -1136,7 +1136,7 @@ public class ImageOCRController extends ImageViewerController {
                         return texts != null;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }

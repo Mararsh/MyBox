@@ -27,7 +27,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -70,7 +70,7 @@ public class FilesRedundancyController extends FilesBatchController {
             done = AppVariables.message("Done");
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -125,7 +125,7 @@ public class FilesRedundancyController extends FilesBatchController {
             }
             return done;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return done;
         }
     }
@@ -184,7 +184,7 @@ public class FilesRedundancyController extends FilesBatchController {
             }
             filesList.clear();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -250,6 +250,7 @@ public class FilesRedundancyController extends FilesBatchController {
     }
 
     @FXML
+    @Override
     public void goAction() {
         if (redundancy.size() > 0) {
             FilesRedundancyResultsController controller

@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -39,7 +39,7 @@ public class FilesRenameTableController extends FilesTableController {
             okRecoverButton.disableProperty().bind(tableView.itemsProperty().isNull());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

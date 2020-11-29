@@ -46,7 +46,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -89,7 +89,7 @@ public class HtmlSnapController extends HtmlBaseController {
             super.initValues();
             lastCodesLen = lastHtmlLen = 0;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -101,7 +101,7 @@ public class HtmlSnapController extends HtmlBaseController {
             initSnap();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -164,7 +164,7 @@ public class HtmlSnapController extends HtmlBaseController {
                     });
             dpiSelector.getSelectionModel().select(AppVariables.getUserConfigInt(baseName + "DPI", 96) + "");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -242,11 +242,11 @@ public class HtmlSnapController extends HtmlBaseController {
                 public void run() {
                     boolean quit = false;
                     if (new Date().getTime() - startTime > maxDelay) {
-//                        logger.debug(" TimeOver:" + newHeight);
+//                        MyBoxLog.debug(" TimeOver:" + newHeight);
                         quit = true;
                     }
                     if (newHeight == lastHeight) {
-//                        logger.debug(" Complete:" + newHeight);
+//                        MyBoxLog.debug(" Complete:" + newHeight);
                         quit = true;
                     }
                     if (quit) {
@@ -275,7 +275,7 @@ public class HtmlSnapController extends HtmlBaseController {
                             }
 
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                             if (loadingController != null) {
                                 loadingController.closeStage();
                                 loadingController = null;
@@ -287,7 +287,7 @@ public class HtmlSnapController extends HtmlBaseController {
             }, 0, delay);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -329,7 +329,7 @@ public class HtmlSnapController extends HtmlBaseController {
             }, 2000);    // make sure page is loaded before snapping
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

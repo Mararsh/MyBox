@@ -9,19 +9,16 @@ import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.Security;
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
-import mara.mybox.db.TableStringValues;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -63,66 +60,6 @@ public class SystemTools {
 
     public static boolean isWindows() {
         return os().contains("win");
-    }
-
-    public static List<Integer> installedVersion(Connection conn) {
-        List<Integer> versions = new ArrayList<>();
-        try {
-            List<String> installed = TableStringValues.read(conn, "InstalledVersions");
-            for (String v : installed) {
-                versions.add(myboxVersion(v));
-            }
-        } catch (Exception e) {
-//            logger.debug(e.toString());
-        }
-        return versions;
-    }
-
-    public static int lastVersion(Connection conn) {
-        try {
-            List<Integer> versions = installedVersion(conn);
-            if (!versions.isEmpty()) {
-                Collections.sort(versions);
-                return versions.get(versions.size() - 1);
-            }
-        } catch (Exception e) {
-//            logger.debug(e.toString());
-        }
-        return 0;
-    }
-
-    public static int myboxVersion(String string) {
-        try {
-            String[] vs = string.split("\\.");
-            switch (vs.length) {
-                case 1:
-                    return Integer.parseInt(vs[0]) * 1000000;
-                case 2:
-                    return Integer.parseInt(vs[0]) * 1000000 + Integer.parseInt(vs[1]) * 1000;
-                case 3:
-                    return Integer.parseInt(vs[0]) * 1000000 + Integer.parseInt(vs[1]) * 1000 + Integer.parseInt(vs[2]);
-            }
-        } catch (Exception e) {
-//            logger.debug(e.toString());
-        }
-        return 0;
-    }
-
-    public static String myboxVersion(int i) {
-        try {
-            int v1 = i / 1000000;
-            int ii = i % 1000000;
-            int v2 = ii / 1000;
-            int v3 = ii % 1000;
-            if (v3 == 0) {
-                return v1 + "." + v2;
-            } else {
-                return v1 + "." + v2 + "." + v3;
-            }
-        } catch (Exception e) {
-//            logger.debug(e.toString());
-        }
-        return i + "";
     }
 
     public static String keystore() {
@@ -207,9 +144,9 @@ public class SystemTools {
 
     public static void currentThread() {
         Thread thread = Thread.currentThread();
-        logger.debug(thread.getId() + " " + thread.getName() + " " + thread.getState());
+        MyBoxLog.debug(thread.getId() + " " + thread.getName() + " " + thread.getState());
         for (StackTraceElement element : thread.getStackTrace()) {
-            logger.debug(element);
+            MyBoxLog.debug(element.toString());
         }
     }
 
@@ -276,12 +213,12 @@ public class SystemTools {
             for (Provider provider : Security.getProviders()) {
                 for (Provider.Service service : provider.getServices()) {
                     if (service.getType().equals("Signature")) {
-                        logger.debug(service.getAlgorithm());
+                        MyBoxLog.debug(service.getAlgorithm());
                     }
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -328,7 +265,7 @@ public class SystemTools {
             byte[] digest = md.digest(bytes);
             return digest;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -339,14 +276,14 @@ public class SystemTools {
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = in.read(buf)) != -1) {
+                while ((len = in.read(buf)) > 0) {
                     md.update(buf, 0, len);
                 }
             }
             byte[] digest = md.digest();
             return digest;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -370,12 +307,12 @@ public class SystemTools {
 
             String[] cipherSuites = sslServerSocket.getSupportedCipherSuites();
             for (String suite : cipherSuites) {
-                logger.debug(suite);
+                MyBoxLog.debug(suite);
             }
 
             String[] protocols = sslServerSocket.getSupportedProtocols();
             for (String protocol : protocols) {
-                logger.debug(protocol);
+                MyBoxLog.debug(protocol);
             }
         } catch (Exception e) {
 
@@ -405,7 +342,7 @@ public class SystemTools {
                     break;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return names;
     }
@@ -464,7 +401,7 @@ public class SystemTools {
             names.addAll(0, cnames);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return names;
     }

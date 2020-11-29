@@ -28,9 +28,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import thridparty.TableAutoCommitCell;
@@ -114,7 +115,7 @@ public class MyBoxLanguagesController extends BaseController {
             loadList();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -180,7 +181,7 @@ public class MyBoxLanguagesController extends BaseController {
             listView.getItems().addAll(ConfigTools.languages());
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -189,7 +190,7 @@ public class MyBoxLanguagesController extends BaseController {
         tableData.clear();
         try {
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -227,13 +228,14 @@ public class MyBoxLanguagesController extends BaseController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -282,7 +284,7 @@ public class MyBoxLanguagesController extends BaseController {
         }
         for (String name : selected) {
             File file = new File(AppVariables.MyBoxLanguagesPath + File.separator + name);
-            file.delete();
+            FileTools.delete(file);
         }
         isSettingValues = true;
         listView.getItems().removeAll(selected);
@@ -312,7 +314,7 @@ public class MyBoxLanguagesController extends BaseController {
                 return;
             }
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -349,13 +351,14 @@ public class MyBoxLanguagesController extends BaseController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

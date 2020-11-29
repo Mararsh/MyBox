@@ -22,7 +22,7 @@ import static mara.mybox.color.IccTagType.signature;
 import static mara.mybox.color.IccTagType.text;
 import static mara.mybox.color.IccTagType.u16Fixed16Number;
 import static mara.mybox.color.IccTagType.viewingConditions;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.CommonValues.Indent;
 
 /**
@@ -364,7 +364,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -386,7 +386,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -408,7 +408,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -429,7 +429,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -450,7 +450,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -472,7 +472,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -493,7 +493,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -515,7 +515,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -536,7 +536,7 @@ public class IccTag {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }

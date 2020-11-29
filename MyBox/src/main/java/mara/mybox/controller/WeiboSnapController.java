@@ -19,10 +19,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Screen;
 import mara.mybox.data.WeiboSnapParameters;
+import mara.mybox.db.TableBrowserBypassSSL;
 import mara.mybox.db.TableStringValues;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
@@ -30,7 +31,6 @@ import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -42,12 +42,13 @@ import mara.mybox.value.CommonValues;
  */
 public class WeiboSnapController extends BaseController {
 
-    private final String WeiboLoadSpeedKey, WeiboScrollDelayKey, WeiboZoomKey;
+    public final static String exmapleAddress = "https://weibo.com/p/1005053926428816/home";
+    private final String WeiboZoomKey;
     private final String WeiboLastAddressKey, WeiboRetryKey, WeiboOpenPathKey, WeiboColseWindowKey;
-    private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey, WeiboUseTempKey;
+    private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey;
     private final String WeiboPdfKey, WeiboHtmlKey, WeiboPixKey, WeiboKeepPageKey, WeiboMiaoKey;
     final private String AuthorKey;
-    private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval, dpi, likeStartPage;
+    private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval, likeStartPage;
     private boolean isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
@@ -67,7 +68,7 @@ public class WeiboSnapController extends BaseController {
             snapIntervalInput, customWidthInput, customHeightInput, authorInput, thresholdInput,
             headerInput, likeStartPageInput;
     @FXML
-    private Button wowButton, recoverPassportButton;
+    private Button recoverPassportButton;
     @FXML
     private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck,
@@ -83,8 +84,6 @@ public class WeiboSnapController extends BaseController {
 
         targetPathKey = "WeiboTargetPathKey";
 
-        WeiboLoadSpeedKey = "WeiboLoadSpeedKey";
-        WeiboScrollDelayKey = "WeiboScrollDelayKey";
         WeiboZoomKey = "WeiboZoomKey";
         WeiboLastAddressKey = "WeiboLastAddressKey";
         WeiboRetryKey = "WeiboRetryKey";
@@ -98,7 +97,6 @@ public class WeiboSnapController extends BaseController {
         WeiboMiaoKey = "WeiboMiaoKey";
         WeiboExpandPicturesKey = "WeiboExpandPicturesKey";
         WeiboExpandCommentsKey = "WeiboExpandCommentsKey";
-        WeiboUseTempKey = "WeiboUseTempKey";
     }
 
     @Override
@@ -113,7 +111,7 @@ public class WeiboSnapController extends BaseController {
             initTargetOptions();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -183,9 +181,9 @@ public class WeiboSnapController extends BaseController {
         }
         });
         addressBox.getSelectionModel().select(0);
-        if (!addressList.contains("https://www.weibo.com/wow")) {
-            addressBox.setValue("https://www.weibo.com/wow");
-            webAddress = "https://www.weibo.com/wow";
+        if (!addressList.contains(exmapleAddress)) {
+            addressBox.setValue(exmapleAddress);
+            webAddress = exmapleAddress;
         }
 
         FxmlControl.setTooltip(startMonthInput, new Tooltip(AppVariables.message("WeiboEarlestMonth")));
@@ -196,7 +194,7 @@ public class WeiboSnapController extends BaseController {
                 checkTimes();
             }
         });
-        startMonthInput.setText(AppVariables.getUserConfigValue("WeiboPostsLastMonth", ""));
+        startMonthInput.setText(AppVariables.getUserConfigValue("WeiboPostsLastMonth", "2014-09"));
 
         startPage = 1;
         startPageInput.textProperty().addListener(new ChangeListener<String>() {
@@ -937,7 +935,7 @@ public class WeiboSnapController extends BaseController {
                 AppVariables.setUserConfigValue(WeiboColseWindowKey, newValue);
             }
         });
-        closeWindowCheck.setSelected(AppVariables.getUserConfigBoolean(WeiboColseWindowKey));
+        closeWindowCheck.setSelected(AppVariables.getUserConfigBoolean(WeiboColseWindowKey, false));
 
         categoryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -962,7 +960,6 @@ public class WeiboSnapController extends BaseController {
         //                .or(bypassSSLCheck.selectedProperty().not())
         );
 
-//        wowButton.disableProperty().bind(startButton.disableProperty());
     }
 
     private void checkCategory() {
@@ -1029,30 +1026,25 @@ public class WeiboSnapController extends BaseController {
 
     @FXML
     protected void exampleAction(ActionEvent event) {
-        if (!addressList.contains("https://www.weibo.com/wow")) {
-            addressBox.setValue("https://www.weibo.com/wow");
-            webAddress = "https://www.weibo.com/wow";
+        if (!addressList.contains(exmapleAddress)) {
+            addressBox.setValue(exmapleAddress);
+            webAddress = exmapleAddress;
         }
         makeParameters();
         if (parameters == null) {
             popError(AppVariables.message("ParametersError"));
             return;
         }
-        parameters.setWebAddress("https://weibo.com/wow");
-        parameters.setStartMonth(DateTools.parseMonth("2012-01"));
-        parameters.setEndMonth(DateTools.parseMonth("2012-01"));
+        parameters.setWebAddress(exmapleAddress);
+        parameters.setStartMonth(DateTools.parseMonth("2014-09"));
+        parameters.setEndMonth(DateTools.parseMonth("2014-10"));
         startSnap();
-    }
-
-    @FXML
-    protected void callMiao(MouseEvent event) {
-        FxmlControl.miao3();
     }
 
     @FXML
     protected void suggestedSettings(ActionEvent event) {
         if (addressBox.getValue() == null) {
-            addressBox.setValue("https://www.weibo.com/wow");
+            addressBox.setValue(exmapleAddress);
         }
         retryBox.getSelectionModel().select("3");
         zoomBox.getSelectionModel().select("1.0");
@@ -1122,7 +1114,7 @@ public class WeiboSnapController extends BaseController {
             return parameters;
         } catch (Exception e) {
             parameters = null;
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1132,6 +1124,23 @@ public class WeiboSnapController extends BaseController {
             if (parameters == null) {
                 popError(AppVariables.message("ParametersError"));
                 return;
+            }
+
+            if (AppVariables.getUserConfigBoolean("SSLBypassAll", false)) {
+                NetworkTools.trustAll();
+            } else {
+                // SSL handshake still fails even when certficates imported! This is workaround
+                try {
+                    List<String> hosts = new ArrayList<>();
+                    hosts.addAll(Arrays.asList(
+                            "www.sina.com", "www.sina.com.cn", "www.weibo.cn", "www.weibo.com", "weibo.com"
+                    ));
+                    NetworkTools.installCertificate(hosts);
+                    TableBrowserBypassSSL.write(hosts);
+                    NetworkTools.myBoxSSL();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
             }
 
             if (postsCheck.isSelected()) {
@@ -1157,7 +1166,7 @@ public class WeiboSnapController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

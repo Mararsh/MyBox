@@ -13,8 +13,8 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.VisitHistory.OperationType;
 import mara.mybox.data.VisitHistory.ResourceType;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -61,9 +61,8 @@ public class TableVisitHistory extends DerbyBase {
             his.setVisitCount(results.getInt("visit_count"));
             return his;
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
             return null;
-            // logger.debug(e.toString());
         }
     }
 
@@ -76,11 +75,14 @@ public class TableVisitHistory extends DerbyBase {
         for (VisitHistory r : records) {
             if (r.getResourceType() == ResourceType.File || r.getResourceType() == ResourceType.Path) {
                 String fname = r.getResourceValue();
-                if (!new File(fname).exists()) {
-                    delete(conn, r);
-                } else if (!names.contains(fname)) {
-                    names.add(fname);
-                    valid.add(r);
+                try {
+                    if (!new File(fname).exists()) {
+                        delete(conn, r);
+                    } else if (!names.contains(fname)) {
+                        names.add(fname);
+                        valid.add(r);
+                    }
+                } catch (Exception e) {
                 }
             } else {
                 valid.add(r);
@@ -99,8 +101,7 @@ public class TableVisitHistory extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return checkFilesExisted(conn, records);
     }
@@ -110,25 +111,21 @@ public class TableVisitHistory extends DerbyBase {
         try ( ResultSet results = statement.executeQuery()) {
             records = findList(conn, results);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
 
     public static List<VisitHistory> find(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
-            try ( PreparedStatement statement = conn.prepareStatement(AllQuery)) {
-                if (count > 0) {
-                    statement.setMaxRows(count);
-                }
-                records = find(conn, statement);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement statement = conn.prepareStatement(AllQuery)) {
+            if (count > 0) {
+                statement.setMaxRows(count);
             }
+            records = find(conn, statement);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -138,20 +135,17 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
-            final String sql = " SELECT  * FROM visit_history "
-                    + "  WHERE resource_type=? ORDER BY last_visit_time  DESC  ";
-            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
-                if (count > 0) {
-                    statement.setMaxRows(count);
-                }
-                statement.setInt(1, resourceType);
-                records = find(conn, statement);
+        final String sql = " SELECT  * FROM visit_history "
+                + "  WHERE resource_type=? ORDER BY last_visit_time  DESC  ";
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+            if (count > 0) {
+                statement.setMaxRows(count);
             }
+            statement.setInt(1, resourceType);
+            records = find(conn, statement);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -175,7 +169,6 @@ public class TableVisitHistory extends DerbyBase {
             return find(resourceType, types, count);
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
             if (resourceType <= 0) {
                 final String sql = " SELECT   * FROM visit_history "
                         + "  WHERE file_type=?  ORDER BY last_visit_time  DESC  ";
@@ -201,8 +194,7 @@ public class TableVisitHistory extends DerbyBase {
             }
 
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -214,7 +206,6 @@ public class TableVisitHistory extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            conn.setReadOnly(true);
             String sql = " SELECT   * FROM visit_history  WHERE ( file_type=" + fileTypes[0];
             for (int i = 1; i < fileTypes.length; ++i) {
                 sql += " OR file_type=" + fileTypes[i];
@@ -231,8 +222,7 @@ public class TableVisitHistory extends DerbyBase {
                 records = findList(conn, results);
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -253,7 +243,6 @@ public class TableVisitHistory extends DerbyBase {
         }
         List<VisitHistory> records = new ArrayList<>();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
             if (resourceType <= 0) {
                 if (fileType <= 0) {
                     final String sql = " SELECT   * FROM visit_history "
@@ -308,8 +297,7 @@ public class TableVisitHistory extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -324,7 +312,6 @@ public class TableVisitHistory extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            conn.setReadOnly(true);
             String sql = " SELECT * FROM visit_history WHERE"
                     + " operation_type=" + operationType
                     + " AND ( file_type=" + fileTypes[0];
@@ -343,8 +330,7 @@ public class TableVisitHistory extends DerbyBase {
                 records = findList(conn, results);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -354,11 +340,9 @@ public class TableVisitHistory extends DerbyBase {
             return null;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
             return find(conn, resourceType, fileType, operationType, value);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -404,8 +388,7 @@ public class TableVisitHistory extends DerbyBase {
             }
 
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -413,7 +396,6 @@ public class TableVisitHistory extends DerbyBase {
     public static List<VisitHistory> findAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
             final String sql = " SELECT   * FROM visit_history "
                     + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.png',  '.tif', 'tiff') "
@@ -427,8 +409,7 @@ public class TableVisitHistory extends DerbyBase {
                 records = find(conn, statement);
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -436,7 +417,6 @@ public class TableVisitHistory extends DerbyBase {
     public static List<VisitHistory> findNoAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
             final String sql = " SELECT   * FROM visit_history "
                     + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.jpg', '.bmp', '.gif', '.pnm', 'wbmp') "
@@ -450,8 +430,7 @@ public class TableVisitHistory extends DerbyBase {
                 records = find(conn, statement);
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -471,8 +450,7 @@ public class TableVisitHistory extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return update(conn, resourceType, fileType, operationType, value, more);
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -556,8 +534,7 @@ public class TableVisitHistory extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -619,8 +596,7 @@ public class TableVisitHistory extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -629,11 +605,8 @@ public class TableVisitHistory extends DerbyBase {
         if (conn == null || resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
-        final String sql = "DELETE FROM visit_history "
-                + " WHERE resource_type=? AND file_type=? "
-                + " AND operation_type=? AND resource_value=?";
-//        logger.debug(sql);
-//        logger.debug(resourceType + " " + fileType + " " + operationType + " >>>" + value + "<<< ");
+        String sql = "DELETE FROM visit_history "
+                + " WHERE resource_type=? AND file_type=? AND operation_type=? AND  resource_value=?";
         try ( PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, resourceType);
             statement.setInt(2, fileType);
@@ -641,8 +614,7 @@ public class TableVisitHistory extends DerbyBase {
             statement.setString(4, value);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -654,8 +626,7 @@ public class TableVisitHistory extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return delete(conn, resourceType, resourceType, operationType, value);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -678,8 +649,7 @@ public class TableVisitHistory extends DerbyBase {
             statement.setInt(3, operationType);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -691,8 +661,7 @@ public class TableVisitHistory extends DerbyBase {
                  PreparedStatement statement = conn.prepareStatement(sql)) {
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

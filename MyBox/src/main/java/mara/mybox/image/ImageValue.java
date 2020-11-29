@@ -20,7 +20,7 @@ import javax.imageio.spi.IIORegistry;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.image.file.ImageJpgFile.getJpegCompressionTypes;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -295,7 +295,7 @@ public class ImageValue {
         try {
             return new ICC_ColorSpace(internalProfile(profileName));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -304,7 +304,7 @@ public class ImageValue {
         try {
             return new ICC_ColorSpace(iccProfile(profileName));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

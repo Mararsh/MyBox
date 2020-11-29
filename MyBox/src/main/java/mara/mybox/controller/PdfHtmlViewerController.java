@@ -21,11 +21,11 @@ import javafx.stage.Modality;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -100,7 +100,7 @@ public class PdfHtmlViewerController extends PdfViewController {
                         new Tooltip(message("PDFComments") + "\n\n" + message("PdfHtmlViewerTips")));
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -112,7 +112,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             operationBox.disableProperty().bind(Bindings.not(infoLoaded));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -185,7 +185,7 @@ public class PdfHtmlViewerController extends PdfViewController {
                         }
 
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             });
@@ -200,13 +200,13 @@ public class PdfHtmlViewerController extends PdfViewController {
                             textArea.setText(contents);
                         }
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -234,7 +234,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -270,23 +270,23 @@ public class PdfHtmlViewerController extends PdfViewController {
                         parser.setStartPage(currentPage + 1);
                         parser.setEndPage(currentPage + 1);
                         parser.setPageStart(title);
-//                    logger.debug(parser.getSpacingTolerance());
+//                    MyBoxLog.debug(parser.getSpacingTolerance());
 //                    parser.setSpacingTolerance(0f);
                         try ( Writer output = new PrintWriter(htmlFile, "utf-8")) {
                             try {
                                 parser.writeText(doc, output);
                             } catch (Exception e) {
-                                logger.debug(error);
+//                                MyBoxLog.debug(error);
                             }
                             doc.close();
                             ok = true;
                         } catch (Exception e) {
                             error = e.toString();
-                            logger.debug(error);
+//                            MyBoxLog.debug(error);
                         }
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(error);
+//                        MyBoxLog.debug(error);
                     }
                     return htmlFile.exists();
                 }
@@ -358,7 +358,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -195,7 +195,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.matches();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -210,7 +210,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.find();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -222,7 +222,7 @@ public class StringTools {
         }
         StringBuilder sb = new StringBuilder();
         int i, pos = 0;
-        while ((i = unicode.indexOf("\\u", pos)) != -1) {
+        while ((i = unicode.indexOf("\\u", pos)) > 0) {
             sb.append(unicode.substring(pos, i));
             if (i + 5 < unicode.length()) {
                 pos = i + 6;

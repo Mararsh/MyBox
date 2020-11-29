@@ -42,12 +42,14 @@ import mara.mybox.data.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageColor.ColorComponent;
 import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageQuantization.ColorCount;
+import mara.mybox.image.ImageQuantization.KMeansClusteringQuantization;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import static mara.mybox.image.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
 import mara.mybox.image.ImageStatistic;
@@ -56,7 +58,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -70,7 +71,8 @@ public class ImageAnalyseController extends ImageViewerController {
 
     protected ImageStatistic data;
     protected ImageView parentView;
-    protected int colorNumber1, bitDepth1, bitDepth2, colorNumber2;
+    protected int colorNumber1, bitDepth1, bitDepth2, colorNumber2, kmeansLoop;
+    protected List<Color> kmeansColors, popularityColors;
 
     @FXML
     protected VBox imageBox, dataBox;
@@ -89,16 +91,18 @@ public class ImageAnalyseController extends ImageViewerController {
     protected BarChart colorsBarchart, grayBarchart, redBarchart, greenBarchart, blueBarchart,
             hueBarchart, saturationBarchart, brightnessBarchart, alphaBarchart;
     @FXML
-    protected Button refreshButton;
+    protected Button refreshButton, palette1Button, palette2Button;
     @FXML
     protected ComboBox<String> colorsNumberSelectors1, colorsNumberSelectors2,
-            regionsDepthSelector1, regionsDepthSelector2;
+            regionsDepthSelector1, regionsDepthSelector2, kmeansLoopSelector;
     @FXML
     protected WebView colorsView, dominantView1, dominantView2,
             grayView, redView, greenView, blueView,
             hueView, saturationView, brightnessView, alphaView;
     @FXML
     protected PieChart dominantPie1, dominantPie2;
+    @FXML
+    protected Label actualLoopLabel;
 
     public ImageAnalyseController() {
         baseTitle = message("ImageAnalyse");
@@ -125,7 +129,7 @@ public class ImageAnalyseController extends ImageViewerController {
             initDataBox();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -143,7 +147,7 @@ public class ImageAnalyseController extends ImageViewerController {
             selectAreaCheck.setSelected(false);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -154,6 +158,18 @@ public class ImageAnalyseController extends ImageViewerController {
 
         initComponentsTab();
         initDominantTab();
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+            FxmlControl.setTooltip(palette1Button, message("AddInColorPalette"));
+            FxmlControl.setTooltip(palette2Button, message("AddInColorPalette"));
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     protected void loadData() {
@@ -244,7 +260,7 @@ public class ImageAnalyseController extends ImageViewerController {
             loadData();
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             imageView.setImage(null);
             alertInformation(message("NotSupported"));
             return false;
@@ -310,6 +326,28 @@ public class ImageAnalyseController extends ImageViewerController {
             });
             colorsNumberSelectors1.getSelectionModel().select(0);
 
+            kmeansLoop = 10000;
+            kmeansLoopSelector.getItems().addAll(Arrays.asList(
+                    "10000", "5000", "3000", "1000", "20000"));
+            kmeansLoopSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            kmeansLoop = v;
+                            FxmlControl.setEditorNormal(kmeansLoopSelector);
+                            loadData(false, true, false);
+                        } else {
+                            FxmlControl.setEditorBadStyle(kmeansLoopSelector);
+                        }
+                    } catch (Exception e) {
+                        FxmlControl.setEditorBadStyle(kmeansLoopSelector);
+                    }
+                }
+            });
+            kmeansLoopSelector.getSelectionModel().select(0);
+
             bitDepth2 = 2;
             regionsDepthSelector2.getItems().addAll(Arrays.asList(
                     "2", "1", "3", "4", "5", "6", "7", "8"));
@@ -344,10 +382,10 @@ public class ImageAnalyseController extends ImageViewerController {
             });
             colorsNumberSelectors2.getSelectionModel().select(0);
 
-            FxmlControl.setTooltip(tipsView, new Tooltip(message("QuantizationBitDepthComments")));
+            FxmlControl.setTooltip(tipsView, new Tooltip(message("QuantizationComments")));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -362,13 +400,13 @@ public class ImageAnalyseController extends ImageViewerController {
                     }
                 });
             }
-            ImageQuantization quantization = ImageQuantization.create(image,
-                    null, KMeansClustering,
-                    colorNumber1, bitDepth1, true, true);
+            KMeansClusteringQuantization quantization = (KMeansClusteringQuantization) ImageQuantization
+                    .create(image, null, KMeansClustering, colorNumber1, bitDepth1, true, true);
+            quantization.getKmeans().setMaxIteration(kmeansLoop);
             showDominantData(quantization, image,
                     message("DominantKMeansComments"), dominantView1, dominantPie1);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return false;
     }
@@ -389,7 +427,7 @@ public class ImageAnalyseController extends ImageViewerController {
             return showDominantData(quantization, image,
                     message("DominantPopularityComments"), dominantView2, dominantPie2);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return false;
     }
@@ -415,20 +453,28 @@ public class ImageAnalyseController extends ImageViewerController {
                 public void run() {
                     view.getEngine().loadContent​(html);
                     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+                    List<Color> colors = new ArrayList<>();
                     for (int i = 0; i < sortedCounts.size(); ++i) {
                         ColorCount count = sortedCounts.get(i);
                         Color color = ImageColor.converColor(count.color);
+                        colors.add(color);
                         String name = "#" + FxmlColor.color2rgba(color).substring(2, 8) + "  "
                                 + (int) (count.count * 100 / total) + "%";
                         pieChartData.add(new PieChart.Data(name, count.count));
                     }
                     pie.setData(pieChartData);
-                    for (int i = 0; i < sortedCounts.size(); ++i) {
-                        ColorCount count = sortedCounts.get(i);
-                        String colorString = FxmlColor.color2rgb(ImageColor.converColor(count.color));
+                    for (int i = 0; i < colors.size(); ++i) {
+                        String colorString = FxmlColor.color2rgb(colors.get(i));
                         PieChart.Data data = pieChartData.get(i);
                         data.getNode().setStyle("-fx-pie-color: " + colorString + ";");
 
+                    }
+                    if (quantization instanceof KMeansClusteringQuantization) {
+                        kmeansColors = colors;
+                        actualLoopLabel.setText(message("ActualLoop") + ":"
+                                + ((KMeansClusteringQuantization) quantization).getKmeans().getLoopCount());
+                    } else {
+                        popularityColors = colors;
                     }
                     Set<Node> legendItems = pie.lookupAll("Label.chart-legend-item");
                     if (legendItems.isEmpty()) {
@@ -442,12 +488,13 @@ public class ImageAnalyseController extends ImageViewerController {
                             legend.setStyle("-fx-background-color: " + colorString);
                         }
                     }
+
                 }
             });
 
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -540,7 +587,7 @@ public class ImageAnalyseController extends ImageViewerController {
             componentsLegendCheck.setSelected(AppVariables.getUserConfigBoolean("ImageHistLegend", true));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -601,7 +648,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 return true;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return false;
     }
@@ -644,7 +691,7 @@ public class ImageAnalyseController extends ImageViewerController {
             colorsView.getEngine().loadContent​(html);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -813,6 +860,23 @@ public class ImageAnalyseController extends ImageViewerController {
         showComponentsHistogram();
     }
 
+    @FXML
+    public void addKmeans() {
+        ColorPaletteManageController controller = ColorPaletteManageController.oneOpen();
+        if (controller != null) {
+            controller.addColors(kmeansColors);
+        }
+    }
+
+    @FXML
+    public void addPopularity() {
+        ColorPaletteManageController controller = ColorPaletteManageController.oneOpen();
+        if (controller != null) {
+            controller.addColors(popularityColors);
+        }
+    }
+
+
     /*
         Color
      */
@@ -881,7 +945,7 @@ public class ImageAnalyseController extends ImageViewerController {
             barchart.setLegendVisible(false);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1203,7 +1267,7 @@ public class ImageAnalyseController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

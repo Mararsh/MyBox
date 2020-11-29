@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -19,12 +18,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -88,7 +87,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -101,7 +100,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             charsetIncorrect = false;
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -151,7 +150,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     return AppVariables.message("Failed");
                 } else {
                     if (deleteCheck.isSelected()) {
-                        srcFile.delete();
+                        FileTools.delete(srcFile);
                     }
                     return AppVariables.message("Successful");
                 }
@@ -166,21 +165,18 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                 return AppVariables.message("Skip");
             }
 
-            if (targetFile.exists()) {
-                targetFile.delete();
+            if (FileTools.rename(decompressedFile, targetFile)) {
+                targetFileGenerated(targetFile);
+                if (deleteCheck.isSelected()) {
+                    FileTools.delete(srcFile);
+                }
+                return AppVariables.message("Successful");
+            } else {
+                return AppVariables.message("Failed");
             }
-            if (!decompressedFile.renameTo(targetFile)) {
-                Files.copy(Paths.get(decompressedFile.getAbsolutePath()),
-                        Paths.get(targetFile.getAbsolutePath()));
-                decompressedFile.delete();
-            }
-            targetFileGenerated(targetFile);
-            if (deleteCheck.isSelected()) {
-                srcFile.delete();
-            }
-            return AppVariables.message("Successful");
+
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -206,7 +202,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             }
 
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -221,15 +217,14 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             } else if (archiver.equalsIgnoreCase(ArchiveStreamFactory.ZIP)) {
                 unarchiveZip(srcFile);
             } else {
-                try ( ArchiveInputStream in
-                        = aFactory.createArchiveInputStream(archiver, fileIn, encoding)) {
+                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, encoding)) {
                     unarchive(in);
                 } catch (Exception ex) {
-//                            logger.debug(ex.toString());
+//                            MyBoxLog.debug(ex.toString());
                 }
             }
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -351,7 +346,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     try ( FileOutputStream out = new FileOutputStream(file)) {
                         int length;
                         byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((length = sevenZFile.read(buf)) != -1) {
+                        while ((length = sevenZFile.read(buf)) > 0) {
                             out.write(buf, 0, length);
                         }
                     }

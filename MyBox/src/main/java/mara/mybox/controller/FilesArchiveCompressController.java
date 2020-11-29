@@ -24,6 +24,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
@@ -31,7 +32,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -254,7 +254,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
             }
             selectTargetFile(file);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -271,7 +271,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                 targetFileInput.setText(targetFile.getAbsolutePath());
             }
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -310,7 +310,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
             totalSize = 0;
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -345,8 +345,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                 SevenZArchiveEntry entry = sevenZOutput.createArchiveEntry(file, name);
                 sevenZOutput.putArchiveEntry(entry);
                 if (file.isFile()) {
-                    try ( BufferedInputStream inputStream
-                            = new BufferedInputStream(new FileInputStream(file))) {
+                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                         int len;
                         byte[] buf = new byte[CommonValues.IOBufferLength];
                         while ((len = inputStream.read(buf)) >= 0) {
@@ -364,8 +363,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                 ArchiveEntry entry = archiveOut.createArchiveEntry(file, name);
                 archiveOut.putArchiveEntry(entry);
                 if (file.isFile()) {
-                    try ( BufferedInputStream inputStream
-                            = new BufferedInputStream(new FileInputStream(file))) {
+                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                         IOUtils.copy(inputStream, archiveOut);
                     }
                     totalSize += file.length();
@@ -377,7 +375,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
             }
             return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return AppVariables.message("Failed");
         }
 
@@ -399,7 +397,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
             return MessageFormat.format(AppVariables.message("DirHandledSummary"),
                     dirFilesNumber, dirFilesHandled);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -436,7 +434,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -451,7 +449,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                 archiveOut.close();
             }
             if (targetFile.exists()) {
-                targetFile.delete();
+                FileTools.delete(targetFile);
             }
             if (!message("None").equals(compressor)) {
                 File tmpFile = FileTools.getTempFile();
@@ -461,18 +459,12 @@ public class FilesArchiveCompressController extends FilesBatchController {
                                 createCompressorOutputStream(compressor, out)) {
                     IOUtils.copy(inputStream, compressOut);
                 }
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                tmpFile.renameTo(targetFile);
+                FileTools.rename(tmpFile, targetFile);
             } else {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                archiveFile.renameTo(targetFile);
+                FileTools.rename(archiveFile, targetFile);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

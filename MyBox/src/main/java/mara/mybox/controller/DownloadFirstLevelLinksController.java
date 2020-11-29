@@ -13,6 +13,7 @@ import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ import mara.mybox.data.Link;
 import mara.mybox.data.Link.FilenameType;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -75,7 +77,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -193,7 +194,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     .name(baseName + "TargatPath", true)
                     .isSource(false).isDirectory(true).mustExist(false);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -208,7 +209,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             initOptionsTab();
             initLogsTab();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -216,7 +217,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         try {
             List<String> urls = VisitHistoryTools.recentDownloadAddress();
             if (urls == null || urls.isEmpty()) {
-                urlBox.getItems().add("https://www.luoxia.com/xiyouji/");
+                urlBox.getItems().add("https://www.kunnu.com/hongloumeng/");
             } else {
                 urlBox.getItems().addAll(urls);
             }
@@ -256,7 +257,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             htmlButton.disableProperty().bind(linksTableView.itemsProperty().isNull());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -279,7 +280,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -303,7 +304,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -449,7 +450,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -459,7 +460,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             maxLogsinput.setText(maxLogs + "");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -478,7 +479,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             tipsView.setFitHeight(AppVariables.iconSize * 1.5);
 //            tableDownloadHistory.clearData();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -498,12 +499,13 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
                 updateLogs(message("DownloadThread") + ": " + downloadThreads.size());
             } catch (Exception e) {
-                logger.error(e.toString());
+                MyBoxLog.error(e.toString());
             }
         }
     }
 
     @FXML
+    @Override
     public void goAction() {
         String address = urlBox.getValue();
         if (address == null) {
@@ -653,7 +655,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             checkData();
             tabPane.getSelectionModel().select(logsTab);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -743,7 +745,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -956,13 +958,8 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     public void html() {
         try {
-            if (addressLink == null) {
-                return;
-            }
-            TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml);
-            controller.hideLeftPane();
-            controller.hideRightPane();
-            controller.openTextFile(new File(addressLink.getFile()));
+            HtmlEditorController controller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
+            controller.loadLink(new URI(urlBox.getValue()));
         } catch (Exception e) {
         }
     }
@@ -1102,7 +1099,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 downloadThreads.clear();
                 updateLogs(message("DownloadThread") + ": " + downloadThreads.size());
             } catch (Exception e) {
-                logger.error(e.toString());
+                MyBoxLog.error(e.toString());
             }
         }
         checkData();
@@ -1187,7 +1184,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                                 + message("Count") + ": " + downloadThreads.size());
                     }
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             }
         }
@@ -1331,9 +1328,9 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     }
                     return;
                 }
-                failed(link, error);
+                MyBoxLog.error(link, error);
             } catch (Exception e) {
-                failed(link, e.toString());
+                MyBoxLog.error(link, e.toString());
             }
         }
 
@@ -1408,7 +1405,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
                 checkData();
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         }
 
@@ -1614,7 +1611,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 if (!ffile.exists()) {
                     updateLogs(message("Failed") + ": " + file);
                 } else if (ffile.length() == 0) {
-                    ffile.delete();
+                    FileTools.delete(ffile);
                     updateLogs(message("Failed") + ": " + file);
                 } else {
                     updateLogs(message("Generated") + ": " + file);
@@ -1682,7 +1679,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
                 logsTextArea.setScrollTop(0);
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         });
     }

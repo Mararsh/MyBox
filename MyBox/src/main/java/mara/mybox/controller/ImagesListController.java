@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -51,7 +51,7 @@ public abstract class ImagesListController extends ImageViewerController {
                 tableView = tableController.tableView;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -61,7 +61,7 @@ public abstract class ImagesListController extends ImageViewerController {
             super.initControls();
             initOptionsSection();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -83,7 +83,7 @@ public abstract class ImagesListController extends ImageViewerController {
                 viewButton.disableProperty().bind(saveButton.disableProperty());
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class ImagesListController extends ImageViewerController {
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -133,7 +133,7 @@ public abstract class ImagesListController extends ImageViewerController {
 
             tableController.addFile(0, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -197,7 +197,7 @@ public abstract class ImagesListController extends ImageViewerController {
             getMyStage().setTitle(title);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -236,7 +236,7 @@ public abstract class ImagesListController extends ImageViewerController {
             recordFileWritten(file);
             saveFile(file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -289,7 +289,7 @@ public abstract class ImagesListController extends ImageViewerController {
             tableController.tableChanged();
             tableController.tableSelected();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

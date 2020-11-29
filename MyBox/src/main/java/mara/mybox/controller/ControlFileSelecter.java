@@ -16,7 +16,7 @@ import mara.mybox.data.tools.VisitHistoryTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -145,7 +145,7 @@ public class ControlFileSelecter extends BaseController {
             sourceExtensionFilter = CommonFxValues.IccProfileExtensionFilter;
         } else if (fileType == VisitHistory.FileType.Certificate) {
             sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.TextEditHistory) {
+        } else if (fileType == VisitHistory.FileType.FileHistory) {
             sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         } else {
             sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
@@ -247,7 +247,7 @@ public class ControlFileSelecter extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

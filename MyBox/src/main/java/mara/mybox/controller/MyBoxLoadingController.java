@@ -21,13 +21,14 @@ import javax.imageio.ImageIO;
 import mara.mybox.MyBox;
 import mara.mybox.db.DataMigration;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -61,7 +62,7 @@ public class MyBoxLoadingController implements Initializable {
             derbyBox.setVisible(true);
             infoLabel.requestFocus();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -74,7 +75,7 @@ public class MyBoxLoadingController implements Initializable {
             myStage = (Stage) myScene.getWindow();
             myStage.setUserData(this);
             infoLabel.setText(message(lang, "Initializing..."));
-            logger.info("MyBox Config file:" + AppVariables.MyboxConfigFile);
+            MyBoxLog.console("MyBox Config file:" + AppVariables.MyboxConfigFile);
             Task task = new Task<Void>() {
                 @Override
                 protected Void call() {
@@ -83,7 +84,7 @@ public class MyBoxLoadingController implements Initializable {
                             infoLabel.setText(MessageFormat.format(message(lang,
                                     "InitializeDataUnder"), AppVariables.MyboxDataPath));
                         });
-                        if (!initPaths(myStage)) {
+                        if (!initFiles(myStage)) {
                             return null;
                         }
 
@@ -97,6 +98,7 @@ public class MyBoxLoadingController implements Initializable {
                                 && DerbyBase.status != DerbyBase.DerbyStatus.Nerwork) {
                             Platform.runLater(() -> {
                                 FxmlStage.alertWarning(myStage, initDB);
+                                MyBoxLog.console(initDB);
                             });
                             AppVariables.initAppVaribles();
                         } else {
@@ -112,6 +114,7 @@ public class MyBoxLoadingController implements Initializable {
                             Platform.runLater(() -> {
                                 infoLabel.setText(message(lang, "CheckingMigration"));
                             });
+                            MyBoxLog.console(message(lang, "CheckingMigration"));
                             if (!DataMigration.checkUpdates()) {
                                 cancel();
                                 return null;
@@ -126,9 +129,11 @@ public class MyBoxLoadingController implements Initializable {
                         ImageIO.setUseCache(true);
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
 
+                        MyBoxLog.info(message(lang, "Load") + " " + CommonValues.AppVersion);
                     } catch (Exception e) {
                         Platform.runLater(() -> {
                             infoLabel.setText(e.toString());
+                            MyBoxLog.console(e.toString());
                         });
                     }
                     return null;
@@ -186,7 +191,7 @@ public class MyBoxLoadingController implements Initializable {
             thread.start();
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -219,7 +224,7 @@ public class MyBoxLoadingController implements Initializable {
                     return false;
                 }
             }
-            logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
+            MyBoxLog.console("MyBox Data Path:" + AppVariables.MyboxDataPath);
 
             String oldPath = ConfigTools.readValue("MyBoxOldDataPath");
             if (oldPath != null) {
@@ -232,16 +237,30 @@ public class MyBoxLoadingController implements Initializable {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
 
-    public boolean initPaths(Stage stage) {
+    public boolean initFiles(Stage stage) {
         try {
             if (!initRootPath(stage)) {
                 return false;
             }
+
+            AppVariables.MyBoxLogsPath = new File(AppVariables.MyboxDataPath + File.separator + "logs");
+            if (!AppVariables.MyBoxLogsPath.exists()) {
+                if (!AppVariables.MyBoxLogsPath.mkdirs()) {
+                    Platform.runLater(() -> {
+                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                                AppVariables.MyBoxLogsPath));
+                    });
+                    return false;
+                }
+            }
+
+            AppVariables.MyBoxDerbyPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
+            System.setProperty("derby.stream.error.file", AppVariables.MyBoxLogsPath + File.separator + "derby.log");
 
             AppVariables.MyBoxLanguagesPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_languages");
             if (!AppVariables.MyBoxLanguagesPath.exists()) {
@@ -270,7 +289,7 @@ public class MyBoxLoadingController implements Initializable {
                 try {
                     FileTools.clearDir(AppVariables.MyBoxTempPath);
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             } else {
                 if (!AppVariables.MyBoxTempPath.mkdirs()) {
@@ -282,19 +301,21 @@ public class MyBoxLoadingController implements Initializable {
                 }
             }
 
-            AppVariables.MyBoxDerbyPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
+            AppVariables.AlarmClocksFile = AppVariables.MyboxDataPath + File.separator + ".alarmClocks";
+
             AppVariables.MyBoxReservePaths = new ArrayList<File>() {
                 {
                     add(AppVariables.MyBoxTempPath);
                     add(AppVariables.MyBoxDerbyPath);
                     add(AppVariables.MyBoxLanguagesPath);
                     add(AppVariables.MyBoxDownloadsPath);
+                    add(AppVariables.MyBoxLogsPath);
                 }
             };
-            AppVariables.AlarmClocksFile = AppVariables.MyboxDataPath + File.separator + ".alarmClocks";
+
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }

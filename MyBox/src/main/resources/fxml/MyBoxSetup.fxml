@@ -24,7 +24,20 @@ License:    Apache License Version 2.0
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
-                <ListView fx:id="oldVersionsListview" prefHeight="200.0" prefWidth="200.0" />
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+               <children>
+                            <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openDataPath">
+                                <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/iconOpen.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                      <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -33,15 +46,6 @@ License:    Apache License Version 2.0
                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label fx:id="fileLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="label" wrapText="true" />
-                                        <Button  fx:id="openPathButton" mnemonicParsing="false" onAction="#openDataPath">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconOpen.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                     </children>
                                 </HBox>
                                 <Separator prefWidth="200.0" />

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -55,8 +55,8 @@ public class TableStringValue extends DerbyBase {
             conn.setReadOnly(true);
             return read(conn, name);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return null;
     }
@@ -74,8 +74,8 @@ public class TableStringValue extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return null;
     }
@@ -88,8 +88,7 @@ public class TableStringValue extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return write(conn, name, value);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -122,8 +121,7 @@ public class TableStringValue extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -149,8 +147,8 @@ public class TableStringValue extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -164,8 +162,8 @@ public class TableStringValue extends DerbyBase {
             statement.setString(1, name);
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -175,8 +173,8 @@ public class TableStringValue extends DerbyBase {
             conn.setReadOnly(true);
             return readWithPrefix(conn, prefix);
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -194,8 +192,8 @@ public class TableStringValue extends DerbyBase {
                 keyValues.put(results.getString("key_name"), results.getString("string_value"));
             }
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
         }
         return keyValues;
     }
@@ -211,8 +209,8 @@ public class TableStringValue extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }

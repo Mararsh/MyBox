@@ -85,7 +85,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </ScrollPane>
-                                                <TitledPane maxWidth="1.7976931348623157E308" text="%Result">
+                                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Result">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                             <children>

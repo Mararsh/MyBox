@@ -29,7 +29,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -144,7 +144,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                         });
 
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                 }
             });
@@ -165,7 +165,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
             checkScaleType();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -212,7 +212,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
             FxmlControl.refreshStyle(setBox);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -224,7 +224,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             imageController.maskRectangleData = new DoubleRectangle(0, 0, width, height);
             imageController.drawMaskRectangleLineAsData();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -262,7 +262,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -321,7 +321,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             }
             labelSize();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

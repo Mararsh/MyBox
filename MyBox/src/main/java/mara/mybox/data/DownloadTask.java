@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -84,7 +84,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
             }
         } catch (Exception e) {
             error = e.toString();
-            logger.debug(error);
+            MyBoxLog.debug(error);
             return null;
         }
     }
@@ -112,7 +112,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
             connection = null;
         } catch (Exception e) {
             error = e.toString();
-            logger.debug(error);
+            MyBoxLog.debug(error);
         }
     }
 
@@ -147,7 +147,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
                 progress();
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = inStream.read(buf)) != -1) {
+                while ((len = inStream.read(buf)) > 0) {
                     if (isCancelled()) {
                         break;
                     }
@@ -160,11 +160,11 @@ public class DownloadTask<Void> extends BaseTask<Void> {
             responseCode = 0;
             Files.copy(Paths.get(tmpFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
                     StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-            tmpFile.delete();
+            FileTools.delete(tmpFile);
             return targetFile.exists();
         } catch (Exception e) {
             error = e.toString();
-            logger.debug(error);
+            MyBoxLog.debug(error);
             return false;
         }
     }

@@ -19,7 +19,7 @@ import mara.mybox.color.ChromaticAdaptation;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -59,7 +59,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
             initCalculation();
             initAll();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

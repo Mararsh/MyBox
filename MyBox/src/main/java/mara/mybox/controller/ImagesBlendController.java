@@ -39,7 +39,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -98,7 +98,7 @@ public class ImagesBlendController extends ImageViewerController {
 
             targetBox.setDisable(true);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -108,7 +108,7 @@ public class ImagesBlendController extends ImageViewerController {
             foreBox.setDisable(true);
             backBox.setDisable(true);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -184,7 +184,7 @@ public class ImagesBlendController extends ImageViewerController {
             checkBlendMode();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -274,7 +274,7 @@ public class ImagesBlendController extends ImageViewerController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -294,7 +294,7 @@ public class ImagesBlendController extends ImageViewerController {
             selectForegroundImage(file);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -353,7 +353,7 @@ public class ImagesBlendController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -431,7 +431,7 @@ public class ImagesBlendController extends ImageViewerController {
             selectBackgroundImage(file);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -491,7 +491,7 @@ public class ImagesBlendController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -619,7 +619,7 @@ public class ImagesBlendController extends ImageViewerController {
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

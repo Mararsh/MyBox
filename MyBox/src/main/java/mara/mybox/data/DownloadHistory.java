@@ -3,7 +3,7 @@ package mara.mybox.data;
 import java.util.Date;
 import mara.mybox.db.TableBase;
 import mara.mybox.db.TableDownloadHistory;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -87,7 +87,7 @@ public class DownloadHistory extends TableData {
                     return true;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return false;
     }
@@ -115,7 +115,7 @@ public class DownloadHistory extends TableData {
                     return downloadTime;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return null;
     }

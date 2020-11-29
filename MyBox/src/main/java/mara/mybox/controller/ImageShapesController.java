@@ -24,7 +24,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -69,7 +69,7 @@ public class ImageShapesController extends ImageBaseController {
                 resetMaskControls();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -127,7 +127,7 @@ public class ImageShapesController extends ImageBaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -143,7 +143,7 @@ public class ImageShapesController extends ImageBaseController {
             drawMaskPolygonLine();
             drawMaskPolyline();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -164,7 +164,7 @@ public class ImageShapesController extends ImageBaseController {
             setMaskAnchorsStroke(anchorColor, anchorWidth);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -287,7 +287,7 @@ public class ImageShapesController extends ImageBaseController {
             initMaskPolylineLine(show);
             initMaskPenlines(show);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -313,7 +313,7 @@ public class ImageShapesController extends ImageBaseController {
             drawMaskRulerX();
             drawMaskRulerY();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -446,7 +446,7 @@ public class ImageShapesController extends ImageBaseController {
             updateLabelTitle();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -533,7 +533,7 @@ public class ImageShapesController extends ImageBaseController {
 //            updateLabelTitle();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -608,7 +608,7 @@ public class ImageShapesController extends ImageBaseController {
 //            updateLabelTitle();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -708,7 +708,7 @@ public class ImageShapesController extends ImageBaseController {
 //            updateLabelTitle();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -796,7 +796,7 @@ public class ImageShapesController extends ImageBaseController {
 //            updateLabelTitle();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -822,7 +822,7 @@ public class ImageShapesController extends ImageBaseController {
                 maskPolylineLineData = new DoublePolyline();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1005,7 +1005,7 @@ public class ImageShapesController extends ImageBaseController {
         scrollPane.setPannable(false);
         mouseX = event.getX();
         mouseY = event.getY();
-//        logger.debug((int) mouseX + " " + (int) mouseY);
+//        MyBoxLog.debug((int) mouseX + " " + (int) mouseY);
     }
 
     @FXML

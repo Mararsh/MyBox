@@ -9,10 +9,10 @@ import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageTypeSpecifier;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -35,6 +35,7 @@ public class ImageInformation extends ImageFileInformation {
     protected Map<String, Map<String, List<Map<String, Object>>>> metaData;
     protected String metaDataXml;
     protected Image image, thumbnail;
+    protected double thumbnailRotation;
     protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
 
@@ -53,6 +54,10 @@ public class ImageInformation extends ImageFileInformation {
 
     public ImageInformation(Image image) {
         this.image = image;
+        if (image != null) {
+            width = (int) image.getWidth();
+            height = (int) image.getHeight();
+        }
         init();
     }
 
@@ -177,6 +182,10 @@ public class ImageInformation extends ImageFileInformation {
         if (imageInfo == null) {
             return null;
         }
+        imageInfo.setIsSampled(false);
+        imageInfo.setIsScaled(false);
+        imageInfo.setThumbnail(null);
+        imageInfo.setImage(null);
         Image image = null;
         try {
             int checkWidth = loadWidth <= 0 ? imageInfo.getWidth() : loadWidth;
@@ -185,10 +194,6 @@ public class ImageInformation extends ImageFileInformation {
             } else if (imageInfo.getThumbnail() != null && (int) (imageInfo.getThumbnail().getWidth()) == checkWidth) {
                 image = imageInfo.getThumbnail();
             }
-            imageInfo.setIsSampled(false);
-            imageInfo.setIsScaled(false);
-            imageInfo.setThumbnail(null);
-            imageInfo.setImage(null);
             int maxWidth = ImageInformation.countMaxWidth(imageInfo);
             if (image == null) {
                 String fileName = imageInfo.getFileName();
@@ -215,7 +220,7 @@ public class ImageInformation extends ImageFileInformation {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return image;
     }
@@ -263,6 +268,20 @@ public class ImageInformation extends ImageFileInformation {
     /*
         customized get/set
      */
+    public int getWidth() {
+        if (width <= 0 && image != null) {
+            width = (int) image.getWidth();
+        }
+        return width;
+    }
+
+    public int getHeight() {
+        if (height <= 0 && image != null) {
+            height = (int) image.getHeight();
+        }
+        return height;
+    }
+
     public String getPixelsString() {
         pixelsString = width + "x" + height;
         return pixelsString;
@@ -314,16 +333,8 @@ public class ImageInformation extends ImageFileInformation {
         this.imageType = imageType;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
     public void setWidth(int width) {
         this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     public void setHeight(int height) {
@@ -1120,6 +1131,14 @@ public class ImageInformation extends ImageFileInformation {
 
     public void setProfileCompressionMethod(String profileCompressionMethod) {
         this.profileCompressionMethod = profileCompressionMethod;
+    }
+
+    public double getThumbnailRotation() {
+        return thumbnailRotation;
+    }
+
+    public void setThumbnailRotation(double thumbnailRotation) {
+        this.thumbnailRotation = thumbnailRotation;
     }
 
 }

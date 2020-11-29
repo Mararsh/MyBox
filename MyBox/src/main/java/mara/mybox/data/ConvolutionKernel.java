@@ -194,7 +194,7 @@ public class ConvolutionKernel {
             }
         }
         k[radius][radius] = 2 + k[radius][radius];
-//        logger.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
+//        MyBoxLog.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
         kernel.setMatrix(k);
         return kernel;
     }
@@ -330,7 +330,7 @@ public class ConvolutionKernel {
             }
         }
         k[radius][radius] = 2 + k[radius][radius];
-//        logger.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
+//        MyBoxLog.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
         kernel.setMatrix(k);
         return kernel;
     }

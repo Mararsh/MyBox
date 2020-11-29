@@ -4,7 +4,7 @@ import java.util.List;
 import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.ConditionNode;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 
@@ -28,7 +28,7 @@ public class DatasetSourceController extends ControlConditionTree {
             select(message("Categories"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -60,7 +60,7 @@ public class DatasetSourceController extends ControlConditionTree {
             }
             treeView.setSelection();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

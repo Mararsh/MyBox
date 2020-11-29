@@ -1,7 +1,7 @@
 package mara.mybox.data;
 
 import java.io.File;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -32,7 +32,7 @@ public class ProcessParameters implements Cloneable {
             }
             return newCode;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

@@ -9,7 +9,7 @@ import static mara.mybox.color.IccXML.iccXML;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -35,7 +35,7 @@ public class IccProfile {
             init();
             isValid = true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             error = e.toString();
             isValid = false;
         }
@@ -52,7 +52,7 @@ public class IccProfile {
             init();
             isValid = true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             error = e.toString();
             isValid = false;
         }
@@ -69,7 +69,7 @@ public class IccProfile {
             init();
             isValid = true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             error = e.toString();
             isValid = false;
         }
@@ -84,7 +84,7 @@ public class IccProfile {
             predefinedColorSpaceType = -1;
             isValid = true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             error = e.toString();
             isValid = false;
         }
@@ -102,7 +102,7 @@ public class IccProfile {
             }
             isValid = colorSpace != null;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             error = e.toString();
             isValid = false;
         }
@@ -157,7 +157,7 @@ public class IccProfile {
             System.arraycopy(digest, 0, data, 84, 16);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }

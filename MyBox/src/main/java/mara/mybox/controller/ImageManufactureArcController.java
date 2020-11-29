@@ -12,7 +12,7 @@ import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -60,7 +60,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
             arcBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageArcSize", 20) + "");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

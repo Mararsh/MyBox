@@ -9,7 +9,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -40,7 +40,7 @@ public class WeiboSnapingInfoController extends BaseController {
             progressIndicator.setProgress(-1F);
             progressIndicator.progressProperty().bind(task.progressProperty());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

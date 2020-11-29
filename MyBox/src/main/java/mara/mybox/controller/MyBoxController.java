@@ -30,10 +30,10 @@ import javafx.stage.Popup;
 import mara.mybox.MyBox;
 import mara.mybox.data.AlarmClock;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.value.CommonValues;
@@ -68,7 +68,7 @@ public class MyBoxController extends BaseController {
             makeImagePopup();
             initAlocks();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -84,7 +84,7 @@ public class MyBoxController extends BaseController {
                     });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -115,7 +115,7 @@ public class MyBoxController extends BaseController {
             vbox.setPadding(new Insets(15, 15, 15, 15));
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -134,7 +134,7 @@ public class MyBoxController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -834,6 +834,11 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.FilesDeleteEmptyDirFxml);
         });
 
+        MenuItem DeleteSysTemporaryPathFiles = new MenuItem(AppVariables.message("DeleteSysTemporaryPathFiles"));
+        DeleteSysTemporaryPathFiles.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.FilesDeleteSysTempFxml);
+        });
+
         MenuItem DeleteNestedDirectories = new MenuItem(AppVariables.message("DeleteNestedDirectories"));
         DeleteNestedDirectories.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.FilesDeleteNestedDirFxml);
@@ -841,7 +846,7 @@ public class MyBoxController extends BaseController {
 
         Menu fileDeleteMenu = new Menu(AppVariables.message("FilesDelete"));
         fileDeleteMenu.getItems().addAll(
-                filesDelete, DeleteEmptyDirectories, DeleteNestedDirectories
+                filesDelete, DeleteEmptyDirectories, DeleteSysTemporaryPathFiles, DeleteNestedDirectories
         );
 
         MenuItem filesArchiveCompress = new MenuItem(AppVariables.message("FilesArchiveCompress"));
@@ -974,7 +979,7 @@ public class MyBoxController extends BaseController {
                 try {
                     MyBox.restart();
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
             });
         });
@@ -1003,7 +1008,7 @@ public class MyBoxController extends BaseController {
                         popFailed();
                     }
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
                 derbyServer.setDisable(false);
             });

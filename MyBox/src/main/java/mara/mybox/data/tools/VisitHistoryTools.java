@@ -16,12 +16,12 @@ import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.VisitHistory.OperationType;
 import mara.mybox.data.VisitHistory.ResourceType;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
+
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableVisitHistory;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -64,7 +64,7 @@ public class VisitHistoryTools {
             return CommonFxValues.IccProfileExtensionFilter;
         } else if (fileType == FileType.Certificate) {
             return CommonFxValues.KeyStoreExtensionFilter;
-        } else if (fileType == FileType.TextEditHistory) {
+        } else if (fileType == FileType.FileHistory) {
             return CommonFxValues.TextExtensionFilter;
         } else {
             return CommonFxValues.AllExtensionFilter;
@@ -111,8 +111,7 @@ public class VisitHistoryTools {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return readFile(conn, fileType, value);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -125,8 +124,7 @@ public class VisitHistoryTools {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return writeFile(conn, fileType, value);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -259,8 +257,7 @@ public class VisitHistoryTools {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return readPath(conn, fileType, value);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -273,8 +270,7 @@ public class VisitHistoryTools {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return writePath(conn, fileType, value);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

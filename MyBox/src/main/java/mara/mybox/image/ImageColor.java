@@ -99,6 +99,9 @@ public class ImageColor {
     }
 
     public static int RGB2Pixel(Color color) {
+        if (color == null) {
+            return 0;
+        }
         return color.getRGB();
     }
 
@@ -133,6 +136,9 @@ public class ImageColor {
     }
 
     public static int RGB2GrayValue(Color color) {
+        if (color == null) {
+            return 0;
+        }
         return RGB2GrayValue(color.getRed(), color.getGreen(), color.getBlue());
     }
 
@@ -147,6 +153,9 @@ public class ImageColor {
     }
 
     public static Color RGB2Gray(Color color) {
+        if (color == null) {
+            return null;
+        }
         int gray = RGB2GrayValue(color);
         return new Color(gray, gray, gray, color.getAlpha());
     }
@@ -158,18 +167,27 @@ public class ImageColor {
 
     // 0.0-1.0
     public static float getHue(Color color) {
+        if (color == null) {
+            return 0;
+        }
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         return hsb[0];
     }
 
     // 0.0-1.0
     public static float getSaturation(Color color) {
+        if (color == null) {
+            return 0;
+        }
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         return hsb[1];
     }
 
     // 0.0-1.0
     public static float getBrightness(Color color) {
+        if (color == null) {
+            return 0;
+        }
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         return hsb[2];
     }
@@ -181,6 +199,9 @@ public class ImageColor {
     }
 
     public static float[] getHSB(Color color) {
+        if (color == null) {
+            return null;
+        }
         return Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
     }
 
@@ -189,6 +210,9 @@ public class ImageColor {
     }
 
     public static float[] toFloat(Color color) {
+        if (color == null) {
+            return null;
+        }
         float[] srgb = new float[3];
         srgb[0] = color.getRed() / 255f;
         srgb[1] = color.getGreen() / 255f;
@@ -197,12 +221,18 @@ public class ImageColor {
     }
 
     public static int calculateColorDistance(Color color1, Color color2) {
+        if (color1 == null || color2 == null) {
+            return Integer.MAX_VALUE;
+        }
         int v = calculateColorDistance2(color1, color2);
         return (int) Math.round(Math.sqrt(v));
     }
 
     // https://en.wikipedia.org/wiki/Color_difference
     public static int calculateColorDistance2(Color color1, Color color2) {
+        if (color1 == null || color2 == null) {
+            return Integer.MAX_VALUE;
+        }
         int redDiff = color1.getRed() - color2.getRed();
         int greenDiff = color1.getGreen() - color2.getGreen();
         int blueDiff = color1.getBlue() - color2.getBlue();
@@ -221,6 +251,9 @@ public class ImageColor {
 //    }
     // distance2 = Math.pow(distance, 2)
     public static boolean isColorMatch2(Color color1, Color color2, int distance2) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         if (color1.getRGB() == color2.getRGB()) {
             return true;
         } else if (distance2 == 0 || color1.getRGB() == 0 || color2.getRGB() == 0) {
@@ -231,37 +264,57 @@ public class ImageColor {
 
     // distance: 0.0-1.0
     public static boolean isHueMatch(Color color1, Color color2, float distance) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         return Math.abs(getHue(color1) - getHue(color2)) <= distance;
     }
 
     // distance: 0.0-1.0
     public static boolean isBrightnessMatch(Color color1, Color color2, float distance) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         return Math.abs(getBrightness(color1) - getBrightness(color2)) <= distance;
     }
 
     // distance: 0.0-1.0
     public static boolean isSaturationMatch(Color color1, Color color2, float distance) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         return Math.abs(getSaturation(color1) - getSaturation(color2)) <= distance;
     }
 
     // distance: 0-255
     public static boolean isRedMatch(Color color1, Color color2, int distance) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         return Math.abs(color1.getRed() - color2.getRed()) <= distance;
     }
 
     // distance: 0-255
     public static boolean isGreenMatch(Color color1, Color color2, int distance) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         return Math.abs(color1.getGreen() - color2.getGreen()) <= distance;
     }
 
     // distance: 0-255
     public static boolean isBlueMatch(Color color1, Color color2, int distance) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         return Math.abs(color1.getBlue() - color2.getBlue()) <= distance;
     }
 
     // distance: 0-100
-    public static boolean matchHue(Color color1, Color color2,
-            int distance, boolean excluded) {
+    public static boolean matchHue(Color color1, Color color2, int distance, boolean excluded) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         boolean isMatch = ImageColor.isHueMatch(color1, color2, distance);
         if (!excluded) {
             return isMatch;
@@ -271,8 +324,10 @@ public class ImageColor {
     }
 
     // distance: 0.0-1.0
-    public static boolean matchHue(Color color1, Color color2,
-            float distance, boolean excluded) {
+    public static boolean matchHue(Color color1, Color color2, float distance, boolean excluded) {
+        if (color1 == null || color2 == null) {
+            return false;
+        }
         boolean isMatch = ImageColor.isHueMatch(color1, color2, distance);
         if (!excluded) {
             return isMatch;

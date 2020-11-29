@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -17,6 +18,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
     protected ImageView maskView;
 
     public ImageManufactureOperationController() {
+        baseTitle = AppVariables.message("ImageManufacture");
     }
 
     protected void initPane() {

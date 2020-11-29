@@ -16,7 +16,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -67,7 +67,7 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -104,7 +104,7 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
             checkOpacityAdd();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -177,7 +177,7 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 

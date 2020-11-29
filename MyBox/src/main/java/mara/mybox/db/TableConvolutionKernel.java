@@ -10,7 +10,7 @@ import java.util.List;
 import mara.mybox.data.ConvolutionKernel;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -57,8 +57,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return records;
     }
@@ -77,7 +76,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -125,8 +124,7 @@ public class TableConvolutionKernel extends DerbyBase {
             }
             return record;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -139,7 +137,7 @@ public class TableConvolutionKernel extends DerbyBase {
             conn.setReadOnly(true);
             return exist(conn, name);
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -154,8 +152,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 return (kResult.next());
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -178,8 +175,7 @@ public class TableConvolutionKernel extends DerbyBase {
             update.executeUpdate();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -203,8 +199,7 @@ public class TableConvolutionKernel extends DerbyBase {
             update.executeUpdate();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -222,8 +217,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 return insert(conn, record);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -246,8 +240,7 @@ public class TableConvolutionKernel extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -268,8 +261,7 @@ public class TableConvolutionKernel extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -290,8 +282,7 @@ public class TableConvolutionKernel extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

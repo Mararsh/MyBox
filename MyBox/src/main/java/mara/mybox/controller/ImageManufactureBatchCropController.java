@@ -12,7 +12,7 @@ import javafx.scene.control.ToggleGroup;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -54,7 +54,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -120,7 +120,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
             checkType();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -264,7 +264,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
             }
             return ImageManufacture.cropOutside(source, x1, y1, x2, y2);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 

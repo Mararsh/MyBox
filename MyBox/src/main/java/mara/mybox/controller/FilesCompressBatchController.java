@@ -15,10 +15,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -139,8 +139,7 @@ public class FilesCompressBatchController extends FilesBatchController {
                     sevenZOutput.setContentCompression(sevenCompress);
                     SevenZArchiveEntry entry = sevenZOutput.createArchiveEntry(srcFile, srcFile.getName());
                     sevenZOutput.putArchiveEntry(entry);
-                    try ( BufferedInputStream inputStream
-                            = new BufferedInputStream(new FileInputStream(srcFile))) {
+                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
                         int len;
                         byte[] buf = new byte[CommonValues.IOBufferLength];
                         while ((len = inputStream.read(buf)) >= 0) {
@@ -158,8 +157,7 @@ public class FilesCompressBatchController extends FilesBatchController {
                         createArchiveOutputStream(compressor, new BufferedOutputStream(new FileOutputStream(tmpFile)))) {
                     ArchiveEntry entry = archiveOut.createArchiveEntry(srcFile, srcFile.getName());
                     archiveOut.putArchiveEntry(entry);
-                    try ( BufferedInputStream inputStream
-                            = new BufferedInputStream(new FileInputStream(srcFile))) {
+                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
                         IOUtils.copy(inputStream, archiveOut);
                     }
                     archiveOut.closeArchiveEntry();
@@ -174,22 +172,22 @@ public class FilesCompressBatchController extends FilesBatchController {
                     IOUtils.copy(inputStream, compressOut);
                 }
             }
-            if (targetFile.exists()) {
-                targetFile.delete();
+            if (FileTools.rename(tmpFile, targetFile)) {
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(MessageFormat.format(message("FileCompressedSuccessfully"),
+                            targetFile, FileTools.showFileSize(srcFile.length()),
+                            FileTools.showFileSize(targetFile.length()),
+                            (100 - targetFile.length() * 100 / srcFile.length()),
+                            DateTools.datetimeMsDuration(new Date(), startTime)
+                    ));
+                }
+                targetFileGenerated(targetFile);
+                return AppVariables.message("Successful");
+            } else {
+                return AppVariables.message("Failed");
             }
-            tmpFile.renameTo(targetFile);
-            if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(MessageFormat.format(message("FileCompressedSuccessfully"),
-                        targetFile, FileTools.showFileSize(srcFile.length()),
-                        FileTools.showFileSize(targetFile.length()),
-                        (100 - targetFile.length() * 100 / srcFile.length()),
-                        DateTools.datetimeMsDuration(new Date(), startTime)
-                ));
-            }
-            targetFileGenerated(targetFile);
-            return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return AppVariables.message("Failed");
         }
     }

@@ -28,7 +28,7 @@ import mara.mybox.fxml.ListDatasetCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonFxValues;
@@ -217,7 +217,7 @@ public class LocationDataEditController extends BaseController {
             datasetSelector.requestFocus();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -255,7 +255,7 @@ public class LocationDataEditController extends BaseController {
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
             controller.loadCoordinate(this, longitude, latitude);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -271,7 +271,7 @@ public class LocationDataEditController extends BaseController {
             labelInput.setText(code.getName());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -537,7 +537,7 @@ public class LocationDataEditController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -565,7 +565,7 @@ public class LocationDataEditController extends BaseController {
             sourceFileInput.clear();
             commentsArea.clear();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -627,7 +627,7 @@ public class LocationDataEditController extends BaseController {
             closeStage();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

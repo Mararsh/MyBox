@@ -34,7 +34,7 @@ import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITessAPI;
@@ -105,7 +105,7 @@ public class ImageOCROptionsController extends BaseController {
                     .name(OCRTools.TessDataPath, true);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -174,7 +174,7 @@ public class ImageOCROptionsController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -282,7 +282,7 @@ public class ImageOCROptionsController extends BaseController {
                 currentOCRFilesLabel.setStyle(badStyle);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -303,7 +303,7 @@ public class ImageOCROptionsController extends BaseController {
             checkEngine();
             setLanguages();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -325,6 +325,7 @@ public class ImageOCROptionsController extends BaseController {
                         ocrController.ocrTabPane.getTabs().removeAll(ocrController.regionsTab, ocrController.wordsTab);
                     }
                 }
+                tesseractPathController.thisPane.setDisable(false);
                 tesseractPathController.checkFileInput();
                 tesseractVersion = 4;
             } else {
@@ -334,12 +335,13 @@ public class ImageOCROptionsController extends BaseController {
                         ocrController.ocrTabPane.getTabs().addAll(ocrController.regionsTab, ocrController.wordsTab);
                     }
                 }
+                tesseractPathController.thisPane.setDisable(true);
                 tesseractPathController.fileInput.setStyle(null);
                 tesseractVersion = tesseractVersion();
             }
             dataPathController.checkFileInput();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -372,11 +374,11 @@ public class ImageOCROptionsController extends BaseController {
                     }
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
             process.waitFor();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return -1;
     }
@@ -409,7 +411,7 @@ public class ImageOCROptionsController extends BaseController {
                 currentOCRFilesLabel.setStyle(badStyle);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -516,7 +518,7 @@ public class ImageOCROptionsController extends BaseController {
         try {
             browseURI(new URI("https://tesseract-ocr.github.io/tessdoc/Home.html"));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -542,7 +544,7 @@ public class ImageOCROptionsController extends BaseController {
             FxmlStage.browseURI(getMyStage(), htmFile.toURI());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

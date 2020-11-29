@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Map;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.CommonValues;
 
@@ -88,8 +89,8 @@ public class TableSystemConf extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -98,8 +99,8 @@ public class TableSystemConf extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return readString(conn, keyName, defaultValue);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return defaultValue;
         }
     }
@@ -129,8 +130,8 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return defaultValue;
     }
@@ -153,8 +154,8 @@ public class TableSystemConf extends DerbyBase {
             }
             return defaultValue;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return defaultValue;
         }
     }
@@ -170,8 +171,8 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return value;
     }
@@ -208,8 +209,8 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return -1;
         }
     }
@@ -235,8 +236,8 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return -1;
         }
     }
@@ -252,8 +253,8 @@ public class TableSystemConf extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return delete(conn, keyName);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -266,8 +267,8 @@ public class TableSystemConf extends DerbyBase {
             statement.setString(1, keyName);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -279,8 +280,8 @@ public class TableSystemConf extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return deletePrefix(conn, keyName);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -293,8 +294,8 @@ public class TableSystemConf extends DerbyBase {
             statement.setString(1, keyName);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }

@@ -39,7 +39,7 @@ import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -137,7 +137,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             distanceInput.setText("0");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -271,7 +271,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             FxmlControl.refreshStyle(setBox);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -303,7 +303,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             valueSelector.getSelectionModel().select(valueList.size() / 2);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -580,7 +580,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                                     = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     }
                 });

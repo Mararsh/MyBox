@@ -15,7 +15,7 @@ import java.util.Map;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import thridparty.EncodingDetect;
 
 /**
@@ -102,7 +102,9 @@ public class TextTools {
             info.setWithBom(false);
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()))) {
                 byte[] header = new byte[4];
-                if ((inputStream.read(header, 0, 4) != -1)) {
+                int bufLen;
+                if ((bufLen = inputStream.read(header, 0, 4)) > 0) {
+                    header = ByteTools.subBytes(header, 0, bufLen);
                     setName = checkCharsetByBom(header);
                     if (setName != null) {
                         info.setCharset(Charset.forName(setName));
@@ -115,7 +117,7 @@ public class TextTools {
             info.setCharset(Charset.forName(setName));
             return true;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -189,30 +191,29 @@ public class TextTools {
                 }
                 char[] buf = new char[512];
                 int len;
-                while ((len = reader.read(buf)) != -1) {
+                while ((len = reader.read(buf)) > 0) {
                     text.append(buf, 0, len);
                 }
             }
             return text.toString();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
 
     public static boolean writeText(FileEditInformation info, String text) {
-        try {
-            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
-                if (info.isWithBom()) {
-                    byte[] bytes = bomBytes(info.getCharset().name());
-                    outputStream.write(bytes);
-                }
-                writer.write(text);
+        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
+                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
+            if (info.isWithBom()) {
+                byte[] bytes = bomBytes(info.getCharset().name());
+                outputStream.write(bytes);
             }
+            writer.write(text);
             return true;
+
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -238,14 +239,14 @@ public class TextTools {
                 }
                 char[] buf = new char[512];
                 int count;
-                while ((count = reader.read(buf)) != -1) {
+                while ((count = reader.read(buf)) > 0) {
                     String text = new String(buf, 0, count);
                     writer.write(text);
                 }
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -272,7 +273,7 @@ public class TextTools {
                      OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                 char[] buf = new char[4096];
                 int count;
-                while ((count = reader.read(buf)) != -1) {
+                while ((count = reader.read(buf)) > 0) {
                     String text = new String(buf, 0, count);
                     text = text.replaceAll(sourceLineBreak, taregtLineBreak);
                     writer.write(text);
@@ -280,7 +281,7 @@ public class TextTools {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -320,33 +321,26 @@ public class TextTools {
     }
 
     public static Line_Break checkLineBreak(File file) {
-        try {
-            if (file == null) {
-                return Line_Break.LF;
-            }
-            try ( InputStreamReader reader = new InputStreamReader(
-                    new BufferedInputStream(new FileInputStream(file)))) {
-                int c;
-                boolean cr = false;
-                while ((c = reader.read()) != -1) {
-                    if ((char) c == '\r') {
-                        cr = true;
-                    } else if ((char) c == '\n') {
-                        if (cr) {
-                            return Line_Break.CRLF;
-                        } else {
-                            return Line_Break.LF;
-                        }
-                    } else if (c != 0 && cr) {
-                        return Line_Break.CR;
+        try ( InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)))) {
+            int c;
+            boolean cr = false;
+            while ((c = reader.read()) > 0) {
+                if ((char) c == '\r') {
+                    cr = true;
+                } else if ((char) c == '\n') {
+                    if (cr) {
+                        return Line_Break.CRLF;
+                    } else {
+                        return Line_Break.LF;
                     }
+                } else if (c != 0 && cr) {
+                    return Line_Break.CR;
                 }
             }
-            return Line_Break.LF;
         } catch (Exception e) {
-            logger.debug(e.toString());
-            return Line_Break.LF;
+            MyBoxLog.debug(e.toString());
         }
+        return Line_Break.LF;
     }
 
     public static String lineBreakValue(Line_Break lb) {

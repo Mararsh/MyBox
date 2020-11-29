@@ -14,7 +14,7 @@ import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageScope;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -58,7 +58,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
             okButton.disableProperty().bind(imageController.cropButton.disableProperty());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

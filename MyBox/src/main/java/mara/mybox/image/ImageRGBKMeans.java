@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 import mara.mybox.data.ListKMeans;
 import mara.mybox.image.ImageQuantization.KMeansRegionQuantization;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -41,7 +41,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             regionQuantization.operate();
             data = regionQuantization.regionColors;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return this;
     }
@@ -69,7 +69,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -81,7 +81,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             return ImageColor.calculateColorDistance2(p1, p2);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return Integer.MAX_VALUE;
         }
     }
@@ -94,7 +94,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             return ImageColor.isColorMatch2(p1, p2, equalDistance);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -119,7 +119,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                     Math.min(255, (int) (totalb / size)));
             return centerColor;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

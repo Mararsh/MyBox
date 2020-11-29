@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.ConvolutionKernel;
 import static mara.mybox.db.DerbyBase.protocol;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -57,8 +57,7 @@ public class TableFloatMatrix extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return matrix;
     }
@@ -90,8 +89,7 @@ public class TableFloatMatrix extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -126,8 +124,7 @@ public class TableFloatMatrix extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -146,8 +143,7 @@ public class TableFloatMatrix extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -164,8 +160,7 @@ public class TableFloatMatrix extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -186,8 +181,7 @@ public class TableFloatMatrix extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -217,8 +211,7 @@ public class TableFloatMatrix extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

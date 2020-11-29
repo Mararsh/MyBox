@@ -40,6 +40,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -55,7 +56,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -118,7 +118,7 @@ public class ImageSplitController extends ImageViewerController {
             operateOriginalSize = true;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -131,7 +131,7 @@ public class ImageSplitController extends ImageViewerController {
             initSplitTab();
             initPdfTab();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -678,7 +678,7 @@ public class ImageSplitController extends ImageViewerController {
 
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -957,7 +957,7 @@ public class ImageSplitController extends ImageViewerController {
             promptLabel.setText(comments);
             splitValid.set(true);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             splitValid.set(false);
         }
 
@@ -1159,12 +1159,7 @@ public class ImageSplitController extends ImageViewerController {
                         document.save(tmpFile);
                         document.close();
                     }
-
-                    if (tFile.exists()) {
-                        tFile.delete();
-                    }
-                    tmpFile.renameTo(tFile);
-                    return true;
+                    return FileTools.rename(tmpFile, tFile);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -1268,15 +1263,7 @@ public class ImageSplitController extends ImageViewerController {
                         out.flush();
                     }
                     writer.dispose();
-                    try {
-                        if (tFile.exists()) {
-                            tFile.delete();
-                        }
-                        tmpFile.renameTo(tFile);
-                    } catch (Exception e) {
-                        return false;
-                    }
-                    return true;
+                    return FileTools.rename(tmpFile, tFile);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

@@ -6,10 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -38,15 +38,13 @@ public class BytesEditInformation extends FileEditInformation {
                 return false;
             }
             objectsNumber = file.length();
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int bufSize = (int) Math.min(objectsNumber, availableMem / 16);
+            int bufSize = FileTools.bufSize(file);
             if (lineBreak == Line_Break.Width && lineBreakWidth > 0) {
                 try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                     byte[] buf = new byte[bufSize];
                     long totalLines = 0;
                     int bufLen;
-                    while ((bufLen = inputStream.read(buf)) != -1) {
+                    while ((bufLen = inputStream.read(buf)) > 0) {
                         if (bufLen < bufSize) {
                             buf = ByteTools.subBytes(buf, 0, bufLen);
                         }
@@ -62,7 +60,7 @@ public class BytesEditInformation extends FileEditInformation {
                     byte[] buf = new byte[bufSize];
                     long totalLines = 1;
                     int bufLen;
-                    while ((bufLen = inputStream.read(buf)) != -1) {
+                    while ((bufLen = inputStream.read(buf)) > 0) {
                         if (bufLen < bufSize) {
                             buf = ByteTools.subBytes(buf, 0, bufLen);
                         }
@@ -78,7 +76,7 @@ public class BytesEditInformation extends FileEditInformation {
             totalNumberRead = true;
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -110,7 +108,7 @@ public class BytesEditInformation extends FileEditInformation {
                     findStart = findReplace.getFileRange().getStart();
                     findEnd = findReplace.getFileRange().getEnd();
                 }
-                while ((pageLen = inputStream.read(buf)) != -1) {
+                while ((pageLen = inputStream.read(buf)) > 0) {
                     if (pageLen < pageSize) {
                         buf = ByteTools.subBytes(buf, 0, pageLen);
                     }
@@ -124,7 +122,7 @@ public class BytesEditInformation extends FileEditInformation {
                         if (findStart >= hexStart && findStart < hexEnd && findEnd > hexEnd) {
                             int findSize = (int) (findEnd - hexEnd) / 3;
                             byte[] findBuf = new byte[findSize];
-                            if ((findLen = inputStream.read(findBuf)) != -1) {
+                            if ((findLen = inputStream.read(findBuf)) > 0) {
                                 if (findLen < findSize) {
                                     findBuf = ByteTools.subBytes(findBuf, 0, findLen);
                                 }
@@ -158,7 +156,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             return pageHex;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -175,7 +173,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -202,7 +200,7 @@ public class BytesEditInformation extends FileEditInformation {
                 int bufSize = (int) sourceInfo.getPageSize();
                 byte[] buf = new byte[bufSize];
                 int bufLen, pageIndex = 1;
-                while ((bufLen = inputStream.read(buf)) != -1) {
+                while ((bufLen = inputStream.read(buf)) > 0) {
                     if (pageIndex == pageNumber) {
                         outputStream.write(ByteTools.hexFormatToBytes(hex));
                     } else {
@@ -215,12 +213,11 @@ public class BytesEditInformation extends FileEditInformation {
                 }
             }
             if (sourceInfo.getFile().equals(file)) {
-                file.delete();
-                targetFile.renameTo(file);
+                FileTools.rename(targetFile, file);
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -241,7 +238,7 @@ public class BytesEditInformation extends FileEditInformation {
                 byte[] buf = new byte[(int) pageSize];
                 int bufLen;
                 String bufHex;
-                while ((bufLen = inputStream.read(buf)) != -1) {
+                while ((bufLen = inputStream.read(buf)) > 0) {
                     if (bufLen < pageSize) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
@@ -271,7 +268,7 @@ public class BytesEditInformation extends FileEditInformation {
             currentPageLineEnd = lineEnd;
             return pageText;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -295,7 +292,7 @@ public class BytesEditInformation extends FileEditInformation {
                 byte[] buf = new byte[(int) pageSize];
                 int bufLen;
                 String pageText;
-                while ((bufLen = inputStream.read(buf)) != -1) {
+                while ((bufLen = inputStream.read(buf)) > 0) {
                     if (bufLen < pageSize) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
@@ -323,7 +320,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             return targetFile;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 

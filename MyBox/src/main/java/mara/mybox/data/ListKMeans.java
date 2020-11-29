@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -48,7 +48,7 @@ public class ListKMeans<T> {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -91,7 +91,7 @@ public class ListKMeans<T> {
         }
         clusters = new ArrayList[k];
         try {
-//            logger.debug("data: " + data.size());
+//            MyBoxLog.console("data: " + data.size() + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
             while (loopCount++ < maxIteration) {
                 for (int i = 0; i < k; ++i) {
                     clusters[i] = new ArrayList<>();
@@ -124,11 +124,11 @@ public class ListKMeans<T> {
                     break;
                 }
             }
-//            logger.debug("loopCount: " + loopCount);
-//            logger.debug("centers: " + centers.size() + "   clusters: " + clusters.length);
+//            MyBoxLog.console("loopCount: " + loopCount);
+//            MyBoxLog.console("centers: " + centers.size() + "   clusters: " + clusters.length);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -154,7 +154,7 @@ public class ListKMeans<T> {
                 dataMap.put(data.get(index), centerData);
             }
         }
-//        logger.debug("dataMap: " + dataMap.size());
+//        MyBoxLog.debug("dataMap: " + dataMap.size());
         return true;
     }
 

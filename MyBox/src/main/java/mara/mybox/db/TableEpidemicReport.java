@@ -13,13 +13,13 @@ import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.db.ColumnDefinition.ColumnType;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
+
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import static mara.mybox.db.DerbyBase.stringValue;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -218,8 +218,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             sql = "ALTER TABLE Epidemic_Report ALTER COLUMN epid RESTART WITH " + (max + 1);
             statement.executeUpdate(sql);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -235,8 +234,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return reports;
     }
@@ -259,8 +257,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return reports;
     }
@@ -275,8 +272,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return report;
     }
@@ -286,8 +282,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             conn.setReadOnly(true);
             return read(conn, dataset, time, location, decodeAncestors);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -305,8 +300,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return report;
     }
@@ -325,8 +319,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return report;
     }
@@ -361,8 +354,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             report.setSource(results.getShort("source"));
             return report;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -387,8 +379,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             report.setSource(results.getShort("source"));
             return report;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -409,7 +400,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
 //            report.setTime(DateTools.stringToDatetime(dateString).getTime());
 //            return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -421,8 +412,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             return write(conn, report);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -463,8 +453,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 return insert(conn, report);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -477,8 +466,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             conn.setAutoCommit(false);
             return write(conn, reports, replace);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -531,8 +519,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             conn.commit();
             return count;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -544,8 +531,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
         try ( PreparedStatement statement = conn.prepareStatement(Insert)) {
             return insert(statement, report);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -558,8 +544,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             setInsert(statement, report);
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -583,8 +568,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             statement.setLong(10, report.getIncreasedDead());
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -595,7 +579,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                     + " AND time='" + DateTools.datetimeToString(report.getTime()) + "'  "
                     + " AND locationid=" + report.getLocationid();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -615,8 +599,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -632,8 +615,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 return false;
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -658,8 +640,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             statement.setLong(11, report.getEpid());
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -676,8 +657,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             }
 
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -701,8 +681,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             statement.setLong(11, report.getLocationid());
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -726,8 +705,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             conn.commit();
             return count;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -737,8 +715,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             conn.setReadOnly(true);
             return datasets(conn);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -758,8 +735,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return datasets;
     }
@@ -769,8 +745,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             conn.setReadOnly(true);
             return times(conn);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -790,8 +765,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return times;
     }
@@ -815,8 +789,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return times;
     }
@@ -831,8 +804,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return size;
     }
@@ -844,8 +816,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             statement.executeUpdate();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -859,8 +830,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             statement.executeUpdate();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -875,8 +845,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             statement.executeUpdate();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

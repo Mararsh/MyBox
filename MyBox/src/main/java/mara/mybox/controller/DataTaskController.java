@@ -10,7 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -54,7 +54,7 @@ public class DataTaskController extends BaseController {
             return;
         }
         if (startButton.getUserData() != null) {
-            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+            ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
             cancelAction();
@@ -65,10 +65,12 @@ public class DataTaskController extends BaseController {
                 return;
             }
             initLogs();
-            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+            ControlStyle.setNameIcon(startButton, message("Stop"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData("started");
-            tabPane.getSelectionModel().select(logsTab);
+            if (tabPane != null && logsTab != null) {
+                tabPane.getSelectionModel().select(logsTab);
+            }
             startTask();
         }
 
@@ -95,7 +97,7 @@ public class DataTaskController extends BaseController {
 
             @Override
             protected void finalAction() {
-                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
                 startButton.applyCss();
                 startButton.setUserData(null);
                 updateLogs(message("Completed") + " " + message("Cost")
@@ -152,7 +154,7 @@ public class DataTaskController extends BaseController {
                 }
             });
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

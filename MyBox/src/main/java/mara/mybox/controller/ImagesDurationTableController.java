@@ -16,7 +16,7 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import thridparty.TableAutoCommitCell;
 
@@ -90,7 +90,7 @@ public class ImagesDurationTableController extends ImagesTableController {
             durationColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -127,7 +127,7 @@ public class ImagesDurationTableController extends ImagesTableController {
             tableView.refresh();
             updateLabel();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

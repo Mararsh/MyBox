@@ -55,7 +55,7 @@ public class VisitHistory {
         public static int Certificate = 16;
         public static int StreamMedia = 17;
 
-        public static int TextEditHistory = 50;
+        public static int FileHistory = 50;
 
         public static int None = 100;
     }

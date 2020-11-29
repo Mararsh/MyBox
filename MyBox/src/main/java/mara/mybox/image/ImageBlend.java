@@ -3,7 +3,7 @@ package mara.mybox.image;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.image.PixelBlend.ImagesBlendMode;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -67,7 +67,7 @@ public class ImageBlend {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return foreImage;
         }
     }
@@ -100,7 +100,7 @@ public class ImageBlend {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -130,7 +130,7 @@ public class ImageBlend {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return foreImage;
         }
     }
@@ -160,7 +160,7 @@ public class ImageBlend {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -185,7 +185,7 @@ public class ImageBlend {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -215,7 +215,7 @@ public class ImageBlend {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -240,7 +240,7 @@ public class ImageBlend {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

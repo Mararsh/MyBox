@@ -7,11 +7,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Map;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
+
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.tools.ConfigTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -93,8 +93,8 @@ public class TableUserConf extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -103,8 +103,8 @@ public class TableUserConf extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return readString(conn, keyName, defaultValue);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return defaultValue;
         }
     }
@@ -134,8 +134,8 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return defaultValue;
     }
@@ -158,8 +158,7 @@ public class TableUserConf extends DerbyBase {
             }
             return defaultValue;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return defaultValue;
         }
     }
@@ -178,8 +177,8 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return value;
     }
@@ -193,8 +192,7 @@ public class TableUserConf extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return writeString(conn, keyName, stringValue);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -226,8 +224,8 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(keyName + " " + stringValue + " " + e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(keyName + " " + stringValue + " " + e.toString());
             return -1;
         }
     }
@@ -253,8 +251,7 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -270,8 +267,8 @@ public class TableUserConf extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return delete(conn, keyName);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -284,8 +281,8 @@ public class TableUserConf extends DerbyBase {
             statement.setString(1, keyName);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -297,8 +294,8 @@ public class TableUserConf extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return deletePrefix(conn, keyName);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -311,8 +308,8 @@ public class TableUserConf extends DerbyBase {
             statement.setString(1, keyName);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }

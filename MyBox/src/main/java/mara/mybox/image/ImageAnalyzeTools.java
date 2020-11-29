@@ -2,7 +2,7 @@ package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -32,7 +32,7 @@ public class ImageAnalyzeTools {
             int[][] h = {red, green, blue};
             return h;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

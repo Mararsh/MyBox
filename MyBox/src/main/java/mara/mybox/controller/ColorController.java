@@ -23,7 +23,7 @@ import mara.mybox.color.RGBColorSpace;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -165,7 +165,7 @@ public class ColorController extends BaseController {
             colorPicker.setValue(Color.RED);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
 
         }
     }

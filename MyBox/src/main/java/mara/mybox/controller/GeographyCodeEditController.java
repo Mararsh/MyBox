@@ -18,7 +18,7 @@ import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -120,7 +120,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -250,7 +250,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
             controller.loadCoordinate(this, longitude, latitude);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -396,7 +396,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -410,7 +410,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 subordinateInput.setText("");
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -453,7 +453,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                     return;
                 }
             } else if (selectedCode.getLevel() >= level.getLevel()) {
-//                logger.debug(selectedCode.getLevel() + " " + level.getLevel());
+//                MyBoxLog.debug(selectedCode.getLevel() + " " + level.getLevel());
                 popError(message("LevelSmallerThanParent"));
                 return;
             }
@@ -527,7 +527,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             }
             closeStage();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -566,7 +566,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             commentsArea.clear();
             codeSelected(null);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

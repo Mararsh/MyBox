@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  *
@@ -27,7 +27,7 @@ public class CommonTools {
             try {
                 in.connect(out);
             } catch (IOException e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
                 return null;
             }
             try ( ObjectOutputStream bo = new ObjectOutputStream(out);
@@ -35,12 +35,12 @@ public class CommonTools {
                 bo.writeObject(source);
                 target = bi.readObject();
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
                 return null;
             }
             return target;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

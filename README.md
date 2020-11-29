@@ -4,19 +4,18 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。     
 
 ## 新内容
-2020-11-18 版本6.3.5        
--  改进：文档的查找/替换有效处理正则表达式和分页；完善读取图片的算法；更顺畅地处理大图片；调整网页编辑器界面。
--  增加：每个版本都有自己的配置文件；菜单按钮；若干文档转换功能；编码/解码URL字串；下载第一级链接。
--  移除：启动时不再允许改变derby模式；删除“管理下载”功能。
--  解决的主要问题：文档的查找/替换对于分页处理不准确；图片列表不应加载原文件；批处理可能产生无限嵌套目录；图片处理界面有错误的处理。           
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)        
-感谢[beijingjazzpanda](https://github.com/Mararsh/MyBox/issues/781)的帮助。    
+2020-11-29 版本6.3.6        
+-  代码：升级到java 15.0.1和javafx15.0.1（除javafx-web模块）。MyBox日志自行实现，不再依赖log4j2。      
+-  文件：增加文件删除/重命名/移动的健壮性。可删除系统临时目录下的文件。       
+-  颜色：量化后的结果可导入调色盘。kmeans cluster量化可设置最大循环数。可导入用户的颜色csv文件。颜色导入的关键字可以是rgb。     
+-  解决的主要问题：文件删除会造成最近访问文件列表弹出错误。合并图片设置列数会出错。           
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6)         
 
  ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。    
  
 ### 源码   
-[MyBox-6.3.5-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-src.zip)   35M  
+[MyBox-6.3.6-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-src.zip)   35M  
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) 和 
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)             
@@ -26,27 +25,27 @@
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
   
 | 平台 | 链接 | 大小 | 启动文件 |    
-| --- | --- | --- |  --- |   
-| win | [MyBox-6.3.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-win-exe.zip)  | 286MB | MyBox.exe |       
-| linux | [MyBox-6.3.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-linux.tar.gz)  | 292MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-mac.dmg)  | 297MB  |  MyBox-6.3.5.app   |   
+| --- | --- | --- |  --- |                                                                               
+| win x64 | [MyBox-6.3.6-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-win-exe.zip)  | 285MB | MyBox.exe |       
+| linux x64 | [MyBox-6.3.6-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-linux.tar.gz)  | 292MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.6-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-mac.dmg)  | 298MB  |  MyBox-6.3.6.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
     
 ### Jar包   
-在已安装JRE或者JDK 14或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
+在已安装JRE或者JDK 15或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-win-jar.zip)  | 148MB | Java 14.0.1或更高版本 |    
-| linux | [MyBox-6.3.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-linux-jar.zip)  | 155MB  | Java 14.0.1或更高版本 |    
-| mac | [MyBox-6.3.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-mac-jar.zip)  |  151MB  | Java 14.0.1或更高版本 |    
+| win | [MyBox-6.3.6-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-win-jar.zip)  | 146MB | Java 15.0.1或更高版本 |    
+| linux | [MyBox-6.3.6-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-linux-jar.zip)  | 153MB  | Java 15.0.1或更高版本 |    
+| mac | [MyBox-6.3.6-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-mac-jar.zip)  |  150MB  | Java 15.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.3.5.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.6.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.3.5.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.6.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -60,7 +59,13 @@
 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。     
 
 ## 配置<a id="Config" />
-配置文件`MyBox_v版本号.ini`在"用户目录"下，如`C:\用户\mara\mybox\`或`/home/mara/mybox/`。   
+配置文件`MyBox_v版本号.ini`在"用户目录"下:                 
+| 平台 | MyBox配置文件的目录 |        
+| --- | --- |        
+| win | `C:\用户\用户名\mybox\`  |         
+| linux | `/home/用户名/mybox/` |        
+| mac | `/Users/用户名/mybox/` |         
+
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。
 利用“设置”功能也可以修改配置参数。
 
@@ -81,8 +86,8 @@
 
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
-| 开发日志 | 6.3.5 |  2020-11-18 | [html](#devLog) |
-| 快捷键 | 6.3.5 |  2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.3.6 |  2020-11-29 | [html](#devLog) |
+| 快捷键 | 6.3.6 |  2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
@@ -97,19 +102,18 @@ MyBox基于以下开源资源：
 
 | 名字 | 角色 | 链接 |  
 | --- | --- | --- | 
-| JDK | Java语言 | http://jdk.java.net/14/   |
+| JDK | Java语言 | http://jdk.java.net/   |
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |   
 | JavaFx | 图形化界面 | https://gluonhq.com/products/javafx/  |     
 |   |   |  https://docs.oracle.com/javafx/2/  |     
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |     
 | NetBeans | 集成开发环境 | https://netbeans.org/ |     
-| jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/14/docs/specs/man/jpackage.html |     
+| jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/15/docs/specs/man/jpackage.html |     
 | maven | 代码构建 | https://maven.apache.org/ |     
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF转html | http://cssbox.sourceforge.net/pdf2dom/ |   
 | javazoom | MP3解码 | http://www.javazoom.net/index.shtml |      
-| log4j | 日志处理 | https://logging.apache.org/log4j/2.x/ |      
 | Derby | 数据库 | http://db.apache.org/derby/ |   
 | GifDecoder | 不规范Gif | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | 文本编码 | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
@@ -144,10 +148,12 @@ MyBox基于以下开源资源：
 | movebank | 位置数据 | https://www.datarepository.movebank.org |      
 | CoordinateConverter | 坐标转换 | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |      
 | JavaMail | email | https://javaee.github.io/javamail/ |      
+| Commons IO | 文件读写 | https://commons.apache.org/proper/commons-io/ |      
+| colorhexa | 色彩数据 | https://www.colorhexa.com/color-names |      
 
 
 # 当前版本
-当前是版本6.3.5，已实现的特点概述如下:
+当前是版本6.3.6，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [本机](#localhost)
@@ -209,6 +215,7 @@ MyBox基于以下开源资源：
 * [帮助](#helps)
 * [对于高清晰屏幕的支持](#Hidpi)    
 * [开发模式](#DevMode)    
+* [MyBox日志](#MyBoxLogs)    
     
 ## 跨平台<a id="cross-platform" />   
 MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 14的平台。（MyBox v5.3以前的版本均基于Java 8）
@@ -345,6 +352,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 6. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
 7. 同目录下图像文件导览，多种文件排序方式。  
 8. 右键菜单。
+9. "剪裁"、“复制”、“保存为”、和各个功能是针对内存中的当前图片。
 
 ![截屏-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer.jpg)       
 
@@ -362,10 +370,12 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 分析图像<a id="ImageData" /> 
 1. 统计显示图像的数据：各颜色成分的均值/方差/斜率/中值/众数/最大/最小，以及直方图。  
 2. 直方图的颜色成分可多选。
-3. 可针对选择的矩形区域做统计显示。
-4. 利用K-Means聚类计算最不同的颜色。
-5. 利用统计量化计算出现最多的颜色。
-6. 图像数据可以被保存为html文件。   
+3. 可针对选择的矩形区域做统计显示。  
+4. 计算主色调：    
+	-  利用K-Means聚类计算最不同的颜色。可设置最大循环数。       
+	-  利用统计量化计算出现最多的颜色。      
+	-  可将计算结果导入调色板。       
+5. 图像数据可以被保存为html文件。   
 
 ![截屏-imageAnanlyse](https://mararsh.github.io/MyBox/snap-imageAnanlyse.jpg)     
 
@@ -380,11 +390,11 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  设置背景色   
 3. 粘贴板。
 	-  数据来源：     
-	      -  对图像整体或选择的部分做"复制"（CTRL+c）  
-	      -  剪切下来的图片部分  
-	      -  系统粘贴板  
-	      -  系统中的图片文件  
-	      -  示例图片    
+		-  对图像整体或选择的部分做"复制"（CTRL+c）  
+		-  剪切下来的图片部分  
+		-  系统粘贴板  
+		-  系统中的图片文件  
+		-  示例图片    
 	-  管理粘贴板列表：增、删、清除、刷新，可设置最多保存数。
 	-  编辑图像时按粘贴按钮（CTRL+v）以把粘贴板的第一张图贴到当前图片上，也可以双击粘贴板列表的项目以粘贴。
 	-  在当前图片上拖拉被粘贴图片，调整大小和位置。
@@ -445,7 +455,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 图像局部化<a id="imagePart" />
 1. 图像的分割。支持按个数分割、按尺寸分割、和定制分割。可以保存为多个图像文件、多帧Tiff文件、或者PDF。
 2. 图像的降采样。可以设置采样区域、采样比例。
-3. 提取透明通道      
+3. 当图片文件包含太多像素而被采样加载时，分割和降采样的是文件中的原图片而非加载到内存的图片。
+4. 提取透明通道。      
 
 ### 图片转换<a id="imageConvert" />
 1. 可选图像文件的格式，包括：png,jpg,bmp,tif,gif, ico, wbmp,pnm,pcx, raw。
@@ -500,10 +511,22 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  第一行定义数据头，以英文逗号分隔。
 	-  其余每行定义一条数据，数据域以英文逗号分隔。
 	-  以下为必要数据域：     
-                 rgba
+                 rgba 或 rgb
 	-  以下是可选数据域：     
                  name
 8. 用户可输入颜色列表。提供示例。
+有效的颜色值示例：              
+ 	  	 	  	orange [常用网页颜色列表](http://mararsh.github.io/MyBox_data/colors/%E5%B8%B8%E7%94%A8%E7%BD%91%E9%A1%B5%E9%A2%9C%E8%89%B2.html)                   
+ 	  	 	  	0xff668840             
+ 	  	 	  	0xff6688         
+ 	  	 	  	#ff6688            
+ 	  	 	  	#f68            
+ 	  	 	  	rgb(255,102,136)             
+ 	  	 	  	rgb(100%,50%,50%)                         
+ 	  	 	  	rgba(255,102,136,0.25)             
+ 	  	 	  	rgba(255,50%,50%,0.25)             
+ 	  	 	  	hsl(240,100%,100%)             
+ 	  	 	  	hsla(120,0%,0%,0.25)            
 
 ### 调色盘<a id="ColorPalette" />
 1. 色块显示颜色。弹出颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。
@@ -573,39 +596,39 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 通用的数据管理<a id="dataManage" />
 1. 定义数据
 2. 数据约束：
- 	- 约定：
- 	  	- 整型数值（integer/long/short）的无效值是最小值（MIN_VALUE）
- 	  	- 双精度数值的无效值是最大值（Double.MAX_VALUE）
+	- 约定：
+ 		- 整型数值（integer/long/short）的无效值是最小值（MIN_VALUE）
+ 		- 双精度数值的无效值是最大值（Double.MAX_VALUE）
 	- 坐标系统：
- 	  	- 可取值：
- 	  	   	- CGCS2000（中国大地坐标），真实位置，近似于WGS_84(GPS)坐标。
- 	  	   	- GCJ-02（中国加密坐标），经过加密的数据，与真实位置有偏差。
- 	  	   	- WGS-84（GPS），真实位置
- 	  	   	- BD-09（百度加密坐标），基于GCJ-02
- 	  	   	- Mapbar（图吧坐标），基于GCJ-02
- 	  	- 当坐标系统未定义或非法时，缺省值为CGCS2000。
+		- 可取值：
+			- CGCS2000（中国大地坐标），真实位置，近似于WGS_84(GPS)坐标。
+			- GCJ-02（中国加密坐标），经过加密的数据，与真实位置有偏差。
+			- WGS-84（GPS），真实位置
+			- BD-09（百度加密坐标），基于GCJ-02
+			- Mapbar（图吧坐标），基于GCJ-02
+		- 当坐标系统未定义或非法时，缺省值为CGCS2000。
 	- 坐标值： 
- 	  	- 数据处理时均用经纬度的小数而不是“度分秒”（DMS）。
-  	  	- MyBox提供“位置工具”以帮助转换坐标的小数和度分秒。                     
- 	  	- 经度有效值范围：`-180~180`，纬度有效值范围：`-90~90`。
+		- 数据处理时均用经纬度的小数而不是“度分秒”（DMS）。
+		- MyBox提供“位置工具”以帮助转换坐标的小数和度分秒。                     
+		- 经度有效值范围：`-180~180`，纬度有效值范围：`-90~90`。
 	- 时间：
- 	  	- 格式：      
- 	  	   	- 日期时间，如：2014-06-11 13:51:33
- 	  	   	- 日期，如：2014-06-11
- 	  	   	- 年，如：2014
- 	  	   	- 月，如：2014-06
- 	  	   	- 时间，如：13:51:33
- 	  	   	- 带毫秒的时间，如：13:51:33.261
- 	  	   	- 带毫秒的日期时间，如：2014-06-11 13:51:33.261
- 	  	   	- 带时区的日期时间，如：2020-09-27 12:29:29 +0800
-  	  	   	- 带毫秒和时区的日期时间，如：2020-09-27 12:29:29.713 +0800
-  	  	   	- 日期和时间之间可以有或没有“T”。“2014-06-11T13:51:33”等同于“2014-06-11 13:51:33”。
-	  	- 纪元：        
+		- 格式：      
+			- 日期时间，如：2014-06-11 13:51:33
+			- 日期，如：2014-06-11
+			- 年，如：2014
+			- 月，如：2014-06
+			- 时间，如：13:51:33
+			- 带毫秒的时间，如：13:51:33.261
+			- 带毫秒的日期时间，如：2014-06-11 13:51:33.261
+			- 带时区的日期时间，如：2020-09-27 12:29:29 +0800
+			- 带毫秒和时区的日期时间，如：2020-09-27 12:29:29.713 +0800
+			- 日期和时间之间可以有或没有“T”。“2014-06-11T13:51:33”等同于“2014-06-11 13:51:33”。
+		- 纪元：        
  	  	 	  	 "0 AD" = "1 BC" = "0" = "-0" = "0000" = "-0000"  = "0001-01-01 00:00:00 BC" =  "公元前1" = "公元前0001-01-01 00:00:00"            
  	  	 	  	 "1 AD" =  "1"  = "0001" = "0001-01-01 00:00:00" = "0001-01-01 00:00:00 AD" =  "公元1" = "公元0001-01-01 00:00:00"           
  	  	 	  	 "202 BC" = "-203" = "-0203" = "-0203-01-01 00:00:00"  = "0202-01-01 00:00:00 BC" = "公元前202" =  "公元前0202-01-01 00:00:00"           
  	  	 	  	 "202 AD" = "202" = "0202" = "0202-01-01 00:00:00" = "0202-01-01 00:00:00 AD" = "公元202" = "公元0202-01-01 00:00:00"            
- 	  	- 有效的时间示例：                  
+		- 有效的时间示例：                  
  	  	 	  	 2020-07-13 11:30:59            
   	  	 	  	 -2020-07-13 11:30:59            
 	  	 	  	 -581-01-23            
@@ -1001,6 +1024,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 3. 整理文件，将文件按修改时间或者生成时间重新归类在新目录下。此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
 4. 删除目录下所有的空目录。
 5. 删除"无限嵌套目录"（由于软件错误而生成的无法正常删除的目录）。  
+6. 删除系统临时目录下的文件。  
 
 ### 归档/压缩/解压/解档<a id="archiveCompress" />  
 1. 归档是把多个文件/目录聚集为单个文件的过程，有的归档格式支持同时实现压缩（如zip和7z）。解档是还原归档文件的过程。 
@@ -1223,9 +1247,26 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 2. 以下功能只有处于“开发模式”才可见：
 	-  菜单项：“帮助”-“制作图标”
 	-  颜色管理的菜单项：“导入MyBox颜色”
+3. 类型为“调试”的日志只在开发模式下才写入数据库。
 
+## MyBox日志<a id="MyBoxLogs" />  
+1. MyBox日志类型包括：错误、信息、调试、终端：
+	-  所有日志都会显示在终端。
+	- “错误”和“信息”总是写入数据库。
+	- ”调试“只在开发模式下才写入数据库。
+	- ”终端“从不写入数据库。
+2. 字段：标识、时间、类型、文件名、类名、方法名、行号、调用者、注释。
+3. “调用者”是调用链，每行是一个节点：文件名、类名、方法名、行号。调用链只记录MyBox自身的方法。
+4. “错误”会导致查看日志的界面被弹出。
 
 # 开发日志<a id="devLog" />       
+2020-11-29 版本6.3.6         
+-  代码：升级到java 15.0.1和javafx15.0.1（除javafx-web模块）。MyBox日志自行实现，不再依赖log4j2。        
+-  文件：增加文件删除/重命名/移动的健壮性。可删除系统临时目录下的文件。       
+-  颜色：量化后的结果可导入调色盘。kmeans cluster量化可设置最大循环数。可导入用户的颜色csv文件。颜色导入的关键字可以是rgb。        
+-  解决的主要问题：文件删除会造成最近访问文件列表弹出错误。合并图片设置列数会出错。           
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6)        
+
 2020-11-18 版本6.3.5        
 -  改进：文档的查找/替换有效处理正则表达式和分页；完善读取图片的算法；更顺畅地处理大图片；调整网页编辑器界面。    
 -  增加：每个版本都有自己的配置文件；菜单按钮；若干文档转换功能；编码/解码URI字串；下载第一级链接。     

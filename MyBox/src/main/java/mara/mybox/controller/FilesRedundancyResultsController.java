@@ -13,9 +13,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
 import mara.mybox.data.FileInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -175,7 +175,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                     } catch (Exception e) {
 
                         error = e.toString();
-                        logger.debug(error);
+                        MyBoxLog.debug(error);
                         return false;
                     }
                 }
@@ -282,7 +282,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                                     continue;
                                 }
                                 if (deleteRadio.isSelected()) {
-                                    file.delete();
+                                    FileTools.delete(file);
                                 } else {
                                     Desktop.getDesktop().moveToTrash(file);
                                 }

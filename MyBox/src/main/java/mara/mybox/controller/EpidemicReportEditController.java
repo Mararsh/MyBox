@@ -16,7 +16,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -84,7 +84,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -101,7 +101,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             confirmedInput.requestFocus();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -230,7 +230,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             selectedCode = code;
             locationInput.setText(selectedCode.getFullName());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -283,7 +283,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             }
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -318,7 +318,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             locationInput.setText("");
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

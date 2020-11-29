@@ -12,10 +12,10 @@ import mara.mybox.data.Dataset;
 import mara.mybox.data.Location;
 import mara.mybox.db.ColumnDefinition.ColumnType;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
+
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -164,8 +164,7 @@ public class TableLocationData extends TableBase<Location> {
             conn.setReadOnly(true);
             return dataset(conn, datasetName);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -181,8 +180,7 @@ public class TableLocationData extends TableBase<Location> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return queryAndCreateDataset(conn, datasetName);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -203,8 +201,7 @@ public class TableLocationData extends TableBase<Location> {
             }
             return dataset;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -213,8 +210,7 @@ public class TableLocationData extends TableBase<Location> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return delete(conn, dataset, deleteDataset);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -233,8 +229,7 @@ public class TableLocationData extends TableBase<Location> {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -251,8 +246,7 @@ public class TableLocationData extends TableBase<Location> {
             conn.setReadOnly(true);
             return times(conn);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -271,8 +265,7 @@ public class TableLocationData extends TableBase<Location> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return times;
     }

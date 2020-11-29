@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.image.ImageColor.ColorComponent;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -261,7 +261,7 @@ public class ImageStatistic {
 
             return this;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

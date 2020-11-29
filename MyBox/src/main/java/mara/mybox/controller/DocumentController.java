@@ -10,7 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -36,7 +36,7 @@ public class DocumentController extends BaseController {
             label.setText(MessageFormat.format(message("DocumentComments"), AppVariables.MyBoxDownloadsPath));
             checkStatus();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -97,7 +97,7 @@ public class DocumentController extends BaseController {
                 });
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

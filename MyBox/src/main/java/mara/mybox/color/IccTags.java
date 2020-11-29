@@ -8,7 +8,7 @@ import static mara.mybox.color.IccXML.iccTagsXml;
 import static mara.mybox.tools.ByteTools.bytesToInt;
 import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -29,7 +29,7 @@ public class IccTags {
             this.data = data;
             this.normalizeLut = normalizeLut;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -81,7 +81,7 @@ public class IccTags {
                 tags.add(tag);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return tags;
     }
@@ -141,7 +141,7 @@ public class IccTags {
 
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

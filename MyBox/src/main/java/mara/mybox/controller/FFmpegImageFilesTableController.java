@@ -18,7 +18,7 @@ import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import thridparty.TableAutoCommitCell;
 
@@ -59,7 +59,7 @@ public class FFmpegImageFilesTableController extends FilesTableController {
                 }
             });
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -74,7 +74,7 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -109,14 +109,14 @@ public class FFmpegImageFilesTableController extends FilesTableController {
                             }
                         }
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                 }
             });
             durationColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -139,7 +139,7 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             tableView.refresh();
             updateLabel();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

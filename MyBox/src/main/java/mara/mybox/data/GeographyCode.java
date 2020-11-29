@@ -3,8 +3,8 @@ package mara.mybox.data;
 import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.TableBase;
 import mara.mybox.db.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -179,7 +179,7 @@ public class GeographyCode extends TableData {
                     return true;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return false;
     }
@@ -417,7 +417,7 @@ public class GeographyCode extends TableData {
             }
             return newCode;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

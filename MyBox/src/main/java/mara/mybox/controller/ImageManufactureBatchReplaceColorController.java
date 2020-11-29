@@ -20,7 +20,7 @@ import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -62,7 +62,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             );
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -92,7 +92,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             checkColorType();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

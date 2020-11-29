@@ -49,7 +49,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -106,7 +106,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             initList();
             initEditFields();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -139,14 +139,12 @@ public class ConvolutionKernelManagerController extends BaseController {
             tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        editAction();
-                    }
+                    editAction();
                 }
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -155,14 +153,9 @@ public class ConvolutionKernelManagerController extends BaseController {
         tableData.clear();
         tableData.addAll(records);
 
-        if (parentController != null && parentFxml != null) {
-            if (parentFxml.contains("ImageManufactureEnhancement")) {
-                ImageManufactureEnhancementController p = (ImageManufactureEnhancementController) parentController;
-                p.loadKernelsList(records);
-            } else if (parentFxml.contains("ImageManufactureBatchEnhancement")) {
-                ImageManufactureBatchEnhancementController p = (ImageManufactureBatchEnhancementController) parentController;
-                p.loadKernelsList(records);
-            }
+        if (parentController != null && parentController instanceof ImageManufactureEnhancementOptionsController) {
+            ImageManufactureEnhancementOptionsController p = (ImageManufactureEnhancementOptionsController) parentController;
+            p.loadKernelsList(records);
         }
     }
 
@@ -255,7 +248,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             FxmlControl.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -286,7 +279,7 @@ public class ConvolutionKernelManagerController extends BaseController {
 
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -304,7 +297,7 @@ public class ConvolutionKernelManagerController extends BaseController {
                 edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

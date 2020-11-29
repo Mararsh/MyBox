@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -34,7 +34,7 @@ public class ConfigTools {
         if (!defaultPath.exists()) {
             defaultPath.mkdirs();
         } else if (!defaultPath.isDirectory()) {
-            defaultPath.delete();
+            FileTools.delete(defaultPath);
             defaultPath.mkdirs();
         }
         return defaultPath;
@@ -73,7 +73,7 @@ public class ConfigTools {
             }
             return writeValue(AppVariables.MyboxConfigFile, key, value);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -108,7 +108,7 @@ public class ConfigTools {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return values;
     }
@@ -126,7 +126,7 @@ public class ConfigTools {
             }
             return value;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -147,7 +147,7 @@ public class ConfigTools {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -168,7 +168,7 @@ public class ConfigTools {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -187,7 +187,7 @@ public class ConfigTools {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }

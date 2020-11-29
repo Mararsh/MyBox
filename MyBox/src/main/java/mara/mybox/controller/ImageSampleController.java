@@ -24,7 +24,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -63,7 +63,7 @@ public class ImageSampleController extends ImageViewerController {
             operateOriginalSize = true;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -139,7 +139,7 @@ public class ImageSampleController extends ImageViewerController {
             saveAsButton.disableProperty().bind(okButton.disabledProperty());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -216,7 +216,7 @@ public class ImageSampleController extends ImageViewerController {
             return rect;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -269,7 +269,7 @@ public class ImageSampleController extends ImageViewerController {
             checkScales();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -289,7 +289,7 @@ public class ImageSampleController extends ImageViewerController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

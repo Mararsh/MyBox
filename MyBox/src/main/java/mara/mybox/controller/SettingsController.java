@@ -38,6 +38,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableVisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -47,7 +48,6 @@ import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -121,7 +121,7 @@ public class SettingsController extends BaseController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -205,7 +205,7 @@ public class SettingsController extends BaseController {
             checkPdfMem();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -324,7 +324,7 @@ public class SettingsController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -358,7 +358,7 @@ public class SettingsController extends BaseController {
                 setStyle(CommonValues.WhiteOnPurpleStyle);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -383,7 +383,7 @@ public class SettingsController extends BaseController {
             }
             refresh();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -396,7 +396,7 @@ public class SettingsController extends BaseController {
             }
             setInterfaceStyle(style);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -486,7 +486,7 @@ public class SettingsController extends BaseController {
                             try {
                                 MyBox.restart();
                             } catch (Exception e) {
-                                logger.debug(e.toString());
+                                MyBoxLog.debug(e.toString());
                             }
                         }
                     });
@@ -501,7 +501,7 @@ public class SettingsController extends BaseController {
             webReadTimeoutInput.setText(AppVariables.getUserConfigInt("WebReadTimeout", 10000) + "");
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -514,7 +514,7 @@ public class SettingsController extends BaseController {
                     ConfigTools.writeConfigValue("JVMmemory", "-Xms" + newJVM + "m");
                     MyBox.restart();
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
             }
         });
@@ -530,7 +530,7 @@ public class SettingsController extends BaseController {
                     popInformation(message("EffectNextStart"));
 //                    MyBox.restart();
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
             }
         });
@@ -548,7 +548,7 @@ public class SettingsController extends BaseController {
             recordFileWritten(directory);
             dataDirInput.setText(directory.getPath());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -582,9 +582,9 @@ public class SettingsController extends BaseController {
                         + "mybox_derby" + File.separator + "db.lck");
                 if (lckFile.exists()) {
                     try {
-                        lckFile.delete();
+                        FileTools.delete(lckFile);
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                 }
                 AppVariables.MyboxDataPath = newPath;
@@ -683,7 +683,7 @@ public class SettingsController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -786,7 +786,7 @@ public class SettingsController extends BaseController {
         try {
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -998,7 +998,7 @@ public class SettingsController extends BaseController {
             copyToSystemClipboardCheck.setSelected(AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1049,7 +1049,7 @@ public class SettingsController extends BaseController {
             gaodeWebKeyInput.setText(AppVariables.getUserConfigValue("GaoDeMapWebKey", CommonValues.GaoDeMapWebKey));
             gaodeServiceKeyInput.setText(AppVariables.getUserConfigValue("GaoDeMapServiceKey", CommonValues.GaoDeMapServiceKey));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1096,7 +1096,7 @@ public class SettingsController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

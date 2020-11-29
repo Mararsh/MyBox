@@ -5,8 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -38,7 +39,7 @@ public class FilesMoveController extends FilesBatchController {
             }
             return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }
@@ -48,7 +49,7 @@ public class FilesMoveController extends FilesBatchController {
         if (super.handleDirectory(sourcePath, targetPath)) {
             if (sourcePath != null && sourcePath.isDirectory()
                     && sourcePath.list().length == 0) {
-                sourcePath.delete();
+                FileTools.deleteDir(sourcePath);
             }
             return true;
         } else {

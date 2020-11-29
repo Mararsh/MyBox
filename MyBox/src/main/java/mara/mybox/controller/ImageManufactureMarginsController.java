@@ -26,7 +26,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -126,7 +126,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -189,7 +189,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             imageController.drawMaskRectangleLineAsData();
             commentsLabel.setText(message("DragMarginsComments"));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

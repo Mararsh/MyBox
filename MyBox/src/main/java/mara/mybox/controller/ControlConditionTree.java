@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.fxml.ConditionTreeView;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -60,7 +60,7 @@ public class ControlConditionTree extends BaseController {
             treeView.setRoot(allItem);
             treeView.setSelection();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

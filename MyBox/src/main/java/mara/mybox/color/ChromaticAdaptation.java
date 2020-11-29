@@ -7,7 +7,7 @@ import java.util.Map;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -350,7 +350,7 @@ public class ChromaticAdaptation {
                 return M;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

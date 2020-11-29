@@ -1,6 +1,5 @@
 package mara.mybox.db;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,9 +7,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.AlarmClock;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -81,15 +81,15 @@ public class TableAlarmClock extends DerbyBase {
                 }
             }
             try {
-                new File(AppVariables.AlarmClocksFile).delete();
+                FileTools.delete(AppVariables.AlarmClocksFile);
             } catch (Exception e) {
-                failed(e);
+                MyBoxLog.error(e);
             }
 
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -121,8 +121,7 @@ public class TableAlarmClock extends DerbyBase {
             }
 
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return alarms;
     }
@@ -190,8 +189,7 @@ public class TableAlarmClock extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -212,8 +210,8 @@ public class TableAlarmClock extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }

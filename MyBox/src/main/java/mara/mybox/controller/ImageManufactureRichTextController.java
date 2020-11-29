@@ -27,11 +27,11 @@ import javafx.stage.Screen;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -89,7 +89,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                             FxmlControl.setEditorBadStyle(marginsWidthBox);
                         }
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         FxmlControl.setEditorBadStyle(marginsWidthBox);
                     }
                 }
@@ -181,7 +181,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             editor.htmlEditor.setHtmlText(message("ImageTextComments"));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -206,7 +206,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                             htmlLoaded();
                         }
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             });
@@ -278,7 +278,6 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
     // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
     private static Image snap(WebView node, boolean keepScale) {
-        logger.debug(Screen.getPrimary().getDpi());
         if (Screen.getPrimary().getDpi() == 96) {
             SnapshotParameters spa = new SnapshotParameters();
             spa.setFill(Color.TRANSPARENT);
@@ -307,7 +306,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             }
 
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 final double rotate = webView.getRotate();
@@ -345,7 +344,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
                             return blended != null;
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                             return false;
                         }
                     }
@@ -368,13 +367,14 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
                 };
                 imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

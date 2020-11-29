@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import static mara.mybox.color.IccHeader.renderingIntent;
 import static mara.mybox.tools.ByteTools.subBytes;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.CommonValues.Indent;
 
 /**
@@ -145,7 +145,7 @@ public class IccXML {
             return s.toString();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -361,7 +361,7 @@ public class IccXML {
                                             }
                                             s.append(Indent).append(Indent).append(Indent).append("</OutputTables>\n");
                                         } else {
-                                            logger.debug("OffsetBCurve:" + values.get("OffsetBCurve"));
+                                            MyBoxLog.debug("OffsetBCurve:" + values.get("OffsetBCurve"));
                                             s.append(Indent).append(Indent).append(Indent).
                                                     append("<OffsetBCurve>").append(values.get("OffsetBCurve")).append("</OffsetBCurve>\n");
                                             s.append(Indent).append(Indent).append(Indent).
@@ -401,7 +401,7 @@ public class IccXML {
             return s.toString();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 

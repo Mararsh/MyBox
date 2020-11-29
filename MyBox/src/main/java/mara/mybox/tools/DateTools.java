@@ -236,7 +236,7 @@ public class DateTools {
             return adToDatetime(s, locale);
         }
         Date d = stringToDatetime(s, format, locale);
-//        logger.debug(s + "  " + locale.getLanguage() + " " + format + "  " + locale + "  "
+//        MyBoxLog.debug(s + "  " + locale.getLanguage() + " " + format + "  " + locale + "  "
 //                + DateTools.textEra(d.getTime(), Era.Format.Datetime, false));
         return d;
     }
@@ -278,7 +278,7 @@ public class DateTools {
         } else {
             format = CommonValues.YearFormat;
         }
-//        logger.debug(s + "  " + format + "  " + locale + "  "
+//        MyBoxLog.debug(s + "  " + format + "  " + locale + "  "
 //                + stringToDatetime(s, format, locale).getTime());
         return stringToDatetime(s, format, locale);
     }

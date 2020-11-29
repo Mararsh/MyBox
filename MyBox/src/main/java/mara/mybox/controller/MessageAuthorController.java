@@ -15,7 +15,7 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -42,7 +42,7 @@ public class MessageAuthorController extends BaseController {
             super.initControls();
             osInput.setText(SystemTools.os());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

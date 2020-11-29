@@ -27,8 +27,9 @@ import java.util.regex.Pattern;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.data.TextEditInformation;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.MyBoxTempPath;
-import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -41,6 +42,15 @@ public class FileTools {
     public static enum FileSortMode {
         ModifyTimeDesc, ModifyTimeAsc, CreateTimeDesc, CreateTimeAsc,
         SizeDesc, SizeAsc, NameDesc, NameAsc, FormatDesc, FormatAsc
+    }
+
+    public static FileSortMode sortMode(String mode) {
+        for (FileSortMode v : FileSortMode.values()) {
+            if (v.name().equals(mode) || message(v.name()).equals(mode)) {
+                return v;
+            }
+        }
+        return null;
     }
 
     public static String filenameFilter(String name) {
@@ -116,9 +126,12 @@ public class FileTools {
             return null;
         }
         String fname = filename;
-        int pos = fname.lastIndexOf('.');
-        if (pos >= 0) {
-            fname = fname.substring(0, pos);
+        int pos1 = fname.lastIndexOf('.');
+        if (pos1 >= 0) {
+            int pos2 = fname.lastIndexOf(File.separator);
+            if (pos2 < 0 || pos2 < pos1) {
+                fname = fname.substring(0, pos1);
+            }
         }
         return fname;
     }
@@ -165,29 +178,45 @@ public class FileTools {
     }
 
     public static String getTempFileName() {
-        return MyBoxTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100);
+        return getTempFileName(MyBoxTempPath.getAbsolutePath());
     }
 
     public static File getTempFile() {
-        File file = new File(getTempFileName());
-        while (file.exists()) {
-            file = new File(getTempFileName());
-        }
-        return file;
+        return getPathTempFile(MyBoxTempPath.getAbsolutePath());
     }
 
     public static File getTempFile(String suffix) {
-        File file = new File(getTempFileName() + suffix);
+        return getPathTempFile(MyBoxTempPath.getAbsolutePath(), suffix);
+    }
+
+    public static File getTempDirectory() {
+        return getPathTempDirectory(MyBoxTempPath.getAbsolutePath());
+    }
+
+    public static String getTempFileName(String path) {
+        return path + File.separator + new Date().getTime() + IntTools.getRandomInt(100);
+    }
+
+    public static File getPathTempFile(String path) {
+        File file = new File(getTempFileName(path));
         while (file.exists()) {
-            file = new File(getTempFileName() + suffix);
+            file = new File(getTempFileName(path));
         }
         return file;
     }
 
-    public static File getTempDirectory() {
-        File file = new File(getTempFileName() + File.separator);
+    public static File getPathTempFile(String path, String suffix) {
+        File file = new File(getTempFileName(path) + suffix);
         while (file.exists()) {
-            file = new File(getTempFileName() + File.separator);
+            file = new File(getTempFileName(path) + suffix);
+        }
+        return file;
+    }
+
+    public static File getPathTempDirectory(String path) {
+        File file = new File(getTempFileName(path) + File.separator);
+        while (file.exists()) {
+            file = new File(getTempFileName(path) + File.separator);
         }
         file.mkdirs();
         return file;
@@ -201,15 +230,18 @@ public class FileTools {
         if (inStr == null) {
             return filename;
         }
-        int pos = filename.lastIndexOf('.');
-        if (pos < 0) {
-            return filename + inStr;
+        int pos1 = filename.lastIndexOf('.');
+        if (pos1 >= 0) {
+            int pos2 = filename.lastIndexOf(File.separator);
+            if (pos2 < 0 || pos2 < pos1) {
+                return filename.substring(0, pos1) + inStr + "." + filename.substring(pos1 + 1);
+            }
         }
-        return filename.substring(0, pos) + inStr + "." + filename.substring(pos + 1);
+        return filename + inStr;
     }
 
     public static String showFileSize(long size) {
-        double kb = size * 1.0f / 1024;
+        double kb = size * 1.0d / 1024;
         if (kb < 1024) {
             return DoubleTools.scale3(kb) + " KB";
         } else {
@@ -383,7 +415,7 @@ public class FileTools {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -408,8 +440,7 @@ public class FileTools {
         return files;
     }
 
-    public static void sortFileInformations(List<FileInformation> files,
-            FileSortMode sortMode) {
+    public static void sortFileInformations(List<FileInformation> files, FileSortMode sortMode) {
         if (files == null || files.isEmpty() || sortMode == null) {
             return;
         }
@@ -551,13 +582,12 @@ public class FileTools {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
 
-    public static FileSynchronizeAttributes copyWholeDirectory(File sourcePath,
-            File targetPath) {
+    public static FileSynchronizeAttributes copyWholeDirectory(File sourcePath, File targetPath) {
         FileSynchronizeAttributes attr = new FileSynchronizeAttributes();
         copyWholeDirectory(sourcePath, targetPath, attr);
         return attr;
@@ -606,7 +636,7 @@ public class FileTools {
             }
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -617,6 +647,52 @@ public class FileTools {
             attr = new FileSynchronizeAttributes();
         }
         return copyFile(sourceFile, targetFile, attr.isCanReplace(), attr.isCopyAttrinutes());
+    }
+
+    public static boolean rename(File sourceFile, File targetFile) {
+        try {
+            if (sourceFile == null || !sourceFile.exists() || targetFile == null) {
+                return false;
+            }
+            if (!delete(targetFile)) {
+                return false;
+            }
+            System.gc();
+            Files.move(sourceFile.toPath(), targetFile.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean delete(String fileName) {
+        if (fileName == null || fileName.isBlank()) {
+            return false;
+        }
+        return delete(new File(fileName));
+    }
+
+    public static boolean delete(File file) {
+        try {
+            if (file == null || !file.exists() || !file.isFile()) {
+                return true;
+            }
+            System.gc();
+            boolean ok = file.delete();
+            int retry = 0;
+            while (!ok && retry++ < 3) {
+                System.gc();
+                Thread.sleep(1000);
+                ok = file.delete();
+            }
+            return ok;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+//        return FileUtils.deleteQuietly(file);
     }
 
     public static boolean clearDir(File dir) {
@@ -636,6 +712,13 @@ public class FileTools {
             }
         }
         return true;
+//        try {
+//            FileUtils.cleanDirectory(dir);
+//            return true;
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//            return false;
+//        }
     }
 
     public static boolean deleteDir(File dir) {
@@ -654,6 +737,8 @@ public class FileTools {
             }
         }
         return dir.delete();
+//        FileUtils.deleteQuietly(dir);
+//        return true;
     }
 
     public static int deleteEmptyDir(File dir, boolean trash) {
@@ -667,7 +752,7 @@ public class FileTools {
                 if (trash) {
                     Desktop.getDesktop().moveToTrash(dir);
                 } else {
-                    dir.delete();
+                    deleteDir(dir);
                 }
                 return ++count;
             }
@@ -681,7 +766,7 @@ public class FileTools {
                 if (trash) {
                     Desktop.getDesktop().moveToTrash(dir);
                 } else {
-                    dir.delete();
+                    deleteDir(dir);
                 }
                 return ++count;
             }
@@ -691,12 +776,16 @@ public class FileTools {
 
     public static void deleteNestedDir(File sourceDir) {
         try {
+            if (sourceDir == null || !sourceDir.exists() || !sourceDir.isDirectory()) {
+                return;
+            }
+            System.gc();
             File targetTmpDir = getTempDirectory();
             deleteNestedDir(sourceDir, targetTmpDir);
-            targetTmpDir.delete();
-            sourceDir.delete();
+            deleteDir(targetTmpDir);
+            deleteDir(sourceDir);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -716,17 +805,19 @@ public class FileTools {
                                     String target = tmpDir.getAbsolutePath() + File.separator + subfile.getName();
                                     Files.move(Paths.get(subfile.getAbsolutePath()), Paths.get(target));
                                 } else {
-                                    subfile.delete();
+                                    delete(subfile);
                                 }
                             }
                         }
+                        file.delete();
+                    } else {
+                        delete(file);
                     }
-                    file.delete();
                 }
                 deleteNestedDir(tmpDir, sourceDir);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -745,9 +836,10 @@ public class FileTools {
                 }
             }
         }
-        return dir.delete();
+        return delete(dir);
     }
 
+    // Return files number and total length
     public static long[] countDirectorySize(File dir, boolean countSubdir) {
         long[] size = new long[2];
         try {
@@ -778,7 +870,7 @@ public class FileTools {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return size;
     }
@@ -832,8 +924,7 @@ public class FileTools {
         }
     }
 
-    public static List<File> splitFileByFilesNumber(File file,
-            String filename, long filesNumber) {
+    public static List<File> splitFileByFilesNumber(File file, String filename, long filesNumber) {
         try {
             if (file == null || filesNumber <= 0) {
                 return null;
@@ -845,8 +936,7 @@ public class FileTools {
                 int digit = (filesNumber + "").length();
                 byte[] buf = new byte[(int) bytesNumber];
                 int bufLen, fileIndex = 1, startIndex = 0, endIndex = 0;
-                while ((fileIndex < filesNumber)
-                        && (bufLen = inputStream.read(buf)) != -1) {
+                while ((fileIndex < filesNumber) && (bufLen = inputStream.read(buf)) > 0) {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
@@ -874,7 +964,7 @@ public class FileTools {
             }
             return splittedFiles;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -895,7 +985,7 @@ public class FileTools {
                 int digit = (fnumber + "").length();
                 byte[] buf = new byte[(int) bytesNumber];
                 int bufLen, fileIndex = 1, startIndex = 0, endIndex = 0;
-                while ((bufLen = inputStream.read(buf)) != -1) {
+                while ((bufLen = inputStream.read(buf)) > 0) {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
@@ -912,7 +1002,7 @@ public class FileTools {
             }
             return splittedFiles;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -933,7 +1023,7 @@ public class FileTools {
             }
             return splittedFiles;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -967,13 +1057,14 @@ public class FileTools {
                 }
             }
             File actualFile = new File(newFilename);
-            if (actualFile.exists()) {
-                actualFile.delete();
+
+            if (FileTools.rename(tempFile, actualFile)) {
+                return actualFile;
+            } else {
+                return null;
             }
-            tempFile.renameTo(actualFile);
-            return actualFile;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -985,7 +1076,7 @@ public class FileTools {
             files.add(file2);
             return mergeFiles(files, targetFile);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -1000,30 +1091,30 @@ public class FileTools {
                 int bufLen;
                 for (File file : files) {
                     try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-                        while ((bufLen = inputStream.read(buf)) != -1) {
-                            buf = ByteTools.subBytes(buf, 0, bufLen);
-                            outputStream.write(buf);
+                        while ((bufLen = inputStream.read(buf)) > 0) {
+                            outputStream.write(buf, 0, bufLen);
                         }
                     }
                 }
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
 
     public static byte[] readBytes(File file) {
         byte[] data = null;
-        try {
-            try ( BufferedInputStream inputStream
-                    = new BufferedInputStream(new FileInputStream(file))) {
-                data = new byte[(int) file.length()];
-                inputStream.read(data);
+        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            int bufSize = (int) file.length();
+            data = new byte[bufSize];
+            int readLen = inputStream.read(data);
+            if (readLen > 0 && readLen < bufSize) {
+                data = ByteTools.subBytes(data, 0, readLen);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return data;
     }
@@ -1037,11 +1128,14 @@ public class FileTools {
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 data = new byte[length];
                 inputStream.skip(offset);
-                inputStream.read(data);
+                int readLen = inputStream.read(data);
+                if (readLen > 0 && readLen < length) {
+                    data = ByteTools.subBytes(data, 0, readLen);
+                }
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -1093,22 +1187,15 @@ public class FileTools {
     }
 
     public static File writeFile(File file, String data, Charset charset) {
-        try {
-            if (file == null || data == null) {
-                return null;
-            }
-            FileWriter writer;
-            if (charset == null) {
-                writer = new FileWriter(file, Charset.forName("utf-8"));
-            } else {
-                writer = new FileWriter(file, charset);
-            }
+        if (file == null || data == null) {
+            return null;
+        }
+        try ( FileWriter writer = new FileWriter(file, charset != null ? charset : Charset.forName("utf-8"))) {
             writer.write(data);
             writer.flush();
-            writer.close();
             return file;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1118,17 +1205,15 @@ public class FileTools {
     }
 
     public static boolean writeFile(File file, byte[] data) {
-        try {
-            if (file == null || data == null) {
-                return false;
-            }
-            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-                outputStream.write(data);
-                outputStream.flush();
-            }
+        if (file == null || data == null) {
+            return false;
+        }
+        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+            outputStream.write(data);
+            outputStream.flush();
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -1138,32 +1223,41 @@ public class FileTools {
 
     }
 
+    public static int bufSize(File file) {
+        Runtime r = Runtime.getRuntime();
+        long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
+        return (int) Math.min(file.length(), availableMem / 16);
+    }
+
     public static File removeBOM(File file) {
         try {
             String setName = null;
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] header = new byte[4];
-                if ((inputStream.read(header, 0, 4) != -1)) {
+                int readLen;
+                if ((readLen = inputStream.read(header, 0, 4)) > 0) {
+                    header = ByteTools.subBytes(header, 0, readLen);
                     setName = TextTools.checkCharsetByBom(header);
                     if (setName == null) {
                         return file;
                     }
                 }
             }
-//            logger.debug(setName);
+//            MyBoxLog.debug(setName);
             File tmpFile = getTempFile();
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                inputStream.skip(TextTools.bomSize(setName));
-                int size = 0;
-                byte[] buffer = new byte[1024];
-                while ((size = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, size);
+                int bomSize = TextTools.bomSize(setName);
+                inputStream.skip(bomSize);
+                int readLen;
+                byte[] buf = new byte[bufSize(file)];
+                while ((readLen = inputStream.read(buf)) > 0) {
+                    outputStream.write(buf, 0, readLen);
                 }
             }
             return tmpFile;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

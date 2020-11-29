@@ -59,7 +59,7 @@ import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -102,7 +102,7 @@ public class HtmlEditorController extends HtmlBaseController {
             super.initValues();
             isFrameSet = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -119,7 +119,7 @@ public class HtmlEditorController extends HtmlBaseController {
             initLinksTab();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -135,13 +135,13 @@ public class HtmlEditorController extends HtmlBaseController {
             htmlEditor.setOnKeyReleased(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-//                    logger.debug("setOnKeyReleased");
+//                    MyBoxLog.debug("setOnKeyReleased");
                     checkEditorChanged();
                 }
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -156,7 +156,7 @@ public class HtmlEditorController extends HtmlBaseController {
             editorLabel.setText(AppVariables.message("Total") + ": " + len);
             updateTitle(true);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -190,7 +190,7 @@ public class HtmlEditorController extends HtmlBaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -206,7 +206,7 @@ public class HtmlEditorController extends HtmlBaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -219,7 +219,7 @@ public class HtmlEditorController extends HtmlBaseController {
             textCollectingVisitor = new TextCollectingVisitor();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -227,7 +227,7 @@ public class HtmlEditorController extends HtmlBaseController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -236,7 +236,7 @@ public class HtmlEditorController extends HtmlBaseController {
         try {
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -272,7 +272,7 @@ public class HtmlEditorController extends HtmlBaseController {
             htmlConverter = FlexmarkHtmlConverter.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -285,7 +285,7 @@ public class HtmlEditorController extends HtmlBaseController {
             FxmlControl.setTooltip(synchronizePairButton, message("SynchronizeChangesToOtherPanes"));
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -348,7 +348,7 @@ public class HtmlEditorController extends HtmlBaseController {
             webEngine.load(uri.toString());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -408,7 +408,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 });
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -473,7 +473,7 @@ public class HtmlEditorController extends HtmlBaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -505,7 +505,7 @@ public class HtmlEditorController extends HtmlBaseController {
             updateTitle(false);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         isSettingValues = false;
     }
@@ -540,7 +540,7 @@ public class HtmlEditorController extends HtmlBaseController {
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         isSettingValues = false;
     }
@@ -572,7 +572,7 @@ public class HtmlEditorController extends HtmlBaseController {
             markdownArea.setEditable(true);
             updateTitle(false);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         isSettingValues = false;
     }
@@ -588,7 +588,7 @@ public class HtmlEditorController extends HtmlBaseController {
             }
             return (String) c;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return "";
         }
     }
@@ -718,7 +718,7 @@ public class HtmlEditorController extends HtmlBaseController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -769,7 +769,7 @@ public class HtmlEditorController extends HtmlBaseController {
                         return md != null;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(error);
+                        MyBoxLog.debug(error);
                         return false;
                     }
                 }
@@ -842,7 +842,7 @@ public class HtmlEditorController extends HtmlBaseController {
                         return html != null;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(error);
+                        MyBoxLog.debug(error);
                         return false;
                     }
                 }
@@ -902,7 +902,7 @@ public class HtmlEditorController extends HtmlBaseController {
             String html = HtmlTools.html(null, style, StringTable.tableDiv(table));
             linksWebview.getEngine().loadContent(html);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

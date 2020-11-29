@@ -27,7 +27,7 @@ import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -122,7 +122,7 @@ public class FilesCompareController extends BaseController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -144,7 +144,7 @@ public class FilesCompareController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -163,7 +163,7 @@ public class FilesCompareController extends BaseController {
             }
             file1Input.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -182,7 +182,7 @@ public class FilesCompareController extends BaseController {
             }
             file2Input.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -205,7 +205,7 @@ public class FilesCompareController extends BaseController {
             }
             browseURI(new URI(link));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -348,7 +348,7 @@ public class FilesCompareController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

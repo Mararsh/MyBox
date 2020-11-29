@@ -13,10 +13,9 @@ import mara.mybox.data.Dataset;
 import mara.mybox.data.Era;
 import mara.mybox.db.ColumnDefinition.ColumnType;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 
@@ -93,7 +92,7 @@ public class TableDataset extends TableBase<Dataset> {
             }
             target.setDsid(source.getDsid());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -118,8 +117,7 @@ public class TableDataset extends TableBase<Dataset> {
             conn.setReadOnly(true);
             return read(conn, category, dataset);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -133,8 +131,7 @@ public class TableDataset extends TableBase<Dataset> {
             statement.setString(2, datasetName);
             return query(conn, statement);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -148,8 +145,7 @@ public class TableDataset extends TableBase<Dataset> {
             conn.setReadOnly(true);
             return datasets(conn, category);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return dataList;
     }
@@ -168,8 +164,7 @@ public class TableDataset extends TableBase<Dataset> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return dataList;
     }
@@ -182,8 +177,7 @@ public class TableDataset extends TableBase<Dataset> {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return datasetNames(conn, category);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return dataList;
     }
@@ -202,8 +196,7 @@ public class TableDataset extends TableBase<Dataset> {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return dataList;
     }

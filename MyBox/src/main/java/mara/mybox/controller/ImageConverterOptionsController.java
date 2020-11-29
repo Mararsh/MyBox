@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -25,7 +24,6 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import static mara.mybox.fxml.FxmlControl.warnStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageValue;
@@ -33,7 +31,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
 import mara.mybox.value.CommonFxValues;
@@ -70,9 +68,7 @@ public class ImageConverterOptionsController extends BaseController {
     @FXML
     protected Button iccSelectButton;
     @FXML
-    protected RadioButton alphaKeepRadio, alphaRemoveRadio, alphaPreKeepRadio, alphaPreReomveRadio;
-    @FXML
-    protected Label formatCommentsLabel;
+    protected RadioButton pcxRadio, alphaKeepRadio, alphaRemoveRadio, alphaPreKeepRadio, alphaPreReomveRadio;
 
     public ImageConverterOptionsController() {
         baseTitle = AppVariables.message("ImageConverterBatch");
@@ -87,7 +83,7 @@ public class ImageConverterOptionsController extends BaseController {
             compressGroup = new ToggleGroup();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -167,6 +163,7 @@ public class ImageConverterOptionsController extends BaseController {
 
             isSettingValues = true;
             FxmlControl.setRadioSelected(formatGroup, getUserConfigValue(baseName + "Format", "png"));
+            FxmlControl.setTooltip(pcxRadio, message("PcxComments"));
             embedProfileCheck.setSelected(getUserConfigBoolean(baseName + "ProfileEmbed", true));
             FxmlControl.setRadioSelected(binaryGroup, getUserConfigValue(baseName + "Binary", message("OTSU")));
             thresholdInput.setText(getUserConfigValue(baseName + "Threashold", null));
@@ -176,7 +173,7 @@ public class ImageConverterOptionsController extends BaseController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -208,14 +205,6 @@ public class ImageConverterOptionsController extends BaseController {
         String format = ((RadioButton) formatGroup.getSelectedToggle()).getText();
         attributes.setImageFormat(format);
         setUserConfigValue(baseName + "Format", format);
-
-        if ("pcx".equals(format)) {
-            formatCommentsLabel.setText(message("PcxComments"));
-            formatCommentsLabel.setStyle(warnStyle);
-        } else {
-            formatCommentsLabel.setText("");
-            formatCommentsLabel.setStyle(null);
-        }
 
         FxmlControl.setEditorNormal(dpiSelector);
         FxmlControl.setEditorNormal(qualitySelector);
@@ -294,6 +283,7 @@ public class ImageConverterOptionsController extends BaseController {
         }
 
         checkDpi();
+        FxmlControl.refreshStyle(thisPane);
 
     }
 
@@ -309,7 +299,6 @@ public class ImageConverterOptionsController extends BaseController {
         if (message("IccProfile").equals(colorSpace)) {
             if (!colorspaceBox.getChildren().contains(profileBox)) {
                 colorspaceBox.getChildren().add(profileBox);
-                FxmlControl.refreshStyle(colorspaceBox);
             }
             checkProfile();
         } else {
@@ -321,7 +310,6 @@ public class ImageConverterOptionsController extends BaseController {
         if (message("BlackOrWhite").equals(colorSpace)) {
             if (!thisPane.getChildren().contains(binaryBox)) {
                 thisPane.getChildren().add(binaryBox);
-                FxmlControl.refreshStyle(binaryBox);
             }
             checkBinary();
         } else {
@@ -354,9 +342,8 @@ public class ImageConverterOptionsController extends BaseController {
         }
 
         checkEmbed();
-
         checkAlpha();
-
+        FxmlControl.refreshStyle(thisPane);
     }
 
     public void checkProfile() {
@@ -375,7 +362,7 @@ public class ImageConverterOptionsController extends BaseController {
                 attributes.setEmbedProfile(embedProfileCheck.isSelected());
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -467,7 +454,7 @@ public class ImageConverterOptionsController extends BaseController {
                 FxmlControl.setEditorBadStyle(qualitySelector);
             }
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             FxmlControl.setEditorBadStyle(qualitySelector);
         }
     }
@@ -486,7 +473,7 @@ public class ImageConverterOptionsController extends BaseController {
                 FxmlControl.setEditorBadStyle(icoWidthSelector);
             }
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             FxmlControl.setEditorBadStyle(icoWidthSelector);
         }
     }
@@ -516,7 +503,7 @@ public class ImageConverterOptionsController extends BaseController {
             checkDither();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -623,7 +610,7 @@ public class ImageConverterOptionsController extends BaseController {
             }
             iccFileSelected(file);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 

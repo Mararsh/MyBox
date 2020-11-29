@@ -8,7 +8,7 @@ import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -60,7 +60,7 @@ public class ConditionTreeView extends TreeView {
             }
             checkSelection(getRoot());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -97,7 +97,7 @@ public class ConditionTreeView extends TreeView {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -127,7 +127,7 @@ public class ConditionTreeView extends TreeView {
                 setSelection(child);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -172,7 +172,7 @@ public class ConditionTreeView extends TreeView {
             }
             checkExpanded(getRoot());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -190,7 +190,7 @@ public class ConditionTreeView extends TreeView {
                 checkExpanded(child);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -206,7 +206,7 @@ public class ConditionTreeView extends TreeView {
             }
             expandNode(getRoot());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -220,7 +220,7 @@ public class ConditionTreeView extends TreeView {
                 expandNode(child);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -231,7 +231,7 @@ public class ConditionTreeView extends TreeView {
             }
             expandNone(getRoot());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -245,7 +245,7 @@ public class ConditionTreeView extends TreeView {
                 expandNode(child);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

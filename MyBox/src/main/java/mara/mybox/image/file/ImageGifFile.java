@@ -22,12 +22,12 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVariables.logger;
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
 
@@ -54,7 +54,7 @@ public class ImageGifFile {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -78,7 +78,7 @@ public class ImageGifFile {
                             break;
                         }
                     } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-//                        logger.error(e.toString());
+//                        MyBoxLog.error(e.toString());
                         if (!e.toString().contains("Attempt to read past end of image sequence!")) {
                             broken = true;
                         }
@@ -93,7 +93,7 @@ public class ImageGifFile {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -102,7 +102,7 @@ public class ImageGifFile {
     // https://github.com/DhyanB/Open-Imaging
     public static List<BufferedImage> readBrokenGifFile(String src) {
         try {
-//            logger.debug("readBrokenGifFile");
+//            MyBoxLog.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
@@ -114,7 +114,7 @@ public class ImageGifFile {
             }
             return images;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -124,11 +124,11 @@ public class ImageGifFile {
         try {
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
-//                logger.error(gif.getFrameCount());
+//                MyBoxLog.error(gif.getFrameCount());
                 image = gif.getFrame(index);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return image;
     }
@@ -139,19 +139,19 @@ public class ImageGifFile {
         try {
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
-//                logger.error(gif.getFrameCount());
+//                MyBoxLog.error(gif.getFrameCount());
                 bufferedImage = gif.getFrame(index);
                 bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(bounds), xscale, yscale);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return bufferedImage;
     }
 
     public static List<BufferedImage> readBrokenGifFile(String src, int xscale, int yscale) {
         try {
-//            logger.debug("readBrokenGifFile");
+//            MyBoxLog.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
@@ -165,14 +165,14 @@ public class ImageGifFile {
             }
             return images;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
 
     public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
         try {
-//            logger.debug("readBrokenGifFile");
+//            MyBoxLog.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
@@ -184,14 +184,14 @@ public class ImageGifFile {
             }
             return images;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
 
     public static List<BufferedImage> readBrokenGifFile(String src, List<ImageInformation> imagesInfo) {
         try {
-//            logger.debug("readBrokenGifFile");
+//            MyBoxLog.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
@@ -211,7 +211,7 @@ public class ImageGifFile {
             }
             return images;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -232,7 +232,7 @@ public class ImageGifFile {
             }
             return bufferedImage;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -262,7 +262,7 @@ public class ImageGifFile {
             }
             return names;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -291,7 +291,7 @@ public class ImageGifFile {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -304,7 +304,7 @@ public class ImageGifFile {
             try {
                 metaData = (GIFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
             } catch (Exception e) {
-                logger.error(e.toString());
+                MyBoxLog.error(e.toString());
                 metaData = null;
             }
 
@@ -314,7 +314,7 @@ public class ImageGifFile {
             return metaData;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -334,7 +334,7 @@ public class ImageGifFile {
             writer.dispose();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -377,7 +377,7 @@ public class ImageGifFile {
 
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -419,19 +419,9 @@ public class ImageGifFile {
             }
             gifWriter.dispose();
 
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-                tmpFile.renameTo(outFile);
-            } catch (Exception e) {
-                return e.toString();
-            }
-
-            return "";
-
+            return FileTools.rename(tmpFile, outFile) ? "" : "Failed";
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return e.toString();
         }
     }
@@ -465,25 +455,18 @@ public class ImageGifFile {
             }
             gifWriter.dispose();
 
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-                tmpFile.renameTo(outFile);
-            } catch (Exception e) {
-                return e.toString();
+            if (!FileTools.rename(tmpFile, outFile)) {
+                return "Failed";
             }
             if (deleteSource) {
                 for (File file : srcFiles) {
-                    file.delete();
+                    FileTools.delete(file);
                 }
                 srcFiles.clear();
             }
-
             return "";
-
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return e.toString();
         }
     }
@@ -516,19 +499,9 @@ public class ImageGifFile {
             }
             gifWriter.dispose();
 
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-                tmpFile.renameTo(outFile);
-            } catch (Exception e) {
-                return e.toString();
-            }
-
-            return "";
-
+            return FileTools.rename(tmpFile, outFile) ? "" : "Failed";
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return e.toString();
         }
     }
@@ -539,7 +512,7 @@ public class ImageGifFile {
         try {
             String format = "javax_imageio_gif_stream_1.0";
             if (metaData.containsKey(format)) {
-                logger.debug(format);
+                MyBoxLog.debug(format);
                 Map<String, List<Map<String, Object>>> javax_imageio_gif_stream = metaData.get(format);
                 if (javax_imageio_gif_stream.containsKey("Version")) {
                     Map<String, Object> Version = javax_imageio_gif_stream.get("Version").get(0);

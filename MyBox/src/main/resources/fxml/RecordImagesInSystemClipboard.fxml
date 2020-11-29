@@ -36,11 +36,6 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
                                                 <Label text="%WhenNewImageInSystemBoard" />
-                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconTips.png" />
-                                                    </image>
-                                                </ImageView>
                                             </children>
                                         </HBox>
                                         <HBox fx:id="typeBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
@@ -54,6 +49,25 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="saveAndViewRadio" mnemonicParsing="false" text="%SaveAndView" toggleGroup="$recordTypeGroup" />
                                             </children>
                                         </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" spacing="5.0">
+                                 <children>
+                                    <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#clearTmp">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconFunction.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconTipsRight.png" />
+                                                    </image>
+                                                </ImageView>
+                                 </children>
+                              </HBox>
                                     </children>
                                 </VBox>
                             </content>
@@ -139,8 +153,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" defaultButton="true"
-                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>

@@ -8,10 +8,11 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.PdfInformation;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.PageExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -48,7 +49,7 @@ public class PdfMergeController extends PdfBatchController {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -97,7 +98,7 @@ public class PdfMergeController extends PdfBatchController {
 
             updateInterface("CompleteFile");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
                 currentParameters.toPage - currentParameters.fromPage, generated);
@@ -117,7 +118,7 @@ public class PdfMergeController extends PdfBatchController {
                     for (int i = sources.size() - 1; i >= 0; --i) {
                         try {
                             PdfInformation source = sources.get(i);
-                            source.getFile().delete();
+                            FileTools.delete(source.getFile());
                             tableData.remove(i);
                         } catch (Exception e) {
                         }
@@ -125,7 +126,7 @@ public class PdfMergeController extends PdfBatchController {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         targetDoc = null;
         super.donePost();

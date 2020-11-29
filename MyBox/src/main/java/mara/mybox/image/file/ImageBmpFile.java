@@ -19,12 +19,12 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import static mara.mybox.image.ImageConvert.dpi2dpm;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -63,7 +63,7 @@ public class ImageBmpFile {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -86,7 +86,7 @@ public class ImageBmpFile {
             }
             return metaData;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -106,15 +106,7 @@ public class ImageBmpFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
             try {
                 return ImageIO.write(image, attributes.getImageFormat(), file);
@@ -134,7 +126,7 @@ public class ImageBmpFile {
                 return metadata;
             }
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }

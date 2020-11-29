@@ -25,11 +25,11 @@ import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.data.LongIndex;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -125,7 +125,7 @@ public class ControlFindReplace extends BaseController {
             exampleFindButton.disableProperty().bind(regexCheck.selectedProperty().not());
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -308,7 +308,7 @@ public class ControlFindReplace extends BaseController {
                 || wrapCheck.isSelected() != findReplace.isWrap()) {
             lastFileRange = null;
             lastStringRange = null;
-//            logger.debug("reset");
+//            MyBoxLog.debug("reset");
         }
         String pageText = mainArea.getText();
         if (pageText.isEmpty()) {
@@ -339,18 +339,18 @@ public class ControlFindReplace extends BaseController {
 
         if (operation != Operation.Count && operation != Operation.ReplaceAll) {
             anchor = mainArea.getAnchor();
-//            logger.debug("anchor：" + anchor);
+//            MyBoxLog.debug("anchor：" + anchor);
 
-//            logger.debug("operation：" + operation + " (lastStringRange != null)：" + (lastStringRange != null));
+//            MyBoxLog.debug("operation：" + operation + " (lastStringRange != null)：" + (lastStringRange != null));
             if (lastStringRange != null && lastStringRange.getStart() == anchor) {
                 if (operation == Operation.FindPrevious) {
-//                    logger.debug(lastStringRange != null);
+//                    MyBoxLog.debug(lastStringRange != null);
                     anchor = anchor + mainArea.getSelectedText().length() - unit;
                 } else if (operation == Operation.FindNext || operation == Operation.ReplaceFirst) {
-//                    logger.debug(lastStringRange != null);
+//                    MyBoxLog.debug(lastStringRange != null);
                     anchor += unit;
                 }
-//                logger.debug("operation：" + operation + " anchor：" + anchor);
+//                MyBoxLog.debug("operation：" + operation + " anchor：" + anchor);
             }
             position = anchor;
 
@@ -359,7 +359,7 @@ public class ControlFindReplace extends BaseController {
                 String sub = pageText.substring(0, anchor);
                 int linesNumber = FindReplaceString.count(sub, "\n");
                 position += linesNumber;
-//                    logger.debug("linesNumber：" + linesNumber + " position：" + position);
+//                    MyBoxLog.debug("linesNumber：" + linesNumber + " position：" + position);
             }
             position += sourceInformation.getCurrentPageObjectStart() * unit;
         }
@@ -367,10 +367,10 @@ public class ControlFindReplace extends BaseController {
             pageText = pageText.replaceAll("\n", " ");
             findString = findString.replaceAll("\n", " ");
             replaceString = replaceString.replaceAll("\n", " ");
-//            logger.debug("replaced");
+//            MyBoxLog.debug("replaced");
         }
-//        logger.debug("anchor：" + anchor + " position：" + position);
-//        logger.debug("\n------\n" + pageText + "\n-----");
+//        MyBoxLog.debug("anchor：" + anchor + " position：" + position);
+//        MyBoxLog.debug("\n------\n" + pageText + "\n-----");
         findReplace = new FindReplaceFile()
                 .setFileInfo(sourceInformation)
                 .setMultiplePages(multiplePages)
@@ -390,7 +390,6 @@ public class ControlFindReplace extends BaseController {
         return true;
     }
 
-    @FXML
     protected void findReplace(FindReplaceString.Operation operation) {
         if (!makeFindReplace(operation)) {
             return;
@@ -425,7 +424,7 @@ public class ControlFindReplace extends BaseController {
                 protected void whenSucceeded() {
                     lastStringRange = findReplace.getStringRange();
                     lastFileRange = findReplace.getFileRange();
-//                    logger.debug("(lastFileRange != null)：" + (lastFileRange != null) + " (lastStringRange != null)：" + (lastStringRange != null));
+//                    MyBoxLog.debug("(lastFileRange != null)：" + (lastFileRange != null) + " (lastStringRange != null)：" + (lastStringRange != null));
                     String info = "";
                     switch (operation) {
                         case Count: {
@@ -484,11 +483,12 @@ public class ControlFindReplace extends BaseController {
                                         mainArea.setText(findReplace.getOutputString());
                                     } else {
                                         mainArea.replaceText(lastStringRange, findReplace.getReplaceString());
+                                        mainArea.selectRange(lastStringRange.getStart(), lastStringRange.getStart() + findReplace.getReplaceString().length());
                                     }
                                     editerController.isSettingValues = false;
                                     editerController.updateInterface(true);
                                 }
-//                                logger.debug("lastStringRange:" + lastStringRange.getStart() + "," + lastStringRange.getEnd() + " anchor" + mainArea.getAnchor());
+//                                MyBoxLog.debug("lastStringRange:" + lastStringRange.getStart() + "," + lastStringRange.getEnd() + " anchor" + mainArea.getAnchor());
                             } else {
                                 info = message("NotFound");
                             }

@@ -14,7 +14,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -56,7 +56,7 @@ public class MarkdownToTextController extends FilesBatchController {
             textCollectingVisitor = new TextCollectingVisitor();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -91,7 +91,7 @@ public class MarkdownToTextController extends FilesBatchController {
             targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }

@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -21,18 +20,17 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import mara.mybox.MainApp;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ConfigTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -48,6 +46,7 @@ public class MyBoxSetupController implements Initializable {
     protected String lang;
     protected int newJVM;
     protected File configPath;
+    protected long totalM;
 
     @FXML
     protected Pane thisPane;
@@ -56,7 +55,7 @@ public class MyBoxSetupController implements Initializable {
     @FXML
     protected Label titleLabel, fileLabel, currentJvmLabel;
     @FXML
-    protected ListView oldVersionsListview;
+    protected ListView<String> listView;
     @FXML
     protected TextField dataDirInput, jvmInput;
     @FXML
@@ -77,19 +76,53 @@ public class MyBoxSetupController implements Initializable {
                 AppVariables.MyboxConfigFile = ConfigTools.defaultConfigFile();
             }
 
+            OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+            totalM = osmxb.getTotalPhysicalMemorySize() / (1024 * 1024);
+
+            makeListView();
+
+            makeEditBox();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void makeListView() {
+        try {
             configPath = new File(System.getProperty("user.home") + File.separator + "mybox");
-            dataDirInput.setText(configPath.getAbsolutePath() + File.separator + "data_v" + CommonValues.AppVersion);
-            if (configPath.exists() && configPath.isDirectory()) {
-                openPathButton.setVisible(true);
-                for (File file : configPath.listFiles()) {
-                    String fname = file.getName().toLowerCase();
-                    if (!file.isFile() || !fname.startsWith("mybox") || !fname.endsWith(".ini")) {
-                        continue;
-                    }
-                    Text item = new Text(file.getName());
-                    item.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
+            if (!configPath.isDirectory()) {
+                FileTools.delete(configPath);
+            }
+            if (!configPath.exists()) {
+                configPath.mkdirs();
+            }
+            listView.getItems().add(0, message(lang, "Default"));
+            for (File file : configPath.listFiles()) {
+                String fname = file.getName().toLowerCase();
+                if (!file.isFile() || !fname.startsWith("mybox") || !fname.endsWith(".ini")) {
+                    continue;
+                }
+                listView.getItems().add(file.getName());
+            }
+            listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String name) {
+                    try {
+                        if (name == null || name.isBlank()) {
+                            return;
+                        }
+                        if (message(lang, "Default").equals(name)) {
+                            dataDirInput.setText(configPath.getAbsolutePath() + File.separator + "data_v" + CommonValues.AppVersion);
+                            embeddedRadio.fire();
+                            hidpiCheck.setSelected(false);
+                            final long jvmM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+                            String m = message(lang, "PhysicalMemory") + ": " + totalM + "MB"
+                                    + "    " + message(lang, "JvmXmx") + ": " + jvmM + "MB";
+                            currentJvmLabel.setText(m);
+                            jvmInput.setText(jvmM + "");
+                        } else {
+                            File file = new File(configPath + File.separator + name);
                             String MyBoxDataPath = ConfigTools.readValue(file, "MyBoxDataPath");
                             if (MyBoxDataPath != null) {
                                 dataDirInput.setText(MyBoxDataPath);
@@ -102,39 +135,34 @@ public class MyBoxSetupController implements Initializable {
                             }
                             String DisableHidpi = ConfigTools.readValue(file, "DisableHidpi");
                             hidpiCheck.setSelected("true".equals(DisableHidpi));
-                            ConfigTools.writeConfigValue("JVMmemory", "-Xms" + newJVM + "m");
                             String JVMmemory = ConfigTools.readValue(file, "JVMmemory");
                             if (JVMmemory != null && JVMmemory.startsWith("-Xms") && JVMmemory.endsWith("m")) {
                                 jvmInput.setText(JVMmemory.substring(4, JVMmemory.length() - 1));
                             }
                         }
-                    });
-                    oldVersionsListview.getItems().add(item);
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
+                    }
                 }
-            } else {
-                openPathButton.setVisible(false);
-            }
-            if (oldVersionsListview.getItems().isEmpty()) {
-                splitPane.getItems().remove(oldVersionsListview);
-            }
+            });
+            listView.getSelectionModel().select(0);
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void makeEditBox() {
+        try {
             titleLabel.setText("MyBox v" + CommonValues.AppVersion);
             fileLabel.setText(AppVariables.MyboxConfigFile.getAbsolutePath());
 
-            int mb = 1024 * 1024;
-            OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            final long totalM = osmxb.getTotalPhysicalMemorySize() / mb;
-            final long jvmM = Runtime.getRuntime().maxMemory() / mb;
-            String m = message(lang, "PhysicalMemory") + ": " + totalM + "MB"
-                    + "    " + message(lang, "JvmXmx") + ": " + jvmM + "MB";
-            currentJvmLabel.setText(m);
             jvmInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(jvmInput.getText());
-                        if (v > 50 && v <= totalM - 50) {
+                        if (v > 50 && v < totalM - 50) {
                             jvmInput.setStyle(null);
                             newJVM = v;
                         } else {
@@ -145,9 +173,6 @@ public class MyBoxSetupController implements Initializable {
                     }
                 }
             });
-            jvmInput.setText(jvmM + "");
-
-            hidpiCheck.setSelected(false);
 
             okButton.disableProperty().bind(
                     dataDirInput.textProperty().isEmpty()
@@ -156,7 +181,7 @@ public class MyBoxSetupController implements Initializable {
             );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -186,7 +211,7 @@ public class MyBoxSetupController implements Initializable {
             }
             dataDirInput.setText(directory.getPath());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -202,7 +227,7 @@ public class MyBoxSetupController implements Initializable {
             if (!dataPath.exists()) {
                 dataPath.mkdirs();
             } else if (!dataPath.isDirectory()) {
-                dataPath.delete();
+                FileTools.delete(dataPath);
                 dataPath.mkdirs();
             }
             if (dataPath.exists() && dataPath.isDirectory()) {
@@ -216,16 +241,14 @@ public class MyBoxSetupController implements Initializable {
             DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
             ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
             long jvmM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
-            if (newJVM != jvmM) {
+            if (newJVM != jvmM && newJVM > 50) {
                 ConfigTools.writeConfigValue("JVMmemory", "-Xms" + newJVM + "m");
             }
             ConfigTools.writeConfigValue("DisableHidpi", hidpiCheck.isSelected() ? "true" : "false");
 
-            logger.error(AppVariables.MyboxDataPath);
             MainApp.MyBoxLoading(getMyStage());
-            logger.error(AppVariables.MyboxDataPath);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

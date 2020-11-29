@@ -26,7 +26,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MediaTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -195,7 +195,7 @@ public class AlarmClockController extends BaseController {
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -299,7 +299,7 @@ public class AlarmClockController extends BaseController {
                     try {
                         mediaPlayer = MediaTools.play(currentSound, volumeValue, loopValue);
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                         popError(e.toString());
                     }
                 }
@@ -330,7 +330,7 @@ public class AlarmClockController extends BaseController {
             sysInput.setText(file.getAbsolutePath());
 
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
 
     }
@@ -354,7 +354,7 @@ public class AlarmClockController extends BaseController {
             localInput.setText(file.getAbsolutePath());
 
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 

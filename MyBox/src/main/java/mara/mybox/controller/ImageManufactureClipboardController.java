@@ -46,7 +46,7 @@ import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -237,7 +237,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             loadClipboard();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -260,7 +260,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 keepRatioType = KeepRatioType.None;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -380,7 +380,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -430,7 +430,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     = (ImageManufactureController) FxmlStage.openStage(CommonValues.ImageManufactureFxml);
             controller.loadImage(selectedImage);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -586,7 +586,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                             }
                             return blendedImage != null;
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                             return false;
                         }
                     }
@@ -622,7 +622,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 thread.start();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -694,7 +694,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         }
                     }
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
                 return null;
             }
@@ -714,7 +714,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                                     = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadImages(files);
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                         }
                     }
                 });

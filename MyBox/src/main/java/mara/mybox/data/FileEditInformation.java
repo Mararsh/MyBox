@@ -8,11 +8,12 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import thridparty.EncodingDetect;
@@ -177,7 +178,9 @@ public abstract class FileEditInformation extends FileInformation {
             withBom = false;
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] header = new byte[4];
-                if ((inputStream.read(header, 0, 4) != -1)) {
+                int bufLen;
+                if ((bufLen = inputStream.read(header, 0, 4)) > 0) {
+                    header = ByteTools.subBytes(header, 0, bufLen);
                     setName = checkCharsetByBom(header);
                     if (setName != null) {
                         charset = Charset.forName(setName);
@@ -190,7 +193,7 @@ public abstract class FileEditInformation extends FileInformation {
             charset = Charset.forName(setName);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -213,15 +216,15 @@ public abstract class FileEditInformation extends FileInformation {
                     outputStream.write(bytes);
                 }
                 char[] buf = new char[CommonValues.IOBufferLength];
-                int count;
-                while ((count = reader.read(buf)) != -1) {
-                    String text = new String(buf, 0, count);
+                int bufLen;
+                while ((bufLen = reader.read(buf)) > 0) {
+                    String text = new String(buf, 0, bufLen);
                     writer.write(text);
                 }
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }

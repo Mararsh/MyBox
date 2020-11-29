@@ -25,6 +25,7 @@ import javax.imageio.plugins.tiff.TIFFField;
 import javax.imageio.plugins.tiff.TIFFTag;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
@@ -32,7 +33,6 @@ import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -57,7 +57,7 @@ public class ImageTiffFile {
                 return metadata;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -85,7 +85,7 @@ public class ImageTiffFile {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -148,7 +148,7 @@ public class ImageTiffFile {
             return metaData;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -168,7 +168,7 @@ public class ImageTiffFile {
             }
             return null;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -185,18 +185,10 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
 
-            return true;
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -222,18 +214,11 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+
+            return FileTools.rename(tmpFile, file);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -262,18 +247,11 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return e.toString();
-            }
-            return "";
+
+            return FileTools.rename(tmpFile, file) ? "" : "Failed";
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return e.toString();
         }
     }
@@ -322,19 +300,11 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-                tmpFile.renameTo(outFile);
-            } catch (Exception e) {
-                return false;
-            }
 
-            return true;
+            return FileTools.rename(tmpFile, outFile);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -380,18 +350,11 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                tmpFile.renameTo(targetFile);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+
+            return FileTools.rename(tmpFile, targetFile);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -462,7 +425,7 @@ public class ImageTiffFile {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

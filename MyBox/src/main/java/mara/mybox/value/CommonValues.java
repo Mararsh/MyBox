@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.5";
-    public static final String AppVersionDate = "2020-11-18";
+    public static final String AppVersion = "6.3.6";
+    public static final String AppVersionDate = "2020-11-29";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -24,6 +24,8 @@ public class CommonValues {
     public static final String MyBoxSetupFxml = "/fxml/MyBoxSetup.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
+    public static final String MyBoxLogsFxml = "/fxml/MyBoxLogs.fxml";
+    public static final String MyBoxLogViewerFxml = "/fxml/MyBoxLogViewer.fxml";
     public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
     public static final String PdfHtmlViewerFxml = "/fxml/PdfHtmlViewer.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
@@ -116,6 +118,7 @@ public class CommonValues {
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
     public static final String FilesDeleteEmptyDirFxml = "/fxml/FilesDeleteEmptyDir.fxml";
+    public static final String FilesDeleteSysTempFxml = "/fxml/FilesDeleteSysTemp.fxml";
     public static final String FilesDeleteNestedDirFxml = "/fxml/FilesDeleteNestedDir.fxml";
     public static final String AlarmClockFxml = "/fxml/AlarmClock.fxml";
     public static final String AlarmClockRunFxml = "/fxml/AlarmClockRun.fxml";

@@ -16,7 +16,7 @@ import mara.mybox.data.FileEditInformation.StringFilterType;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -62,7 +62,7 @@ public class FileFilterController extends FileEditerController {
             FxmlControl.setTooltip(filterTypeSelector, new Tooltip(AppVariables.message("FilterTypesComments")));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -34,7 +34,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -83,7 +83,7 @@ public class HtmlBaseController extends BaseController {
             super.initValues();
             zoomScale = 1.0f;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -93,7 +93,7 @@ public class HtmlBaseController extends BaseController {
             super.initControls();
             initBroswer();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -123,23 +123,23 @@ public class HtmlBaseController extends BaseController {
                         }
                         switch (newState) {
                             case SUCCEEDED:
-//                                logger.debug("SUCCEEDED");
+//                                MyBoxLog.debug("SUCCEEDED");
                                 afterPageLoaded();
                                 break;
                             case FAILED:
-//                                logger.debug("Failed");
+//                                MyBoxLog.debug("Failed");
                                 webLabel.setText(message("Failed"));
                                 afterPageFailed();
                                 break;
                             case CANCELLED:
-//                                logger.debug("Canceled");
+//                                MyBoxLog.debug("Canceled");
                                 webLabel.setText(message("Canceled"));
                                 afterPageFailed();
                                 break;
                         }
 
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         webLabel.setText(e.toString());
                         afterPageFailed();
                     }
@@ -198,13 +198,13 @@ public class HtmlBaseController extends BaseController {
                         }
                     } catch (Exception e) {
                         popError(e.toString());
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             });
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -219,7 +219,7 @@ public class HtmlBaseController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -263,6 +263,7 @@ public class HtmlBaseController extends BaseController {
     }
 
     @FXML
+    @Override
     public void goAction() {
         sourceFile = null;
         String address = urlBox.getValue();
@@ -288,7 +289,7 @@ public class HtmlBaseController extends BaseController {
             webLabel.setText(uri + "  " + message("Loading..."));
             webEngine.load(uri.toString());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -345,7 +346,7 @@ public class HtmlBaseController extends BaseController {
 
             updateTitle(true);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         isSettingValues = false;
     }
@@ -436,7 +437,7 @@ public class HtmlBaseController extends BaseController {
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

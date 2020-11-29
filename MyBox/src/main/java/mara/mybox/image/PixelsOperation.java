@@ -9,7 +9,7 @@ import java.util.Queue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -342,7 +342,7 @@ public class PixelsOperation {
             thisLine = nextLine = null;
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return image;
         }
     }
@@ -443,7 +443,7 @@ public class PixelsOperation {
             }
             return target;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

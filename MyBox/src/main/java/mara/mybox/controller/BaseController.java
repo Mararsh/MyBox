@@ -64,10 +64,10 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.tools.VisitHistoryTools;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableUserConf;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -79,7 +79,6 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
 import mara.mybox.value.CommonFxValues;
@@ -139,7 +138,7 @@ public class BaseController implements Initializable {
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
             undoButton, redoButton, transparentButton, whiteButton, blackButton, playButton, stopButton,
-            selectAllButton, selectNoneButton, withdrawButton, runButton;
+            selectAllButton, selectNoneButton, withdrawButton;
     @FXML
     protected VBox paraBox;
     @FXML
@@ -190,7 +189,7 @@ public class BaseController implements Initializable {
             initControls();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -213,7 +212,7 @@ public class BaseController implements Initializable {
                 });
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -460,7 +459,7 @@ public class BaseController implements Initializable {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -582,7 +581,7 @@ public class BaseController implements Initializable {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -625,7 +624,7 @@ public class BaseController implements Initializable {
                 }
             }, 1000);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -668,10 +667,17 @@ public class BaseController implements Initializable {
                 checkRightPaneClose();
             }
 
+            if (leftPaneControl != null) {
+                FxmlControl.setTooltip(leftPaneControl, new Tooltip("F4"));
+            }
+            if (rightPaneControl != null) {
+                FxmlControl.setTooltip(rightPaneControl, new Tooltip("F5"));
+            }
+
             checkRightPaneHide();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -756,7 +762,7 @@ public class BaseController implements Initializable {
             }
             isSettingValues = false;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -783,7 +789,7 @@ public class BaseController implements Initializable {
         isSettingValues = true;
         splitPane.getItems().remove(leftPane);
         isSettingValues = false;
-        ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        ControlStyle.setIconName(leftPaneControl, "iconDoubleRight.png");
         setSplitDividerPositions();
         splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowLeftControl", false);
@@ -798,7 +804,7 @@ public class BaseController implements Initializable {
         isSettingValues = true;
         splitPane.getItems().add(0, leftPane);
         isSettingValues = false;
-        ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+        ControlStyle.setIconName(leftPaneControl, "iconDoubleLeft.png");
         setSplitDividerPositions();
         splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowLeftControl", true);
@@ -827,7 +833,7 @@ public class BaseController implements Initializable {
         isSettingValues = true;
         splitPane.getItems().remove(rightPane);
         isSettingValues = false;
-        ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+        ControlStyle.setIconName(rightPaneControl, "iconDoubleLeft.png");
         setSplitDividerPositions();
         splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowRightControl", false);
@@ -842,7 +848,7 @@ public class BaseController implements Initializable {
         isSettingValues = true;
         splitPane.getItems().add(rightPane);
         isSettingValues = false;
-        ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        ControlStyle.setIconName(rightPaneControl, "iconDoubleRight.png");
         setSplitDividerPositions();
         splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowRightControl", true);
@@ -974,10 +980,10 @@ public class BaseController implements Initializable {
 
     // Shortcuts like Ctrl-c/v/x/z/y/a may be for text editing
     public void keyEventsHandler(KeyEvent event) {
-//        logger.debug(this.getClass().getName() + " " + event.isControlDown() + " text:" + event.getText()
+//        MyBoxLog.debug(this.getClass().getName() + " " + event.isControlDown() + " text:" + event.getText()
 //                + " code:" + event.getCode());
         currentKeyEvent = event;
-//        logger.debug(currentKeyEvent.getSource().getClass());
+//        MyBoxLog.debug(currentKeyEvent.getSource().getClass());
         keyEventsHandlerDo(event);
     }
 
@@ -1163,8 +1169,8 @@ public class BaseController implements Initializable {
                     setAction();
                 } else if (playButton != null && !playButton.isDisabled()) {
                     playAction();
-                } else if (runButton != null && !runButton.isDisabled()) {
-                    runAction();
+                } else if (goButton != null && !goButton.isDisabled()) {
+                    goAction();
                 }
                 return;
             case F2:
@@ -1221,7 +1227,7 @@ public class BaseController implements Initializable {
                 scene.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
             }
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1235,7 +1241,7 @@ public class BaseController implements Initializable {
                 thisPane.getStylesheets().add(BaseController.class.getResource(CommonValues.MyBoxStyle).toExternalForm());
             }
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1289,7 +1295,7 @@ public class BaseController implements Initializable {
             }
             return c;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1340,7 +1346,7 @@ public class BaseController implements Initializable {
 
             selectSourceFileDo(file);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1399,8 +1405,7 @@ public class BaseController implements Initializable {
                 VisitHistoryTools.readFile(conn, fileType, fname);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1435,8 +1440,7 @@ public class BaseController implements Initializable {
                 VisitHistoryTools.writeFile(conn, TargetFileType, fname);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1463,8 +1467,7 @@ public class BaseController implements Initializable {
                 VisitHistoryTools.readFile(conn, AddFileType, fname);
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1489,8 +1492,7 @@ public class BaseController implements Initializable {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1511,7 +1513,7 @@ public class BaseController implements Initializable {
             }
             selectTargetPath(directory);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1544,7 +1546,7 @@ public class BaseController implements Initializable {
             }
             selectTargetFile(file);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1560,7 +1562,7 @@ public class BaseController implements Initializable {
                 targetFileInput.setText(targetFile.getAbsolutePath());
             }
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1578,7 +1580,7 @@ public class BaseController implements Initializable {
             }
             selectSourcePath(directory);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2021,7 +2023,7 @@ public class BaseController implements Initializable {
             }
             return target;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -2032,7 +2034,7 @@ public class BaseController implements Initializable {
             Hyperlink link = (Hyperlink) event.getSource();
             link(link.getText());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2042,7 +2044,7 @@ public class BaseController implements Initializable {
             URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
             browseURI(uri);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2059,7 +2061,7 @@ public class BaseController implements Initializable {
             }
             browseURI(new URI(link));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2068,7 +2070,7 @@ public class BaseController implements Initializable {
         try {
             browseURI(new URI("http://db.apache.org/derby/docs/10.15/ref/index.html"));
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2088,7 +2090,7 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void runAction() {
+    public void goAction() {
 
     }
 
@@ -2262,7 +2264,7 @@ public class BaseController implements Initializable {
                         AppVariables.initAppVaribles();
                         return true;
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }
@@ -2293,12 +2295,12 @@ public class BaseController implements Initializable {
                     if (f.isDirectory() && !AppVariables.MyBoxReservePaths.contains(f)) {
                         FileTools.deleteDir(f);
                     } else if (!f.equals(AppVariables.MyboxConfigFile)) {
-                        f.delete();
+                        FileTools.delete(f);
                     }
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2319,7 +2321,7 @@ public class BaseController implements Initializable {
         try {
             browseURI(new File(MyboxDataPath).toURI());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -2330,7 +2332,7 @@ public class BaseController implements Initializable {
             }
             return FxmlStage.openScene(getMyStage(), newFxml);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2401,10 +2403,10 @@ public class BaseController implements Initializable {
                 backgroundTask = null;
             }
 
-//            System.gc();
+            System.gc();
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
 
@@ -2628,7 +2630,7 @@ public class BaseController implements Initializable {
                     = FxmlStage.openLoadingStage(getMyStage(), block, info);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2657,7 +2659,7 @@ public class BaseController implements Initializable {
             return controller;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -2744,7 +2746,7 @@ public class BaseController implements Initializable {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

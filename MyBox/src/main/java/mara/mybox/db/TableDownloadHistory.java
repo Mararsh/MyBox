@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import mara.mybox.data.DownloadHistory;
 import mara.mybox.db.ColumnDefinition.ColumnType;
 import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -89,7 +89,7 @@ public class TableDownloadHistory extends TableBase<DownloadHistory> {
             }
             target.setDhid(source.getDhid());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -111,9 +111,8 @@ public class TableDownloadHistory extends TableBase<DownloadHistory> {
             delete.setString(1, "%" + addressPath);
             return delete.executeUpdate();
         } catch (Exception e) {
-            DerbyBase.failed(e);
-            logger.debug(e.toString());
-            logger.debug(address + " -- > " + addressPath);
+            MyBoxLog.error(e);
+            MyBoxLog.debug(address + " -- > " + addressPath);
             return 0;
         }
     }

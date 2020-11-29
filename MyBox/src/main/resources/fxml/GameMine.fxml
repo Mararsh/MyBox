@@ -151,7 +151,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <CheckBox fx:id="miaowCheck" mnemonicParsing="false" selected="true" text="%Miaow" />
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="okOptionsButton" mnemonicParsing="false" onAction="#okOptionsAction">
+                                                <Button fx:id="okOptionsButton" mnemonicParsing="false"  styleClass="big" stylesheets="@../styles/MyBox.css" onAction="#okOptionsAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -169,7 +169,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="optionsTab1" text="%Histories">
+                        <Tab text="%Histories">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>

@@ -18,7 +18,7 @@ import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.ConditionNode;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -43,7 +43,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             treeView.setSelectedTitles(s);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -114,7 +114,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
-                        logger.debug(error);
+                        MyBoxLog.debug(error);
                         return false;
                     }
                 }

@@ -5,10 +5,11 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -33,14 +34,11 @@ public class MyBox {
         }
 
         initBaseValues();
-        if (AppVariables.MyboxDataPath != null) {
-            logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
-        }
         launchApp();
     }
 
     public static boolean initBaseValues() {
-        logger.info("Checking configuration parameters...");
+        MyBoxLog.console("Checking configuration parameters...");
         if (AppVariables.appArgs != null) {
             for (String arg : AppVariables.appArgs) {
                 if (arg.startsWith("config=")) {
@@ -53,7 +51,7 @@ public class MyBox {
                             if (!dataPathFile.exists()) {
                                 dataPathFile.mkdirs();
                             } else if (!dataPathFile.isDirectory()) {
-                                dataPathFile.delete();
+                                FileTools.delete(dataPathFile);
                                 dataPathFile.mkdirs();
                             }
                             if (dataPathFile.exists() && dataPathFile.isDirectory()) {
@@ -68,7 +66,7 @@ public class MyBox {
             }
         }
         AppVariables.MyboxConfigFile = ConfigTools.defaultConfigFile();
-        logger.info("MyBox Config file:" + AppVariables.MyboxConfigFile);
+        MyBoxLog.console("MyBox Config file:" + AppVariables.MyboxConfigFile);
         String dataPath = ConfigTools.readValue("MyBoxDataPath");
         if (dataPath != null) {
             try {
@@ -76,11 +74,12 @@ public class MyBox {
                 if (!dataPathFile.exists()) {
                     dataPathFile.mkdirs();
                 } else if (!dataPathFile.isDirectory()) {
-                    dataPathFile.delete();
+                    FileTools.delete(dataPathFile);
                     dataPathFile.mkdirs();
                 }
                 if (dataPathFile.exists() && dataPathFile.isDirectory()) {
                     AppVariables.MyboxDataPath = dataPathFile.getAbsolutePath();
+                    MyBoxLog.console("MyBox Data Path:" + AppVariables.MyboxDataPath);
                     return true;
                 }
             } catch (Exception e) {
@@ -90,10 +89,10 @@ public class MyBox {
     }
 
     public static void launchApp() {
-        logger.info("Starting Mybox...");
-        logger.info("JVM path: " + System.getProperty("java.home"));
+        MyBoxLog.console("Starting Mybox...");
+        MyBoxLog.console("JVM path: " + System.getProperty("java.home"));
 
-        if (setJVMmemory() && !internalRestart()) {
+        if (AppVariables.MyboxDataPath != null && setJVMmemory() && !internalRestart()) {
             restart();
 
         } else {
@@ -143,14 +142,13 @@ public class MyBox {
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
             if (AppVariables.MyboxDataPath != null) {
-                System.setProperty("derby.stream.error.file", AppVariables.MyboxDataPath
-                        + File.separator + "mybox_derby" + File.separator + "derby.log");
+                System.setProperty("javax.net.ssl.trustStore", SystemTools.keystore());
+                System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());
+                System.setProperty("javax.net.ssl.keyStore", SystemTools.keystore());
+                System.setProperty("javax.net.ssl.keyStorePassword", SystemTools.keystorePassword());
             }
 //            System.setProperty("derby.language.logQueryPlan", "true");
-            System.setProperty("javax.net.ssl.trustStore", SystemTools.keystore());
-            System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());
-            System.setProperty("javax.net.ssl.keyStore", SystemTools.keystore());
-            System.setProperty("javax.net.ssl.keyStorePassword", SystemTools.keystorePassword());
+
 //            System.setProperty("jdk.tls.client.protocols", "TLSv1");
             System.setProperty("jdk.tls.server.protocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3");
 //            System.setProperty("https.protocol", "TLSv1");
@@ -160,7 +158,7 @@ public class MyBox {
 //            System.setProperty("javax.net.debug", "ssl,handshake,session,trustmanager,sslctx");
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -184,13 +182,13 @@ public class MyBox {
                 restartJar();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     public static void restartBundles(File jar) {
         try {
-            logger.info("Restarting Mybox bundles...");
+            MyBoxLog.console("Restarting Mybox bundles...");
 
             List<String> commands = new ArrayList<>();
             commands.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
@@ -217,13 +215,13 @@ public class MyBox {
 
             System.exit(0);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     public static void restartJar() {
         try {
-            logger.info("Restarting Mybox Jar package...");
+            MyBoxLog.console("Restarting Mybox Jar package...");
             List<String> commands = new ArrayList<>();
             commands.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
 
@@ -258,7 +256,7 @@ public class MyBox {
 
             System.exit(0);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

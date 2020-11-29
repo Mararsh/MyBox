@@ -29,7 +29,7 @@ import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -80,7 +80,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                 datasetGroup.selectToggle(datasetGroup.getToggles().get(0));
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -104,7 +104,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
                 return doTask(conn);
             } catch (Exception e) {
-                logger.debug(count + "  " + e.toString());
+                MyBoxLog.debug(count + "  " + e.toString());
                 try {
                     Thread.sleep(500 * count);
                 } catch (Exception ex) {
@@ -186,7 +186,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             return true;
         } catch (Exception e) {
             updateLogs(e.toString(), true);
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -228,7 +228,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             sum(conn, equalQuery, insert, update, Earch);
         } catch (Exception e) {
             updateLogs(e.toString(), true);
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -358,7 +358,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
 
         } catch (Exception e) {
             updateLogs(e.toString(), true);
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -423,7 +423,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             conn.commit();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             updateLogs(e.toString(), true);
         }
     }

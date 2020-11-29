@@ -36,16 +36,17 @@ import javafx.scene.web.WebEngine;
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import mara.mybox.controller.HtmlViewerController;
 import mara.mybox.data.DownloadHistory;
-import mara.mybox.data.Link;
 import mara.mybox.data.FindReplaceString;
+import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import mara.mybox.db.TableDownloadHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sf.image4j.codec.ico.ICODecoder;
@@ -95,9 +96,12 @@ public class HtmlTools {
             + "a:visited  {color: #DDDDDD}\n"
             + ".valueText { color:wheat;  }\n"
             + BaseStyle;
+    public static final String BookStyle
+            = "body { background-color:#F6F1EB; color:black;  }\n"
+            + BaseStyle;
 
     public enum HtmlStyle {
-        Default, Console, Blackboard, Ago
+        Default, Console, Blackboard, Ago, Book
     }
 
     public static URI uri(String address) {
@@ -112,7 +116,7 @@ public class HtmlTools {
             }
             return u;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -186,6 +190,8 @@ public class HtmlTools {
 //                return LinkStyle;
             case Ago:
                 return AgoStyle;
+            case Book:
+                return BookStyle;
         }
         return DefaultStyle;
     }
@@ -298,7 +304,7 @@ public class HtmlTools {
             }
             return null;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -357,7 +363,7 @@ public class HtmlTools {
             FileTools.writeFile(htmFile, html);
             return htmFile;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -367,7 +373,7 @@ public class HtmlTools {
             File htmFile = writeHtml(html);
             FxmlStage.openHtmlEditor(null, htmFile);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -378,8 +384,8 @@ public class HtmlTools {
 //    public static void editHtml(String title, String style, String body) {
 //        HtmlTools.editHtml(html(title, style, body));
 //    }
-    public static void viewHtml(String title, String body) {
-        FxmlStage.openHtmlViewer(null, body);
+    public static HtmlViewerController viewHtml(String title, String body) {
+        return FxmlStage.openHtmlViewer(null, body);
     }
 
     public static String html(String title, String body) {
@@ -456,14 +462,11 @@ public class HtmlTools {
                         final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                     byte[] buf = new byte[CommonValues.IOBufferLength];
                     int len;
-                    while ((len = inStream.read(buf)) != -1) {
+                    while ((len = inStream.read(buf)) > 0) {
                         outputStream.write(buf, 0, len);
                     }
                 }
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                tmpFile.renameTo(targetFile);
+                FileTools.rename(tmpFile, targetFile);
                 if (targetFile.exists()) {
                     return null;
                 } else {
@@ -497,14 +500,11 @@ public class HtmlTools {
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = inStream.read(buf)) != -1) {
+                while ((len = inStream.read(buf)) > 0) {
                     outputStream.write(buf, 0, len);
                 }
             }
-            if (targetFile.exists()) {
-                targetFile.delete();
-            }
-            tmpFile.renameTo(targetFile);
+            FileTools.rename(tmpFile, targetFile);
             if (targetFile.exists()) {
                 return null;
             } else {
@@ -534,13 +534,13 @@ public class HtmlTools {
                         image = images.get(0);
                     }
                 } catch (Exception e) {
-//                    logger.debug(e.toString());
+//                    MyBoxLog.debug(e.toString());
                 }
                 if (image == null) {
                     try {
                         image = ImageIO.read(in);
                     } catch (Exception e) {
-//                        logger.debug(e.toString());
+//                        MyBoxLog.debug(e.toString());
                     }
                 }
             }
@@ -554,7 +554,7 @@ public class HtmlTools {
 //            NetworkTools.defaultSSL();
             return targetFile.exists();
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -580,7 +580,7 @@ public class HtmlTools {
                 return sb.toString();
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -602,7 +602,7 @@ public class HtmlTools {
             String iconUrl = url.getProtocol() + "://" + url.getHost() + "/favicon.ico";
             return downloadIcon(iconUrl, targetFile);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -624,7 +624,7 @@ public class HtmlTools {
                         new File(FileTools.replaceFileSuffix(targetFile.getAbsolutePath(), suffix)));
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -656,7 +656,7 @@ public class HtmlTools {
             }
             return null;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -691,7 +691,7 @@ public class HtmlTools {
                     continue;
                 }
                 hrefString = hrefString.substring(1).trim();
-                //                logger.debug("hrefString: " + hrefString);
+                //                MyBoxLog.debug("hrefString: " + hrefString);
                 if (hrefString.startsWith("\"")) {
                     hrefString = hrefString.substring(1);
                     pos = hrefString.indexOf("\"");
@@ -750,10 +750,10 @@ public class HtmlTools {
                         name = nameString.substring(0, pos);
                         string = nameString.substring(pos + 4);
                     }
-                    //                    logger.debug("nameString: " + nameString + " name: " + name);
+                    //                    MyBoxLog.debug("nameString: " + nameString + " name: " + name);
                 }
                 Link alink = Link.create().setAddress(address.trim()).setAddressOriginal(addressOriginal).setName(FileTools.filenameFilter(name.trim())).setTitle(title == null ? null : FileTools.filenameFilter(title.trim()));
-//                logger.debug("address: " + address + " title: " + title + " name: " + name);
+//                MyBoxLog.debug("address: " + address + " title: " + title + " name: " + name);
                 links.add(alink);
                 if (pos < 0) {
                     break;
@@ -761,7 +761,7 @@ public class HtmlTools {
             }
             return links;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -818,7 +818,7 @@ public class HtmlTools {
             }
             return links;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -856,7 +856,7 @@ public class HtmlTools {
                     } else {
                         linkAddress = linkPath + "/" + linkAddress;
                     }
-                    //                    logger.debug(link.getAddress() + "  --> " + linkAddress);
+                    //                    MyBoxLog.debug(link.getAddress() + "  --> " + linkAddress);
                 }
                 try {
                     URL linkURL = new URL(linkAddress);
@@ -864,14 +864,14 @@ public class HtmlTools {
                     link.setAddress(linkURL.toString());
                     String filename = link.filename(path, nameType);
                     link.setFile(new File(filename).getAbsolutePath());
-                    //                    logger.debug(link.getAddress() + "  --> " + link.getFilename());
+                    //                    MyBoxLog.debug(link.getAddress() + "  --> " + link.getFilename());
                     validLinks.add(link);
                 } catch (Exception e) {
                 }
             }
             return validLinks;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -904,7 +904,7 @@ public class HtmlTools {
             }
             return links;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -945,9 +945,9 @@ public class HtmlTools {
                     }
                     try {
                         linkURL = new URL(fullAddress);
-//                        logger.debug(linkAddress + "   " + fullAddress);
+//                        MyBoxLog.debug(linkAddress + "   " + fullAddress);
                     } catch (Exception ex) {
-//                        logger.debug(linkAddress);
+//                        MyBoxLog.debug(linkAddress);
                         continue;
                     }
                 }
@@ -960,7 +960,7 @@ public class HtmlTools {
             }
             return validLinks;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -974,8 +974,7 @@ public class HtmlTools {
                 final PreparedStatement urlQuery = conn.prepareStatement(TableDownloadHistory.UrlQeury)) {
             return relinkPage(conn, filenameQeury, urlQuery, file, null);
         } catch (Exception e) {
-            DerbyBase.failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -1050,11 +1049,9 @@ public class HtmlTools {
                     writer.write(newLine + "\n");
                 }
             }
-            file.delete();
-            tmpFile.renameTo(file);
-            return true;
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -1122,17 +1119,16 @@ public class HtmlTools {
                         replaced += "\"" + linkFile.getAbsolutePath() + "\"";
                     }
                 } catch (Exception e) {
-//                    logger.debug(e.toString());
+//                    MyBoxLog.debug(e.toString());
                 }
             }
             replaced += unchecked;
             File tmpFile = FileTools.getTempFile();
             FileTools.writeFile(tmpFile, replaced, FileTools.charset(httpFile));
-            httpFile.delete();
-            tmpFile.renameTo(httpFile);
-            return true;
+
+            return FileTools.rename(tmpFile, httpFile);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -1168,7 +1164,7 @@ public class HtmlTools {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1186,7 +1182,7 @@ public class HtmlTools {
                 String filepath = file.getAbsolutePath();
                 String name = file.getName();
                 if (filepath.equals(targetFile.getAbsolutePath()) || filepath.equals(navFile.getAbsolutePath())) {
-                    file.delete();
+                    FileTools.delete(file);
                 } else {
                     if (first == null) {
                         first = file;
@@ -1211,7 +1207,7 @@ public class HtmlTools {
             FileTools.writeFile(frameFile, frameset);
             return frameFile.exists();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -1232,7 +1228,7 @@ public class HtmlTools {
             for (File file : files) {
                 String name = file.getName();
                 if (name.startsWith(listPrefix)) {
-                    file.delete();
+                    FileTools.delete(file);
                 } else {
                     Link link = completedLinks.get(file);
                     if (link == null) {
@@ -1265,7 +1261,7 @@ public class HtmlTools {
             filename = path.getAbsolutePath() + File.separator + listPrefix + ".html";
             FileTools.writeFile(new File(filename), table.html());
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1283,7 +1279,7 @@ public class HtmlTools {
             }
             return m;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -1345,7 +1341,7 @@ public class HtmlTools {
             }
             return html;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

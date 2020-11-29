@@ -8,7 +8,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -48,7 +48,7 @@ public class HtmlFramesetController extends FilesBatchController {
             targetFileInput = targetFileController.fileInput;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -63,7 +63,7 @@ public class HtmlFramesetController extends FilesBatchController {
             super.initControls();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -76,7 +76,7 @@ public class HtmlFramesetController extends FilesBatchController {
             }
             validFiles = new ArrayList<>();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
         return super.makeMoreParameters();
@@ -94,7 +94,7 @@ public class HtmlFramesetController extends FilesBatchController {
             validFiles.add(srcFile);
             return AppVariables.message("Successful");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
     }

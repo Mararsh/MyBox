@@ -7,24 +7,87 @@ package mara.mybox.dev;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.BaseTask;
+import mara.mybox.db.TableStringValues;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
  *
  * @author mara
  */
-public class devTools {
+public class DevTools {
+
+    public static List<Integer> installedVersion(Connection conn) {
+        List<Integer> versions = new ArrayList<>();
+        try {
+            List<String> installed = TableStringValues.read(conn, "InstalledVersions");
+            for (String v : installed) {
+                versions.add(myboxVersion(v));
+            }
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+        }
+        return versions;
+    }
+
+    public static int lastVersion(Connection conn) {
+        try {
+            List<Integer> versions = installedVersion(conn);
+            if (!versions.isEmpty()) {
+                Collections.sort(versions);
+                return versions.get(versions.size() - 1);
+            }
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+        }
+        return 0;
+    }
+
+    public static int myboxVersion(String string) {
+        try {
+            String[] vs = string.split("\\.");
+            switch (vs.length) {
+                case 1:
+                    return Integer.parseInt(vs[0]) * 1000000;
+                case 2:
+                    return Integer.parseInt(vs[0]) * 1000000 + Integer.parseInt(vs[1]) * 1000;
+                case 3:
+                    return Integer.parseInt(vs[0]) * 1000000 + Integer.parseInt(vs[1]) * 1000 + Integer.parseInt(vs[2]);
+            }
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+        }
+        return 0;
+    }
+
+    public static String myboxVersion(int i) {
+        try {
+            int v1 = i / 1000000;
+            int ii = i % 1000000;
+            int v2 = ii / 1000;
+            int v3 = ii % 1000;
+            if (v3 == 0) {
+                return v1 + "." + v2;
+            } else {
+                return v1 + "." + v2 + "." + v3;
+            }
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+        }
+        return i + "";
+    }
 
     public static BaseTask<Void> makeIconsTask(BaseController parentController) {
         String saved = AppVariables.getUserConfigValue("SourceCodesPath", null);
@@ -53,7 +116,7 @@ public class devTools {
                     FileTools.clearDir(new File(bluePath));
 
                     List<String> keeps = Arrays.asList(
-                            "iconChina.png", "iconMyBox.png", "iconRGB.png", "iconWOW.png", "iconSaveAs.png",
+                            "iconChina.png", "iconMyBox.png", "iconRGB.png", "iconSaveAs.png",
                             "iconHue.png", "iconColorWheel.png", "iconColor.png", "iconButterfly.png", "iconPalette.png",
                             "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png", "iconMap.png", "iconSynchronize.png"
                     );
@@ -109,7 +172,7 @@ public class devTools {
 //                            FileTools.copyWholeDirectory(new File(srcPath + "buttonsBlue"), new File(targetPath + "buttonsBlue"));
 //                        }
                 } catch (Exception e) {
-                    logger.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
                 return true;
             }
@@ -121,6 +184,26 @@ public class devTools {
 
         };
         return task;
+    }
+
+    public static String getFileName() {
+        StackTraceElement[] stacks = new Throwable().getStackTrace();
+        return stacks[1].getFileName();
+    }
+
+    public static String getMethodName() {
+        StackTraceElement[] stacks = new Throwable().getStackTrace();
+        return stacks[1].getMethodName();
+    }
+
+    public static String getClassName() {
+        StackTraceElement[] stacks = new Throwable().getStackTrace();
+        return stacks[1].getClassName();
+    }
+
+    public static int getLineNumber() {
+        StackTraceElement[] stacks = new Throwable().getStackTrace();
+        return stacks[1].getLineNumber();
     }
 
 }

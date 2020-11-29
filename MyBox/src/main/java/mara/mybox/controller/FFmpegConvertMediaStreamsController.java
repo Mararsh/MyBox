@@ -7,7 +7,7 @@ import java.util.Date;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -96,7 +96,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
 
         } catch (Exception e) {
             updateInterface("Failed");
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

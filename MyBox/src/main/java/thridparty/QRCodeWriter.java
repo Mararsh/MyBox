@@ -16,11 +16,10 @@ import java.util.Map;
  *
  * @Author dswitkin@google.com (Daniel Switkin)
  * @License Apache License Version 2.0
- */
-/*
-    Updated by Mara
-    Update Date 2019-9-26
-    ===> Original class is final so I have to modify it by copying all codes here
+ *
+ * Updated by Mara
+ * Update Date 2019-9-26
+ * ===> Original class is final so I have to modify it by copying all codes here
  */
 public class QRCodeWriter implements Writer {
 

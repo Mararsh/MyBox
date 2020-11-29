@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.ConvolutionKernel;
 import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -54,8 +55,7 @@ public class TableDoubleMatrix extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return matrix;
     }
@@ -78,8 +78,7 @@ public class TableDoubleMatrix extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -103,8 +102,7 @@ public class TableDoubleMatrix extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -120,8 +118,7 @@ public class TableDoubleMatrix extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -136,8 +133,7 @@ public class TableDoubleMatrix extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -157,8 +153,7 @@ public class TableDoubleMatrix extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -191,8 +186,7 @@ public class TableDoubleMatrix extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

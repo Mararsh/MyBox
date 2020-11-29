@@ -6,9 +6,9 @@ import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -48,7 +48,7 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
             stripper = new PDFTextStripper();
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             stripper = null;
             return false;
         }
@@ -63,7 +63,7 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
             tmpFile = FileTools.getTempFile();
             fileWriter = new FileWriter(tmpFile, Charset.forName("utf-8"), false);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             fileWriter = null;
         }
         return fileWriter != null;
@@ -89,7 +89,7 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return len;
     }
@@ -100,14 +100,12 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
             if (fileWriter != null) {
                 fileWriter.close();
                 File tFile = new File(currentTargetFile);
-                if (tFile.exists()) {
-                    tFile.delete();
+                if (FileTools.rename(tmpFile, tFile)) {
+                    targetFileGenerated(tFile);
                 }
-                tmpFile.renameTo(tFile);
-                targetFileGenerated(tFile);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         fileWriter = null;
     }

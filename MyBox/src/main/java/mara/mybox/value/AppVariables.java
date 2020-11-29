@@ -19,12 +19,10 @@ import mara.mybox.controller.AlarmClockController;
 import mara.mybox.data.CustomizedLanguage;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.CommonValues.BundleEn;
 import static mara.mybox.value.CommonValues.BundleZhCN;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
@@ -36,13 +34,10 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
 public class AppVariables {
 
     public static String[] appArgs;
-    public static File MyboxConfigFile;
+    public static File MyboxConfigFile, MyBoxLogsPath;
     public static String MyboxDataPath, AlarmClocksFile;
     public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath, MyBoxDownloadsPath;
     public static List<File> MyBoxReservePaths;
-    public static boolean devMode, dbErroring;
-
-    public static Logger logger = LogManager.getLogger(AppVariables.class);
     public static ResourceBundle currentBundle;
     public static Map<String, String> userConfigValues;
     public static Map<String, String> systemConfigValues;
@@ -52,7 +47,7 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
-            disableHiDPI, DerbyFailAsked;
+            disableHiDPI, devMode, popErrorLogs;
     public static ControlStyle.ColorStyle ControlColor;
     public static String lastError;
     public static SSLSocketFactory defaultSSLSocketFactory;
@@ -76,14 +71,14 @@ public class AppVariables {
             thumbnailWidth = AppVariables.getUserConfigInt("ThumbnailWidth", 100);
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
-            disableHiDPI = DerbyFailAsked = false;
+            disableHiDPI = devMode = popErrorLogs = false;
             lastError = null;
             if (defaultSSLSocketFactory == null) {
                 defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
                 defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -146,10 +141,10 @@ public class AppVariables {
             } else {
                 value = BundleEn.getString(thestr);
             }
-//            logger.debug(language + " " + thestr + " " + value);
+//            MyBoxLog.debug(language + " " + thestr + " " + value);
             return value;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return thestr;
         }
     }
@@ -314,7 +309,7 @@ public class AppVariables {
 
     public static String getUserConfigValue(String key, String defaultValue) {
         try {
-//            logger.debug("getUserConfigValue:" + key);
+//            MyBoxLog.debug("getUserConfigValue:" + key);
             String value;
             if (userConfigValues.containsKey(key)) {
                 value = userConfigValues.get(key);
@@ -324,7 +319,7 @@ public class AppVariables {
             }
             return value;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return defaultValue;
         }
     }
@@ -340,7 +335,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return defaultValue;
         }
     }
@@ -357,7 +352,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return defaultValue;
         }
     }
@@ -373,7 +368,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return defaultValue;
         }
     }
@@ -408,7 +403,7 @@ public class AppVariables {
             userConfigValues.put(key, path.getAbsolutePath());
             return path;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -474,7 +469,7 @@ public class AppVariables {
 
     public static String getSystemConfigValue(String key, String defaultValue) {
         try {
-//            logger.debug("getSystemConfigValue:" + key);
+//            MyBoxLog.debug("getSystemConfigValue:" + key);
             String value;
             if (systemConfigValues.containsKey(key)) {
                 value = systemConfigValues.get(key);
@@ -484,7 +479,7 @@ public class AppVariables {
             }
             return value;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -500,7 +495,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return defaultValue;
         }
     }
@@ -517,7 +512,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return defaultValue;
         }
     }

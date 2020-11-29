@@ -11,7 +11,7 @@ import mara.mybox.db.TableLocationData;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -129,7 +129,7 @@ public class Location extends TableData implements Cloneable {
                     return true;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return false;
     }
@@ -269,7 +269,7 @@ public class Location extends TableData implements Cloneable {
             }
             return newCode;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

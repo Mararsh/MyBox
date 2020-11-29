@@ -1,42 +1,39 @@
 package mara.mybox.data;
 
 import java.io.File;
+import java.util.Date;
 import mara.mybox.db.TableBase;
-import mara.mybox.db.TableEditHistory;
-import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonValues;
+import mara.mybox.db.TableMyBoxLog;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
  * @CreateDate 2020-9-7
  * @License Apache License Version 2.0
  */
-public class EditHistory extends TableData {
+public class FileHistory extends TableData {
 
-    protected long ehid;
+    protected long fhid;
+    protected String category;
     protected File history, file;
-    protected long createTime;
+    protected Date recordTime;
 
     private void init() {
-        createTime = CommonValues.InvalidLong;
+        fhid = -1;
+        category = null;
+        recordTime = null;
         history = null;
         file = null;
     }
 
-    public EditHistory() {
+    public FileHistory() {
         init();
-    }
-
-    public EditHistory(File file, File history, long createTime) {
-        this.createTime = createTime;
-        this.history = history;
-        this.file = file;
     }
 
     @Override
     public TableBase getTable() {
         if (table == null) {
-            table = new TableEditHistory();
+            table = new TableMyBoxLog();
         }
         return table;
     }
@@ -48,6 +45,12 @@ public class EditHistory extends TableData {
         }
         try {
             switch (column) {
+                case "fhid":
+                    fhid = value == null ? -1 : (long) value;
+                    return true;
+                case "category":
+                    category = value == null ? null : (String) value;
+                    return true;
                 case "history":
                     history = null;
                     if (value != null) {
@@ -66,12 +69,12 @@ public class EditHistory extends TableData {
                         }
                     }
                     return true;
-                case "create_time":
-                    createTime = value == null ? CommonValues.InvalidLong : (long) value;
+                case "record_time":
+                    recordTime = value == null ? null : (Date) value;
                     return true;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return false;
     }
@@ -82,21 +85,26 @@ public class EditHistory extends TableData {
             return null;
         }
         switch (column) {
+            case "fhid":
+                return fhid;
+            case "category":
+                return category;
             case "history":
-                return history;
+                return history != null ? history.getAbsolutePath() : null;
             case "file":
-                return file;
-            case "create_time":
-                return createTime;
+                return file != null ? file.getAbsolutePath() : null;
+            case "record_time":
+                return recordTime;
         }
         return null;
     }
 
     @Override
     public boolean valid() {
-        return history != null && history.exists()
+        return category != null
+                && history != null && history.exists()
                 && file != null && file.exists()
-                && createTime > 0;
+                && recordTime != null;
     }
 
     public void setFile(String string) {
@@ -108,39 +116,52 @@ public class EditHistory extends TableData {
         }
     }
 
+
     /*
         get/set
      */
-    public long getEhid() {
-        return ehid;
+    public long getFhid() {
+        return fhid;
     }
 
-    public void setEhid(long ehid) {
-        this.ehid = ehid;
+    public FileHistory setFhid(long fhid) {
+        this.fhid = fhid;
+        return this;
     }
 
     public File getHistory() {
         return history;
     }
 
-    public void setHistory(File history) {
+    public FileHistory setHistory(File history) {
         this.history = history;
+        return this;
     }
 
     public File getFile() {
         return file;
     }
 
-    public void setFile(File file) {
+    public FileHistory setFile(File file) {
         this.file = file;
+        return this;
     }
 
-    public long getCreateTime() {
-        return createTime;
+    public Date getRecordTime() {
+        return recordTime;
     }
 
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
+    public FileHistory setRecordTime(Date recordTime) {
+        this.recordTime = recordTime;
+        return this;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
 }

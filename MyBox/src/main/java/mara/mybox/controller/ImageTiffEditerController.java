@@ -6,7 +6,7 @@ import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -82,7 +82,7 @@ public class ImageTiffEditerController extends ImagesListController {
                 saveAsAction();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -27,7 +27,7 @@ import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -75,7 +75,7 @@ public class ChineseGeographyCodes {
 //            coordinatesCountiesGeoCode();
 //            citiesAll();
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -95,18 +95,18 @@ public class ChineseGeographyCodes {
                          BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pageFile))) {
                     byte[] buf = new byte[CommonValues.IOBufferLength];
                     int len;
-                    while ((len = inStream.read(buf)) != -1) {
+                    while ((len = inStream.read(buf)) > 0) {
                         outputStream.write(buf, 0, len);
                     }
                     ok = true;
                     break;
                 } catch (Exception e) {
-                    logger.debug((++failedCount) + "  " + e.toString());
+                    MyBoxLog.debug((++failedCount) + "  " + e.toString());
                     Thread.sleep(500);
                 }
             }
             if (!ok || !pageFile.exists()) {
-                logger.debug(address);
+                MyBoxLog.debug(address);
                 return null;
             }
             boolean started = false;
@@ -127,7 +127,7 @@ public class ChineseGeographyCodes {
                     }
                 }
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
                 return null;
             }
             String data = s.toString();
@@ -152,7 +152,7 @@ public class ChineseGeographyCodes {
             }
             return codes;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -169,7 +169,7 @@ public class ChineseGeographyCodes {
 //            FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\counties-Links.txt"), currentLinks.toString());
 //            GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\counties.txt"), counties, true);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -320,7 +320,7 @@ public class ChineseGeographyCodes {
                 FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\citiesLinks.txt"), currentLinks.toString(), Charset.forName("utf-8"));
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -345,12 +345,12 @@ public class ChineseGeographyCodes {
             } else if (cityName.endsWith("市") || cityName.endsWith("盟") || cityName.endsWith("县")) {
                 sname = cityName.substring(0, cityName.length() - 1);
             }
-//            logger.debug(cityid + " " + cityName + " " + sname);
+//            MyBoxLog.debug(cityid + " " + cityName + " " + sname);
             if (!sname.equals(cityName)) {
                 cityCode.setAlias1(sname);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -399,7 +399,7 @@ public class ChineseGeographyCodes {
                         + " towns:" + towns.size() + " villages:" + villages.size()
                         + " cost:" + (new Date().getTime() - start) / 60000;
                 s.append(d).append("\n");
-                logger.debug(d);
+                MyBoxLog.debug(d);
                 FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\links\\" + cityName + "-Links.txt"), currentLinks.toString());
 //                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-counties.txt"), counties, true);
 //                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-towns.txt"), towns, true);
@@ -407,7 +407,7 @@ public class ChineseGeographyCodes {
             }
             FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\costs.txt"), s.toString());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -444,7 +444,7 @@ public class ChineseGeographyCodes {
                     }
                     String link = links.get(cityName);
                     if (link == null) {
-                        logger.debug(cityName);
+                        MyBoxLog.debug(cityName);
                         continue;
                     }
                     List<GeographyCode> countiesData = fetch("county", link, "<tr class='countytr'>", "</table>");
@@ -460,7 +460,7 @@ public class ChineseGeographyCodes {
 
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -483,7 +483,7 @@ public class ChineseGeographyCodes {
             if (!fetchTown) {
                 return;
             }
-//            logger.debug(countyid + " " + countyCode.getFullName());
+//            MyBoxLog.debug(countyid + " " + countyCode.getFullName());
             List<GeographyCode> townsData = fetch("town", link, "<tr class='towntr'>", "</table>");
             for (GeographyCode town : townsData) {
                 townCode = town;
@@ -492,7 +492,7 @@ public class ChineseGeographyCodes {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -515,7 +515,7 @@ public class ChineseGeographyCodes {
             townCode.setCounty(countyCode.getGcid());
             townCode.setCountyName(countyCode.getChineseName());
             townCode.setComments(null);
-//            logger.debug(townid + " " + townCode.getFullName());
+//            MyBoxLog.debug(townid + " " + townCode.getFullName());
             if (!fetchVillage) {
                 return;
             }
@@ -527,7 +527,7 @@ public class ChineseGeographyCodes {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -551,10 +551,10 @@ public class ChineseGeographyCodes {
             villageCode.setTown(townCode.getGcid());
             villageCode.setTownName(townCode.getChineseName());
             villageCode.setComments(null);
-//            logger.debug(villageid + " " + villageCode.getFullName());
+//            MyBoxLog.debug(villageid + " " + villageCode.getFullName());
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -596,13 +596,13 @@ public class ChineseGeographyCodes {
                         countyName = countyCode.getFullName();
                         link = links.get(countyName);
                         if (link == null) {
-                            logger.debug(countyName);
+                            MyBoxLog.debug(countyName);
                             continue;
                         }
-//                        logger.debug(countyName + "  " + link);
+//                        MyBoxLog.debug(countyName + "  " + link);
                         List<GeographyCode> townsData = fetch("town", link, "<tr class='towntr'>", "</table>");
                         if (townsData == null || townsData.isEmpty()) {
-                            logger.debug(countyName);
+                            MyBoxLog.debug(countyName);
                             continue;
                         }
                         for (GeographyCode town : townsData) {
@@ -614,12 +614,12 @@ public class ChineseGeographyCodes {
                     GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\internal\\" + provinceName + "_towns_internal.csv"), towns);
                     GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\external\\" + provinceName + "_towns_external.csv"), towns);
                     FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\" + provinceName + "_towns_Links.txt"), currentLinks.toString());
-                    logger.debug(provinceName + " " + towns.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
+                    MyBoxLog.debug(provinceName + " " + towns.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                 }
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -662,18 +662,18 @@ public class ChineseGeographyCodes {
                             + " ORDER BY gcid ";
                     towns = TableGeographyCode.queryCodes(conn, sql, true);
                     String link;
-                    logger.debug(provinceName + " towns:" + towns.size());
+                    MyBoxLog.debug(provinceName + " towns:" + towns.size());
                     for (GeographyCode town : towns) {
                         townCode = town;
                         townName = townCode.getFullName();
                         link = links.get(townName);
                         if (link == null) {
-                            logger.debug("NoLink  " + townName);
+                            MyBoxLog.debug("NoLink  " + townName);
                             continue;
                         }
                         List<GeographyCode> villagesData = fetch("village", link, "<tr class='villagetr'>", "</table>");
                         if (villagesData == null) {
-                            logger.debug("NoData  " + townName);
+                            MyBoxLog.debug("NoData  " + townName);
                             continue;
                         }
                         for (GeographyCode village : villagesData) {
@@ -686,12 +686,12 @@ public class ChineseGeographyCodes {
                             new File("D:\\玛瑞\\Mybox\\地理代码\\中国国家统计局\\villages\\internal\\" + provinceName + "_villages_internal.csv"), villages);
                     GeographyCodeTools.writeExternalCSV(
                             new File("D:\\玛瑞\\Mybox\\地理代码\\中国国家统计局\\villages\\external\\" + provinceName + "_villages_external.csv"), villages);
-                    logger.debug(provinceName + " towns:" + towns.size() + " villages:" + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
+                    MyBoxLog.debug(provinceName + " towns:" + towns.size() + " villages:" + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                 }
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -709,10 +709,10 @@ public class ChineseGeographyCodes {
                             + "  ORDER BY gcid ";
                     GeographyCode dbcode = TableGeographyCode.queryCode(conn, sql, true);
                     if (dbcode == null) {
-                        logger.debug(code.getFullName() + "  " + code.getGcid());
+                        MyBoxLog.debug(code.getFullName() + "  " + code.getGcid());
                         GeographyCode query = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), code.getFullName());
                         if (query == null || query.getLongitude() < -180) {
-                            logger.debug(code.getFullName() + "  " + code.getGcid());
+                            MyBoxLog.debug(code.getFullName() + "  " + code.getGcid());
                         } else {
                             code.setLongitude(query.getLongitude());
                             code.setLatitude(query.getLatitude());
@@ -720,18 +720,18 @@ public class ChineseGeographyCodes {
                             code.setCode2(query.getCode2());
                             code.setCode5(query.getCode5());
                             TableGeographyCode.write(conn, code);
-                            logger.debug(code.getFullName() + "  " + code.getGcid());
+                            MyBoxLog.debug(code.getFullName() + "  " + code.getGcid());
                         }
                     } else if (!code.getChineseName().equals(dbcode.getChineseName())) {
-                        logger.debug(code.getGcid() + "  " + code.getFullName() + "  " + dbcode.getChineseName());
+                        MyBoxLog.debug(code.getGcid() + "  " + code.getFullName() + "  " + dbcode.getChineseName());
                     }
                 }
 
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -750,10 +750,10 @@ public class ChineseGeographyCodes {
                             + " level=7  ORDER BY gcid ";
                     GeographyCode dbcode = TableGeographyCode.queryCode(conn, sql, true);
                     if (dbcode == null) {
-                        logger.debug(code.getFullName() + "  " + code.getGcid());
+                        MyBoxLog.debug(code.getFullName() + "  " + code.getGcid());
                         GeographyCode query = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), code.getFullName());
                         if (query == null || query.getLongitude() < -180) {
-                            logger.debug(code.getFullName() + "  " + code.getGcid());
+                            MyBoxLog.debug(code.getFullName() + "  " + code.getGcid());
                         } else {
                             code.setLongitude(query.getLongitude());
                             code.setLatitude(query.getLatitude());
@@ -761,18 +761,18 @@ public class ChineseGeographyCodes {
                             code.setCode2(query.getCode2());
                             code.setCode5(query.getCode5());
                             TableGeographyCode.write(conn, code);
-                            logger.debug(code.getFullName() + "  " + code.getGcid());
+                            MyBoxLog.debug(code.getFullName() + "  " + code.getGcid());
                         }
                     } else if (!code.getChineseName().equals(dbcode.getChineseName())) {
-                        logger.debug(code.getGcid() + "  " + code.getFullName() + "  " + dbcode.getChineseName());
+                        MyBoxLog.debug(code.getGcid() + "  " + code.getFullName() + "  " + dbcode.getChineseName());
                     }
                 }
 
             } catch (Exception e) {
-                logger.debug(e.toString());
+                MyBoxLog.debug(e.toString());
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -788,11 +788,11 @@ public class ChineseGeographyCodes {
                     provinceName = province.getChineseName();
                     GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), provinceName);
                     if (gcode == null || gcode.getLongitude() < -180) {
-                        logger.debug(province.getGcid() + " " + provinceName);
+                        MyBoxLog.debug(province.getGcid() + " " + provinceName);
                     } else {
                         if (province.getLongitude() != gcode.getLongitude()
                                 || province.getLatitude() != gcode.getLatitude()) {
-                            logger.debug(provinceName + "  " + province.getGcid()
+                            MyBoxLog.debug(provinceName + "  " + province.getGcid()
                                     + "  db " + province.getLongitude() + " " + province.getLatitude()
                                     + "  geo " + gcode.getLongitude() + " " + gcode.getLatitude()
                             );
@@ -809,7 +809,7 @@ public class ChineseGeographyCodes {
             GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\Geography_Code_china_provinces_internal.csv"), provinces);
             GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_provinces_external.csv"), provinces);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -827,19 +827,19 @@ public class ChineseGeographyCodes {
                             + " level=5  ";
                     cityCode = TableGeographyCode.queryCode(conn, sql, true);
                     if (!city.getChineseName().equals(cityCode.getChineseName()) && !city.getChineseName().equals(cityCode.getAlias1())) {
-                        logger.debug(city.getGcid() + " " + city.getChineseName() + "  " + cityCode.getChineseName());
+                        MyBoxLog.debug(city.getGcid() + " " + city.getChineseName() + "  " + cityCode.getChineseName());
                         continue;
                     }
                     String fullname = city.getFullName();
                     GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
-//                    logger.debug(fullname + "  " + city.getDataid()
+//                    MyBoxLog.debug(fullname + "  " + city.getDataid()
 //                            + "  db " + cityCode.getLongitude() + " " + cityCode.getLatitude());
                     if (gcode == null || gcode.getLongitude() < -180) {
-                        logger.debug(city.getGcid() + " " + fullname);
+                        MyBoxLog.debug(city.getGcid() + " " + fullname);
                     } else {
                         if (cityCode.getLongitude() != gcode.getLongitude()
                                 || cityCode.getLatitude() != gcode.getLatitude()) {
-                            logger.debug(fullname + "  " + city.getGcid()
+                            MyBoxLog.debug(fullname + "  " + city.getGcid()
                                     + "  db " + cityCode.getLongitude() + " " + cityCode.getLatitude()
                                     + "  geo " + gcode.getLongitude() + " " + gcode.getLatitude()
                             );
@@ -858,7 +858,7 @@ public class ChineseGeographyCodes {
             GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_cities_external.csv"), fixed);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -877,7 +877,7 @@ public class ChineseGeographyCodes {
                             + " level=6  ";
                     countyCode = TableGeographyCode.queryCode(conn, sql, true);
                     if (!county.getChineseName().equals(countyCode.getChineseName())) {
-                        logger.debug(county.getGcid() + " " + county.getChineseName() + "  " + countyCode.getChineseName());
+                        MyBoxLog.debug(county.getGcid() + " " + county.getChineseName() + "  " + countyCode.getChineseName());
                         continue;
                     }
                     String fullname = countyCode.getProvinceName();
@@ -888,14 +888,14 @@ public class ChineseGeographyCodes {
                     }
                     fullname += countyCode.getChineseName();
                     GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
-//                    logger.debug(fullname + "  " + city.getDataid()
+//                    MyBoxLog.debug(fullname + "  " + city.getDataid()
 //                            + "  db " + cityCode.getLongitude() + " " + cityCode.getLatitude());
                     if (gcode == null || gcode.getLongitude() < -180) {
-                        logger.debug(countyCode.getGcid() + " " + fullname);
+                        MyBoxLog.debug(countyCode.getGcid() + " " + fullname);
                     } else {
                         if (countyCode.getLongitude() != gcode.getLongitude()
                                 || countyCode.getLatitude() != gcode.getLatitude()) {
-                            logger.debug(fullname + "  " + countyCode.getGcid()
+                            MyBoxLog.debug(fullname + "  " + countyCode.getGcid()
                                     + "  db " + countyCode.getLongitude() + " " + countyCode.getLatitude()
                                     + "  geo " + gcode.getLongitude() + " " + gcode.getLatitude()
                             );
@@ -914,7 +914,7 @@ public class ChineseGeographyCodes {
             GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_counties_external.csv"), fixed);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -944,7 +944,7 @@ public class ChineseGeographyCodes {
                             + " country=100 AND province=" + province.getGcid()
                             + "AND level=7 ORDER BY gcid ";
                     towns = TableGeographyCode.queryCodes(conn, sql, true);
-                    logger.debug(provinceName + "  " + towns.size());
+                    MyBoxLog.debug(provinceName + "  " + towns.size());
                     for (GeographyCode town : towns) {
                         String fullname = town.getProvinceName();
                         if (town.getCityCode().getAlias1() == null) {
@@ -953,23 +953,23 @@ public class ChineseGeographyCodes {
                             fullname += town.getCityCode().getAlias1();
                         }
                         fullname += town.getCountyName() + town.getChineseName();
-//                        logger.debug(town.getDataid() + " " + town.getCity() + " " + town.getCityName()
+//                        MyBoxLog.debug(town.getDataid() + " " + town.getCity() + " " + town.getCityName()
 //                                + " " + (town.getCityCode() != null) + " " + town.getCityCode().getAlias1() + " " + fullname);
                         String key = keys.get((count++) / 5500);
                         GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
 
                         if (count % 500 == 0) {
-                            logger.debug(town.getGcid() + " " + fullname);
+                            MyBoxLog.debug(town.getGcid() + " " + fullname);
                         }
                         if (gcode == null || gcode.getLongitude() < -180) {
-                            logger.debug(town.getGcid() + " " + town.getCity() + " " + fullname);
+                            MyBoxLog.debug(town.getGcid() + " " + town.getCity() + " " + fullname);
                         } else {
-//                            logger.debug(fullname + "  " + town.getDataid()
+//                            MyBoxLog.debug(fullname + "  " + town.getDataid()
 //                                    + "  geo " + gcode.getLongitude() + " " + gcode.getLatitude()
 //                            );
 //                            if (town.getLongitude() != gcode.getLongitude()
 //                                    || town.getLatitude() != gcode.getLatitude()) {
-//                                logger.debug(fullname + "  " + town.getDataid()
+//                                MyBoxLog.debug(fullname + "  " + town.getDataid()
 //                                        + "  db " + town.getLongitude() + " " + town.getLatitude()
 //                                        + "  geo " + gcode.getLongitude() + " " + gcode.getLatitude()
 //                                );
@@ -991,7 +991,7 @@ public class ChineseGeographyCodes {
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1034,7 +1034,7 @@ public class ChineseGeographyCodes {
                     provinceName = province.getChineseName();
                     villages = GeographyCodeTools.readInternalCSV(
                             new File("D:\\玛瑞\\Mybox\\地理代码\\中国国家统计局\\villages\\internal\\" + provinceName + "_villages_internal.csv"));
-                    logger.debug(provinceName + "  " + villages.size());
+                    MyBoxLog.debug(provinceName + "  " + villages.size());
                     long start = new Date().getTime();
                     coordinates = new ArrayList();
                     for (GeographyCode village : villages) {
@@ -1045,11 +1045,11 @@ public class ChineseGeographyCodes {
                         keyIndex = (count++) / 5800;
                         if (lastKey != keyIndex) {
                             if (keyIndex > keys.size() - 1) {
-                                logger.debug("out fo keys: " + count);
+                                MyBoxLog.debug("out fo keys: " + count);
                                 return;
                             }
                             key = keys.get(keyIndex);
-                            logger.debug(count + "  " + keyIndex + "  " + key);
+                            MyBoxLog.debug(count + "  " + keyIndex + "  " + key);
                             lastKey = keyIndex;
                             if (!coordinates.isEmpty()) {
                                 int filelIndex = keyIndex + 34;
@@ -1059,7 +1059,7 @@ public class ChineseGeographyCodes {
                                 GeographyCodeTools.writeExternalCSV(
                                         new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\china_province_villages_external\\"
                                                 + provinceName + "_villages_external_" + filelIndex + ".csv"), coordinates, false);
-                                logger.debug(provinceName + " villages: " + filelIndex + " " + coordinates.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
+                                MyBoxLog.debug(provinceName + " villages: " + filelIndex + " " + coordinates.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                                 coordinates = new ArrayList();
                                 start = new Date().getTime();
                             }
@@ -1067,14 +1067,14 @@ public class ChineseGeographyCodes {
                         }
                         GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
                         if (gcode == null || gcode.getLongitude() < -180) {
-                            logger.debug(village.getGcid() + " " + fullname);
+                            MyBoxLog.debug(village.getGcid() + " " + fullname);
                         } else {
                             village.setLongitude(gcode.getLongitude());
                             village.setLatitude(gcode.getLatitude());
                             village.setCode1(gcode.getCode1());
                             village.setCode2(gcode.getCode2());
                             village.setCode5(gcode.getCode5());
-//                            logger.debug(village.getDataid() + " " + fullname + " " + gcode.getLongitude() + " " + gcode.getLatitude());
+//                            MyBoxLog.debug(village.getDataid() + " " + fullname + " " + gcode.getLongitude() + " " + gcode.getLatitude());
                         }
                         coordinates.add(village);
                     }
@@ -1086,12 +1086,12 @@ public class ChineseGeographyCodes {
                         GeographyCodeTools.writeExternalCSV(
                                 new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\china_province_villages_external\\"
                                         + provinceName + "_villages_external_" + filelIndex + ".csv"), coordinates, false);
-                        logger.debug(provinceName + " villages: " + filelIndex + " " + coordinates.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
+                        MyBoxLog.debug(provinceName + " villages: " + filelIndex + " " + coordinates.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                     }
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -1138,7 +1138,7 @@ public class ChineseGeographyCodes {
                     }
                     long start = new Date().getTime();
                     villages = GeographyCodeTools.readInternalCSV(internalFile);
-                    logger.debug(provinceName + "  " + villages.size());
+                    MyBoxLog.debug(provinceName + "  " + villages.size());
                     missed = false;
                     for (GeographyCode village : villages) {
                         if (village.validCoordinate()) {
@@ -1147,15 +1147,15 @@ public class ChineseGeographyCodes {
                         missed = true;
                         count++;
                         String fullname = village.getFullName().substring(4);
-                        logger.debug(count + " miss: " + village.getGcid() + " " + fullname);
+                        MyBoxLog.debug(count + " miss: " + village.getGcid() + " " + fullname);
                         keyIndex = count / 5800;
                         if (lastKey != keyIndex) {
                             if (keyIndex > keys.size() - 1) {
-                                logger.debug("out fo keys: " + count);
+                                MyBoxLog.debug("out fo keys: " + count);
                                 return;
                             }
                             key = keys.get(keyIndex);
-                            logger.debug(count + "  " + keyIndex + "  " + key);
+                            MyBoxLog.debug(count + "  " + keyIndex + "  " + key);
                             lastKey = keyIndex;
                         }
                         int retry = 0;
@@ -1163,7 +1163,7 @@ public class ChineseGeographyCodes {
                         while (retry < 5) {
                             GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
                             if (gcode == null || !gcode.validCoordinate()) {
-                                logger.debug("failed: " + village.getGcid() + " " + fullname);
+                                MyBoxLog.debug("failed: " + village.getGcid() + " " + fullname);
                                 Thread.sleep(1000);
                                 retry++;
                             } else {
@@ -1173,7 +1173,7 @@ public class ChineseGeographyCodes {
                                 village.setCode2(gcode.getCode2());
                                 village.setCode5(gcode.getCode5());
                                 fixed = true;
-                                logger.debug(village.getGcid() + " " + fullname + " " + gcode.getLongitude() + " " + gcode.getLatitude());
+                                MyBoxLog.debug(village.getGcid() + " " + fullname + " " + gcode.getLongitude() + " " + gcode.getLatitude());
                                 break;
                             }
                         }
@@ -1190,7 +1190,7 @@ public class ChineseGeographyCodes {
                                 + provinceName + "_villages_external.csv").
                                 renameTo(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\外部格式\\"
                                         + provinceName + "_villages_external.csv"));
-                        logger.debug("Rename:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
+                        MyBoxLog.debug("Rename:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                     } else {
                         if (fixed) {
                             GeographyCodeTools.writeInternalCSV(
@@ -1199,19 +1199,19 @@ public class ChineseGeographyCodes {
                             GeographyCodeTools.writeExternalCSV(
                                     new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\外部格式\\"
                                             + provinceName + "_villages_external.csv"), villages, false);
-                            logger.debug("Fixed:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
+                            MyBoxLog.debug("Fixed:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                             new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄miss\\china_province_villages_internal\\"
                                     + provinceName + "_villages_internal.csv").delete();
                             new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄miss\\china_province_villages_external\\"
                                     + provinceName + "_villages_external.csv").delete();
                         } else {
-                            logger.debug("Not Fixed:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
+                            MyBoxLog.debug("Not Fixed:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

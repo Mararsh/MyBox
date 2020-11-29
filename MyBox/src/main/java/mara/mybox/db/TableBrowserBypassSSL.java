@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.CertificateBypass;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -54,8 +54,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
                 return exist;
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return false;
     }
@@ -75,8 +74,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return bypass;
     }
@@ -89,8 +87,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
             conn.setReadOnly(true);
             return read(conn, host);
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -112,8 +109,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -135,8 +131,40 @@ public class TableBrowserBypassSSL extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean write(List<String> hosts) {
+        if (hosts == null || hosts.isEmpty()) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return write(conn, hosts);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean write(Connection conn, List<String> hosts) {
+        if (conn == null || hosts == null || hosts.isEmpty()) {
+            return false;
+        }
+        String insertSql = "INSERT INTO Browser_Bypass_SSL(host, create_time) VALUES(?,?)";
+        try ( PreparedStatement insert = conn.prepareStatement(insertSql)) {
+            for (String hostname : hosts) {
+                CertificateBypass exist = read(conn, hostname);
+                if (exist == null) {
+                    insert.setString(1, hostname.trim());
+                    insert.setString(2, DateTools.datetimeToString(new Date()));
+                    insert.executeUpdate();
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e, insertSql);
             return false;
         }
     }
@@ -151,8 +179,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
             statement.setString(1, host.trim());
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -166,8 +193,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
             statement.executeUpdate();
             return true;
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -188,8 +214,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
             }
             conn.commit();
         } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return count;
     }

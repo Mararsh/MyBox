@@ -39,12 +39,12 @@ import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -82,7 +82,7 @@ public class FxmlStage {
             controller.setMyScene(scene);
             controller.setLoadFxml(newFxml);
 
-//            stage.setUserData(controller);
+            stage.setUserData(controller);
             stage.getIcons().add(CommonFxValues.AppIcon);
             stage.setTitle(controller.getBaseTitle());
             if (stageStyle != null) {
@@ -111,7 +111,7 @@ public class FxmlStage {
 
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -134,9 +134,10 @@ public class FxmlStage {
             controller.setLoadFxml(newFxml);
             controller.initSplitPanes();
             controller.refreshStyle();
+
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -153,7 +154,7 @@ public class FxmlStage {
             }
             return initScene(stage, newFxml, bundle, stageStyle);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -203,7 +204,7 @@ public class FxmlStage {
             }
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -219,25 +220,12 @@ public class FxmlStage {
                 appExit();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
     public static void appExit() {
         try {
-//            if (AppVariables.backgroundTasks != null && !AppVariables.backgroundTasks.isEmpty()) {
-//                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//                alert.setContentText(MessageFormat.format(message("BackgroundTasksRunning"), AppVariables.backgroundTasks.size()));
-//                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-//                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-//                stage.setAlwaysOnTop(true);
-//                stage.toFront();
-//                Optional<ButtonType> result = alert.showAndWait();
-//                if (result.get() == null || result.get() != ButtonType.OK) {
-//                    return;
-//                }
-//            }
-
             if (Window.getWindows() != null) {
                 List<Window> windows = new ArrayList<>();
                 windows.addAll(Window.getWindows());
@@ -245,7 +233,6 @@ public class FxmlStage {
                     window.hide();
                 }
             }
-
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (AppVariables.getUserConfigBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVariables.scheduledTasks.keySet()) {
@@ -258,7 +245,6 @@ public class FxmlStage {
                         AppVariables.executorService = null;
                     }
                 }
-
             } else {
                 if (AppVariables.scheduledTasks != null) {
                     AppVariables.scheduledTasks = null;
@@ -271,15 +257,15 @@ public class FxmlStage {
 
             if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
 
-//                logger.debug("Shut down Derby server...");
+//                MyBoxLog.debug("Shut down Derby server...");
 //                DerbyBase.shutdownDerbyServer();
-                logger.debug("Exit now. Bye!");
+                MyBoxLog.info("Exit now. Bye!");
                 Platform.exit(); // Some thread may still be alive after this
                 System.exit(0);  // Go
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -291,6 +277,9 @@ public class FxmlStage {
             }
             List<Stage> stages = new ArrayList<>();
             for (Window window : Window.getWindows()) {
+                if (!(window instanceof Stage)) {
+                    continue;
+                }
                 Stage stage = (Stage) window;
                 if (title.equals(stage.getTitle())) {
                     stages.add(stage);
@@ -298,7 +287,35 @@ public class FxmlStage {
             }
             return stages;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static Stage findStage(String title) {
+        try {
+            List<Stage> stages = findStages(title);
+            if (stages != null && !stages.isEmpty()) {
+                Stage stage = stages.get(0);
+                return stage;
+            }
+        } catch (Exception e) {
+//            MyBoxLog.error(e.toString());
+        }
+        return null;
+    }
+
+    public static Stage currentStage() {
+        try {
+            for (Window window : Window.getWindows()) {
+                Stage stage = (Stage) window;
+                if (stage.isShowing() && stage.isFocused()) {
+                    return stage;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -314,7 +331,7 @@ public class FxmlStage {
             controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -326,7 +343,7 @@ public class FxmlStage {
             controller.loadLink(link);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -338,7 +355,7 @@ public class FxmlStage {
             controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -350,7 +367,7 @@ public class FxmlStage {
             controller.loadBody(body);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -362,7 +379,7 @@ public class FxmlStage {
             controller.loadFile(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -375,7 +392,7 @@ public class FxmlStage {
             controller.loadImage(file.getAbsolutePath());
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -387,7 +404,7 @@ public class FxmlStage {
             controller.loadImage(file, imageInfo);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -399,7 +416,7 @@ public class FxmlStage {
             controller.loadImage(imageInfo);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -412,7 +429,7 @@ public class FxmlStage {
             controller.loadImage(image);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -423,7 +440,7 @@ public class FxmlStage {
                     = (ImageViewerController) openScene(stage, CommonValues.ImageViewerFxml);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -436,7 +453,7 @@ public class FxmlStage {
             }
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -447,7 +464,7 @@ public class FxmlStage {
                     CommonValues.ImagesBrowserFxml);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -459,7 +476,7 @@ public class FxmlStage {
             controller.openFile(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -471,7 +488,7 @@ public class FxmlStage {
             controller.openFile(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -484,7 +501,7 @@ public class FxmlStage {
             controller.openFile(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -500,7 +517,7 @@ public class FxmlStage {
             controller.loadImageFileInformation(info);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -513,7 +530,7 @@ public class FxmlStage {
             controller.loadImageFileMeta(info);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -526,7 +543,7 @@ public class FxmlStage {
             controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -538,7 +555,7 @@ public class FxmlStage {
             controller.loadFile(file);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -615,7 +632,7 @@ public class FxmlStage {
             // https://stackoverflow.com/questions/27879854/desktop-getdesktop-browse-hangs
             // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
             try {
-                if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() != -1) {
+                if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() > 0) {
                     Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
                     return true;
                 } else {
@@ -639,7 +656,7 @@ public class FxmlStage {
                     desktop.browse(uri);
                     return true;
                 } catch (Exception e) {
-//                    logger.error(e.toString());
+//                    MyBoxLog.error(e.toString());
                 }
             }
         }
@@ -678,7 +695,7 @@ public class FxmlStage {
             return alert;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -696,7 +713,7 @@ public class FxmlStage {
 
             alert.showAndWait();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -716,7 +733,7 @@ public class FxmlStage {
 
             alert.showAndWait();
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -736,7 +753,7 @@ public class FxmlStage {
             }
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -747,7 +764,7 @@ public class FxmlStage {
             controller.loadImage(info);
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -793,7 +810,7 @@ public class FxmlStage {
             }
             return controller;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
 

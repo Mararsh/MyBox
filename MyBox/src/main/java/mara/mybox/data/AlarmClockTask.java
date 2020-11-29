@@ -10,7 +10,7 @@ import javafx.application.Platform;
 import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.data.AlarmClock.AlarmType;
 import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.tools.DateTools;
 
@@ -37,9 +37,9 @@ public class AlarmClockTask extends TimerTask {
     @Override
     public void run() {
         try {
-//            logger.debug("call");
+//            MyBoxLog.debug("call");
             if (!canTriggerAlarm(alarm)) {
-                logger.debug("Can not tigger alarm due to not satisfied");
+                MyBoxLog.debug("Can not tigger alarm due to not satisfied");
                 return;
             }
             Platform.runLater(new Runnable() {
@@ -55,7 +55,7 @@ public class AlarmClockTask extends TimerTask {
                             AppVariables.alarmClockController.getAlertClockTableController().refreshAction();
                         }
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                 }
             });
@@ -76,7 +76,7 @@ public class AlarmClockTask extends TimerTask {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

@@ -21,13 +21,13 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.color.ColorBase;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageColor;
 import static mara.mybox.image.ImageConvert.pixelSizeMm2dpi;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 import net.sf.image4j.codec.ico.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -87,11 +87,15 @@ public class ImageFileReaders {
                 int index = 0;
                 ImageReadParam param = reader.getDefaultReadParam();
                 while (true) {
+                    int imageWidth = reader.getWidth(index);
+                    int scale = imageWidth / width;
+                    scale = scale > 1 ? scale : 1;
+                    param.setSourceSubsampling(scale, scale, 0, 0);
                     BufferedImage frame;
                     try {
                         frame = reader.read(index, param);
                     } catch (Exception e) {
-                        frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
+                        frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
                     }
                     if (frame != null) {
                         frame = ImageManufacture.scaleImageWidthKeep(frame, width);
@@ -105,7 +109,7 @@ public class ImageFileReaders {
                 return frames;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -132,6 +136,10 @@ public class ImageFileReaders {
                 int index = 0;
                 ImageReadParam param = reader.getDefaultReadParam();
                 while (true) {
+                    int imageHeight = reader.getHeight(index);
+                    int scale = imageHeight / height;
+                    scale = scale > 1 ? scale : 1;
+                    param.setSourceSubsampling(scale, scale, 0, 0);
                     BufferedImage frame;
                     try {
                         frame = reader.read(index, param);
@@ -150,7 +158,7 @@ public class ImageFileReaders {
                 return frames;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -203,7 +211,7 @@ public class ImageFileReaders {
                 return images;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -235,8 +243,9 @@ public class ImageFileReaders {
             if (format == null) {
                 format = FileTools.getFileSuffix(filename).toLowerCase();
             }
+            BufferedImage frame;
             if ("ico".equals(format) || "icon".equals(format)) {
-                BufferedImage frame = readIcon(new File(filename), index);
+                frame = readIcon(new File(filename), index);
                 frame = ImageManufacture.scaleImageWidthKeep(frame, width);
                 return frame;
             }
@@ -248,20 +257,25 @@ public class ImageFileReaders {
                 ImageReader reader = readers.next();
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
-                BufferedImage frame;
+                int imageWidth = reader.getWidth(index);
+                int scale = imageWidth / width;
+                scale = scale > 1 ? scale : 1;
+                if (scale > 1) {
+                    param.setSourceSubsampling(scale, scale, 0, 0);
+                }
                 try {
                     frame = reader.read(index, param);
                 } catch (Exception e) {
-                    frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
+                    frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
                 }
                 if (frame != null) {
                     frame = ImageManufacture.scaleImageWidthKeep(frame, width);
                 }
                 reader.dispose();
-                return frame;
             }
+            return frame;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -287,6 +301,12 @@ public class ImageFileReaders {
                 ImageReader reader = readers.next();
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
+                int imageHeight = reader.getHeight(index);
+                int scale = imageHeight / height;
+                scale = scale > 1 ? scale : 1;
+                if (scale > 1) {
+                    param.setSourceSubsampling(scale, scale, 0, 0);
+                }
                 BufferedImage frame;
                 try {
                     frame = reader.read(index, param);
@@ -300,7 +320,7 @@ public class ImageFileReaders {
                 return frame;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -337,6 +357,7 @@ public class ImageFileReaders {
                 bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(rectangle), xscale, yscale);
                 return bufferedImage;
             }
+            BufferedImage frame;
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
                 if (!readers.hasNext()) {
@@ -345,7 +366,7 @@ public class ImageFileReaders {
                 ImageReader reader = readers.next();
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
-                BufferedImage frame;
+
                 try {
                     param.setSourceSubsampling(realXScale, realYScale, 0, 0);
                     if (rectangle != null) {
@@ -356,10 +377,10 @@ public class ImageFileReaders {
                     frame = readBrokenImage(e, new File(filename), index, rectangle, realXScale, realYScale);
                 }
                 reader.dispose();
-                return frame;
             }
+            return frame;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -394,7 +415,7 @@ public class ImageFileReaders {
             }
             return frames.get(index >= 0 && index < frames.size() ? index : 0);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -418,7 +439,7 @@ public class ImageFileReaders {
             }
             image = readBrokenImage(e, file, finfo.getImageInformation(), index, bounds, xscale, yscale);
         } catch (Exception ex) {
-//            logger.error(ex.toString());
+//            MyBoxLog.error(ex.toString());
         }
         return image;
     }
@@ -449,7 +470,7 @@ public class ImageFileReaders {
                 }
                 break;
             default:
-//                logger.error(e.toString());
+//                MyBoxLog.error(e.toString());
         }
         return image;
     }
@@ -537,18 +558,18 @@ public class ImageFileReaders {
                     try {
                         imageInfo.setPixelAspectRatio(reader.getAspectRatio(i));
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                     try {
                         imageInfo.setHasThumbnails(reader.hasThumbnails(i));
                         imageInfo.setNumberOfThumbnails(reader.getNumThumbnails(i));
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                     try {
                         readImageMetaData(format, imageInfo, reader.getImageMetadata(i));
                     } catch (Exception e) {
-                        logger.error(e.toString());
+                        MyBoxLog.error(e.toString());
                     }
                     ImageInformation.countMaxWidth(imageInfo);
                     imagesInfo.add(imageInfo);
@@ -561,7 +582,7 @@ public class ImageFileReaders {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return fileInfo;
     }
@@ -605,10 +626,10 @@ public class ImageFileReaders {
                 default:
 
             }
-//            logger.debug(metaData);
+//            MyBoxLog.debug(metaData);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -669,7 +690,7 @@ public class ImageFileReaders {
             }
             metaDataXml.append("</").append(node.getNodeName()).append(">").append(lineSeparator);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -681,19 +702,19 @@ public class ImageFileReaders {
                 return;
             }
             Map<String, List<Map<String, Object>>> javax_imageio = metaData.get("javax_imageio_1.0");
-//            logger.debug("explainCommonMetaData");
+//            MyBoxLog.debug("explainCommonMetaData");
             if (javax_imageio.containsKey("ColorSpaceType")) {
                 Map<String, Object> ColorSpaceType = javax_imageio.get("ColorSpaceType").get(0);
                 if (ColorSpaceType.containsKey("name")) {
                     imageInfo.setColorSpace((String) ColorSpaceType.get("name"));
-//                    logger.debug(" colorSpaceType:" + ColorSpaceType.get("name"));
+//                    MyBoxLog.debug(" colorSpaceType:" + ColorSpaceType.get("name"));
                 }
             }
             if (javax_imageio.containsKey("NumChannels")) {
                 Map<String, Object> NumChannels = javax_imageio.get("NumChannels").get(0);
                 if (NumChannels.containsKey("value")) {
                     imageInfo.setColorChannels(Integer.valueOf((String) NumChannels.get("value")));
-//                    logger.debug(" NumChannels:" + NumChannels.get("value"));
+//                    MyBoxLog.debug(" NumChannels:" + NumChannels.get("value"));
                 }
             }
             if (javax_imageio.containsKey("Gamma")) {
@@ -1014,7 +1035,7 @@ public class ImageFileReaders {
             }
             return null;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

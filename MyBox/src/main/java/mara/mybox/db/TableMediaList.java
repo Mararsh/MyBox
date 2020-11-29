@@ -10,6 +10,7 @@ import java.util.List;
 import static mara.mybox.controller.MediaPlayerController.MiaoGuaiGuaiBenBen;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -66,8 +67,8 @@ public class TableMediaList extends DerbyBase {
             }
             return mediaLists;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -87,8 +88,8 @@ public class TableMediaList extends DerbyBase {
             names.remove(MiaoGuaiGuaiBenBen);
             return names;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -115,8 +116,8 @@ public class TableMediaList extends DerbyBase {
             list.setMedias(TableMedia.read(conn, addresses));
             return list;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return null;
         }
 
@@ -140,14 +141,14 @@ public class TableMediaList extends DerbyBase {
                     statement.executeUpdate(sql);
                     index++;
                 } catch (Exception e) {
-                    failed(e);
-//                    logger.debug(e.toString());
+                    MyBoxLog.error(e);
+//                    MyBoxLog.debug(e.toString());
                 }
             }
             return true;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -167,8 +168,8 @@ public class TableMediaList extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }

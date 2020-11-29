@@ -13,7 +13,7 @@ import mara.mybox.db.TableDataset;
 import mara.mybox.db.TableLocationData;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVRecord;
 
@@ -102,7 +102,7 @@ public class LocationDataImportMovebankController extends DataImportController<L
             }
             return data;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }

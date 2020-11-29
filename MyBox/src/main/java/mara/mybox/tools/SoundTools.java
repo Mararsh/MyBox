@@ -18,7 +18,7 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.Port;
 import javax.sound.sampled.SourceDataLine;
 import javazoom.jl.player.Player;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -49,7 +49,7 @@ public class SoundTools {
                 return playback(in, addVolume);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class SoundTools {
                 return playback(in, addVolume);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -90,7 +90,7 @@ public class SoundTools {
             return clip;
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -101,7 +101,7 @@ public class SoundTools {
                 return getControl(in);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -112,7 +112,7 @@ public class SoundTools {
                 return getControl(in);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -136,7 +136,7 @@ public class SoundTools {
                 return gainControl;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -151,12 +151,11 @@ public class SoundTools {
 
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
             AudioFormat aif = audioInputStream.getFormat();
-            //System.out.println(aif);
             final SourceDataLine sdl;
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, aif);
             sdl = (SourceDataLine) AudioSystem.getLine(info);
             if (!AudioSystem.isLineSupported(info)) {
-                System.out.print("no support for " + aif.toString());
+                MyBoxLog.error("no support for " + aif.toString());
             }
 
             FloatControl fc = (FloatControl) sdl.getControl(FloatControl.Type.MASTER_GAIN);
@@ -166,7 +165,7 @@ public class SoundTools {
             fc.setValue(dB);
             int nByte = 0;
             byte[] buffer = new byte[CommonValues.IOBufferLength];
-            while (nByte != -1) {
+            while (nByte > 0) {
                 nByte = audioInputStream.read(buffer, 0, CommonValues.IOBufferLength);
                 sdl.write(buffer, 0, nByte);
             }
@@ -182,7 +181,6 @@ public class SoundTools {
 
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
             AudioFormat aif = audioInputStream.getFormat();
-            //System.out.println(aif);
             DataLine.Info info = new DataLine.Info(Clip.class, aif);
             try ( Clip clip = (Clip) AudioSystem.getLine(info)) {
                 clip.addLineListener(new LineListener() {
@@ -258,12 +256,12 @@ public class SoundTools {
         if (line != null) {
             // Start
             FloatControl vol = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-            logger.debug(vol.getValue() + vol.getUnits());
+            MyBoxLog.debug(vol.getValue() + vol.getUnits());
             line.start();
             int nBytesRead = 0, nBytesWritten = 0;
-            while (nBytesRead != -1) {
+            while (nBytesRead > 0) {
                 nBytesRead = din.read(data, 0, data.length);
-                if (nBytesRead != -1) {
+                if (nBytesRead > 0) {
                     nBytesWritten = line.write(data, 0, nBytesRead);
                 }
             }

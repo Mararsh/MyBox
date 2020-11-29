@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import mara.mybox.data.FileInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -154,7 +154,7 @@ public class CompressTools {
             }
             return compressor;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -195,7 +195,7 @@ public class CompressTools {
                             detect = false;
                         }
                     } catch (Exception e) {
-//                        logger.debug(e.toString());
+//                        MyBoxLog.debug(e.toString());
                         try {
                             String defectValue = CompressorStreamFactory.detect(fileIn);
                             try ( CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
@@ -205,7 +205,7 @@ public class CompressTools {
                                     detect = true;
                                 }
                             } catch (Exception ex) {
-                                logger.debug(ex.toString());
+                                MyBoxLog.debug(ex.toString());
                             }
                         } catch (Exception ex) {
                         }
@@ -220,10 +220,10 @@ public class CompressTools {
                                 detect = true;
                             }
                         } catch (Exception ex) {
-//                            logger.debug(ex.toString());
+//                            MyBoxLog.debug(ex.toString());
                         }
                     } catch (Exception ex) {
-//                        logger.debug(ex.toString());
+//                        MyBoxLog.debug(ex.toString());
                     }
                 }
             }
@@ -237,7 +237,7 @@ public class CompressTools {
                 return null;
             }
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -248,9 +248,7 @@ public class CompressTools {
                 return null;
             }
             File file = (targetFile == null) ? FileTools.getTempFile() : targetFile;
-            if (file.exists()) {
-                file.delete();
-            }
+            FileTools.delete(file);
             try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
                 final byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len = -1;
@@ -260,7 +258,7 @@ public class CompressTools {
             }
             return file;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -289,20 +287,20 @@ public class CompressTools {
                         try {
                             archiver = ArchiveStreamFactory.detect(fileIn);
                         } catch (Exception ex) {
-//                            logger.debug(ex.toString());
+//                            MyBoxLog.debug(ex.toString());
                         }
                     }
                 } else {
                     try {
                         archiver = ArchiveStreamFactory.detect(fileIn);
                     } catch (Exception ex) {
-//                            logger.debug(ex.toString());
+//                            MyBoxLog.debug(ex.toString());
                     }
                 }
             }
             return archiver;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -349,7 +347,7 @@ public class CompressTools {
             }
             return unarchive;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -380,7 +378,7 @@ public class CompressTools {
             }
             return unarchive;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -394,7 +392,7 @@ public class CompressTools {
             ArchiveEntry entry;
             while ((entry = archiveInputStream.getNextEntry()) != null) {
                 if (!archiveInputStream.canReadEntryData(entry)) {
-                    logger.debug("Can not Read entry Data:" + entry.getName());
+                    MyBoxLog.debug("Can not Read entry Data:" + entry.getName());
                     continue;
                 }
                 try {
@@ -405,12 +403,12 @@ public class CompressTools {
                     file.setFileType(entry.isDirectory() ? "dir" : "file");
                     entries.add(file);
                 } catch (Exception e) {
-                    logger.debug(e.toString());
+                    MyBoxLog.debug(e.toString());
                 }
             }
             return entries;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         return entries;
     }
@@ -441,7 +439,7 @@ public class CompressTools {
             }
             return unarchive;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -470,7 +468,7 @@ public class CompressTools {
             }
             return unarchive;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }

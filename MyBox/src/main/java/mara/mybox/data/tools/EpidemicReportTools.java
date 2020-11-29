@@ -16,7 +16,7 @@ import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.data.StringTable;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.message;
@@ -56,7 +56,7 @@ public class EpidemicReportTools {
             report.setSource(Integer.valueOf(record.get("DataSource")));
             return report;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -240,7 +240,7 @@ public class EpidemicReportTools {
             ret.put("report", report);
             return ret;
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             ret.put("message", e.toString());
             return ret;
         }
@@ -399,7 +399,7 @@ public class EpidemicReportTools {
         try {
             printer.printRecord("DataSet", "Time", "Locationid", "Confirmed", "Healed", "Dead", "IncreasedConfirmed", "IncreasedHealed", "IncreasedDead", "DataSource");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -407,7 +407,7 @@ public class EpidemicReportTools {
         try {
             printer.printRecord(report.getDataSet(), DateTools.datetimeToString(report.getTime()), report.getLocationid(), report.getConfirmed(), report.getHealed(), report.getDead(), report.getIncreasedConfirmed(), report.getIncreasedHealed(), report.getIncreasedDead(), report.getSource());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -418,7 +418,7 @@ public class EpidemicReportTools {
                 writeInternalCSV(printer, report);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -426,7 +426,7 @@ public class EpidemicReportTools {
         try {
             printer.printRecord(externalNames(extraFields));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -434,7 +434,7 @@ public class EpidemicReportTools {
         try {
             printer.printRecord(values(report, extraFields));
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -445,7 +445,7 @@ public class EpidemicReportTools {
                 writeExternalCSV(printer, report, extraFields);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -470,7 +470,7 @@ public class EpidemicReportTools {
             }
             writer.write("]}\n");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -582,7 +582,7 @@ public class EpidemicReportTools {
 
             return s;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -601,7 +601,7 @@ public class EpidemicReportTools {
             }
             writer.write("</EpidemicReports>\n");
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

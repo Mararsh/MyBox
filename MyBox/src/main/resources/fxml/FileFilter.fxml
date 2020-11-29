@@ -40,7 +40,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Label text="%FileFilterComments" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
+                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%FileFilterComments" />
                             </items>
                         </ToolBar>
                     </children>
@@ -79,7 +79,7 @@ License:    Apache License Version 2.0
                 </SplitPane>
                 <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="numbersLabel" maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
                         <HBox fx:id="pageBox" alignment="CENTER_LEFT" spacing="5.0">
                             <children>
                                 <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">

@@ -21,7 +21,7 @@ import mara.mybox.db.TableBase;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -124,7 +124,7 @@ public class TableDataEditController extends BaseController {
                 columnsBox.getChildren().add(line);
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -215,7 +215,7 @@ public class TableDataEditController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             input.setStyle(badStyle);
         }
     }
@@ -318,7 +318,7 @@ public class TableDataEditController extends BaseController {
             FxmlControl.locateBelow(button, popMenu);
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

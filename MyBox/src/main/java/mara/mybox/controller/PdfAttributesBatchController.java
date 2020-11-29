@@ -23,7 +23,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -201,7 +201,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
                             .or(ownerPasswordInput2.styleProperty().isEqualTo(badStyle))
             );
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -414,7 +414,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
             }
             return message("Successful");
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             if (e.toString().contains("the password is incorrect")) {
                 return message("PasswordIncorrect");
             } else {

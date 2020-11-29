@@ -21,7 +21,7 @@ import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.ControlStyle;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -115,14 +115,14 @@ public class EpidemicReportsExportController extends DataExportController {
         }
         if (!validTopOrder()) {
             alertError(message("TimeAsOrderWhenSetTop"));
-            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+            ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
             startButton.setUserData(null);
             return;
         }
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             dataSize = 0;
@@ -204,7 +204,7 @@ public class EpidemicReportsExportController extends DataExportController {
                         if (loading != null) {
                             loading.setInfo(e.toString());
                         }
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                         return false;
                     }
                 }
@@ -213,7 +213,7 @@ public class EpidemicReportsExportController extends DataExportController {
                 protected void whenSucceeded() {
                     browseURI(targetPath.toURI());
                     updateLogs(message("MissionCompleted"));
-                    ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                    ControlStyle.setNameIcon(startButton, message("Start"), "iconStart.png");
                     startButton.applyCss();
                     startButton.setUserData(null);
                 }
@@ -223,7 +223,8 @@ public class EpidemicReportsExportController extends DataExportController {
                     updateLogs(message("Canceled"));
                 }
             };
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -265,7 +266,7 @@ public class EpidemicReportsExportController extends DataExportController {
                 loading.setInfo(e.toString());
             }
             updateLogs(e.toString());
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

@@ -12,9 +12,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -35,23 +35,15 @@ public class ImagePcxFile {
         try {
             ImageWriter writer = getWriter();
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, null), null);
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -59,14 +51,14 @@ public class ImagePcxFile {
     public static PCXMetadata getPcxMetadata(File file) {
         try {
             PCXImageReader reader = new PCXImageReader(new PCXImageReaderSpi());
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 PCXMetadata metadata = (PCXMetadata) reader.getImageMetadata(0);
                 reader.dispose();
                 return metadata;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

@@ -47,7 +47,7 @@ import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -145,7 +145,7 @@ public abstract class BatchTableController<P> extends BaseController {
             checkButtons();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -282,7 +282,7 @@ public abstract class BatchTableController<P> extends BaseController {
             return items;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -351,7 +351,7 @@ public abstract class BatchTableController<P> extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -570,7 +570,7 @@ public abstract class BatchTableController<P> extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -629,7 +629,7 @@ public abstract class BatchTableController<P> extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -671,7 +671,7 @@ public abstract class BatchTableController<P> extends BaseController {
             initSelector();
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -830,7 +830,7 @@ public abstract class BatchTableController<P> extends BaseController {
             }
             addFiles(index, files);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -910,7 +910,7 @@ public abstract class BatchTableController<P> extends BaseController {
             }
             return infos;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -934,7 +934,7 @@ public abstract class BatchTableController<P> extends BaseController {
             }
             addDirectory(index, directory);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -964,7 +964,7 @@ public abstract class BatchTableController<P> extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }
@@ -1170,7 +1170,7 @@ public abstract class BatchTableController<P> extends BaseController {
             controller.startAction();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 

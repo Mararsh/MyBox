@@ -10,9 +10,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.ByteTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -67,7 +66,7 @@ public class FilesMergeController extends FilesBatchController {
             }
             selectTargetFile(file);
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -92,9 +91,8 @@ public class FilesMergeController extends FilesBatchController {
             int bufLen;
             FileInformation d = (FileInformation) tableData.get(currentParameters.currentIndex);
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(d.getFile()))) {
-                while ((bufLen = inputStream.read(buf)) != -1) {
-                    buf = ByteTools.subBytes(buf, 0, bufLen);
-                    outputStream.write(buf);
+                while ((bufLen = inputStream.read(buf)) > 0) {
+                    outputStream.write(buf, 0, bufLen);
                 }
             }
             return AppVariables.message("Successful");
@@ -109,7 +107,7 @@ public class FilesMergeController extends FilesBatchController {
             outputStream.close();
             targetFileGenerated(targetFile);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
         super.donePost();
     }

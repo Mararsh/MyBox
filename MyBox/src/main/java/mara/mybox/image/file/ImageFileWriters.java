@@ -11,11 +11,11 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import net.sf.image4j.codec.ico.ICOEncoder;
 
@@ -34,7 +34,7 @@ public class ImageFileWriters {
             BufferedImage image = ImageFileReaders.readImage(srcFile);
             return writeImageFile(image, targetFile);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class ImageFileWriters {
         try {
             return writeImageFile(image, outFile.getAbsolutePath());
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -60,7 +60,7 @@ public class ImageFileWriters {
         try {
             return writeImageFile(image, FileTools.getFileSuffix(outFile), outFile);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class ImageFileWriters {
             attributes.setQuality(100);
             return writeImageFile(image, attributes, outFile);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -139,21 +139,10 @@ public class ImageFileWriters {
                 out.flush();
             }
             writer.dispose();
-
-            try {
-                File file = new File(outFile);
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                logger.debug(e.toString());
-                tmpFile.delete();
-                return false;
-            }
-            return true;
+            File file = new File(outFile);
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
 
@@ -173,7 +162,7 @@ public class ImageFileWriters {
             ICOEncoder.write(scaled, targetFile);
             return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }
@@ -207,7 +196,7 @@ public class ImageFileWriters {
             }
             return writer;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -234,7 +223,7 @@ public class ImageFileWriters {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -264,7 +253,7 @@ public class ImageFileWriters {
             }
             return metaData;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -295,13 +284,13 @@ public class ImageFileWriters {
 
                     metaData.mergeTree(metaFormat, tree);
                 } catch (Exception e) {
-//                    logger.error(e.toString());
+//                    MyBoxLog.error(e.toString());
                 }
             }
 
             return metaData;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

@@ -26,7 +26,7 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -80,7 +80,7 @@ public class LocationInMapController extends GeographyCodeMapController {
             multipleCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "MultiplePoints", true));
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -183,7 +183,7 @@ public class LocationInMapController extends GeographyCodeMapController {
                             code = GeographyCodeTools.geoCode(mapOptionsController.coordinateSystem,
                                     longitude, latitude, true);
                         } catch (Exception e) {
-                            logger.error(e.toString());
+                            MyBoxLog.error(e.toString());
                             return false;
                         }
                     } else {

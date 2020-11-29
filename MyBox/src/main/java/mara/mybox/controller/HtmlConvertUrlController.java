@@ -14,7 +14,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -56,7 +56,7 @@ public class HtmlConvertUrlController extends BaseController {
             equalButton.disableProperty().bind(valueInput.textProperty().isEmpty());
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -69,7 +69,7 @@ public class HtmlConvertUrlController extends BaseController {
                 resultInput.setText(URLEncoder.encode(valueInput.getText(), charsetsSelector.getValue()));
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -94,7 +94,7 @@ public class HtmlConvertUrlController extends BaseController {
                 popInformation(message("CopySuccessfully"));
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 

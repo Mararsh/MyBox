@@ -10,8 +10,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -568,7 +568,7 @@ public class ControlStyle {
         if (id.startsWith("start")) {
             switch (id) {
                 case "startButton":
-                    return new ControlStyle(id, "", "F1 / CTRL+e / ALT+e", "iconStart.png");
+                    return new ControlStyle(id, message("Start"), "F1 / CTRL+e / ALT+e", "iconStart.png");
 
                 default:
                     return new ControlStyle(id, message("Start"), "", "iconStart.png");
@@ -1151,9 +1151,6 @@ public class ControlStyle {
             case "originalButton":
                 return new ControlStyle("originalButton", message("OriginalSize"), "", "iconOriginalSize.png");
 
-            case "wowButton":
-                return new ControlStyle("wowButton", message("WowAsExample"), "", "iconWOW.png");
-
             case "suggestButton":
                 return new ControlStyle("suggestButton", message("SuggestedSettings"), "", "iconIdea.png");
 
@@ -1485,6 +1482,32 @@ public class ControlStyle {
         FxmlControl.setTooltip(node, new Tooltip(tips));
     }
 
+    public static void setName(Node node, String name) {
+        String id = node.getId();
+        if (id == null) {
+            return;
+        }
+        ControlStyle style = getControlStyle(node);
+        style.setName(name);
+        setTips(node, style);
+    }
+
+    public static void setNameIcon(Node node, String name, String iconName) {
+        setIconName(node, iconName);
+        String id = node.getId();
+        if (id == null) {
+            return;
+        }
+        ControlStyle style = getControlStyle(node);
+        style.setName(name);
+        setTips(node, style);
+    }
+
+    public static void setIconTooltips(Node node, String iconName, String tooltip) {
+        setIconName(node, iconName);
+        FxmlControl.setTooltip(node, new Tooltip(tooltip));
+    }
+
     public static void setTextStyle(Node node, ControlStyle controlStyle,
             ColorStyle colorStyle) {
         try {
@@ -1520,7 +1543,7 @@ public class ControlStyle {
             }
 
         } catch (Exception e) {
-            logger.debug(node.getId() + " " + e.toString());
+            MyBoxLog.debug(node.getId() + " " + e.toString());
 
         }
     }
@@ -1545,6 +1568,10 @@ public class ControlStyle {
 
     public static void setColorStyle(Node node, ControlStyle style, ColorStyle color) {
         setIcon(node, getIcon(style, color));
+    }
+
+    public static void setIconName(Node node, String iconName) {
+        setIcon(node, getIcon(iconName));
     }
 
     public static void setIcon(Node node, String icon) {
@@ -1578,7 +1605,7 @@ public class ControlStyle {
             }
 
         } catch (Exception e) {
-            logger.debug(node.getId() + " " + e.toString());
+            MyBoxLog.debug(node.getId() + " " + e.toString());
 
         }
     }

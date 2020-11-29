@@ -23,6 +23,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -35,11 +37,10 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -66,7 +67,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     @FXML
-    private Button openTargetButton;
+    private Button openTargetButton, functionsButton;
     @FXML
     protected TitledPane targetPane;
     @FXML
@@ -146,7 +147,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             checkThreshold();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }
@@ -239,9 +240,21 @@ public class RecordImagesInSystemClipboardController extends BaseController {
         }
     }
 
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        FxmlControl.setTooltip(functionsButton, new Tooltip(message("DeleteSysTemporaryPathFiles")));
+        startButton.requestFocus();
+    }
+
     @FXML
     protected void openTargetPath(ActionEvent event) {
         view(new File(targetPathInput.getText()));
+    }
+
+    @FXML
+    public void clearTmp() {
+        FxmlStage.openStage(CommonValues.FilesDeleteSysTempFxml);
     }
 
     @FXML
@@ -252,8 +265,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             if (startButton.getUserData() == null) {
                 targetPane.setDisable(true);
                 typeBox.setDisable(true);
-                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
-                FxmlControl.setTooltip(startButton, new Tooltip(message("StopRecording")));
+                ControlStyle.setNameIcon(startButton, message("StopRecording"), "iconStop.png");
                 startButton.setUserData("started");
                 startButton.applyCss();
                 getMyStage().setIconified(true);
@@ -309,8 +321,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             } else {
                 targetPane.setDisable(false);
                 typeBox.setDisable(false);
-                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
-                FxmlControl.setTooltip(startButton, new Tooltip(message("StartRecording")));
+                ControlStyle.setNameIcon(startButton, message("StartRecording"), "iconStart.png");
                 startButton.setUserData(null);
                 startButton.applyCss();
                 recordLabel.setText("");
@@ -321,7 +332,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

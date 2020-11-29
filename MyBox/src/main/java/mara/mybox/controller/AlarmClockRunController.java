@@ -10,11 +10,11 @@ import javafx.stage.Stage;
 import javax.sound.sampled.Clip;
 import mara.mybox.data.AlarmClock;
 import static mara.mybox.data.AlarmClock.getTypeString;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -41,9 +41,8 @@ public class AlarmClockRunController extends BaseController {
     @FXML
     public void manageAction(ActionEvent event) {
         knowAction(event);
-        List<Stage> stages = FxmlStage.findStages(message("AlarmClock"));
-        if (stages != null && !stages.isEmpty()) {
-            Stage stage = stages.get(0);
+        Stage stage = FxmlStage.findStage(message("AlarmClock"));
+        if (stage != null) {
             stage.toFront();
             stage.requestFocus();
         } else {
@@ -67,7 +66,7 @@ public class AlarmClockRunController extends BaseController {
                         AlarmClockController controller = (AlarmClockController) (stage.getUserData());
                         controller.alertClockTableController.refreshAction();
                     } catch (Exception e) {
-                        logger.debug(e.toString());
+                        MyBoxLog.debug(e.toString());
                     }
                 }
             }

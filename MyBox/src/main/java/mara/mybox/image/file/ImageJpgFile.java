@@ -22,12 +22,12 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.w3c.dom.NodeList;
 
@@ -90,7 +90,7 @@ public class ImageJpgFile {
                 }
             }
         } catch (Exception ex) {
-            logger.error(ex.toString());
+            MyBoxLog.error(ex.toString());
         }
         return bufferedImage;
     }
@@ -116,7 +116,7 @@ public class ImageJpgFile {
             }
             return param;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -160,7 +160,7 @@ public class ImageJpgFile {
             metaData.mergeTree(nativeFormat, root);
             return metaData;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -218,7 +218,7 @@ public class ImageJpgFile {
             metaData.mergeTree(nativeFormat, nativeTree);
             return metaData;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -236,17 +236,9 @@ public class ImageJpgFile {
                 out.flush();
             }
             writer.dispose();
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                tmpFile.renameTo(file);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+            return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return false;
         }
     }

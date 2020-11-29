@@ -185,8 +185,7 @@ License:    Apache License Version 2.0
                                                 <Button mnemonicParsing="false" onAction="#oneAction" text="1" />
                                                 <Button fx:id="gaussButton" mnemonicParsing="false" onAction="#gaussianDistribution" text="%GaussianDistribution" />
                                                 <Button mnemonicParsing="false" onAction="#normalization" text="%Normalization" />
-                                                <Button fx:id="saveButton"   defaultButton="true" mnemonicParsing="false" onAction="#saveAction" HBox.hgrow="NEVER"
-                                                        styleClass="big" stylesheets="@../styles/MyBox.css" >
+                                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -216,11 +215,4 @@ License:    Apache License Version 2.0
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-    <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DoubleClickToEdit" BorderPane.alignment="CENTER_LEFT">
-            <BorderPane.margin>
-                <Insets left="10.0" right="10.0" />
-            </BorderPane.margin>
-        </Label>
-    </bottom>
 </BorderPane>

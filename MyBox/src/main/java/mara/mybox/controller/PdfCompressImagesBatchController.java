@@ -17,7 +17,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.image.CCITTFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
@@ -65,7 +65,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
                             .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -181,7 +181,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             }
             return newObject;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

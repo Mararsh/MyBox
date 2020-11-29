@@ -16,7 +16,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
@@ -99,7 +99,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
             imageSaveType = SaveType.File;
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -170,7 +170,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
             }
             currentParameters.startPage = 1;
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
@@ -213,11 +213,11 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
                 parser.writeText(doc, output);
                 return htmlFile;
             } catch (Exception e) {
-//                logger.debug(e.toString());
+//                MyBoxLog.debug(e.toString());
                 return null;
             }
         } catch (Exception e) {
-//            logger.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }

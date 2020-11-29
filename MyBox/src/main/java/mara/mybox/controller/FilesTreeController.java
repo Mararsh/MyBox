@@ -19,7 +19,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.TreeTableFileSizeCell;
 import mara.mybox.fxml.TreeTableEraCell;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -52,7 +52,7 @@ public class FilesTreeController extends BaseController {
             initTreeTableView();
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            MyBoxLog.debug(e.toString());
         }
 
     }

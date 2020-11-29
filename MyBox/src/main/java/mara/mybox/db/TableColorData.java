@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.data.ColorData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -74,7 +74,7 @@ public class TableColorData extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
+            MyBoxLog.error(e);
         }
         return v;
     }
@@ -105,8 +105,7 @@ public class TableColorData extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return palette;
     }
@@ -119,8 +118,7 @@ public class TableColorData extends DerbyBase {
             conn.setReadOnly(true);
             return read(conn, rgba);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -139,8 +137,7 @@ public class TableColorData extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }
@@ -176,8 +173,7 @@ public class TableColorData extends DerbyBase {
             data.bindInPalette();
             return data;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 
@@ -194,8 +190,8 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             return write(conn, rgba, null, replace);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -234,7 +230,7 @@ public class TableColorData extends DerbyBase {
         try {
             return write(FxmlColor.color2rgba(color), replace);
         } catch (Exception e) {
-//            // logger.debug(e.toString());
+//            // MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -246,8 +242,8 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             return write(conn, data, replace);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -292,8 +288,7 @@ public class TableColorData extends DerbyBase {
             conn.commit();
             return count;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -313,8 +308,8 @@ public class TableColorData extends DerbyBase {
             conn.commit();
             return count;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return -1;
         }
     }
@@ -349,8 +344,7 @@ public class TableColorData extends DerbyBase {
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -380,8 +374,8 @@ public class TableColorData extends DerbyBase {
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -411,8 +405,8 @@ public class TableColorData extends DerbyBase {
                 return insert(conn, data);
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -424,8 +418,8 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             return delete(conn, rgba);
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -439,8 +433,8 @@ public class TableColorData extends DerbyBase {
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -462,8 +456,8 @@ public class TableColorData extends DerbyBase {
             }
             conn.commit();
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return count;
     }
@@ -485,8 +479,8 @@ public class TableColorData extends DerbyBase {
             }
             conn.commit();
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return count;
     }
@@ -512,8 +506,8 @@ public class TableColorData extends DerbyBase {
                 addDataInPalette(conn, palette, true);
             }
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
+//            // MyBoxLog.debug(e.toString());
         }
         return palette;
     }
@@ -533,8 +527,7 @@ public class TableColorData extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return maxp;
     }
@@ -555,8 +548,7 @@ public class TableColorData extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
         }
         return minp;
     }
@@ -593,8 +585,7 @@ public class TableColorData extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -614,8 +605,7 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return endPalette(conn, rgba);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -642,8 +632,7 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return frontPalette(conn, rgba);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -700,8 +689,7 @@ public class TableColorData extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -721,8 +709,7 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return endPalette(conn, data, replace);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -742,8 +729,7 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return frontPalette(conn, data, replace);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -762,8 +748,7 @@ public class TableColorData extends DerbyBase {
             trimPalette(conn);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -776,8 +761,7 @@ public class TableColorData extends DerbyBase {
             addColorsInPalette(conn, colors);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -796,8 +780,7 @@ public class TableColorData extends DerbyBase {
             trimPalette(conn);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -809,8 +792,7 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return addDataInPalette(conn, dataList, replace);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -829,8 +811,7 @@ public class TableColorData extends DerbyBase {
             trimPalette(conn);
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -841,8 +822,7 @@ public class TableColorData extends DerbyBase {
             statement.setString(1, rgba.toUpperCase());
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -869,8 +849,7 @@ public class TableColorData extends DerbyBase {
             trimPalette(conn);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -881,8 +860,7 @@ public class TableColorData extends DerbyBase {
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -903,8 +881,7 @@ public class TableColorData extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -937,8 +914,7 @@ public class TableColorData extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -950,8 +926,7 @@ public class TableColorData extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -974,8 +949,7 @@ public class TableColorData extends DerbyBase {
             conn.commit();
             return true;
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

@@ -10,7 +10,7 @@ import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -36,7 +36,7 @@ public class ControlTimeTree extends ControlConditionTree {
             s.add(message("AllTime"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
-            logger.error(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
