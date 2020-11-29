@@ -64,7 +64,8 @@ A bug has been reported to jpackage dev team:
 Each version has itself's configuration file. New version can copy parameters from existed versions.      
 
 ## Configuration <a id="Config"></a>     
-Configuration file `MyBox_v<Version>.ini` is under "User Home":                        
+Configuration file `MyBox_v<Version>.ini` is under "User Home":                
+        
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |        
 | win | `C:\users\User Name\mybox\`  |       
@@ -766,7 +767,7 @@ Valid color value is like:
            Countries have values of "area" and "population".       
  	-  CSV format:            
  	  	-  Download address:       
-                        https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode/en      
+                        https://github.com/Mararsh/MyBox_data/tree/master/md/GeographyCode/en      
  	  	-  Necessary fields:        
                          Level,Longitude,Latitude            
                          And "Chinese Name" or "English Name"            
@@ -918,7 +919,7 @@ Valid color value is like:
  	-  Embedded predefined data in MyBox: COVID-19 historical data from Johns Hopkins University.(Till 2020-09-24)
  	-  CSV format:       
  	  	-  Download address:            
-                         https://github.com/Mararsh/MyBox_data/tree/master/COVID19/en       
+                         https://github.com/Mararsh/MyBox_data/tree/master/md/COVID19/en       
  	  	-  Necessary fields:                 
                            Data Set,Time,Confirmed,Healed,Dead         
                    And location data which are enough to define a geography code:                                   

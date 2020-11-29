@@ -752,7 +752,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
            国家的"面积"和"人口"有有效值。       
  	-  CSV格式。            
  	  	- 下载地址：       
-                         https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode       
+                         https://github.com/Mararsh/MyBox_data/tree/master/md/GeographyCode       
  	  	-  以下为必要字段：        
                          Level,Longitude,Latitude            
                          以及"Chinese Name"或 "English Name"            
@@ -905,7 +905,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	-  MyBox内置预定义数据：来自约翰霍普金斯大学的COVID-19数据（直到2020-09-24）。
  	-  CSV格式：      
  	  	-  下载地址：         
-                           https://github.com/Mararsh/MyBox_data/tree/master/COVID19              
+                           https://github.com/Mararsh/MyBox_data/tree/master/md/COVID19              
  	  	-  以下为必要字段：           
                            数据集,时间,确认,治愈,死亡                     
                    以及足以定义一个地理编码的位置数据：                 
