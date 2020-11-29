@@ -89,7 +89,7 @@ Function "Settings" can be used to change configuration values.
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.6 | 2020-11-18 | [html](#devLog) |
+| Development Logs | 6.3.6 | 2020-11-29 | [html](#devLog) |
 | Shortcuts | 6.3.5 | 2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
