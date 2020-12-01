@@ -3,7 +3,7 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
-!!! Notice: Please do not use function "Uncompress and unpack file". A bug can cause infinite loop and make the file larger and larger. A hug file is generated even when the process is canceled. Sorry!
+## !!! Notice: Please do not use function "Uncompress and unpack file". A bug can cause infinite loop and make the file larger and larger. A hug file is generated even when the process is canceled. Sorry!
 
 ## What's New
 2020-11-29 v6.3.6        
