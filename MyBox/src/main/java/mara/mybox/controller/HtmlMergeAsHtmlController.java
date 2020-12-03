@@ -82,7 +82,7 @@ public class HtmlMergeAsHtmlController extends FilesBatchController {
 
             targetFileInput.textProperty().addListener(
                     (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                        String prefix = FileTools.getNamePrefix(newValue);
+                        String prefix = FileTools.namePrefix(newValue);
                         if (prefix != null) {
                             titleInput.setText(prefix);
                         }

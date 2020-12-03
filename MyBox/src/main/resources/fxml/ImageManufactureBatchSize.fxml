@@ -79,6 +79,75 @@ License:    Apache License Version 2.0
                                                 <TextField fx:id="keepHeightInput" disable="true" prefWidth="80.0" promptText="%Pixels" />
                                             </children>
                                         </FlowPane>
+                              <VBox fx:id="hintsBox" spacing="5.0">
+                                 <children>
+                                    <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <Label text="%Interpolation" />
+                                          <FlowPane hgap="5.0" vgap="5.0">
+                                             <children>
+                                                <RadioButton fx:id="interpolationNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="interpolationGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="interpolation9Radio" mnemonicParsing="false" text="%Interpolation9" toggleGroup="$interpolationGroup" />
+                                                <RadioButton fx:id="interpolation4Radio" mnemonicParsing="false" text="%Interpolation4" toggleGroup="$interpolationGroup" />
+                                                <RadioButton fx:id="interpolation1Radio" mnemonicParsing="false" text="%Interpolation1" toggleGroup="$interpolationGroup" />
+                                             </children>
+                                          </FlowPane>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <Label text="%Dithering" />
+                                          <FlowPane hgap="5.0" vgap="5.0">
+                                             <children>
+                                                <RadioButton fx:id="ditherNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="ditherGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="ditherOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$ditherGroup" />
+                                                <RadioButton fx:id="ditherOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$ditherGroup" />
+                                             </children>
+                                          </FlowPane>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <Label text="%AntiAlias" />
+                                          <FlowPane hgap="5.0" vgap="5.0">
+                                             <children>
+                                                <RadioButton fx:id="antiNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="antiAliasGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="antiOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$antiAliasGroup" />
+                                                <RadioButton fx:id="antiOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$antiAliasGroup" />
+                                             </children>
+                                          </FlowPane>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <Label text="%BestQuality" />
+                                          <FlowPane hgap="5.0" vgap="5.0">
+                                             <children>
+                                                <RadioButton fx:id="qualityNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="qualityGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="qualityOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$qualityGroup" />
+                                                <RadioButton fx:id="qualityOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$qualityGroup" />
+                                             </children>
+                                          </FlowPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

@@ -9,11 +9,12 @@ import org.fit.pdfdom.resource.HtmlResource;
 import org.fit.pdfdom.resource.SaveResourceToDirHandler;
 
 /**
+ * https://github.com/radkovo/Pdf2Dom/issues/38
+ *
  * @Author Mara
  * @CreateDate 2019-8-31
  * @License Apache License Version 2.0
  */
-// https://github.com/radkovo/Pdf2Dom/issues/38
 public class PDFResourceToDirHandler extends SaveResourceToDirHandler {
 
     private final File directory;

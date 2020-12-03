@@ -531,7 +531,7 @@ public class ImageBaseController extends BaseController {
         if (scrollPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
-        FxmlControl.moveXCenter(scrollPane, imageView);
+        FxmlControl.moveCenter(scrollPane, imageView);
         scrollPane.setVvalue(scrollPane.getVmin());
         if (borderLine != null) {
             borderLine.setLayoutX(imageView.getLayoutX() - 1);
@@ -816,6 +816,7 @@ public class ImageBaseController extends BaseController {
     }
 
     public void loadImage(Image inImage) {
+        MyBoxLog.console("here");
         sourceFile = null;
         imageInformation = null;
         image = inImage;

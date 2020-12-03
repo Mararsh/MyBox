@@ -39,11 +39,11 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                  <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconTips.png" />
-                     </image>
-                  </ImageView>
+                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTips.png" />
+                            </image>
+                        </ImageView>
                         <ImageView fx:id="sampledView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/iconSampled.png" />
@@ -53,7 +53,7 @@ License:    Apache License Version 2.0
                         <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                             <children>
                                 <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
-                        <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true" text="%ContextMenu" />
+                                <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true" text="%ContextMenu" />
                                 <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -347,11 +347,6 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label text="%FontFile" />
                                                                 <ComboBox fx:id="fontBox" editable="true" prefWidth="140.0" />
-                                                                <ImageView fx:id="fontTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconTips.png" />
-                                                                    </image>
-                                                                </ImageView>
                                                             </children>
                                                         </FlowPane>
                                                         <FlowPane hgap="5.0" layoutX="32.0" layoutY="273.0" vgap="5.0">

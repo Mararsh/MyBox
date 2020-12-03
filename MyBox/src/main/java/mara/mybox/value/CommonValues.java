@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.6";
-    public static final String AppVersionDate = "2020-11-29";
+    public static final String AppVersion = "6.3.7";
+    public static final String AppVersionDate = "2020-12-03";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -152,7 +152,7 @@ public class CommonValues {
     public static final String HtmlToMarkdownFxml = "/fxml/HtmlToMarkdown.fxml";
     public static final String HtmlToTextFxml = "/fxml/HtmlToText.fxml";
     public static final String HtmlToPdfFxml = "/fxml/HtmlToPdf.fxml";
-    public static final String HtmlToUTF8Fxml = "/fxml/HtmlToUTF8.fxml";
+    public static final String HtmlSetCharsetFxml = "/fxml/HtmlSetCharset.fxml";
     public static final String HtmlSnapFxml = "/fxml/HtmlSnap.fxml";
     public static final String HtmlMergeAsHtmlFxml = "/fxml/HtmlMergeAsHtml.fxml";
     public static final String HtmlMergeAsMarkdownFxml = "/fxml/HtmlMergeAsMarkdown.fxml";
@@ -169,6 +169,7 @@ public class CommonValues {
     public static final String FileDecompressFxml = "/fxml/FileDecompress.fxml";
     public static final String FileUnarchiveFxml = "/fxml/FileUnarchive.fxml";
     public static final String FilesDecompressUnarchiveBatchFxml = "/fxml/FilesDecompressUnarchiveBatch.fxml";
+    public static final String FileTTC2TTFFxml = "/fxml/FileTTC2TTF.fxml";
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
     public static final String WebBrowserBoxFxml = "/fxml/WebBrowserBox.fxml";
     public static final String WebBrowserHistoryFxml = "/fxml/WebBrowserHistory.fxml";

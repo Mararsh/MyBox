@@ -53,13 +53,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -483,7 +483,7 @@ public class HtmlEditorController extends HtmlBaseController {
         try {
             if (sourceFile == null) {
                 final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                        null, targetExtensionFilter, true);
+                        null, targetExtensionFilter);
                 if (file == null) {
                     return;
                 }
@@ -519,7 +519,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, targetExtensionFilter, true);
+                    name, targetExtensionFilter);
             if (file == null) {
                 return;
             }

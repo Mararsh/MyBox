@@ -3,7 +3,8 @@ package thridparty;
 /**
  * @Author https://www.cnblogs.com/ChurchYim/p/8427373.html
  *
- * My updates are marked with #####. Mara
+ * Changed by Mara
+ * My updates are marked with #####.
  */
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,5 +1,6 @@
 package mara.mybox.value;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -47,9 +48,8 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
-            disableHiDPI, devMode, popErrorLogs;
+            disableHiDPI, devMode, hidpiIcons;
     public static ControlStyle.ColorStyle ControlColor;
-    public static String lastError;
     public static SSLSocketFactory defaultSSLSocketFactory;
     public static HostnameVerifier defaultHostnameVerifier;
 
@@ -62,17 +62,18 @@ public class AppVariables {
             systemConfigValues = new HashMap<>();
             getBundle();
             getPdfMem();
-            devMode = AppVariables.getUserConfigBoolean("DevMode", false);
-            openStageInNewWindow = AppVariables.getUserConfigBoolean("OpenStageInNewWindow", false);
-            restoreStagesSize = AppVariables.getUserConfigBoolean("RestoreStagesSize", true);
-            sceneFontSize = AppVariables.getUserConfigInt("SceneFontSize", 15);
-            fileRecentNumber = AppVariables.getUserConfigInt("FileRecentNumber", 16);
-            iconSize = AppVariables.getUserConfigInt("IconSize", 20);
-            thumbnailWidth = AppVariables.getUserConfigInt("ThumbnailWidth", 100);
+            devMode = getUserConfigBoolean("DevMode", false);
+            openStageInNewWindow = getUserConfigBoolean("OpenStageInNewWindow", false);
+            restoreStagesSize = getUserConfigBoolean("RestoreStagesSize", true);
+            sceneFontSize = getUserConfigInt("SceneFontSize", 15);
+            fileRecentNumber = getUserConfigInt("FileRecentNumber", 16);
+            iconSize = getUserConfigInt("IconSize", 20);
+            thumbnailWidth = getUserConfigInt("ThumbnailWidth", 100);
             ControlColor = ControlStyle.getConfigColorStyle();
-            controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
-            disableHiDPI = devMode = popErrorLogs = false;
-            lastError = null;
+            controlDisplayText = getUserConfigBoolean("ControlDisplayText", false);
+            hidpiIcons = getUserConfigBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
+            devMode = getUserConfigBoolean("DevMode", false);
+            disableHiDPI = false;
             if (defaultSSLSocketFactory == null) {
                 defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
                 defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
@@ -101,7 +102,7 @@ public class AppVariables {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        AppVariables.setUserConfigValue("language", lang);
+        setUserConfigValue("language", lang);
         return getBundle();
     }
 
@@ -111,19 +112,19 @@ public class AppVariables {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
         if (lang.startsWith("zh")) {
-            AppVariables.currentBundle = CommonValues.BundleZhCN;
+            currentBundle = CommonValues.BundleZhCN;
         } else if (lang.startsWith("en")) {
-            AppVariables.currentBundle = CommonValues.BundleEn;
+            currentBundle = CommonValues.BundleEn;
         } else {
             try {
-                AppVariables.currentBundle = new CustomizedLanguage(lang);
+                currentBundle = new CustomizedLanguage(lang);
             } catch (Exception e) {
             }
-            if (AppVariables.currentBundle == null) {
-                AppVariables.currentBundle = CommonValues.BundleEn;
+            if (currentBundle == null) {
+                currentBundle = CommonValues.BundleEn;
             }
         }
-        return AppVariables.currentBundle;
+        return currentBundle;
     }
 
     public static String message(String language, String thestr) {
@@ -206,8 +207,8 @@ public class AppVariables {
     }
 
     public static boolean setOpenStageInNewWindow(boolean value) {
-        if (AppVariables.setUserConfigValue("OpenStageInNewWindow", value)) {
-            AppVariables.openStageInNewWindow = value;
+        if (setUserConfigValue("OpenStageInNewWindow", value)) {
+            openStageInNewWindow = value;
             return true;
         } else {
             return false;
@@ -215,8 +216,8 @@ public class AppVariables {
     }
 
     public static boolean setRestoreStagesSize(boolean value) {
-        if (AppVariables.setUserConfigValue("RestoreStagesSize", value)) {
-            AppVariables.restoreStagesSize = value;
+        if (setUserConfigValue("RestoreStagesSize", value)) {
+            restoreStagesSize = value;
             return true;
         } else {
             return false;
@@ -226,23 +227,23 @@ public class AppVariables {
     public static MemoryUsageSetting setPdfMem(String value) {
         switch (value) {
             case "1GB":
-                AppVariables.setUserConfigValue("PdfMemDefault", "1GB");
-                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024L, -1);
+                setUserConfigValue("PdfMemDefault", "1GB");
+                pdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024L, -1);
                 break;
             case "2GB":
-                AppVariables.setUserConfigValue("PdfMemDefault", "2GB");
-                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024L, -1);
+                setUserConfigValue("PdfMemDefault", "2GB");
+                pdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024L, -1);
                 break;
             case "Unlimit":
-                AppVariables.setUserConfigValue("PdfMemDefault", "Unlimit");
-                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
+                setUserConfigValue("PdfMemDefault", "Unlimit");
+                pdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
                 break;
             case "500MB":
             default:
-                AppVariables.setUserConfigValue("PdfMemDefault", "500MB");
-                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024L, -1);
+                setUserConfigValue("PdfMemDefault", "500MB");
+                pdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024L, -1);
         }
-        return AppVariables.pdfMemUsage;
+        return pdfMemUsage;
     }
 
     public static MemoryUsageSetting getPdfMem() {
@@ -250,8 +251,8 @@ public class AppVariables {
     }
 
     public static boolean setSceneFontSize(int size) {
-        if (AppVariables.setUserConfigInt("SceneFontSize", size)) {
-            AppVariables.sceneFontSize = size;
+        if (setUserConfigInt("SceneFontSize", size)) {
+            sceneFontSize = size;
             return true;
         } else {
             return false;
@@ -259,8 +260,8 @@ public class AppVariables {
     }
 
     public static boolean setIconSize(int size) {
-        if (AppVariables.setUserConfigInt("IconSize", size)) {
-            AppVariables.iconSize = size;
+        if (setUserConfigInt("IconSize", size)) {
+            iconSize = size;
             return true;
         } else {
             return false;
@@ -303,7 +304,7 @@ public class AppVariables {
     }
 
     public static Color getAlphaColor() {
-        String color = AppVariables.getUserConfigValue("AlphaAsColor", Color.WHITE.toString());
+        String color = getUserConfigValue("AlphaAsColor", Color.WHITE.toString());
         return Color.web(color);
     }
 
@@ -374,7 +375,7 @@ public class AppVariables {
     }
 
     public static boolean getUserConfigBoolean(String key) {
-        return AppVariables.getUserConfigBoolean(key, true);
+        return getUserConfigBoolean(key, true);
     }
 
     public static File getUserConfigPath(String key) {
@@ -518,7 +519,7 @@ public class AppVariables {
     }
 
     public static boolean getSystemConfigBoolean(String key) {
-        return AppVariables.getSystemConfigBoolean(key, true);
+        return getSystemConfigBoolean(key, true);
     }
 
     public static boolean setSystemConfigValue(String key, String value) {

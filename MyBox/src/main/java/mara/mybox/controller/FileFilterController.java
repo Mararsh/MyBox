@@ -13,10 +13,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.StringFilterType;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -120,7 +120,7 @@ public class FileFilterController extends FileEditerController {
         filterConditionsLabel.setText(filterConditions);
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -144,7 +144,8 @@ public class FileFilterController extends FileEditerController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -159,7 +160,7 @@ public class FileFilterController extends FileEditerController {
     @Override
     public void saveAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                null, targetExtensionFilter, true);
+                null, targetExtensionFilter);
         if (file == null) {
             return;
         }
@@ -172,7 +173,7 @@ public class FileFilterController extends FileEditerController {
         targetInformation.setLineBreakValue(sourceInformation.getLineBreakValue());
         targetInformation.setLineBreakWidth(sourceInformation.getLineBreakWidth());
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -193,7 +194,8 @@ public class FileFilterController extends FileEditerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

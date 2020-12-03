@@ -38,7 +38,7 @@ public class BytesEditInformation extends FileEditInformation {
                 return false;
             }
             objectsNumber = file.length();
-            int bufSize = FileTools.bufSize(file);
+            int bufSize = FileTools.bufSize(file, 16);
             if (lineBreak == Line_Break.Width && lineBreakWidth > 0) {
                 try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                     byte[] buf = new byte[bufSize];

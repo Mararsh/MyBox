@@ -46,7 +46,7 @@ public class CompressTools {
             return CompressExtension;
         }
         CompressExtension = new HashMap<>();
-        CompressExtension.put("gzip", "gz");
+        CompressExtension.put("gz", "gz");
         CompressExtension.put("bzip2", "bz2");
         CompressExtension.put("pack200", "pack");
         CompressExtension.put("xz", "xz");
@@ -134,29 +134,26 @@ public class CompressTools {
     }
 
     public static String detectCompressor(File srcFile, String name) {
-        try {
-            if (srcFile == null || "none".equals(name)) {
-                return null;
-            }
-            String compressor;
-            String namein = (name != null) ? name.toLowerCase() : null;
-            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
-                CompressorStreamFactory cFactory = new CompressorStreamFactory();
-                if (namein != null && cFactory.getInputStreamCompressorNames().contains(namein)) {
-                    try ( CompressorInputStream in = cFactory.createCompressorInputStream(namein, fileIn)) {
-                        compressor = namein;
-                    } catch (Exception e) {
-                        compressor = detectCompressor(fileIn, namein);
-                    }
-                } else {
-                    compressor = detectCompressor(fileIn, namein);
-                }
-            }
-            return compressor;
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+        if (srcFile == null || "none".equals(name)) {
             return null;
         }
+        String compressor = null;
+        String namein = (name != null) ? name.toLowerCase() : null;
+        try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
+            CompressorStreamFactory cFactory = new CompressorStreamFactory();
+            if (namein != null && cFactory.getInputStreamCompressorNames().contains(namein)) {
+                try ( CompressorInputStream in = cFactory.createCompressorInputStream(namein, fileIn)) {
+                    compressor = namein;
+                } catch (Exception e) {
+                    compressor = detectCompressor(fileIn, namein);
+                }
+            } else {
+                compressor = detectCompressor(fileIn, namein);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e, srcFile.getAbsolutePath());
+        }
+        return compressor;
     }
 
     public static String detectCompressor(BufferedInputStream fileIn, String name) {
@@ -168,6 +165,7 @@ public class CompressTools {
                 try ( CompressorInputStream in = new BlockLZ4CompressorInputStream(fileIn)) {
                     compressor = "lz4-block";
                 } catch (Exception e) {
+                    MyBoxLog.debug(e, name);
                 }
             }
         }
@@ -195,7 +193,7 @@ public class CompressTools {
                             detect = false;
                         }
                     } catch (Exception e) {
-//                        MyBoxLog.debug(e.toString());
+                        MyBoxLog.error(e.toString());
                         try {
                             String defectValue = CompressorStreamFactory.detect(fileIn);
                             try ( CompressorInputStream in = cFactory.createCompressorInputStream(defectValue, fileIn)) {
@@ -208,6 +206,7 @@ public class CompressTools {
                                 MyBoxLog.debug(ex.toString());
                             }
                         } catch (Exception ex) {
+                            MyBoxLog.debug(ex.toString());
                         }
                     }
                 } else {
@@ -220,10 +219,10 @@ public class CompressTools {
                                 detect = true;
                             }
                         } catch (Exception ex) {
-//                            MyBoxLog.debug(ex.toString());
+                            MyBoxLog.debug(ex.toString());
                         }
                     } catch (Exception ex) {
-//                        MyBoxLog.debug(ex.toString());
+                        MyBoxLog.debug(ex.toString());
                     }
                 }
             }
@@ -237,7 +236,7 @@ public class CompressTools {
                 return null;
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e.toString());
             return null;
         }
     }
@@ -251,14 +250,18 @@ public class CompressTools {
             FileTools.delete(file);
             try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
                 final byte[] buf = new byte[CommonValues.IOBufferLength];
-                int len = -1;
-                while (-1 != (len = compressorInputStream.read(buf))) {
+                int len;
+                while ((len = compressorInputStream.read(buf)) != -1) {  //******debug
+                    if (len <= 0) {
+                        MyBoxLog.console(len);
+                        break;
+                    }
                     out.write(buf, 0, len);
                 }
             }
             return file;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -272,37 +275,34 @@ public class CompressTools {
     }
 
     public static String detectArchiver(File srcFile, String nameIn) {
-        try {
-            if (srcFile == null || "none".equals(nameIn)) {
-                return null;
-            }
-            String archiver = null;
-            String name = (nameIn != null) ? nameIn.toLowerCase() : null;
-            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
-                ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
-                if (name != null && aFactory.getInputStreamArchiveNames().contains(name)) {
-                    try ( ArchiveInputStream in = aFactory.createArchiveInputStream(name, fileIn)) {
-                        archiver = name;
-                    } catch (Exception e) {
-                        try {
-                            archiver = ArchiveStreamFactory.detect(fileIn);
-                        } catch (Exception ex) {
-//                            MyBoxLog.debug(ex.toString());
-                        }
-                    }
-                } else {
+        if (srcFile == null || "none".equals(nameIn)) {
+            return null;
+        }
+        String archiver = null;
+        String name = (nameIn != null) ? nameIn.toLowerCase() : null;
+        try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
+            ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
+            if (name != null && aFactory.getInputStreamArchiveNames().contains(name)) {
+                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(name, fileIn)) {
+                    archiver = name;
+                } catch (Exception e) {
                     try {
                         archiver = ArchiveStreamFactory.detect(fileIn);
                     } catch (Exception ex) {
-//                            MyBoxLog.debug(ex.toString());
+                        MyBoxLog.debug(ex, nameIn);
                     }
                 }
+            } else {
+                try {
+                    archiver = ArchiveStreamFactory.detect(fileIn);
+                } catch (Exception ex) {
+                    MyBoxLog.debug(ex, nameIn);
+                }
             }
-            return archiver;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return null;
+            MyBoxLog.debug(e, nameIn);
         }
+        return archiver;
     }
 
     public static Map<String, Object> readEntries(File srcFile, String encoding) {
@@ -408,7 +408,7 @@ public class CompressTools {
             }
             return entries;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return entries;
     }

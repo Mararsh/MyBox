@@ -386,7 +386,9 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
             String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
             if (d == null) {
-                ttfSelector.getSelectionModel().select(0);
+                if (!ttfSelector.getItems().isEmpty()) {
+                    ttfSelector.getSelectionModel().select(0);
+                }
             } else {
                 ttfSelector.setValue(d);
             }
@@ -534,6 +536,9 @@ public class DownloadFirstLevelLinksController extends BaseController {
                         URL url = new URL(address);
                         File httpFile = FileTools.getTempFile();
                         HtmlTools.downloadHttp(url, httpFile);
+                        if (!httpFile.exists() || httpFile.length() == 0) {
+                            return false;
+                        }
                         title = HtmlTools.title(httpFile);
                         addressLink = Link.create().setUrl(url).setAddress(url.toString()).setName(title).setTitle(title);
                         addressLink.setFile(httpFile.getAbsolutePath());
@@ -639,9 +644,9 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     Link link = selected.get(i);
                     link.setIndex(i + 1);
                     File file = new File(link.getFile());
-                    file.mkdirs();
                     link.setFile(file.getAbsolutePath());
                     File path = file.getParentFile();
+                    path.mkdirs();
                     if (paths.containsKey(path)) {
                         paths.put(path, paths.get(path) + 1);
                     } else {
@@ -1287,10 +1292,10 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
                 URL url = link.getUrl();
                 File file = new File(link.getFile());
-                file.mkdirs();
+                file.getParentFile().mkdirs();
                 link.setFile(file.getAbsolutePath());
 
-//                updateLogs(message("Downloading") + ": " + url + " --> " + file);
+                updateLogs(message("Downloading") + ": " + url + " --> " + file);
                 String error = HtmlTools.downloadHttp(url, file);
                 if (error == null) {
                     link.setDlTime(new Date());
@@ -1300,7 +1305,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                         if (utf8 == null) {
                             updateLogs(message("Failed") + ": " + file);
                         } else if (!"NeedNot".equals(utf8)) {
-                            updateLogs(message("HtmlToUTF8") + ": " + file);
+                            updateLogs(message("HtmlSetCharset") + ": " + file);
                             FileTools.writeFile(file, utf8, Charset.forName("utf-8"));
                         }
                     }

@@ -389,7 +389,7 @@ License:    Apache License Version 2.0
                         <Label fx:id="bottomLabel" minHeight="-Infinity" wrapText="true" HBox.hgrow="NEVER" />
                         <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">
                             <HBox.margin>
-                                <Insets left="20.0" />
+                                <Insets />
                             </HBox.margin>
                         </Label>
                         <HBox fx:id="pageBox" alignment="CENTER_LEFT" spacing="5.0">

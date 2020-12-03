@@ -3,7 +3,7 @@ package thridparty;
 /**
  * @Author http://brucelindbloom.com/index.html?Eqn_XYZ_to_T.html
  * http://brucelindbloom.com/index.html?Eqn_T_to_xy.html
- *  *
+ *
  */
 public class ColorTemperature {
 

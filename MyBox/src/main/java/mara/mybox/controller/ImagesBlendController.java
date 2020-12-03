@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -39,7 +40,6 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -308,7 +308,7 @@ public class ImagesBlendController extends ImageViewerController {
 
             final String fileName = file.getPath();
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -348,7 +348,8 @@ public class ImagesBlendController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -445,7 +446,7 @@ public class ImagesBlendController extends ImageViewerController {
 
             final String fileName = file.getPath();
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -486,7 +487,8 @@ public class ImagesBlendController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -576,7 +578,7 @@ public class ImagesBlendController extends ImageViewerController {
         }
         try {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    null, targetExtensionFilter, true);
+                    null, targetExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -585,7 +587,7 @@ public class ImagesBlendController extends ImageViewerController {
             targetFile = file;
 
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -614,7 +616,8 @@ public class ImagesBlendController extends ImageViewerController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

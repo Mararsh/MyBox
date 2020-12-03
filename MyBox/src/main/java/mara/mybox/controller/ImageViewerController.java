@@ -1144,7 +1144,7 @@ public class ImageViewerController extends ImageShapesController {
         }
         try {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    saveAsPrefix(), CommonFxValues.ImageExtensionFilter, true);
+                    saveAsPrefix(), CommonFxValues.ImageExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -1413,8 +1413,10 @@ public class ImageViewerController extends ImageShapesController {
         }
         if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
             if (imageChanged || (imageInformation != null && imageInformation.isIsScaled())) {
+                MyBoxLog.console("here");
                 controller.loadImage(image);
             } else {
+                MyBoxLog.console("here");
                 controller.loadImage(sourceFile, imageInformation, image);
             }
             return;
@@ -1438,6 +1440,7 @@ public class ImageViewerController extends ImageShapesController {
 
                 @Override
                 protected void whenSucceeded() {
+                    MyBoxLog.console("here");
                     controller.loadImage(areaImage);
                 }
             };

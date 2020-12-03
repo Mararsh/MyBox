@@ -3,8 +3,8 @@ package mara.mybox.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.tools.HtmlTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.HtmlTools;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -68,6 +68,10 @@ public class StringTable {
 
     public String html() {
         return tableHtml(this);
+    }
+
+    public String div() {
+        return tableDiv(this);
     }
 
     public void editHtml() {

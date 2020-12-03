@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
@@ -23,26 +24,26 @@ public class ByteTools {
 
     public static int Invalid_Byte = CommonValues.InvalidShort;
 
-    //  Big-Endian
+    //  https://stackoverflow.com/questions/4485128/how-do-i-convert-long-to-byte-and-back-in-java
     public static int bytesToInt(byte[] b) {
-        return b[3] & 0xFF
-                | (b[2] & 0xFF) << 8
-                | (b[1] & 0xFF) << 16
-                | (b[0] & 0xFF) << 24;
+        return ByteBuffer.allocate(Integer.BYTES).put(b).flip().getInt();
+    }
+
+    public static long bytesToUInt(byte[] b) {
+        return bytesToLong(mergeBytes(new byte[4], b));
+    }
+
+    public static long bytesToLong(byte[] b) {
+        return ByteBuffer.allocate(Long.BYTES).put(b).flip().getLong();
     }
 
     public static int bytesToUshort(byte[] b) {
-        return b[1] & 0xFF
-                | (b[0] & 0xFF) << 8;
+        return bytesToInt(mergeBytes(new byte[2], b));
     }
 
+    // https://stackoverflow.com/questions/6374915/java-convert-int-to-byte-array-of-4-bytes?r=SearchResults
     public static byte[] intToBytes(int a) {
-        return new byte[]{
-            (byte) ((a >> 24) & 0xFF),
-            (byte) ((a >> 16) & 0xFF),
-            (byte) ((a >> 8) & 0xFF),
-            (byte) (a & 0xFF)
-        };
+        return ByteBuffer.allocate(Integer.BYTES).putInt(a).array();
     }
 
     public static byte intSmallByte(int a) {
@@ -55,18 +56,20 @@ public class ByteTools {
         return bytes[0];
     }
 
-    public static byte[] unsignedShortToBytes(int s) {
-        return new byte[]{
-            (byte) ((s >>> 8) & 0xFF),
-            (byte) (s & 0xFF)
-        };
+    public static byte[] longToBytes(long a) {
+        return ByteBuffer.allocate(Long.BYTES).putLong(a).array();
     }
 
-    public static byte[] shortToBytes(short s) {
-        return new byte[]{
-            (byte) ((s >> 8) & 0xFF),
-            (byte) (s & 0xFF)
-        };
+    public static byte[] uIntToBytes(long a) {
+        return subBytes(longToBytes(a), 4, 4);
+    }
+
+    public static byte[] uShortToBytes(int a) {
+        return subBytes(intToBytes(a), 2, 2);
+    }
+
+    public static byte[] shortToBytes(short a) {
+        return ByteBuffer.allocate(Short.BYTES).putShort(a).array();
     }
 
     public static String byteToHex(byte b) {
@@ -299,8 +302,7 @@ public class ByteTools {
             System.arraycopy(bytes, off, newBytes, 0, length);
             return newBytes;
         } catch (Exception e) {
-            MyBoxLog.debug(bytes.length + " " + off + " " + length);
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e, bytes.length + " " + off + " " + length);
             return null;
         }
     }
@@ -312,7 +314,7 @@ public class ByteTools {
             System.arraycopy(bytes2, 0, bytes3, bytes1.length, bytes2.length);
             return bytes3;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

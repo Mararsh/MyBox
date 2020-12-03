@@ -50,11 +50,16 @@ License:    Apache License Version 2.0
                                                 <Label text="px" />
                                                 <Label text="%IconSize">
                                                     <HBox.margin>
-                                                        <Insets left="50.0" />
+                                                        <Insets left="40.0" />
                                                     </HBox.margin>
                                                 </Label>
                                                 <ComboBox fx:id="iconSizeBox" editable="true" prefWidth="100.0" />
                                                 <Label text="px" />
+                                    <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">
+                                       <HBox.margin>
+                                          <Insets left="40.0" />
+                                       </HBox.margin>
+                                    </CheckBox>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" spacing="10.0" VBox.vgrow="NEVER">

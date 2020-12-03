@@ -142,7 +142,7 @@ public class FilesCompressBatchController extends FilesBatchController {
                     try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
                         int len;
                         byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((len = inputStream.read(buf)) >= 0) {
+                        while ((len = inputStream.read(buf)) > 0) {
                             sevenZOutput.write(buf, 0, len);
                         }
                     }

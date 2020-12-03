@@ -37,6 +37,8 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -44,9 +46,7 @@ import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -183,10 +183,10 @@ public class HtmlSnapController extends HtmlBaseController {
         File file;
         if (isOneImage) {
             file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                    null, CommonFxValues.ImageExtensionFilter, true);
+                    null, CommonFxValues.ImageExtensionFilter);
         } else {
             file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF)),
-                    null, CommonFxValues.PdfExtensionFilter, true);
+                    null, CommonFxValues.PdfExtensionFilter);
         }
         if (file == null) {
             return;

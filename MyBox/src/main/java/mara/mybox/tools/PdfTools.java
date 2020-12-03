@@ -197,7 +197,9 @@ public class PdfTools {
                 content.drawImage(imageObject, marginSize, page.getTrimBox().getHeight() - marginSize - h, w, h);
                 if (pageNumber) {
                     content.beginText();
-                    content.setFont(font, 12);
+                    if (font != null) {
+                        content.setFont(font, 12);
+                    }
                     content.newLineAtOffset(w + marginSize - 80, 5);
                     content.showText(index + " / " + total);
                     content.endText();
@@ -205,7 +207,9 @@ public class PdfTools {
                 if (header != null && !header.trim().isEmpty()) {
                     try {
                         content.beginText();
-                        content.setFont(font, 16);
+                        if (font != null) {
+                            content.setFont(font, 16);
+                        }
                         content.newLineAtOffset(marginSize, page.getTrimBox().getHeight() - marginSize + 2);
                         content.showText(header.trim());
                         content.endText();
@@ -221,8 +225,7 @@ public class PdfTools {
         }
     }
 
-    public static boolean htmlIntoPdf(List<File> files, File targetFile,
-            boolean isImageSize) {
+    public static boolean htmlIntoPdf(List<File> files, File targetFile, boolean isImageSize) {
         if (files == null || files.isEmpty()) {
             return false;
         }
@@ -230,7 +233,7 @@ public class PdfTools {
             int count = 0;
             try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDPageContentStream content;
-                PDFont font = PDType1Font.HELVETICA;
+                PDFont font = defaultFont(document);
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -305,8 +308,7 @@ public class PdfTools {
                 p.getPageWidth(), p.getPageHeight(), p.getMarginSize(), p.getTitle(), p.isDithering());
     }
 
-    public static boolean images2Pdf(List<Image> images, File targetFile,
-            WeiboSnapParameters p) {
+    public static boolean images2Pdf(List<Image> images, File targetFile, WeiboSnapParameters p) {
         try {
             if (images == null || images.isEmpty()) {
                 return false;
@@ -320,7 +322,7 @@ public class PdfTools {
                 info.setAuthor(p.getAuthor());
                 document.setDocumentInformation(info);
                 document.setVersion(1.0f);
-                PDFont font = getFont(document, p.getFontName());
+                PDFont font = getFont(document, p.getFontFile());
 
                 BufferedImage bufferedImage;
                 for (Image image : images) {
@@ -378,7 +380,7 @@ public class PdfTools {
                 info.setAuthor(p.getAuthor());
                 document.setDocumentInformation(info);
                 document.setVersion(1.0f);
-                PDFont font = getFont(document, p.getFontName());
+                PDFont font = getFont(document, p.getFontFile());
 
                 BufferedImage bufferedImage;
                 File file;
@@ -426,60 +428,26 @@ public class PdfTools {
 //        pageSize.setUpperRightY(page.getTrimBox().getHeight() - 20);
     }
 
-    public static String getFontFile(String name) {
-        String fontFile = null;
-        try {
-
-            switch (name) {
-                case "宋体":
-                    fontFile = FileTools.getFontFile("simsun");
-                    break;
-                case "幼圆":
-                    fontFile = FileTools.getFontFile("SIMYOU");
-                    break;
-                case "仿宋":
-                    fontFile = FileTools.getFontFile("simfang");
-                    break;
-                case "隶书":
-                    fontFile = FileTools.getFontFile("SIMLI");
-                    break;
-            }
-        } catch (Exception e) {
-        }
-        return fontFile;
-    }
-
-    public static PDFont getFont(PDDocument document, String name) {
+    public static PDFont getFont(PDDocument document, String fontFile) {
         PDFont font = PDType1Font.HELVETICA;
         try {
-            String fontFile = null;
-            switch (name) {
-                case "宋体":
-                    fontFile = FileTools.getFontFile("simsun");
-                    break;
-                case "幼圆":
-                    fontFile = FileTools.getFontFile("SIMYOU");
-                    break;
-                case "仿宋":
-                    fontFile = FileTools.getFontFile("simfang");
-                    break;
-                case "隶书":
-                    fontFile = FileTools.getFontFile("SIMLI");
-                    break;
-                case "Helvetica":
-                    return PDType1Font.HELVETICA;
-                case "Courier":
-                    return PDType1Font.COURIER;
-                case "Times New Roman":
-                    return PDType1Font.TIMES_ROMAN;
-            }
             if (fontFile != null) {
-//                MyBoxLog.debug(fontFile);
-                font = PDType0Font.load(document, new File(fontFile));
+                font = PDType0Font.load(document, new File(SystemTools.ttf(fontFile)));
             }
         } catch (Exception e) {
         }
-//        MyBoxLog.debug(font.getName());
+        return font;
+    }
+
+    public static PDFont defaultFont(PDDocument document) {
+        PDFont font = PDType1Font.HELVETICA;
+        try {
+            List<String> ttfList = SystemTools.ttfList();
+            if (ttfList != null && !ttfList.isEmpty()) {
+                font = getFont(document, ttfList.get(0));
+            }
+        } catch (Exception e) {
+        }
         return font;
     }
 
@@ -517,12 +485,10 @@ public class PdfTools {
 
     }
 
-    public static boolean writeSplitImages(String sourceFormat,
-            String sourceFile,
-            ImageInformation imageInformation, List<Integer> rows,
-            List<Integer> cols,
+    public static boolean writeSplitImages(String sourceFormat, String sourceFile,
+            ImageInformation imageInformation, List<Integer> rows, List<Integer> cols,
             ImageAttributes attributes, File targetFile,
-            PdfImageFormat pdfFormat, String fontName, String author,
+            PdfImageFormat pdfFormat, String fontFile, String author,
             int threshold, int jpegQuality, boolean isImageSize,
             boolean pageNumber,
             int pageWidth, int pageHeight, int marginSize, String header) {
@@ -534,7 +500,7 @@ public class PdfTools {
             }
             File tmpFile = FileTools.getTempFile();
             try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
-                PDFont font = PdfTools.getFont(document, fontName);
+                PDFont font = PdfTools.getFont(document, fontFile);
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());

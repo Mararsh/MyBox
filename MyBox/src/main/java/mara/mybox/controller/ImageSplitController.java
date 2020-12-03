@@ -55,6 +55,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -495,23 +496,23 @@ public class ImageSplitController extends ImageViewerController {
         });
         MarginsBox.getSelectionModel().select("20");
 
-        if (fontBox != null) {
-            fontBox.getItems().addAll(Arrays.asList(
-                    "幼圆",
-                    "仿宋",
-                    "隶书",
-                    "Helvetica",
-                    "Courier",
-                    "Times New Roman"
-            ));
-            fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov,
-                        String oldValue, String newValue) {
+        fontBox.getItems().addAll(SystemTools.ttfList());
+        fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue == null || newValue.isBlank()) {
+                    return;
                 }
-            });
-            fontBox.getSelectionModel().select(0);
-
+                AppVariables.setUserConfigValue(baseName + "TTF", newValue);
+            }
+        });
+        String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
+        if (d == null) {
+            if (!fontBox.getItems().isEmpty()) {
+                fontBox.getSelectionModel().select(0);
+            }
+        } else {
+            fontBox.setValue(d);
         }
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
@@ -980,7 +981,7 @@ public class ImageSplitController extends ImageViewerController {
             prefix = FileTools.getFilePrefix(sourceFile.getName());
         }
         final File tFile = chooseSaveFile(diagTitle, AppVariables.getUserConfigPath(targetPathKey),
-                prefix, ext, true);
+                prefix, ext);
         if (tFile == null) {
             return null;
         }
@@ -1094,7 +1095,7 @@ public class ImageSplitController extends ImageViewerController {
         }
         final boolean inPageNumber = pageNumberCheck.isSelected();
         final String header = headerInput.getText();
-        final String fontName = fontBox.getSelectionModel().getSelectedItem();
+        final String fontFile = fontBox.getSelectionModel().getSelectedItem();
         if (pdfTask != null) {
             pdfTask.cancel();
             pdfController = null;
@@ -1115,7 +1116,7 @@ public class ImageSplitController extends ImageViewerController {
                     }
                     File tmpFile = FileTools.getTempFile();
                     try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
-                        PDFont font = PdfTools.getFont(document, fontName);
+                        PDFont font = PdfTools.getFont(document, fontFile);
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
                         info.setModificationDate(Calendar.getInstance());

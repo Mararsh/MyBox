@@ -2,22 +2,19 @@
 
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。  
-
-## !!! 注意：请勿使用解压缩功能。一个bug可能造成源文件被毁坏并生成巨大的文件。抱歉！    
   
 ## 新内容
-2020-11-29 版本6.3.6        
--  代码：升级到java 15.0.1和javafx15.0.1（除javafx-web模块）。MyBox日志自行实现，不再依赖log4j2。      
--  文件：增加文件删除/重命名/移动的健壮性。可删除系统临时目录下的文件。       
--  颜色：量化后的结果可导入调色盘。kmeans cluster量化可设置最大循环数。可导入用户的颜色csv文件。颜色导入的关键字可以是rgb。     
--  解决的主要问题：文件删除会造成最近访问文件列表弹出错误。合并图片设置列数会出错。           
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6)         
+2020-12-03 版本6.3.7                  
+-  添加：从ttc文件中提取ttf文件。内置一个开源免费的ttf文件。          
+-  改进：可以选择高清晰图标和普通图标。可以批量设置html的编码。统一PDF字体选择控件。图像伸缩处理时可以设置渲染参数。设置mac的缺省视频解码器为VideoToolBox。                 
+-  解决的主要问题：解压缩gz文件会毁坏源文件并且不断增大文件。html编码可能解析错误。字节编辑的右面板只显示一行。                     
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7)                   
 
  ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。    
  
 ### 源码   
-[MyBox-6.3.6-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-src.zip)   35M  
+[MyBox-6.3.7-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-src.zip)   37M  
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) 和 
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)             
@@ -28,9 +25,9 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |                                                                               
-| win x64 | [MyBox-6.3.6-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-win-exe.zip)  | 285MB | MyBox.exe |       
-| linux x64 | [MyBox-6.3.6-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-linux.tar.gz)  | 292MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.6-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-mac.dmg)  | 298MB  |  MyBox-6.3.6.app   |   
+| win x64 | [MyBox-6.3.7-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-exe.zip)  | 292MB | MyBox.exe |       
+| linux x64 | [MyBox-6.3.7-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux.tar.gz)  | 298MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.7-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac.dmg)  | 305MB  |  MyBox-6.3.7.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -40,14 +37,14 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3.6-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-win-jar.zip)  | 146MB | Java 15.0.1或更高版本 |    
-| linux | [MyBox-6.3.6-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-linux-jar.zip)  | 153MB  | Java 15.0.1或更高版本 |    
-| mac | [MyBox-6.3.6-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.6/MyBox-6.3.6-mac-jar.zip)  |  150MB  | Java 15.0.1或更高版本 |    
+| win | [MyBox-6.3.7-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-jar.zip)  | 148MB | Java 15.0.1或更高版本 |    
+| linux | [MyBox-6.3.7-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux-jar.zip)  | 155MB  | Java 15.0.1或更高版本 |    
+| mac | [MyBox-6.3.7-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac-jar.zip)  |  152MB  | Java 15.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.3.6.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.7.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.3.6.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.7.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -88,8 +85,8 @@
 
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
-| 开发日志 | 6.3.6 |  2020-11-29 | [html](#devLog) |
-| 快捷键 | 6.3.6 |  2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.3.7 |  2020-12-03 | [html](#devLog) |
+| 快捷键 | 6.3.5 |  2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
@@ -152,10 +149,12 @@ MyBox基于以下开源资源：
 | JavaMail | email | https://javaee.github.io/javamail/ |      
 | Commons IO | 文件读写 | https://commons.apache.org/proper/commons-io/ |      
 | colorhexa | 色彩数据 | https://www.colorhexa.com/color-names |      
+| 文泉驿 | 开源字体 | http://wenq.org/wqy2/ |      
+| ttc2ttf | 提取ttf | https://github.com/fermi1981/TTC_TTF |      
 
 
 # 当前版本
-当前是版本6.3.6，已实现的特点概述如下:
+当前是版本6.3.7，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [本机](#localhost)
@@ -220,7 +219,7 @@ MyBox基于以下开源资源：
 * [MyBox日志](#MyBoxLogs)    
     
 ## 跨平台<a id="cross-platform" />   
-MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 14的平台。（MyBox v5.3以前的版本均基于Java 8）
+MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 15的平台。（MyBox v5.3以前的版本均基于Java 8）
  
 ## 国际化<a id="international" />
 1. 所有代码均国际化。目前支持中文、英文。
@@ -401,7 +400,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  编辑图像时按粘贴按钮（CTRL+v）以把粘贴板的第一张图贴到当前图片上，也可以双击粘贴板列表的项目以粘贴。
 	-  在当前图片上拖拉被粘贴图片，调整大小和位置。
 	-  粘贴选项：是否保持宽高比、混合模式、不透明度、旋转角度。
-4. 伸缩：拖动锚点调整大小、按比例收缩、或设置像素。四种保持宽高比的选项。
+4. 伸缩：拖动锚点调整大小、按比例收缩、或设置像素。四种保持宽高比的选项。设置渲染参数。
 5. 色彩：针对红/蓝/绿/黄/青/紫通道、饱和度、明暗、色相、不透明度，进行增加、减少、设值、过滤、取反色的操作。可选是否预乘透明。
 6. 效果：海报（减色）、阈值化、灰色、黑白色、褐色、浮雕、边沿检测、马赛克、磨砂玻璃。可选算法和参数。
 7. 增强：对比度、平滑、锐化、卷积。可选算法和参数。
@@ -1027,6 +1026,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 4. 删除目录下所有的空目录。
 5. 删除"无限嵌套目录"（由于软件错误而生成的无法正常删除的目录）。  
 6. 删除系统临时目录下的文件。  
+7. 从ttc文件中提取ttf文件。
 
 ### 归档/压缩/解压/解档<a id="archiveCompress" />  
 1. 归档是把多个文件/目录聚集为单个文件的过程，有的归档格式支持同时实现压缩（如zip和7z）。解档是还原归档文件的过程。 
@@ -1198,6 +1198,8 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 ## 设置<a id="settings" />
 1. 界面：
 	-  语言、字体大小、图标大小
+	-  可选择高清晰图标（100px）还是普通图标（40px）。         
+           显示器分辨率不高于120dpi时，建议选择普通图标。在非高清晰的显示器上显示高清晰图标反而会模糊。          
 	-  控件颜色、是否显示控件文字、界面风格
 	-  是否恢复界面上次尺寸
 	-  是否在新窗口中打开界面
@@ -1240,9 +1242,9 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 
 ## 对于高清晰屏幕的支持<a id="Hidpi" />     
-Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。MyBox支持在线关闭/打开DPI敏感，修改时MyBox会自动重启。       
+1. Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。MyBox支持在线关闭/打开DPI敏感，修改时MyBox会自动重启。       
 开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。     
-
+2. 用户可以选择高清晰图标还是普通图标。     
 
 ## 开发模式<a id="DevMode" />  
 1. 在“设置”中开启/关闭开发模式。
@@ -1261,7 +1263,13 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 3. “调用者”是调用链，每行是一个节点：文件名、类名、方法名、行号。调用链只记录MyBox自身的方法。
 4. “错误”会导致查看日志的界面被弹出。
 
-# 开发日志<a id="devLog" />       
+# 开发日志<a id="devLog" />          
+2020-12-03 版本6.3.7                  
+-  添加：从ttc文件中提取ttf文件。内置一个开源免费的ttf文件。          
+-  改进：可以选择高清晰图标和普通图标。可以批量设置html的编码。统一PDF字体选择控件。图像伸缩处理时可以设置渲染参数。设置mac的缺省视频解码器为VideoToolBox。                 
+-  解决的主要问题：解压缩gz文件会毁坏源文件并且不断增大文件。html编码可能解析错误。字节编辑的右面板只显示一行。                     
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7)                    
+
 2020-11-29 版本6.3.6         
 -  代码：升级到java 15.0.1和javafx15.0.1（除javafx-web模块）。MyBox日志自行实现，不再依赖log4j2。        
 -  文件：增加文件删除/重命名/移动的健壮性。可删除系统临时目录下的文件。       

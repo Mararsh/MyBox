@@ -362,7 +362,7 @@ public class MapBaseController extends BaseController {
             htmlTitle = title;
         }
         File htmlFile = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                htmlTitle, CommonFxValues.HtmlExtensionFilter, true);
+                htmlTitle, CommonFxValues.HtmlExtensionFilter);
         if (htmlFile == null) {
             return;
         }

@@ -9,9 +9,9 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -60,7 +60,7 @@ public class FilesMergeController extends FilesBatchController {
     @Override
     public void selectTargetFileFromPath(File path) {
         try {
-            final File file = chooseSaveFile(path, null, CommonFxValues.AllExtensionFilter, true);
+            final File file = chooseSaveFile(path, null, CommonFxValues.AllExtensionFilter);
             if (file == null) {
                 return;
             }

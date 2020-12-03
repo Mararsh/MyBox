@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,10 +14,10 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -30,6 +31,7 @@ public class ControlFileSelecter extends BaseController {
     protected File file;
     protected String name, defaultValue;
     protected boolean isSource, isDirectory, checkQuit, permitNull, mustExist;
+    protected SimpleBooleanProperty changed;
 
     @FXML
     protected Label label;
@@ -44,6 +46,7 @@ public class ControlFileSelecter extends BaseController {
         checkQuit = false;
         permitNull = false;
         mustExist = false;
+        changed = new SimpleBooleanProperty(false);
     }
 
     public static ControlFileSelecter create() {
@@ -147,6 +150,8 @@ public class ControlFileSelecter extends BaseController {
             sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
         } else if (fileType == VisitHistory.FileType.FileHistory) {
             sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.TTC) {
+            sourceExtensionFilter = CommonFxValues.TTCExtensionFilter;
         } else {
             sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
         }
@@ -208,6 +213,7 @@ public class ControlFileSelecter extends BaseController {
         } else {
             recordFileWritten(file);
         }
+        changed.set(true);
     }
 
     @FXML

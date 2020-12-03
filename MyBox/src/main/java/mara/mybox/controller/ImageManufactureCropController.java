@@ -10,11 +10,12 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageScope;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -67,6 +68,11 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
         imageController.showRightPane();
         imageController.showScopePane();
         imageController.hideImagePane();
+        if (scopeController.scope == null
+                || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
+                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
+            scopeController.scopeRectangleRadio.fire();
+        }
     }
 
     @FXML
@@ -75,10 +81,11 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
         if (scopeController.scope == null
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
+            popError(message("InvalidScope"));
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -129,7 +136,8 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

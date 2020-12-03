@@ -69,7 +69,7 @@ public class SettingsController extends BaseController {
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
-            copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck,
+            copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
             clearCurrentRootCheck, hidpiCheck, devModeCheck, splitPaneSensitiveCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
@@ -189,7 +189,9 @@ public class SettingsController extends BaseController {
 
             }
 
-            controlsTextCheck.setSelected(getUserConfigBoolean("ControlDisplayText", false));
+            controlsTextCheck.setSelected(AppVariables.controlDisplayText);
+            hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
+            FxmlControl.setTooltip(hidpiIconsCheck, new Tooltip(message("HidpiIconsComments")));
 
             imageWidthBox.getSelectionModel().select(AppVariables.getUserConfigInt("MaxImageSampleWidth", 4096) + "");
 
@@ -318,7 +320,19 @@ public class SettingsController extends BaseController {
                         return;
                     }
                     AppVariables.controlDisplayText = controlsTextCheck.isSelected();
-                    AppVariables.setUserConfigValue("ControlDisplayText", controlsTextCheck.isSelected());
+                    AppVariables.setUserConfigValue("ControlDisplayText", AppVariables.controlDisplayText);
+                    refresh();
+                }
+            });
+
+            hidpiIconsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
+                    AppVariables.setUserConfigValue("HidpiIcons", AppVariables.hidpiIcons);
                     refresh();
                 }
             });

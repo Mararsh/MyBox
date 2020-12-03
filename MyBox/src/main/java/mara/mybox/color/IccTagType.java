@@ -649,7 +649,7 @@ public class IccTagType {
     }
 
     public static byte[] uInt16Number(int d) {
-        return ByteTools.unsignedShortToBytes(d);
+        return ByteTools.uShortToBytes(d);
     }
 
     public static byte[] s15Fixed16Number(double d) {

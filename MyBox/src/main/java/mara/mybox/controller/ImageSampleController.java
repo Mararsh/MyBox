@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
@@ -24,7 +25,6 @@ import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -300,7 +300,7 @@ public class ImageSampleController extends ImageViewerController {
             return;
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                null, targetExtensionFilter, true);
+                null, targetExtensionFilter);
         if (file == null) {
             return;
         }

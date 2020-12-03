@@ -10,11 +10,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
@@ -56,7 +56,7 @@ public class ImageMetaDataController extends BaseController {
         }
         fileInput.setText(info.getFileName());
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -101,7 +101,8 @@ public class ImageMetaDataController extends BaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -117,7 +118,7 @@ public class ImageMetaDataController extends BaseController {
     @Override
     public void saveAsAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                null, targetExtensionFilter, true);
+                null, targetExtensionFilter);
         if (file == null) {
             return;
         }
@@ -130,7 +131,7 @@ public class ImageMetaDataController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -152,7 +153,8 @@ public class ImageMetaDataController extends BaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

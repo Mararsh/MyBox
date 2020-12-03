@@ -78,7 +78,7 @@ public abstract class FileEditerController extends BaseController {
     protected String filterConditions = "";
     protected StringFilterType filterType;
     protected Line_Break lineBreak;
-    protected int lineBreakWidth, lastCursor, lastCaret, currentLine;
+    protected int defaultPageSize, lineBreakWidth, lastCursor, lastCaret, currentLine;
     protected double lastScrollTop, lastScrollLeft;
     protected String lineBreakValue;
     protected String[] filterStrings;
@@ -123,6 +123,7 @@ public abstract class FileEditerController extends BaseController {
 
     public FileEditerController() {
         baseTitle = AppVariables.message("FileEditer");
+        defaultPageSize = 10000;
     }
 
     public FileEditerController(Edit_Type editType) {
@@ -289,7 +290,7 @@ public abstract class FileEditerController extends BaseController {
             }
             sourceFile = file;
             sourceInformation = FileEditInformation.newEditInformation(editType, file);
-            sourceInformation.setPageSize(AppVariables.getUserConfigInt(baseName + "PageSize", 100000));
+            sourceInformation.setPageSize(AppVariables.getUserConfigInt(baseName + "PageSize", defaultPageSize));
             sourceInformation.setCurrentPage(currentPageNumber);
             targetInformation = FileEditInformation.newEditInformation(editType);
 
@@ -737,9 +738,9 @@ public abstract class FileEditerController extends BaseController {
                         checkPageSize();
                     }
                 });
-                int pageSize = AppVariables.getUserConfigInt(baseName + "PageSize", 10000);
+                int pageSize = AppVariables.getUserConfigInt(baseName + "PageSize", defaultPageSize);
                 if (pageSize <= 0) {
-                    pageSize = 10000;
+                    pageSize = defaultPageSize;
                 }
                 pageSizeInput.setText(pageSize + "");
             }
@@ -1489,9 +1490,10 @@ public abstract class FileEditerController extends BaseController {
 
         updateCursor(pageText);
 
+        updateControls(changed);
+
         updatePairArea();
 
-        updateControls(changed);
     }
 
     protected void updateControls(boolean changed) {
@@ -1739,7 +1741,7 @@ public abstract class FileEditerController extends BaseController {
 
     protected void saveNew() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                null, targetExtensionFilter, editType != Edit_Type.Bytes);
+                null, targetExtensionFilter);
         if (file == null) {
             return;
         }
@@ -1843,7 +1845,7 @@ public abstract class FileEditerController extends BaseController {
             name = FileTools.getFilePrefix(sourceFile.getName());
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                name, targetExtensionFilter, editType != Edit_Type.Bytes);
+                name, targetExtensionFilter);
         if (file == null) {
             return;
         }

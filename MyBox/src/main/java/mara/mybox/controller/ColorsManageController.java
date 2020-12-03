@@ -401,7 +401,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
         List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
         csvExtensionFilter.add(new FileChooser.ExtensionFilter("csv", "*.csv"));
         final File file = chooseSaveFile(VisitHistoryTools.getSavedPath(FileType.Text),
-                filename + ".csv", csvExtensionFilter, false);
+                filename + ".csv", csvExtensionFilter);
         if (file == null) {
             return;
         }

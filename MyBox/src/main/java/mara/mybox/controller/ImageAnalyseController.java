@@ -961,7 +961,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, targetExtensionFilter, true);
+                    name, targetExtensionFilter);
             if (file == null) {
                 return;
             }

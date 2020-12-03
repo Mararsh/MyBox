@@ -42,7 +42,7 @@ public class TextEditInformation extends FileEditInformation {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                int textSize = FileTools.bufSize(file);
+                int textSize = FileTools.bufSize(file, 16);
                 char[] textBuf = new char[textSize];
                 char[] charBuf = new char[1];
                 boolean crlf = lineBreak.equals(Line_Break.CRLF);

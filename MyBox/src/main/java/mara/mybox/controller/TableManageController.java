@@ -27,10 +27,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableBase;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -268,7 +268,7 @@ public class TableManageController<P> extends BaseController {
         }
         tableData.clear();
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -324,7 +324,8 @@ public class TableManageController<P> extends BaseController {
             } else {
                 openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingTableData"));
             }
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -432,7 +433,7 @@ public class TableManageController<P> extends BaseController {
     @FXML
     public void examplesAction() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -449,7 +450,8 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -484,7 +486,7 @@ public class TableManageController<P> extends BaseController {
             }
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -506,7 +508,8 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -618,7 +621,7 @@ public class TableManageController<P> extends BaseController {
         }
         recordFileOpened(file);
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -636,7 +639,8 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -649,13 +653,13 @@ public class TableManageController<P> extends BaseController {
     @FXML
     protected void exportAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                message(tableName) + ".txt", CommonFxValues.AllExtensionFilter, false);
+                message(tableName) + ".txt", CommonFxValues.AllExtensionFilter);
         if (file == null) {
             return;
         }
         recordFileWritten(file);
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -673,7 +677,8 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

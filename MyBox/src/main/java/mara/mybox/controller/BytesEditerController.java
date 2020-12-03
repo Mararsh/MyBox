@@ -23,13 +23,13 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -268,6 +268,7 @@ public class BytesEditerController extends FileEditerController {
             String[] lines = text.split("\n");
             StringBuilder bytes = new StringBuilder();
             String lineText;
+            MyBoxLog.console(lines.length);
             for (String line : lines) {
                 lineText = new String(ByteTools.hexFormatToBytes(line), sourceInformation.getCharset());
                 lineText = lineText.replaceAll("\n|\r", " ") + "\n";

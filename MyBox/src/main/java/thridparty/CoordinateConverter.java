@@ -5,7 +5,7 @@ import mara.mybox.tools.DoubleTools;
 /**
  * @Author https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage
  *
- * #### Changed by Mara
+ * Changed by Mara
  */
 public class CoordinateConverter {
 

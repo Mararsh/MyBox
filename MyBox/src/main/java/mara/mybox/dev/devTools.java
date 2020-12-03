@@ -115,11 +115,16 @@ public class DevTools {
                     String bluePath = srcPath + "buttonsBlue/";
                     FileTools.clearDir(new File(bluePath));
 
-                    List<String> keeps = Arrays.asList(
-                            "iconChina.png", "iconMyBox.png", "iconRGB.png", "iconSaveAs.png",
-                            "iconHue.png", "iconColorWheel.png", "iconColor.png", "iconButterfly.png", "iconPalette.png",
-                            "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png", "iconMap.png", "iconSynchronize.png"
+                    List<String> prefix = Arrays.asList(
+                            "iconChina", "iconMyBox", "iconRGB", "iconSaveAs",
+                            "iconHue", "iconColorWheel", "iconColor", "iconButterfly", "iconPalette",
+                            "iconMosaic", "iconBlackWhite", "iconGrayscale", "iconMap", "iconSynchronize"
                     );
+                    List<String> keeps = new ArrayList<>();
+                    for (String name : prefix) {
+                        keeps.add(name + ".png");
+                        keeps.add(name + "_100.png");
+                    }
                     File[] icons = new File(lightBluePath).listFiles();
                     BufferedImage src = null;
                     ImageScope scope = new ImageScope();

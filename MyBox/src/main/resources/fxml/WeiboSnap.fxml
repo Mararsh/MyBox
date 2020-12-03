@@ -37,11 +37,11 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label minWidth="-Infinity" text="%WeiboAddress" />
                                                 <ComboBox fx:id="addressBox" editable="true" maxWidth="1.7976931348623157E308" visibleRowCount="15" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction">
+                                                <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconExamples.png" />
+                                                                <Image url="@../buttons/iconDemo.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -273,6 +273,12 @@ License:    Apache License Version 2.0
                                                 <Label text="\%" />
                                             </children>
                                         </HBox>
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                    <Label minWidth="-Infinity" text="%FontFile" wrapText="true" />
+                                    <ComboBox fx:id="fontBox" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
                                         <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%MaxMainMemPDF" />

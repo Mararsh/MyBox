@@ -29,6 +29,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.message;
@@ -62,7 +63,7 @@ public class WeiboSnapController extends BaseController {
     private ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
     @FXML
     private ComboBox<String> addressBox, zoomBox, widthBox, retryBox, dpiSelector,
-            MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox;
+            MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox, fontBox;
     @FXML
     private TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
             snapIntervalInput, customWidthInput, customHeightInput, authorInput, thresholdInput,
@@ -658,6 +659,25 @@ public class WeiboSnapController extends BaseController {
         });
         authorInput.setText(AppVariables.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
+        fontBox.getItems().addAll(SystemTools.ttfList());
+        fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue == null || newValue.isBlank()) {
+                    return;
+                }
+                AppVariables.setUserConfigValue(baseName + "TTF", newValue);
+            }
+        });
+        String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
+        if (d == null) {
+            if (!fontBox.getItems().isEmpty()) {
+                fontBox.getSelectionModel().select(0);
+            }
+        } else {
+            fontBox.setValue(d);
+        }
+
         String pdfSize = AppVariables.getUserConfigValue("WeiBoSnapPdfSize", "500M");
         if ("1G".equals(pdfSize)) {
             pdfSize1GRadio.fire();
@@ -1025,7 +1045,7 @@ public class WeiboSnapController extends BaseController {
     }
 
     @FXML
-    protected void exampleAction(ActionEvent event) {
+    protected void demo(ActionEvent event) {
         if (!addressList.contains(exmapleAddress)) {
             addressBox.setValue(exmapleAddress);
             webAddress = exmapleAddress;
@@ -1103,7 +1123,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setTempdir(AppVariables.MyBoxTempPath);
             parameters.setPdfScale(pdfScale);
             parameters.setOpenPathWhenStop(openPathCheck.isSelected());
-            parameters.setFontName("幼圆");
+            parameters.setFontFile(fontBox.getSelectionModel().getSelectedItem());
             parameters.setDithering(ditherCheck.isSelected());
             parameters.setUseTempFiles(true);
             parameters.setSnapInterval(snapInterval);

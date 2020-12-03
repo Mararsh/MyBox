@@ -413,10 +413,7 @@ public class ImageManufactureController extends ImageViewerController {
     @Override
     public boolean afterImageLoaded() {
         try {
-            if (!super.afterImageLoaded()) {
-                return false;
-            }
-            if (image == null) {
+            if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
             if (imageInformation != null) {
@@ -454,6 +451,21 @@ public class ImageManufactureController extends ImageViewerController {
             historyIndex.set(-1);
             loadImageHistories();
             updateBottom(message("Loaded"));
+
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            fitSize();
+                            refinePane();
+                        }
+                    });
+                }
+            }, 200);
+
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -535,9 +547,9 @@ public class ImageManufactureController extends ImageViewerController {
         }
         ControlStyle.setIconName(imagePaneControl, "iconDoubleLeft.png");
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-        if (scopeController.scopeAllRadio.isSelected()) {
-            scopeController.scopeRectangleRadio.fire();
-        }
+//        if (scopeController.scopeAllRadio.isSelected()) {
+//            scopeController.scopeRectangleRadio.fire();
+//        }
         fitSize();
         mainSplitPane.applyCss();
         isSettingValues = false;
@@ -1090,7 +1102,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
         try {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    saveAsPrefix(), targetExtensionFilter, true);
+                    saveAsPrefix(), targetExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -1145,8 +1157,7 @@ public class ImageManufactureController extends ImageViewerController {
         updateImage(operation, null, null, newImage, cost);
     }
 
-    public void updateImage(ImageOperation operation, String objectType, String opType,
-            Image newImage, long cost) {
+    public void updateImage(ImageOperation operation, String objectType, String opType, Image newImage, long cost) {
         try {
             recordImageHistory(operation, objectType, opType, newImage);
             String info = operation == null ? "" : AppVariables.message(operation.name());
@@ -1167,7 +1178,6 @@ public class ImageManufactureController extends ImageViewerController {
 
     public void updateImage(Image newImage, String info) {
         try {
-
             updateImage(newImage);
             showImagePane();
             scopeController.updateImage(newImage);

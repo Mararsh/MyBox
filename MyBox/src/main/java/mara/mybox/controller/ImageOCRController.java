@@ -889,7 +889,7 @@ public class ImageOCRController extends ImageViewerController {
 
             String name = (sourceFile != null ? FileTools.getFilePrefix(sourceFile.getName()) : "") + "_preprocessed";
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                    name, CommonFxValues.ImageExtensionFilter, true);
+                    name, CommonFxValues.ImageExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -1224,7 +1224,7 @@ public class ImageOCRController extends ImageViewerController {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, targetExtensionFilter, true);
+                    name, targetExtensionFilter);
             if (file == null) {
                 return;
             }

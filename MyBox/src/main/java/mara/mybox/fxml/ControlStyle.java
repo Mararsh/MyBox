@@ -478,9 +478,6 @@ public class ControlStyle {
                 case "refTipsView":
                     return new ControlStyle(id, "", message("ImageRefTips"), "", "iconTips.png");
 
-                case "fontTipsView":
-                    return new ControlStyle(id, "", message("FontFileComments"), "", "iconTips.png");
-
                 case "distanceTipsView":
                     return new ControlStyle(id, "", message("ColorMatchComments"), "", "iconTips.png");
 
@@ -1582,14 +1579,16 @@ public class ControlStyle {
             ImageView v = new ImageView(icon);
 
             if (node instanceof Labeled) {
-                if (node.getStyleClass().contains("big")) {
-                    v.setFitWidth(AppVariables.iconSize * 2);
-                    v.setFitHeight(AppVariables.iconSize * 2);
-                } else {
-                    v.setFitWidth(AppVariables.iconSize);
-                    v.setFitHeight(AppVariables.iconSize);
+                if (((Labeled) node).getGraphic() != null) {
+                    if (node.getStyleClass().contains("big")) {
+                        v.setFitWidth(AppVariables.iconSize * 2);
+                        v.setFitHeight(AppVariables.iconSize * 2);
+                    } else {
+                        v.setFitWidth(AppVariables.iconSize);
+                        v.setFitHeight(AppVariables.iconSize);
+                    }
+                    ((Labeled) node).setGraphic(v);
                 }
-                ((Labeled) node).setGraphic(v);
 
             } else if (node instanceof ImageView) {
                 ImageView nodev = (ImageView) node;
@@ -1601,11 +1600,9 @@ public class ControlStyle {
                     nodev.setFitWidth(AppVariables.iconSize * 1.2);
                     nodev.setFitHeight(AppVariables.iconSize * 1.2);
                 }
-
             }
-
         } catch (Exception e) {
-            MyBoxLog.debug(node.getId() + " " + e.toString());
+            MyBoxLog.error(e, node.getId());
 
         }
     }
@@ -1616,16 +1613,29 @@ public class ControlStyle {
                     || style.getIconName().isEmpty()) {
                 return null;
             }
-            String path = getIconPath(color);
-            return path + style.getIconName();
+            return getIcon(color, style.getIconName());
         } catch (Exception e) {
+            MyBoxLog.error(e, style.getIconName());
             return null;
         }
     }
 
-    public static String getIcon(String name) {
-        String path = getIconPath();
-        return path + name;
+    public static String getIcon(ColorStyle style, String iconName) {
+        String path = getIconPath(style);
+        String finalName = iconName;
+        if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
+            finalName = iconName.substring(0, iconName.length() - 4) + "_100.png";
+            try {
+                new ImageView(path + finalName);
+            } catch (Exception e) {
+                finalName = iconName;
+            }
+        }
+        return path + finalName;
+    }
+
+    public static String getIcon(String iconName) {
+        return getIcon(AppVariables.ControlColor, iconName);
     }
 
     public static String getIconPath() {

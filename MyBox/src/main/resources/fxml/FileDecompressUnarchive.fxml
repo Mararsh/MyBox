@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
+<BorderPane fx:id="thisPane" minHeight="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -57,15 +57,15 @@ License:    Apache License Version 2.0
                                         <RadioButton fx:id="gzRadio" layoutX="103.0" layoutY="10.0" text="gz" toggleGroup="$compressGroup" />
                                         <RadioButton layoutX="15.0" layoutY="15.0" text="bzip2" toggleGroup="$compressGroup" />
                                         <RadioButton layoutX="183.0" layoutY="15.0" text="xz" toggleGroup="$compressGroup" />
-                              <RadioButton layoutX="140.0" layoutY="56.0" text="z" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="140.0" layoutY="56.0" text="z" toggleGroup="$compressGroup" />
                                         <RadioButton fx:id="pack200Radio" layoutX="99.0" layoutY="15.0" text="pack200" toggleGroup="$compressGroup" />
                                         <RadioButton layoutX="435.0" layoutY="15.0" text="deflate" toggleGroup="$compressGroup" />
-                              <RadioButton layoutX="140.0" layoutY="56.0" text="deflate64" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="140.0" layoutY="56.0" text="deflate64" toggleGroup="$compressGroup" />
                                         <RadioButton layoutX="319.0" layoutY="56.0" text="lzma" toggleGroup="$compressGroup" />
                                         <RadioButton layoutX="15.0" layoutY="97.0" text="snappy-framed" toggleGroup="$compressGroup" />
                                         <RadioButton layoutX="176.0" layoutY="56.0" text="lz4-block" toggleGroup="$compressGroup" />
                                         <RadioButton layoutX="266.0" layoutY="138.0" text="lz4-framed" toggleGroup="$compressGroup" />
-                              <RadioButton text="%None" toggleGroup="$compressGroup" />
+                                        <RadioButton text="%None" toggleGroup="$compressGroup" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -92,9 +92,9 @@ License:    Apache License Version 2.0
                                         <RadioButton fx:id="PosterizingRadio211" layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
                                         <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
                                         <RadioButton fx:id="ThresholdingRadio2" layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
-                              <RadioButton fx:id="ThresholdingRadio21" text="arj" toggleGroup="$archiverGroup" />
-                              <RadioButton fx:id="ThresholdingRadio211" layoutX="997.0" layoutY="15.0" text="dump" toggleGroup="$archiverGroup" />
-                              <RadioButton text="%None" toggleGroup="$archiverGroup" />
+                                        <RadioButton fx:id="ThresholdingRadio21" text="arj" toggleGroup="$archiverGroup" />
+                                        <RadioButton fx:id="ThresholdingRadio211" layoutX="997.0" layoutY="15.0" text="dump" toggleGroup="$archiverGroup" />
+                                        <RadioButton text="%None" toggleGroup="$archiverGroup" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -116,6 +116,20 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </TitledPane>
+                <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                    <children>
+                        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
             </children>
             <BorderPane.margin>
                 <Insets />

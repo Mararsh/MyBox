@@ -197,7 +197,7 @@ public class HtmlViewerController extends BaseController {
             name += ".htm";
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                name, targetExtensionFilter, true);
+                name, targetExtensionFilter);
         if (file == null) {
             return;
         }

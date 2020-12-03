@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import com.sun.management.OperatingSystemMXBean;
+import java.awt.Toolkit;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public class MainMenuController extends BaseController {
             pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem;
     @FXML
     private CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
-            newWindowCheck, restoreStagesSizeCheck, popRecentCheck, controlTextCheck;
+            newWindowCheck, restoreStagesSizeCheck, popRecentCheck, controlTextCheck, hidpiIconsCheck;
     @FXML
     private Menu settingsMenu, recentMenu, helpMenu;
     @FXML
@@ -103,7 +104,8 @@ public class MainMenuController extends BaseController {
         checkIconSize();
         monitorMemroyCheck.setSelected(AppVariables.getUserConfigBoolean("MonitorMemroy", false));
         monitorCpuCheck.setSelected(AppVariables.getUserConfigBoolean("MonitorCpu", false));
-        controlTextCheck.setSelected(AppVariables.getUserConfigBoolean("ControlDisplayText", false));
+        controlTextCheck.setSelected(AppVariables.controlDisplayText);
+        hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
         newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
         restoreStagesSizeCheck.setSelected(AppVariables.restoreStagesSize);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
@@ -549,6 +551,22 @@ public class MainMenuController extends BaseController {
     protected void setControlDisplayText(ActionEvent event) {
         AppVariables.controlDisplayText = controlTextCheck.isSelected();
         AppVariables.setUserConfigValue("ControlDisplayText", controlTextCheck.isSelected());
+        refresh();
+    }
+
+    @FXML
+    protected void hidpiIcons(ActionEvent event) {
+        AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
+        AppVariables.setUserConfigValue("HidpiIcons", AppVariables.hidpiIcons);
+        if (AppVariables.hidpiIcons) {
+            if (Toolkit.getDefaultToolkit().getScreenResolution() <= 120) {
+                parentController.alertInformation(message("HidpiIconsComments"));
+            }
+        } else {
+            if (Toolkit.getDefaultToolkit().getScreenResolution() > 120) {
+                parentController.alertInformation(message("HidpiIconsComments"));
+            }
+        }
         refresh();
     }
 
@@ -1115,8 +1133,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openHtmlToUTF8(ActionEvent event) {
-        loadScene(CommonValues.HtmlToUTF8Fxml);
+    private void openHtmlSetCharset(ActionEvent event) {
+        loadScene(CommonValues.HtmlSetCharsetFxml);
     }
 
     @FXML
@@ -1203,6 +1221,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openFilesRedundancy(ActionEvent event) {
         loadScene(CommonValues.FilesRedundancyFxml);
+    }
+
+    @FXML
+    private void openTTC2TTF(ActionEvent event) {
+        loadScene(CommonValues.FileTTC2TTFFxml);
     }
 
     @FXML

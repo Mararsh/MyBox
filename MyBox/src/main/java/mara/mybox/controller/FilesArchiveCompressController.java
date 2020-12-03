@@ -247,8 +247,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
     @Override
     public void selectTargetFileFromPath(File path) {
         try {
-            final File file = chooseSaveFile(path, rootName + "." + extension,
-                    null, true);
+            final File file = chooseSaveFile(path, rootName + "." + extension, null);
             if (file == null) {
                 return;
             }
@@ -348,7 +347,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                     try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                         int len;
                         byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((len = inputStream.read(buf)) >= 0) {
+                        while ((len = inputStream.read(buf)) > 0) {
                             sevenZOutput.write(buf, 0, len);
                         }
                     }

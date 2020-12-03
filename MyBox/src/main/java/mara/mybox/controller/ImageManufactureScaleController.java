@@ -22,6 +22,7 @@ import javafx.stage.WindowEvent;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -29,7 +30,6 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -48,12 +48,15 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     @FXML
     protected ToggleGroup scaleGroup, keepGroup;
     @FXML
-    protected VBox setBox, pixelBox, keepBox, ratioBox;
+    protected VBox setBox, pixelBox, keepBox, ratioBox, hintsBox;
     @FXML
     protected ComboBox<String> scaleSelector;
     @FXML
     protected RadioButton dragRadio, scaleRadio, pixelsRadio,
-            widthRadio, heightRadio, largerRadio, smallerRadio;
+            widthRadio, heightRadio, largerRadio, smallerRadio,
+            interpolationNullRadio, interpolation9Radio, interpolation4Radio, interpolation1Radio,
+            ditherNullRadio, ditherOnRadio, ditherOffRadio, antiNullRadio, antiOnRadio, antiOffRadio,
+            qualityNullRadio, qualityOnRadio, qualityOffRadio;
     @FXML
     protected CheckBox keepRatioCheck;
     @FXML
@@ -191,7 +194,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
             if (dragRadio.isSelected()) {
                 scaleType = ScaleType.Dragging;
-                setBox.getChildren().addAll(keepBox, okButton);
+                setBox.getChildren().addAll(keepBox, hintsBox, okButton);
                 commentsLabel.setText(message("DragSizeComments"));
                 initDrag();
                 checkKeepType();
@@ -199,14 +202,14 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
             } else if (pixelsRadio.isSelected()) {
                 scaleType = ScaleType.Pixels;
-                setBox.getChildren().addAll(keepBox, pixelBox, okButton);
+                setBox.getChildren().addAll(keepBox, pixelBox, hintsBox, okButton);
                 checkKeepType();
                 checkPixelsWidth();
                 checkPixelsHeight();
 
             } else if (scaleRadio.isSelected()) {
                 scaleType = ScaleType.Scale;
-                setBox.getChildren().addAll(scaleSelector, okButton);
+                setBox.getChildren().addAll(scaleSelector, hintsBox, okButton);
                 checkScale();
             }
 
@@ -308,7 +311,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
         }
         try {
             if (keepRatioType != KeepRatioType.None) {
-                int[] wh = ImageManufacture.scale(
+                int[] wh = ImageManufacture.scaleValues(
                         (int) imageView.getImage().getWidth(),
                         (int) imageView.getImage().getHeight(),
                         (int) width, (int) height, keepRatioType);
@@ -364,7 +367,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             width = imageController.maskRectangleData.getWidth();
             height = imageController.maskRectangleData.getHeight();
         } else {
-            int[] wh = ImageManufacture.scale(
+            int[] wh = ImageManufacture.scaleValues(
                     (int) imageView.getImage().getWidth(),
                     (int) imageView.getImage().getHeight(),
                     (int) imageController.maskRectangleData.getWidth(),
@@ -405,19 +408,44 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
                 @Override
                 protected boolean handle() {
+                    int interpolation = -1, dither = -1, anti = -1, quality = -1;
+                    if (interpolation9Radio.isSelected()) {
+                        interpolation = 9;
+                    } else if (interpolation4Radio.isSelected()) {
+                        interpolation = 4;
+                    } else if (interpolation1Radio.isSelected()) {
+                        interpolation = 1;
+                    }
+                    if (ditherOnRadio.isSelected()) {
+                        dither = 1;
+                    } else if (ditherOffRadio.isSelected()) {
+                        dither = 0;
+                    }
+                    if (antiOnRadio.isSelected()) {
+                        anti = 1;
+                    } else if (antiOffRadio.isSelected()) {
+                        anti = 0;
+                    }
+                    if (qualityOnRadio.isSelected()) {
+                        quality = 1;
+                    } else if (qualityOffRadio.isSelected()) {
+                        quality = 0;
+                    }
                     switch (scaleType) {
                         case Scale:
                             if (scale <= 0) {
                                 return false;
                             }
-                            newImage = FxmlImageManufacture.scaleImage(imageView.getImage(), scale);
+                            newImage = FxmlImageManufacture.scaleImage(imageView.getImage(), scale,
+                                    dither, anti, quality, interpolation);
                             break;
                         case Dragging:
                         case Pixels:
                             if (width <= 0 || height <= 0) {
                                 return false;
                             }
-                            newImage = FxmlImageManufacture.scaleImage(imageView.getImage(), (int) width, (int) height);
+                            newImage = FxmlImageManufacture.scaleImage(imageView.getImage(), (int) width, (int) height,
+                                    dither, anti, quality, interpolation);
                             break;
                         default:
                             return false;

@@ -61,8 +61,8 @@ public class HtmlTools {
     public static String Indent = "    ";
     public static final String BaseStyle
             = ".center { text-align:center;  max-width:95%; }\n"
-            + "table { border-collapse:collapse;  margin: 8px;  max-width:95%;}\n"
-            + "table, th, td { border: 1px solid; padding: 8px;}\n"
+            + "table { max-width:95%;  }\n"
+            + "table, th, td { border-collapse: collapse; border-style: solid; border-width:1px; padding: 8px;  }\n"
             + "th { font-weight:bold;  text-align:center;}\n"
             + "tr { height: 1.2em;  }\n"
             + ".boldText { font-weight:bold;  }\n";
@@ -309,7 +309,7 @@ public class HtmlTools {
         }
     }
 
-    public static String charset(String head) {
+    public static String charsetName(String head) {
         if (head == null) {
             return null;
         }
@@ -322,39 +322,53 @@ public class HtmlTools {
         if (pos < 0) {
             return null;
         }
-        s = s.substring(0, pos);
-        pos = s.indexOf("\"");
-        if (pos >= 0) {
+        s = s.substring(0, pos).trim();
+        if (s.startsWith("\"")) {
             s = s.substring(1).trim();
             pos = s.indexOf("\"");
             if (pos >= 0) {
-                return s.substring(0, pos);
+                return s.substring(0, pos).trim();
+            } else {
+                return s;
+            }
+        } else if (s.startsWith("\'")) {
+            s = s.substring(1).trim();
+            pos = s.indexOf("\'");
+            if (pos >= 0) {
+                return s.substring(0, pos).trim();
             } else {
                 return s;
             }
         } else {
-            pos = s.indexOf("\'");
+            pos = s.indexOf("\"");
             if (pos >= 0) {
-                s = s.substring(1).trim();
+                return s.substring(0, pos).trim();
+            } else {
                 pos = s.indexOf("\'");
                 if (pos >= 0) {
                     return s.substring(0, pos).trim();
                 } else {
-                    return s;
-                }
-            } else {
-                pos = s.indexOf(";");
-                if (pos >= 0) {
-                    return s.substring(0, pos).trim();
-                } else {
-                    return s;
+                    pos = s.indexOf(";");
+                    if (pos >= 0) {
+                        return s.substring(0, pos).trim();
+                    } else {
+                        return s;
+                    }
                 }
             }
         }
     }
 
-    public static String htmlCharset(String html) {
-        return charset(head(html));
+    public static Charset charset(String head) {
+        try {
+            String name = charsetName(head);
+            if (name == null) {
+                return null;
+            }
+            return Charset.forName(name);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static File writeHtml(String html) {
@@ -1299,38 +1313,45 @@ public class HtmlTools {
         if (head == null) {
             return true;
         } else {
-            String charset = charset(head);
-            return charset == null || "utf-8".equals(charset.toLowerCase());
+            Charset charset = charset(head);
+            return charset == null || charset.equals(Charset.forName("utf-8"));
         }
     }
 
     public static String toUTF8(File htmlFile, boolean must) {
+        return setCharset(htmlFile, Charset.forName("utf-8"), must);
+    }
+
+    public static String setCharset(File htmlFile, Charset charset, boolean must) {
         try {
+            if (charset == null) {
+                return "InvalidData";
+            }
             Charset fileCharset = FileTools.charset(htmlFile);
             String html = FileTools.readTexts(htmlFile, fileCharset);
             String head = head(html);
             String preHtml = preHtml(html);
             if (head == null) {
-                if (!must && fileCharset.equals(Charset.forName("utf-8"))) {
+                if (!must && fileCharset.equals(charset)) {
                     return "NeedNot";
                 }
                 html = preHtml + "<html>\n"
                         + "    <head>\n"
-                        + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
+                        + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n"
                         + "    </head>\n"
                         + html + "\n"
                         + "</html>";
             } else {
                 String newHead;
-                String charset = charset(head);
-                if (!must && fileCharset.equals(Charset.forName("utf-8"))
-                        && (charset == null || "utf-8".equals(charset.toLowerCase()))) {
+                Charset headCharset = charset(head);
+                if (!must && fileCharset.equals(charset)
+                        && (headCharset == null || charset.equals(headCharset))) {
                     return "NeedNot";
                 }
-                if (charset != null) {
-                    newHead = head.replace(charset, "UTF-8");
+                if (headCharset != null) {
+                    newHead = FindReplaceString.replace(head, headCharset.name(), charset.name(), 0, false, true, false);
                 } else {
-                    newHead = head + "\n<meta charset=\"text/html; charset=UTF-8\"/>";
+                    newHead = head + "\n<meta charset=\"text/html; charset=" + charset.name() + "\"/>";
                 }
                 html = preHtml + "<html>\n"
                         + "    <head>\n"
@@ -1341,7 +1362,7 @@ public class HtmlTools {
             }
             return html;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e, charset.displayName());
             return null;
         }
     }

@@ -42,21 +42,20 @@ import mara.mybox.color.IccTagType;
 import mara.mybox.color.IccTags;
 import mara.mybox.color.IccXML;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.ByteTools;
+import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import static mara.mybox.value.CommonValues.Indent;
-import static mara.mybox.tools.ByteTools.bytesToHexFormat;
-import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 
 /**
  * @Author Mara
@@ -708,7 +707,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 inputName = message("File") + ": " + name;
             }
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -771,7 +770,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL, inputName + " " + message("Loading..."));
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -786,7 +786,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             profile.setNormalizeLut(lutNormalizeCheck.isSelected());
@@ -827,7 +827,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL, message("Loading..."));
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1065,7 +1066,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             return true;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return true;
             }
             task = new SingletonTask<Void>() {
@@ -1105,7 +1106,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1661,7 +1663,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         tagDescDisplay.setText(tag.getDescription());
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1698,7 +1700,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1790,7 +1793,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1808,7 +1811,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1863,14 +1867,14 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             name = embedICCName;
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Xml)),
-                name, CommonFxValues.XmlExtensionFilter, true);
+                name, CommonFxValues.XmlExtensionFilter);
         if (file == null) {
             return;
         }
         recordFileWritten(file, VisitHistory.FileType.Xml);
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1890,7 +1894,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1988,7 +1993,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -2008,7 +2013,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -2043,7 +2049,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             name = embedICCName;
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                name, targetExtensionFilter, true);
+                name, targetExtensionFilter);
         if (file == null) {
             return;
         }

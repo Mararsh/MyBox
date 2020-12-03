@@ -342,7 +342,7 @@ public class PdfHtmlViewerController extends PdfViewController {
                 return;
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    saveAsPrefix(), targetExtensionFilter, true);
+                    saveAsPrefix(), targetExtensionFilter);
             if (file == null) {
                 return;
             }

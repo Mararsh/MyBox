@@ -56,6 +56,7 @@ import mara.mybox.data.GeographyCode;
 import mara.mybox.data.QueryCondition;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlControl.ChartCoordinate;
@@ -72,7 +73,6 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -1335,7 +1335,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 + (frameLabel.getText().isBlank() ? "" : " " + frameLabel.getText())
                 + ".png";
         File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                name, CommonFxValues.ImageExtensionFilter, true);
+                name, CommonFxValues.ImageExtensionFilter);
         if (file == null) {
             return;
         }

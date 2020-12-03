@@ -14,10 +14,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -96,7 +96,7 @@ public abstract class ImagesListController extends ImageViewerController {
             tableController.tableData.clear();
 
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(sourcePathKey),
-                    null, sourceExtensionFilter, true);
+                    null, sourceExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -206,7 +206,7 @@ public abstract class ImagesListController extends ImageViewerController {
     public void saveAction() {
         if (sourceFile == null) {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    null, targetExtensionFilter, true);
+                    null, targetExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -229,7 +229,7 @@ public abstract class ImagesListController extends ImageViewerController {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, targetExtensionFilter, true);
+                    name, targetExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -276,7 +276,9 @@ public abstract class ImagesListController extends ImageViewerController {
             if (optionsBox != null) {
                 optionsBox.setDisable(false);
             }
-            tableBox.setDisable(false);
+            if (tableBox != null) {
+                tableBox.setDisable(false);
+            }
             if (sourceFile != null) {
                 getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
             }

@@ -5,6 +5,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -53,6 +54,10 @@ public class ChromaticityDiagram {
         show = new LinkedHashMap();
     }
 
+    public static ChromaticityDiagram create() {
+        return new ChromaticityDiagram();
+    }
+
     /*
         Diagram
      */
@@ -63,6 +68,7 @@ public class ChromaticityDiagram {
 
     public BufferedImage drawData() {
         try {
+//            MyBoxLog.console(width + " " + height);
             image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             g = image.createGraphics();
             if (bgColor != null) {
@@ -83,6 +89,7 @@ public class ChromaticityDiagram {
 
             // Title / Bottom
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setComposite(ac);
             if (title == null) {
                 title = message("ChromaticityDiagram");
@@ -484,16 +491,18 @@ public class ChromaticityDiagram {
         return width;
     }
 
-    public void setWidth(int width) {
+    public ChromaticityDiagram setWidth(int width) {
         this.width = width;
+        return this;
     }
 
     public int getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public ChromaticityDiagram setHeight(int height) {
         this.height = height;
+        return this;
     }
 
     public int getMargins() {
@@ -636,16 +645,18 @@ public class ChromaticityDiagram {
         return dotSize;
     }
 
-    public void setDotSize(int dotSize) {
+    public ChromaticityDiagram setDotSize(int dotSize) {
         this.dotSize = dotSize;
+        return this;
     }
 
     public boolean isIsLine() {
         return isLine;
     }
 
-    public void setIsLine(boolean isLine) {
+    public ChromaticityDiagram setIsLine(boolean isLine) {
         this.isLine = isLine;
+        return this;
     }
 
     public boolean isShow2Degree() {
@@ -696,48 +707,54 @@ public class ChromaticityDiagram {
         return bgColor;
     }
 
-    public void setBgColor(Color bgColor) {
+    public ChromaticityDiagram setBgColor(Color bgColor) {
         this.bgColor = bgColor;
+        return this;
     }
 
     public double getCalculateX() {
         return calculateX;
     }
 
-    public void setCalculateX(double calculateX) {
+    public ChromaticityDiagram setCalculateX(double calculateX) {
         this.calculateX = calculateX;
+        return this;
     }
 
     public double getCalculateY() {
         return calculateY;
     }
 
-    public void setCalculateY(double calculateY) {
+    public ChromaticityDiagram setCalculateY(double calculateY) {
         this.calculateY = calculateY;
+        return this;
     }
 
     public Color getCalculateColor() {
         return calculateColor;
     }
 
-    public void setCalculateColor(Color calculateColor) {
+    public ChromaticityDiagram setCalculateColor(Color calculateColor) {
         this.calculateColor = calculateColor;
+        return this;
     }
 
     public String getDataSourceTexts() {
         return dataSourceTexts;
     }
 
-    public void setDataSourceTexts(String dataSourceTexts) {
+    public ChromaticityDiagram setDataSourceTexts(String dataSourceTexts) {
         this.dataSourceTexts = dataSourceTexts;
+        return this;
     }
 
     public int getFontSize() {
         return fontSize;
     }
 
-    public void setFontSize(int fontSize) {
+    public ChromaticityDiagram setFontSize(int fontSize) {
         this.fontSize = fontSize;
+        return this;
     }
 
     public Font getCommentsFont() {

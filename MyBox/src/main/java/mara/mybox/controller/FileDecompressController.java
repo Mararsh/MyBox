@@ -33,7 +33,7 @@ public class FileDecompressController extends BaseController {
         sourceFile = file;
         this.compressor = compressor;
         this.archiverChoice = archiverChoice;
-        if (sourceFile == null || !sourceFile.exists()) {
+        if (sourceFile == null || !sourceFile.exists() || compressor == null) {
             closeStage();
             return;
         }
@@ -42,10 +42,6 @@ public class FileDecompressController extends BaseController {
                 + FileTools.showFileSize(sourceFile.length()));
         startButton.disableProperty().unbind();
         startButton.setDisable(false);
-//        startButton.disableProperty().bind(
-//                Bindings.isEmpty(targetPathInput.textProperty())
-//                        .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-//        );
     }
 
     @FXML
@@ -55,49 +51,43 @@ public class FileDecompressController extends BaseController {
             popError(message("InvalidTargetPath"));
             return;
         }
-        if (sourceFile == null || !sourceFile.exists()) {
+        if (sourceFile == null || !sourceFile.exists() || compressor == null) {
             closeStage();
             return;
         }
-
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
-                boolean skip;
-                Map<String, Object> decompress;
+                File decompressFile;
                 String archiver;
 
                 @Override
                 protected boolean handle() {
                     try {
+                        Map<String, Object> decompressedResults = null;
                         String filename = sourceFile.getName();
-                        if (compressor != null) {
-                            String suffix = "." + CompressTools.extensionByCompressor(compressor);
-                            if (filename.toLowerCase().endsWith(suffix)) {
-                                targetFile = makeTargetFile(
-                                        filename.substring(0, filename.length() - suffix.length()), targetPath);
-                            } else {
-                                targetFile = makeTargetFile(filename, targetPath);
+                        String suffix = CompressTools.extensionByCompressor(compressor);
+                        if (suffix != null && filename.toLowerCase().endsWith("." + suffix)) {
+                            File dFile = makeTargetFile(filename.substring(0, filename.length() - suffix.length() - 1), targetPath);
+                            if (dFile == null) {
+                                return true;
                             }
-                        } else {
-                            targetFile = makeTargetFile(filename, targetPath);
+                            decompressedResults = CompressTools.decompress(sourceFile, compressor, dFile);
                         }
-                        skip = targetFile == null;
-                        if (skip) {
-                            return true;
+                        if (decompressedResults == null) {
+                            return false;
                         }
-                        decompress = CompressTools.decompress(sourceFile, compressor, targetFile);
-                        if (decompress == null) {
+                        decompressFile = (File) decompressedResults.get("decompressedFile");
+                        if (decompressFile == null || !decompressFile.exists()) {
                             return false;
                         }
                         if (archiverChoice == null || "auto".equals(archiverChoice)) {
-                            archiver = CompressTools.detectArchiver(targetFile);
+                            archiver = CompressTools.detectArchiver(decompressFile);
                         } else {
-                            archiver = CompressTools.detectArchiver(targetFile, archiverChoice);
+                            archiver = CompressTools.detectArchiver(decompressFile, archiverChoice);
                         }
-
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
@@ -107,27 +97,26 @@ public class FileDecompressController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (targetFile == null || !targetFile.exists()) {
-                        startButton.setDisable(true);
-                        popError(AppVariables.message("InvalidFormatTryOther"));
+                    if (decompressFile == null || !decompressFile.exists()) {
+                        popFailed();
                         return;
                     }
                     if (archiver != null) {
                         FileUnarchiveController controller
                                 = (FileUnarchiveController) openStage(CommonValues.FileUnarchiveFxml);
-                        controller.loadFile(targetFile, archiver);
-                        closeStage();
-                    } else if (decompress != null) {
-                        File path = targetFile.getParentFile();
+                        controller.loadFile(decompressFile, archiver);
+                    } else {
+                        File path = decompressFile.getParentFile();
                         browseURI(path.toURI());
                         recordFileOpened(path);
-                        closeStage();
                     }
+                    closeStage();
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

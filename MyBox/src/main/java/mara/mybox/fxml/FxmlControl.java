@@ -606,20 +606,14 @@ public class FxmlControl {
     }
 
     public static void moveXCenter(Region pNnode, Node node) {
-        try {
-            if (node == null || pNnode == null) {
-                return;
-            }
-            double xOffset = pNnode.getWidth() - node.getBoundsInLocal().getWidth();
-
-            if (xOffset > 0) {
-//                MyBoxLog.debug(pNnode.getWidth() + " " + node.getBoundsInLocal().getWidth());
-                node.setLayoutX(pNnode.getLayoutX() + xOffset / 2);
-//                MyBoxLog.debug(pNnode.getLayoutX() + " " + xOffset / 2 + " " + node.getLayoutX());
-            } else {
-                node.setLayoutX(0);
-            }
-        } catch (Exception e) {
+        if (node == null || pNnode == null) {
+            return;
+        }
+        double xOffset = pNnode.getBoundsInParent().getWidth() - node.getBoundsInParent().getWidth();
+        if (xOffset > 0) {
+            node.setLayoutX(xOffset / 2);
+        } else {
+            node.setLayoutX(0);
         }
     }
 
@@ -627,9 +621,11 @@ public class FxmlControl {
         if (node == null || pNnode == null) {
             return;
         }
-        double yOffset = pNnode.getHeight() - node.getBoundsInLocal().getHeight();
+        double yOffset = pNnode.getBoundsInParent().getHeight() - node.getBoundsInParent().getHeight();
         if (yOffset > 0) {
-            node.setLayoutY(pNnode.getLayoutY() + yOffset / 2);
+            node.setLayoutY(yOffset / 2);
+        } else {
+            node.setLayoutY(0);
         }
     }
 
@@ -639,10 +635,10 @@ public class FxmlControl {
     }
 
     public static void moveXCenter(Node node) {
-        if (node == null || node.getParent() == null) {
+        if (node == null) {
             return;
         }
-        double xOffset = node.getParent().getBoundsInLocal().getWidth() - node.getBoundsInLocal().getWidth();
+        double xOffset = node.getBoundsInParent().getWidth() - node.getBoundsInParent().getWidth();
         if (xOffset > 0) {
             node.setLayoutX(xOffset / 2);
         } else {
@@ -651,12 +647,14 @@ public class FxmlControl {
     }
 
     public static void moveYCenter(Node node) {
-        if (node == null || node.getParent() == null) {
+        if (node == null) {
             return;
         }
-        double yOffset = node.getParent().getBoundsInLocal().getHeight() - node.getBoundsInLocal().getHeight();
+        double yOffset = node.getBoundsInParent().getHeight() - node.getBoundsInParent().getHeight();
         if (yOffset > 0) {
             node.setLayoutY(yOffset / 2);
+        } else {
+            node.setLayoutY(0);
         }
     }
 
@@ -671,10 +669,9 @@ public class FxmlControl {
                     || sPane == null) {
                 return;
             }
-            iView.setFitWidth(sPane.getWidth() - 20);
-            iView.setFitHeight(sPane.getHeight() - 20);
-            FxmlControl.moveXCenter(sPane, iView);
-            iView.setLayoutY(10);
+            iView.setFitWidth(sPane.getBoundsInLocal().getWidth());
+            iView.setFitHeight(sPane.getBoundsInLocal().getHeight());
+            FxmlControl.moveCenter(sPane, iView);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }
@@ -688,15 +685,15 @@ public class FxmlControl {
             }
             iView.setFitWidth(iView.getImage().getWidth());
             iView.setFitHeight(iView.getImage().getHeight());
-            FxmlControl.moveXCenter(sPane, iView);
-            iView.setLayoutY(10);
+            FxmlControl.moveCenter(sPane, iView);
+//            MyBoxLog.console(iView.getImage().getWidth() + " " + iView.getImage().getHeight());
+//            iView.setLayoutY(10);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }
     }
 
-    public static void zoomIn(ScrollPane sPane, ImageView iView, int xZoomStep,
-            int yZoomStep) {
+    public static void zoomIn(ScrollPane sPane, ImageView iView, int xZoomStep, int yZoomStep) {
         double currentWidth = iView.getFitWidth();
         if (currentWidth == -1) {
             currentWidth = iView.getImage().getWidth();
@@ -707,11 +704,10 @@ public class FxmlControl {
             currentHeight = iView.getImage().getHeight();
         }
         iView.setFitHeight(currentHeight + yZoomStep);
-        FxmlControl.moveXCenter(sPane, iView);
+        FxmlControl.moveCenter(sPane, iView);
     }
 
-    public static void zoomOut(ScrollPane sPane, ImageView iView, int xZoomStep,
-            int yZoomStep) {
+    public static void zoomOut(ScrollPane sPane, ImageView iView, int xZoomStep, int yZoomStep) {
         double currentWidth = iView.getFitWidth();
         if (currentWidth == -1) {
             currentWidth = iView.getImage().getWidth();
@@ -728,7 +724,7 @@ public class FxmlControl {
             return;
         }
         iView.setFitHeight(currentHeight - yZoomStep);
-        FxmlControl.moveXCenter(sPane, iView);
+        FxmlControl.moveCenter(sPane, iView);
     }
 
     // https://stackoverflow.com/questions/38599588/javafx-stage-setmaximized-only-works-once-on-mac-osx-10-9-5

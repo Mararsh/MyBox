@@ -9,10 +9,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Modality;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -81,7 +81,7 @@ public class FileDecompressUnarchiveController extends BaseController {
         } else if (compressorChoice.equals(message("None"))) {
             compressorChoice = "none";
         }
-        readFile();
+        startAction();
     }
 
     protected void checkArchiver() {
@@ -92,7 +92,7 @@ public class FileDecompressUnarchiveController extends BaseController {
         } else if (archiverChoice.equals(message("None"))) {
             archiverChoice = "none";
         }
-        readFile();
+        startAction();
     }
 
     protected void checkSevenCompress() {
@@ -114,16 +114,14 @@ public class FileDecompressUnarchiveController extends BaseController {
     }
 
     @Override
-    public void sourceFileChanged(final File file) {
-        try {
-            sourceFile = file;
-            readFile();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
+    public void sourceFileChanged(File file) {
+        sourceFile = file;
+        startAction();
     }
 
-    public void readFile() {
+    @FXML
+    @Override
+    public void startAction() {
         compressor = null;
         archiver = null;
         if (sourceFile == null || badStyle.equals(sourceFileInput.getStyle())) {
@@ -131,7 +129,7 @@ public class FileDecompressUnarchiveController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -139,7 +137,6 @@ public class FileDecompressUnarchiveController extends BaseController {
                 @Override
                 protected boolean handle() {
                     try {
-
                         switch (compressorChoice) {
                             case "none":
                                 compressor = null;
@@ -150,7 +147,6 @@ public class FileDecompressUnarchiveController extends BaseController {
                             default:
                                 compressor = CompressTools.detectCompressor(sourceFile, compressorChoice);
                         }
-
                         if (compressor == null) {
                             switch (archiverChoice) {
                                 case "none":
@@ -163,9 +159,9 @@ public class FileDecompressUnarchiveController extends BaseController {
                                     archiver = CompressTools.detectArchiver(sourceFile, archiverChoice);
                             }
                         }
-
                         return true;
                     } catch (Exception e) {
+                        MyBoxLog.debug(e, sourceFile.getAbsolutePath());
                         error = e.toString();
                         return false;
                     }
@@ -187,15 +183,16 @@ public class FileDecompressUnarchiveController extends BaseController {
                         } else {
                             popError(AppVariables.message("InvalidFormatTryOther"));
                         }
-
                     } catch (Exception e) {
-                        error = e.toString();
+                        MyBoxLog.debug(e, sourceFile.getAbsolutePath());
+                        popError(e.toString());
                     }
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

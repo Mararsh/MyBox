@@ -169,7 +169,7 @@ public class FindReplaceFile extends FindReplaceString {
                 inputStream.skip(bytes.length);
 //                MyBoxLog.debug(bytes.length);
             }
-            int pageSize = FileTools.bufSize(sourceFile);
+            int pageSize = FileTools.bufSize(sourceFile, 16);
 //            MyBoxLog.debug(availableMem + " " + sourceFile.length() + " " + pageSize);
             char[] textBuf = new char[pageSize];
             char[] charBuf = new char[1];
@@ -239,7 +239,7 @@ public class FindReplaceFile extends FindReplaceString {
                     return null;
                 }
             }
-            int pageSize = FileTools.bufSize(sourceFile);
+            int pageSize = FileTools.bufSize(sourceFile, 16);
 //            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
 //            String findString = findReplaceFile.getFileFindString().replaceAll("\n", sourceInfo.getLineBreakValue());
             String findString = findReplaceFile.getFileFindString();
@@ -423,7 +423,7 @@ public class FindReplaceFile extends FindReplaceString {
                     return null;
                 }
             }
-            int pageSize = FileTools.bufSize(sourceFile);
+            int pageSize = FileTools.bufSize(sourceFile, 16);
 //            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
@@ -635,7 +635,7 @@ public class FindReplaceFile extends FindReplaceString {
             findReplaceFile.setFileInfo(sourceInfo);
             File sourceFile = sourceInfo.getFile();
 //            MyBoxLog.debug(sourceFile);
-            int pageSize = FileTools.bufSize(sourceFile);
+            int pageSize = FileTools.bufSize(sourceFile, 16);
 //            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             String replaceString = findReplaceFile.getFileReplaceString();
@@ -803,9 +803,7 @@ public class FindReplaceFile extends FindReplaceString {
         File sourceFile = sourceInfo.getFile();
 //        MyBoxLog.debug("sourceFile:" + sourceFile);
         try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile))) {
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(sourceFile.length(), availableMem / 48);
+            int pageSize = FileTools.bufSize(sourceFile, 48);
 //            MyBoxLog.debug(availableMem + " " + sourceFile.length() + " " + pageSize);
             byte[] pageBytes = new byte[pageSize];
             // findString should have been in hex format
@@ -872,9 +870,7 @@ public class FindReplaceFile extends FindReplaceString {
                     return null;
                 }
             }
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(fileLength, availableMem / 48);
+            int pageSize = FileTools.bufSize(sourceFile, 48);
 //            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
@@ -1036,9 +1032,7 @@ public class FindReplaceFile extends FindReplaceString {
                 }
             }
 //            MyBoxLog.debug("position:" + position + " bytesPosition:" + bytesPosition);
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(fileLength, availableMem / 48);
+            int pageSize = FileTools.bufSize(sourceFile, 48);
 //            MyBoxLog.debug("pageSize:" + pageSize + " fileLength:" + fileLength + " availableMem:" + availableMem);
             String findString = findReplaceFile.getFileFindString();
             FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
@@ -1246,9 +1240,7 @@ public class FindReplaceFile extends FindReplaceString {
             sourceInfo.setFindReplace(findReplaceFile);
             findReplaceFile.setFileInfo(sourceInfo);
             File sourceFile = sourceInfo.getFile();
-            Runtime r = Runtime.getRuntime();
-            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-            int pageSize = (int) Math.min(sourceFile.length(), availableMem / 48);
+            int pageSize = FileTools.bufSize(sourceFile, 48);
 //            MyBoxLog.debug(pageSize + " " + sourceFile.length() + " " + availableMem);
             String findString = findReplaceFile.getFileFindString();
             String replaceString = findReplaceFile.getFileReplaceString();

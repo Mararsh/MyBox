@@ -23,13 +23,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -45,7 +46,6 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
  */
 public class ImagesCombinePdfController extends ImagesListController {
 
-    private final String ImageCombineMarginsKey, AuthorKey;
     protected int marginSize, pageWidth, pageHeight, jpegQuality, threshold;
     protected boolean isImageSize;
     private PdfImageFormat pdfFormat;
@@ -64,8 +64,6 @@ public class ImagesCombinePdfController extends ImagesListController {
     public ImagesCombinePdfController() {
         baseTitle = AppVariables.message("ImagesCombinePdf");
 
-        ImageCombineMarginsKey = "ImageCombineMarginsKey";
-        AuthorKey = "AuthorKey";
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = CommonFxValues.PdfExtensionFilter;
     }
@@ -188,7 +186,7 @@ public class ImagesCombinePdfController extends ImagesListController {
                 try {
                     marginSize = Integer.valueOf(newValue);
                     if (marginSize >= 0) {
-                        AppVariables.setUserConfigValue(ImageCombineMarginsKey, newValue);
+                        AppVariables.setUserConfigValue(baseName + "MarginsSize", newValue);
                         FxmlControl.setEditorNormal(MarginsBox);
                     } else {
                         marginSize = 0;
@@ -201,34 +199,34 @@ public class ImagesCombinePdfController extends ImagesListController {
                 }
             }
         });
-        MarginsBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageCombineMarginsKey, "20"));
+        MarginsBox.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "MarginsSize", "20"));
 
-        if (fontBox != null) {
-            fontBox.getItems().addAll(Arrays.asList(
-                    "幼圆",
-                    "仿宋",
-                    "隶书",
-                    "Helvetica",
-                    "Courier",
-                    "Times New Roman"
-            ));
-            fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov,
-                        String oldValue, String newValue) {
+        fontBox.getItems().addAll(SystemTools.ttfList());
+        fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue == null || newValue.isBlank()) {
+                    return;
                 }
-            });
-            fontBox.getSelectionModel().select(0);
-
+                AppVariables.setUserConfigValue(baseName + "TTF", newValue);
+            }
+        });
+        String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
+        if (d == null) {
+            if (!fontBox.getItems().isEmpty()) {
+                fontBox.getSelectionModel().select(0);
+            }
+        } else {
+            fontBox.setValue(d);
         }
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVariables.setUserConfigValue(AuthorKey, newValue);
+                AppVariables.setUserConfigValue(baseName + "Author", newValue);
             }
         });
-        authorInput.setText(AppVariables.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
+        authorInput.setText(AppVariables.getUserConfigValue(baseName + "Author", System.getProperty("user.name")));
 
     }
 
@@ -463,7 +461,7 @@ public class ImagesCombinePdfController extends ImagesListController {
         }
 
         final File file = chooseSaveFile(VisitHistoryTools.getSavedPath(VisitHistory.FileType.PDF),
-                null, targetExtensionFilter, true);
+                null, targetExtensionFilter);
         if (file == null) {
             return;
         }

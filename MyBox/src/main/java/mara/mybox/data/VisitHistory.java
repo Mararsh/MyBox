@@ -54,6 +54,8 @@ public class VisitHistory {
         public static int Media = 15;
         public static int Certificate = 16;
         public static int StreamMedia = 17;
+        public static int TTC = 18;
+        public static int TTF = 19;
 
         public static int FileHistory = 50;
 

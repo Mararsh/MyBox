@@ -18,13 +18,14 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Ogmios
- *
- * #### Changed a little by Mara
  * https://stackoverflow.com/questions/24694616/how-to-enable-commit-on-focuslost-for-tableview-treetableview
+ *
+ * Changed by Mara
+ *
+ * This is an old issue since 2011
+ * https://bugs.openjdk.java.net/browse/JDK-8089514
+ * https://bugs.openjdk.java.net/browse/JDK-8089311
  */
-// This is an old issue since 2011
-// https://bugs.openjdk.java.net/browse/JDK-8089514
-// https://bugs.openjdk.java.net/browse/JDK-8089311
 public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
 
     protected TextField txtFldRef;

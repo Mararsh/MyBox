@@ -1498,9 +1498,6 @@ public class BaseController implements Initializable {
 
     @FXML
     public void selectTargetPath() {
-        if (targetPathInput == null) {
-            return;
-        }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
             File path = AppVariables.getUserConfigPath(targetPathKey);
@@ -1518,7 +1515,9 @@ public class BaseController implements Initializable {
     }
 
     public void selectTargetPath(File directory) {
-        targetPathInput.setText(directory.getPath());
+        if (targetPathInput != null) {
+            targetPathInput.setText(directory.getPath());
+        }
 
         recordFileWritten(directory);
         targetPathChanged();
@@ -1540,7 +1539,7 @@ public class BaseController implements Initializable {
             if (sourceFile != null) {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
-            final File file = chooseSaveFile(path, name, targetExtensionFilter, true);
+            final File file = chooseSaveFile(path, name, targetExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -1985,7 +1984,7 @@ public class BaseController implements Initializable {
     //
     public File makeTargetFile(String fileName, File targetPath) {
         try {
-            String namePrefix = FileTools.getNamePrefix(fileName);
+            String namePrefix = FileTools.namePrefix(fileName);
             String nameSuffix = FileTools.getFileSuffix(fileName);
             if (targetFileType != null) {
                 nameSuffix = "." + targetFileType;
@@ -2418,16 +2417,11 @@ public class BaseController implements Initializable {
 
     public File chooseSaveFile(File defaultPath, String defaultName,
             List<FileChooser.ExtensionFilter> filters) {
-        return chooseSaveFile(null, defaultPath, defaultName, filters, true);
+        return chooseSaveFile(null, defaultPath, defaultName, filters);
     }
 
-    public File chooseSaveFile(File defaultPath, String defaultName,
-            List<FileChooser.ExtensionFilter> filters, boolean mustHaveExtension) {
-        return chooseSaveFile(null, defaultPath, defaultName, filters, mustHaveExtension);
-    }
-
-    public File chooseSaveFile(String title, File defaultPath,
-            String defaultName, List<FileChooser.ExtensionFilter> filters, boolean mustHaveExtension) {
+    public File chooseSaveFile(String title, File defaultPath, String defaultName,
+            List<FileChooser.ExtensionFilter> filters) {
         try {
             FileChooser fileChooser = new FileChooser();
             if (title != null) {
@@ -2440,7 +2434,6 @@ public class BaseController implements Initializable {
             String suffix = null;
             if (filters != null) {
                 suffix = FileTools.getFileSuffix(filters.get(0).getExtensions().get(0));
-
                 fileChooser.getExtensionFilters().addAll(filters);
             }
             if ("*".equals(suffix)) {
@@ -2466,12 +2459,30 @@ public class BaseController implements Initializable {
             }
             // https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
             // This is a pretty annoying thing in JavaFX - they will automatically append the extension on Windows, but not on Linux or Mac.
-            if (mustHaveExtension && FileTools.getFileSuffix(file.getName()).isEmpty()) {
-                if (suffix == null) {
-                    popError(message("NoFileExtension"), 3000);
-                    return null;
+            if (FileTools.getFileSuffix(file.getName()).isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                if (myStage != null) {
+                    alert.setTitle(myStage.getTitle());
                 }
-                file = new File(file.getAbsolutePath() + "." + suffix);
+                alert.setHeaderText(null);
+                alert.setContentText(message("SureNoFileExtension"));
+                ButtonType buttonSure = new ButtonType(message("Sure"));
+                ButtonType buttonNo = new ButtonType(message("No"));
+                ButtonType buttonCancel = new ButtonType(message("Cancel"));
+                alert.getButtonTypes().setAll(buttonCancel, buttonNo, buttonSure);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() != buttonSure) {
+                    if (result.get() == buttonNo) {
+                        return chooseSaveFile(title, defaultPath, defaultName, filters);
+                    } else {
+                        return null;
+                    }
+                }
             }
             return file;
 

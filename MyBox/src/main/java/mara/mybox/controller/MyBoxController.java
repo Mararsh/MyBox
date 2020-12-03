@@ -302,9 +302,9 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.HtmlToPdfFxml);
         });
 
-        MenuItem HtmlToUTF8 = new MenuItem(AppVariables.message("HtmlToUTF8"));
-        HtmlToUTF8.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.HtmlToUTF8Fxml);
+        MenuItem HtmlSetCharset = new MenuItem(AppVariables.message("HtmlSetCharset"));
+        HtmlSetCharset.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.HtmlSetCharsetFxml);
         });
 
         MenuItem HtmlSnap = new MenuItem(AppVariables.message("HtmlSnap"));
@@ -339,7 +339,7 @@ public class MyBoxController extends BaseController {
 
         htmlMenu.getItems().addAll(
                 htmlEditor, HtmlSnap, new SeparatorMenuItem(),
-                htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlToUTF8, new SeparatorMenuItem(),
+                htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );
 
@@ -871,9 +871,14 @@ public class MyBoxController extends BaseController {
 
         Menu archiveCompressMenu = new Menu(AppVariables.message("FilesArchiveCompress"));
         archiveCompressMenu.getItems().addAll(
-                filesArchiveCompress, filesCompress,
-                filesDecompressUnarchive, filesDecompressUnarchiveBatch
+                filesDecompressUnarchive, filesDecompressUnarchiveBatch,
+                filesArchiveCompress, filesCompress
         );
+
+        MenuItem TTC2TTF = new MenuItem(AppVariables.message("TTC2TTF"));
+        TTC2TTF.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.FileTTC2TTFFxml);
+        });
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
@@ -883,7 +888,7 @@ public class MyBoxController extends BaseController {
                 filesFind, filesRedundancy, filesCompare, new SeparatorMenuItem(),
                 filesRename, filesCopy, filesMove, new SeparatorMenuItem(),
                 fileDeleteMenu, new SeparatorMenuItem(),
-                archiveCompressMenu
+                archiveCompressMenu, new SeparatorMenuItem(), TTC2TTF
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

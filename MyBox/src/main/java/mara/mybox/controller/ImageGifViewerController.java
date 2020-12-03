@@ -22,6 +22,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageFileInformation;
@@ -30,7 +31,6 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -335,7 +335,7 @@ public class ImageGifViewerController extends ImageViewerController {
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                     FileTools.getFilePrefix(sourceFile.getName()),
-                    CommonFxValues.ImageExtensionFilter, true);
+                    CommonFxValues.ImageExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -467,7 +467,7 @@ public class ImageGifViewerController extends ImageViewerController {
         }
         try {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    "gif", CommonFxValues.GifExtensionFilter, true);
+                    "gif", CommonFxValues.GifExtensionFilter);
             if (file == null) {
                 return;
             }

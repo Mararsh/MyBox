@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
@@ -17,7 +18,6 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -172,7 +172,7 @@ public class ImageFramesViewerController extends ImagesListController {
             final File tFile = chooseSaveFile(message("FilePrefixInput"),
                     AppVariables.getUserConfigPath(targetPathKey),
                     FileTools.getFilePrefix(sourceFile.getName()),
-                    CommonFxValues.ImageExtensionFilter, true);
+                    CommonFxValues.ImageExtensionFilter);
             if (tFile == null) {
                 return;
             }

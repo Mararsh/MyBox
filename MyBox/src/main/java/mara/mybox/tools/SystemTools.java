@@ -17,8 +17,10 @@ import javafx.scene.input.Clipboard;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -324,23 +326,35 @@ public class SystemTools {
         List<String> names = new ArrayList<>();
         try {
             String os = os();
-            File ttfPath = null;
+            File ttfPath;
             switch (os) {
                 case "win":
                     ttfPath = new File("C:/Windows/Fonts/");
-                    names = ttfList(ttfPath);
+                    names.addAll(ttfList(ttfPath));
                     break;
                 case "linux":
                     ttfPath = new File("/usr/share/fonts/");
-                    names = ttfList(ttfPath);
+                    names.addAll(ttfList(ttfPath));
+                    ttfPath = new File("/usr/lib/kbd/consolefonts/");
+                    names.addAll(ttfList(ttfPath));
                     break;
                 case "mac":
                     ttfPath = new File("/Library/Fonts/");
-                    names = ttfList(ttfPath);
+                    names.addAll(ttfList(ttfPath));
                     ttfPath = new File("/System/Library/Fonts/");
                     names.addAll(ttfList(ttfPath));
                     break;
             }
+
+            // http://wenq.org/wqy2/
+            File wqy_microhei = FxmlControl.getInternalFile("/data/wqy-microhei.ttf", "data", "wqy-microhei.ttf", false);
+            String wqy_microhei_name = wqy_microhei.getAbsolutePath() + "      " + message("wqy_microhei");
+            if (!names.isEmpty() && names.get(0).contains("    ")) {
+                names.add(1, wqy_microhei_name);
+            } else {
+                names.add(0, wqy_microhei_name);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -398,12 +412,30 @@ public class SystemTools {
             if (names.contains(pathname + "simhei.ttf")) {
                 cnames.add(pathname + "simhei.ttf" + "      黑体");
             }
+
+            for (String name : names) {
+                if (name.contains(pathname + "华文")) {
+                    cnames.add(name);
+                }
+            }
+
             names.addAll(0, cnames);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return names;
+    }
+
+    public static String ttf(String item) {
+        if (item == null) {
+            return null;
+        }
+        int pos = item.indexOf("    ");
+        if (pos > 0) {
+            return item.substring(0, pos);
+        }
+        return item;
     }
 
 }

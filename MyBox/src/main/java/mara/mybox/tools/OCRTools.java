@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -126,11 +126,6 @@ public class OCRTools {
             if (!osd.exists()) {
                 File tmp = FxmlControl.getInternalFile("/tessdata/osd.traineddata");
                 FileTools.copyFile(tmp, osd);
-            }
-            File pdfttf = new File(path.getAbsolutePath() + File.separator + "pdf.ttf");
-            if (!pdfttf.exists()) {
-                File tmp = FxmlControl.getInternalFile("/tessdata/pdf.ttf");
-                FileTools.copyFile(tmp, pdfttf);
             }
             AppVariables.setUserConfigValue(TessDataPath, path.getAbsolutePath());
             return true;

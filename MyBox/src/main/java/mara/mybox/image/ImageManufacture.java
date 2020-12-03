@@ -199,7 +199,8 @@ public class ImageManufacture {
         return true;
     }
 
-    public static BufferedImage scaleImage(BufferedImage source, int width, int height) {
+    public static BufferedImage scaleImage(BufferedImage source, int width, int height,
+            int dither, int antiAlias, int quality, int interpolation) {
         if (width <= 0 || height <= 0
                 || (width == source.getWidth() && height == source.getHeight())) {
             return source;
@@ -210,35 +211,86 @@ public class ImageManufacture {
         }
         BufferedImage target = new BufferedImage(width, height, imageType);
         Graphics2D g = target.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (antiAlias == 1) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        } else if (antiAlias == 0) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        }
+        if (quality == 1) {
+            g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        } else if (quality == 0) {
+            g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        }
+        if (dither == 1) {
+            g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+        } else if (dither == 0) {
+            g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+        }
+        switch (interpolation) {
+            case 1:
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                break;
+            case 4:
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                break;
+            case 9:
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                break;
+        }
         g.setBackground(CommonFxValues.TRANSPARENT);
         g.drawImage(source, 0, 0, width, height, null);
         g.dispose();
         return target;
     }
 
+    public static BufferedImage scaleImage(BufferedImage source, int width, int height) {
+        return scaleImage(source, width, height, -1, -1, -1, -1);
+    }
+
     public static BufferedImage scaleImageWidthKeep(BufferedImage source, int width) {
+        return scaleImageWidthKeep(source, width, -1, -1, -1, -1);
+    }
+
+    public static BufferedImage scaleImageWidthKeep(BufferedImage source, int width,
+            int dither, int antiAlias, int quality, int interpolation) {
         if (width <= 0 || width == source.getWidth()) {
             return source;
         }
         int height = source.getHeight() * width / source.getWidth();
-        return scaleImage(source, width, height);
+        return scaleImage(source, width, height, dither, antiAlias, quality, interpolation);
     }
 
     public static BufferedImage scaleImageHeightKeep(BufferedImage source, int height) {
         int width = source.getWidth() * height / source.getHeight();
-        return scaleImage(source, width, height);
+        return scaleImageHeightKeep(source, height, -1, -1, -1, -1);
+    }
+
+    public static BufferedImage scaleImageHeightKeep(BufferedImage source, int height,
+            int dither, int antiAlias, int quality, int interpolation) {
+        int width = source.getWidth() * height / source.getHeight();
+        return scaleImage(source, width, height, dither, antiAlias, quality, interpolation);
     }
 
     public static BufferedImage scaleImageByScale(BufferedImage source, float scale) {
         return scaleImageByScale(source, scale, scale);
     }
 
+    public static BufferedImage scaleImageByScale(BufferedImage source, float scale,
+            int dither, int antiAlias, int quality, int interpolation) {
+        return scaleImageByScale(source, scale, scale, dither, antiAlias, quality, interpolation);
+    }
+
     public static BufferedImage scaleImageByScale(BufferedImage source, float xscale, float yscale) {
+        return scaleImageByScale(source, xscale, yscale, -1, -1, -1, -1);
+    }
+
+    public static BufferedImage scaleImageByScale(BufferedImage source, float xscale, float yscale,
+            int dither, int antiAlias, int quality, int interpolation) {
         int width = (int) (source.getWidth() * xscale);
         int height = (int) (source.getHeight() * yscale);
-        return scaleImage(source, width, height);
+        return scaleImage(source, width, height, dither, antiAlias, quality, interpolation);
     }
 
     public static BufferedImage scaleImageLess(BufferedImage source, int size) {
@@ -252,7 +304,7 @@ public class ImageManufacture {
         return scaleImageByScale(source, scale);
     }
 
-    public static int[] scale(int sourceX, int sourceY, int newWidth, int newHeight, int keepRatioType) {
+    public static int[] scaleValues(int sourceX, int sourceY, int newWidth, int newHeight, int keepRatioType) {
         int finalW = newWidth;
         int finalH = newHeight;
         if (keepRatioType != KeepRatioType.None) {
@@ -294,7 +346,7 @@ public class ImageManufacture {
         int finalW = targetW;
         int finalH = targetH;
         if (keepRatio) {
-            int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
+            int[] wh = ImageManufacture.scaleValues(source.getWidth(), source.getHeight(),
                     targetW, targetH, keepType);
             finalW = wh[0];
             finalH = wh[1];
@@ -304,7 +356,7 @@ public class ImageManufacture {
 
     public static BufferedImage fitSize(BufferedImage source, int targetW, int targetH) {
         try {
-            int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
+            int[] wh = ImageManufacture.scaleValues(source.getWidth(), source.getHeight(),
                     targetW, targetH, KeepRatioType.BaseOnSmaller);
             int finalW = wh[0];
             int finalH = wh[1];
@@ -314,8 +366,6 @@ public class ImageManufacture {
             }
             BufferedImage target = new BufferedImage(targetW, targetH, imageType);
             Graphics2D g = target.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setBackground(CommonFxValues.TRANSPARENT);
             g.drawImage(source, (targetW - finalW) / 2, (targetH - finalH) / 2, finalW, finalH, null);
             g.dispose();
@@ -415,6 +465,7 @@ public class ImageManufacture {
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent));
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setColor(color);
             g.setFont(font);
             for (int i = 0; i < texts.size(); ++i) {
@@ -462,8 +513,7 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage addArc(BufferedImage source, int arc,
-            Color bgColor) {
+    public static BufferedImage addArc(BufferedImage source, int arc, Color bgColor) {
         int width = source.getWidth();
         int height = source.getHeight();
         int imageType = source.getType();
@@ -910,7 +960,6 @@ public class ImageManufacture {
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
         Color bgColor = CommonFxValues.TRANSPARENT;
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g.setBackground(bgColor);
         if (!isSkew) {
             g.rotate(Math.toRadians(angle), newWidth / 2, newHeight / 2);
@@ -1374,7 +1423,6 @@ public class ImageManufacture {
         try {
             BufferedImage target = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = target.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             g.setColor(bgColor);
             g.fillRect(0, 0, totalWidth, totalHeight);
@@ -2169,8 +2217,7 @@ public class ImageManufacture {
     }
 
     public static BufferedImage drawHTML(BufferedImage backImage,
-            BufferedImage html,
-            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
+            BufferedImage html, DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
             int rotate, int margin) {
         try {
             if (html == null || backImage == null || bkRect == null) {
@@ -2182,7 +2229,6 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.setBackground(CommonFxValues.TRANSPARENT);
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
             g.drawImage(backImage, 0, 0, null);

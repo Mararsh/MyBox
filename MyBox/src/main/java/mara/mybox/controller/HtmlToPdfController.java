@@ -84,7 +84,9 @@ public class HtmlToPdfController extends FilesBatchController {
             });
             String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
             if (d == null) {
-                ttfSelector.getSelectionModel().select(0);
+                if (!ttfSelector.getItems().isEmpty()) {
+                    ttfSelector.getSelectionModel().select(0);
+                }
             } else {
                 ttfSelector.setValue(d);
             }

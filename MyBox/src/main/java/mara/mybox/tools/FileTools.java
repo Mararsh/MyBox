@@ -31,6 +31,7 @@ import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @Author mara
@@ -77,22 +78,11 @@ public class FileTools {
         return createTime(file.getAbsolutePath());
     }
 
-    public static String getFilePath(final String filename) {
-        if (filename == null) {
-            return null;
-        }
-        int pos = filename.lastIndexOf(File.separator);
-        if (pos < 0) {
-            return "";
-        }
-        return filename.substring(0, pos);
-    }
-
     public static String getFilePrefix(File file) {
         try {
-            return FileTools.getFilePrefix(file.getName());
+            return getFilePrefix(file.getName());
         } catch (Exception e) {
-            return null;
+            return "";
         }
     }
 
@@ -108,11 +98,11 @@ public class FileTools {
         return fname;
     }
 
-    public static String getNamePrefix(final String filename) {
-        if (filename == null) {
+    public static String namePrefix(final String file) {
+        if (file == null) {
             return null;
         }
-        String fname = getName(filename);
+        String fname = getName(file);
         int pos = fname.lastIndexOf('.');
         if (pos >= 0) {
             fname = fname.substring(0, pos);
@@ -121,60 +111,95 @@ public class FileTools {
     }
 
     // filename may include path or not, it is decided by caller
-    public static String getFilePrefix(final String filename) {
-        if (filename == null) {
+    public static String getFilePrefix(String file) {
+        if (file == null) {
             return null;
         }
-        String fname = filename;
-        int pos1 = fname.lastIndexOf('.');
-        if (pos1 >= 0) {
-            int pos2 = fname.lastIndexOf(File.separator);
-            if (pos2 < 0 || pos2 < pos1) {
-                fname = fname.substring(0, pos1);
-            }
+        String path, name;
+        int pos = file.lastIndexOf(File.separator);
+        if (pos >= 0) {
+            path = file.substring(0, pos + 1);
+            name = file.substring(pos + 1);
+        } else {
+            path = "";
+            name = file;
         }
-        return fname;
+        pos = name.lastIndexOf('.');
+        if (pos >= 0) {
+            return path + name.substring(0, pos);
+        } else {
+            return path + name;
+        }
     }
 
     public static String getFileSuffix(File file) {
-        try {
-            return getFileSuffix(file.getAbsolutePath());
-        } catch (Exception e) {
+        if (file == null) {
             return null;
         }
+        return getFileSuffix(file.getName());
     }
 
     // not include "."
-    public static String getFileSuffix(final String filename) {
-        if (filename == null || filename.endsWith(File.separator)) {
-            return "";
-        }
-        String suffix, s = filename;
-        int pos = filename.lastIndexOf(File.separator);
-        if (pos >= 0) {
-            s = s.substring(pos + 1);
-        }
-        pos = s.lastIndexOf('.');
-        if (pos >= 0 && s.length() > pos) {
-            suffix = s.substring(pos + 1);
-        } else {
-            suffix = "";
-        }
-        return suffix;
-    }
-
-    public static String replaceFileSuffix(String filename, String newSuffix) {
-        if (filename == null) {
+    public static String getFileSuffix(String file) {
+        if (file == null || file.endsWith(File.separator)) {
             return null;
         }
-        String fname = filename;
-        int pos = filename.lastIndexOf('.');
-        if (pos >= 0) {
-            fname = fname.substring(0, pos) + "." + newSuffix;
-        } else {
-            fname += "." + newSuffix;
+        if (file.endsWith(".")) {
+            return "";
         }
-        return fname;
+        String name = getName(file);
+        int pos = name.lastIndexOf('.');
+        if (pos >= 0) {
+            return name.substring(pos + 1);
+        } else {
+            return "";
+        }
+    }
+
+    public static String replaceFileSuffix(String file, String newSuffix) {
+        if (file == null || newSuffix == null) {
+            return null;
+        }
+        String path, name;
+        int pos = file.lastIndexOf(File.separator);
+        if (pos >= 0) {
+            path = file.substring(0, pos + 1);
+            name = file.substring(pos + 1);
+        } else {
+            path = "";
+            name = file;
+        }
+        pos = name.lastIndexOf('.');
+        if (pos >= 0) {
+            name = path + name.substring(0, pos + 1) + newSuffix;
+        } else {
+            name = path + name + "." + newSuffix;
+        }
+        return name;
+    }
+
+    public static String appendName(String file, String append) {
+        if (file == null) {
+            return null;
+        }
+        if (append == null || append.isEmpty()) {
+            return file;
+        }
+        String path, name;
+        int pos = file.lastIndexOf(File.separator);
+        if (pos >= 0) {
+            path = file.substring(0, pos + 1);
+            name = file.substring(pos + 1);
+        } else {
+            path = "";
+            name = file;
+        }
+        pos = name.lastIndexOf('.');
+        if (pos >= 0) {
+            return path + name.substring(0, pos) + append + name.substring(pos);
+        } else {
+            return path + name + append;
+        }
     }
 
     public static String getTempFileName() {
@@ -220,24 +245,6 @@ public class FileTools {
         }
         file.mkdirs();
         return file;
-    }
-
-    // Notice to avoid this situation: filename itself does not include "." while its path include "."
-    public static String appendName(String filename, String inStr) {
-        if (filename == null) {
-            return null;
-        }
-        if (inStr == null) {
-            return filename;
-        }
-        int pos1 = filename.lastIndexOf('.');
-        if (pos1 >= 0) {
-            int pos2 = filename.lastIndexOf(File.separator);
-            if (pos2 < 0 || pos2 < pos1) {
-                return filename.substring(0, pos1) + inStr + "." + filename.substring(pos1 + 1);
-            }
-        }
-        return filename + inStr;
     }
 
     public static String showFileSize(long size) {
@@ -658,8 +665,9 @@ public class FileTools {
                 return false;
             }
             System.gc();
-            Files.move(sourceFile.toPath(), targetFile.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            FileUtils.moveFile(sourceFile, targetFile);
+//            Files.move(sourceFile.toPath(), targetFile.toPath(),
+//                    StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -676,23 +684,20 @@ public class FileTools {
 
     public static boolean delete(File file) {
         try {
-            if (file == null || !file.exists() || !file.isFile()) {
+            if (file == null || !file.exists()) {
                 return true;
             }
             System.gc();
-            boolean ok = file.delete();
-            int retry = 0;
-            while (!ok && retry++ < 3) {
-                System.gc();
-                Thread.sleep(1000);
-                ok = file.delete();
+            if (file.isDirectory()) {
+                FileUtils.deleteDirectory(file);
+                return true;
+            } else {
+                return FileUtils.deleteQuietly(file);
             }
-            return ok;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
-//        return FileUtils.deleteQuietly(file);
     }
 
     public static boolean clearDir(File dir) {
@@ -893,37 +898,6 @@ public class FileTools {
         return files;
     }
 
-    public static String getFontFile(String fontName) {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("linux")) {
-            return getFontFile("/usr/share/fonts/", fontName);
-
-        } else if (os.contains("windows")) {
-            return getFontFile("C:/Windows/Fonts/", fontName);
-
-        } else if (os.contains("mac")) {
-            String f = getFontFile("/Library/Fonts/", fontName);
-            if (f != null) {
-                return f;
-            } else {
-                return getFontFile("/System/Library/Fonts/", fontName);
-            }
-        }
-        return null;
-    }
-
-    public static String getFontFile(String path, String fontName) {
-        if (new File(path + fontName + ".ttf ").exists()) {
-            return path + fontName + ".ttf ";
-        } else if (new File(path + fontName.toLowerCase() + ".ttf ").exists()) {
-            return path + fontName + ".ttf ";
-        } else if (new File(path + fontName.toUpperCase() + ".ttf ").exists()) {
-            return path + fontName + ".ttf ";
-        } else {
-            return null;
-        }
-    }
-
     public static List<File> splitFileByFilesNumber(File file, String filename, long filesNumber) {
         try {
             if (file == null || filesNumber <= 0) {
@@ -1045,7 +1019,7 @@ public class FileTools {
                 byte[] buf = new byte[cutLength];
                 int bufLen;
                 bufLen = inputStream.read(buf);
-                if (bufLen == -1) {
+                if (bufLen <= 0) {
                     return null;
                 }
                 try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
@@ -1223,10 +1197,11 @@ public class FileTools {
 
     }
 
-    public static int bufSize(File file) {
+    public static int bufSize(File file, int memPart) {
         Runtime r = Runtime.getRuntime();
         long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
-        return (int) Math.min(file.length(), availableMem / 16);
+        long min = Math.min(file.length(), availableMem / memPart);
+        return min > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) min;
     }
 
     public static File removeBOM(File file) {
@@ -1243,14 +1218,13 @@ public class FileTools {
                     }
                 }
             }
-//            MyBoxLog.debug(setName);
             File tmpFile = getTempFile();
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                 int bomSize = TextTools.bomSize(setName);
                 inputStream.skip(bomSize);
                 int readLen;
-                byte[] buf = new byte[bufSize(file)];
+                byte[] buf = new byte[bufSize(file, 16)];
                 while ((readLen = inputStream.read(buf)) > 0) {
                     outputStream.write(buf, 0, readLen);
                 }

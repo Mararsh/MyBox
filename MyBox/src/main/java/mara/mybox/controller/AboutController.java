@@ -34,7 +34,6 @@ public class AboutController extends BaseController {
                 : "https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf");
 
         FxmlControl.miao5();
-
     }
 
 }

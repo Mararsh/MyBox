@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.3.6</version>
+    <version>6.3.7</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -171,7 +171,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.19</version>
+            <version>1.20</version>
         </dependency>
         <dependency>
             <groupId>org.tukaani</groupId>

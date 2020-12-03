@@ -8,9 +8,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -41,32 +41,32 @@ public class DocumentController extends BaseController {
     }
 
     protected void checkStatus() {
-        String docVersion = "5.0";
+        String userGuideVersion = "5.0", devGuideVersion = "2.1";
         String lang = AppVariables.getLanguage();
         String docPath = AppVariables.MyBoxDownloadsPath + File.separator;
         String webPath = "https://mararsh.github.io/MyBox_documents/" + lang + "/";
 
-        String fileName = "MyBox-UserGuide-" + docVersion + "-Overview-" + lang + ".pdf";
+        String fileName = "MyBox-UserGuide-" + userGuideVersion + "-Overview-" + lang + ".pdf";
         File file = new File(docPath + fileName);
         setButton(overviewButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + docVersion + "-PdfTools-" + lang + ".pdf";
+        fileName = "MyBox-UserGuide-" + userGuideVersion + "-PdfTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(pdfButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + docVersion + "-ImageTools-" + lang + ".pdf";
+        fileName = "MyBox-UserGuide-" + userGuideVersion + "-ImageTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(imageButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + docVersion + "-NetworkTools-" + lang + ".pdf";
+        fileName = "MyBox-UserGuide-" + userGuideVersion + "-NetworkTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(networkButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + docVersion + "-DesktopTools-" + lang + ".pdf";
+        fileName = "MyBox-UserGuide-" + userGuideVersion + "-DesktopTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(desktopButton, file, webPath + fileName);
 
-        fileName = "MyBox-DevGuide-2.0-" + lang + ".pdf";
+        fileName = "MyBox-DevGuide-" + devGuideVersion + "-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(devButton, file, webPath + fileName);
 

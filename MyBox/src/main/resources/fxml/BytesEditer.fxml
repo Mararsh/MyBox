@@ -306,7 +306,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </CheckBox>
-                                        <Button mnemonicParsing="false" onMouseEntered="#popNumber"  >
+                                        <Button mnemonicParsing="false" onMouseEntered="#popNumber">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -324,7 +324,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button mnemonicParsing="false" onMouseEntered="#popUpperLetter" >
+                                        <Button mnemonicParsing="false" onMouseEntered="#popUpperLetter">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -333,7 +333,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button mnemonicParsing="false" onMouseEntered="#popSpecial"  >
+                                        <Button mnemonicParsing="false" onMouseEntered="#popSpecial">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -427,7 +427,7 @@ License:    Apache License Version 2.0
                         <Label fx:id="bottomLabel" minHeight="-Infinity" wrapText="true" HBox.hgrow="NEVER" />
                         <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">
                             <HBox.margin>
-                                <Insets left="20.0" />
+                                <Insets />
                             </HBox.margin>
                         </Label>
                         <HBox fx:id="pageBox" alignment="CENTER_LEFT" spacing="5.0">

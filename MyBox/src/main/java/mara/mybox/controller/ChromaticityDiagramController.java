@@ -18,23 +18,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
@@ -67,68 +60,59 @@ import mara.mybox.value.CommonFxValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ChromaticityDiagramController extends ChromaticityBaseController {
+public class ChromaticityDiagramController extends ImageBaseController {
 
-    private boolean isLine, inputInit = true;
-    private int dotSize, fontSize;
-    private java.awt.Color bgColor, calculateColor;
-    private final ObservableList<ColorValue> calculatedValues = FXCollections.observableArrayList();
-    private ObservableList<CIEData> degree2nm1Data, degree10nm1Data, degree2nm5Data, degree10nm5Data;
-    private double X, Y = 1, Z, x = 0.4, y = 0.5;
+    protected boolean isLine, inputInit = true;
+    protected int dotSize, fontSize;
+    protected java.awt.Color bgColor, calculateColor;
+    protected final ObservableList<ColorValue> calculatedValues = FXCollections.observableArrayList();
+    protected ObservableList<CIEData> degree2nm1Data, degree10nm1Data, degree2nm5Data, degree10nm5Data;
+    protected double X, Y = 1, Z, x = 0.4, y = 0.5;
 
     @FXML
-    private ComboBox<String> dotTypeBox, backgroundBox, fontSelector;
+    protected ComboBox<String> fontSelector;
     @FXML
-    private CheckBox cdProPhotoCheck, cdColorMatchCheck, cdNTSCCheck, cdPALCheck, cdAppleCheck, cdAdobeCheck,
+    protected CheckBox cdProPhotoCheck, cdColorMatchCheck, cdNTSCCheck, cdPALCheck, cdAppleCheck, cdAdobeCheck,
             cdSRGBCheck, cdECICheck, cdCIECheck, cdSMPTECCheck, degree2Check, degree10Check,
             waveCheck, whitePointsCheck, gridCheck, calculateCheck, inputCheck;
     @FXML
-    private ImageView cieDiagram;
+    protected TextArea sourceInputArea, sourceDataArea, d2n1Area, d2n5Area, d10n1Area, d10n5Area;
     @FXML
-    private ScrollPane cieDiagramScroll;
+    protected TableView<ColorValue> calculatedValuesTable;
     @FXML
-    private TextArea sourceInputArea, sourceDataArea,
-            d2n1Area, d2n5Area, d10n1Area, d10n5Area;
+    protected TableColumn<ColorValue, String> colorSpaceColumn, conditionsColumn, valuesColumn;
     @FXML
-    private SplitPane dataTablePane;
+    protected TableView<CIEData> d2n1TableView, d2n5TableView, d10n1TableView, d10n5TableView, inputTableView;
     @FXML
-    private ToggleGroup dataGroup;
+    protected TableColumn<CIEData, Integer> wave2n1Column, wave10n1Column, wave2n5Column, wave10n5Column;
     @FXML
-    private VBox tableBox, calculateBox, inputBox;
-    @FXML
-    private TableView<ColorValue> calculatedValuesTable;
-    @FXML
-    private TableColumn<ColorValue, String> colorSpaceColumn, conditionsColumn, valuesColumn;
-    @FXML
-    private TableView<CIEData> d2n1TableView, d2n5TableView, d10n1TableView, d10n5TableView, inputTableView;
-    @FXML
-    private TableColumn<CIEData, Integer> wave2n1Column, wave10n1Column, wave2n5Column, wave10n5Column;
-    @FXML
-    private TableColumn<CIEData, Double> tx2n1Column, ty2n1Column, tz2n1Column, nx2n1Column, ny2n1Column, nz2n1Column,
+    protected TableColumn<CIEData, Double> tx2n1Column, ty2n1Column, tz2n1Column, nx2n1Column, ny2n1Column, nz2n1Column,
             rx2n1Column, ry2n1Column, rz2n1Column, r2n1Column, g2n1Column, b2n1Column,
             tx10n1Column, ty10n1Column, tz10n1Column, nx10n1Column, ny10n1Column, nz10n1Column,
             rx10n1Column, ry10n1Column, rz10n1Column, r10n1Column, g10n1Column, b10n1Column;
     @FXML
-    private TableColumn<CIEData, Integer> ri2n1Column, gi2n1Column, bi2n1Column,
+    protected TableColumn<CIEData, Integer> ri2n1Column, gi2n1Column, bi2n1Column,
             ri10n1Column, gi10n1Column, bi10n1Column;
     @FXML
-    private TableColumn<CIEData, Double> tx2n5Column, ty2n5Column, tz2n5Column, nx2n5Column, ny2n5Column, nz2n5Column,
+    protected TableColumn<CIEData, Double> tx2n5Column, ty2n5Column, tz2n5Column, nx2n5Column, ny2n5Column, nz2n5Column,
             rx2n5Column, ry2n5Column, rz2n5Column, r2n5Column, g2n5Column, b2n5Column,
             tx10n5Column, ty10n5Column, tz10n5Column, nx10n5Column, ny10n5Column, nz10n5Column,
             rx10n5Column, ry10n5Column, rz10n5Column, r10n5Column, g10n5Column, b10n5Column;
     @FXML
-    private TableColumn<CIEData, Integer> ri2n5Column, gi2n5Column, bi2n5Column,
+    protected TableColumn<CIEData, Integer> ri2n5Column, gi2n5Column, bi2n5Column,
             ri10n5Column, gi10n5Column, bi10n5Column;
     @FXML
-    private ToolBar dataToolbar;
+    protected TextField XInput, YInput, ZInput, xInput, yInput;
     @FXML
-    private TextField XInput, YInput, ZInput, xInput, yInput;
-    @FXML
-    private Button calculateXYZButton, calculateXYButton, displayDataButton;
-    @FXML
-    private TabPane csPane, filePane;
+    protected Button okSizeButton, calculateXYZButton, calculateXYButton, displayDataButton;
     @FXML
     protected ColorSetController colorSetController;
+    @FXML
+    protected ToggleGroup bgGroup, dotGroup;
+    @FXML
+    protected RadioButton bgTransparentRadio, bgWhiteRadio, bgBlackRadio,
+            dotLine4pxRadio, dotDot6pxRadio, dotDot10pxRadio, dotDot4pxRadio, dotDot12pxRadio,
+            dotLine1pxRadio, dotLine2pxRadio, dotLine6pxRadio, dotLine10pxRadio;
 
     public ChromaticityDiagramController() {
         baseTitle = AppVariables.message("DrawChromaticityDiagram");
@@ -151,7 +135,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         try {
             super.initControls();
 
-            initToolBar();
+            initDisplay();
             initDataBox();
             initCIETables();
             initCIEData();
@@ -162,32 +146,18 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         }
     }
 
-    private void initToolBar() {
+    private void initDisplay() {
         try {
-            List<String> bgList = Arrays.asList(message("Transparent"),
-                    message("White"), message("Black")
-            );
-            backgroundBox.getItems().addAll(bgList);
-            backgroundBox.setVisibleRowCount(bgList.size());
-            backgroundBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            bgGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                     checkBackground();
                 }
             });
 
-            List<String> opList = Arrays.asList(message("Line4px"),
-                    message("Dot6px"), message("Dot10px"), message("Dot4px"),
-                    message("Dot12px"), message("Line1px"), message("Line2px"),
-                    message("Line6px"), message("Line10px")
-            );
-            dotTypeBox.getItems().addAll(opList);
-            dotTypeBox.setVisibleRowCount(opList.size());
-            dotTypeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            dotGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                     checkDotType();
                 }
             });
@@ -326,8 +296,11 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
 
             isSettingValues = true;
-            backgroundBox.getSelectionModel().select(0);
-            dotTypeBox.getSelectionModel().select(0);
+            bgColor = null;
+            isLine = true;
+            dotSize = 4;
+            bgTransparentRadio.fire();
+            dotLine4pxRadio.fire();
             fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
         } catch (Exception e) {
@@ -344,7 +317,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                 }
             });
 
-            cieDiagram.fitWidthProperty().addListener(new ChangeListener<Number>() {
+            imageView.fitWidthProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov,
                         Number old_val, Number new_val) {
@@ -353,7 +326,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                     }
                 }
             });
-            cieDiagram.fitHeightProperty().addListener(new ChangeListener<Number>() {
+            imageView.fitHeightProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov,
                         Number old_val, Number new_val) {
@@ -362,7 +335,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                     }
                 }
             });
-            cieDiagramScroll.widthProperty().addListener(new ChangeListener<Number>() {
+            scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov,
                         Number old_val, Number new_val) {
@@ -380,17 +353,9 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     private void initDataBox() {
         try {
-            dataGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                    loadTableData();
-                }
-            });
-
             XInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
                         X = Double.parseDouble(newValue);
                         XInput.setStyle(null);
@@ -401,8 +366,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
             YInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
                         Y = Double.parseDouble(newValue);
                         if (Y == 0) {
@@ -417,8 +381,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
             ZInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
                         Z = Double.parseDouble(newValue);
                         ZInput.setStyle(null);
@@ -597,73 +560,52 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     }
 
-    private void refinePane() {
-        if (cieDiagram.getImage() == null) {
-            return;
-        }
-        FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
-        cieDiagramScroll.setVvalue(cieDiagramScroll.getVmin());
-
-    }
-
     private void checkDotType() {
-        try {
-            isLine = false;
-            String type = dotTypeBox.getSelectionModel().getSelectedItem();
-            if (message("Dot6px").equals(type)) {
-                dotSize = 6;
-            } else if (message("Dot10px").equals(type)) {
-                dotSize = 10;
-            } else if (message("Dot4px").equals(type)) {
-                dotSize = 4;
-            } else if (message("Dot12px").equals(type)) {
-                dotSize = 12;
-            } else if (message("Line2px").equals(type)) {
-                isLine = true;
-                dotSize = 2;
-            } else if (message("Line1px").equals(type)) {
-                isLine = true;
-                dotSize = 1;
-            } else if (message("Line4px").equals(type)) {
-                isLine = true;
-                dotSize = 4;
-            } else if (message("Line6px").equals(type)) {
-                isLine = true;
-                dotSize = 6;
-            } else if (message("Line10px").equals(type)) {
-                isLine = true;
-                dotSize = 10;
-            } else {
-                dotSize = 6;
-            }
-        } catch (Exception e) {
+        isLine = false;
+        if (dotDot6pxRadio.isSelected()) {
+            dotSize = 6;
+        } else if (dotDot10pxRadio.isSelected()) {
+            dotSize = 10;
+        } else if (dotDot4pxRadio.isSelected()) {
+            dotSize = 4;
+        } else if (dotDot12pxRadio.isSelected()) {
+            dotSize = 12;
+        } else if (dotLine4pxRadio.isSelected()) {
+            isLine = true;
+            dotSize = 4;
+        } else if (dotLine1pxRadio.isSelected()) {
+            isLine = true;
+            dotSize = 1;
+        } else if (dotLine2pxRadio.isSelected()) {
+            isLine = true;
+            dotSize = 2;
+        } else if (dotLine6pxRadio.isSelected()) {
+            isLine = true;
+            dotSize = 6;
+        } else if (dotLine10pxRadio.isSelected()) {
+            isLine = true;
+            dotSize = 10;
+        } else {
             dotSize = 6;
         }
         if (!isSettingValues) {
             displayChromaticityDiagram();
         }
-
     }
 
     private void checkBackground() {
-        try {
-            String type = backgroundBox.getSelectionModel().getSelectedItem();
-            if (message("Transparent").equals(type)) {
-                bgColor = null;
-            } else if (message("White").equals(type)) {
-                bgColor = java.awt.Color.WHITE;
-            } else if (message("Black").equals(type)) {
-                bgColor = java.awt.Color.BLACK;
-            } else {
-                bgColor = null;
-            }
-        } catch (Exception e) {
+        if (bgTransparentRadio.isSelected()) {
+            bgColor = null;
+        } else if (bgWhiteRadio.isSelected()) {
+            bgColor = java.awt.Color.WHITE;
+        } else if (bgBlackRadio.isSelected()) {
+            bgColor = java.awt.Color.BLACK;
+        } else {
             bgColor = null;
         }
         if (!isSettingValues) {
             displayChromaticityDiagram();
         }
-
     }
 
     private void checkFontSize() {
@@ -744,46 +686,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     private void afterInitCIEData() {
-        loadTableData();
         colorSetController.init(this, baseName + "Color", Color.THISTLE);
-    }
-
-    private void loadTableData() {
-        try {
-            tableBox.getChildren().clear();
-            RadioButton selected = (RadioButton) dataGroup.getSelectedToggle();
-            if (message("Calculate").equals(selected.getText())) {
-
-                tableBox.getChildren().addAll(dataToolbar, calculateBox);
-
-            } else if (message("Input").equals(selected.getText())) {
-
-                tableBox.getChildren().addAll(dataToolbar, inputBox);
-
-            }
-
-            FxmlControl.refreshStyle(tableBox);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void keyEventsHandler(KeyEvent event) {
-        if (event.isControlDown() && event.getCode() != null) {
-            switch (event.getCode()) {
-                case DIGIT2:
-                    paneSizeDiagram();
-                    return;
-                case DIGIT3:
-                    zoomInDiagram();
-                    return;
-                case DIGIT4:
-                    zoomOutDiagram();
-                    return;
-            }
-        }
-        super.keyEventsHandler(event);
     }
 
     @Override
@@ -1013,21 +916,6 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     @FXML
-    public void zoomInDiagram() {
-        FxmlControl.zoomIn(cieDiagramScroll, cieDiagram, 20, 20);
-    }
-
-    @FXML
-    public void zoomOutDiagram() {
-        FxmlControl.zoomOut(cieDiagramScroll, cieDiagram, 20, 20);
-    }
-
-    @FXML
-    public void paneSizeDiagram() {
-        FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
-    }
-
-    @FXML
     @Override
     public void clearAction() {
         isSettingValues = true;
@@ -1218,16 +1106,14 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                         selections.put(DataType.ProPhotoLines, cdProPhotoCheck.isSelected());
                         selections.put(DataType.SMPTECLines, cdSMPTECCheck.isSelected());
 
-                        ChromaticityDiagram cd = new ChromaticityDiagram();
-                        cd.setIsLine(isLine);
-                        cd.setDotSize(dotSize);
-                        cd.setBgColor(bgColor);
-                        cd.setFontSize(fontSize);
-                        cd.setDataSourceTexts(sourceDataArea.getText());
+                        ChromaticityDiagram cd = ChromaticityDiagram.create()
+                                //                                .setWidth(width).setHeight(height)
+                                .setIsLine(isLine).setDotSize(dotSize)
+                                .setBgColor(bgColor).setFontSize(fontSize)
+                                .setDataSourceTexts(sourceDataArea.getText());
                         if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
-                            cd.setCalculateX(x);
-                            cd.setCalculateY(y);
-                            cd.setCalculateColor(calculateColor);
+                            cd.setCalculateX(x).setCalculateY(y)
+                                    .setCalculateColor(calculateColor);
                         }
                         image = SwingFXUtils.toFXImage(cd.drawData(selections), null);
 
@@ -1240,8 +1126,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    cieDiagram.setImage(image);
-                    FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
+                    imageView.setImage(image);
+                    FxmlControl.paneSize(scrollPane, imageView);
                     d2n1Area.home();
                     d2n5Area.home();
                     d10n1Area.home();
@@ -1259,10 +1145,17 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     @FXML
+    public void sizeAction() {
+        if (!isSettingValues) {
+            displayChromaticityDiagram();
+        }
+    }
+
+    @FXML
     @Override
     public void saveAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                "ChromaticityDiagram", CommonFxValues.ImageExtensionFilter, true);
+                "ChromaticityDiagram", CommonFxValues.ImageExtensionFilter);
         if (file == null) {
             return;
         }
@@ -1277,7 +1170,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                 @Override
                 protected boolean handle() {
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(cieDiagram.getImage());
+                    final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(imageView.getImage());
                     if (this == null || this.isCancelled()) {
                         return false;
                     }
@@ -1301,7 +1194,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     public void exportAction(String filename, TextArea textArea) {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                filename, CommonFxValues.TextExtensionFilter, true);
+                filename, CommonFxValues.TextExtensionFilter);
         if (file == null) {
             return;
         }
@@ -1351,6 +1244,15 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     @FXML
     public void export105Action() {
         exportAction("CIE1964Observer10Degree5nm", d10n5Area);
+    }
+
+    @FXML
+    public void aboutColor() {
+        try {
+            FxmlStage.browseURI(getMyStage(), ChromaticityBaseController.aboutColorHtml().toURI());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

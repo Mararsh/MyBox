@@ -12,12 +12,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -28,19 +28,23 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageManufactureBatchSizeController extends ImageManufactureBatchController {
 
-    private float scale;
-    private int sizeType, customWidth, customHeight, keepWidth, keepHeight;
+    protected float scale;
+    protected int sizeType, customWidth, customHeight, keepWidth, keepHeight;
+    protected int interpolation = -1, dither = -1, anti = -1, quality = -1;
 
     @FXML
-    private ToggleGroup pixelsGroup;
+    protected ToggleGroup pixelsGroup;
     @FXML
-    private ComboBox<String> scaleBox;
+    protected ComboBox<String> scaleBox;
     @FXML
-    private TextField customWidthInput, customHeightInput, keepWidthInput, keepHeightInput;
+    protected TextField customWidthInput, customHeightInput, keepWidthInput, keepHeightInput;
     @FXML
-    private RadioButton scaleRadio, widthRadio, heightRadio, customRadio;
+    protected RadioButton scaleRadio, widthRadio, heightRadio, customRadio,
+            interpolationNullRadio, interpolation9Radio, interpolation4Radio, interpolation1Radio,
+            ditherNullRadio, ditherOnRadio, ditherOffRadio, antiNullRadio, antiOnRadio, antiOffRadio,
+            qualityNullRadio, qualityOnRadio, qualityOffRadio;
 
-    private static class SizeType {
+    protected static class SizeType {
 
         public static int Scale = 0;
         public static int Width = 1;
@@ -260,20 +264,48 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     }
 
     @Override
+    public boolean makeMoreParameters() {
+        interpolation = dither = anti = quality = -1;
+        if (interpolation9Radio.isSelected()) {
+            interpolation = 9;
+        } else if (interpolation4Radio.isSelected()) {
+            interpolation = 4;
+        } else if (interpolation1Radio.isSelected()) {
+            interpolation = 1;
+        }
+        if (ditherOnRadio.isSelected()) {
+            dither = 1;
+        } else if (ditherOffRadio.isSelected()) {
+            dither = 0;
+        }
+        if (antiOnRadio.isSelected()) {
+            anti = 1;
+        } else if (antiOffRadio.isSelected()) {
+            anti = 0;
+        }
+        if (qualityOnRadio.isSelected()) {
+            quality = 1;
+        } else if (qualityOffRadio.isSelected()) {
+            quality = 0;
+        }
+        return super.makeMoreParameters();
+    }
+
+    @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
             BufferedImage target = null;
             if (sizeType == SizeType.Scale) {
-                target = ImageManufacture.scaleImageByScale(source, scale);
+                target = ImageManufacture.scaleImageByScale(source, scale, dither, anti, quality, interpolation);
 
             } else if (sizeType == SizeType.Width) {
-                target = ImageManufacture.scaleImageWidthKeep(source, keepWidth);
+                target = ImageManufacture.scaleImageWidthKeep(source, keepWidth, dither, anti, quality, interpolation);
 
             } else if (sizeType == SizeType.Height) {
-                target = ImageManufacture.scaleImageHeightKeep(source, keepHeight);
+                target = ImageManufacture.scaleImageHeightKeep(source, keepHeight, dither, anti, quality, interpolation);
 
             } else if (sizeType == SizeType.Custom) {
-                target = ImageManufacture.scaleImage(source, customWidth, customHeight);
+                target = ImageManufacture.scaleImage(source, customWidth, customHeight, dither, anti, quality, interpolation);
             }
 
             return target;

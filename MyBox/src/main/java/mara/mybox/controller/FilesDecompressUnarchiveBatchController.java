@@ -251,7 +251,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         continue;
                     }
                     File parent = file.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                    if (!parent.isDirectory() || !parent.mkdirs()) {
                         archiveFail++;
                         if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(message("FailOpenFile" + ":" + file));
@@ -293,7 +293,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         continue;
                     }
                     File parent = file.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                    if (!parent.isDirectory() || !parent.mkdirs()) {
                         archiveFail++;
                         if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(message("FailOpenFile" + ":" + file));
@@ -336,7 +336,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         continue;
                     }
                     File parent = file.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                    if (!parent.isDirectory() || !parent.mkdirs()) {
                         archiveFail++;
                         if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(message("FailOpenFile" + ":" + file));

@@ -165,8 +165,7 @@ public class SoundTools {
             fc.setValue(dB);
             int nByte = 0;
             byte[] buffer = new byte[CommonValues.IOBufferLength];
-            while (nByte > 0) {
-                nByte = audioInputStream.read(buffer, 0, CommonValues.IOBufferLength);
+            while ((nByte = audioInputStream.read(buffer, 0, CommonValues.IOBufferLength)) > 0) {
                 sdl.write(buffer, 0, nByte);
             }
             sdl.stop();
@@ -258,12 +257,9 @@ public class SoundTools {
             FloatControl vol = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
             MyBoxLog.debug(vol.getValue() + vol.getUnits());
             line.start();
-            int nBytesRead = 0, nBytesWritten = 0;
-            while (nBytesRead > 0) {
-                nBytesRead = din.read(data, 0, data.length);
-                if (nBytesRead > 0) {
-                    nBytesWritten = line.write(data, 0, nBytesRead);
-                }
+            int nBytesRead = 0, nBytesWritten;
+            while ((nBytesRead = din.read(data, 0, data.length)) > 0) {
+                nBytesWritten = line.write(data, 0, nBytesRead);
             }
             // Stop
             line.drain();

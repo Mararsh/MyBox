@@ -88,7 +88,7 @@ public class ControlSaveAs extends BaseController {
     public void selectFile() {
         File selectedfile = chooseSaveFile(
                 AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(TargetFileType)),
-                prefix, targetExtensionFilter, true);
+                prefix, targetExtensionFilter);
         if (selectedfile == null) {
             return;
         }

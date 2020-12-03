@@ -38,7 +38,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
@@ -109,13 +109,8 @@ License:    Apache License Version 2.0
                                                 </FlowPane>
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="830.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <Label text="%FontFile" />
-                                                        <ComboBox fx:id="fontBox" editable="true" HBox.hgrow="ALWAYS" />
-                                                        <ImageView fx:id="fontTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconTips.png" />
-                                                            </image>
-                                                        </ImageView>
+                                                        <Label minWidth="-Infinity" text="%FontFile" wrapText="true" />
+                                                        <ComboBox fx:id="fontBox" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                     </children>
                                                 </HBox>
                                                 <FlowPane hgap="5.0" vgap="5.0">
@@ -149,8 +144,7 @@ License:    Apache License Version 2.0
                     <children>
                         <Label maxWidth="1.7976931348623157E308" text="  " visible="false" HBox.hgrow="ALWAYS" />
                         <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
-                        <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs"
-                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                        <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

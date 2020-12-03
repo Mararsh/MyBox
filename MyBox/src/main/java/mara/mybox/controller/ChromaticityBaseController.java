@@ -14,14 +14,14 @@ import javafx.stage.Modality;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -133,6 +133,14 @@ public class ChromaticityBaseController extends BaseController {
     @FXML
     public void aboutColor() {
         try {
+            FxmlStage.browseURI(getMyStage(), aboutColorHtml().toURI());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static File aboutColorHtml() {
+        try {
             StringTable table = new StringTable(null, message("ResourcesAboutColor"));
             table.newLinkRow("ICCWebsite", "http://www.color.org");
             table.newLinkRow("ICCProfileTags", "https://sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html");
@@ -152,10 +160,11 @@ public class ChromaticityBaseController extends BaseController {
             table.newLinkRow("ChromaticityDiagram", "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
 
             File htmFile = HtmlTools.writeHtml(table.html());
-            FxmlStage.browseURI(getMyStage(), htmFile.toURI());
+            return htmFile;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return null;
         }
     }
 
@@ -201,14 +210,14 @@ public class ChromaticityBaseController extends BaseController {
     @FXML
     public void exportAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                exportName, CommonFxValues.TextExtensionFilter, true);
+                exportName, CommonFxValues.TextExtensionFilter);
         if (file == null) {
             return;
         }
         recordFileWritten(file, VisitHistory.FileType.Text);
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -226,7 +235,8 @@ public class ChromaticityBaseController extends BaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

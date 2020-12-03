@@ -81,8 +81,7 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="575.0">
                     <children>
                         <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
-                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

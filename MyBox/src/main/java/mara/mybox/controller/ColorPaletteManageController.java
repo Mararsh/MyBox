@@ -55,7 +55,6 @@ public class ColorPaletteManageController extends BaseController {
     public Control control;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
-    protected double baseHeight;
     protected double rectSize;
 
     @FXML
@@ -121,31 +120,9 @@ public class ColorPaletteManageController extends BaseController {
 
     @Override
     public void toFront() {
-        baseHeight = headerBox.getHeight() + barBox.getHeight() + closeBox.getHeight() + 110;
-        colorsPane.heightProperty().addListener(
-                (ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
-                    if (!isSettingValues && Math.abs(newVal.doubleValue() - oldVal.doubleValue()) > 10) {
-                        Platform.runLater(() -> {
-                            adjustHeight();
-                        });
-                    }
-                });
-
         load();
-        adjustHeight();
         super.toFront();
         FxmlControl.setTooltip(dataButton, message("ManageColors"));
-    }
-
-    protected void adjustHeight() {
-        try {
-            isSettingValues = true;
-            myStage.setHeight(baseHeight + scrollPane.getHeight());
-            isSettingValues = false;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
     }
 
     public void load() {
@@ -473,7 +450,6 @@ public class ColorPaletteManageController extends BaseController {
                 }
             }
             isSettingValues = false;
-            adjustHeight();
             updateSizeLabel();
 
         } catch (Exception e) {
@@ -490,7 +466,6 @@ public class ColorPaletteManageController extends BaseController {
             clickedRect = null;
             enteredRect = null;
             isSettingValues = false;
-            adjustHeight();
             TableColorData.clearPalette();
             updateSizeLabel();
         } catch (Exception e) {

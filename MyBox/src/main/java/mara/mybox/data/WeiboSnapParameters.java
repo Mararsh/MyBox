@@ -18,7 +18,7 @@ public class WeiboSnapParameters {
     private int webWidth, retry, startPage, loadInterval, snapInterval, likeStartPage, retried;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;
-    private String webAddress, author, title, fontName, maxMergedSize;
+    private String webAddress, author, title, fontFile, maxMergedSize;
     private int marginSize, pageWidth, pageHeight, jpegQuality, threshold, maxMergeSize, category, pdfScale, dpi;
     private Date startMonth, endMonth;
     private float zoomScale;
@@ -292,12 +292,12 @@ public class WeiboSnapParameters {
         this.useTempFiles = useTempFiles;
     }
 
-    public String getFontName() {
-        return fontName;
+    public String getFontFile() {
+        return fontFile;
     }
 
-    public void setFontName(String fontName) {
-        this.fontName = fontName;
+    public void setFontFile(String fontFile) {
+        this.fontFile = fontFile;
     }
 
     public boolean isDithering() {

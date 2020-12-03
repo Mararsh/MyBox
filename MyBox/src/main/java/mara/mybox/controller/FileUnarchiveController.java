@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.TreeTableEraCell;
 import mara.mybox.fxml.TreeTableFileSizeCell;
@@ -33,7 +34,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -165,7 +165,7 @@ public class FileUnarchiveController extends FilesTreeController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -215,7 +215,8 @@ public class FileUnarchiveController extends FilesTreeController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -315,7 +316,7 @@ public class FileUnarchiveController extends FilesTreeController {
         charsetIncorrect = false;
         error = null;
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -354,7 +355,8 @@ public class FileUnarchiveController extends FilesTreeController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -387,7 +389,7 @@ public class FileUnarchiveController extends FilesTreeController {
                         continue;
                     }
                     File parent = file.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                    if (!parent.isDirectory() || !parent.mkdirs()) {
                         archiveFail++;
 //                        MyBoxLog.debug(message("FailOpenFile" + ":" + file));
                         continue;
@@ -424,7 +426,7 @@ public class FileUnarchiveController extends FilesTreeController {
                         continue;
                     }
                     File parent = file.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                    if (!parent.isDirectory() || !parent.mkdirs()) {
                         archiveFail++;
 //                        MyBoxLog.debug(message("FailOpenFile" + ":" + file));
                         continue;
