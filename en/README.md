@@ -130,7 +130,7 @@ MyBox is based on following open sources:
 | flexmark-java | Convert Markdown | https://github.com/vsch/flexmark-java |   
 | commons-compress | archive/compress | https://commons.apache.org/proper/commons-compress |   
 | XZ for Java | archive/compress | https://tukaani.org/xz/java.html |   
-| jaffree | warp ffmpeg | https://github.com/kokorin/Jaffree |   
+| jaffree | wrap ffmpeg | https://github.com/kokorin/Jaffree |   
 | ffmpeg| convert/create medias | http://ffmpeg.org |   
 | image4j | ico format | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
@@ -206,7 +206,7 @@ Current version is 6.3.7. Its features are mentioned below in summary:
 * [Media Tools](#MediaTools)
     - [Play Videos/Audios](#mediaPlayer)
     - [Manage Playlists](#mediaList)
-    - [Warp ffmpeg functions](#ffmpeg)
+    - [Wrap ffmpeg functions](#ffmpeg)
     - [Game-Elimination](#gameElimination)
     - [Game-Mine](#gameMine)
     - [Others](#mediaOthers)
