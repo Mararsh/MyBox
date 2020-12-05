@@ -5,10 +5,10 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 ## What's New
 2020-12-03 v6.3.7                  
--  Add: Extract ttf from ttc. Embed a open source ttf file.                     
--  Improve: Hign dpi icons and common icons can be selected.  Set html charset in batch.  Consistent control to select PDF font file. 
+-  Add: Extract ttf from ttc. Embed an open source ttf file.                     
+-  Improve: high dpi icons and common icons can be selected.  Set html charset in batch.  Consistent control to select PDF font file. 
 Rendering parameters can be set when scale images. Set default video decoder on mac as VideoToolBox.             
--  Solved problems. Source file is destoried when decompress gzip file and it becomes larger and larger.  Charset of html may be parsed incorrectly. 
+-  Solved problems. Source file is destoryed when decompress gzip file and it becomes larger and larger.  Charset of html may be parsed incorrectly. 
 Only one line is shown in right pane when edit bytes.                          
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7)             
   
@@ -90,7 +90,7 @@ Function "Settings" can be used to change configuration values.
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.7 | 2020-11-29 | [html](#devLog) |
+| Development Logs | 6.3.7 | 2020-12-03 | [html](#devLog) |
 | Shortcuts | 6.3.5 | 2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -1276,10 +1276,10 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 # Development Logs <a id="devLog"></a>           
 2020-12-03 v6.3.7                   
--  Add: Extract ttf from ttc. Embed a open source ttf file.                     
--  Improve: Hign dpi icons and common icons can be selected.  Set html charset in batch.  Consistent control to select PDF font file. 
+-  Add: Extract ttf from ttc. Embed an open source ttf file.                     
+-  Improve: high dpi icons and common icons can be selected.  Set html charset in batch.  Consistent control to select PDF font file. 
 Rendering parameters can be set when scale images. Set default video decoder on mac as VideoToolBox.             
--  Solved problems. Source file is destoried when decompress gzip file and it becomes larger and larger.  Charset of html may be parsed incorrectly. 
+-  Solved problems. Source file is destoryed when decompress gzip file and it becomes larger and larger.  Charset of html may be parsed incorrectly. 
 Only one line is shown in right pane when edit bytes.                          
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7)             
 
