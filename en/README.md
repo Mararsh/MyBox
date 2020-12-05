@@ -216,7 +216,6 @@ Current version is 6.3.7. Its features are mentioned below in summary:
     - [Encode/Decode URL](#encodeDecodeURL)
     - [Web Browser](#webBrowser)
     - [Security Certificates](#securityCerificates)
-    - [Manage Downloads](#manageDownloads)
 * [Settings](#settings)
 * [Window](#windows)
 * [Helps](#helps)
@@ -278,7 +277,7 @@ Versions before v5.3 are based on Java 8.
 	-  Both Find String and Replace String can be multiple lines. Their line breaks are handled as file's definition.    
 	-  Support regular expression. Provide examples.
 	-  Counting.
-	-  Due to limitation of algorithm, to find regular expression in pages，assume maximum length of matched string is less than 1/16 of current available physical memory.
+	-  Due to limitation of algorithm, to find regular expression in pages，assume maximum length of matched string is less than 1/16 of current JVM available memory.
 3. Locate. Go to position of specified character or specified line.
 4. Filter lines:
 	-  Conditions: Include/Not include One, Include/Not Include All, Include/Not Include Regular Expression, Match/Not Match Regular Expression.     
