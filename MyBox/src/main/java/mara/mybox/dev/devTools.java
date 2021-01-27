@@ -15,7 +15,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.BaseTask;
-import mara.mybox.db.TableStringValues;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.file.ImageFileWriters;

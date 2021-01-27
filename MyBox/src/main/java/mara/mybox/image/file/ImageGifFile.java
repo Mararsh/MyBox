@@ -86,11 +86,11 @@ public class ImageGifFile {
                     }
                 }
                 reader.dispose();
-                if (broken) {
-                    return readBrokenGifFile(src);
-                } else {
-                    return images;
-                }
+            }
+            if (broken) {
+                return readBrokenGifFile(src);
+            } else {
+                return images;
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -136,13 +136,11 @@ public class ImageGifFile {
     public static BufferedImage readBrokenGifFile(String src, int index,
             Rectangle bounds, int xscale, int yscale) {
         BufferedImage bufferedImage = null;
-        try {
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                final GifImage gif = GifDecoder.read(in);
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
+            final GifImage gif = GifDecoder.read(in);
 //                MyBoxLog.error(gif.getFrameCount());
-                bufferedImage = gif.getFrame(index);
-                bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(bounds), xscale, yscale);
-            }
+            bufferedImage = gif.getFrame(index);
+            bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(bounds), xscale, yscale);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -150,91 +148,83 @@ public class ImageGifFile {
     }
 
     public static List<BufferedImage> readBrokenGifFile(String src, int xscale, int yscale) {
-        try {
 //            MyBoxLog.debug("readBrokenGifFile");
-            List<BufferedImage> images = new ArrayList<>();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                final GifImage gif = GifDecoder.read(in);
-                final int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; ++i) {
-                    final BufferedImage img = gif.getFrame(i);
-                    int width = img.getWidth() / xscale;
-                    int height = img.getHeight() / yscale;
-                    images.add(ImageManufacture.scaleImage(img, width, height));
-                }
+        List<BufferedImage> images = new ArrayList<>();
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
+            final GifImage gif = GifDecoder.read(in);
+            final int frameCount = gif.getFrameCount();
+            for (int i = 0; i < frameCount; ++i) {
+                final BufferedImage img = gif.getFrame(i);
+                int width = img.getWidth() / xscale;
+                int height = img.getHeight() / yscale;
+                images.add(ImageManufacture.scaleImage(img, width, height));
             }
-            return images;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
+        return images;
     }
 
     public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
-        try {
 //            MyBoxLog.debug("readBrokenGifFile");
-            List<BufferedImage> images = new ArrayList<>();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                final GifImage gif = GifDecoder.read(in);
-                final int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; ++i) {
-                    final BufferedImage img = gif.getFrame(i);
-                    images.add(ImageManufacture.scaleImageWidthKeep(img, width));
-                }
+        List<BufferedImage> images = new ArrayList<>();
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
+            final GifImage gif = GifDecoder.read(in);
+            final int frameCount = gif.getFrameCount();
+            for (int i = 0; i < frameCount; ++i) {
+                final BufferedImage img = gif.getFrame(i);
+                images.add(ImageManufacture.scaleImageWidthKeep(img, width));
             }
-            return images;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
+        return images;
     }
 
     public static List<BufferedImage> readBrokenGifFile(String src, List<ImageInformation> imagesInfo) {
-        try {
 //            MyBoxLog.debug("readBrokenGifFile");
-            List<BufferedImage> images = new ArrayList<>();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                final GifImage gif = GifDecoder.read(in);
-                final int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; ++i) {
-                    ImageInformation info = imagesInfo.get(i);
-                    final BufferedImage bufferedImage = gif.getFrame(i);
-                    if (info.isNeedSample()) {
-                        images.add(ImageManufacture.scaleImageByScale(bufferedImage, 1f / info.getSampleScale()));
-                        info.setIsSampled(true);
-                    } else {
-                        images.add(bufferedImage);
-                        info.setIsSampled(false);
-                        info.setBufferedImage(bufferedImage);
-                    }
+        List<BufferedImage> images = new ArrayList<>();
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
+            final GifImage gif = GifDecoder.read(in);
+            final int frameCount = gif.getFrameCount();
+            for (int i = 0; i < frameCount; ++i) {
+                ImageInformation info = imagesInfo.get(i);
+                final BufferedImage bufferedImage = gif.getFrame(i);
+                if (info.isNeedSample()) {
+                    images.add(ImageManufacture.scaleImageByScale(bufferedImage, 1f / info.getSampleScale()));
+                    info.setIsSampled(true);
+                } else {
+                    images.add(bufferedImage);
+                    info.setIsSampled(false);
+                    info.setBufferedImage(bufferedImage);
                 }
             }
-            return images;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
+        return images;
     }
 
     public static BufferedImage readBrokenGifFile(String src, ImageInformation imageInfo) {
-        try {
-            BufferedImage bufferedImage;
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                final GifImage gif = GifDecoder.read(in);
-                bufferedImage = gif.getFrame(0);
-                if (imageInfo.isNeedSample()) {
-                    bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, 1f / imageInfo.getSampleScale());
-                    imageInfo.setIsSampled(true);
-                } else {
-                    imageInfo.setIsSampled(false);
-                    imageInfo.setBufferedImage(bufferedImage);
-                }
+        BufferedImage bufferedImage = null;
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
+            final GifImage gif = GifDecoder.read(in);
+            bufferedImage = gif.getFrame(0);
+            if (imageInfo.isNeedSample()) {
+                bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, 1f / imageInfo.getSampleScale());
+                imageInfo.setIsSampled(true);
+            } else {
+                imageInfo.setIsSampled(false);
+                imageInfo.setBufferedImage(bufferedImage);
             }
-            return bufferedImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
+        return bufferedImage;
     }
 
     public static List<String> extractGifImages(File source, File target, int from, int to) {
@@ -274,8 +264,7 @@ public class ImageGifFile {
         return writer;
     }
 
-    public static ImageWriteParam getPara(ImageAttributes attributes,
-            ImageWriter writer) {
+    public static ImageWriteParam getPara(ImageAttributes attributes, ImageWriter writer) {
         try {
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
@@ -297,8 +286,7 @@ public class ImageGifFile {
     }
 
     public static IIOMetadata getWriterMeta(ImageAttributes attributes,
-            BufferedImage image,
-            ImageWriter writer, ImageWriteParam param) {
+            BufferedImage image, ImageWriter writer, ImageWriteParam param) {
         try {
             GIFImageMetadata metaData;
             try {
@@ -307,46 +295,38 @@ public class ImageGifFile {
                 MyBoxLog.error(e.toString());
                 metaData = null;
             }
-
             if (attributes.getDensity() > 0) {
                 // Have not found the way to set density data in meta data of GIF format.
             }
             return metaData;
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static void writeGifImageFile(BufferedImage image,
-            ImageAttributes attributes, String outFile) {
+    public static void writeGifImageFile(BufferedImage image, ImageAttributes attributes, String outFile) {
         try {
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
-
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     public static boolean getParaMeta(long interval, boolean loop,
-            GIFImageWriter gifWriter, ImageWriteParam param,
-            GIFImageMetadata metaData) {
+            GIFImageWriter gifWriter, ImageWriteParam param, GIFImageMetadata metaData) {
         try {
-
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             param.setCompressionType("LZW");
             param.setCompressionQuality(1);
-
             String delay;
             if (interval > 0) {
                 delay = interval / 10 + "";
@@ -374,7 +354,6 @@ public class ImageGifFile {
                 tree.appendChild(applicationExtensionsNode);
             }
             metaData.mergeTree(format, tree);
-
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -401,7 +380,6 @@ public class ImageGifFile {
             File tmpFile = FileTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
-
                 gifWriter.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
                     BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
@@ -418,7 +396,6 @@ public class ImageGifFile {
                 out.flush();
             }
             gifWriter.dispose();
-
             return FileTools.rename(tmpFile, outFile) ? "" : "Failed";
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -454,7 +431,6 @@ public class ImageGifFile {
                 out.flush();
             }
             gifWriter.dispose();
-
             if (!FileTools.rename(tmpFile, outFile)) {
                 return "Failed";
             }
@@ -498,7 +474,6 @@ public class ImageGifFile {
                 out.flush();
             }
             gifWriter.dispose();
-
             return FileTools.rename(tmpFile, outFile) ? "" : "Failed";
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,7 +23,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -36,6 +36,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -60,7 +61,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageViewerController extends ImageShapesController {
+public class ImageViewerController extends BaseImageShapesController {
 
     protected ImageScope scope;
     protected int currentAngle = 0, rotateAngle = 90;
@@ -1248,27 +1249,6 @@ public class ImageViewerController extends ImageShapesController {
         }
     }
 
-    @FXML
-    public void renameAction() {
-        try {
-            if (imageChanged) {
-                saveAction();
-            }
-            File newFile = renameFile(sourceFile);
-            if (newFile == null) {
-                return;
-            }
-            sourceFile = newFile;
-            changeFile(imageInformation, newFile);
-            updateLabelTitle();
-            makeImageNevigator();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            popError(e.toString());
-        }
-
-    }
-
     public void changeFile(ImageInformation info, File file) {
         if (info == null || file == null) {
             return;
@@ -1282,84 +1262,43 @@ public class ImageViewerController extends ImageShapesController {
         info.setFile(file);
     }
 
-    public File renameFile(File srcFile) {
-        if (srcFile == null) {
-            return null;
-        }
+    @FXML
+    public void renameAction() {
         try {
-            String newName;
-            while (true) {
-                TextInputDialog dialog = new TextInputDialog(srcFile.getName());
-                dialog.setTitle(message("Rename"));
-                dialog.setHeaderText(message("OriginalFileName") + ": " + srcFile.getAbsolutePath());
-                dialog.setContentText(message("NewFileName") + ": " + srcFile.getParent() + File.separator);
-                dialog.getEditor().setPrefWidth(300);
-                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-                Optional<String> result = dialog.showAndWait();
-                if (!result.isPresent()) {
-                    return null;
-                }
-                newName = result.get();
-                if (newName == null || newName.isBlank()) {
-                    return null;
-                }
-                File newFile = new File(srcFile.getParent() + File.separator + newName);
-                if (newFile.exists()) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle(message("Rename"));
-                    alert.setContentText(message("SureReplaceExistedFile"));
-                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                    ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                    ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                    alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                    Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    alertStage.setAlwaysOnTop(true);
-                    alertStage.toFront();
-
-                    Optional<ButtonType> alertResult = alert.showAndWait();
-                    if (alertResult.get() != buttonSure) {
-                        continue;
-                    }
-                }
-                if (FileTools.getFileSuffix(newName).equals(FileTools.getFileSuffix(srcFile.getName()))) {
-                    break;
-                }
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(message("Rename"));
-                alert.setContentText(message("SureChangeSuffix"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-                alertStage.setAlwaysOnTop(true);
-                alertStage.toFront();
-
-                Optional<ButtonType> alertResult = alert.showAndWait();
-                if (alertResult.get() == buttonSure) {
-                    break;
-                }
+            if (imageChanged) {
+                saveAction();
             }
-            File newFile = new File(srcFile.getParent() + File.separator + newName);
-            if (newFile.getAbsolutePath().equals(srcFile.getAbsolutePath())) {
-                return null;
+            if (sourceFile == null) {
+                return;
             }
-            recordFileOpened(newFile);
-
-            if (FileTools.rename(srcFile, newFile)) {
-                popSuccessful();
-                return newFile;
-            } else {
-                popFailed();
-                return null;
-            }
-
+            FileRenameController controller = (FileRenameController) FxmlStage.openStage(CommonValues.FileRenameFxml);
+            controller.getMyStage().setOnHiding((WindowEvent event) -> {
+                File newFile = controller.getNewFile();
+                Platform.runLater(() -> {
+                    fileRenamed(newFile);
+                });
+            });
+            controller.set(sourceFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());
-            return null;
+        }
+    }
+
+    public void fileRenamed(File newFile) {
+        try {
+            if (newFile == null) {
+                return;
+            }
+            popSuccessful();
+            sourceFile = newFile;
+            recordFileOpened(sourceFile);
+            changeFile(imageInformation, newFile);
+            updateLabelTitle();
+            makeImageNevigator();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            popError(e.toString());
         }
     }
 
@@ -1407,7 +1346,7 @@ public class ImageViewerController extends ImageShapesController {
         operation(controller);
     }
 
-    public void operation(ImageBaseController controller) {
+    public void operation(BaseImageController controller) {
         if (imageView == null || imageView.getImage() == null || controller == null) {
             return;
         }

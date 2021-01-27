@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.Dataset;
-import mara.mybox.data.Location;
-import mara.mybox.db.TableBase;
-import mara.mybox.db.TableDataset;
-import mara.mybox.db.TableLocationData;
+import mara.mybox.db.data.Dataset;
+import mara.mybox.db.data.Location;
+import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.TableDataset;
+import mara.mybox.db.table.TableLocationData;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
@@ -40,7 +40,7 @@ public class LocationDataImportMovebankController extends DataImportController<L
     }
 
     @Override
-    public TableBase getTableDefinition() {
+    public BaseTable getTableDefinition() {
         tableDefinition = tableLocationData;
         if (tableDataset == null) {
             tableDataset = new TableDataset();

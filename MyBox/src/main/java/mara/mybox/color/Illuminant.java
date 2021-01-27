@@ -2,7 +2,7 @@ package mara.mybox.color;
 
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.tools.MatrixTools;
+import mara.mybox.tools.MatrixDoubleTools;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -191,7 +191,7 @@ public class Illuminant extends CIEData {
     }
 
     public double[][] whitePoint() {
-        return MatrixTools.columnVector(relativeX, relativeY, relativeZ);
+        return MatrixDoubleTools.columnVector(relativeX, relativeY, relativeZ);
     }
 
     /*

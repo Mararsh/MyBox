@@ -108,7 +108,7 @@ License:    Apache License Version 2.0
                 </VBox>
                 <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <children>
-                        <fx:include fx:id="table" source="ImagesDurationTable.fxml" />
+                        <fx:include fx:id="table" source="ControlImagesDurationTable.fxml" />
                     </children>
                 </VBox>
             </children>

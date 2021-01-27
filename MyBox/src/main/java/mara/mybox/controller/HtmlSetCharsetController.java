@@ -2,13 +2,12 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
@@ -47,8 +46,7 @@ public class HtmlSetCharsetController extends FilesBatchController {
 
     @Override
     public void initOptionsSection() {
-        List<String> setNames = TextTools.getCharsetNames();
-        charsetSelector.getItems().addAll(setNames);
+        charsetSelector.getItems().addAll(TextTools.getCharsetNames());
         charsetSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {

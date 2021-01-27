@@ -79,9 +79,17 @@ License:    Apache License Version 2.0
                 </SplitPane>
                 <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <Label fx:id="numbersLabel" maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                        <HBox fx:id="pageBox" alignment="CENTER_LEFT" spacing="5.0">
+                        <Label fx:id="bottomLabel" minHeight="-Infinity" wrapText="true" HBox.hgrow="NEVER" />
+                        <Label fx:id="selectionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </Label>
+                        <HBox fx:id="pageBox" alignment="CENTER_LEFT" minWidth="-Infinity" spacing="5.0">
                             <children>
+                                <Label minWidth="-Infinity" text="%Page" />
+                                <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" HBox.hgrow="NEVER" />
+                                <Label fx:id="pageLabel" />
                                 <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -114,18 +122,6 @@ License:    Apache License Version 2.0
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconLast.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Label text="%Page" />
-                                <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
-                                <Label fx:id="pageLabel" />
-                                <Button fx:id="goButton" mnemonicParsing="false" onAction="#goPageAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconGo.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

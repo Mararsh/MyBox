@@ -104,11 +104,9 @@ public class ImageRawFile {
 
                 // convert byte array back to BufferedImage
                 InputStream in = new ByteArrayInputStream(rawData);
-
                 reader.setInput(in);
-                return reader.read(0);
             }
-
+            return reader.read(0);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -122,10 +120,10 @@ public class ImageRawFile {
                 rawData = new byte[fileInput.available()];
                 fileInput.read(rawData);
             }
-            InputStream in = new ByteArrayInputStream(rawData);
-            BufferedImage image = ImageIO.read(in);
-            in.close();
-
+            BufferedImage image;
+            try ( InputStream in = new ByteArrayInputStream(rawData)) {
+                image = ImageIO.read(in);
+            }
             File newFile = new File(file.getPath() + ".png");
             ImageIO.write(image, "png", newFile);
             return newFile;

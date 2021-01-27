@@ -43,7 +43,7 @@ import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
-import mara.mybox.db.TableDownloadHistory;
+import mara.mybox.db.table.TableDownloadHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
@@ -61,8 +61,8 @@ public class HtmlTools {
     public static String Indent = "    ";
     public static final String BaseStyle
             = ".center { text-align:center;  max-width:95%; }\n"
-            + "table { max-width:95%;  }\n"
-            + "table, th, td { border-collapse: collapse; border-style: solid; border-width:1px; padding: 8px;  }\n"
+            + "table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}\n"
+            + "th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}\n"
             + "th { font-weight:bold;  text-align:center;}\n"
             + "tr { height: 1.2em;  }\n"
             + ".boldText { font-weight:bold;  }\n";
@@ -71,14 +71,14 @@ public class HtmlTools {
             + ".valueText { color:#2e598a;  }\n";
     public static final String ConsoleStyle
             = "body { background-color:black; color:#CCFF99; }\n"
-            + "table, th, td { border: #66FF66; }\n"
+            + "table, th, td { border: #CCFF99; }\n"
             + "a:link {color: #FFFFFF}\n"
             + "a:visited  {color: #DDDDDD}\n"
             + ".valueText { color:skyblue;  }\n"
             + BaseStyle;
     public static final String BlackboardStyle
             = "body { background-color:#336633; color:white; }\n"
-            + "table, th, td { border: #66FF66; }\n"
+            + "table, th, td { border: white; }\n"
             + "a:link {color: #FFFFFF}\n"
             + "a:visited  {color: #DDDDDD}\n"
             + ".valueText { color:wheat;  }\n"
@@ -91,7 +91,7 @@ public class HtmlTools {
             + BaseStyle;
     public static final String AgoStyle
             = "body { background-color:darkblue; color:white;  }\n"
-            + "table, th, td { border: #66FF66; }\n"
+            + "table, th, td { border: white; }\n"
             + "a:link {color: #FFFFFF}\n"
             + "a:visited  {color: #DDDDDD}\n"
             + ".valueText { color:wheat;  }\n"
@@ -210,13 +210,15 @@ public class HtmlTools {
         return HtmlStyle.Default;
     }
 
-    public static String body(String html) {
+    // Not include <body> and </body>
+    public static String bodyWithoutTag(String html) {
         if (html == null) {
             return null;
         }
         int from = 0, to = html.length();
-        IndexRange start = FindReplaceString.next(html, "<body>", 0, false, true, false);
+        IndexRange start = FindReplaceString.next(html, "<body", 0, true, true, false);
         if (start != null) {
+            start = FindReplaceString.next(html, ">", start.getEnd(), false, true, false);
             from = start.getEnd();
         } else {
             IndexRange headend = FindReplaceString.next(html, "</head>", 0, false, true, false);
@@ -236,16 +238,44 @@ public class HtmlTools {
         return html.substring(from, to);
     }
 
-    public static String head(String html) {
+    // Include <body> and </body>
+    public static String body(String html) {
+        if (html == null) {
+            return null;
+        }
+        int from = 0, to = html.length();
+        IndexRange start = FindReplaceString.next(html, "<body", 0, false, true, false);
+        if (start != null) {
+            from = start.getStart();
+        } else {
+            IndexRange headend = FindReplaceString.next(html, "</head>", 0, false, true, false);
+            if (headend != null) {
+                from = headend.getEnd();
+            }
+        }
+        IndexRange end = FindReplaceString.next(html, "</body>", from, false, true, false);
+        if (end != null) {
+            to = end.getEnd();
+        } else {
+            IndexRange htmlend = FindReplaceString.next(html, "</html>", 0, false, true, false);
+            if (htmlend != null) {
+                to = htmlend.getStart();
+            }
+        }
+        return html.substring(from, to);
+    }
+
+    // Not include <head> and </head>
+    public static String headWithoutTag(String html) {
         if (html == null) {
             return null;
         }
         int from = 0;
-        IndexRange start = FindReplaceString.next(html, "<head>", 0, false, true, false);
+        IndexRange start = FindReplaceString.next(html, "<head", 0, false, true, false);
         if (start == null) {
             return null;
         }
-
+        start = FindReplaceString.next(html, ">", start.getEnd(), false, true, false);
         from = start.getEnd();
         IndexRange end = FindReplaceString.next(html, "</head>", from, false, true, false);
         if (end == null) {
@@ -255,11 +285,30 @@ public class HtmlTools {
         return html.substring(from, to);
     }
 
+    // Include <head> and </head>
+    public static String head(String html) {
+        if (html == null) {
+            return null;
+        }
+        int from = 0;
+        IndexRange start = FindReplaceString.next(html, "<head", 0, false, true, false);
+        if (start == null) {
+            return null;
+        }
+        from = start.getStart();
+        IndexRange end = FindReplaceString.next(html, "</head>", from, false, true, false);
+        if (end == null) {
+            return null;
+        }
+        int to = end.getEnd();
+        return html.substring(from, to);
+    }
+
     public static String preHtml(String html) {
         if (html == null) {
             return "";
         }
-        IndexRange start = FindReplaceString.next(html, "<html>", 0, false, true, false);
+        IndexRange start = FindReplaceString.next(html, "<html", 0, false, true, false);
         if (start == null || start.getStart() == 0) {
             return "";
         }
@@ -403,10 +452,10 @@ public class HtmlTools {
     }
 
     public static String html(String title, String body) {
-        return htmlStyleValue(title, DefaultStyle, body);
+        return htmlWithStyleValue(title, DefaultStyle, body);
     }
 
-    public static String htmlStyleValue(String title, String styleValue, String body) {
+    public static String htmlPrefix(String title, String styleValue) {
         StringBuilder s = new StringBuilder();
         s.append("<HTML>\n").
                 append(Indent).append("<HEAD>\n").
@@ -420,15 +469,23 @@ public class HtmlTools {
             s.append(Indent).append(Indent).append("</style>\n");
         }
         s.append(Indent).append("</HEAD>\n");
-        s.append(Indent).append("<BODY>\n");
+        return s.toString();
+    }
+
+    public static String htmlPrefix() {
+        return htmlPrefix(null, DefaultStyle);
+    }
+
+    public static String htmlWithStyleValue(String title, String styleValue, String body) {
+        StringBuilder s = new StringBuilder();
+        s.append(htmlPrefix(title, styleValue));
         s.append(body);
-        s.append(Indent).append("</BODY>\n");
         s.append("</HTML>\n");
         return s.toString();
     }
 
     public static String html(String title, HtmlStyle style, String body) {
-        return htmlStyleValue(title, styleValue(style), body);
+        return htmlWithStyleValue(title, styleValue(style), body);
     }
 
     public static String html(String title, String styleName, String body) {
@@ -446,7 +503,7 @@ public class HtmlTools {
     public static String setStyleValue(String html, String styleValue) {
         String title = htmlTitle(html);
         String body = body(html);
-        return htmlStyleValue(title, styleValue, body);
+        return htmlWithStyleValue(title, styleValue, body);
     }
 
     public static String downloadHttp(String address, File targetFile) {
@@ -472,8 +529,7 @@ public class HtmlTools {
                 connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
                 connection.connect();
                 File tmpFile = FileTools.getTempFile();
-                try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                        final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream()); final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                     byte[] buf = new byte[CommonValues.IOBufferLength];
                     int len;
                     while ((len = inStream.read(buf)) > 0) {
@@ -510,8 +566,7 @@ public class HtmlTools {
             connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
             connection.connect();
             File tmpFile = FileTools.getTempFile();
-            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
                 while ((len = inStream.read(buf)) > 0) {
@@ -983,9 +1038,7 @@ public class HtmlTools {
         if (file == null || !file.exists()) {
             return false;
         }
-        try (final Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login);
-                final PreparedStatement filenameQeury = conn.prepareStatement(TableDownloadHistory.FilenameQeury);
-                final PreparedStatement urlQuery = conn.prepareStatement(TableDownloadHistory.UrlQeury)) {
+        try (final Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login); final PreparedStatement filenameQeury = conn.prepareStatement(TableDownloadHistory.FilenameQeury); final PreparedStatement urlQuery = conn.prepareStatement(TableDownloadHistory.UrlQeury)) {
             return relinkPage(conn, filenameQeury, urlQuery, file, null);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1016,8 +1069,7 @@ public class HtmlTools {
             List<Link> links = new ArrayList<>();
             File tmpFile = FileTools.getTempFile();
             Charset charset = FileTools.charset(file);
-            try (final BufferedReader reader = new BufferedReader(new FileReader(file, charset));
-                    final BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset))) {
+            try (final BufferedReader reader = new BufferedReader(new FileReader(file, charset)); final BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     links.clear();
@@ -1213,10 +1265,13 @@ public class HtmlTools {
             }
             String body = nav.toString();
             FileTools.writeFile(navFile, HtmlTools.html(message("PathIndex"), body));
-
             String frameset = " <FRAMESET border=0 cols=400,*>\n"
-                    + "<FRAME frameBorder=no marginHeight=15 marginWidth=5  name=nav src=\"" + namePrefix + "_Nav.html\">\n"
-                    + "<FRAME frameBorder=no marginHeight=15 marginWidth=10  name=main src=\"" + first.toURI() + "\">\n";
+                    + "<FRAME frameBorder=no marginHeight=15 marginWidth=5  name=nav src=\"" + namePrefix + "_Nav.html\">\n";
+            if (first.getParent().equals(targetFile.getParent())) {
+                frameset += "<FRAME frameBorder=no marginHeight=15 marginWidth=10  name=main src=\"" + first.getName() + "\">\n";
+            } else {
+                frameset += "<FRAME frameBorder=no marginHeight=15 marginWidth=10  name=main src=\"" + first.toURI() + "\">\n";
+            }
             File frameFile = new File(targetFile.getParent() + File.separator + namePrefix + ".html");
             FileTools.writeFile(frameFile, frameset);
             return frameFile.exists();
@@ -1324,12 +1379,12 @@ public class HtmlTools {
 
     public static String setCharset(File htmlFile, Charset charset, boolean must) {
         try {
-            if (charset == null) {
+            if (htmlFile == null || charset == null) {
                 return "InvalidData";
             }
             Charset fileCharset = FileTools.charset(htmlFile);
             String html = FileTools.readTexts(htmlFile, fileCharset);
-            String head = head(html);
+            String head = headWithoutTag(html);
             String preHtml = preHtml(html);
             if (head == null) {
                 if (!must && fileCharset.equals(charset)) {
@@ -1363,6 +1418,39 @@ public class HtmlTools {
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e, charset.displayName());
+            return null;
+        }
+    }
+
+    public static String setStyle(File htmlFile, String css, boolean ignoreOriginal) {
+        try {
+            if (htmlFile == null || css == null) {
+                return "InvalidData";
+            }
+            Charset fileCharset = FileTools.charset(htmlFile);
+            String html = FileTools.readTexts(htmlFile, fileCharset);
+            String preHtml = preHtml(html);
+            String head;
+            if (ignoreOriginal) {
+                head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
+            } else {
+                head = headWithoutTag(html);
+                if (head == null) {
+                    head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
+                }
+            }
+            html = preHtml + "<html>\n"
+                    + "    <head>\n"
+                    + head + "\n"
+                    + "        <style type=\"text/css\">/>\n"
+                    + css
+                    + "        </style>/>\n"
+                    + "    </head>\n"
+                    + body(html) + "\n"
+                    + "</html>";
+            return html;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }

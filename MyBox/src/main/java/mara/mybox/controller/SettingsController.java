@@ -36,8 +36,8 @@ import javafx.stage.Stage;
 import mara.mybox.MyBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
-import mara.mybox.db.TableImageHistory;
-import mara.mybox.db.TableVisitHistory;
+import mara.mybox.db.table.TableImageHistory;
+import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -858,10 +858,10 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 AppVariables.setUserConfigInt("StrokeWidth", v);
                                 FxmlControl.setEditorNormal(strokeWidthBox);
-                                if (parentController instanceof ImageShapesController) {
-                                    ((ImageShapesController) parentController).setMaskStroke();
-                                } else if (parentController instanceof ImageBaseController) {
-                                    ((ImageBaseController) parentController).setMaskStroke();
+                                if (parentController instanceof BaseImageShapesController) {
+                                    ((BaseImageShapesController) parentController).setMaskStroke();
+                                } else if (parentController instanceof BaseImageController) {
+                                    ((BaseImageController) parentController).setMaskStroke();
                                 }
                             } else {
                                 FxmlControl.setEditorBadStyle(strokeWidthBox);
@@ -874,16 +874,16 @@ public class SettingsController extends BaseController {
             });
             strokeWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("StrokeWidth", "3"));
 
-            strokeColorSetController.init(this, baseName + "StrokeColor", Color.web(ImageShapesController.DefaultStrokeColor));
+            strokeColorSetController.init(this, "StrokeColor", Color.web(BaseImageShapesController.DefaultStrokeColor));
             strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
                     if (parentController != null) {
-                        if (parentController instanceof ImageShapesController) {
-                            ((ImageShapesController) parentController).setMaskStroke();
-                        } else if (parentController instanceof ImageBaseController) {
-                            ((ImageBaseController) parentController).setMaskStroke();
+                        if (parentController instanceof BaseImageShapesController) {
+                            ((BaseImageShapesController) parentController).setMaskStroke();
+                        } else if (parentController instanceof BaseImageController) {
+                            ((BaseImageController) parentController).setMaskStroke();
                         }
                     }
                     popSuccessful();
@@ -901,10 +901,10 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 AppVariables.setUserConfigInt("AnchorWidth", v);
                                 FxmlControl.setEditorNormal(anchorWidthBox);
-                                if (parentController instanceof ImageShapesController) {
-                                    ((ImageShapesController) parentController).setMaskStroke();
-                                } else if (parentController instanceof ImageBaseController) {
-                                    ((ImageBaseController) parentController).setMaskStroke();
+                                if (parentController instanceof BaseImageShapesController) {
+                                    ((BaseImageShapesController) parentController).setMaskStroke();
+                                } else if (parentController instanceof BaseImageController) {
+                                    ((BaseImageController) parentController).setMaskStroke();
                                 }
                             } else {
                                 FxmlControl.setEditorBadStyle(anchorWidthBox);
@@ -917,15 +917,15 @@ public class SettingsController extends BaseController {
             });
             anchorWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("AnchorWidth", "10"));
 
-            anchorColorSetController.init(this, baseName + "AnchorColor", Color.web(ImageShapesController.DefaultAnchorColor));
+            anchorColorSetController.init(this, "AnchorColor", Color.web(BaseImageShapesController.DefaultAnchorColor));
             anchorColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
-                    if (parentController instanceof ImageShapesController) {
-                        ((ImageShapesController) parentController).setMaskStroke();
-                    } else if (parentController instanceof ImageBaseController) {
-                        ((ImageBaseController) parentController).setMaskStroke();
+                    if (parentController instanceof BaseImageShapesController) {
+                        ((BaseImageShapesController) parentController).setMaskStroke();
+                    } else if (parentController instanceof BaseImageController) {
+                        ((BaseImageController) parentController).setMaskStroke();
                     }
                     popSuccessful();
                 }
@@ -936,16 +936,16 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
                     AppVariables.setUserConfigValue("AnchorSolid", new_toggle);
-                    if (parentController instanceof ImageShapesController) {
-                        ((ImageShapesController) parentController).setMaskStroke();
-                    } else if (parentController instanceof ImageBaseController) {
-                        ((ImageBaseController) parentController).setMaskStroke();
+                    if (parentController instanceof BaseImageShapesController) {
+                        ((BaseImageShapesController) parentController).setMaskStroke();
+                    } else if (parentController instanceof BaseImageController) {
+                        ((BaseImageController) parentController).setMaskStroke();
                     }
                 }
             });
             anchorSolidCheck.setSelected(AppVariables.getUserConfigBoolean("AnchorSolid", true));
 
-            alphaColorSetController.init(this, baseName + "AlphaAsColor", Color.WHITE);
+            alphaColorSetController.init(this, "AlphaAsColor", Color.WHITE);
             alphaColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,

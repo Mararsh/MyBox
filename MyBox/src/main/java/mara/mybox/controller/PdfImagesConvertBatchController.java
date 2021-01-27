@@ -37,7 +37,7 @@ public class PdfImagesConvertBatchController extends PdfBatchController {
     @FXML
     protected CheckBox copyAllCheck;
     @FXML
-    protected ImageConverterOptionsController optionsController;
+    protected ControlImageConverterOptions optionsController;
 
     public PdfImagesConvertBatchController() {
         baseTitle = AppVariables.message("PdfImagesConvertBatch");
@@ -122,7 +122,7 @@ public class PdfImagesConvertBatchController extends PdfBatchController {
             Iterator<COSName> pageIterator = iterable.iterator();
 
             while (pageIterator.hasNext()) {
-                if (task.isCancelled()) {
+                if (task == null || task.isCancelled()) {
                     break;
                 }
                 COSName cosName = pageIterator.next();

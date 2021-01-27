@@ -26,11 +26,11 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
     private int centerWidth, centerHeight, leftX, leftY, rightX, rightY;
 
     @FXML
-    private RadioButton centerRadio, customRadio;
+    protected RadioButton centerRadio, customRadio;
     @FXML
-    private ToggleGroup cropGroup;
+    protected ToggleGroup cropGroup;
     @FXML
-    private TextField centerWidthInput, centerHeightInput, leftXInput, leftYInput, rightXInput, rightYInput;
+    protected TextField centerWidthInput, centerHeightInput, leftXInput, leftYInput, rightXInput, rightYInput;
 
     public ImageManufactureBatchCropController() {
         baseTitle = AppVariables.message("ImageManufactureBatchCrop");

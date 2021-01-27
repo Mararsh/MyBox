@@ -19,15 +19,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -36,7 +37,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-05-31
  * @License Apache License Version 2.0
  */
-public class FFmpegScreenRecorderController extends DataTaskController {
+public class FFmpegScreenRecorderController extends BaseTaskController {
 
     protected String os;
     protected Process recorder;
@@ -152,7 +153,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             startButton.setUserData("started");
             tabPane.getSelectionModel().select(logsTab);
             if (optionsController.delayController.value > 0) {
-                updateLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"), true);
+                updateLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"));
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
@@ -175,7 +176,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             timer.cancel();
             timer = null;
         }
-        updateLogs(message("Started"), true);
+        updateLogs(message("Started"));
         List<String> parameters = new ArrayList();
         // http://trac.ffmpeg.org/wiki/Capture/Desktop
         parameters.add(optionsController.executable.getAbsolutePath());
@@ -197,6 +198,9 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 break;
             default:
                 return false;
+        }
+        if (!moreParameters(parameters)) {
+            return false;
         }
         return startRecorder(parameters);
     }
@@ -345,7 +349,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
         return true;
     }
 
-    protected boolean startRecorder(List<String> parameters) {
+    protected boolean moreParameters(List<String> parameters) {
         try {
             if (parameters == null) {
                 return false;
@@ -412,12 +416,28 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             }
             parameters.add(targetFile.getAbsolutePath());
             parameters.add("-y");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return true;
+    }
+
+    protected boolean startRecorder(List<String> parameters) {
+        try {
+            if (parameters == null) {
+                return false;
+            }
             ProcessBuilder pb = new ProcessBuilder(parameters)
                     .redirectErrorStream(true);
+            warmUp(pb);
+            FileTools.delete(targetFile);
             recorder = pb.start();
-            updateLogs("PID:" + recorder.pid(), true);
+            String cmd = parameters.toString().replaceAll("[\\[|,|\\]]", " ");
+            updateLogs(cmd);
+            updateLogs("PID:" + recorder.pid());
             if (optionsController.durationController.value > 0) {
-                updateLogs(message("Duration") + ": " + optionsController.durationController.value + " " + message("Seconds"), true);
+                updateLogs(message("Duration") + ": " + optionsController.durationController.value + " " + message("Seconds"));
             }
             if (timer != null) {
                 timer.cancel();
@@ -443,7 +463,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                         }
                     }
                     if (verboseCheck.isSelected() || !recording) {
-                        updateLogs(line + "\n", true);
+                        updateLogs(line + "\n");
                     }
                     if (!started && (new Date().getTime() - startTime > 15000)) {  // terminal process if too long blocking
                         recorder.destroyForcibly();
@@ -466,7 +486,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        updateLogs(message("FFmpegScreenRecorderAbnormal"), true);
+                        updateLogs(message("FFmpegScreenRecorderAbnormal"));
                         alertError(message("FFmpegScreenRecorderAbnormal"));
                     }
                 });
@@ -475,6 +495,21 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             MyBoxLog.error(e.toString());
         }
         return true;
+    }
+
+    // Looks the generated media is always invalid when command runs for the first time.
+    // So let's skip its first time...
+    protected void warmUp(ProcessBuilder pb) {
+        if (pb == null) {
+            return;
+        }
+        try {
+            recorder = pb.start();
+            cancelAction();
+            stopping.set(false);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
     @Override

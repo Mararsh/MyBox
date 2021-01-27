@@ -5,7 +5,7 @@ package mara.mybox.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.db.TableBrowserBypassSSL;
+import mara.mybox.db.table.TableBrowserBypassSSL;
 
 /**
  *

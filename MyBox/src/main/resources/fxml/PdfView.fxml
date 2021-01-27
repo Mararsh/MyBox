@@ -335,16 +335,7 @@ License:    Apache License Version 2.0
                                                         <Label text="%Page" />
                                                         <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
                                                         <Label fx:id="pageLabel" />
-                                                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goPageAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconGo.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
+                                                        <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -353,7 +344,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
+                                                        <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -362,7 +353,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                                                        <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -371,7 +362,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                                                        <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -506,7 +497,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                     <content>
-                                                                        <fx:include fx:id="ocrOptions" source="ImageOCROptions.fxml" />
+                                                                        <fx:include fx:id="ocrOptions" source="ControlOCROptions.fxml" />
                                                                     </content>
                                                                 </ScrollPane>
                                                             </children>

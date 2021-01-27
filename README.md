@@ -3,18 +3,18 @@
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。  
   
-## 新内容
-2020-12-03 版本6.3.7                  
--  添加：从ttc文件中提取ttf文件。内置一个开源免费的ttf文件。          
--  改进：可以选择高清晰图标和普通图标。可以批量设置html的编码。统一PDF字体选择控件。图像伸缩处理时可以设置渲染参数。设置mac的缺省视频解码器为VideoToolBox。                 
--  解决的主要问题：解压缩gz文件会毁坏源文件并且不断增大文件。html编码可能解析错误。字节编辑的右面板只显示一行。                     
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7)                   
+## 新内容      
+2021-1-27 版本6.3.8                  
+-  添加：编辑和转换csv和excel文件。数据粘贴板。编辑和保存矩阵。批量设置html的风格。          
+-  改进：颜色量化可以设置通道权重。焦点不在文本输入控件时快捷键可以省略Ctrl/Alt。数据转换/导出采用流读取。                 
+-  解决的主要问题：批量替换图片颜色的距离不生效。PDF的用户密码和所有者密码混乱。文本过滤界面分页错误。表字段也需要翻译。时间树上公元前的时间解析错误。                    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8)                   
 
  ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。    
  
 ### 源码   
-[MyBox-6.3.7-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-src.zip)   37M  
+[MyBox-6.3.8-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-src.zip)   37M  
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) 和 
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)             
@@ -25,9 +25,9 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |                                                                               
-| win x64 | [MyBox-6.3.7-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-exe.zip)  | 292MB | MyBox.exe |       
-| linux x64 | [MyBox-6.3.7-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux.tar.gz)  | 298MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.7-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac.dmg)  | 305MB  |  MyBox-6.3.7.app   |   
+| win x64 | [MyBox-6.3.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-exe.zip)  | 292MB | MyBox.exe |       
+| linux x64 | [MyBox-6.3.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux.tar.gz)  | 299MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac.dmg)  | 306MB  |  MyBox-6.3.8.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -37,14 +37,14 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3.7-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-jar.zip)  | 148MB | Java 15.0.1或更高版本 |    
-| linux | [MyBox-6.3.7-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux-jar.zip)  | 155MB  | Java 15.0.1或更高版本 |    
-| mac | [MyBox-6.3.7-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac-jar.zip)  |  152MB  | Java 15.0.1或更高版本 |    
+| win | [MyBox-6.3.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-jar.zip)  | 148MB | Java 15.0.1或更高版本 |    
+| linux | [MyBox-6.3.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux-jar.zip)  | 155MB  | Java 15.0.1或更高版本 |    
+| mac | [MyBox-6.3.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac-jar.zip)  |  152MB  | Java 15.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.3.7.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.8.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.3.7.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.8.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -58,12 +58,12 @@
 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。     
 
 ## 配置<a id="Config" />
-配置文件`MyBox_v版本号.ini`在"用户目录"下:                 
+配置文件在"用户目录"下:                 
 | 平台 | MyBox配置文件的目录 |        
 | --- | --- |        
-| win | `C:\用户\用户名\mybox\`  |         
-| linux | `/home/用户名/mybox/` |        
-| mac | `/Users/用户名/mybox/` |         
+| win | `C:\用户\用户名\mybox\MyBox_v6.3.8.ini`  |         
+| linux | `/home/用户名/mybox/MyBox_v6.3.8.ini` |        
+| mac | `/Users/用户名/mybox/MyBox_v6.3.8.ini` |         
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。
 利用“设置”功能也可以修改配置参数。
@@ -79,14 +79,11 @@
 | 镜像 | https://sourceforge.net/projects/mara-mybox/files/ |        
 | 云盘 | https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F |    
 
-# 文档    
-
-[打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)      
-
+# 文档         
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
-| 开发日志 | 6.3.7 |  2020-12-03 | [html](#devLog) |
-| 快捷键 | 6.3.5 |  2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.3.8 |  2021-1-27 | [html](#devLog) |
+| 快捷键 | 6.3.8 |  2021-1-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
@@ -131,7 +128,7 @@ MyBox基于以下开源资源：
 | AutoCommitCell | 提交修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | 高德 | 地图 | https://lbs.amap.com/api/javascript-api/summary |      
 | 高德 | 坐标 | https://lbs.amap.com/api/webservice/guide/api/georegeo |      
-| 微信 | 图片素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+| 微博 | 图片素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | 百度 | COVID-19数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | 腾讯 | COVID-19数据 | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 | poi | Excel | https://poi.apache.org |      
@@ -143,7 +140,7 @@ MyBox基于以下开源资源：
 | JHU | COVID-19数据 | https://github.com/CSSEGISandData/COVID-19 |      
 | 懒人图库 | 色彩数据 | https://tool.lanrentuku.com/color/china.html |      
 | 中国纹样全集 | 素材 | https://book.douban.com/subject/3894923/ |      
-| 天地图 | 地图 | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
+| 中国国家基础地理信息中心 | 地图 | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
 | movebank | 位置数据 | https://www.datarepository.movebank.org |      
 | CoordinateConverter | 坐标转换 | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |      
 | JavaMail | email | https://javaee.github.io/javamail/ |      
@@ -154,7 +151,7 @@ MyBox基于以下开源资源：
 
 
 # 当前版本
-当前是版本6.3.7，已实现的特点概述如下:
+当前是版本6.3.8，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [本机](#localhost)
@@ -164,6 +161,7 @@ MyBox基于以下开源资源：
     - [编辑文本](#editText)
     - [编辑字节](#editBytes)
     - [编辑网页](#htmlEditor)
+    - [网页工具](#htmlTools)
     - [编辑Markdown](#markdownEditor)
     - [转换文档](#convertDocuments)
 * [图像工具](#imageTools)
@@ -182,14 +180,16 @@ MyBox基于以下开源资源：
     - [其它](#imageOthers)
     - [大图片的处理](#bigImage)
 * [数据工具](#dataTools)
-    - [通用的数据管理](#dataManage)
+    - [数据文件](#dataFiles)
+    - [数据粘贴板](#dataClipboard)
+    - [矩阵](#matrix)
+    - [数据管理](#dataManage)
     - [地图数据](#mapData)
     - [地理编码](#geographyCode)
     - [地图上的位置](#locationInMap)
     - [位置数据](#locationData)
     - [位置工具](#locationTools)
     - [疫情报告](#epidemicReport)
-    - [矩阵计算](#matrixTool)
     - [生成条码](#createBarcodes)
     - [解码条码](#decodeBarcodes)
     - [消息摘要](#messageDegist)
@@ -219,14 +219,22 @@ MyBox基于以下开源资源：
 * [MyBox日志](#MyBoxLogs)    
     
 ## 跨平台<a id="cross-platform" />   
-MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 15的平台。（MyBox v5.3以前的版本均基于Java 8）
+MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 15的平台。       
+MyBox v5.3以前的版本均基于Java 8。           
  
 ## 国际化<a id="international" />
-1. 所有代码均国际化。目前支持中文、英文。
-2. 可实时切换语言。
-3. 扩展语言只需编辑资源文件。
-4. 支持在线添加语言，提供表格，对照英语翻译。新语言可实时生效。
-5. 新语言的资源文件可共享给别人：把新语言文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。
+1. 所有代码均国际化。可实时切换语言。
+2. 一种语言对应两个资源文件："Messages_语言名.properties"、"TableMessages_语言名.properties"。  
+3. 内置中文和英文， 在目录`MyBox/src/main/resources/bundles/`中：       
+
+| 语言 | 界面的资源文件 | 数据表的资源文件 |            
+| --- | --- |  --- |        
+| 中文 | Messages_zh_CN.properties | TableMessages_zh_CN.properties |                 
+| 英文 | Messages_en.properties | TableMessages_en.properties |        
+
+4. 支持在线添加语言。提供表格，对照英语翻译。新语言可实时生效。     
+例如，新语言名字为“aa”，则它的资源文件是：Messages_aa.properties和TableMessages_aa.properties。     
+5. 新语言可共享给别人：把资源文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。
 
 ![截屏-封面](https://mararsh.github.io/MyBox/snap-cover.jpg)
 
@@ -255,9 +263,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  识别PDF文件中图片的文字（OCR）。
 5. 分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。
 6. 合并多个PDF文件。 
-7. 将多个图片合成PDF文件，可以设置压缩选项、页面尺寸、页边、页眉、作者等。
-   支持中文，程序自动定位系统中的字体文件，用户也可以输入ttf字体文件路径。
-8. 修改PDF的属性，如：标题、作者、版本、修改时间、用户密码、所有者密码、用户权限等
+7. 将多个图片合成PDF文件
+8. 写PDF的选项：页面尺寸、图片属性、字体文件、页边、页眉、作者等。
+9. 修改PDF的属性，如：标题、作者、版本、修改时间、用户密码、所有者密码、用户权限等
 
 
 ![截屏-pdf](https://mararsh.github.io/MyBox/snap-pdf.jpg)       
@@ -312,6 +320,10 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ![截屏-textEditor](https://mararsh.github.io/MyBox/snap-htmlEditor.jpg)        
 
+### 网页工具<a id="htmlTools" />      
+1. 网页截图：可设置dpi，看选保存为一张图还是多图保存在PDF中。
+2. 合并多个网页为一个网页/Markdown/文本/PDF文件。
+3. 对多个文件生成框架文件。      
 
 ### 编辑Markdown<a id="markdownEditor" />
 1. 提供输入格式的按钮。
@@ -333,11 +345,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  转换网页为文本。
 	-  转换网页为PDF。
 	-  修改网页编码。
-3. 其它网页工具：
-	-  网页截图：可设置dpi，看选保存为一张图还是多图保存在PDF中。
-	-  合并多个网页为一个网页/Markdown/文本/PDF文件。
-	-  对多个文件生成框架文件。
-4. 批量转换Markdown：
+3. 批量转换Markdown：
 	-  转换Markdown为网页。
 	-  转换Markdown为文本。
 	-  转换Markdown为PDF。
@@ -346,14 +354,14 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ### 查看图像<a id="viewImage" />
 1. 设置加载宽度：原始尺寸或指定宽度。
-2. "选择区域"：处于选择模式时，剪裁、复制、另存，都是针对选择的区域，否则是针对整个图像。
+2. 选择区域。
 3. 旋转可保存。
 4. 删除、重命名、恢复。
 5. 可选显示：坐标、横标尺、纵标尺、数据。
 6. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
 7. 同目录下图像文件导览，多种文件排序方式。  
 8. 右键菜单。
-9. "剪裁"、“复制”、“保存为”、和各个功能是针对内存中的当前图片。
+9. "剪裁"、“复制”、“保存为”、和各个功能是针对内存中当前图片所选择的区域。
 
 ![截屏-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer.jpg)       
 
@@ -373,7 +381,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 2. 直方图的颜色成分可多选。
 3. 可针对选择的矩形区域做统计显示。  
 4. 计算主色调：    
-	-  利用K-Means聚类计算最不同的颜色。可设置最大循环数。       
+	-  利用K-Means聚类计算最不同的颜色。 
 	-  利用统计量化计算出现最多的颜色。      
 	-  可将计算结果导入调色板。       
 5. 图像数据可以被保存为html文件。   
@@ -404,8 +412,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 5. 色彩：针对红/蓝/绿/黄/青/紫通道、饱和度、明暗、色相、不透明度，进行增加、减少、设值、过滤、取反色的操作。可选是否预乘透明。
 6. 效果：海报（减色）、阈值化、灰色、黑白色、褐色、浮雕、边沿检测、马赛克、磨砂玻璃。可选算法和参数。
 7. 增强：对比度、平滑、锐化、卷积。可选算法和参数。
-8. 富文本：以网页形式编辑文本，在图片上拖放调整文本的大小和位置。可设置背景的颜色、不透明度、边沿宽度、圆角大小，可设置文字的旋转角度。
-   由于是利用截屏实现，结果比较模糊，还没有好的解决办法。（此版本暂时不支持）
+8. 富文本：以网页形式编辑文本，在图片上拖放调整文本的大小和位置。可设置背景的颜色、不透明度、边沿宽度、圆角大小，可设置文字的旋转角度。   
+    由于是利用截屏实现，结果比较模糊，还没有好的解决办法。（此版本暂时不支持）
 9. 文字：设置字体、风格、大小、色彩、不透明度、阴影、角度，可选是否轮廓、是否垂直，点击图片定位文字。
 10. 画笔：
 	-  折线：多笔一线。可选画笔的宽度、颜色、是否虚线、不透明度。
@@ -501,13 +509,10 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ![截屏-ocr](https://mararsh.github.io/MyBox/snap-ocr.jpg)       
 
 ### 颜色管理<a id="ColorManagement" />
-1. 在颜色库中增/删/改任意色彩。提供常用网页色彩、传统中国色彩、传统日本色彩。
-2. 给颜色命名。
-3. 把颜色加入/移出调色板。
-4. 简单/全部显示颜色属性。 
-5. 合并/分列显示颜色属性。
-6. 导出全部或选择的颜色为html或csv文件。
-7. 导入颜色文件，CSV格式：
+1. 在颜色库中增/删/改任意色彩：给颜色命名、把颜色加入/移出调色板。
+2. 简单/全部显示颜色属性，或合并/分列显示颜色属性。
+3. 导出当前页、全部、或选择的颜色为html或csv文件。
+4. 导入颜色文件，CSV格式：
 	-  文件编码是UTF-8或ASCII
 	-  第一行定义数据头，以英文逗号分隔。
 	-  其余每行定义一条数据，数据域以英文逗号分隔。
@@ -515,9 +520,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
                  rgba 或 rgb
 	-  以下是可选数据域：     
                  name
-8. 用户可输入颜色列表。提供示例。
+5. 用户可输入颜色列表。提供示例。      
 有效的颜色值示例：              
- 	  	 	  	orange [常用网页颜色列表](http://mararsh.github.io/MyBox_data/colors/%E5%B8%B8%E7%94%A8%E7%BD%91%E9%A1%B5%E9%A2%9C%E8%89%B2.html)                   
+ 	  	 	  	orange        
  	  	 	  	0xff668840             
  	  	 	  	0xff6688         
  	  	 	  	#ff6688            
@@ -527,10 +532,12 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	  	 	  	rgba(255,102,136,0.25)             
  	  	 	  	rgba(255,50%,50%,0.25)             
  	  	 	  	hsl(240,100%,100%)             
- 	  	 	  	hsla(120,0%,0%,0.25)            
+ 	  	 	  	hsla(120,0%,0%,0.25)         
+[常用网页颜色列表](http://mararsh.github.io/MyBox_data/colors/%E5%B8%B8%E7%94%A8%E7%BD%91%E9%A1%B5%E9%A2%9C%E8%89%B2.html)                   
+6. 内置：常用网页色彩、传统中国色彩、传统日本色彩、来自colorhexa.com的颜色。   
 
 ### 调色盘<a id="ColorPalette" />
-1. 色块显示颜色。弹出颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。
+1. 色块显示颜色。弹出：颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。
 2. 拖动色块以调整颜色的顺序。 
 
 ![截屏-colors](https://mararsh.github.io/MyBox/snap-colors.jpg)       
@@ -594,7 +601,54 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ## 数据工具<a id="dataTools" />
 
-### 通用的数据管理<a id="dataManage" />
+### 数据文件<a id="dataFiles" />
+1. 编辑数据文件：
+	- 对于CSV文件：
+ 		- 选项包括：文件的字符集、是否以第一行作为字段的名字、字段的分隔符。
+	- 对于Excel文件：
+ 		- 选项包括：工作表号、是否以第一行作为字段的名字。
+ 		- 工具只能处理Excel文件中的基本数据。如果文件包含格式、风格、或图，建议把修改保存为新文件以免数据丢失。
+	- 文件中的数据应当是等宽的，即所有行的列数相同。
+	- 数据被加载到表单中：
+ 		- 在表格单元中编辑数据。
+ 		- 将鼠标移至行/列的头部，以弹出此行/列的功能菜单。
+ 		- 将鼠标移至按钮上，以弹出所有/选择的行/列的功能菜单。
+ 		- 功能包括：设置列宽、选择、设值、复制、粘贴、插入、删除、排序。
+	- 数据分页：
+ 		- 当功能超出当前页时，运行功能之前必须保存当前页的修改。
+ 		- 对所有页的修改是直接写文件，所以无法恢复。
+	- "数据定义"用以描述和约束数据：
+ 		- 列名不能为空也不能重复。
+ 		- "数据类型"和"是否为空"用来检验数据值的合法性。
+ 		- 无论文件有无列名头行，数据定义都将被保存在数据库中。
+ 		- 点击“清除”按钮以删除数据库中的数据定义。文件将被重新加载。
+	- 同步显示数据的文本格式和网页格式：
+ 		- 可选择文本格式的分隔符。
+ 		- 可利用数据粘贴板来修改复制数据。
+2. 批量转换数据文件：
+	- 源文件格式：csv、excel。可以设置源文件的选项。
+	- 目标文件格式：csv、excel、xml、json、html、pdf。可以设置目标文件的选项。      
+
+### 数据粘贴板<a id="dataClipboard" />       
+1. 粘贴或输入文本，工具逐行按指定的分隔符解析数据。
+2. 同步显示数据的文本格式和网页格式。    
+
+
+### 矩阵<a id="matrix" />
+1. 编辑矩阵：
+	- 定义矩阵属性：名字、行数、列数、精度、描述。
+	- 在表格单元中修改行-列的数值。
+	- 将鼠标移至行/列的头部，以弹出此行/列的功能菜单。
+	- 将鼠标移至按钮上，以弹出所有/选择的行/列的功能菜单。
+	- 功能包括：设置列宽、选择、设值、复制、粘贴、插入、删除、排序。
+	- 同步显示数据的文本格式和网页格式。
+	- 利用数据粘贴板进行修改复制数值。特殊字符将被忽略。
+2. 矩阵的一元计算：转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解、逆矩阵-用消元法求解、逆矩阵-用伴随矩阵求解、矩阵的秩、伴随矩阵、余子式、归一化、乘以数值、除以数值、幂。
+3. 矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。
+4. 保存矩阵。编辑或计算后的矩阵可以保存在数据库中，以方便引用。  
+
+
+### 通用的数据管理<a id="dataManage" />      
 1. 定义数据
 2. 数据约束：
 	- 约定：
@@ -986,15 +1040,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ![截屏-epidemicReport](https://mararsh.github.io/MyBox/snap-epidemicReport.jpg)       
 
-### 矩阵计算<a id="matrixTool" />
-1. 矩阵数据的编辑：
-	-  对于输入或粘贴的数据，过滤特殊字符，以适应带格式的数据。
-	-  自动把当前矩阵数据转变为行向量、列向量、或指定列数的矩阵。
-	-  自动生成单位矩阵、随机方阵、或随机矩阵，可设置行/列数。   
-2. 矩阵的一元计算：转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解
-	、逆矩阵-用消元法求解、逆矩阵-用伴随矩阵求解、矩阵的秩、伴随矩阵、余子式、归一化、
-	、设置小数位数、设为整型、乘以数值、除以数值、幂。
-3. 矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。
+
 	
 
 ### 生成条码<a id="createBarcodes" />
@@ -1236,7 +1282,9 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 5. 最近访问的工具
 
 ## 帮助<a id="helps" />
-1. MyBox快捷键列表
+1. MyBox快捷键：
+	-  若焦点在“文本输入”控件中，则Delete/Home/End/PageUp/PageDown/Ctrl-c/v/z/y/x作用于此控件中的文本。否则，快捷键作用于界面。
+	-  若焦点不在“文本输入”控件中，Ctrl/Alt键可省略。例如，焦点在图片上时，按"c"以复制，按"2"以设置为面板尺寸。
 2. MyBox的属性
 3. 文档：帮助用户启动下载任务。若数据目录下已有MyBox文档，则MyBox会自动发现它们。
 
@@ -1264,6 +1312,12 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 4. “错误”会导致查看日志的界面被弹出。
 
 # 开发日志<a id="devLog" />          
+2021-1-27 版本6.3.8                  
+-  添加：编辑和转换csv和excel文件。数据粘贴板。编辑和保存矩阵。批量设置html的风格。          
+-  改进：颜色量化可以设置通道权重。焦点不在文本输入控件时快捷键可以省略Ctrl/Alt。数据转换/导出采用流读取。                 
+-  解决的主要问题：批量替换图片颜色的距离不生效。PDF的用户密码和所有者密码混乱。文本过滤界面分页错误。表字段也需要翻译。时间树上公元前的时间解析错误。                    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8)               
+
 2020-12-03 版本6.3.7                  
 -  添加：从ttc文件中提取ttf文件。内置一个开源免费的ttf文件。          
 -  改进：可以选择高清晰图标和普通图标。可以批量设置html的编码。统一PDF字体选择控件。图像伸缩处理时可以设置渲染参数。设置mac的缺省视频解码器为VideoToolBox。                 

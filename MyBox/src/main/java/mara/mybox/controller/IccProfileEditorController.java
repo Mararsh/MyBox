@@ -41,8 +41,8 @@ import mara.mybox.color.IccTag;
 import mara.mybox.color.IccTagType;
 import mara.mybox.color.IccTags;
 import mara.mybox.color.IccXML;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -127,7 +127,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         AddFileType = VisitHistory.FileType.Icc;
         AddPathType = VisitHistory.FileType.Icc;
 
-        defaultPathKey = SystemTools.IccProfilePath();
+        defaultPath = SystemTools.IccProfilePath();
 
         sourceExtensionFilter = CommonFxValues.IccProfileExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;

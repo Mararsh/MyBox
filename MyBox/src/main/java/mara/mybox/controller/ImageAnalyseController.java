@@ -40,11 +40,12 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.data.StringTable;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageColor.ColorComponent;
 import mara.mybox.image.ImageQuantization;
@@ -71,7 +72,8 @@ public class ImageAnalyseController extends ImageViewerController {
 
     protected ImageStatistic data;
     protected ImageView parentView;
-    protected int colorNumber1, bitDepth1, bitDepth2, colorNumber2, kmeansLoop;
+    protected int colorNumber1, regionSize1, regionSize2, colorNumber2, kmeansLoop,
+            weight11, weight12, weight13, weight21, weight22, weight23;
     protected List<Color> kmeansColors, popularityColors;
 
     @FXML
@@ -94,7 +96,8 @@ public class ImageAnalyseController extends ImageViewerController {
     protected Button refreshButton, palette1Button, palette2Button;
     @FXML
     protected ComboBox<String> colorsNumberSelectors1, colorsNumberSelectors2,
-            regionsDepthSelector1, regionsDepthSelector2, kmeansLoopSelector;
+            regionSizeSelector1, regionSizeSelector2, weightSelector1, weightSelector2,
+            kmeansLoopSelector;
     @FXML
     protected WebView colorsView, dominantView1, dominantView2,
             grayView, redView, greenView, blueView,
@@ -292,21 +295,12 @@ public class ImageAnalyseController extends ImageViewerController {
      */
     protected void initDominantTab() {
         try {
-            bitDepth1 = 4;
-            regionsDepthSelector1.getItems().addAll(Arrays.asList(
-                    "4", "3", "2", "1", "5", "6", "7", "8"));
-            regionsDepthSelector1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    bitDepth1 = Integer.valueOf(newValue);
-                    loadData(false, true, false);
-                }
-            });
-            regionsDepthSelector1.getSelectionModel().select(0);
 
-            colorNumber1 = 16;
+            colorNumber1 = AppVariables.getUserConfigInt(baseName + "ColorNumber1", 16);
+            colorNumber1 = colorNumber1 <= 0 ? 16 : colorNumber1;
             colorsNumberSelectors1.getItems().addAll(Arrays.asList(
                     "16", "8", "5", "6", "27", "64", "258", "128"));
+            colorsNumberSelectors1.setValue(colorNumber1 + "");
             colorsNumberSelectors1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -314,6 +308,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             colorNumber1 = v;
+                            AppVariables.setUserConfigInt(baseName + "ColorNumber1", colorNumber1);
                             FxmlControl.setEditorNormal(colorsNumberSelectors1);
                             loadData(false, true, false);
                         } else {
@@ -324,7 +319,61 @@ public class ImageAnalyseController extends ImageViewerController {
                     }
                 }
             });
-            colorsNumberSelectors1.getSelectionModel().select(0);
+
+            regionSize1 = AppVariables.getUserConfigInt(baseName + "RegionSize1", 256);
+            regionSize1 = regionSize1 <= 0 ? 256 : regionSize1;
+            regionSizeSelector1.getItems().addAll(Arrays.asList("256", "1024", "64", "512", "1024", "4096", "128"));
+            regionSizeSelector1.setValue(regionSize1 + "");
+            regionSizeSelector1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            regionSize1 = v;
+                            AppVariables.setUserConfigInt(baseName + "RegionSize1", regionSize1);
+                            regionSizeSelector1.getEditor().setStyle(null);
+                            loadData(false, true, false);
+                        } else {
+                            regionSizeSelector1.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        regionSizeSelector1.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+            weight11 = 2;
+            weight12 = 4;
+            weight13 = 4;
+            String defaultV = AppVariables.getUserConfigValue(baseName + "RGBWeights1", "2:4:3");
+            weightSelector1.getItems().addAll(Arrays.asList(
+                    "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
+            ));
+            weightSelector1.setValue(defaultV);
+            weightSelector1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        String[] values = newValue.split(":");
+                        int v1 = Integer.parseInt(values[0]);
+                        int v2 = Integer.parseInt(values[1]);
+                        int v3 = Integer.parseInt(values[2]);
+                        if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
+                            weightSelector1.getEditor().setStyle(badStyle);
+                            return;
+                        }
+                        weight11 = v1;
+                        weight12 = v2;
+                        weight13 = v3;
+                        weightSelector1.getEditor().setStyle(null);
+                        AppVariables.setUserConfigValue(baseName + "RGBWeights1", newValue);
+                        loadData(false, true, false);
+                    } catch (Exception e) {
+                        weightSelector1.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
 
             kmeansLoop = 10000;
             kmeansLoopSelector.getItems().addAll(Arrays.asList(
@@ -348,21 +397,11 @@ public class ImageAnalyseController extends ImageViewerController {
             });
             kmeansLoopSelector.getSelectionModel().select(0);
 
-            bitDepth2 = 2;
-            regionsDepthSelector2.getItems().addAll(Arrays.asList(
-                    "2", "1", "3", "4", "5", "6", "7", "8"));
-            regionsDepthSelector2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    bitDepth2 = Integer.valueOf(newValue);
-                    loadData(false, false, true);
-                }
-            });
-            regionsDepthSelector2.getSelectionModel().select(0);
-
-            colorNumber2 = 16;
+            colorNumber2 = AppVariables.getUserConfigInt(baseName + "ColorNumber2", 16);
+            colorNumber2 = colorNumber2 <= 0 ? 16 : colorNumber2;
             colorsNumberSelectors2.getItems().addAll(Arrays.asList(
                     "16", "8", "5", "6", "27", "64", "258", "128"));
+            colorsNumberSelectors2.setValue(colorNumber2 + "");
             colorsNumberSelectors2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -370,6 +409,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             colorNumber2 = v;
+                            AppVariables.setUserConfigInt(baseName + "ColorNumber2", colorNumber2);
                             FxmlControl.setEditorNormal(colorsNumberSelectors2);
                             loadData(false, false, true);
                         } else {
@@ -380,7 +420,61 @@ public class ImageAnalyseController extends ImageViewerController {
                     }
                 }
             });
-            colorsNumberSelectors2.getSelectionModel().select(0);
+
+            regionSize2 = AppVariables.getUserConfigInt(baseName + "RegionSize2", 256);
+            regionSize2 = regionSize2 <= 0 ? 256 : regionSize2;
+            regionSizeSelector2.getItems().addAll(Arrays.asList("256", "1024", "64", "512", "1024", "4096", "128"));
+            regionSizeSelector2.setValue(regionSize2 + "");
+            regionSizeSelector2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            regionSize2 = v;
+                            AppVariables.setUserConfigInt(baseName + "RegionSize2", regionSize2);
+                            regionSizeSelector2.getEditor().setStyle(null);
+                            loadData(false, false, true);
+                        } else {
+                            regionSizeSelector2.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        regionSizeSelector2.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+            weight21 = 2;
+            weight22 = 4;
+            weight23 = 4;
+            String defaultV2 = AppVariables.getUserConfigValue(baseName + "RGBWeights2", "2:4:3");
+            weightSelector2.getItems().addAll(Arrays.asList(
+                    "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
+            ));
+            weightSelector2.setValue(defaultV2);
+            weightSelector2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        String[] values = newValue.split(":");
+                        int v1 = Integer.parseInt(values[0]);
+                        int v2 = Integer.parseInt(values[1]);
+                        int v3 = Integer.parseInt(values[2]);
+                        if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
+                            weightSelector2.getEditor().setStyle(badStyle);
+                            return;
+                        }
+                        weight21 = v1;
+                        weight22 = v2;
+                        weight23 = v3;
+                        weightSelector2.getEditor().setStyle(null);
+                        AppVariables.setUserConfigValue(baseName + "RGBWeights2", newValue);
+                        loadData(false, false, true);
+                    } catch (Exception e) {
+                        weightSelector2.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
 
             FxmlControl.setTooltip(tipsView, new Tooltip(message("QuantizationComments")));
 
@@ -401,7 +495,9 @@ public class ImageAnalyseController extends ImageViewerController {
                 });
             }
             KMeansClusteringQuantization quantization = (KMeansClusteringQuantization) ImageQuantization
-                    .create(image, null, KMeansClustering, colorNumber1, bitDepth1, true, true);
+                    .create(image, null, KMeansClustering, colorNumber1,
+                            regionSize1, weight11, weight12, weight13,
+                            true, true, true);
             quantization.getKmeans().setMaxIteration(kmeansLoop);
             showDominantData(quantization, image,
                     message("DominantKMeansComments"), dominantView1, dominantPie1);
@@ -422,8 +518,9 @@ public class ImageAnalyseController extends ImageViewerController {
                 });
             }
             ImageQuantization quantization = ImageQuantization.create(image,
-                    null, QuantizationAlgorithm.PopularityQuantization,
-                    colorNumber2, bitDepth2, true, true);
+                    null, QuantizationAlgorithm.PopularityQuantization, colorNumber2,
+                    regionSize2, weight21, weight22, weight23,
+                    true, true, true);
             return showDominantData(quantization, image,
                     message("DominantPopularityComments"), dominantView2, dominantPie2);
         } catch (Exception e) {
@@ -976,7 +1073,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Tab currentTab = dataPane.getSelectionModel().getSelectedItem();
 
             dataPane.getSelectionModel().select(colorsTab);
-            String html = (String) colorsView.getEngine().executeScript("document.documentElement.outerHTML");
+            String html = FxmlControl.getHtml(colorsView);
             Thread.sleep(50);
             final String colorsViewHml = HtmlTools.body(html);
 
@@ -987,7 +1084,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(dominantTab);
-            html = (String) dominantView1.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(dominantView1);
             Thread.sleep(50);
             final String dominantView1Hml = HtmlTools.body(html);
 
@@ -998,7 +1095,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image dominantPie1Snap = dominantPie1.snapshot(snapPara, snapshot);
 
-            html = (String) dominantView2.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(dominantView2);
             Thread.sleep(50);
             final String dominantView2Hml = HtmlTools.body(html);
 
@@ -1010,7 +1107,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image dominantPie2Snap = dominantPie2.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(grayTab);
-            html = (String) grayView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(grayView);
             Thread.sleep(50);
             final String greyHtml = HtmlTools.body(html);
 
@@ -1022,7 +1119,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image greyBarchartSnap = grayBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(redTab);
-            html = (String) redView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(redView);
             Thread.sleep(50);
             final String redHtml = HtmlTools.body(html);
 
@@ -1034,7 +1131,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image redBarchartSnap = redBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(greenTab);
-            html = (String) greenView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(greenView);
             Thread.sleep(50);
             final String greenHtml = HtmlTools.body(html);
 
@@ -1046,7 +1143,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image greenBarchartSnap = greenBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(blueTab);
-            html = (String) blueView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(blueView);
             Thread.sleep(50);
             final String blueHtml = HtmlTools.body(html);
 
@@ -1058,7 +1155,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image blueBarchartSnap = blueBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(hueTab);
-            html = (String) hueView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(hueView);
             Thread.sleep(50);
             final String hueHtml = HtmlTools.body(html);
 
@@ -1070,7 +1167,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image hueBarchartSnap = hueBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(brightnessTab);
-            html = (String) brightnessView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(brightnessView);
             Thread.sleep(50);
             final String brightnessHtml = HtmlTools.body(html);
 
@@ -1082,7 +1179,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image brightnessBarchartSnap = brightnessBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(saturationTab);
-            html = (String) saturationView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(saturationView);
             Thread.sleep(50);
             final String saturationHtml = HtmlTools.body(html);
 
@@ -1094,7 +1191,7 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image saturationBarchartSnap = saturationBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(alphaTab);
-            html = (String) alphaView.getEngine().executeScript("document.documentElement.outerHTML");
+            html = FxmlControl.getHtml(alphaView);
             Thread.sleep(50);
             final String alphaHtml = HtmlTools.body(html);
 

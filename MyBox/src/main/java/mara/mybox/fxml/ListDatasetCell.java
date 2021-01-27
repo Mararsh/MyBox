@@ -1,7 +1,7 @@
 package mara.mybox.fxml;
 
 import javafx.scene.control.ListCell;
-import mara.mybox.data.Dataset;
+import mara.mybox.db.data.Dataset;
 
 /**
  * @Author Mara

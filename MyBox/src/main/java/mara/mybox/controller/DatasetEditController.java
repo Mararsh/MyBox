@@ -13,11 +13,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import mara.mybox.data.Dataset;
+import mara.mybox.db.data.Dataset;
 import mara.mybox.data.Era;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
-import mara.mybox.db.TableDataset;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableDataset;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
@@ -130,8 +130,8 @@ public class DatasetEditController extends BaseController {
                 clearData();
                 return;
             }
-            if (loadedDataset.getDsid() > 0) {
-                idInput.setText(loadedDataset.getDsid() + "");
+            if (loadedDataset.getId() > 0) {
+                idInput.setText(loadedDataset.getId() + "");
             } else {
                 idInput.clear();
             }
@@ -232,9 +232,9 @@ public class DatasetEditController extends BaseController {
             }
             Dataset dataset = new Dataset().setDataSet(name);
             if (idInput.getText() == null || idInput.getText().isBlank()) {
-                dataset.setDsid(-1);
+                dataset.setId(-1);
             } else {
-                dataset.setDsid(Long.valueOf(idInput.getText()));
+                dataset.setId(Long.valueOf(idInput.getText()));
             }
             String category = categorySelector.getSelectionModel().getSelectedItem();
             for (String c : TableDataset.dataCategories()) {
@@ -281,16 +281,16 @@ public class DatasetEditController extends BaseController {
                 return;
             }
 
-            if (dataset.getDsid() > 0) {
+            if (dataset.getId() > 0) {
                 popUpdateSuccessful();
-                idInput.setText(dataset.getDsid() + "");
+                idInput.setText(dataset.getId() + "");
             } else {
                 popInsertSuccessful();
             }
             closeStage();
 
             if (parentController != null) {
-                ((DataAnalysisController) parentController).refreshAction();
+                ((BaseDataManageController) parentController).refreshAction();
                 parentController.getMyStage().toFront();
             }
 

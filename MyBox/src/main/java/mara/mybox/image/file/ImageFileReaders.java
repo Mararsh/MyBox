@@ -106,8 +106,8 @@ public class ImageFileReaders {
                     }
                 }
                 reader.dispose();
-                return frames;
             }
+            return frames;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -155,8 +155,8 @@ public class ImageFileReaders {
                     }
                 }
                 reader.dispose();
-                return frames;
             }
+            return frames;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -208,8 +208,8 @@ public class ImageFileReaders {
                     }
                 }
                 reader.dispose();
-                return images;
             }
+            return images;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -293,6 +293,7 @@ public class ImageFileReaders {
                 frame = ImageManufacture.scaleImageHeightKeep(frame, height);
                 return frame;
             }
+            BufferedImage frame = null;
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
                 if (!readers.hasNext()) {
@@ -307,7 +308,6 @@ public class ImageFileReaders {
                 if (scale > 1) {
                     param.setSourceSubsampling(scale, scale, 0, 0);
                 }
-                BufferedImage frame;
                 try {
                     frame = reader.read(index, param);
                 } catch (Exception e) {
@@ -317,8 +317,8 @@ public class ImageFileReaders {
                     frame = ImageManufacture.scaleImageHeightKeep(frame, height);
                 }
                 reader.dispose();
-                return frame;
             }
+            return frame;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -558,18 +558,18 @@ public class ImageFileReaders {
                     try {
                         imageInfo.setPixelAspectRatio(reader.getAspectRatio(i));
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.console(e.toString());
                     }
                     try {
                         imageInfo.setHasThumbnails(reader.hasThumbnails(i));
                         imageInfo.setNumberOfThumbnails(reader.getNumThumbnails(i));
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.console(e.toString());
                     }
                     try {
                         readImageMetaData(format, imageInfo, reader.getImageMetadata(i));
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.console(e.toString());
                     }
                     ImageInformation.countMaxWidth(imageInfo);
                     imagesInfo.add(imageInfo);
@@ -1023,17 +1023,17 @@ public class ImageFileReaders {
 
     public static IIOMetadata getIIOMetadata(File file) {
         try {
+            IIOMetadata iioMetaData = null;
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
                 if (readers.hasNext()) {
                     ImageReader reader = readers.next();
                     reader.setInput(iis, false);
-                    IIOMetadata iioMetaData = reader.getImageMetadata(0);
+                    iioMetaData = reader.getImageMetadata(0);
                     reader.dispose();
-                    return iioMetaData;
                 }
             }
-            return null;
+            return iioMetaData;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

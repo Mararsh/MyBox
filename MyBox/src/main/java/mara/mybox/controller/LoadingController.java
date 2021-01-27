@@ -9,9 +9,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Region;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -26,11 +27,11 @@ public class LoadingController extends BaseController {
     private boolean isCanceled;
 
     @FXML
-    private ProgressIndicator progressIndicator;
+    protected ProgressIndicator progressIndicator;
     @FXML
-    private Label infoLabel, timeLabel;
+    protected Label infoLabel, timeLabel;
     @FXML
-    private TextArea text;
+    protected TextArea text;
 
     public LoadingController() {
         baseTitle = AppVariables.message("LoadingPage");
@@ -97,11 +98,11 @@ public class LoadingController extends BaseController {
     }
 
     public void setInfo(String info) {
-//        if (loadingTask == null || !loadingTask.isRunning()) {
-//            return;
-//        }
         Platform.runLater(() -> {
             infoLabel.setText(info);
+            infoLabel.setWrapText(true);
+            infoLabel.setMinHeight(Region.USE_PREF_SIZE);
+            infoLabel.applyCss();
         });
 
     }
@@ -111,7 +112,7 @@ public class LoadingController extends BaseController {
     }
 
     public void setProgress(float value) {
-        if (loadingTask == null || !loadingTask.isRunning()) {
+        if (loadingTask == null || loadingTask.isDone()) {
             return;
         }
         progressIndicator.setProgress(value);
@@ -167,7 +168,7 @@ public class LoadingController extends BaseController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (loadingTask != null && loadingTask.isRunning()) {
+        if (loadingTask != null && !loadingTask.isDone()) {
             loadingTask.cancel();
             loadingTask = null;
         }

@@ -12,7 +12,7 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageTooLargeController extends BaseController {
 
-    protected ImageBaseController parent;
+    protected BaseImageController parent;
     protected ImageInformation imageInfo;
 
     @FXML
@@ -27,7 +27,7 @@ public class ImageTooLargeController extends BaseController {
 
     }
 
-    public void setValues(ImageBaseController parent, ImageInformation imageInfo) {
+    public void setValues(BaseImageController parent, ImageInformation imageInfo) {
         if (parent == null || imageInfo == null) {
             return;
         }

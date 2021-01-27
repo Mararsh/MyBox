@@ -15,19 +15,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.util.converter.LongStringConverter;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import thridparty.TableAutoCommitCell;
 
@@ -36,7 +36,7 @@ import thridparty.TableAutoCommitCell;
  * @CreateDate 2020-2-4
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsEditController extends TableManageController<EpidemicReport> {
+public class EpidemicReportsEditController extends BaseDataTableController<EpidemicReport> {
 
     protected EpidemicReportsController reportsController;
     protected long time;
@@ -180,7 +180,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             locationColumn.setText(message("Country"));
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -218,7 +218,8 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -317,7 +318,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -329,7 +330,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                         EpidemicReport report = (EpidemicReport) o;
                         report.setDataSet(dataset);
                         report.setTime(time);
-                        report.setSource(2);
+                        report.setSource((short) 2);
                     }
                     count = TableEpidemicReport.write(tableData, true);
                     return count > 0;
@@ -351,7 +352,8 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

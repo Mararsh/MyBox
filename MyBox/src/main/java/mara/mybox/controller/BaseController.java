@@ -59,14 +59,14 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mara.mybox.data.BaseTask;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.VisitHistory.FileType;
-import mara.mybox.data.tools.VisitHistoryTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableUserConf;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory.FileType;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -90,9 +90,9 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class BaseController implements Initializable {
+public abstract class BaseController implements Initializable {
 
-    protected String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPathKey;
+    protected String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPath;
     protected int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
@@ -107,7 +107,7 @@ public class BaseController implements Initializable {
     protected ContextMenu popMenu;
     protected MaximizedListener maximizedListener;
     protected FullscreenListener fullscreenListener;
-    protected String targetFileType, targetNameAppend;
+    protected String targetFileSuffix, targetNameAppend;
     protected ChangeListener<Number> leftDividerListener, rightDividerListener;
     protected boolean isSettingValues;
     protected File sourceFile, sourcePath, targetPath, targetFile;
@@ -138,7 +138,8 @@ public class BaseController implements Initializable {
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
             undoButton, redoButton, transparentButton, whiteButton, blackButton, playButton, stopButton,
-            selectAllButton, selectNoneButton, withdrawButton;
+            selectAllButton, selectNoneButton, withdrawButton,
+            pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton;
     @FXML
     protected VBox paraBox;
     @FXML
@@ -173,7 +174,7 @@ public class BaseController implements Initializable {
         LastPathKey = "LastPathKey";
         targetPathKey = "targetPath";
         sourcePathKey = "sourcePath";
-        defaultPathKey = null;
+        defaultPath = null;
 
         sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -374,31 +375,29 @@ public class BaseController implements Initializable {
             if (targetExistGroup != null) {
                 targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
-                    public void changed(ObservableValue<? extends Toggle> ov,
-                            Toggle old_toggle, Toggle new_toggle) {
+                    public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
                         checkTargetExistType();
                     }
                 });
                 isSettingValues = true;
-                FxmlControl.setRadioSelected(targetExistGroup, getUserConfigValue("TargetExistType", message("Replace")));
+                FxmlControl.setRadioSelected(targetExistGroup, getUserConfigValue(baseName + "TargetExistType", message("Replace")));
                 if (targetAppendInput != null) {
                     targetAppendInput.textProperty().addListener(new ChangeListener<String>() {
                         @Override
-                        public void changed(ObservableValue<? extends String> ov,
-                                String oldv, String newv) {
+                        public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
                             checkTargetExistType();
                         }
                     });
-                    targetAppendInput.setText(getUserConfigValue("TargetExistAppend", "_m"));
+                    targetAppendInput.setText(getUserConfigValue(baseName + "TargetExistAppend", "_m"));
                 }
                 isSettingValues = false;
                 checkTargetExistType();
             }
 
-            dpi = 96;
+            dpi = AppVariables.getUserConfigInt(baseName + "DPI", 96);
             if (dpiSelector != null) {
                 List<String> dpiValues = new ArrayList();
-                dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
+                dpiValues.addAll(Arrays.asList("96", "72", "300", "160", "240", "120", "600", "400"));
                 String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
                 if (dpiValues.contains(sValue)) {
                     dpiValues.remove(sValue);
@@ -410,16 +409,22 @@ public class BaseController implements Initializable {
                 }
                 dpiValues.add(sValue);
                 dpiSelector.getItems().addAll(dpiValues);
+                dpiSelector.setValue(dpi + "");
                 dpiSelector.getSelectionModel().selectedItemProperty().addListener(
                         (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                             try {
-                                dpi = Integer.parseInt(newValue);
-                                AppVariables.setUserConfigValue(baseName + "DPI", dpi + "");
+                                int v = Integer.parseInt(newValue);
+                                if (v > 0) {
+                                    dpi = v;
+                                    AppVariables.setUserConfigInt(baseName + "DPI", dpi);
+                                    dpiSelector.getEditor().setStyle(null);
+                                } else {
+                                    dpiSelector.getEditor().setStyle(badStyle);
+                                }
                             } catch (Exception e) {
-                                dpi = 96;
+                                dpiSelector.getEditor().setStyle(badStyle);
                             }
                         });
-                dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "DPI", "96"));
             }
 
             if (splitPane != null && leftPane != null && leftPaneControl != null) {
@@ -533,15 +538,13 @@ public class BaseController implements Initializable {
                         });
                 myScene.widthProperty().addListener(
                         (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (!isSettingValues && !myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
-                            && (myStage.getWidth() > minSize)) {
+                            if (recordStageSizeChange(minSize)) {
                                 AppVariables.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
                             }
                         });
                 myScene.heightProperty().addListener(
                         (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (!isSettingValues && !myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
-                            && (myStage.getHeight() > minSize)) {
+                            if (recordStageSizeChange(minSize)) {
                                 AppVariables.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
                             }
                         });
@@ -565,10 +568,9 @@ public class BaseController implements Initializable {
                 myStage.setY(0);
             }
 
-            initSplitPanes();
             refreshStyle();
-            myStage.toFront();
-            myStage.requestFocus();
+            initSplitPanes();
+
             if (mainMenuController != null) {
                 FxmlControl.mouseCenter(myStage);
             }
@@ -604,10 +606,12 @@ public class BaseController implements Initializable {
 
     public void toFront() {
         try {
+            getMyStage().setIconified(false);
+            myStage.toFront();
+            myStage.requestFocus();
             if (topCheck == null || !topCheck.isVisible() || topCheck.isDisabled()) {
                 return;
             }
-            getMyStage().toFront();
             topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
             if (!topCheck.isSelected()) {
                 return;
@@ -619,7 +623,6 @@ public class BaseController implements Initializable {
                     Platform.runLater(() -> {
                         getMyStage().toFront();
                         checkAlwaysTop();
-                        timer = null;
                     });
                 }
             }, 1000);
@@ -958,6 +961,7 @@ public class BaseController implements Initializable {
         if (targetAppendInput != null) {
             targetAppendInput.setStyle(null);
         }
+
         RadioButton selected = (RadioButton) targetExistGroup.getSelectedToggle();
         if (selected.equals(targetReplaceRadio)) {
             targetExistType = TargetExistType.Replace;
@@ -968,17 +972,17 @@ public class BaseController implements Initializable {
                 if (targetAppendInput.getText() == null || targetAppendInput.getText().trim().isEmpty()) {
                     targetAppendInput.setStyle(badStyle);
                 } else {
-                    setUserConfigValue("TargetExistAppend", targetAppendInput.getText().trim());
+                    setUserConfigValue(baseName + "TargetExistAppend", targetAppendInput.getText().trim());
                 }
             }
 
         } else if (selected.equals(targetSkipRadio)) {
             targetExistType = TargetExistType.Skip;
         }
-        setUserConfigValue("TargetExistType", selected.getText());
+        setUserConfigValue(baseName + "TargetExistType", selected.getText());
     }
 
-    // Shortcuts like Ctrl-c/v/x/z/y/a may be for text editing
+    // Shortcuts like PageDown/PageUp/Home/End/Ctrl-c/v/x/z/y/a may work for text editing
     public void keyEventsHandler(KeyEvent event) {
 //        MyBoxLog.debug(this.getClass().getName() + " " + event.isControlDown() + " text:" + event.getText()
 //                + " code:" + event.getCode());
@@ -1015,22 +1019,29 @@ public class BaseController implements Initializable {
             case HOME:
                 if (firstButton != null && !firstButton.isDisabled()) {
                     firstAction();
+                } else if (pageFirstButton != null && !pageFirstButton.isDisabled()) {
+                    pageFirstAction();
                 }
                 return;
             case END:
                 if (lastButton != null && !lastButton.isDisabled()) {
                     lastAction();
+                } else if (pageLastButton != null && !pageLastButton.isDisabled()) {
+                    pageLastAction();
                 }
                 return;
-
             case PAGE_UP:
                 if (previousButton != null && !previousButton.isDisabled()) {
                     previousAction();
+                } else if (pagePreviousButton != null && !pagePreviousButton.isDisabled()) {
+                    pagePreviousAction();
                 }
                 return;
             case PAGE_DOWN:
                 if (nextButton != null && !nextButton.isDisabled()) {
                     nextAction();
+                } else if (pageNextButton != null && !pageNextButton.isDisabled()) {
+                    pageNextAction();
                 }
                 return;
         }
@@ -1057,11 +1068,17 @@ public class BaseController implements Initializable {
                 }
                 return;
             case C:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (copyButton != null && !copyButton.isDisabled()) {
                     copyAction();
                 }
                 return;
             case V:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (pasteButton != null && !pasteButton.isDisabled()) {
                     pasteAction();
                 }
@@ -1082,6 +1099,9 @@ public class BaseController implements Initializable {
                 }
                 return;
             case A:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (allButton != null && !allButton.isDisabled()) {
                     allAction();
                 } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
@@ -1094,6 +1114,9 @@ public class BaseController implements Initializable {
                 }
                 return;
             case X:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (cropButton != null && !cropButton.isDisabled()) {
                     cropAction();
                 }
@@ -1109,11 +1132,17 @@ public class BaseController implements Initializable {
                 }
                 return;
             case Z:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (undoButton != null && !undoButton.isDisabled()) {
                     undoAction();
                 }
                 return;
             case Y:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (redoButton != null && !redoButton.isDisabled()) {
                     redoAction();
                 }
@@ -1146,18 +1175,51 @@ public class BaseController implements Initializable {
         }
         switch (code) {
             case DELETE:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (deleteButton != null && !deleteButton.isDisabled()) {
                     deleteAction();
                 }
                 return;
+            case HOME:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
+                if (firstButton != null && !firstButton.isDisabled()) {
+                    firstAction();
+                } else if (pageFirstButton != null && !pageFirstButton.isDisabled()) {
+                    pageFirstAction();
+                }
+                return;
+            case END:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
+                if (lastButton != null && !lastButton.isDisabled()) {
+                    lastAction();
+                } else if (pageLastButton != null && !pageLastButton.isDisabled()) {
+                    pageLastAction();
+                }
+                return;
             case PAGE_UP:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (previousButton != null && !previousButton.isDisabled()) {
                     previousAction();
+                } else if (pagePreviousButton != null && !pagePreviousButton.isDisabled()) {
+                    pagePreviousAction();
                 }
                 return;
             case PAGE_DOWN:
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
                 if (nextButton != null && !nextButton.isDisabled()) {
                     nextAction();
+                } else if (pageNextButton != null && !pageNextButton.isDisabled()) {
+                    pageNextAction();
                 }
                 return;
             case F1:
@@ -1216,6 +1278,10 @@ public class BaseController implements Initializable {
 //                else if (stopButton != null && !stopButton.isDisabled()) {
 //                    stopAction();
 //                }
+        }
+
+        if (!FxmlControl.textInputFocus(this)) {
+            controlAltHandler(event);
         }
 
     }
@@ -1985,11 +2051,16 @@ public class BaseController implements Initializable {
     public File makeTargetFile(String fileName, File targetPath) {
         try {
             String namePrefix = FileTools.namePrefix(fileName);
-            String nameSuffix = FileTools.getFileSuffix(fileName);
-            if (targetFileType != null) {
-                nameSuffix = "." + targetFileType;
-            } else if (!nameSuffix.isEmpty()) {
-                nameSuffix = "." + nameSuffix;
+            String nameSuffix;
+            if (targetFileSuffix != null) {
+                nameSuffix = "." + targetFileSuffix;
+            } else {
+                nameSuffix = FileTools.getFileSuffix(fileName);
+                if (nameSuffix != null && !nameSuffix.isEmpty()) {
+                    nameSuffix = "." + nameSuffix;
+                } else {
+                    nameSuffix = "";
+                }
             }
             return makeTargetFile(namePrefix, nameSuffix, targetPath);
         } catch (Exception e) {
@@ -1999,8 +2070,9 @@ public class BaseController implements Initializable {
 
     public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
         try {
-            String targetPrefix = targetPath.getAbsolutePath() + File.separator + namePrefix;
-            File target = new File(targetPrefix + nameSuffix);
+            String targetPrefix = targetPath.getAbsolutePath() + File.separator + FileTools.filenameFilter(namePrefix);
+            String targetSuffix = FileTools.filenameFilter(nameSuffix);
+            File target = new File(targetPrefix + targetSuffix);
             if (target.exists()) {
                 if (targetExistType == TargetExistType.Skip) {
                     target = null;
@@ -2009,11 +2081,11 @@ public class BaseController implements Initializable {
                         targetNameAppend = targetAppendInput.getText().trim();
                     }
                     if (targetNameAppend == null || targetNameAppend.isEmpty()) {
-                        targetNameAppend = "-m";
+                        targetNameAppend = "_m";
                     }
                     while (true) {
                         targetPrefix = targetPrefix + targetNameAppend;
-                        target = new File(targetPrefix + nameSuffix);
+                        target = new File(targetPrefix + targetSuffix);
                         if (!target.exists()) {
                             break;
                         }
@@ -2209,6 +2281,26 @@ public class BaseController implements Initializable {
     }
 
     @FXML
+    public void pageNextAction() {
+
+    }
+
+    @FXML
+    public void pagePreviousAction() {
+
+    }
+
+    @FXML
+    public void pageFirstAction() {
+
+    }
+
+    @FXML
+    public void pageLastAction() {
+
+    }
+
+    @FXML
     public void popAction() {
 
     }
@@ -2376,7 +2468,7 @@ public class BaseController implements Initializable {
                 timer.cancel();
                 timer = null;
             }
-            if (task != null && task.isRunning()) {
+            if (task != null && !task.isQuit()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(AppVariables.message("TaskRunning"));
@@ -2533,6 +2625,9 @@ public class BaseController implements Initializable {
                     + " -fx-background-radius: 6;");
             popup.setAutoFix(true);
             popup.getContent().add(popupLabel);
+            popupLabel.setWrapText(true);
+            popupLabel.setMinHeight(Region.USE_PREF_SIZE);
+            popupLabel.applyCss();
 
             if (delay > 0) {
                 if (popupTimer != null) {
@@ -2814,6 +2909,7 @@ public class BaseController implements Initializable {
         protected void whenFailed() {
             if (error != null) {
                 popError(AppVariables.message(error));
+//                MyBoxLog.console(AppVariables.message(error));
             } else {
                 popFailed();
             }
@@ -2852,8 +2948,8 @@ public class BaseController implements Initializable {
         return sourcePathKey;
     }
 
-    public String getDefaultPathKey() {
-        return defaultPathKey;
+    public String getDefaultPath() {
+        return defaultPath;
     }
 
     public int getSourceFileType() {

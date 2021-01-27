@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.3.7</version>
+    <version>6.3.8</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -66,7 +66,11 @@
             <artifactId>pdfbox</artifactId>
             <version>2.0.21</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-tools</artifactId>
+            <version>2.0.21</version>
+        </dependency>
         <dependency>
             <groupId>net.sf.cssbox</groupId>
             <artifactId>pdf2dom</artifactId>

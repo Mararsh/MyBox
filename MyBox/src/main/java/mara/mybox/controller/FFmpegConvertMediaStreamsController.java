@@ -5,9 +5,9 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import mara.mybox.data.MediaInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -44,7 +44,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
 
                         for (; currentParameters.currentIndex < len;
                                 currentParameters.currentIndex++) {
-                            if (isCancelled()) {
+                            if (task == null || isCancelled()) {
                                 break;
                             }
 
@@ -52,7 +52,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
 
                             updateTaskProgress(currentParameters.currentIndex + 1, len);
 
-                            if (isCancelled() || isPreview) {
+                            if (task == null || isCancelled() || isPreview) {
                                 break;
                             }
                         }

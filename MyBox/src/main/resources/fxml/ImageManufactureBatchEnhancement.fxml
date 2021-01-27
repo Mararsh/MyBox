@@ -38,14 +38,26 @@ License:    Apache License Version 2.0
                         <Tab fx:id="optionsTab" text="%Options">
                             <content>
                                 <VBox fx:id="optionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="953.0" prefViewportWidth="1634.0">
-                                        <content>
-                                            <fx:include fx:id="options" source="ImageManufactureEnhancementOptions.fxml" />
-                                        </content>
-                                        <padding>
-                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                        </padding>
-                                    </ScrollPane>
+                                    <children>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="953.0" prefViewportWidth="1634.0">
+                                            <content>
+                                                <fx:include fx:id="options" source="ImageManufactureEnhancementOptions.fxml" />
+                                            </content>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                        </ScrollPane>
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
+                                                  styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPreview.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
                                 </VBox>
                             </content>
                         </Tab>
@@ -71,15 +83,6 @@ License:    Apache License Version 2.0
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/iconBrowse.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPreview.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

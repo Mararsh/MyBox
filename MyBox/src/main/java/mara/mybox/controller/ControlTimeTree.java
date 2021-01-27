@@ -8,9 +8,9 @@ import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.tools.DateTools;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -66,23 +66,34 @@ public class ControlTimeTree extends ControlConditionTree {
         }
         CheckBoxTreeItem<ConditionNode> root = (CheckBoxTreeItem<ConditionNode>) treeView.getRoot();
         root.getChildren().clear();
+        boolean isBC = false;
+        String year, yearEra;
         for (Date time : times) {
             String timeString = DateTools.datetimeToString(time);
-            String year = timeString.substring(0, 4);
+            year = timeString.substring(0, 4);
+            yearEra = year;
+            if (isEra) {
+                isBC = DateTools.isBC(time.getTime());
+                if (isBC) {
+                    yearEra += " BC";
+                }
+            }
             CheckBoxTreeItem<ConditionNode> yearItem = null;
             if (!root.isLeaf()) {
                 for (TreeItem<ConditionNode> rootChild : root.getChildren()) {
-                    if (year.equals(rootChild.getValue().getTitle())) {
+                    if (yearEra.equals(rootChild.getValue().getTitle())) {
                         yearItem = (CheckBoxTreeItem<ConditionNode>) rootChild;
                         break;
                     }
                 }
             }
             if (yearItem == null) {
+                String start = year + "-01-01 00:00:00" + (isBC ? " BC" : "");
+                String end = year + "-12-31 23:59:59" + (isBC ? " BC" : "");
                 CheckBoxTreeItem<ConditionNode> newYearItem = new CheckBoxTreeItem(
-                        ConditionNode.create(year)
-                                .setTitle(year)
-                                .setCondition(condition(year + "-01-01 00:00:00", year + "-12-31 23:59:59"))
+                        ConditionNode.create(yearEra)
+                                .setTitle(yearEra)
+                                .setCondition(condition(start, end))
                 );
                 root.getChildren().add(newYearItem);
                 newYearItem.setExpanded(false);
@@ -107,32 +118,44 @@ public class ControlTimeTree extends ControlConditionTree {
         }
         yearItem.getChildren().clear();
         String year = yearItem.getValue().getTitle();
+        String month, monthEra;
+        boolean isBC = false;
         for (Date time : times) {
             String timeString = DateTools.datetimeToString(time);
-            String month = timeString.substring(0, 7);
-            if (!month.startsWith(year)) {
+            month = timeString.substring(0, 7);
+            if (!month.startsWith(year.substring(0, 4))) {
                 continue;
+            }
+            monthEra = month;
+            if (isEra) {
+                isBC = DateTools.isBC(time.getTime());
+                if (isBC) {
+                    monthEra += " BC";
+                    if (!year.endsWith(" BC")) {
+                        continue;
+                    }
+                }
             }
             CheckBoxTreeItem<ConditionNode> monthItem = null;
             if (!yearItem.isLeaf()) {
                 for (TreeItem<ConditionNode> yearChild : yearItem.getChildren()) {
-                    if (month.equals(yearChild.getValue().getTitle())) {
+                    if (monthEra.equals(yearChild.getValue().getTitle())) {
                         monthItem = (CheckBoxTreeItem<ConditionNode>) yearChild;
                         break;
                     }
                 }
             }
             if (monthItem == null) {
-                String start = month + "-01 00:00:00";
+                String start = month + "-01 00:00:00" + (isBC ? " BC" : "");
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(DateTools.stringToDatetime(start));
                 calendar.add(Calendar.MONTH, 1);
                 calendar.add(Calendar.DATE, -1);
-                String endDay = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+                String end = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()) + " 23:59:59" + (isBC ? " BC" : "");
                 CheckBoxTreeItem<ConditionNode> newMonthItem = new CheckBoxTreeItem(
-                        ConditionNode.create(month)
-                                .setTitle(month)
-                                .setCondition(condition(start, endDay + " 23:59:59"))
+                        ConditionNode.create(monthEra)
+                                .setTitle(monthEra)
+                                .setCondition(condition(start, end))
                 );
                 yearItem.getChildren().add(newMonthItem);
                 newMonthItem.setExpanded(false);
@@ -155,26 +178,40 @@ public class ControlTimeTree extends ControlConditionTree {
         }
         monthItem.getChildren().clear();
         String month = monthItem.getValue().getTitle();
+        String day, dayEra;
+        boolean isBC = false;
         for (Date time : times) {
             String timeString = DateTools.datetimeToString(time);
-            String day = timeString.substring(0, 10);
-            if (!day.startsWith(month)) {
+            day = timeString.substring(0, 10);
+            if (!day.startsWith(month.substring(0, 7))) {
                 continue;
+            }
+            dayEra = day;
+            if (isEra) {
+                isBC = DateTools.isBC(time.getTime());
+                if (isBC) {
+                    dayEra += " BC";
+                    if (!month.endsWith(" BC")) {
+                        continue;
+                    }
+                }
             }
             CheckBoxTreeItem<ConditionNode> dayItem = null;
             if (!monthItem.isLeaf()) {
                 for (TreeItem<ConditionNode> monthChild : monthItem.getChildren()) {
-                    if (day.equals(monthChild.getValue().getTitle())) {
+                    if (dayEra.equals(monthChild.getValue().getTitle())) {
                         dayItem = (CheckBoxTreeItem<ConditionNode>) monthChild;
                         break;
                     }
                 }
             }
             if (dayItem == null) {
+                String start = day + " 00:00:00" + (isBC ? " BC" : "");
+                String end = day + " 23:59:59" + (isBC ? " BC" : "");
                 CheckBoxTreeItem<ConditionNode> newDayItem = new CheckBoxTreeItem(
-                        ConditionNode.create(day)
-                                .setTitle(day)
-                                .setCondition(condition(day + " 00:00:00", day + " 23:59:59"))
+                        ConditionNode.create(dayEra)
+                                .setTitle(dayEra)
+                                .setCondition(condition(start, end))
                 );
                 monthItem.getChildren().add(newDayItem);
                 newDayItem.setExpanded(false);
@@ -201,26 +238,40 @@ public class ControlTimeTree extends ControlConditionTree {
         }
         dayItem.getChildren().clear();
         String day = dayItem.getValue().getTitle();
+        String hour, hourEra;
+        boolean isBC = false;
         for (Date time : times) {
             String timeString = DateTools.datetimeToString(time);
-            String hour = timeString.substring(0, 13);
-            if (!hour.startsWith(day)) {
+            hour = timeString.substring(0, 13);
+            if (!hour.startsWith(day.substring(0, 10))) {
                 continue;
+            }
+            hourEra = hour;
+            if (isEra) {
+                isBC = DateTools.isBC(time.getTime());
+                if (isBC) {
+                    hourEra += " BC";
+                    if (!day.endsWith(" BC")) {
+                        continue;
+                    }
+                }
             }
             CheckBoxTreeItem<ConditionNode> hourItem = null;
             if (!dayItem.isLeaf()) {
                 for (TreeItem<ConditionNode> dayChild : dayItem.getChildren()) {
-                    if (hour.equals(dayChild.getValue().getTitle())) {
+                    if (hourEra.equals(dayChild.getValue().getTitle())) {
                         hourItem = (CheckBoxTreeItem<ConditionNode>) dayChild;
                         break;
                     }
                 }
             }
             if (hourItem == null) {
+                String start = hour + ":00:00" + (isBC ? " BC" : "");
+                String end = hour + ":59:59" + (isBC ? " BC" : "");
                 CheckBoxTreeItem<ConditionNode> newHourItem = new CheckBoxTreeItem(
-                        ConditionNode.create(hour)
-                                .setTitle(hour)
-                                .setCondition(condition(hour + ":00:00", hour + ":59:59"))
+                        ConditionNode.create(hourEra)
+                                .setTitle(hourEra)
+                                .setCondition(condition(start, end))
                 );
                 dayItem.getChildren().add(newHourItem);
                 newHourItem.setExpanded(false);
@@ -243,15 +294,27 @@ public class ControlTimeTree extends ControlConditionTree {
         }
         parentItem.getChildren().clear();
         String hour = parentItem.getValue().getTitle();
+        String timeEra;
+        boolean isBC = false;
         for (Date time : times) {
             String timeString = DateTools.datetimeToString(time);
-            if (!timeString.startsWith(hour)) {
+            if (!timeString.startsWith(hour.substring(0, 13))) {
                 continue;
+            }
+            timeEra = timeString;
+            if (isEra) {
+                isBC = DateTools.isBC(time.getTime());
+                if (isBC) {
+                    timeEra += " BC";
+                    if (!hour.endsWith(" BC")) {
+                        continue;
+                    }
+                }
             }
             CheckBoxTreeItem<ConditionNode> timeItem = null;
             if (!parentItem.isLeaf()) {
                 for (TreeItem<ConditionNode> node : parentItem.getChildren()) {
-                    if (timeString.equals(node.getValue().getTitle())) {
+                    if (timeEra.equals(node.getValue().getTitle())) {
                         timeItem = (CheckBoxTreeItem<ConditionNode>) node;
                         break;
                     }
@@ -259,9 +322,9 @@ public class ControlTimeTree extends ControlConditionTree {
             }
             if (timeItem == null) {
                 timeItem = new CheckBoxTreeItem(
-                        ConditionNode.create(timeString)
-                                .setTitle(timeString)
-                                .setCondition(condition(timeString))
+                        ConditionNode.create(timeEra)
+                                .setTitle(timeEra)
+                                .setCondition(condition(timeString + (isBC ? " BC" : "")))
                 );
                 parentItem.getChildren().add(timeItem);
             }
@@ -280,8 +343,8 @@ public class ControlTimeTree extends ControlConditionTree {
         if (!isEra) {
             return " " + fieldName + " BETWEEN '" + start + "' AND '" + end + "'";
         } else {
-            long startTime = DateTools.stringToDatetime(start).getTime();
-            long endTime = DateTools.stringToDatetime(end).getTime();
+            long startTime = DateTools.encodeEra(start).getTime();
+            long endTime = DateTools.encodeEra(end).getTime();
             return " " + fieldName + " BETWEEN " + startTime + " AND " + endTime;
         }
     }
@@ -290,7 +353,7 @@ public class ControlTimeTree extends ControlConditionTree {
         if (!isEra) {
             return " " + fieldName + "= '" + time + "'";
         } else {
-            long timeValue = DateTools.stringToDatetime(time).getTime();
+            long timeValue = DateTools.encodeEra(time).getTime();
             return " " + fieldName + "=" + timeValue;
         }
     }

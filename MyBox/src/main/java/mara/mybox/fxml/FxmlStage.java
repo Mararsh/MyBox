@@ -24,6 +24,8 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BytesEditerController;
+import mara.mybox.controller.DataFileCSVController;
+import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.controller.HtmlViewerController;
@@ -38,7 +40,7 @@ import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.controller.WebBrowserController;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.CompressTools;
@@ -101,6 +103,7 @@ public class FxmlStage {
 
             stage.setScene(scene);
             stage.show();
+
             controller.afterSceneLoaded();
 
             if (controller.getMainMenuController() != null && !newFxml.equals(CommonValues.LoadingFxml)) {
@@ -215,6 +218,9 @@ public class FxmlStage {
 
     public static void closeStage(Stage stage) {
         try {
+            if (stage == null) {
+                return;
+            }
             stage.close();
             if (Window.getWindows().isEmpty()) {
                 appExit();
@@ -328,6 +334,30 @@ public class FxmlStage {
         try {
             final PdfViewController controller
                     = (PdfViewController) openScene(stage, CommonValues.PdfViewFxml);
+            controller.sourceFileChanged(file);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static DataFileCSVController openCsvEditor(Stage stage, File file) {
+        try {
+            final DataFileCSVController controller
+                    = (DataFileCSVController) openScene(stage, CommonValues.DataFileCSVFxml);
+            controller.sourceFileChanged(file);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static DataFileExcelController openExcelEditor(Stage stage, File file) {
+        try {
+            final DataFileExcelController controller
+                    = (DataFileExcelController) openScene(stage, CommonValues.DataFileExcelFxml);
             controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
@@ -593,11 +623,17 @@ public class FxmlStage {
         } else if ("md".equals(suffix)) {
             controller = openMarkdownEditer(stage, file);
 
-        } else if (Arrays.asList(CommonValues.TextFileSuffix).contains(suffix)) {
-            controller = openTextEditer(stage, file);
-
         } else if ("pdf".equals(suffix)) {
             controller = openPdfViewer(stage, file);
+
+        } else if ("csv".equals(suffix)) {
+            controller = openCsvEditor(stage, file);
+
+        } else if ("xlsx".equals(suffix) || "xls".equals(suffix)) {
+            controller = openExcelEditor(stage, file);
+
+        } else if (Arrays.asList(CommonValues.TextFileSuffix).contains(suffix)) {
+            controller = openTextEditer(stage, file);
 
         } else if (CompressTools.compressFormats().contains(suffix)
                 || CompressTools.archiveFormats().contains(suffix)) {

@@ -15,12 +15,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.data.PdfInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -43,9 +43,9 @@ public class PdfSplitBatchController extends PdfBatchController {
     private PdfSplitType splitType;
 
     @FXML
-    private ToggleGroup splitGroup;
+    protected ToggleGroup splitGroup;
     @FXML
-    private TextField PagesNumberInput, FilesNumberInput, ListInput;
+    protected TextField PagesNumberInput, FilesNumberInput, ListInput;
 
     public enum PdfSplitType {
         PagesNumber, FilesNumber, StartEndList
@@ -206,23 +206,20 @@ public class PdfSplitBatchController extends PdfBatchController {
         try {
             countHandling(srcFile);
             currentParameters.currentSourceFile = srcFile;
-            if (!isPreview) {
-                PdfInformation info = (PdfInformation) tableData.get(currentParameters.currentIndex);
-                actualParameters.fromPage = info.getFromPage();
-                if (actualParameters.fromPage <= 0) {
-                    actualParameters.fromPage = 1;
-                }
-                actualParameters.toPage = info.getToPage();
-                actualParameters.password = info.getUserPassword();
+            PdfInformation info = (PdfInformation) tableData.get(currentParameters.currentIndex);
+            currentParameters.fromPage = info.getFromPage();
+            if (actualParameters.fromPage <= 0) {
+                actualParameters.fromPage = 1;
             }
-
+            currentParameters.toPage = info.getToPage();
+            currentParameters.password = info.getUserPassword();
             try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                     currentParameters.password, AppVariables.pdfMemUsage)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
                 }
-
+                MyBoxLog.console(currentParameters.fromPage + " " + currentParameters.toPage);
                 currentParameters.currentTargetPath = targetPath;
                 if (currentParameters.targetSubDir) {
                     currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
@@ -258,6 +255,7 @@ public class PdfSplitBatchController extends PdfBatchController {
 
     private int splitByPagesSize(PDDocument source) {
         try {
+            MyBoxLog.console(currentParameters.fromPage + " " + currentParameters.toPage);
             Splitter splitter = new Splitter();
             splitter.setStartPage(currentParameters.fromPage);  // 1-based
             splitter.setEndPage(currentParameters.toPage);

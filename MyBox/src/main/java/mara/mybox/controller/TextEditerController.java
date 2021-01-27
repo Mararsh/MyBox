@@ -23,7 +23,7 @@ import mara.mybox.dev.MyBoxLog;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TextEditerController extends FileEditerController {
+public class TextEditerController extends BaseFileEditerController {
 
     public TextEditerController() {
         baseTitle = AppVariables.message("TextEditer");

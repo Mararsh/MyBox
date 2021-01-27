@@ -39,7 +39,7 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ControlFindReplace extends BaseController {
 
-    protected FileEditerController editerController;
+    protected BaseFileEditerController editerController;
     protected FileEditInformation sourceInformation;
     protected LongIndex lastFileRange;   // whole file
     protected IndexRange lastStringRange;  // currentPage
@@ -130,7 +130,7 @@ public class ControlFindReplace extends BaseController {
 
     }
 
-    public void setValues(FileEditerController parent) {
+    public void setValues(BaseFileEditerController parent) {
         editerController = parent;
         mainArea = parent.mainArea;
         sourceInformation = editerController.sourceInformation;
@@ -346,7 +346,7 @@ public class ControlFindReplace extends BaseController {
                 if (operation == Operation.FindPrevious) {
 //                    MyBoxLog.debug(lastStringRange != null);
                     anchor = anchor + mainArea.getSelectedText().length() - unit;
-                } else if (operation == Operation.FindNext || operation == Operation.ReplaceFirst) {
+                } else if (operation == Operation.FindNext) {
 //                    MyBoxLog.debug(lastStringRange != null);
                     anchor += unit;
                 }

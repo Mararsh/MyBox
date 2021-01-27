@@ -12,8 +12,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -31,7 +31,7 @@ public class ControlFileSelecter extends BaseController {
     protected File file;
     protected String name, defaultValue;
     protected boolean isSource, isDirectory, checkQuit, permitNull, mustExist;
-    protected SimpleBooleanProperty changed;
+    protected SimpleBooleanProperty notify;
 
     @FXML
     protected Label label;
@@ -46,7 +46,7 @@ public class ControlFileSelecter extends BaseController {
         checkQuit = false;
         permitNull = false;
         mustExist = false;
-        changed = new SimpleBooleanProperty(false);
+        notify = new SimpleBooleanProperty(false);
     }
 
     public static ControlFileSelecter create() {
@@ -213,7 +213,7 @@ public class ControlFileSelecter extends BaseController {
         } else {
             recordFileWritten(file);
         }
-        changed.set(true);
+        notify.set(!notify.get());
     }
 
     @FXML

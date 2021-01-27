@@ -26,11 +26,11 @@ import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageMosaic.MosaicType;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -241,13 +241,15 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
     @Override
     protected void paneExpanded() {
+        imageController.showRightPane();
         checkPenType();
     }
 
     private void checkPenType() {
         try {
-            imageController.showImagePane();
+            imageController.resetImagePane();
             imageController.hideScopePane();
+            imageController.showImagePane();
             setBox.getChildren().clear();
             imageController.initMaskControls(false);
             if (typeGroup.getSelectedToggle() == null) {

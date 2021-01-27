@@ -16,13 +16,13 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import mara.mybox.data.FileInformation;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableBase;
+import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
@@ -40,8 +40,8 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class DataImportController<D> extends FilesBatchController {
 
-    protected DataAnalysisController parent;
-    protected TableBase tableDefinition;
+    protected BaseDataManageController parent;
+    protected BaseTable tableDefinition;
 
     @FXML
     protected CheckBox replaceCheck, statisticCheck, closeWhenCompleteCheck;
@@ -117,7 +117,7 @@ public class DataImportController<D> extends FilesBatchController {
     /*
         methods need implemented
      */
-    public TableBase getTableDefinition() {
+    public BaseTable getTableDefinition() {
         return tableDefinition;
     }
 
@@ -342,7 +342,7 @@ public class DataImportController<D> extends FilesBatchController {
     /*
         get/set
      */
-    public void setTableDefinition(TableBase tableDefinition) {
+    public void setTableDefinition(BaseTable tableDefinition) {
         this.tableDefinition = tableDefinition;
     }
 

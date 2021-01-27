@@ -6,17 +6,14 @@ import com.vladsch.flexmark.profile.pegdown.Extensions;
 import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
 import com.vladsch.flexmark.util.data.DataHolder;
 import java.io.File;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
@@ -28,10 +25,9 @@ import mara.mybox.value.CommonFxValues;
 public class HtmlToPdfController extends FilesBatchController {
 
     protected DataHolder pdfOptions;
-    protected String ttf;
 
     @FXML
-    protected ComboBox<String> ttfSelector;
+    protected ControlTTFSelecter ttfController;
     @FXML
     protected TextArea cssArea;
 
@@ -57,44 +53,40 @@ public class HtmlToPdfController extends FilesBatchController {
         try {
             super.initControls();
 
-            List<String> ttfList = SystemTools.ttfList();
-            ttfSelector.getItems().addAll(ttfList);
-            ttfSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            ttfController.name(baseName);
+            ttfController.ttfSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue == null || newValue.isBlank()) {
                         return;
                     }
-                    int pos = newValue.indexOf("    ");
-                    if (pos < 0) {
-                        ttf = newValue;
-                    } else {
-                        ttf = newValue.substring(0, pos);
-                    }
-                    AppVariables.setUserConfigValue(baseName + "TTF", newValue);
-                    String css = "@font-face {\n"
-                            + "  font-family: 'myFont';\n"
-                            + "  src: url('file:///" + ttf.replaceAll("\\\\", "/") + "');\n"
-                            + "  font-weight: normal;\n"
-                            + "  font-style: normal;\n"
-                            + "}\n"
-                            + " body { font-family:  'myFont';}";
-                    cssArea.setText(css);
+                    checkTtf();
                 }
             });
-            String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
-            if (d == null) {
-                if (!ttfSelector.getItems().isEmpty()) {
-                    ttfSelector.getSelectionModel().select(0);
-                }
-            } else {
-                ttfSelector.setValue(d);
-            }
+            checkTtf();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
 
+    public void checkTtf() {
+        String value = ttfController.ttfSelector.getValue();
+        int pos = value.indexOf("    ");
+        String ttf;
+        if (pos < 0) {
+            ttf = value;
+        } else {
+            ttf = value.substring(0, pos);
+        }
+        String css = "@font-face {\n"
+                + "  font-family: 'myFont';\n"
+                + "  src: url('file:///" + ttf.replaceAll("\\\\", "/") + "');\n"
+                + "  font-weight: normal;\n"
+                + "  font-style: normal;\n"
+                + "}\n"
+                + " body { font-family:  'myFont';}";
+        cssArea.setText(css);
     }
 
     @Override

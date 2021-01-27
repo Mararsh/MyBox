@@ -95,11 +95,6 @@ public class ImageInformation extends ImageFileInformation {
         return loadImage(AppVariables.thumbnailWidth);
     }
 
-    public boolean needSampled() {
-        countMaxWidth(this);
-        return this.needSample;
-    }
-
     public void setBufferedImage(BufferedImage bufferedImage) {
         if (bufferedImage != null) {
             image = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -116,6 +111,9 @@ public class ImageInformation extends ImageFileInformation {
             sampledWidth = (int) image.getWidth();
             sampledHeight = (int) image.getHeight();
         } else {
+            if (width <= 0) {
+                width = 512;
+            }
             sampledWidth = ImageInformation.countMaxWidth(this);
             sampledHeight = sampledWidth * height / width;
         }
@@ -194,12 +192,17 @@ public class ImageInformation extends ImageFileInformation {
             } else if (imageInfo.getThumbnail() != null && (int) (imageInfo.getThumbnail().getWidth()) == checkWidth) {
                 image = imageInfo.getThumbnail();
             }
-            int maxWidth = ImageInformation.countMaxWidth(imageInfo);
+
             if (image == null) {
                 String fileName = imageInfo.getFileName();
                 String format = imageInfo.getImageFormat();
                 BufferedImage bufferedImage;
                 int finalWidth = checkWidth;
+                int maxWidth = ImageInformation.countMaxWidth(imageInfo);
+                if (checkWidth > maxWidth) {
+                    System.gc();
+                    maxWidth = ImageInformation.countMaxWidth(imageInfo);
+                }
                 if (checkWidth > maxWidth) {
                     imageInfo.setIsSampled(true);
                     bufferedImage = ImageFileReaders.readFrameByScale(format, fileName, imageInfo.getIndex(), imageInfo.getSampleScale());

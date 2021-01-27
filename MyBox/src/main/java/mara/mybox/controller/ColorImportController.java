@@ -14,8 +14,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import mara.mybox.data.ColorData;
-import mara.mybox.db.TableColorData;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ColorDataTools;
+import mara.mybox.db.table.TableColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
@@ -133,7 +134,7 @@ public class ColorImportController extends BaseController {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    List<ColorData> data = ColorData.readCSV(file);
+                    List<ColorData> data = ColorDataTools.readCSV(file);
                     if (data == null) {
                         return false;
                     }
@@ -161,7 +162,7 @@ public class ColorImportController extends BaseController {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    List<ColorData> data = ColorData.predefined(type);
+                    List<ColorData> data = ColorDataTools.predefined(type);
                     if (data == null) {
                         return false;
                     }

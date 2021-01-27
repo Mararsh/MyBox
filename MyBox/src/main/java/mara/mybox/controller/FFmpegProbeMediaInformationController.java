@@ -30,7 +30,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -39,7 +39,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
@@ -49,7 +49,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegProbeMediaInformationController extends FFmpegOptionsController {
+public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions {
 
     @FXML
     protected TabPane tabPane;

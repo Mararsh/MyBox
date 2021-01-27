@@ -17,9 +17,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.tools.GeographyCodeTools;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.TableCoordinateSystemCell;
@@ -27,7 +29,6 @@ import mara.mybox.fxml.TableLatitudeCell;
 import mara.mybox.fxml.TableLongitudeCell;
 import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -36,7 +37,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-2-3
  * @License Apache License Version 2.0
  */
-public class GeographyCodeController extends DataAnalysisController<GeographyCode> {
+public class GeographyCodeController extends BaseDataManageController<GeographyCode> {
 
     protected LoadingController loading;
 
@@ -64,11 +65,6 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     @Override
     public void setTableDefinition() {
         tableDefinition = new TableGeographyCode();
-    }
-
-    @Override
-    protected DataExportController dataExporter() {
-        return (GeographyCodeExportController) openStage(CommonValues.GeographyCodeExportFxml);
     }
 
     @Override
@@ -119,7 +115,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             }
             if (this.isSelected()) {
                 setStyle("-fx-background-color:  #0096C9; -fx-text-background-color: white");
-            } else if (item.isPredefined()) {
+            } else if (GeographyCode.isPredefined(item)) {
                 setStyle("-fx-background-color: " + predefinedColorSetController.rgb());
             } else {
                 setStyle("-fx-background-color: " + inputtedColorSetController.rgb());
@@ -297,7 +293,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
         if (selected == null) {
             return;
         }
-        HtmlTools.viewHtml(message("GeographyCode"), selected.info("</br>"));
+        HtmlTools.viewHtml(message("GeographyCode"), BaseDataTools.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

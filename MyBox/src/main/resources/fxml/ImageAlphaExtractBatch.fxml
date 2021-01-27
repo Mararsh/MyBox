@@ -54,29 +54,6 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconBrowse.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPreview.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconTips.png" />
-                                                    </image>
-                                                </ImageView>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -95,7 +72,7 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                 <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$fileTypeGroup" />
                                                 <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
-<RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -112,6 +89,34 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                             </children>
                                         </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
+                                                        styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPreview.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconBrowse.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconTips.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </children>
+                                        </HBox>
                                     </children>
                                 </VBox>
                             </content>
@@ -126,7 +131,7 @@ License:    Apache License Version 2.0
                                                 <Label text="%MaxLines" />
                                                 <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
                                                 <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                                                <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

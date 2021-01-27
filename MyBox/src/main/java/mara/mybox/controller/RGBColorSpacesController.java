@@ -11,16 +11,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -31,20 +32,22 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class RGBColorSpacesController extends ChromaticityBaseController {
 
-    private ObservableList<RGBColorSpace> colorSpaces;
+    protected ObservableList<RGBColorSpace> colorSpaces;
 
     @FXML
     public RGBColorSpaceController rgbController;
     @FXML
     public WhitePointController whiteController;
     @FXML
-    private TextArea primariesArea, calculateArea;
+    protected TextArea primariesArea;
     @FXML
-    private TableView<RGBColorSpace> primariesTableView;
+    protected WebView webView;
     @FXML
-    private TableColumn<RGBColorSpace, String> csColumn, whiteColumn, colorColumn, algorithmColumn;
+    protected TableView<RGBColorSpace> primariesTableView;
     @FXML
-    private TableColumn<RGBColorSpace, Double> txcsColumn, tycsColumn, tzcsColumn, nxcsColumn, nycsColumn, nzcsColumn,
+    protected TableColumn<RGBColorSpace, String> csColumn, whiteColumn, colorColumn, algorithmColumn;
+    @FXML
+    protected TableColumn<RGBColorSpace, Double> txcsColumn, tycsColumn, tzcsColumn, nxcsColumn, nycsColumn, nzcsColumn,
             rxcsColumn, rycsColumn, rzcsColumn;
     @FXML
     protected Button calculateButton, exportButton;
@@ -128,7 +131,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
 
     private void initData() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -152,7 +155,8 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -166,7 +170,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     @FXML
     public void calculateAction(ActionEvent event) {
         try {
-            calculateArea.clear();
+            webView.getEngine().loadContent("");
             if (calculateButton.isDisabled()) {
                 return;
             }
@@ -180,31 +184,30 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
                 primaries[0] = rgbController.red;
                 primaries[1] = rgbController.green;
                 primaries[2] = rgbController.blue;
-                sourceWhitePoint = MatrixTools.columnVector(rgbController.white);
+                sourceWhitePoint = MatrixDoubleTools.columnVector(rgbController.white);
             }
-            double[][] targetWhitePoint = MatrixTools.columnVector(whiteController.relative);
+            double[][] targetWhitePoint = MatrixDoubleTools.columnVector(whiteController.relative);
             if (primaries == null || sourceWhitePoint == null || targetWhitePoint == null) {
                 return;
             }
             Map<String, Object> adapted = (Map<String, Object>) RGBColorSpace.primariesAdapted(primaries,
                     sourceWhitePoint, targetWhitePoint, algorithm, scale, true);
             double[][] adaptedPrimaries = (double[][]) adapted.get("adaptedPrimaries");
-            double[][] normalized = MatrixTools.scale(CIEData.normalize(adaptedPrimaries), scale);
-            double[][] relative = MatrixTools.scale(CIEData.relative(adaptedPrimaries), scale);
-            calculateArea.setText(message("AdaptedPrimaries") + ": \n");
-            calculateArea.appendText(message("NormalizedValuesCC") + " = \n");
-            calculateArea.appendText(MatrixTools.print(normalized, 20, scale));
-            calculateArea.appendText(message("RelativeValues") + " = \n");
-            calculateArea.appendText(MatrixTools.print(relative, 20, scale));
-            calculateArea.appendText(message("Tristimulus") + " = \n");
-            calculateArea.appendText(MatrixTools.print(adaptedPrimaries, 20, scale));
-
-            calculateArea.appendText("\n----------------" + message("CalculationProcedure") + "----------------\n");
-            calculateArea.appendText(message("ReferTo") + "： \n");
-            calculateArea.appendText("            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n");
-            calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");
-            calculateArea.appendText((String) adapted.get("procedure"));
-            calculateArea.home();
+            double[][] normalized = MatrixDoubleTools.scale(CIEData.normalize(adaptedPrimaries), scale);
+            double[][] relative = MatrixDoubleTools.scale(CIEData.relative(adaptedPrimaries), scale);
+            String s = message("AdaptedPrimaries") + ": \n"
+                    + message("NormalizedValuesCC") + " = \n"
+                    + MatrixDoubleTools.print(normalized, 20, scale)
+                    + message("RelativeValues") + " = \n"
+                    + MatrixDoubleTools.print(relative, 20, scale)
+                    + message("Tristimulus") + " = \n"
+                    + MatrixDoubleTools.print(adaptedPrimaries, 20, scale)
+                    + "\n----------------" + message("CalculationProcedure") + "----------------\n"
+                    + message("ReferTo") + "： \n"
+                    + "            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n"
+                    + "            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n"
+                    + (String) adapted.get("procedure");
+            webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

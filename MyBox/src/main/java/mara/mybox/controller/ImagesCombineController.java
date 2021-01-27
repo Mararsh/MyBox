@@ -42,19 +42,19 @@ import mara.mybox.value.AppVariables;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImagesCombineController extends ImagesListController {
+public class ImagesCombineController extends BaseImagesListController {
 
     private ImageCombine imageCombine;
 
     @FXML
-    private ToggleGroup sizeGroup, arrayGroup;
+    protected ToggleGroup sizeGroup, arrayGroup;
     @FXML
-    private RadioButton arrayColumnRadio, arrayRowRadio, arrayColumnsRadio, keepSizeRadio, sizeBiggerRadio,
+    protected RadioButton arrayColumnRadio, arrayRowRadio, arrayColumnsRadio, keepSizeRadio, sizeBiggerRadio,
             sizeSmallerRadio, eachWidthRadio, eachHeightRadio, totalWidthRadio, totalHeightRadio;
     @FXML
-    private TextField totalWidthInput, totalHeightInput, eachWidthInput, eachHeightInput;
+    protected TextField totalWidthInput, totalHeightInput, eachWidthInput, eachHeightInput;
     @FXML
-    private ComboBox<String> columnsBox, intervalBox, MarginsBox;
+    protected ComboBox<String> columnsBox, intervalBox, MarginsBox;
     @FXML
     protected ColorSetController colorSetController;
     @FXML
@@ -420,7 +420,7 @@ public class ImagesCombineController extends ImagesListController {
     }
 
     @FXML
-    private void newWindow(ActionEvent event) {
+    protected void newWindow(ActionEvent event) {
         FxmlStage.openImageViewer(image);
     }
 

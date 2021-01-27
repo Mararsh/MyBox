@@ -6,8 +6,8 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import mara.mybox.data.ConvolutionKernel;
-import mara.mybox.tools.MatrixTools;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -169,7 +169,7 @@ public class ImageConvolution extends PixelsOperation {
         } else {
             clearedSource = source;
         }
-        float[] k = MatrixTools.matrix2Array(convolutionKernel.getMatrix());
+        float[] k = MatrixDoubleTools.matrix2Array(convolutionKernel.getMatrix());
         if (k == null) {
             return clearedSource;
         }

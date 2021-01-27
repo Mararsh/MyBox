@@ -23,14 +23,16 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.Dataset;
 import mara.mybox.data.Era;
-import mara.mybox.data.Location;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableDataset;
-import mara.mybox.db.TableLocationData;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.data.Dataset;
+import mara.mybox.db.data.Location;
+import mara.mybox.db.table.TableDataset;
+import mara.mybox.db.table.TableLocationData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.fxml.FxmlStage.openScene;
@@ -40,7 +42,6 @@ import mara.mybox.fxml.TableLatitudeCell;
 import mara.mybox.fxml.TableLongitudeCell;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonValues;
@@ -50,7 +51,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class LocationDataController extends DataAnalysisController<Location> {
+public class LocationDataController extends BaseDataManageController<Location> {
 
     protected TableLocationData tableLocationData;
     protected TableDataset tableDataset;
@@ -102,11 +103,6 @@ public class LocationDataController extends DataAnalysisController<Location> {
                 + tableDataset.createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
                 + TableLocationData.CreateView.replaceAll("\n", "</BR>");
         tableDefinitionString = HtmlTools.html(tableName, html);
-    }
-
-    @Override
-    protected DataExportController dataExporter() {
-        return (LocationDataExportController) openStage(CommonValues.LocationDataExportFxml);
     }
 
     @Override
@@ -419,7 +415,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
         if (selected == null) {
             return;
         }
-        HtmlTools.viewHtml(message("LocationData"), selected.info("</br>"));
+        HtmlTools.viewHtml(message("LocationData"), BaseDataTools.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

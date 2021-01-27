@@ -29,6 +29,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#resetWindows" text="%ResetWindows" />
                                 <MenuItem mnemonicParsing="false" onAction="#fullScreen" text="%FullScreen" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="%CloseWindow" />
                                 <MenuItem fx:id="closeOtherMenu" mnemonicParsing="false" onAction="#closeOtherWindows" text="%CloseOtherWindows" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#exit" text="%Exit" />
@@ -78,6 +79,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlToText" text="%HtmlToText" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlToPdf" text="%HtmlToPdf" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlSetCharset" text="%HtmlSetCharset" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openHtmlSetStyle" text="%HtmlSetStyle" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlMergeAsHtml" text="%HtmlMergeAsHtml" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlMergeAsMarkdown" text="%HtmlMergeAsMarkdown" />
@@ -168,14 +170,27 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu mnemonicParsing="false" text="%Data">
                             <items>
+                                <Menu mnemonicParsing="false" text="%DataFile">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openDataCsv" text="%EditCSV" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openCsvConvert" text="%CsvConvert" />
+                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openDataExcel" text="%EditExcel" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openExcelConvert" text="%ExcelConvert" />
+                                    </items>
+                                </Menu>
+                                <MenuItem mnemonicParsing="false" onAction="#openDataClipboard" text="%DataClipboard" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMatricesManage" text="%MatricesManage" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMatrixUnaryCalculation" text="%MatrixUnaryCalculation" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMatricesBinaryCalculation" text="%MatricesBinaryCalculation" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openGeographyCode" text="%GeographyCode" />
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationInMap" text="%LocationInMap" />
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationData" text="%LocationData" />
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationTools" text="%LocationTools" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openEpidemicReports" text="%EpidemicReport" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openMatricesCalculation" text="%MatricesCalculation" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBarcodeCreator" text="%BarcodeCreator" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBarcodeDecoder" text="%BarcodeDecoder" />
@@ -205,9 +220,9 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%FilesDelete">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openDeleteEmptyDirectories" text="%DeleteEmptyDirectories" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteSysTempPath" text="%DeleteSysTemporaryPathFiles" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openDeleteEmptyDirectories" text="%DeleteEmptyDirectories" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDeleteNestedDirectories" text="%DeleteNestedDirectories" />
                                     </items>
                                 </Menu>
@@ -331,9 +346,6 @@ License:    Apache License Version 2.0
 
                                 <Menu mnemonicParsing="false" text="%Icons">
                                     <items>
-                                        <CheckMenuItem fx:id="hidpiIconsCheck" mnemonicParsing="false" onAction="#hidpiIcons" text="%HidpiIcons" />
-                                        <SeparatorMenuItem mnemonicParsing="false" />
-
                                         <RadioMenuItem fx:id="redMenuItem" mnemonicParsing="false" onAction="#setRed" text="%RedControls">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="colorGroup" />
@@ -365,7 +377,8 @@ License:    Apache License Version 2.0
 
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />
-
+                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                        <CheckMenuItem fx:id="hidpiIconsCheck" mnemonicParsing="false" onAction="#hidpiIcons" text="%HidpiIcons" />
                                     </items>
                                 </Menu>
 

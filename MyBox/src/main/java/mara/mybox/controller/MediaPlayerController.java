@@ -43,14 +43,14 @@ import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -93,7 +93,7 @@ public class MediaPlayerController extends BaseController {
     @FXML
     protected ComboBox<String> repeatSelector, speedSelector;
     @FXML
-    protected MediaTableController tableController;
+    protected ControlMediaTable tableController;
     @FXML
     protected Button dataButton, catButton;
     @FXML
@@ -191,6 +191,7 @@ public class MediaPlayerController extends BaseController {
             });
 
             timeSlider.valueProperty().addListener(new InvalidationListener() {
+                @Override
                 public void invalidated(Observable ov) {
                     if (player != null && timeSlider.isValueChanging()) {
                         player.seek(player.getTotalDuration().multiply(timeSlider.getValue() / 100.0));
@@ -199,6 +200,7 @@ public class MediaPlayerController extends BaseController {
             });
 
             volumeSlider.valueProperty().addListener(new InvalidationListener() {
+                @Override
                 public void invalidated(Observable ov) {
                     if (player != null && volumeSlider.isValueChanging()) {
                         player.setVolume(volumeSlider.getValue() / 100.0);
@@ -250,9 +252,8 @@ public class MediaPlayerController extends BaseController {
         mediaView.setPreserveRatio(true);
         playerBox.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observable,
-                    Number oldValue, Number newValue) {
-//                if (newValue.doubleValue() - oldValue.doubleValue() < 3) {
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//                if (newValue.doubleValue() - oldValue.doubleValue() < 20) {
 //                    return;
 //                }
                 if (player != null && playerBox.getChildren().contains(mediaView)) {
@@ -264,7 +265,7 @@ public class MediaPlayerController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Number> observable,
                     Number oldValue, Number newValue) {
-//                if (newValue.doubleValue() - oldValue.doubleValue() < 3) {
+//                if (newValue.doubleValue() - oldValue.doubleValue() < 20) {
 //                    return;
 //                }
                 if (player != null && playerBox.getChildren().contains(mediaView)) {
@@ -497,9 +498,24 @@ public class MediaPlayerController extends BaseController {
 
     public void load(File file) {
         try {
+            isSettingValues = true;
             initPlayer();
             tableData.clear();
             tableController.addFile(file);
+            isSettingValues = false;
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            dataChanged();
+                        }
+                    });
+                }
+            }, 3000);
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -587,46 +603,115 @@ public class MediaPlayerController extends BaseController {
 
     public void playCurrent() {
         if (tableData.isEmpty()
-                || currentIndex < 0 || currentIndex > tableData.size() - 1) {
+                || currentIndex < 0 || currentIndex >= tableData.size()) {
             initPlayer();
             return;
         }
         synchronized (this) {
             try {
                 if (task != null && !task.isQuit()) {
-                    return;
+                    task.cancel();
+                }
+                task = new SingletonTask<Void>() {
+
+                    private int index;
+                    private MediaInformation info;
+
+                    @Override
+                    protected boolean handle() {
+                        error = null;
+                        try {
+                            index = getIndex(currentIndex);
+                            List<Integer> tried = new ArrayList();
+                            while (tried.size() < tableData.size()) {
+                                info = tableData.get(index);
+                                if (!tried.contains(index)) {
+                                    tried.add(index);
+                                }
+                                if (info == null) {
+                                    index = getIndex(++index);
+                                    continue;
+                                }
+                                long wait = 0;
+                                while (!info.isFinish()) {
+                                    if (task == null || task.isQuit()) {
+                                        return false;
+                                    }
+                                    Thread.sleep(500);
+                                    wait += 500;
+                                }
+                                if (info.isFinish()) {
+                                    return true;
+                                } else {
+                                    index = getIndex(++index);
+                                }
+                            }
+                        } catch (Exception e) {
+                            error = e.toString();
+                        }
+                        return false;
+                    }
+
+                    private int getIndex(int index) {
+                        int newIndex = index;
+                        if (newIndex >= tableData.size()) {
+                            newIndex = 0;
+                        }
+                        if (!randomCheck.isSelected()) {
+                            return newIndex;
+                        }
+                        if (randomPlayed == null || randomPlayed.size() >= tableData.size()) {
+                            randomPlayed = new ArrayList();
+                        }
+                        if (randomPlayed.contains(newIndex)) {
+                            Random r = new Random();
+                            int v = r.nextInt(tableData.size());
+                            while (randomPlayed.contains(v)) {
+                                v = r.nextInt(tableData.size());
+                            }
+                            return v;
+                        }
+                        return newIndex;
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        playMedia(index, info);
+                    }
+
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL, message("ReadingMedia..."));
+                task.setSelf(task);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
+            }
+        }
+
+    }
+
+    public void playMedia(int index, MediaInformation info) {
+        if (info == null || !info.isFinish()) {
+            popInformation(message("MediaNotReady"), 6000);
+            initPlayer();
+            return;
+        }
+        synchronized (this) {
+            try {
+                if (task != null && !task.isQuit()) {
+                    task.cancel();
                 }
                 if (player != null) {
                     player.dispose();
                     player = null;
                 }
+                currentIndex = index;
+                currentMedia = info;
                 if (randomCheck.isSelected()) {
-                    if (randomPlayed == null || randomPlayed.size() >= tableData.size()) {
-                        randomPlayed = new ArrayList();
-                    }
-                    if (randomPlayed.contains(currentIndex)) {
-                        Random r = new Random();
-                        int v = r.nextInt(tableData.size());
-                        while (randomPlayed.contains(v)) {
-                            v = r.nextInt(tableData.size());
-                        }
-                        currentIndex = v;
-                    }
                     randomPlayed.add(currentIndex);
                 }
-                currentMedia = tableData.get(currentIndex);
-                if (currentMedia.getURI() == null) {
-                    initPlayer();
-                    return;
-                }
-
-                if ((currentMedia.getVideoEncoding() == null || currentMedia.getVideoEncoding().isBlank())
-                        && (currentMedia.getAudioEncoding() == null || currentMedia.getAudioEncoding().isBlank())) {
-                    popInformation(message("MediaNotReady"), 6000);
-                    initPlayer();
-                    return;
-                }
-
                 myStage.setTitle(getBaseTitle() + " - " + currentMedia.getAddress());
                 isSettingValues = true;
                 tableController.markFileHandling(currentIndex);
@@ -636,7 +721,6 @@ public class MediaPlayerController extends BaseController {
                 } else {
                     popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
                 }
-
                 task = new SingletonTask<Void>() {
 
                     @Override
@@ -653,7 +737,6 @@ public class MediaPlayerController extends BaseController {
                                     }
                                 });
                             } else {
-
                                 error = media.getError().toString();
                                 handleMediaError(currentMedia, media.getError());
                                 return true;
@@ -674,7 +757,6 @@ public class MediaPlayerController extends BaseController {
                                 }
                             });
 
-//                        player.setCycleCount(repeat);
                             player.setVolume(volumeSlider.getValue() / 100.0);
                             player.setRate(speed);
                             checkControls();
@@ -716,7 +798,6 @@ public class MediaPlayerController extends BaseController {
 
                             showPlayer();
 
-//                        player.setCycleCount(repea
                         } catch (Exception e) {
                             error = e.toString();
                         }
@@ -784,7 +865,6 @@ public class MediaPlayerController extends BaseController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-
                 player.play();
                 ControlStyle.setIconTooltips(playButton, "iconPause.png", message("Pause") + "\nF1 / s / S");
                 playButton.setUserData("Playing");

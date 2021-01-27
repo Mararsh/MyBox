@@ -2,10 +2,10 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Iterator;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -34,7 +34,7 @@ public class PdfExtractImagesBatchController extends PdfBatchController {
             if (iterable != null) {
                 Iterator<COSName> pageIterator = iterable.iterator();
                 while (pageIterator.hasNext()) {
-                    if (task.isCancelled()) {
+                    if (task == null || task.isCancelled()) {
                         break;
                     }
                     COSName cosName = pageIterator.next();

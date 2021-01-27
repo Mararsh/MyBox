@@ -17,9 +17,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.GeographyCode;
+import mara.mybox.db.data.GeographyCode;
 import mara.mybox.data.StringTable;
-import static mara.mybox.data.tools.GeographyCodeTools.toGCJ02ByWebService;
+import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
@@ -37,20 +37,20 @@ import thridparty.CoordinateConverter;
  * @CreateDate 2020-8-4
  * @License Apache License Version 2.0
  */
-public class LocationToolsController extends MapBaseController {
+public class LocationToolsController extends BaseMapController {
 
     protected int degrees, minutes;
     protected double seconds, longitude, latitude, coordinate;
 
     @FXML
-    private Button equalDButton, equalDmsButton, equalCsButton;
+    protected Button equalDButton, equalDmsButton, equalCsButton;
     @FXML
-    private RadioButton wgs84Radio, gcj02Radio, bd09Radio, cgcs2000Radio, mapbarRadio;
+    protected RadioButton wgs84Radio, gcj02Radio, bd09Radio, cgcs2000Radio, mapbarRadio;
     @FXML
-    private TextField degreesInput, minutesInput, secondsInput, dmsInput, decimalInput,
+    protected TextField degreesInput, minutesInput, secondsInput, dmsInput, decimalInput,
             longitudeInput, latitudeInput;
     @FXML
-    private WebView csView;
+    protected WebView csView;
 
     public LocationToolsController() {
         baseTitle = AppVariables.message("LocationTools");

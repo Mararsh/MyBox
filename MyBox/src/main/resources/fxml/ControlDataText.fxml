@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlDataTextController">
+    <children>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER">
+            <children>
+                <Label text="%Delimiter" />
+                <RadioButton fx:id="blankRadio" mnemonicParsing="false" selected="true" text="%Blank">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="delimiterGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="tabRadio" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="commaRadio" mnemonicParsing="false" text="," toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="blank4Radio" layoutX="96.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Blank4" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="blank8Radio" layoutX="95.0" layoutY="60.0" mnemonicParsing="false" selected="true" text="%Blank8" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="|" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="sharpRadio" mnemonicParsing="false" text="#" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="semicolonsRadio" mnemonicParsing="false" text=";" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="atRadio" mnemonicParsing="false" text="\@" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="stringRadio" mnemonicParsing="false" text="%String" toggleGroup="$delimiterGroup" />
+                <TextField fx:id="delimiterInput" prefWidth="80.0" />
+            </children>
+        </FlowPane>
+        <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <items>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconTips.png" />
+                           </image>
+                        </ImageView>
+                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconClear.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#pasteAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPaste.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <TextArea fx:id="inputArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%DataInputComments" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+                <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="611.0" prefViewportWidth="298.0">
+                    <content>
+                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <tabs>
+                                <Tab closable="false" text="%Html">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="editHtmlButton" layoutX="242.0" layoutY="10.0" mnemonicParsing="false" onAction="#editHtmlAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconEdit.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab closable="false" text="%Data">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconCopy.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="dataArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </TabPane>
+                    </content>
+                </ScrollPane>
+            </items>
+        </SplitPane>
+    </children>
+    <BorderPane.margin>
+        <Insets />
+    </BorderPane.margin>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</VBox>

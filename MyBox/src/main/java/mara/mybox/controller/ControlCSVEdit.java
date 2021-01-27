@@ -9,7 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import mara.mybox.db.TableBase;
+import mara.mybox.db.table.BaseTable;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
@@ -22,12 +22,12 @@ import mara.mybox.value.CommonValues;
  */
 public class ControlCSVEdit extends BaseController {
 
-    protected TableBase tableDefinition;
+    protected BaseTable tableDefinition;
 
     @FXML
     protected Button inputButton;
 
-    public void init(BaseController parent, TableBase tableDefinition) {
+    public void init(BaseController parent, BaseTable tableDefinition) {
         parentController = parent;
         this.tableDefinition = tableDefinition;
     }
@@ -95,11 +95,11 @@ public class ControlCSVEdit extends BaseController {
     /*
         get/set
      */
-    public TableBase getTableDefinition() {
+    public BaseTable getTableDefinition() {
         return tableDefinition;
     }
 
-    public void setTableDefinition(TableBase tableDefinition) {
+    public void setTableDefinition(BaseTable tableDefinition) {
         this.tableDefinition = tableDefinition;
     }
 

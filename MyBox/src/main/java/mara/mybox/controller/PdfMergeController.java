@@ -30,7 +30,7 @@ public class PdfMergeController extends PdfBatchController {
     private PDDocument targetDoc;
 
     @FXML
-    private CheckBox deleteCheck;
+    protected CheckBox deleteCheck;
 
     public PdfMergeController() {
         baseTitle = AppVariables.message("MergePdf");

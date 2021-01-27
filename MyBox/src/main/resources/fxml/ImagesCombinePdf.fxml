@@ -31,109 +31,14 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab fx:id="sourceTab" text="%SourceFiles">
                             <content>
-                                <fx:include fx:id="table" source="ImagesTable.fxml" />
+                                <fx:include fx:id="table" source="ControlImagesTable.fxml" />
                             </content>
                         </Tab>
                         <Tab fx:id="optionsTab" text="%Options">
                             <content>
-                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                            <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                            </padding>
-                                            <children>
-                                                <Label text="%PageSize" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%ImagesSize">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="sizeGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <RadioButton fx:id="eachHeightRadio" mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
-                                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="300.0" />
-                                                        <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="200.0" />
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                    <children>
-                                                        <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
-                                                        <Label text="%UnitPixels" />
-                                                        <TextField fx:id="customWidthInput" disable="true" prefWidth="100.0" promptText="%Width" />
-                                                        <TextField fx:id="customHeightInput" disable="true" prefWidth="100.0" promptText="%Height" />
-                                                        <ImageView fx:id="pdfPageSizeTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconTips.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </children>
-                                                </FlowPane>
-                                                <Label text="%SavedFormat">
-                                                    <VBox.margin>
-                                                        <Insets top="10.0" />
-                                                    </VBox.margin>
-                                                </Label>
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%PNG">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="formatGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                    <children>
-                                                        <RadioButton mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$formatGroup" />
-                                                        <ComboBox fx:id="jpegBox" editable="true" prefWidth="80.0" />
-                                                        <Label text="\%">
-                                                            <padding>
-                                                                <Insets right="10.0" />
-                                                            </padding>
-                                                        </Label>
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                    <children>
-                                                        <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
-                                                        <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
-                                                        <Label text="%EmptyForDefault" />
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                    <children>
-                                                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
-                                                        <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconTips.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </children>
-                                                </FlowPane>
-                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="830.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <Label minWidth="-Infinity" text="%FontFile" wrapText="true" />
-                                                        <ComboBox fx:id="fontBox" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                </HBox>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                    <children>
-                                                        <Label text="%PageMargin" />
-                                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="100.0" />
-                                                        <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%AddPageNumber" />
-                                                    </children>
-                                                </FlowPane>
-                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="840.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <Label text="%Author" />
-                                                        <TextField fx:id="authorInput" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label text="%PageHeader" />
-                                                        <TextField fx:id="headerInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
+                                        <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
                                     </content>
                                 </ScrollPane>
                             </content>

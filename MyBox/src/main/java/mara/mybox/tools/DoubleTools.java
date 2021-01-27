@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @Author Mara
@@ -42,7 +43,7 @@ public class DoubleTools {
     }
 
     public static double scale(double v, int scale) {
-        BigDecimal b = new BigDecimal(Double.toString(v));
+        BigDecimal b = new BigDecimal(v);
         return scale(b, scale);
     }
 
@@ -98,6 +99,15 @@ public class DoubleTools {
         xyz[1] = y;
         xyz[2] = z;
         return xyz;
+    }
+
+    public static double random(Random r, int max) {
+        if (r == null) {
+            r = new Random();
+        }
+        double d = r.nextDouble();
+        int p = r.nextInt(max > 0 ? max : 1);
+        return p != 0 ? (d * p) : d;
     }
 
 }

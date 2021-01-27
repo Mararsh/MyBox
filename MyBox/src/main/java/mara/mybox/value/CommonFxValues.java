@@ -196,6 +196,33 @@ public class CommonFxValues {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> TTFExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("ttf", "*.ttf"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> ExcelExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> CsvExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> SheetExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
+            add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
+        }
+    };
+
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
 }

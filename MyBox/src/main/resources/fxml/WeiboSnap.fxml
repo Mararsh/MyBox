@@ -176,11 +176,6 @@ License:    Apache License Version 2.0
                                                 <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
                                                 <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
                                                 <Label text="%EmptyForDefault" />
-                                                <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconTips.png" />
-                                                    </image>
-                                                </ImageView>
                                                 <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                             </children>
                                         </HBox>
@@ -228,8 +223,7 @@ License:    Apache License Version 2.0
                                                     </HBox.margin>
                                                 </Label>
                                                 <RadioButton mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
-                                                <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="180.0" />
-                                                <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
+                                                <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="400.0" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" spacing="10.0">
@@ -273,12 +267,7 @@ License:    Apache License Version 2.0
                                                 <Label text="\%" />
                                             </children>
                                         </HBox>
-                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                 <children>
-                                    <Label minWidth="-Infinity" text="%FontFile" wrapText="true" />
-                                    <ComboBox fx:id="fontBox" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                 </children>
-                              </HBox>
+                                        <fx:include fx:id="ttf" source="ControlTTFSelector.fxml" />
                                         <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%MaxMainMemPDF" />

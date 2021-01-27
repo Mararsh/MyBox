@@ -11,14 +11,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.color.Illuminant;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -37,18 +38,20 @@ public class IlluminantsController extends ChromaticityBaseController {
     @FXML
     public WhitePointController sourceWPController, targetWPController;
     @FXML
-    private TextArea adaptationArea, illuminantsArea;
+    protected TextArea illuminantsArea;
+    @FXML
+    protected WebView webView;
     @FXML
     protected Button calculateButton, exportButton;
     @FXML
-    private TableView<Illuminant> illuminantsTableView;
+    protected TableView<Illuminant> illuminantsTableView;
     @FXML
-    private TableColumn<Illuminant, String> illumColumn, observerColumn, illumCommentsColumn;
+    protected TableColumn<Illuminant, String> illumColumn, observerColumn, illumCommentsColumn;
     @FXML
-    private TableColumn<Illuminant, Double> nxillumColumn, nyillumColumn, nzillumColumn,
+    protected TableColumn<Illuminant, Double> nxillumColumn, nyillumColumn, nzillumColumn,
             rxillumColumn, ryillumColumn, rzillumColumn;
     @FXML
-    private TableColumn<Illuminant, Integer> illuminautTemperatureColumn;
+    protected TableColumn<Illuminant, Integer> illuminautTemperatureColumn;
 
     public IlluminantsController() {
         baseTitle = AppVariables.message("Illuminants");
@@ -113,7 +116,7 @@ public class IlluminantsController extends ChromaticityBaseController {
 
     private void initData() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -137,7 +140,8 @@ public class IlluminantsController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -146,7 +150,7 @@ public class IlluminantsController extends ChromaticityBaseController {
     @FXML
     public void calculateAction(ActionEvent event) {
         try {
-            adaptationArea.clear();
+            webView.getEngine().loadContent("");
             if (calculateButton.isDisabled()) {
                 return;
             }
@@ -160,17 +164,17 @@ public class IlluminantsController extends ChromaticityBaseController {
                     swp[0], swp[1], swp[2], twp[0], twp[1], twp[2], algorithm, scale, true);
             double[] adaptedColor = (double[]) run.get("adaptedColor");
             double[] mc = DoubleTools.scale(adaptedColor, scale);
-            adaptationArea.setText(message("CalculatedValues") + ":    X=" + mc[0] + "    Y=" + mc[1] + "    Z=" + mc[2] + "\n");
+            String s = message("CalculatedValues") + ":    X=" + mc[0] + "    Y=" + mc[1] + "    Z=" + mc[2] + "\n";
             double[] mr = DoubleTools.scale(CIEData.relative(mc), scale);
-            adaptationArea.appendText(message("RelativeValues") + ":    X=" + mr[0] + "    Y=" + mr[1] + "    Z=" + mr[2] + "\n");
+            s += message("RelativeValues") + ":    X=" + mr[0] + "    Y=" + mr[1] + "    Z=" + mr[2] + "\n";
             double[] mn = DoubleTools.scale(CIEData.normalize(mc), scale);
-            adaptationArea.appendText(message("NormalizedValuesCC") + ":    x=" + mn[0] + "    y=" + mn[1] + "    z=" + mn[2] + "\n");
-            adaptationArea.appendText("\n----------------" + message("CalculationProcedure") + "----------------\n");
-            adaptationArea.appendText(message("ReferTo") + "： \n");
-            adaptationArea.appendText("            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n");
-            adaptationArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");
-            adaptationArea.appendText((String) run.get("procedure"));
-            adaptationArea.home();
+            s += message("NormalizedValuesCC") + ":    x=" + mn[0] + "    y=" + mn[1] + "    z=" + mn[2] + "\n"
+                    + "\n----------------" + message("CalculationProcedure") + "----------------\n"
+                    + message("ReferTo") + "： \n"
+                    + "            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n"
+                    + "            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n"
+                    + (String) run.get("procedure");
+            webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

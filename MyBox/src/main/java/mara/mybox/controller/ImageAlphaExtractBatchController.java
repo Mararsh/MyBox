@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.beans.binding.Bindings;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
@@ -62,7 +62,7 @@ public class ImageAlphaExtractBatchController extends ImageManufactureBatchContr
             if (targets == null) {
                 return AppVariables.message("Failed");
             }
-            targetFormat = targetFileType;
+            targetFormat = targetFileSuffix;
             if (targetFormat == null) {
                 targetFormat = FileTools.getFileSuffix(srcFile.getName());
             }

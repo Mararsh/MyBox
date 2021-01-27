@@ -46,7 +46,7 @@ License:    Apache License Version 2.0
                     <children>
                         <Label text="%Results" />
                         <TextArea fx:id="codeInput" editable="false" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="500.0" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" onMouseEntered="#popSaveAs"
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
                                 styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

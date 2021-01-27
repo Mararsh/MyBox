@@ -166,6 +166,7 @@ License:    Apache License Version 2.0
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </HBox>
+                                    <Label minHeight="-Infinity" text="%FileNameFilterComments" />
                                  </children>
                               </VBox>
                            </content>

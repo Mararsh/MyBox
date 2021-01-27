@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                                     <children>
-                                        <fx:include fx:id="table" source="ImagesTable.fxml" />
+                                        <fx:include fx:id="table" source="ControlImagesTable.fxml" />
                                     </children>
                                 </VBox>
                             </content>
@@ -104,11 +104,11 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconDoubleRight.png" />
-                                 </image>
-                              </ImageView>
+                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconDoubleRight.png" />
+                                            </image>
+                                        </ImageView>
                                     </children>
                                 </HBox>
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
@@ -123,14 +123,14 @@ License:    Apache License Version 2.0
                                 </ScrollPane>
                             </children>
                         </VBox>
-                  <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1646.0" prefViewportWidth="527.0">
-                     <content>
-                        <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                           <children>
-                                      <TitledPane maxWidth="1.7976931348623157E308" text="%SizeOptions" VBox.vgrow="NEVER">
-                                          <content>
-                                              <VBox spacing="5.0">
-                                                  <children>
+                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1646.0" prefViewportWidth="527.0">
+                            <content>
+                                <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <children>
+                                        <TitledPane maxWidth="1.7976931348623157E308" text="%SizeOptions" VBox.vgrow="NEVER">
+                                            <content>
+                                                <VBox spacing="5.0">
+                                                    <children>
                                                         <RadioButton fx:id="keepSizeRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepSize">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="sizeGroup" />
@@ -146,14 +146,14 @@ License:    Apache License Version 2.0
                                                         <TextField fx:id="totalWidthInput" disable="true" prefWidth="100.0" promptText="%Width" />
                                                         <RadioButton fx:id="totalHeightRadio" mnemonicParsing="false" text="%TotalHeight" toggleGroup="$sizeGroup" />
                                                         <TextField fx:id="totalHeightInput" disable="true" prefWidth="100.0" promptText="%Height" />
-                                                  </children>
-                                              </VBox>
-                                          </content>
-                                      </TitledPane>
-                                      <TitledPane maxWidth="1.7976931348623157E308" text="%ArrayOptions" VBox.vgrow="NEVER">
-                                          <content>
-                                              <VBox spacing="5.0">
-                                                  <children>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane maxWidth="1.7976931348623157E308" text="%ArrayOptions" VBox.vgrow="NEVER">
+                                            <content>
+                                                <VBox spacing="5.0">
+                                                    <children>
                                                         <RadioButton fx:id="arrayColumnRadio" mnemonicParsing="false" selected="true" text="%SingleColumn">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="arrayGroup" />
@@ -168,14 +168,14 @@ License:    Apache License Version 2.0
                                                         <ComboBox fx:id="intervalBox" editable="true" prefWidth="100.0" />
                                                         <Label text="%Margins" />
                                                         <ComboBox fx:id="MarginsBox" editable="true" prefWidth="100.0" />
-                                                  </children>
-                                              </VBox>
-                                          </content>
-                                      </TitledPane>
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
                     </items>
                 </SplitPane>
             </children>
@@ -190,7 +190,7 @@ License:    Apache License Version 2.0
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-   <bottom>
-              <Label fx:id="imageLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT" />
-   </bottom>
+    <bottom>
+        <Label fx:id="imageLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT" />
+    </bottom>
 </BorderPane>

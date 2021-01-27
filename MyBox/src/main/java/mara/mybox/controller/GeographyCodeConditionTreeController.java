@@ -10,15 +10,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
-import mara.mybox.data.tools.GeographyCodeTools;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableGeographyCode;
-import mara.mybox.fxml.ConditionNode;
+import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ConditionNode;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -51,14 +51,14 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
     public void loadTree() {
         treeView.setRoot(null);
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
                 private GeographyCode earch;
                 private List<GeographyCode> continents, others;
                 private List<Long> haveChildren;
-                private List<Integer> haveLevels;
+                private List<Short> haveLevels;
 
                 @Override
                 protected boolean handle() {
@@ -79,9 +79,9 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                         }
                         continents = new ArrayList<>();
                         others = new ArrayList<>();
-                        List<GeographyCode> nodes = TableGeographyCode.queryChildren(conn, earch.getGcid());
+                        List<GeographyCode> nodes = TableGeographyCode.queryChildren(conn, earch.getId());
                         nodes.forEach((node) -> {
-                            if (node.getLevel() == 2 && node.getGcid() >= 2 && node.getGcid() <= 8) {
+                            if (node.getLevel() == 2 && node.getId() >= 2 && node.getId() <= 8) {
                                 continents.add(node);
                             } else if (node.getLevel() > 1) {
                                 others.add(node);
@@ -99,7 +99,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                         haveLevels = new ArrayList();
                         try ( PreparedStatement query = conn.prepareStatement(TableGeographyCode.LevelSizeQuery)) {
                             query.setMaxRows(1);
-                            for (int i = 2; i <= 9; i++) {
+                            for (short i = 2; i <= 9; i++) {
                                 query.setLong(1, i);
                                 try ( ResultSet results = query.executeQuery()) {
                                     if (results.next()) {
@@ -146,14 +146,15 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
     }
 
     protected void addNodes(CheckBoxTreeItem<ConditionNode> parent, List<GeographyCode> codes,
-            List<Long> haveChildren, List<Integer> haveLevels) {
+            List<Long> haveChildren, List<Short> haveLevels) {
         if (parent == null || parent.getValue() == null
                 || codes == null || codes.isEmpty()) {
             return;
@@ -168,15 +169,15 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             CheckBoxTreeItem<ConditionNode> valueItem = new CheckBoxTreeItem(
                     ConditionNode.create(message("Self"))
                             .setTitle((prefix.isBlank() ? message("Earth") + " - " : prefix) + message("Self"))
-                            .setCondition("Geography_Code.gcid=" + parantCode.getGcid())
+                            .setCondition("Geography_Code.gcid=" + parantCode.getId())
             );
             parent.getChildren().add(valueItem);
 
             CheckBoxTreeItem<ConditionNode> predefinedItem = new CheckBoxTreeItem(
                     ConditionNode.create(message("PredefinedData"))
                             .setTitle(prefix + message("PredefinedData"))
-                            .setCondition((parantCode.getGcid() == 1 ? ""
-                                    : parentLevel.getKey() + "=" + parantCode.getGcid() + " AND ")
+                            .setCondition((parantCode.getId() == 1 ? ""
+                                    : parentLevel.getKey() + "=" + parantCode.getId() + " AND ")
                                     + " gcsource=2")
             );
             parent.getChildren().add(predefinedItem);
@@ -184,21 +185,21 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             CheckBoxTreeItem<ConditionNode> inputtedItem = new CheckBoxTreeItem(
                     ConditionNode.create(message("InputtedData"))
                             .setTitle(prefix + message("InputtedData"))
-                            .setCondition((parantCode.getGcid() == 1 ? ""
-                                    : parentLevel.getKey() + "=" + parantCode.getGcid() + " AND ")
+                            .setCondition((parantCode.getId() == 1 ? ""
+                                    : parentLevel.getKey() + "=" + parantCode.getId() + " AND ")
                                     + " gcsource<>2")
             );
             parent.getChildren().add(inputtedItem);
 
             if (haveLevels != null) {
-                for (int levelValue : haveLevels) {
+                for (short levelValue : haveLevels) {
                     GeographyCodeLevel level = new GeographyCodeLevel(levelValue);
                     CheckBoxTreeItem<ConditionNode> levelItem = new CheckBoxTreeItem(
                             ConditionNode.create(level.getName())
                                     .setTitle(prefix + level.getName())
                                     .setCondition("level=" + levelValue
-                                            + (parantCode.getGcid() == 1 ? ""
-                                            : " AND " + parentLevel.getKey() + "=" + parantCode.getGcid()))
+                                            + (parantCode.getId() == 1 ? ""
+                                            : " AND " + parentLevel.getKey() + "=" + parantCode.getId()))
                     );
                     parent.getChildren().add(levelItem);
                 }
@@ -206,7 +207,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
         }
 
         for (GeographyCode code : codes) {
-            long codeid = code.getGcid();
+            long codeid = code.getId();
             GeographyCodeLevel codeLevel = code.getLevelCode();
 
             CheckBoxTreeItem<ConditionNode> codeItem = new CheckBoxTreeItem(
@@ -244,13 +245,13 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
         }
         parent.getChildren().clear();
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
                 private List<GeographyCode> nodes;
                 private List<Long> haveChildren;
-                private List<Integer> haveLevels;
+                private List<Short> haveLevels;
 
                 @Override
                 protected boolean handle() {
@@ -265,7 +266,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                             loading.setInfo(message("Loading") + " " + level.getName()
                                     + " " + code.getName());
                         }
-                        nodes = TableGeographyCode.queryChildren(conn, code.getGcid());
+                        nodes = TableGeographyCode.queryChildren(conn, code.getId());
                         if (nodes == null || nodes.isEmpty()) {
                             return false;
                         }
@@ -282,11 +283,11 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                         for (int i = codeLevel + 1; i <= 9; i++) {
                             String sql = "SELECT gcid FROM Geography_Code WHERE "
                                     + " level=" + i + " AND "
-                                    + level.getKey() + "=" + code.getGcid()
+                                    + level.getKey() + "=" + code.getId()
                                     + " OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
                             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                                 if (results.next()) {
-                                    haveLevels.add(i);
+                                    haveLevels.add(Short.valueOf(i + ""));
                                 }
                             }
                         }
@@ -307,7 +308,8 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

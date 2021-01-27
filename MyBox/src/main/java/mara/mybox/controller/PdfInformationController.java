@@ -18,31 +18,31 @@ import mara.mybox.dev.MyBoxLog;
 public class PdfInformationController extends BaseController {
 
     @FXML
-    private TextField FilesPath;
+    protected TextField FilesPath;
     @FXML
-    private TextField FileName;
+    protected TextField FileName;
     @FXML
-    private TextField FileSize;
+    protected TextField FileSize;
     @FXML
-    private TextField title;
+    protected TextField title;
     @FXML
-    private TextField subject;
+    protected TextField subject;
     @FXML
-    private TextField creator;
+    protected TextField creator;
     @FXML
-    private TextField author;
+    protected TextField author;
     @FXML
-    private TextField createTime;
+    protected TextField createTime;
     @FXML
-    private TextField modifyTime;
+    protected TextField modifyTime;
     @FXML
-    private TextField producer;
+    protected TextField producer;
     @FXML
-    private TextField version;
+    protected TextField version;
     @FXML
-    private TextField numberOfPages;
+    protected TextField numberOfPages;
     @FXML
-    private TextField firstPageSize, firstPageSize2;
+    protected TextField firstPageSize, firstPageSize2;
 
     public PdfInformationController() {
         baseTitle = AppVariables.message("PdfInformation");

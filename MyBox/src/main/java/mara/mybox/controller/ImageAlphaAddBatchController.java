@@ -38,13 +38,13 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
     }
 
     @FXML
-    private ToggleGroup alphaGroup, alphaAddGroup;
+    protected ToggleGroup alphaGroup, alphaAddGroup;
     @FXML
-    private HBox alphaFileBox;
+    protected HBox alphaFileBox;
     @FXML
-    private RadioButton opacityRadio;
+    protected RadioButton opacityRadio;
     @FXML
-    private ComboBox<String> opacityBox;
+    protected ComboBox<String> opacityBox;
 
     public ImageAlphaAddBatchController() {
         baseTitle = AppVariables.message("ImageAlphaAdd");

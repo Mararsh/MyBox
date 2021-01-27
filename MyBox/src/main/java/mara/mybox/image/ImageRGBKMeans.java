@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.ListKMeans;
-import mara.mybox.image.ImageQuantization.KMeansRegionQuantization;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.ImageQuantization.KMeansRegionQuantization;
 
 /**
  * @Author Mara
@@ -17,11 +17,9 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ImageRGBKMeans extends ListKMeans<Color> {
 
-    // Each channel is 4 bit depth and reigons size = 64 *64 * 64 = 262,144
-    // When ditDepth is larger than 4, the results are worse due to
-    // similiar selected colors  by too small regions.
-    protected int bitDepth = 4;
     protected KMeansRegionQuantization regionQuantization;
+    protected int regionSize;
+    protected int weight1, weight2, weight3;
     protected BufferedImage image;
     protected int equalDistance = 16;
     protected ImageScope scope;
@@ -37,7 +35,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                 return this;
             }
             regionQuantization = KMeansRegionQuantization.create(image,
-                    scope, isDithering, bitDepth);
+                    scope, isDithering, regionSize, weight1, weight2, weight3);
             regionQuantization.operate();
             data = regionQuantization.regionColors;
         } catch (Exception e) {
@@ -79,7 +77,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             if (p1 == null || p2 == null) {
                 return Integer.MAX_VALUE;
             }
-            return ImageColor.calculateColorDistance2(p1, p2);
+            return ImageColor.calculateColorDistanceSquare(p1, p2);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return Integer.MAX_VALUE;
@@ -92,7 +90,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             if (p1 == null || p2 == null) {
                 return false;
             }
-            return ImageColor.isColorMatch2(p1, p2, equalDistance);
+            return ImageColor.isColorMatchSquare(p1, p2, equalDistance);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
@@ -136,7 +134,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             int minDistance = Integer.MAX_VALUE;
             for (int i = 0; i < centers.size(); ++i) {
                 Color centerColor = centers.get(i);
-                int distance = ImageColor.calculateColorDistance2(regionColor, centerColor);
+                int distance = ImageColor.calculateColorDistanceSquare(regionColor, centerColor);
                 if (distance < minDistance) {
                     minDistance = distance;
                     mappedColor = centerColor;
@@ -185,12 +183,48 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         return this;
     }
 
-    public int getBitDepth() {
-        return bitDepth;
+    public KMeansRegionQuantization getRegionQuantization() {
+        return regionQuantization;
     }
 
-    public ImageRGBKMeans setBitDepth(int bitDepth) {
-        this.bitDepth = bitDepth;
+    public ImageRGBKMeans setRegionQuantization(KMeansRegionQuantization regionQuantization) {
+        this.regionQuantization = regionQuantization;
+        return this;
+    }
+
+    public int getRegionSize() {
+        return regionSize;
+    }
+
+    public ImageRGBKMeans setRegionSize(int regionSize) {
+        this.regionSize = regionSize;
+        return this;
+    }
+
+    public int getWeight1() {
+        return weight1;
+    }
+
+    public ImageRGBKMeans setWeight1(int weight1) {
+        this.weight1 = weight1;
+        return this;
+    }
+
+    public int getWeight2() {
+        return weight2;
+    }
+
+    public ImageRGBKMeans setWeight2(int weight2) {
+        this.weight2 = weight2;
+        return this;
+    }
+
+    public int getWeight3() {
+        return weight3;
+    }
+
+    public ImageRGBKMeans setWeight3(int weight3) {
+        this.weight3 = weight3;
         return this;
     }
 

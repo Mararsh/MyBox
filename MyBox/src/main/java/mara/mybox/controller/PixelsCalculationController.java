@@ -49,29 +49,29 @@ public class PixelsCalculationController extends BaseController {
     private boolean fromSource, cp_useInch, cd_useInch;
 
     @FXML
-    private ToggleGroup cp_sizeGroup, cp_DensityGroup, predefinedGroup, ratioGroup, cs_DensityGroup, cd_sizeGroup;
+    protected ToggleGroup cp_sizeGroup, cp_DensityGroup, predefinedGroup, ratioGroup, cs_DensityGroup, cd_sizeGroup;
     @FXML
-    private TextField targetLabel, adjustLabel;
+    protected TextField targetLabel, adjustLabel;
     @FXML
-    private TextField cp_widthInches, cp_heightInches, cp_widthCM, cp_heightCM, cp_densityInput;
+    protected TextField cp_widthInches, cp_heightInches, cp_widthCM, cp_heightCM, cp_densityInput;
     @FXML
-    private ComboBox<String> predeinfedDisplayList, predeinfedIconList, predeinfedPrintList, predeinfedPhotoList;
+    protected ComboBox<String> predeinfedDisplayList, predeinfedIconList, predeinfedPrintList, predeinfedPhotoList;
     @FXML
-    private Button useButton;
+    protected Button useButton;
     @FXML
-    private HBox cd_pixelsBox, sourcePixelsBox, cs_pixelsBox, ratioBox, sourceBox, adjustBox;
+    protected HBox cd_pixelsBox, sourcePixelsBox, cs_pixelsBox, ratioBox, sourceBox, adjustBox;
     @FXML
-    private TextField cs_width, cs_height, cs_densityInput;
+    protected TextField cs_width, cs_height, cs_densityInput;
     @FXML
-    private TextField source_width, source_height;
+    protected TextField source_width, source_height;
     @FXML
-    private TextField cd_width, cd_height, cd_heightInches, cd_widthInches, cd_widthCM, cd_heightCM;
+    protected TextField cd_width, cd_height, cd_heightInches, cd_widthInches, cd_widthCM, cd_heightCM;
     @FXML
-    private CheckBox sourceCheck, radioCheck;
+    protected CheckBox sourceCheck, radioCheck;
     @FXML
-    private Label ratioLabel;
+    protected Label ratioLabel;
     @FXML
-    private TabPane tabPane;
+    protected TabPane tabPane;
 
     public PixelsCalculationController() {
         baseTitle = AppVariables.message("PixelsCalculator");
@@ -681,7 +681,7 @@ public class PixelsCalculationController extends BaseController {
     }
 
     @FXML
-    private void useResult(ActionEvent event) {
+    protected void useResult(ActionEvent event) {
         if (finalX <= 0 || finalY <= 0) {
             alertInformation(AppVariables.message("Invalid"));
             return;

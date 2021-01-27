@@ -88,13 +88,14 @@ public class ImagePnmFile {
 
     public static PNMMetadata getPnmMetadata(File file) {
         try {
+            PNMMetadata metadata;
             PNMImageReader reader = new PNMImageReader(new PNMImageReaderSpi());
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
-                PNMMetadata metadata = (PNMMetadata) reader.getImageMetadata(0);
+                metadata = (PNMMetadata) reader.getImageMetadata(0);
                 reader.dispose();
-                return metadata;
             }
+            return metadata;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

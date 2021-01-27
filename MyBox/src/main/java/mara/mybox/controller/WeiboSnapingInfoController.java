@@ -22,13 +22,13 @@ public class WeiboSnapingInfoController extends BaseController {
     private WeiboSnapRunController parent;
 
     @FXML
-    private ProgressIndicator progressIndicator;
+    protected ProgressIndicator progressIndicator;
     @FXML
-    private Label infoLabel;
+    protected Label infoLabel;
     @FXML
-    private TextArea infoText, errorText;
+    protected TextArea infoText, errorText;
     @FXML
-    private Button stopButton, reloadButton;
+    protected Button stopButton, reloadButton;
 
     public WeiboSnapingInfoController() {
         baseTitle = AppVariables.message("WeiboSnap");
@@ -80,17 +80,17 @@ public class WeiboSnapingInfoController extends BaseController {
     }
 
     @FXML
-    private void stopAction(ActionEvent event) {
+    protected void stopAction(ActionEvent event) {
         parent.endSnap();
     }
 
     @FXML
-    private void openPath(ActionEvent event) {
+    protected void openPath(ActionEvent event) {
         parent.openPath();
     }
 
     @FXML
-    private void reloadAction(ActionEvent event) {
+    protected void reloadAction(ActionEvent event) {
         parent.reloadPage();
     }
 

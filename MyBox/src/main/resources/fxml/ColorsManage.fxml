@@ -58,15 +58,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                  <Button fx:id="viewButton" layoutX="303.0" layoutY="10.0" mnemonicParsing="false" onAction="#viewAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconView.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                        <Button fx:id="viewButton" layoutX="303.0" layoutY="10.0" mnemonicParsing="false" onAction="#viewAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconView.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -97,11 +97,11 @@ License:    Apache License Version 2.0
                         <CheckBox fx:id="mergeCheck" mnemonicParsing="false" text="%Merge" />
                         <CheckBox fx:id="allColumnsCheck" mnemonicParsing="false" selected="true" text="%AllColumns" />
                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                  <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconTipsRight.png" />
-                     </image>
-                  </ImageView>
+                        <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTipsRight.png" />
+                            </image>
+                        </ImageView>
                         <Button fx:id="csvButton" mnemonicParsing="false" onMouseEntered="#popCsvMenu">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -164,19 +164,14 @@ License:    Apache License Version 2.0
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Label fx:id="dataSizeLabel" layoutX="10.0" layoutY="19.0" />
-                <Label fx:id="selectedLabel" layoutX="15.0" layoutY="19.0" />
-                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%EditableColumnsComments" BorderPane.alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                    <BorderPane.margin>
-                        <Insets left="10.0" right="10.0" />
-                    </BorderPane.margin>
-                </Label>
-                <Label fx:id="pageLabel1" layoutX="1231.0" layoutY="19.0" text="%PageSize" />
-                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
-                <Label text="%Page" />
-                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="120.0" />
-                <Label fx:id="pageLabel" />
-                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
+                <Label fx:id="dataSizeLabel" layoutX="10.0" layoutY="19.0" minHeight="-Infinity" wrapText="true" />
+                <Label fx:id="selectedLabel" layoutX="15.0" layoutY="19.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Label minWidth="-Infinity" text="%PageSize" />
+                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="100.0" />
+                <Label minWidth="-Infinity" text="%Page" />
+                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="100.0" />
+                <Label fx:id="pageLabel" minWidth="-Infinity" />
+                <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -185,7 +180,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
+                <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -194,7 +189,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -203,7 +198,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

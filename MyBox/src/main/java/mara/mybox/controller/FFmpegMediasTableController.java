@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Modality;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.db.TableMedia;
+import mara.mybox.db.table.TableMedia;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -22,9 +22,9 @@ import mara.mybox.value.CommonFxValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FFmpegMediasTableController extends MediaTableController {
+public class FFmpegMediasTableController extends ControlMediaTable {
 
-    protected FFmpegBatchController parent;
+    protected BaseFFmpegBatchController parent;
 
     public FFmpegMediasTableController() {
         sourceExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
@@ -46,16 +46,16 @@ public class FFmpegMediasTableController extends MediaTableController {
     }
 
     @Override
-    protected void readMediaInfo(MediaInformation info) {
+    protected void readMediaInfo(MediaInformation info, String msg) {
         try {
-            parent = (FFmpegBatchController) parentController;
+            parent = (BaseFFmpegBatchController) parentController;
 
             if (info == null || info.getAddress() == null
                     || parent == null || parent.ffmpegOptionsController.executable == null) {
                 return;
             }
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -127,9 +127,9 @@ public class FFmpegMediasTableController extends MediaTableController {
                         updateLabel();
                     }
                 };
-                parentController.openHandlingStage(task, Modality.WINDOW_MODAL,
-                        message("ReadingMedia...") + "\n" + info.getAddress());
-                task.setSelf(task);Thread thread = new Thread(task);
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL, msg);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

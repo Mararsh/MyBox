@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -36,8 +35,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -54,7 +53,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2020-10-20
  * @License Apache License Version 2.0
  */
-public class HtmlSnapController extends HtmlBaseController {
+public class HtmlSnapController extends BaseHtmlController {
 
     protected int delay, orginalStageHeight, orginalStageY;
     protected int lastHtmlLen, lastCodesLen;
@@ -110,22 +109,21 @@ public class HtmlSnapController extends HtmlBaseController {
             if (snapBox == null) {
                 return;
             }
+            delay = 2000;
             delayBox.getItems().addAll(Arrays.asList("2", "3", "5", "1", "10"));
             delayBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     try {
-                        delay = Integer.valueOf(newValue);
-                        if (delay > 0) {
-                            AppVariables.setUserConfigInt(baseName + "Delay", delay);
-                            delay = delay * 1000;
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            delay = v * 1000;
+                            AppVariables.setUserConfigInt(baseName + "Delay", v);
                             FxmlControl.setEditorNormal(delayBox);
                         } else {
-                            delay = 2000;
                             FxmlControl.setEditorBadStyle(delayBox);
                         }
                     } catch (Exception e) {
-                        delay = 2000;
                         FxmlControl.setEditorBadStyle(delayBox);
                     }
                 }
@@ -140,29 +138,6 @@ public class HtmlSnapController extends HtmlBaseController {
             });
             checkOneImage();
 
-            List<String> dpiValues = new ArrayList();
-            dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
-            String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
-            if (dpiValues.contains(sValue)) {
-                dpiValues.remove(sValue);
-            }
-            dpiValues.add(0, sValue);
-            sValue = (int) Screen.getPrimary().getDpi() + "";
-            if (dpiValues.contains(sValue)) {
-                dpiValues.remove(sValue);
-            }
-            dpiValues.add(sValue);
-            dpiSelector.getItems().addAll(dpiValues);
-            dpiSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            dpi = Integer.parseInt(newValue);
-                            AppVariables.setUserConfigInt(baseName + "DPI", dpi);
-                        } catch (Exception e) {
-                            dpi = 96;
-                        }
-                    });
-            dpiSelector.getSelectionModel().select(AppVariables.getUserConfigInt(baseName + "DPI", 96) + "");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

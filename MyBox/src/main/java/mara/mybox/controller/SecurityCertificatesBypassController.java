@@ -9,10 +9,10 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mara.mybox.data.CertificateBypass;
-import mara.mybox.db.TableBrowserBypassSSL;
+import mara.mybox.db.table.TableBrowserBypassSSL;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -20,7 +20,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class SecurityCertificatesBypassController extends TableManageController<CertificateBypass> {
+public class SecurityCertificatesBypassController extends BaseDataTableController<CertificateBypass> {
 
     @FXML
     protected TableColumn<CertificateBypass, String> hostColumn;
@@ -65,7 +65,7 @@ public class SecurityCertificatesBypassController extends TableManageController<
     }
 
     @Override
-    protected boolean clearData() {
+    protected int clearData() {
         return new TableBrowserBypassSSL().clear();
     }
 

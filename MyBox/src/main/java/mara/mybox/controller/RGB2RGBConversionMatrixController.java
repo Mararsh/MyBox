@@ -14,16 +14,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.color.RGB2RGBConversionMatrix;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -39,13 +40,15 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     @FXML
     public RGBColorSpaceController sourceController, targetController;
     @FXML
-    private TextArea textsArea, calculateArea;
+    protected TextArea textsArea;
+    @FXML
+    protected WebView webView;
     @FXML
     protected TextField scaleMatricesInput;
     @FXML
-    private TableView<RGB2RGBConversionMatrix> matrixTableView;
+    protected TableView<RGB2RGBConversionMatrix> matrixTableView;
     @FXML
-    private TableColumn<RGB2RGBConversionMatrix, String> sourceCSColumn, sourceWhiteColumn,
+    protected TableColumn<RGB2RGBConversionMatrix, String> sourceCSColumn, sourceWhiteColumn,
             targetCSColumn, targetWhiteColumn, algorithmColumn, source2targetColumn, target2sourceCloumn;
     @FXML
     protected Button calculateButton, calculateAllButton, exportButton;
@@ -179,7 +182,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     @FXML
     public void calculateAction(ActionEvent event) {
         try {
-            calculateArea.clear();
+            webView.getEngine().loadContent("");
             if (calculateButton.isDisabled()) {
                 return;
             }
@@ -193,7 +196,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                 sourcePrimaries[0] = sourceController.red;
                 sourcePrimaries[1] = sourceController.green;
                 sourcePrimaries[2] = sourceController.blue;
-                sourceWhitePoint = MatrixTools.columnVector(sourceController.white);
+                sourceWhitePoint = MatrixDoubleTools.columnVector(sourceController.white);
             }
             if (sourcePrimaries == null || sourceWhitePoint == null) {
                 return;
@@ -208,7 +211,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                 targetPrimaries[0] = targetController.red;
                 targetPrimaries[1] = targetController.green;
                 targetPrimaries[2] = targetController.blue;
-                targetWhitePoint = MatrixTools.columnVector(targetController.white);
+                targetWhitePoint = MatrixDoubleTools.columnVector(targetController.white);
             }
             if (targetPrimaries == null || targetWhitePoint == null) {
                 return;
@@ -217,19 +220,18 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                     sourcePrimaries, sourceWhitePoint, targetPrimaries, targetWhitePoint,
                     algorithm, scale, true);
             double[][] conversionMatrix = (double[][]) rgb2rgb.get("conversionMatrix");
-            double[][] conversionMatrixInverse = MatrixTools.inverse(conversionMatrix);
-            calculateArea.appendText(message("Source") + " -> " + message("Target") + " =\n");
-            calculateArea.appendText(MatrixTools.print(conversionMatrix, 20, scale));
-            calculateArea.appendText(message("Target") + " -> " + message("Source") + " =\n");
-            calculateArea.appendText(MatrixTools.print(conversionMatrixInverse, 20, scale));
-
-            calculateArea.appendText("\n----------------" + message("CalculationProcedure") + "----------------\n");
-            calculateArea.appendText(message("ReferTo") + "： \n");
-            calculateArea.appendText("            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n");
-            calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html \n");
-            calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");
-            calculateArea.appendText((String) rgb2rgb.get("procedure"));
-            calculateArea.home();
+            double[][] conversionMatrixInverse = MatrixDoubleTools.inverse(conversionMatrix);
+            String s = message("Source") + " -> " + message("Target") + " =\n"
+                    + MatrixDoubleTools.print(conversionMatrix, 20, scale)
+                    + message("Target") + " -> " + message("Source") + " =\n"
+                    + MatrixDoubleTools.print(conversionMatrixInverse, 20, scale)
+                    + "\n----------------" + message("CalculationProcedure") + "----------------\n"
+                    + message("ReferTo") + "： \n"
+                    + "            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n"
+                    + "            http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html \n"
+                    + "            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n"
+                    + (String) rgb2rgb.get("procedure");
+            webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -238,7 +240,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     @FXML
     public void calculateAllAction(ActionEvent event) {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -262,7 +264,8 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

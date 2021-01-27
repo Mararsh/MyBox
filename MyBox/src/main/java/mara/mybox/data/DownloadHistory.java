@@ -1,8 +1,7 @@
 package mara.mybox.data;
 
+import mara.mybox.db.data.BaseData;
 import java.util.Date;
-import mara.mybox.db.TableBase;
-import mara.mybox.db.TableDownloadHistory;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -10,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2020-10-15
  * @License Apache License Version 2.0
  */
-public class DownloadHistory extends TableData {
+public class DownloadHistory extends BaseData {
 
     protected long dhid;
     protected String url, title, name, filename;
@@ -44,46 +43,39 @@ public class DownloadHistory extends TableData {
         this.index = index;
     }
 
-    @Override
-    public TableBase getTable() {
-        if (table == null) {
-            table = new TableDownloadHistory();
-        }
-        return table;
+    /*
+        Static methods
+     */
+    public static boolean valid(DownloadHistory data) {
+        return data != null && data.getUrl() != null;
     }
 
-    @Override
-    public boolean valid() {
-        return url != null;
-    }
-
-    @Override
-    public boolean setValue(String column, Object value) {
-        if (column == null) {
+    public static boolean setValue(DownloadHistory data, String column, Object value) {
+        if (data == null || column == null) {
             return false;
         }
         try {
             switch (column) {
                 case "dhid":
-                    dhid = value == null ? -1 : (long) value;
+                    data.setDhid(value == null ? -1 : (long) value);
                     return true;
                 case "url":
-                    url = value == null ? null : (String) value;
+                    data.setUrl(value == null ? null : (String) value);
                     return true;
                 case "title":
-                    title = value == null ? null : (String) value;
+                    data.setTitle(value == null ? null : (String) value);
                     return true;
                 case "index":
-                    index = value == null ? -1 : (int) value;
+                    data.setIndex(value == null ? -1 : (int) value);
                     return true;
                 case "name":
-                    name = value == null ? null : (String) value;
+                    data.setName(value == null ? null : (String) value);
                     return true;
                 case "filename":
-                    filename = value == null ? null : (String) value;
+                    data.setFilename(value == null ? null : (String) value);
                     return true;
                 case "download_time":
-                    downloadTime = value == null ? null : (Date) value;
+                    data.setDownloadTime(value == null ? null : (Date) value);
                     return true;
             }
         } catch (Exception e) {
@@ -92,27 +84,26 @@ public class DownloadHistory extends TableData {
         return false;
     }
 
-    @Override
-    public Object getValue(String column) {
-        if (column == null) {
+    public static Object getValue(DownloadHistory data, String column) {
+        if (data == null || column == null) {
             return null;
         }
         try {
             switch (column) {
                 case "dhid":
-                    return dhid;
+                    return data.getDhid();
                 case "url":
-                    return url == null ? null : (url.length() > 4096 ? url.substring(0, 4096) : url);
+                    return data.getUrl() == null ? null : (data.getUrl().length() > 4096 ? data.getUrl().substring(0, 4096) : data.getUrl());
                 case "title":
-                    return title == null ? null : (title.length() > 4096 ? title.substring(0, 4096) : title);
+                    return data.getTitle() == null ? null : (data.getTitle().length() > 4096 ? data.getTitle().substring(0, 4096) : data.getTitle());
                 case "name":
-                    return name == null ? null : (name.length() > 4096 ? name.substring(0, 4096) : name);
+                    return data.getName() == null ? null : (data.getName().length() > 4096 ? data.getName().substring(0, 4096) : data.getName());
                 case "index":
-                    return index;
+                    return data.getIndex();
                 case "filename":
-                    return filename == null ? null : (filename.length() > 4096 ? filename.substring(0, 4096) : filename);
+                    return data.getFilename() == null ? null : (data.getFilename().length() > 4096 ? data.getFilename().substring(0, 4096) : data.getFilename());
                 case "download_time":
-                    return downloadTime;
+                    return data.getDownloadTime();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

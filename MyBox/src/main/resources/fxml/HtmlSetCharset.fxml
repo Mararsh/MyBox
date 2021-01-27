@@ -34,23 +34,33 @@ License:    Apache License Version 2.0
                                 <fx:include fx:id="table" source="FilesTable.fxml" />
                             </content>
                         </Tab>
-                  <Tab fx:id="optionsTab" text="%Options">
-                     <content>
-                        <VBox fx:id="optionsVBox" spacing="10.0">
-                           <children>
-                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                 <children>
-                                    <Label text="%TargetFileCharset" />
-                                    <ComboBox fx:id="charsetSelector" prefWidth="400.0" />
-                                 </children>
-                              </HBox>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </Tab>
+                        <Tab fx:id="optionsTab" text="%Options">
+                            <content>
+                                <VBox fx:id="optionsVBox" spacing="10.0">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <Label text="%TargetFileCharset" />
+                                                <ComboBox fx:id="charsetSelector" prefWidth="400.0" />
+                                            </children>
+                                        </HBox>
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
+                                                styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPreview.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </Tab>
                         <Tab fx:id="targetTab" text="%TargetFiles">
                             <content>
                                 <VBox fx:id="targetVBox" spacing="10.0">
@@ -64,15 +74,6 @@ License:    Apache License Version 2.0
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/iconFolderImage.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPreview.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

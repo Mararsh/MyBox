@@ -13,21 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import mara.mybox.data.EpidemicReport;
-import static mara.mybox.data.EpidemicReport.create;
-import mara.mybox.data.GeographyCode;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.EpidemicReport;
+import static mara.mybox.db.data.EpidemicReport.create;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -52,7 +52,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             if (TableGeographyCode.China(conn) == null) {
-                updateLogs(message("LoadingPredefinedGeographyCodes"), true);
+                updateLogs(message("LoadingPredefinedGeographyCodes"));
                 GeographyCodeTools.importPredefined(conn);
             }
             List<GeographyCode> provinces = TableGeographyCode.queryCodes(conn,
@@ -64,7 +64,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                 String province = provinceCode.getChineseName();
                 String provinceEncode = URLEncoder.encode(province, "UTF-8");
                 URL url = new URL(address + "province=" + provinceEncode);
-                updateLogs(url.toString(), true);
+                updateLogs(url.toString());
 
                 File pageFile = FileTools.getTempFile(".txt");
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -83,16 +83,16 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                 }
                 List<EpidemicReport> provinceReports = readProvince(provinceCode, pageFile);
                 if (provinceReports.isEmpty()) {
-                    updateLogs(province + " " + message("DataSize") + ":" + provinceReports.size(), true);
+                    updateLogs(province + " " + message("DataSize") + ":" + provinceReports.size());
                 } else if (TableEpidemicReport.write(conn, provinceReports, replaceCheck.isSelected()) > 0) {
-                    updateLogs(message("Imported") + " " + province + " " + message("DataSize") + ":" + provinceReports.size(), true);
+                    updateLogs(message("Imported") + " " + province + " " + message("DataSize") + ":" + provinceReports.size());
                 } else {
-                    updateLogs(message("Skip") + " " + province + " " + message("DataSize") + ":" + provinceReports.size(), true);
+                    updateLogs(message("Skip") + " " + province + " " + message("DataSize") + ":" + provinceReports.size());
                 }
                 conn.commit();
 
                 List<GeographyCode> cities = TableGeographyCode.queryCodes(conn,
-                        "SELECT * FROM Geography_Code WHERE level=5 AND country=100 AND province=" + provinceCode.getGcid(), false);
+                        "SELECT * FROM Geography_Code WHERE level=5 AND country=100 AND province=" + provinceCode.getId(), false);
                 for (GeographyCode cityCode : cities) {
                     if (task == null || task.isCancelled()) {
                         return false;
@@ -120,11 +120,11 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
 
                     List<EpidemicReport> cityReports = readCity(provinceCode, cityCode, pageFile);
                     if (cityReports.isEmpty()) {
-                        updateLogs(province + " " + message("DataSize") + ":" + cityReports.size(), true);
+                        updateLogs(province + " " + message("DataSize") + ":" + cityReports.size());
                     } else if (TableEpidemicReport.write(conn, cityReports, replaceCheck.isSelected()) > 0) {
-                        updateLogs(message("Imported") + " " + province + " " + city + " " + message("DataSize") + ":" + cityReports.size(), true);
+                        updateLogs(message("Imported") + " " + province + " " + city + " " + message("DataSize") + ":" + cityReports.size());
                     } else {
-                        updateLogs(message("Skip") + " " + province + " " + city + " " + message("DataSize") + ":" + cityReports.size(), true);
+                        updateLogs(message("Skip") + " " + province + " " + city + " " + message("DataSize") + ":" + cityReports.size());
                     }
                     conn.commit();
                 }
@@ -132,7 +132,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
             conn.commit();
             return true;
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
             return false;
         }
 
@@ -147,8 +147,8 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                     return provinceReports;
                 }
                 EpidemicReport report = create()
-                        .setDataSet(Dataset).setSource(2)
-                        .setLocationid(province.getGcid());
+                        .setDataSet(Dataset).setSource((short) 2)
+                        .setLocationid(province.getId());
                 int startPos = data.indexOf("\"date\":\"");
                 if (startPos < 0) {
                     break;
@@ -228,7 +228,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
 
                 provinceReports.add(report);
                 updateLogs(Dataset + " " + province.getName() + " " + timeString + " "
-                        + report.getConfirmed() + " " + report.getHealed() + " " + report.getDead(), false);
+                        + report.getConfirmed() + " " + report.getHealed() + " " + report.getDead());
             }
 
         } catch (Exception e) {
@@ -246,8 +246,8 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                     return citiesReports;
                 }
                 EpidemicReport cityReport = create()
-                        .setDataSet(Dataset).setSource(2)
-                        .setLocationid(province.getGcid());
+                        .setDataSet(Dataset).setSource((short) 2)
+                        .setLocationid(province.getId());
                 int startPos = data.indexOf("\"date\":\"");
                 if (startPos < 0) {
                     break;
@@ -317,7 +317,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                 citiesReports.add(cityReport);
                 updateLogs(Dataset + " " + province.getName() + " " + city.getName()
                         + " " + timeString + " "
-                        + cityReport.getConfirmed() + " " + cityReport.getHealed() + " " + cityReport.getDead(), false);
+                        + cityReport.getConfirmed() + " " + cityReport.getHealed() + " " + cityReport.getDead());
 
             }
         } catch (Exception e) {

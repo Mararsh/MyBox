@@ -66,8 +66,9 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     @Override
     protected void paneExpanded() {
         imageController.showRightPane();
-        imageController.showScopePane();
+        imageController.resetImagePane();
         imageController.hideImagePane();
+        imageController.showScopePane();
         if (scopeController.scope == null
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {

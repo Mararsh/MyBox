@@ -124,7 +124,6 @@ public class MyBoxLoadingController implements Initializable {
                             });
                             DerbyBase.initTableValues();
                         }
-
                         ImageValue.registrySupportedImageFormats();
                         ImageIO.setUseCache(true);
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
@@ -142,7 +141,6 @@ public class MyBoxLoadingController implements Initializable {
                 @Override
                 protected void succeeded() {
                     super.succeeded();
-
                     Platform.runLater(() -> {
                         infoLabel.setText(message(lang, "LoadingInterface"));
 
@@ -161,7 +159,6 @@ public class MyBoxLoadingController implements Initializable {
                                 }
                             }
                         }
-
                         if (inFile != null) {
                             BaseController controller = FxmlStage.openTarget(myStage, inFile, false);
                             if (controller == null) {

@@ -384,7 +384,7 @@ public class MarkdownEditerController extends TextEditerController {
 
                         if (tabPane.getTabs().contains(htmlTab)) {
                             String style = AppVariables.getUserConfigValue(baseName + "LinksStyle", message("Default"));
-                            html = HtmlTools.htmlStyleValue(titleInput.getText(), style, html);
+                            html = HtmlTools.htmlWithStyleValue(titleInput.getText(), style, html);
                         }
                         if (tabPane.getTabs().contains(tocTab)) {
                             toc = MarkdownTools.toc(document, indentSize);
@@ -528,7 +528,7 @@ public class MarkdownEditerController extends TextEditerController {
 
                         if (tabPane.getTabs().contains(htmlTab)) {
                             String style = AppVariables.getUserConfigValue(baseName + "LinksStyle", message("Default"));
-                            html = HtmlTools.htmlStyleValue(titleInput.getText(), style, html);
+                            html = HtmlTools.htmlWithStyleValue(titleInput.getText(), style, html);
                         }
                         return html != null;
                     } catch (Exception e) {

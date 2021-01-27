@@ -15,7 +15,7 @@ import mara.mybox.value.AppVariables;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int webWidth, retry, startPage, loadInterval, snapInterval, likeStartPage, retried;
+    private int webWidth, retry, startPage, loadInterval, snapInterval, likeStartPage, retried, fontSize = 20;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;
     private String webAddress, author, title, fontFile, maxMergedSize;
@@ -362,6 +362,14 @@ public class WeiboSnapParameters {
 
     public void setRetried(int retried) {
         this.retried = retried;
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
     }
 
 }

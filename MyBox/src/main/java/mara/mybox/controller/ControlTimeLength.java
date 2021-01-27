@@ -19,7 +19,7 @@ public class ControlTimeLength extends BaseController {
     protected String name;
     protected long value, defaultValue;
     protected boolean isSeconds, permitNotSetting, permitInvalid, permitZero;
-    protected SimpleBooleanProperty changed;
+    protected SimpleBooleanProperty notify;
 
     @FXML
     protected ComboBox<String> lengthSelector;
@@ -31,7 +31,7 @@ public class ControlTimeLength extends BaseController {
         permitZero = false;
         permitNotSetting = false;
         permitInvalid = false;
-        changed = new SimpleBooleanProperty(false);
+        notify = new SimpleBooleanProperty(false);
     }
 
     public static ControlTimeLength create() {
@@ -123,7 +123,7 @@ public class ControlTimeLength extends BaseController {
                         lengthSelector.getEditor().setStyle(null);
                     }
 //                    MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
-                    changed.set(true);
+                    notify.set(!notify.get());
                 });
         isSettingValues = true;
         value = this.defaultValue;
@@ -149,10 +149,6 @@ public class ControlTimeLength extends BaseController {
 //        MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
         isSettingValues = false;
         return this;
-    }
-
-    public void checked() {
-        changed.set(false);
     }
 
     public boolean select(long inValue) {

@@ -377,4 +377,54 @@ public class TextTools {
         return ByteTools.bytesToHexFormat(lineBreakBytes(lb, charset));
     }
 
+    public static String delimiterText(String delimiter) {
+        if (delimiter == null) {
+            return null;
+        }
+        String text;
+        switch (delimiter) {
+            case "tab":
+                text = "\t";
+                break;
+            case "blank":
+                text = " ";
+                break;
+            case "blank4":
+                text = "    ";
+                break;
+            case "blank8":
+                text = "        ";
+                break;
+            default:
+                text = delimiter;
+                break;
+        }
+        return text;
+    }
+
+    public static String dataText(Object[][] data, String delimiter) {
+        if (data == null || data.length == 0 || delimiter == null) {
+            return "";
+        }
+        try {
+            StringBuilder s = new StringBuilder();
+            String p = delimiterText(delimiter);
+            int rowsNumber = data.length;
+            int colsNumber = data[0].length;
+            for (int i = 0; i < rowsNumber; i++) {
+                for (int j = 0; j < colsNumber; j++) {
+                    s.append(data[i][j]);
+                    if (j < colsNumber - 1) {
+                        s.append(p);
+                    }
+                }
+                s.append("\n");
+            }
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return "";
+        }
+    }
+
 }

@@ -188,6 +188,10 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
     @Override
     protected void paneExpanded() {
+        imageController.showRightPane();
+        imageController.resetImagePane();
+        imageController.hideScopePane();
+        imageController.showImagePane();
         if (editor != null) {
             editor.closeStage();
         }

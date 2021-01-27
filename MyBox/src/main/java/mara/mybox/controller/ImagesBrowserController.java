@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -49,6 +50,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -62,6 +64,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -107,9 +110,9 @@ public class ImagesBrowserController extends ImageViewerController {
     @FXML
     protected ComboBox<String> colsnumBox, filesBox, popSizeSelector;
     @FXML
-    private CheckBox saveRotationCheck, popCheck;
+    protected CheckBox saveRotationCheck, popCheck;
     @FXML
-    private Label totalLabel;
+    protected Label totalLabel;
     @FXML
     protected ToggleGroup popGroup;
 
@@ -667,11 +670,32 @@ public class ImagesBrowserController extends ImageViewerController {
                 return;
             }
             File file = info.getImageFileInformation().getFile();
-            String oname = file.getAbsolutePath();
-            File newFile = renameFile(file);
+            FileRenameController controller = (FileRenameController) FxmlStage.openStage(CommonValues.FileRenameFxml);
+            controller.getMyStage().setOnHiding((WindowEvent event) -> {
+                File newFile = controller.getNewFile();
+                Platform.runLater(() -> {
+                    fileRenamed(index, newFile);
+                });
+            });
+            controller.set(file);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void fileRenamed(int index, File newFile) {
+        try {
             if (newFile == null) {
                 return;
             }
+            popSuccessful();
+            recordFileOpened(newFile);
+            ImageInformation info = tableData.get(index);
+            if (info == null) {
+                return;
+            }
+            File file = info.getImageFileInformation().getFile();
+            String oname = file.getAbsolutePath();
             changeFile(info, newFile);
             String nname = newFile.getAbsolutePath();
             tableData.set(index, info);
@@ -681,12 +705,11 @@ public class ImagesBrowserController extends ImageViewerController {
             } else if (displayMode == DisplayMode.FilesList || displayMode == DisplayMode.ThumbnailsList) {
                 tableView.refresh();
             }
-
 //            makeImagesNevigator(true);
             popInformation(MessageFormat.format(AppVariables.message("FileRenamed"), oname, nname));
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            popError(e.toString());
         }
     }
 

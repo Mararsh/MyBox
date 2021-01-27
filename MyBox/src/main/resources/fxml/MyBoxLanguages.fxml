@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="611.0" prefViewportWidth="252.0">
                             <content>
@@ -44,6 +44,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                                <Button fx:id="useButton" disable="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#useAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconYes.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="deleteButton" disable="true" layoutX="255.0" layoutY="10.0" mnemonicParsing="false" onAction="#deleteAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -54,13 +63,13 @@ License:    Apache License Version 2.0
                                                     </graphic>
                                                 </Button>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="useButton" disable="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#useAction">
+                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconYes.png" />
+                                                                <Image url="@../buttons/iconOpen.png" />
                                                             </image>
-                                                        </ImageView>
+                                                        </ImageView> 
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -82,8 +91,7 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"
-                                               styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" />
+                                        <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="saveButton" layoutX="964.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -104,14 +112,33 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="keyColumn" editable="false" prefWidth="150.0" text="%Key" />
-                                        <TableColumn fx:id="valueColumn" prefWidth="400.0" text="%Translation" />
-                                        <TableColumn fx:id="englishColumn" editable="false" prefWidth="400.0" text="%English" />
-                                    </columns>
-                                </TableView>
-                                <Label text="%MyBoxLanguageComments"   styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
+                                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <tabs>
+                                        <Tab fx:id="interfaceTab" closable="false" text="%Interface">
+                                            <content>
+                                                <TableView fx:id="interfaceView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="keyColumn" editable="false" prefWidth="150.0" text="%Key" />
+                                                        <TableColumn fx:id="valueColumn" prefWidth="400.0" text="%Translation" />
+                                                        <TableColumn fx:id="englishColumn" editable="false" prefWidth="400.0" text="%English" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </Tab>
+                                        <Tab fx:id="tableTab" closable="false" text="%Table">
+                                            <content>
+                                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="tableKeyColumn" editable="false" prefWidth="150.0" text="%Key" />
+                                                        <TableColumn fx:id="tableValueColumn" prefWidth="400.0" text="%Translation" />
+                                                        <TableColumn fx:id="tableEnglishColumn" editable="false" prefWidth="400.0" text="%English" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
+                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%MyBoxLanguageComments" />
                             </children>
                             <padding>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

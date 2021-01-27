@@ -58,7 +58,7 @@ public class FileTools {
         if (name == null || name.isBlank()) {
             return name;
         }
-        Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]|&nbsp;|&lt;|&gt;|&amp;|&quot;");
+        Pattern pattern = Pattern.compile(CommonValues.FileNameSpecialChars);
         return pattern.matcher(name).replaceAll("_");
     }
 
@@ -692,7 +692,7 @@ public class FileTools {
                 FileUtils.deleteDirectory(file);
                 return true;
             } else {
-                return FileUtils.deleteQuietly(file);
+                return file.delete();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1056,26 +1056,24 @@ public class FileTools {
     }
 
     public static boolean mergeFiles(List<File> files, File targetFile) {
-        try {
-            if (files == null || files.isEmpty() || targetFile == null) {
-                return false;
-            }
-            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
-                byte[] buf = new byte[CommonValues.IOBufferLength];
-                int bufLen;
-                for (File file : files) {
-                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-                        while ((bufLen = inputStream.read(buf)) > 0) {
-                            outputStream.write(buf, 0, bufLen);
-                        }
+        if (files == null || files.isEmpty() || targetFile == null) {
+            return false;
+        }
+        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
+            byte[] buf = new byte[CommonValues.IOBufferLength];
+            int bufLen;
+            for (File file : files) {
+                try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+                    while ((bufLen = inputStream.read(buf)) > 0) {
+                        outputStream.write(buf, 0, bufLen);
                     }
                 }
             }
-            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
+        return true;
     }
 
     public static byte[] readBytes(File file) {
@@ -1097,22 +1095,19 @@ public class FileTools {
         if (file == null || offset < 0 || length <= 0) {
             return null;
         }
-        try {
-            byte[] data;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-                data = new byte[length];
-                inputStream.skip(offset);
-                int readLen = inputStream.read(data);
-                if (readLen > 0 && readLen < length) {
-                    data = ByteTools.subBytes(data, 0, readLen);
-                }
+        byte[] data;
+        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            data = new byte[length];
+            inputStream.skip(offset);
+            int readLen = inputStream.read(data);
+            if (readLen > 0 && readLen < length) {
+                data = ByteTools.subBytes(data, 0, readLen);
             }
-            return data;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
-
+        return data;
     }
 
     public static Charset charset(File file) {
@@ -1138,26 +1133,25 @@ public class FileTools {
     }
 
     public static String readTexts(File file, Charset charset) {
-        try {
-            StringBuilder s = new StringBuilder();
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    s.append(line).append(System.lineSeparator());
-                }
+        StringBuilder s = new StringBuilder();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                s.append(line).append(System.lineSeparator());
             }
-            return s.toString();
         } catch (Exception e) {
             return null;
         }
+        return s.toString();
     }
 
     public static File writeFile(File file, String data) {
-        if (file.exists()) {
-            return writeFile(file, data, charset(file));
-        } else {
-            return writeFile(file, data, Charset.forName("utf-8"));
-        }
+        return writeFile(file, data, Charset.forName("utf-8"));
+//        if (file.exists()) {
+//            return writeFile(file, data, charset(file));
+//        } else {
+//            return writeFile(file, data, Charset.forName("utf-8"));
+//        }
     }
 
     public static File writeFile(File file, String data, Charset charset) {
@@ -1167,11 +1161,11 @@ public class FileTools {
         try ( FileWriter writer = new FileWriter(file, charset != null ? charset : Charset.forName("utf-8"))) {
             writer.write(data);
             writer.flush();
-            return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
+        return file;
     }
 
     public static File writeFile(String data) {
@@ -1185,11 +1179,11 @@ public class FileTools {
         try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
             outputStream.write(data);
             outputStream.flush();
-            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
+        return true;
     }
 
     public static boolean same(File file1, File file2) {

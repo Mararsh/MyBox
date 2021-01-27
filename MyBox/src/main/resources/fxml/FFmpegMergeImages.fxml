@@ -31,12 +31,12 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab fx:id="imagesTab" text="%Images">
                             <content>
-                                <fx:include fx:id="table" source="ImagesDurationTable.fxml" HBox.hgrow="ALWAYS" />
+                                <fx:include fx:id="table" source="ControlImagesDurationTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </Tab>
                         <Tab fx:id="audiosTab" text="%Audios">
                             <content>
-                                <fx:include fx:id="audiosTable" source="FFmpegAudiosTable.fxml" />
+                                <fx:include fx:id="audiosTable" source="ControlFFmpegAudiosTable.fxml" />
                             </content>
                         </Tab>
                         <Tab fx:id="optionsTab" text="%FFmpegOptions">
@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
                                             </padding>
                                             <children>
                                                 <CheckBox fx:id="stopCheck" mnemonicParsing="false" selected="true" text="%StopAfterAudioFinished" />
-                                                <fx:include fx:id="ffmpegOptions" source="FFmpegOptions.fxml" HBox.hgrow="ALWAYS" />
+                                                <fx:include fx:id="ffmpegOptions" source="ControlFFmpegOptions.fxml" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </VBox>
                                     </content>

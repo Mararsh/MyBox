@@ -1,0 +1,2001 @@
+<html><head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <style type="text/css">
+            缺省
+        </style>
+    </head>
+<body><h1><a href="https://github.com/Mararsh/MyBox/tree/master/en">ReadMe in English</a>  <img src="https://mararsh.github.io/MyBox/iconGo.png" alt="ReadMe"></h1>
+<h1>MyBox：简易工具集</h1>
+<p>这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。</p>
+<h2>新内容</h2>
+<p>2020-12-03 版本6.3.7</p>
+<ul>
+    <li>添加：从ttc文件中提取ttf文件。内置一个开源免费的ttf文件。</li>
+    <li>改进：可以选择高清晰图标和普通图标。可以批量设置html的编码。统一PDF字体选择控件。图像伸缩处理时可以设置渲染参数。设置mac的缺省视频解码器为VideoToolBox。</li>
+    <li>解决的主要问题：解压缩gz文件会毁坏源文件并且不断增大文件。html编码可能解析错误。字节编辑的右面板只显示一行。<br>
+        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7">此版本关闭的需求/问题列表</a></li>
+</ul>
+<h2>下载与运行</h2>
+<p>每个版本编译好的包已发布在<a href="https://github.com/Mararsh/MyBox/releases">Releases</a>目录下（点击上面的<code>releases</code>页签）。</p>
+<h3>源码</h3>
+<p><a href="https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-src.zip">MyBox-6.3.7-src.zip</a>   37M</p>
+<p>关于源码的结构、编辑、和构建，请参考<a href="https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf">开发指南</a> 和
+<a href="https://mararsh.github.io/MyBox/pack_steps.html">打包步骤</a></p>
+<h3>自包含程序包</h3>
+<p>自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）</p>
+<table>
+    <thead>
+        <tr><th> 平台 </th><th> 链接 </th><th> 大小 </th><th> 启动文件 </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> win x64 </td><td> <a href="https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-exe.zip">MyBox-6.3.7-win.zip</a>  </td><td> 292MB </td><td> MyBox.exe </td></tr>
+        <tr><td> linux x64 </td><td> <a href="https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux.tar.gz">MyBox-6.3.7-linux.tar.gz</a>  </td><td> 298MB  </td><td> bin/MyBox  </td></tr>
+        <tr><td> mac </td><td> <a href="https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac.dmg">MyBox-6.3.7-mac.dmg</a>  </td><td> 305MB  </td><td>  MyBox-6.3.7.app   </td></tr>
+    </tbody>
+</table>
+<p>双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
+（目前无法双击打开路径包含汉字的文件）</p>
+<h3>Jar包</h3>
+<p>在已安装JRE或者JDK 15或更高版本（<code>Oracle java</code>或<code>Open jdk</code>均可）的环境下，可以下载jar包。</p>
+<table>
+    <thead>
+        <tr><th> 平台 </th><th> 链接 </th><th> 大小 </th><th> 运行需要 </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> win </td><td> <a href="https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-jar.zip">MyBox-6.3.7-win-jar.zip</a>  </td><td> 148MB </td><td> Java 15.0.1或更高版本 </td></tr>
+        <tr><td> linux </td><td> <a href="https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux-jar.zip">MyBox-6.3.7-linux-jar.zip</a>  </td><td> 155MB  </td><td> Java 15.0.1或更高版本 </td></tr>
+        <tr><td> mac </td><td> <a href="https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac-jar.zip">MyBox-6.3.7-mac-jar.zip</a>  </td><td>  152MB  </td><td> Java 15.0.1或更高版本 </td></tr>
+    </tbody>
+</table>
+<p>执行以下命令来启动程序：</p>
+<pre><code>     java   -jar   MyBox-6.3.7.jar</code></pre>
+<p>程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：</p>
+<pre><code>     java   -jar   MyBox-6.3.7.jar   /tmp/a1.jpg</code></pre>
+<h3>其它下载地址</h3>
+<p>从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F<br>
+从sourceforge下载：https://sourceforge.net/projects/mara-mybox/files/</p>
+<h3>限制</h3>
+<p>自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
+<a href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936">JDK-8232936</a></p>
+<h2>版本迁移</h2>
+<p>每个版本有自己的配置文件，新版本可以复制已安装版本的参数。</p>
+<h2>配置<a id="Config"></a></h2><a id="Config">
+<p>配置文件<code>MyBox_v版本号.ini</code>在"用户目录"下:<br>
+| 平台 | MyBox配置文件的目录 |<br>
+| — | — |<br>
+| win | <code>C:\用户\用户名\mybox\</code>  |<br>
+| linux | <code>/home/用户名/mybox/</code> |<br>
+| mac | <code>/Users/用户名/mybox/</code> |</p>
+<p>可以临时改变配置文件：在命令行启动jar包时设置参数"config="配置文件名""。
+利用“设置”功能也可以修改配置参数。</p>
+<h1>资源地址</h1>
+<table>
+    <thead>
+        <tr><th> 内容 </th><th> 链接 </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> 项目主页 </td><td> https://github.com/Mararsh/MyBox </td></tr>
+        <tr><td> 源代码和编译好的包 </td><td> https://github.com/Mararsh/MyBox/releases </td></tr>
+        <tr><td> 在线提交软件需求和问题报告 </td><td> https://github.com/Mararsh/MyBox/issues </td></tr>
+        <tr><td> 数据 </td><td> https://github.com/Mararsh/MyBox_data </td></tr>
+        <tr><td> 文档 </td><td> https://github.com/Mararsh/MyBox_documents </td></tr>
+        <tr><td> 镜像 </td><td> https://sourceforge.net/projects/mara-mybox/files/ </td></tr>
+        <tr><td> 云盘 </td><td> https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F </td></tr>
+    </tbody>
+</table>
+<h1>文档</h1>
+</a><p><a id="Config"></a><a href="https://mararsh.github.io/MyBox/pack_steps.html">打包步骤</a></p>
+<table>
+    <thead>
+        <tr><th> 文档名 </th><th> 版本 </th><th> 修改时间  </th><th> 链接 </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> 开发日志 </td><td> 6.3.7 </td><td>  2020-12-03 </td><td> <a href="#devLog">html</a> </td></tr>
+        <tr><td> 快捷键 </td><td> 6.3.5 </td><td>  2020-11-18 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_shortcuts.html">html</a> </td></tr>
+        <tr><td> 打包步骤 </td><td> 6.3.3 </td><td>  2020-9-27 </td><td> <a href="https://mararsh.github.io/MyBox/pack_steps.html">html</a> </td></tr>
+        <tr><td> 开发指南 </td><td> 2.1 </td><td>  2020-08-27 </td><td> <a href="https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf">PDF</a> </td></tr>
+        <tr><td> 用户手册-综述 </td><td>  5.0 </td><td>  2019-4-19 </td><td> <a href="https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf">PDF</a> </td></tr>
+        <tr><td> 用户手册-图像工具 </td><td> 5.0 </td><td>  2019-4-18 </td><td> <a href="https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-ImageTools-zh.pdf">PDF</a> </td></tr>
+        <tr><td> 用户手册-PDF工具 </td><td> 5.0 </td><td>  2019-4-20 </td><td> <a href="https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-PdfTools-zh.pdf">PDF</a> </td></tr>
+        <tr><td> 用户手册-桌面工具 </td><td> 5.0 </td><td>  2019-4-16 </td><td> <a href="https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-DesktopTools-zh.pdf">PDF</a> </td></tr>
+        <tr><td> 用户手册-网络工具 </td><td> 5.0 </td><td>  2019-4-16 </td><td> <a href="https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-NetworkTools-zh.pdf">PDF</a> </td></tr>
+    </tbody>
+</table>
+<h1>实现基础</h1>
+<p>MyBox基于以下开源资源：</p>
+<table>
+    <thead>
+        <tr><th> 名字 </th><th> 角色 </th><th> 链接 </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> JDK </td><td> Java语言 </td><td> http://jdk.java.net/   </td></tr>
+        <tr><td>   </td><td>   </td><td> https://www.oracle.com/technetwork/java/javase/downloads/index.html  </td></tr>
+        <tr><td> JavaFx </td><td> 图形化界面 </td><td> https://gluonhq.com/products/javafx/  </td></tr>
+        <tr><td>   </td><td>   </td><td>  https://docs.oracle.com/javafx/2/  </td></tr>
+        <tr><td>   </td><td>   </td><td>  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html </td></tr>
+        <tr><td> NetBeans </td><td> 集成开发环境 </td><td> https://netbeans.org/ </td></tr>
+        <tr><td> jpackage </td><td> 自包含包 </td><td> https://docs.oracle.com/en/java/javase/15/docs/specs/man/jpackage.html </td></tr>
+        <tr><td> maven </td><td> 代码构建 </td><td> https://maven.apache.org/ </td></tr>
+        <tr><td> jai-imageio </td><td> 图像处理 </td><td> https://github.com/jai-imageio/jai-imageio-core </td></tr>
+        <tr><td> PDFBox </td><td> PDF处理 </td><td> https://pdfbox.apache.org/ </td></tr>
+        <tr><td> PDF2DOM </td><td> PDF转html </td><td> http://cssbox.sourceforge.net/pdf2dom/ </td></tr>
+        <tr><td> javazoom </td><td> MP3解码 </td><td> http://www.javazoom.net/index.shtml </td></tr>
+        <tr><td> Derby </td><td> 数据库 </td><td> http://db.apache.org/derby/ </td></tr>
+        <tr><td> GifDecoder </td><td> 不规范Gif </td><td> https://github.com/DhyanB/Open-Imaging/ </td></tr>
+        <tr><td> EncodingDetect </td><td> 文本编码 </td><td> https://www.cnblogs.com/ChurchYim/p/8427373.html </td></tr>
+        <tr><td> Free Icons </td><td> 图标 </td><td> https://icons8.com/icons/set/home </td></tr>
+        <tr><td> Lindbloom </td><td> 色彩理论 </td><td> http://brucelindbloom.com/index.html </td></tr>
+        <tr><td> tess4j </td><td> OCR </td><td> https://github.com/nguyenq/tess4j </td></tr>
+        <tr><td> tesseract </td><td> OCR </td><td> https://github.com/tesseract-ocr/tesseract </td></tr>
+        <tr><td> barcode4j </td><td> 生成条码 </td><td> http://barcode4j.sourceforge.net </td></tr>
+        <tr><td> zxing </td><td> 生成/解码条码 </td><td> https://github.com/zxing/zxing </td></tr>
+        <tr><td> flexmark-java </td><td> 转换Markdown </td><td> https://github.com/vsch/flexmark-java </td></tr>
+        <tr><td> commons-compress </td><td> 归档/压缩 </td><td> https://commons.apache.org/proper/commons-compress </td></tr>
+        <tr><td> XZ for Java </td><td> 归档/压缩 </td><td> https://tukaani.org/xz/java.html </td></tr>
+        <tr><td> jaffree </td><td> 封装ffmpeg </td><td> https://github.com/kokorin/Jaffree </td></tr>
+        <tr><td> ffmpeg</td><td> 媒体转换/生成 </td><td> http://ffmpeg.org </td></tr>
+        <tr><td> image4j </td><td> ico格式 </td><td> https://github.com/imcdonagh/image4j </td></tr>
+        <tr><td> AutoCommitCell </td><td> 提交修改 </td><td> https://stackoverflow.com/questions/24694616 （Ogmios） </td></tr>
+        <tr><td> 高德 </td><td> 地图 </td><td> https://lbs.amap.com/api/javascript-api/summary </td></tr>
+        <tr><td> 高德 </td><td> 坐标 </td><td> https://lbs.amap.com/api/webservice/guide/api/georegeo </td></tr>
+        <tr><td> 微信 </td><td> 图片素材 </td><td> https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 </td></tr>
+        <tr><td> 百度 </td><td> COVID-19数据 </td><td> https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 </td></tr>
+        <tr><td> 腾讯 </td><td> COVID-19数据 </td><td> https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&amp;city=武汉 </td></tr>
+        <tr><td> poi </td><td> Excel </td><td> https://poi.apache.org </td></tr>
+        <tr><td> LabeledBarChart </td><td> JavaFx图 </td><td> https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) </td></tr>
+        <tr><td> commons-csv </td><td> CSV </td><td> https://commons.apache.org/proper/commons-csv/ </td></tr>
+        <tr><td> geonames </td><td> 位置数据 </td><td> https://www.geonames.org/countries/ </td></tr>
+        <tr><td> world-area </td><td> 位置数据 </td><td> https://github.com/wizardcode/world-area </td></tr>
+        <tr><td> 中国国家统计局 </td><td> 数据 </td><td> http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ </td></tr>
+        <tr><td> JHU </td><td> COVID-19数据 </td><td> https://github.com/CSSEGISandData/COVID-19 </td></tr>
+        <tr><td> 懒人图库 </td><td> 色彩数据 </td><td> https://tool.lanrentuku.com/color/china.html </td></tr>
+        <tr><td> 中国纹样全集 </td><td> 素材 </td><td> https://book.douban.com/subject/3894923/ </td></tr>
+        <tr><td> 天地图 </td><td> 地图 </td><td> http://lbs.tianditu.gov.cn/api/js4.0/guide.html </td></tr>
+        <tr><td> movebank </td><td> 位置数据 </td><td> https://www.datarepository.movebank.org </td></tr>
+        <tr><td> CoordinateConverter </td><td> 坐标转换 </td><td> https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage </td></tr>
+        <tr><td> JavaMail </td><td> email </td><td> https://javaee.github.io/javamail/ </td></tr>
+        <tr><td> Commons IO </td><td> 文件读写 </td><td> https://commons.apache.org/proper/commons-io/ </td></tr>
+        <tr><td> colorhexa </td><td> 色彩数据 </td><td> https://www.colorhexa.com/color-names </td></tr>
+        <tr><td> 文泉驿 </td><td> 开源字体 </td><td> http://wenq.org/wqy2/ </td></tr>
+        <tr><td> ttc2ttf </td><td> 提取ttf </td><td> https://github.com/fermi1981/TTC_TTF </td></tr>
+    </tbody>
+</table>
+<h1>当前版本</h1>
+<p>当前是版本6.3.7，已实现的特点概述如下:</p>
+<ul>
+    <li><a href="#cross-platform">跨平台</a></li>
+    <li><a href="#international">国际化</a></li>
+    <li><a href="#localhost">本机</a></li>
+    <li><a href="#documentTools">文档工具</a>
+        <ul>
+            <li><a href="#pdfTools">PDF工具</a></li>
+            <li><a href="#editTextBase">文本编辑的基础</a></li>
+            <li><a href="#editText">编辑文本</a></li>
+            <li><a href="#editBytes">编辑字节</a></li>
+            <li><a href="#htmlEditor">编辑网页</a></li>
+            <li><a href="#markdownEditor">编辑Markdown</a></li>
+            <li><a href="#convertDocuments">转换文档</a></li>
+        </ul>
+    </li>
+    <li><a href="#imageTools">图像工具</a>
+        <ul>
+            <li><a href="#viewImage">查看图像</a></li>
+            <li><a href="#browserImage">浏览图像</a></li>
+            <li><a href="#ImageData">分析图像</a></li>
+            <li><a href="#imageManufacture">图像处理</a></li>
+            <li><a href="#multiFrames">多帧图像文件</a></li>
+            <li><a href="#multipleImages">多图合一</a></li>
+            <li><a href="#imagePart">图像局部化</a></li>
+            <li><a href="#imageConvert">图片转换</a></li>
+            <li><a href="#imageOCR">识别图像中的文字</a></li>
+            <li><a href="#ColorManagement">颜色管理</a></li>
+            <li><a href="#ColorPalette">调色盘</a></li>
+            <li><a href="#colorSpaces">色彩空间</a></li>
+            <li><a href="#imageOthers">其它</a></li>
+            <li><a href="#bigImage">大图片的处理</a></li>
+        </ul>
+    </li>
+    <li><a href="#dataTools">数据工具</a>
+        <ul>
+            <li><a href="#dataManage">通用的数据管理</a></li>
+            <li><a href="#mapData">地图数据</a></li>
+            <li><a href="#geographyCode">地理编码</a></li>
+            <li><a href="#locationInMap">地图上的位置</a></li>
+            <li><a href="#locationData">位置数据</a></li>
+            <li><a href="#locationTools">位置工具</a></li>
+            <li><a href="#epidemicReport">疫情报告</a></li>
+            <li><a href="#matrixTool">矩阵计算</a></li>
+            <li><a href="#createBarcodes">生成条码</a></li>
+            <li><a href="#decodeBarcodes">解码条码</a></li>
+            <li><a href="#messageDegist">消息摘要</a></li>
+        </ul>
+    </li>
+    <li><a href="#fileTools">文件工具</a>
+        <ul>
+            <li><a href="#directoriesArrange">管理文件/目录</a></li>
+            <li><a href="#archiveCompress">归档/压缩/解压/解档</a></li>
+            <li><a href="#filesRedundancy">检查冗余文件</a></li>
+            <li><a href="#fileOthers">其它</a></li>
+        </ul>
+    </li>
+    <li><a href="#MediaTools">媒体工具</a>
+        <ul>
+            <li><a href="#mediaPlayer">播放视频/音频</a></li>
+            <li><a href="#mediaList">管理播放列表</a></li>
+            <li><a href="#ffmpeg">封装ffmpeg的功能</a></li>
+            <li><a href="#gameElimination">游戏-消消乐</a></li>
+            <li><a href="#gameMine">游戏-挖雷</a></li>
+            <li><a href="#mediaOthers">其它</a></li>
+        </ul>
+    </li>
+    <li><a href="#netTools">网络工具</a>
+        <ul>
+            <li><a href="#downloadFirstLevelLinks">下载第一级链接</a></li>
+            <li><a href="#weiboSnap">微博截图工具</a></li>
+            <li><a href="#encodeDecodeURL">解码/编码URL</a></li>
+            <li><a href="#webBrowser">浏览器</a></li>
+            <li><a href="#securityCerificates">管理安全证书</a></li>
+        </ul>
+    </li>
+    <li><a href="#settings">设置</a></li>
+    <li><a href="#windows">窗口</a></li>
+    <li><a href="#helps">帮助</a></li>
+    <li><a href="#Hidpi">对于高清晰屏幕的支持</a></li>
+    <li><a href="#DevMode">开发模式</a></li>
+    <li><a href="#MyBoxLogs">MyBox日志</a></li>
+</ul>
+<h2>跨平台<a id="cross-platform"></a></h2><a id="cross-platform">
+<p>MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 15的平台。（MyBox v5.3以前的版本均基于Java 8）</p>
+</a><h2><a id="cross-platform">国际化</a><a id="international"></a></h2><a id="international">
+<ol>
+    <li>所有代码均国际化。目前支持中文、英文。</li>
+    <li>可实时切换语言。</li>
+    <li>扩展语言只需编辑资源文件。</li>
+    <li>支持在线添加语言，提供表格，对照英语翻译。新语言可实时生效。</li>
+    <li>新语言的资源文件可共享给别人：把新语言文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-cover.jpg" alt="截屏-封面"></p>
+</a><h2><a id="international">本机</a><a id="localhost"></a></h2><a id="localhost">
+<ol>
+    <li>如无必要，不访问网络。</li>
+    <li>如无必要，不读不写。</li>
+</ol>
+</a><h2><a id="localhost">文档工具</a><a id="documentTools"></a></h2><a id="documentTools">
+</a><h3><a id="documentTools">PDF工具</a><a id="pdfTools"></a></h3><a id="pdfTools">
+<ol>
+    <li>以图像模式查看PDF文件，每页被转换为一张图片：
+        <ul>
+            <li>标签和缩略图</li>
+            <li>可设置dpi以调整清晰度</li>
+            <li>可把页面剪切保存为图片</li>
+            <li>识别页面中的文字（OCR）</li>
+        </ul>
+    </li>
+    <li>以网页模式查看PDF文件，可逐页查看和编辑页面和html。</li>
+    <li>批量转换：
+        <ul>
+            <li>将PDF文件的每页转换并保存为一张图片文件，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。</li>
+            <li>转换PDF文件中被选择页的图片，并保存为新的PDF。</li>
+            <li>压缩PDF文件中的图片，保存为新的PDF。可设置JPEG质量或者黑白色阈值</li>
+            <li>将PDF转换为网页，可选：每页保存为一个html、还是整个PDF保存为一个html；字体文件/图像文件是嵌入、单独保存、还是忽略。</li>
+        </ul>
+    </li>
+    <li>批量提取：
+        <ul>
+            <li>将PDF中的图片提取出来。</li>
+            <li>将PDF文件中的文字提取出来，可以定制页的分割行。</li>
+            <li>识别PDF文件中图片的文字（OCR）。</li>
+        </ul>
+    </li>
+    <li>分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。</li>
+    <li>合并多个PDF文件。</li>
+    <li>将多个图片合成PDF文件，可以设置压缩选项、页面尺寸、页边、页眉、作者等。
+        支持中文，程序自动定位系统中的字体文件，用户也可以输入ttf字体文件路径。</li>
+    <li>修改PDF的属性，如：标题、作者、版本、修改时间、用户密码、所有者密码、用户权限等</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-pdf.jpg" alt="截屏-pdf"></p>
+</a><h3><a id="pdfTools">文本编辑的基础</a><a id="editTextBase"></a></h3><a id="editTextBase">
+<ol>
+    <li>编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。</li>
+    <li>查找与替换。
+        <ul>
+            <li>选项：忽略大小写、回绕。</li>
+            <li>查找字串和替换字串都支持支持多行。其中的换行符按照当前文件换行符的定义来处理。</li>
+            <li>支持正则表达式，提供示例。</li>
+            <li>计数</li>
+            <li>由于算法的限制，对于多页文档查找规则表达式时，假设：匹配的字符串的最大长度小于当前JVM可用内存的1/16。</li>
+        </ul>
+    </li>
+    <li>定位。跳转到指定的字符位置或行号。</li>
+    <li>行过滤：
+        <ul>
+            <li>条件：包含/不包含任一、包含/不含所有、包含/不包含规则表达式、匹配/不匹配规则表达式。</li>
+            <li>可累加过滤。</li>
+            <li>可保存过滤结果。可选是否包含行号。</li>
+        </ul>
+    </li>
+    <li>分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
+        <ul>
+            <li>设置页尺寸。</li>
+            <li>页面导航。</li>
+            <li>先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。</li>
+            <li>对于跨页字符串，确保查找、替换、过滤的正确性。</li>
+        </ul>
+    </li>
+    <li>定时自动保存。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-textEditor.jpg" alt="截屏-textEditor"></p>
+</a><h3><a id="editTextBase">编辑文本</a><a id="editText"></a></h3><a id="editText">
+<ol>
+    <li>自动检测或手动设置文件编码；改变字符集实现转码；支持BOM设置。</li>
+    <li>自动检测换行符；改变换行符。显示行号。<br>
+        支持LF（Unix/Linux）、 CR（Apple）、 CRLF（Windows）。</li>
+    <li>字符集对应的编码：字节的十六进制，同步显示、同步选择，可选同步滚动、同步更新。</li>
+</ol>
+</a><h3><a id="editText">编辑字节</a><a id="editBytes"></a></h3><a id="editBytes">
+<ol>
+    <li>字节被表示为两个十六进制字符。所有空格、换行、非法值将被忽略。</li>
+    <li>常用ASCII字符的输入选择框。</li>
+    <li>换行。仅用于显示、无实际影响。显示行号。可按字节数换行、或按一组字节值来换行。</li>
+    <li>选择字符集来解码：同步显示、同步滚动、同步选择。非字符显示为问号。</li>
+    <li>分页。若按字节数换行，则行过滤时不考虑跨页。</li>
+</ol>
+</a><h3><a id="editBytes">编辑网页</a><a id="htmlEditor"></a></h3><a id="htmlEditor">
+<ol>
+    <li>加载或编辑本地网页或在线网页，可以彼此同步内容：
+        <ul>
+            <li>网页浏览器</li>
+            <li>编辑网页富文本（不支持FrameSet）</li>
+            <li>编辑网页代码。（支持FrameSet）</li>
+            <li>编辑Markdown</li>
+        </ul>
+    </li>
+    <li>显示：
+        <ul>
+            <li>转换的文本</li>
+            <li>提取网页中标题</li>
+            <li>提取网页中的链接</li>
+        </ul>
+    </li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-htmlEditor.jpg" alt="截屏-textEditor"></p>
+</a><h3><a id="htmlEditor">编辑Markdown</a><a id="markdownEditor"></a></h3><a id="markdownEditor">
+<ol>
+    <li>提供输入格式的按钮。</li>
+    <li>显示，可选是否同步更新：
+        <ul>
+            <li>转换的网页</li>
+            <li>转换的网页代码</li>
+            <li>转换为文本</li>
+            <li>提取网页中标题</li>
+            <li>提取网页中的链接</li>
+        </ul>
+    </li>
+</ol>
+</a><h3><a id="markdownEditor">转换文档</a><a id="convertDocuments"></a></h3><a id="convertDocuments">
+<ol>
+    <li>批量转换文本：
+        <ul>
+            <li>转换文件的字符集。</li>
+            <li>转换文件的换行符。</li>
+            <li>转换文本为网页。</li>
+            <li>替换文本中的字符串。</li>
+        </ul>
+    </li>
+    <li>批量转换网页：
+        <ul>
+            <li>转换网页为Markdown。</li>
+            <li>转换网页为文本。</li>
+            <li>转换网页为PDF。</li>
+            <li>修改网页编码。</li>
+        </ul>
+    </li>
+    <li>其它网页工具：
+        <ul>
+            <li>网页截图：可设置dpi，看选保存为一张图还是多图保存在PDF中。</li>
+            <li>合并多个网页为一个网页/Markdown/文本/PDF文件。</li>
+            <li>对多个文件生成框架文件。</li>
+        </ul>
+    </li>
+    <li>批量转换Markdown：
+        <ul>
+            <li>转换Markdown为网页。</li>
+            <li>转换Markdown为文本。</li>
+            <li>转换Markdown为PDF。</li>
+        </ul>
+    </li>
+</ol>
+</a><h2><a id="convertDocuments">图像工具</a><a id="imageTools"></a></h2><a id="imageTools">
+</a><h3><a id="imageTools">查看图像</a><a id="viewImage"></a></h3><a id="viewImage">
+<ol>
+    <li>设置加载宽度：原始尺寸或指定宽度。</li>
+    <li>“选择区域”：处于选择模式时，剪裁、复制、另存，都是针对选择的区域，否则是针对整个图像。</li>
+    <li>旋转可保存。</li>
+    <li>删除、重命名、恢复。</li>
+    <li>可选显示：坐标、横标尺、纵标尺、数据。</li>
+    <li>查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。</li>
+    <li>同目录下图像文件导览，多种文件排序方式。</li>
+    <li>右键菜单。</li>
+    <li>“剪裁”、“复制”、“保存为”、和各个功能是针对内存中的当前图片。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-imageViewer.jpg" alt="截屏-imageViewer"></p>
+</a><h3><a id="viewImage">浏览图像</a><a id="browserImage"></a></h3><a id="browserImage">
+<ol>
+    <li>同屏显示多图，分别或者同步旋转和缩放。</li>
+    <li>旋转可选保存。</li>
+    <li>格栅模式：可选文件数、列数、加载宽度</li>
+    <li>文件列表模式</li>
+    <li>缩略图列表模式</li>
+    <li>重命名、删除</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-imageBrowser.jpg" alt="截屏-imageBrowser"></p>
+</a><h3><a id="browserImage">分析图像</a><a id="ImageData"></a></h3><a id="ImageData">
+<ol>
+    <li>统计显示图像的数据：各颜色成分的均值/方差/斜率/中值/众数/最大/最小，以及直方图。</li>
+    <li>直方图的颜色成分可多选。</li>
+    <li>可针对选择的矩形区域做统计显示。</li>
+    <li>计算主色调：
+        <ul>
+            <li>利用K-Means聚类计算最不同的颜色。可设置最大循环数。</li>
+            <li>利用统计量化计算出现最多的颜色。</li>
+            <li>可将计算结果导入调色板。</li>
+        </ul>
+    </li>
+    <li>图像数据可以被保存为html文件。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-imageAnanlyse.jpg" alt="截屏-imageAnanlyse"></p>
+</a><h3><a id="ImageData">图像处理</a><a id="imageManufacture"></a></h3><a id="imageManufacture">
+<ol>
+    <li>复制：
+        <ul>
+            <li>复制：当前范围以内的部分、当前范围之外的部分、或整个图片</li>
+            <li>选择：是否切除边沿、是否同时复制到系统粘贴板</li>
+            <li>设置背景色</li>
+        </ul>
+    </li>
+    <li>剪裁：
+        <ul>
+            <li>剪切：当前范围以内的部分、或当前范围之外的部分</li>
+            <li>选择：是否切除边沿、是否把剪切下来的部分放入粘贴板</li>
+            <li>设置背景色</li>
+        </ul>
+    </li>
+    <li>粘贴板。
+        <ul>
+            <li>数据来源：
+                <ul>
+                    <li>对图像整体或选择的部分做"复制"（CTRL+c）</li>
+                    <li>剪切下来的图片部分</li>
+                    <li>系统粘贴板</li>
+                    <li>系统中的图片文件</li>
+                    <li>示例图片</li>
+                </ul>
+            </li>
+            <li>管理粘贴板列表：增、删、清除、刷新，可设置最多保存数。</li>
+            <li>编辑图像时按粘贴按钮（CTRL+v）以把粘贴板的第一张图贴到当前图片上，也可以双击粘贴板列表的项目以粘贴。</li>
+            <li>在当前图片上拖拉被粘贴图片，调整大小和位置。</li>
+            <li>粘贴选项：是否保持宽高比、混合模式、不透明度、旋转角度。</li>
+        </ul>
+    </li>
+    <li>伸缩：拖动锚点调整大小、按比例收缩、或设置像素。四种保持宽高比的选项。设置渲染参数。</li>
+    <li>色彩：针对红/蓝/绿/黄/青/紫通道、饱和度、明暗、色相、不透明度，进行增加、减少、设值、过滤、取反色的操作。可选是否预乘透明。</li>
+    <li>效果：海报（减色）、阈值化、灰色、黑白色、褐色、浮雕、边沿检测、马赛克、磨砂玻璃。可选算法和参数。</li>
+    <li>增强：对比度、平滑、锐化、卷积。可选算法和参数。</li>
+    <li>富文本：以网页形式编辑文本，在图片上拖放调整文本的大小和位置。可设置背景的颜色、不透明度、边沿宽度、圆角大小，可设置文字的旋转角度。
+        由于是利用截屏实现，结果比较模糊，还没有好的解决办法。（此版本暂时不支持）</li>
+    <li>文字：设置字体、风格、大小、色彩、不透明度、阴影、角度，可选是否轮廓、是否垂直，点击图片定位文字。</li>
+    <li>画笔：
+        <ul>
+            <li>折线：多笔一线。可选画笔的宽度、颜色、是否虚线、不透明度。</li>
+            <li>线条：一笔一线。可选画笔的宽度、颜色、是否虚线、不透明度。</li>
+            <li>橡皮檫：一笔一线。总是透明色，可选画笔的宽度。</li>
+            <li>磨砂玻璃：一点一画。可选画笔的宽度、模糊强度、形状（圆形还是方形）。</li>
+            <li>马赛克：一点一画。可选画笔的宽度、模糊强度、形状（圆形还是方形）。</li>
+            <li>形状：矩形、圆形、椭圆、多边形。可选画笔的宽度、颜色、是否虚线、不透明度、是否填充、填充色。</li>
+        </ul>
+    </li>
+    <li>变形：斜拉、镜像、旋转，可设置参数。</li>
+    <li>圆角：把图像四角改为圆角，可设置背景色、圆角大小。</li>
+    <li>阴影：可设置背景色、阴影大小、是否预乘透明。</li>
+    <li>边沿：模糊边沿，可设置是否预乘透明；拖动锚点以调整边沿；按宽度加边；按宽度切边；按颜色切边。可选四边、颜色。</li>
+    <li>修改历史：
+        <ul>
+            <li>对于图片的每一次修改，工具可以自动保存为图片历史。</li>
+            <li>管理历史：删除、清除、选择并恢复为当前图片，可设置最多保存的历史个数。</li>
+            <li>对上一步的撤销（CTRL+z）和重做（CTRL+y）。可以随时恢复原图（CTRL+r）。也可以选择历史列表中任意图片来恢复。</li>
+        </ul>
+    </li>
+    <li>“范围”：定义操作针对的像素内容，既可定义区域、定义颜色匹配规则，也可同时定义区域和颜色匹配。
+        <ul>
+            <li>定义区域：可以是矩形、圆形、椭圆、多边形，区域可反选。</li>
+            <li>定义要匹配颜色列表，可以利用调色盘在图片上直接取色。</li>
+            <li>选择颜色匹配的对象，可以是红/蓝/绿通道、饱和度、明暗、色相，色距可定义。颜色匹配结果可反选。</li>
+            <li>抠图：匹配像素周围的像素、并按同一匹配规则持续扩散出去。多个像素点的匹配合集就是结果。</li>
+            <li>轮廓：把背景透明的图片的轮廓自动提取出来，作为操作的范围。</li>
+            <li>范围可作用于：复制、剪切、颜色、效果、和卷积。</li>
+            <li>保存和管理范围：增、删、改、清除，应用已保存的范围。</li>
+        </ul>
+    </li>
+    <li>弹出图片：当前图片可以显示在弹出的新窗口中，可选择弹出窗口是否总是在最上面。</li>
+    <li>"按需可见"的界面布局：
+        <ul>
+            <li>显示/隐藏左面板（F4）、右面板（F5）</li>
+            <li>显示/隐藏范围面板（F7）、图片面板（F8）</li>
+            <li>上下风箱式页签</li>
+            <li>叠加多页签切换</li>
+            <li>按功能显示/隐藏控件</li>
+        </ul>
+    </li>
+    <li>演示：对于粘贴的混合模式、“颜色”、“效果”、“增强”，一键展示各种数据处理的示例。</li>
+    <li>批量图像处理。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-imageManufacture.jpg" alt="截屏-imageManufacture"></p>
+</a><h3><a id="imageManufacture">多帧图像文件</a><a id="multiFrames"></a></h3><a id="multiFrames">
+<ol>
+    <li>查看、提取多帧图像文件</li>
+    <li>创建、编辑多帧tiff文件</li>
+    <li>查看/提取/创建/编辑动画Gif文件。可设置间隔、是否循环、图片尺寸</li>
+</ol>
+</a><h3><a id="multiFrames">多图合一</a><a id="multipleImages"></a></h3><a id="multipleImages">
+<ol>
+    <li>图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。</li>
+    <li>将多个图片合成PDF文件</li>
+    <li>添加透明通道</li>
+</ol>
+</a><h3><a id="multipleImages">图像局部化</a><a id="imagePart"></a></h3><a id="imagePart">
+<ol>
+    <li>图像的分割。支持按个数分割、按尺寸分割、和定制分割。可以保存为多个图像文件、多帧Tiff文件、或者PDF。</li>
+    <li>图像的降采样。可以设置采样区域、采样比例。</li>
+    <li>当图片文件包含太多像素而被采样加载时，分割和降采样的是文件中的原图片而非加载到内存的图片。</li>
+    <li>提取透明通道。</li>
+</ol>
+</a><h3><a id="imagePart">图片转换</a><a id="imageConvert"></a></h3><a id="imageConvert">
+<ol>
+    <li>可选图像文件的格式，包括：png,jpg,bmp,tif,gif, ico, wbmp,pnm,pcx, raw。</li>
+    <li>可选颜色空间，包括：sRGB、Linear sRGB、ECI RGB、Adobe RGB、Apple RGB、Color Match RGB、ECI CMYK、Adobe CMYK(多种)、灰色、黑白色。</li>
+    <li>可选外部ICC特性文件作为转换的依据。</li>
+    <li>对于jpg/png格式可选是否嵌入ICC特性文件，对于Tif格式必选嵌入。</li>
+    <li>可选对透明通道（如果有）的处理：保留、删除、预乘并保留、预乘并删除。</li>
+    <li>可选压缩类型和质量。</li>
+    <li>对于黑白色，可选二值化算法：OTSU、缺省、或输入预置，可选是否抖动处理。</li>
+    <li>批量转换。</li>
+</ol>
+</a><h3><a id="imageConvert">识别图像中的文字</a><a id="imageOCR"></a></h3><a id="imageOCR">
+<ol>
+    <li>对图像预处理：
+        <ul>
+            <li>多种图像算法</li>
+            <li>伸缩比例</li>
+            <li>黑白阈值</li>
+            <li>旋转角度。</li>
+            <li>是否自动矫正偏斜</li>
+            <li>是否反色</li>
+        </ul>
+    </li>
+    <li>文字识别的选项：
+        <ul>
+            <li>数据文件列表及其顺序</li>
+            <li>是否生成"区域"数据，及其粒度</li>
+            <li>是否生成"词"数据，及其粒度</li>
+        </ul>
+    </li>
+    <li>单图识别：
+        <ul>
+            <li>可以保存并加载预处理后的图像。</li>
+            <li>可以设置需要识别的矩形区域。</li>
+            <li>同步显示：预处理后的图像、原图、和识别出的文字及其html。</li>
+            <li>以html显示"区域"数据和"词"数据，并可保存为文件。</li>
+            <li>演示：一键展示各个图像增强算法的示例。</li>
+        </ul>
+    </li>
+    <li>批量识别：
+        <ul>
+            <li>可选是否同时生成html或PDF</li>
+            <li>可选是否合并识别出文字</li>
+        </ul>
+    </li>
+    <li>OCR引擎：
+        <ul>
+            <li>对于win，可以选择内置的tesseract引擎、或用户安装的tesseract。</li>
+            <li>对于linux和mac，只能使用用户安装的tesseract。</li>
+        </ul>
+    </li>
+    <li>OCR数据文件目录：
+        <ul>
+            <li>可以设为任何可读可写的目录。若已安装tesseract，建议设为它的子目录 “tessdata”。</li>
+            <li>MyBox内置英文和中文的"最快的"数据文件，若此目录下没有这些文件，则MyBox将它们把复制到此目录下。<br>
+                注意：当使用内置引擎时，文件/目录名最好是纯英文，以免失败。</li>
+        </ul>
+    </li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-ocr.jpg" alt="截屏-ocr"></p>
+</a><h3><a id="imageOCR">颜色管理</a><a id="ColorManagement"></a></h3><a id="ColorManagement">
+</a><ol><a id="ColorManagement">
+    <li>在颜色库中增/删/改任意色彩。提供常用网页色彩、传统中国色彩、传统日本色彩。</li>
+    <li>给颜色命名。</li>
+    <li>把颜色加入/移出调色板。</li>
+    <li>简单/全部显示颜色属性。</li>
+    <li>合并/分列显示颜色属性。</li>
+    <li>导出全部或选择的颜色为html或csv文件。</li>
+    <li>导入颜色文件，CSV格式：
+        <ul>
+            <li>文件编码是UTF-8或ASCII</li>
+            <li>第一行定义数据头，以英文逗号分隔。</li>
+            <li>其余每行定义一条数据，数据域以英文逗号分隔。</li>
+            <li>以下为必要数据域：<br>
+                rgba 或 rgb</li>
+            <li>以下是可选数据域：<br>
+                name</li>
+        </ul>
+    </li>
+    </a><li><a id="ColorManagement">用户可输入颜色列表。提供示例。
+        有效的颜色值示例：<br>
+        orange </a><a href="http://mararsh.github.io/MyBox_data/colors/%E5%B8%B8%E7%94%A8%E7%BD%91%E9%A1%B5%E9%A2%9C%E8%89%B2.html">常用网页颜色列表</a><br>
+        0xff668840<br>
+        0xff6688<br>
+        #ff6688<br>
+        #f68<br>
+        rgb(255,102,136)<br>
+        rgb(100%,50%,50%)<br>
+        rgba(255,102,136,0.25)<br>
+        rgba(255,50%,50%,0.25)<br>
+        hsl(240,100%,100%)<br>
+        hsla(120,0%,0%,0.25)</li>
+</ol>
+<h3>调色盘<a id="ColorPalette"></a></h3><a id="ColorPalette">
+<ol>
+    <li>色块显示颜色。弹出颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。</li>
+    <li>拖动色块以调整颜色的顺序。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-colors.jpg" alt="截屏-colors"></p>
+</a><h3><a id="ColorPalette">色彩空间</a><a id="colorSpaces"></a></h3><a id="colorSpaces">
+<ol>
+    <li>绘制色度图
+        <ul>
+            <li>标准数据的轮廓线：CIE 1931 2度观察者（D50）、CIE 1964 10度观察者（D50）、CIE RGB色域、ECI RGB色域、sRGB色域、
+                Adobe RGB色域、Apple RGB色域、PAL RGB色域、NTSC RGB色域、ColorMath ProPhoto RGB色域、SMPTE-C RGB色域。</li>
+            <li>标准光源（白点）：A、C、D50、D55、D65、E。</li>
+            <li>用户可填写刺激值或色坐标、或选择色彩，工具自动计算各种色彩空间对应的色彩数值、并把计算值显示在色度图上。</li>
+            <li>用户可输入或用文件导入光谱数据，工具自动过滤掉特殊字符、并把光谱数据显示在色度图上。</li>
+            <li>用户可以选择在色度图上显示/不显示以上数据。</li>
+            <li>用户可选色度图的背景为透明/白色/黑色，可选轮廓线的点尺寸或线尺寸，可选是否显示格栅和波值。</li>
+            <li>工具以表格和文本显示标准数据：CIE 1931 2度观察者1nm、CIE 1931 2度观察者5nm、CIE 1964 10度观察者1nm、CIE 1964 10度观察者5nm，
+                用户可导出数据的文本。</li>
+        </ul>
+    </li>
+    <li>编辑ICC色彩特性文件
+        <ul>
+            <li>预置标准ICC文件：Java内嵌的ICC文件（包括sRGB、XYZ、PYCC、GRAY、LINEAR_RGB）、
+                ECI提供的ICC文件（包括ECI_CMYK、ECI_RGB_v2）和Adobe提供的ICC文件（包括Adobe RGB、Apple RGB、及多种CMYK ICC文件）。</li>
+            <li>头部所有字段可编辑。在保存ICC文件时，工具自动计算"profile id"字段（MD5摘要）。</li>
+            <li>标签表：标签、名字、类型、偏移、大小、描述、解码后的数据、数据的原始值（十六进制字节）</li>
+            <li>可编辑的标签类型：Text、MultiLocalizedUnicode、Signature、DateTime、XYZ、Curve、ViewingConditions、Measurement、S15Fixed16Array。
+                当前版本不支持编辑LUT类型的标签。</li>
+            <li>选项：把LUT表中的数据归一化到0~1。</li>
+            <li>整个ICC数据被解析显示为XML，并可导出。未被解码的数据显示为十六进制字节。</li>
+            <li>读入的ICC数据可以修改另存为新的ICC文件。</li>
+        </ul>
+    </li>
+    <li>RGB色彩空间
+        <ul>
+            <li>用户选择或输入RGB色彩空间（基色和白点）、选择或输入要适应的参考白点，工具自动计算色适应后的基色值，并展示计算过程。</li>
+            <li>可设置小数位数。</li>
+            <li>色适应算法可选：Bradford、XYZ Scaling、Von Kries。</li>
+            <li>预置的标准RGB色彩空间包括：CIE RGB、ECI RGB、sRGB、Adobe RGB、Apple RGB、PAL RGB、NTSC RGB、ColorMath ProPhoto RGB、SMPTE-C RGB</li>
+            <li>预置的标准光源包括CIE 1931和CIE 1964的：A、B、C、D50、D55、D65、D75、E、F1~F12。</li>
+            <li>工具以表格和文本显示：不同的标准RGB色彩空间、不同的标准光源、不同的算法所计算出的色适应后的基色值。用户可导出数据的文本。</li>
+        </ul>
+    </li>
+    <li>线性RGB到XYZ的转换矩阵
+        <ul>
+            <li>用户选择或输入RGB色彩空间（基色和白点）、选择或输入XYZ空间的参考白点，工具自动计算线性RGB到XYZ的转换矩阵，并展示计算过程。</li>
+            <li>以表格和文本显示：不同的标准RGB色彩空间、不同的XYZ空间参考白点、不同的算法所计算出的转换矩阵。用户可导出数据的文本。</li>
+        </ul>
+    </li>
+    <li>线性RGB到线性RGB的转换矩阵
+        <ul>
+            <li>用户选择或输入源和目标的RGB色彩空间（基色和白点），工具自动计算源线性RGB到目标线性RGB的转换矩阵，并展示计算过程。</li>
+            <li>工具以表格和文本显示：不同的标准RGB色彩空间之间以不同的算法所计算出的转换矩阵。用户可导出数据的文本。</li>
+        </ul>
+    </li>
+    <li>光源
+        <ul>
+            <li>用户输入源颜色（相对值/色度坐标/刺激值）、选择或输入源白点和目标白点，工具自动计算色适应后的颜色值，并展示计算过程。</li>
+            <li>工具以表格和文本显示标准光源的数据值、色温和说明。用户可导出数据的文本。</li>
+        </ul>
+    </li>
+    <li>色度适应矩阵
+        <ul>
+            <li>用户选择或输入源白点和目标白点，工具自动计算色度适应矩阵，并展示计算过程。</li>
+            <li>工具以表格和文本显示不同标准光源之间不同的算法的色度适应矩阵。用户可导出数据的文本。</li>
+        </ul>
+    </li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-colorDiagram.jpg" alt="截屏-colorDiagram"></p>
+</a><h3><a id="colorSpaces">其它</a><a id="imageOthers"></a></h3><a id="imageOthers">
+<ol>
+    <li>支持图像格式：png,jpg,bmp,tif,gif,ico,wbmp,pnm,pcx。可读Adobe YCCK/CMYK的jpg图像。</li>
+    <li>像素计算器</li>
+    <li>卷积核管理器</li>
+</ol>
+</a><h3><a id="imageOthers">大图片的处理</a><a id="bigImage"></a></h3><a id="bigImage">
+<ol>
+    <li>评估加载整个图像所需内存,判断能否加载整个图像。</li>
+    <li>若可用内存足够载入整个图像，则读取图像所有数据做下一步处理。尽可能内存操作而避免文件读写。</li>
+    <li>若内存可能溢出，则采样读取图像数据做下一步处理。</li>
+    <li>采样比的选择：即要保证采样图像足够清晰、又要避免采样数据占用过多内存。</li>
+    <li>采样图像主要用于显示图像。已被采样的大图像，不适用于图像整体的操作和图像合并操作。</li>
+    <li>一些操作，如分割图像、降采样图像，可以局部读取图像数据、边读边写，因此适用于大图像：显示的是采样图像、而处理的是原图像。</li>
+</ol>
+</a><h2><a id="bigImage">数据工具</a><a id="dataTools"></a></h2><a id="dataTools">
+</a><h3><a id="dataTools">通用的数据管理</a><a id="dataManage"></a></h3><a id="dataManage">
+<ol>
+    <li>定义数据</li>
+    <li>数据约束：
+        <ul>
+            <li>约定：
+                <ul>
+                    <li>整型数值（integer/long/short）的无效值是最小值（MIN_VALUE）</li>
+                    <li>双精度数值的无效值是最大值（Double.MAX_VALUE）</li>
+                </ul>
+            </li>
+            <li>坐标系统：
+                <ul>
+                    <li>可取值：
+                        <ul>
+                            <li>CGCS2000（中国大地坐标），真实位置，近似于WGS_84(GPS)坐标。</li>
+                            <li>GCJ-02（中国加密坐标），经过加密的数据，与真实位置有偏差。</li>
+                            <li>WGS-84（GPS），真实位置</li>
+                            <li>BD-09（百度加密坐标），基于GCJ-02</li>
+                            <li>Mapbar（图吧坐标），基于GCJ-02</li>
+                        </ul>
+                    </li>
+                    <li>当坐标系统未定义或非法时，缺省值为CGCS2000。</li>
+                </ul>
+            </li>
+            <li>坐标值：
+                <ul>
+                    <li>数据处理时均用经纬度的小数而不是“度分秒”（DMS）。</li>
+                    <li>MyBox提供“位置工具”以帮助转换坐标的小数和度分秒。</li>
+                    <li>经度有效值范围：<code>-180~180</code>，纬度有效值范围：<code>-90~90</code>。</li>
+                </ul>
+            </li>
+            <li>时间：
+                <ul>
+                    <li>格式：
+                        <ul>
+                            <li>日期时间，如：2014-06-11 13:51:33</li>
+                            <li>日期，如：2014-06-11</li>
+                            <li>年，如：2014</li>
+                            <li>月，如：2014-06</li>
+                            <li>时间，如：13:51:33</li>
+                            <li>带毫秒的时间，如：13:51:33.261</li>
+                            <li>带毫秒的日期时间，如：2014-06-11 13:51:33.261</li>
+                            <li>带时区的日期时间，如：2020-09-27 12:29:29 +0800</li>
+                            <li>带毫秒和时区的日期时间，如：2020-09-27 12:29:29.713 +0800</li>
+                            <li>日期和时间之间可以有或没有“T”。“2014-06-11T13:51:33”等同于“2014-06-11 13:51:33”。</li>
+                        </ul>
+                    </li>
+                    <li>纪元：<br>
+                        “0 AD” = “1 BC” = “0” = “-0” = “0000” = “-0000”  = “0001-01-01 00:00:00 BC” =  “公元前1” = “公元前0001-01-01 00:00:00”<br>
+                        “1 AD” =  “1”  = “0001” = “0001-01-01 00:00:00” = “0001-01-01 00:00:00 AD” =  “公元1” = “公元0001-01-01 00:00:00”<br>
+                        “202 BC” = “-203” = “-0203” = “-0203-01-01 00:00:00”  = “0202-01-01 00:00:00 BC” = “公元前202” =  “公元前0202-01-01 00:00:00”<br>
+                        “202 AD” = “202” = “0202” = “0202-01-01 00:00:00” = “0202-01-01 00:00:00 AD” = “公元202” = “公元0202-01-01 00:00:00”</li>
+                    <li>有效的时间示例：<br>
+                        2020-07-13 11:30:59<br>
+                        -2020-07-13 11:30:59<br>
+                        -581-01-23<br>
+                        960<br>
+                        公元960<br>
+                        公元前770-12-11<br>
+                        公元前1046-03-10 10:10:10<br>
+                        202 BC<br>
+                        960-01-23 AD<br>
+                        1046-03-10 10:10:10 BC</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>增/删/改/复制/清除/刷新数据。</li>
+    <li>查询数据：
+        <ul>
+            <li>定义和管理查询条件。</li>
+            <li>当前查询条件被显示在"信息"页签上。</li>
+            <li>符合条件的数据分页显示在"数据"表中。</li>
+            <li>数据行可以按数据值显示不同颜色。</li>
+        </ul>
+    </li>
+    <li>导入数据，csv格式：
+        <ul>
+            <li>文件编码是UTF-8或ASCII。</li>
+            <li>第一行定义数据头，以英文逗号分隔。</li>
+            <li>其余每行定义一条数据，字段以英文逗号分隔。</li>
+            <li>字段的顺序随意。</li>
+            <li>必要字段都应占位，但不一定必须有值（与具体数据有关）。</li>
+            <li>可选是否替换已存在的数据。预定义数据或者示例数据总是替换。</li>
+        </ul>
+    </li>
+    <li>导出数据：
+        <ul>
+            <li>定义和管理导出条件。</li>
+            <li>导出的数据字段可选。</li>
+            <li>导出格式可选：csv、xml、json、xlsx、html。</li>
+            <li>可选择导出文件的分割行数。</li>
+            <li>可导出当前数据页。</li>
+        </ul>
+    </li>
+    <li>删除数据：
+        <ul>
+            <li>定义和管理删除条件。</li>
+            <li>预定义的数据无法被删除。</li>
+            <li>被引用的数据（如外键引用）无法被删除。</li>
+        </ul>
+    </li>
+    <li>定义、管理、和应用"条件"：
+        <ul>
+            <li>"条件"被用来执行：查询、删除、导出。</li>
+            <li>在面板中设置条件：
+                <ul>
+                    <li>数据条件形成树结构，树结点可以多选。</li>
+                    <li>排序的字段可以多选，顺序可调。</li>
+                </ul>
+            </li>
+            <li>编辑条件：标题、where、order by、fetch，它们被拼接成最终条件。</li>
+            <li>管理条件：增/删/改/复制。</li>
+            <li>被执行过的条件被自动保存。</li>
+            <li>最近执行过的条件被列出在按钮的弹出窗口中。</li>
+        </ul>
+    </li>
+</ol>
+</a><h3><a id="dataManage">地图数据</a><a id="mapData"></a></h3><a id="mapData">
+<ol>
+    <li>在地图上可以展示多种数据：地理编码、位置数据、或坐标查询。</li>
+    <li>显示在地图上的数据可以是：
+        <ul>
+            <li>满足当前查询的所有数据。可以设置“最多个数”以免性能问题。</li>
+            <li>当前数据页。</li>
+        </ul>
+    </li>
+    <li>天地图：
+        <ul>
+            <li>接受CGCS2000坐标数据，并把它们显示为无偏差的正确位置。</li>
+            <li>对于其它坐标数据，MyBox把它们转换为CGCS2000以显示正确位置。</li>
+            <li>可选投影：EPSG:900913/3857（球面墨卡托）、EPSG:4326（经纬度直投）。</li>
+            <li>可选控件：缩放、缩放比例、地图类型、符号。</li>
+            <li>地图类型：地图、卫星、卫星混合、地形、地形混合。</li>
+            <li>地图自带语言</li>
+            <li>地图级别为1-18</li>
+        </ul>
+    </li>
+    <li>高德地图：
+        <ul>
+            <li>接受GCJ-02坐标，并把它们显示为无偏差的正确位置。</li>
+            <li>对于其它坐标数据，MyBox把它们转换为GCJ-02以显示正确位置。</li>
+            <li>投影为EPSG:900913/3857（球面墨卡托）。</li>
+            <li>图层：
+                <ul>
+                    <li>可多选：标准图层、卫星图层、路网图层、交通图层。</li>
+                    <li>外国坐标不支持路网图层和交通图层。</li>
+                    <li>部分外国坐标支持卫星图层。</li>
+                    <li>可分别设置每个图层的不透明度。</li>
+                </ul>
+            </li>
+            <li>地图的语言：中文、英文、中英文。</li>
+            <li>地图级别为3-18</li>
+            <li>可选“适应地图”，即将地图自动调整为可以显示所有数据的最佳大小和位置。</li>
+        </ul>
+    </li>
+    <li>调整地图级别：
+        <ul>
+            <li>滑动鼠标滚轮。</li>
+            <li>点击地图控件。</li>
+            <li>选择“地图尺寸”。</li>
+        </ul>
+    </li>
+    <li>标注图片：
+        <ul>
+            <li>可选：点（泡泡）、圆形、任意图片</li>
+            <li>对于位置数据，还可选：数据集图像、数据图像。若无有效值，则为点。</li>
+            <li>可设置标记图片的尺寸（长宽相同）。</li>
+        </ul>
+    </li>
+    <li>标注文字：
+        <ul>
+            <li>可选：标签、坐标、地址。</li>
+            <li>对于位置数据，还可选：开始时间、结束时间、数据值等。</li>
+            <li>可多选。每个选择显示为一行。</li>
+            <li>可设置标记文字的尺寸。</li>
+            <li>可选是否粗体。</li>
+            <li>可设置标记文字的颜色。对于位置数据，还可选：数据颜色。</li>
+        </ul>
+    </li>
+    <li>弹出信息：
+        <ul>
+            <li>鼠标放在标注上则可弹出更多信息。</li>
+            <li>可选是否弹出。</li>
+        </ul>
+    </li>
+    <li>截图：
+        <ul>
+            <li>可设置截图分辨率。</li>
+            <li>把当前地图和图中数据截取为html</li>
+        </ul>
+    </li>
+    <li>地图的数据密钥可以在“设置”里修改。 缺省的密钥是所有MyBox用户共享的免费密钥。</li>
+    <li>显示地图时，信任地图服务商的所有主机地址。</li>
+</ol>
+</a><h3><a id="mapData">地理编码</a><a id="geographyCode"></a></h3><a id="geographyCode">
+<ol>
+    <li>数据定义：
+        <ul>
+            <li>基本属性：标识、级别、经度、纬度、中国名、英文名、5个代码、5个别名。</li>
+            <li>从属属性：属主、洲、国家、省、市、县、镇、村、建筑。（构成"祖先"）</li>
+            <li>辅助属性：高度、精度、坐标系统、面积（平方米）、人口、注释、是否预定义。</li>
+        </ul>
+    </li>
+    <li>数据约束：
+        <ul>
+            <li>必须有值：标识、级别、中文名或英文名</li>
+            <li>“级别"的可取值：全球（只能是"地球”）、洲、国家、省（州）、市、县（区）、镇（乡）、村（居委会）、建筑、兴趣点。</li>
+            <li>数据不必逐级从属，即可以跨级定义，例如：一个村庄直接属于南极洲；又如：城市直接属于国家，而没有省/州一级。</li>
+            <li>匹配数据：
+                <ul>
+                    <li>以下方式之一可以确定一个地址：
+                        <ul>
+                            <li>匹配数据标识（由MyBox自动赋值）。这是精确匹配。</li>
+                            <li>匹配"级别" + “祖先” + “中文名"或"英文名"或任一别名”。这是精确匹配。</li>
+                            <li>匹配"级别" + “中文名"或"英文名"或任一"别名”。这是模糊匹配，可能有同级重名导致匹配错误的情况。</li>
+                        </ul>
+                    </li>
+                    <li>匹配名字或者别名时，不区分大小写。</li>
+                    <li>有时候"代码"（code1/2/3/4/5）也可以辅助查找。</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>编辑数据：
+        <ul>
+            <li>数据的"从属关系"只能从位置树上选择。</li>
+            <li>数据的级别必须比祖先低。</li>
+            <li>数据必须有中文名或者英文名。</li>
+            <li>可在地图上选择/显示坐标。</li>
+            <li>对选择的数据项设置为：“预定义的数据”、或"输入的数据"。</li>
+        </ul>
+    </li>
+    <li>定义条件：
+        <ul>
+            <li>地理代码按级别和从属关系形成一棵树，可多选</li>
+        </ul>
+    </li>
+    <li>导入数据：
+        <ul>
+            <li>内置的预定义数据：洲、国家、中国的省/市/县。<br>
+                国家的"面积"和"人口"有有效值。</li>
+            <li>CSV格式。
+                <ul>
+                    <li>下载地址：<br>
+                        https://github.com/Mararsh/MyBox_data/tree/master/md/GeographyCode</li>
+                    <li>以下为必要字段：<br>
+                        Level,Longitude,Latitude<br>
+                        以及"Chinese Name"或 “English Name”</li>
+                    <li>以下是可选字段：<br>
+                        Altitude,Precision,Coordinate System,Square Kilometers,Population,<br>
+                        Code 1,Code 2,Code 3,Code 4,Code 5,Alias 1,Alias 2,Alias 3,Alias 4,Alias 5,<br>
+                        Continent,Country,Province,City,County,Town,Village,Building,Comments</li>
+                </ul>
+            </li>
+            <li>来自geoname.org的位置数据。
+                <ul>
+                    <li>下载地址：<br>
+                        http://download.geonames.org/export/zip/</li>
+                    <li>以制表符分隔的文本，编码为UTF-8。</li>
+                    <li>字段：<br>
+                        countryCode postalCode placeName<br>
+                        adminName1 adminCode1 adminName2 adminCode2 adminName3 adminCode3<br>
+                        latitude longitude accuracy</li>
+                    <li>坐标系统是WGS_84。</li>
+                    <li>同一地址只写一次，即使它有多个邮编或者坐标。</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>设置：
+        <ul>
+            <li>定制数据行颜色。提供"缺省"和"随机"按钮。</li>
+        </ul>
+    </li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-geoCode.jpg" alt="截屏-geoCode"></p>
+</a><h3><a id="geographyCode">地图上的位置</a><a id="locationInMap"></a></h3><a id="locationInMap">
+<ol>
+    <li>查询地理代码：
+        <ul>
+            <li>点击地图</li>
+            <li>输入地址
+                <ul>
+                    <li>天地图支持中外地址的中英文（如“伦敦”、“Paris”）</li>
+                    <li>高德地图只支持中国地址的中文。</li>
+                </ul>
+            </li>
+            <li>输入坐标</li>
+        </ul>
+    </li>
+    <li>可以保存查询出来的地理代码。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-locationMap.jpg" alt="截屏-geoCode"></p>
+</a><h3><a id="locationInMap">位置数据</a><a id="locationData"></a></h3><a id="locationData">
+<ol>
+    <li>数据定义：
+        <ul>
+            <li>基本属性：数据集、标签、经度、纬度、开始时间、结束时间。</li>
+            <li>辅助属性：地址、高度、精度、坐标系统、速度、方向、数据值、数据规模、图像、说明。</li>
+        </ul>
+    </li>
+    <li>数据集：
+        <ul>
+            <li>每个位置数据都属于一个数据集。</li>
+            <li>数据集定义其所包含的位置数据的共同属性，包括：
+                <ul>
+                    <li>时间格式</li>
+                    <li>对于公元后的时间是否省略“公元”</li>
+                    <li>文字的颜色</li>
+                    <li>图像<br>
+                        这些属性有助于在地图上显著区分数据点。</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>定义条件：
+        <ul>
+            <li>数据集列表，可多选</li>
+            <li>时间树（开始时间），可多选</li>
+        </ul>
+    </li>
+    <li>地图数据：
+        <ul>
+            <li>开始显示地图数据时，以第一个数据为地图中心。</li>
+            <li>位置分布：所有数据全部显示在地图上。</li>
+            <li>时间序列：
+                <ul>
+                    <li>按“开始时间”升序逐帧显示数据</li>
+                    <li>选项：
+                        <ul>
+                            <li>若选择“累加”，则已显示帧的数据点不被抹除，即数据点逐帧叠加。</li>
+                            <li>若选择“时间叠加”，则凡是时间区间与当前帧的时间区间有重叠的数据都算作当前帧的有效数据。<br>
+                                例如，当前帧的开始时间是“公元前1044”、结束时间是“公元前221”，则所有起止区间与这个时间段有重合的数据都显示在当前帧中。</li>
+                            <li>若选择“移到中心”，则每帧都会调整地图中心。</li>
+                            <li>若选择“链接”，则显示相邻两帧的连线。<br>
+                                注：只有天地图的国内地址才正常显示连线。</li>
+                        </ul>
+                    </li>
+                    <li>帧控制：
+                        <ul>
+                            <li>可以设置时间间隔</li>
+                            <li>可以选择帧（开始时间）</li>
+                            <li>暂停/播放</li>
+                            <li>前/后帧</li>
+                            <li>是否循环播放</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>截图：
+        <ul>
+            <li>对于“位置分布”，可选
+                <ul>
+                    <li>html：数据和当前帧的截图</li>
+                    <li>当前帧的截图。格式自选。</li>
+                </ul>
+            </li>
+            <li>对于“时间序列”，还可以选择：
+                <ul>
+                    <li>jpg：所有帧的截图</li>
+                    <li>png：所有帧的截图</li>
+                    <li>动态gif：所有帧的截图（可能内存不够）</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>导入数据：
+        <ul>
+            <li>CSV格式。
+                <ul>
+                    <li>以下为必要字段：<br>
+                        Dataset,Longitude,Latitude</li>
+                    <li>以下是可选字段：<br>
+                        Label,Address,Altitude,Precision,Speed,Direction,Coordinate System,<br>
+                        Data Value,Data Size,Start Time,End Time,Image,Comments</li>
+                </ul>
+            </li>
+            <li>来自movebank.org的位置数据。
+                <ul>
+                    <li>下载地址：<br>
+                        https://www.datarepository.movebank.org/</li>
+                    <li>以逗号分隔CSV格式。</li>
+                    <li>以下为必要字段：<br>
+                        timestamp,location-long,location-lat,study-name</li>
+                    <li>坐标系统是WGS_84。</li>
+                </ul>
+            </li>
+            <li>示例：中国历代都城</li>
+            <li>示例：欧洲赤膀鸭的秋季迁徙模式</li>
+            <li>示例：墨西哥湾的抹香鲸</li>
+            <li>若数据包含的数据集在数据库中还未定义，则自动添加到数据库中。</li>
+        </ul>
+    </li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-locationData.jpg" alt="截屏-geoCode"></p>
+</a><h3><a id="locationData">位置工具</a><a id="locationTools"></a></h3><a id="locationTools">
+<ol>
+    <li>转换坐标的小数和度分秒。有效的“度分秒”（DMS）示例：<br>
+        48°51’12.28"<br>
+        -77° 3’ 43.9308"<br>
+        48°51’12.28"N<br>
+        2°20’55.68"E<br>
+        S 34° 36’ 13.4028"<br>
+        W 58° 22’ 53.7348"<br>
+        118度48分54.152秒<br>
+        -32度04分10.461秒<br>
+        东经118度48分54.152秒<br>
+        北纬32度04分10.461秒<br>
+        西经118度48分54.152秒<br>
+        南纬32度04分10.461秒</li>
+    <li>把坐标转换为其它坐标系。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-locationTools.jpg" alt="截屏-geoCode"></p>
+</a><h3><a id="locationTools">疫情报告</a><a id="epidemicReport"></a></h3><a id="epidemicReport">
+<ol>
+    <li>数据定义：
+        <ul>
+            <li>基本属性：数据集、时间、位置、来源。</li>
+            <li>基础数值：确认、治愈、死亡。</li>
+            <li>差值统计：新增确认、新增治愈、新增死亡。<br>
+                由前后两天数据行的差值计算出。</li>
+            <li>除值统计：
+                <ul>
+                    <li>治愈/确认千分比、死亡/确认千分比。</li>
+                    <li>确认/平方公里千分比、治愈/平方公里千分比、死亡/平方公里千分比。</li>
+                    <li>确认/人口千分比、治愈/人口千分比、死亡/人口千分比。<br>
+                        当位置数据的"面积"/"人口"值非法（零或负数）时，相应的统计值没有意义（零）。<br>
+                        预定义的"国家"数据有合法的"面积"和"人口"值，因此可以得到有意义的统计值。</li>
+                </ul>
+            </li>
+            <li>累加统计：
+                <ul>
+                    <li>一些国家的数值<br>
+                        由此国家的省的数值累加计算出。</li>
+                    <li>洲的数值<br>
+                        由此洲的国家的数值累加计算出。</li>
+                    <li>全球的数值<br>
+                        由各洲的数值累加计算出。</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>数据约束：
+        <ul>
+            <li>必须有值：数据集、时间、位置</li>
+            <li>"来源"的取值：“输入的数据”、“预定义数据”、“填充的数据”、“统计数据”。</li>
+            <li>"位置"是"地理编码"的外键，即所引用的位置必须在"地理编码"中有定义。</li>
+            <li>“确认”、“治愈”、"死亡"这三个值至少有一个大于零。</li>
+            <li>以下方式之一可以确定一个疫情报告：
+                <ul>
+                    <li>匹配数据标识（由MyBox自动赋值）。这是精确匹配。</li>
+                    <li>匹配"数据集 + “日期” + “位置”。这是精确匹配。</li>
+                </ul>
+            </li>
+            <li>此版本假设，对于确定的数据集、确定的地址，一天只有一个有效数据。</li>
+        </ul>
+    </li>
+    <li>编辑数据：
+        <ul>
+            <li>输入单个数据时，"位置"只能从位置树上选择。</li>
+            <li>在"中国省会疫情报告"和"全球疫情报告"界面上，可以填写多个地址的同一数据集同一天的数据。</li>
+            <li>对选择的多个数据项修改"来源"的取值。</li>
+        </ul>
+    </li>
+    <li>导入数据：
+        <ul>
+            <li>MyBox内置预定义数据：来自约翰霍普金斯大学的COVID-19数据（直到2020-09-24）。</li>
+            <li>CSV格式：
+                <ul>
+                    <li>下载地址：<br>
+                        https://github.com/Mararsh/MyBox_data/tree/master/md/COVID19</li>
+                    <li>以下为必要字段：<br>
+                        数据集,时间,确认,治愈,死亡<br>
+                        以及足以定义一个地理编码的位置数据：<br>
+                        经度,纬度,级别,洲,国家,省,市,区县,乡镇,村庄,建筑物,兴趣点</li>
+                    <li>以下是可选字段：<br>
+                        新增确诊,新增治愈,新增死亡</li>
+                    <li>坐标系统是CGCS2000。</li>
+                </ul>
+            </li>
+            <li>来自约翰霍普金斯大学的COVID-19历史数据（全球）：
+                <ul>
+                    <li>下载地址：<br>
+                        https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</li>
+                    <li>以下为必要字段：<br>
+                        Province/State,Country/Region,Lat,Long<br>
+                        以及日期列表“1/22/20,1/23/20…”</li>
+                    <li>坐标系统是WGS_84。</li>
+                    <li>澳大利亚、加拿大、和中国的数据是省/州级别的，其它的数据是国家级别。</li>
+                    <li>全部是零的数据项将被跳过。</li>
+                </ul>
+            </li>
+            <li>来自约翰霍普金斯大学的COVID-19每日数据（全球）。
+                <ul>
+                    <li>下载地址：<br>
+                        https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports s</li>
+                    <li>字段随着时间在变化。。。<br>
+                        以下是"01-22-2020.csv"的格式：<br>
+                        Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered<br>
+                        以下是"05-15-2020.csv"的格式：<br>
+                        FIPS,Admin2,Province_State,Country_Region,Last_Update,Lat,Long_,Confirmed,Deaths,Recovered,Active,Combined_Key</li>
+                    <li>坐标系统是WGS_84。</li>
+                    <li>全部是零的数据项将被跳过。</li>
+                </ul>
+            </li>
+            <li>来自百度的COVID-19今日数据（全球）。<br>
+                下载地址：https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3</li>
+            <li>来自腾讯的COVID-19历史数据（中国）。<br>
+                下载地址：https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?</li>
+            <li>导入时可选是否统计数据集。</li>
+            <li>导入数据的时间均被改为"23:59:00"。</li>
+            <li>若数据包含的地理代码在数据库中还未定义，则自动添加到数据库中。</li>
+        </ul>
+    </li>
+    <li>统计数据：
+        <ul>
+            <li>可选累加数据：
+                <ul>
+                    <li>省/州的数据累加为国家的数据</li>
+                    <li>国家的数据累加为洲的数据</li>
+                    <li>洲的数据累加为地球的数据。</li>
+                </ul>
+            </li>
+            <li>可选差值数据的位置级别。</li>
+        </ul>
+    </li>
+    <li>定义"条件"：
+        <ul>
+            <li>“数据源树”：数据集、及其不同数据源形成一棵"数据源树"，树结点可以多选。</li>
+            <li>“位置树”：MyBox中所有的地理编码按从属关系形成一棵"位置树"，树结点可以多选。</li>
+            <li>“时间树”：MyBox中所有的疫情报告涉及的时间按年/月/日形成一棵"时间树"，树结点可以多选。</li>
+            <li>“每日首部数据的个数”：
+                <ul>
+                    <li>不限制。不显示图，只按条件查询数据。</li>
+                    <li>有效值：
+                        <ul>
+                            <li>按条件查询数据后、截取每日最前面的数据，以此显示数据和图。</li>
+                            <li>"时间降序"自动被设置为最前面的排序条件。</li>
+                            <li>还必须再选择至少一个排序字段</li>
+                            <li>除了"时间降序"，最前面的排序字段被称为"查询的主属性"</li>
+                        </ul>
+                    </li>
+                    <li>"每日首部数据的个数"和排序条件只对查询和导出有效，对删除无效。</li>
+                </ul>
+            </li>
+            <li>编辑条件：标题、where、order by、fetch、“每日首部数据的个数”(-1或0表示不限制)，它们被拼接成最终查询条件。</li>
+        </ul>
+    </li>
+    <li>显示图：
+        <ul>
+            <li>当查询条件符合要求时，才会显示图：图数据总是"每日首部数据"，并有一个"查询的主属性"。</li>
+            <li>除了"查询的主属性"，可以选择更多数据属性，以在图中显示多维数据、或者同时显示多个数据的图。</li>
+            <li>可选的图类型：水平条图、垂直条图、水平线图、垂直线图、饼图、地图。</li>
+            <li>当数据的时间不唯一时，图是动态的：按时间升序逐帧显示每个时间的数据图。</li>
+            <li>对于动态图，可以暂停/继续、设置间隔、停在指定时间的帧、上一帧、下一帧。</li>
+            <li>常用选择，即时生效：
+                <ul>
+                    <li>图例位置：不显示、顶、底、左、右</li>
+                    <li>数值标签：名和值、值、名、不显示、弹出</li>
+                    <li>显示/不显示：类别轴的标签、水平网格线、垂直网格线</li>
+                    <li>数值轴：笛卡尔坐标、方根坐标、自然对数坐标、以10为底的对数坐标</li>
+                    <li>文字大小</li>
+                    <li>地图的参数：级别、图层、语言</li>
+                </ul>
+            </li>
+            <li>截图
+                <ul>
+                    <li>当前帧的截图。格式自选。</li>
+                    <li>jpg：所有帧的截图</li>
+                    <li>png：所有帧的截图</li>
+                    <li>动态gif：所有帧的截图（可能内存不够）</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>设置：
+        <ul>
+            <li>截图的分辨率、动态截图的最大宽度、加载图数据的时间。<br>
+                这些参数与内存消耗和计算机计算能力有关。</li>
+            <li>按"数据源"定制数据行颜色。提供"缺省"和"随机"按钮。</li>
+            <li>定制图中数据值的颜色。提供"缺省"和"随机"按钮。</li>
+            <li>定制图中位置值的颜色。提供"随机"按钮。</li>
+        </ul>
+    </li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-epidemicReport.jpg" alt="截屏-epidemicReport"></p>
+</a><h3><a id="epidemicReport">矩阵计算</a><a id="matrixTool"></a></h3><a id="matrixTool">
+<ol>
+    <li>矩阵数据的编辑：
+        <ul>
+            <li>对于输入或粘贴的数据，过滤特殊字符，以适应带格式的数据。</li>
+            <li>自动把当前矩阵数据转变为行向量、列向量、或指定列数的矩阵。</li>
+            <li>自动生成单位矩阵、随机方阵、或随机矩阵，可设置行/列数。</li>
+        </ul>
+    </li>
+    <li>矩阵的一元计算：转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解
+        、逆矩阵-用消元法求解、逆矩阵-用伴随矩阵求解、矩阵的秩、伴随矩阵、余子式、归一化、
+        、设置小数位数、设为整型、乘以数值、除以数值、幂。</li>
+    <li>矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。</li>
+</ol>
+</a><h3><a id="matrixTool">生成条码</a><a id="createBarcodes"></a></h3><a id="createBarcodes">
+<ol>
+    <li>支持的一维码类型： Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE,
+        Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail</li>
+    <li>支持的二维码类型：QR_Code, PDF_417, DataMatrix</li>
+    <li>一维码选项：朝向、宽高、分辨率、文字位置、字体大小、空白区宽度等。不同类型的选项不同。</li>
+    <li>二维码选项：宽高、边沿、纠错级别、压缩模式。不同类型的选项不同。</li>
+    <li>二维码QR_Code可以在中心显示一个图片。根据纠错级别自动调整图片大小。</li>
+    <li>示例参数和建议值。</li>
+    <li>对生成的条码即时检验。</li>
+</ol>
+</a><h3><a id="createBarcodes">解码条码</a><a id="decodeBarcodes"></a></h3><a id="decodeBarcodes">
+<ol>
+    <li>支持的一维码类型： Code39, Code128, Interleaved2Of5, ITF_14,  EAN13, EAN8, EAN_128, UPCA, UPCE</li>
+    <li>支持的二维码类型：QR_Code, PDF_417, DataMatrix</li>
+    <li>显示条码内容和元数据（条码类型、纠错级别等）</li>
+</ol>
+</a><h3><a id="decodeBarcodes">消息摘要</a><a id="messageDigest"></a></h3><a id="messageDigest">
+<ol>
+    <li>生成文件或者输入文本的消息摘要</li>
+    <li>支持MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512</li>
+</ol>
+</a><h2><a id="messageDigest">文件工具</a><a id="fileTools"></a></h2><a id="fileTools">
+</a><h3><a id="fileTools">管理文件/目录</a><a id="directoriesArrange"></a></h3><a id="directoriesArrange">
+<ol>
+    <li>查找、删除、复制、移动、重命名。</li>
+    <li>目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。</li>
+    <li>整理文件，将文件按修改时间或者生成时间重新归类在新目录下。此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。</li>
+    <li>删除目录下所有的空目录。</li>
+    <li>删除"无限嵌套目录"（由于软件错误而生成的无法正常删除的目录）。</li>
+    <li>删除系统临时目录下的文件。</li>
+    <li>从ttc文件中提取ttf文件。</li>
+</ol>
+</a><h3><a id="directoriesArrange">归档/压缩/解压/解档</a><a id="archiveCompress"></a></h3><a id="archiveCompress">
+<ol>
+    <li>归档是把多个文件/目录聚集为单个文件的过程，有的归档格式支持同时实现压缩（如zip和7z）。解档是还原归档文件的过程。</li>
+    <li>压缩是把单个文件转变为一个更小的文件的过程。通常是先归档再压缩。解压是还原压缩文件的过程。</li>
+    <li>支持归档格式： zip, tar, 7z, ar, cpio。</li>
+    <li>支持解档格式： zip, tar, 7z, ar, cpio, arj, dump。</li>
+    <li>支持压缩格式：gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed。</li>
+    <li>支持解压格式：gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, DEFLATE64,  Z。</li>
+    <li>解档/解压时，可自动检测格式，也可由用户指定格式（有的格式无法自动检测出来）。</li>
+    <li>解档时，提供树状结构方便用户选择提取内容。</li>
+</ol>
+</a><h3><a id="archiveCompress">检查冗余文件</a><a id="filesRedundancy"></a></h3><a id="filesRedundancy">
+<ol>
+    <li>根据MD5检查重复的文件。</li>
+    <li>提供树状结构方便用户删除冗余文件。</li>
+    <li>支持边检查边删除。</li>
+</ol>
+</a><h3><a id="filesRedundancy">其它</a><a id="fileOthers"></a></h3><a id="fileOthers">
+<ol>
+    <li>切割文件。切割方式可以是：按文件数、按字节数、或按起止列表。</li>
+    <li>合并文件。</li>
+    <li>比较文件（字节）。</li>
+    <li>批量处理时，选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。</li>
+</ol>
+</a><h2><a id="fileOthers">媒体工具</a><a id="MediaTools"></a></h2><a id="MediaTools">
+</a><h3><a id="MediaTools">播放视频/音频</a><a id="mediaPlayer"></a></h3><a id="mediaPlayer">
+<ol>
+    <li>创建/加载播放列表</li>
+    <li>选项：自动播放、显示毫秒、循环次数、随机顺序</li>
+    <li>设置：音量、速度（0~8倍）</li>
+    <li>按键：播放/暂停/停止/上一个/下一个/媒体信息/静音/全屏</li>
+    <li>全屏时：触屏短暂显示控件、ESC退出全屏</li>
+    <li>支持的容器格式：aiff, mp3, mp4, wav, hls(m3u8)，支持的视频编码：h.264/avc，支持的音频编码：aac, mp3, pcm。<br>
+        如果视频没有声音，这是因为播放器不支持它的音频编码器。<br>
+        已知问题：播放一些流媒体时MyBox可能崩溃退出。</li>
+    <li>乖乖和笨笨的声音</li>
+    <li>此工具无需ffmpeg。但是在Linux上需要安装libavcodec和libavformat， 参见：<br>
+        https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html</li>
+</ol>
+</a><h3><a id="mediaPlayer">管理播放列表</a><a id="mediaList"></a></h3><a id="mediaList">
+<ol>
+    <li>增删改播放列表</li>
+    <li>增删改播放列表的内容。</li>
+    <li>读取所支持媒体格式的信息：时长、音频编码、视频编码</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-mediaPlayer.jpg" alt="截屏-mediaPlayer"></p>
+</a><h3><a id="mediaList">封装ffmpeg的功能</a><a id="ffmpeg"></a></h3><a id="ffmpeg">
+<p>注：这一组功能依赖于ffmpeg，需要用户自己下载ffmpeg（建议使用静态版本）。</p>
+<ol>
+    <li>处理媒体时：
+        <ul>
+            <li>可选择/设置所有的参数，包括文件格式（合成器）、视频编码、音频编码、字幕、视频帧率、宽高比、音频采样率、改变音量等。</li>
+            <li>“缺省”按钮：当有NVIDIA时，选择"h264_nvenc"作为视频编码器，以利用硬件加速。</li>
+            <li>多数播放器支持：合成器"mp4"，视频编码"H.264", 音频编码"AAC"。</li>
+            <li>尝试不同的编码器、编码预调、CRF值，以获得适应于你的计算机的设置，考虑以下因素：
+                <ul>
+                    <li>编码器应该足够快以保证不掉帧。</li>
+                    <li>消耗有限的系统资源，以留给其它应用足够的CPU和内存。</li>
+                    <li>生成的文件的质量和大小是可忍受的。</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>录屏：
+        <ul>
+            <li>当没有NVIDIA、并且CPU不那么强时：
+                <ul>
+                    <li>选择"libx264rgb"作为视频编码器，以跳过从RGB到yuv444p的转换。</li>
+                    <li>选择较快的编码预调。</li>
+                    <li>录制之后，利用视频转换工具以编码器“libx264”将生成的RGB视频转换为yuv444p。</li>
+                </ul>
+            </li>
+            <li>可选是否录视频：
+                <ul>
+                    <li>设置线程队列大小。</li>
+                    <li>录制范围：全屏、窗口、矩形。</li>
+                </ul>
+            </li>
+            <li>可选是否录音频：
+                <ul>
+                    <li>自动检测声卡，并把第一个声卡作为设备。</li>
+                    <li>设置线程队列大小。</li>
+                </ul>
+            </li>
+            <li>设置延时：
+                <ul>
+                    <li>若是”不限制“，则用户按按钮”开始“时立即开始录制。</li>
+                    <li>若是有效值，则在这个时间结束时开始录制。</li>
+                </ul>
+            </li>
+            <li>设置时长：
+                <ul>
+                    <li>若是”不限制“，则用户按按钮”停止“时才停止。</li>
+                    <li>若是有效值，则时间结束时自动停止。用户按按钮”停止“也可中止录制。</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>批量转换音频/视频：
+        <ul>
+            <li>源文件以文件/目录表显示</li>
+            <li>源文件以流和媒体信息表显示</li>
+        </ul>
+    </li>
+    <li>把图片和音频合成为视频：
+        <ul>
+            <li>源文件以文件/目录表显示</li>
+            <li>源文件以流和媒体信息表显示</li>
+            <li>可以单独设置每个图片的时长，也可对全部图片设置时长</li>
+            <li>可选择是否"音频流结束时结束视频"。</li>
+            <li>图片被自动适应为屏幕大小且保持宽高比。</li>
+        </ul>
+    </li>
+    <li>利用ffprobe读取媒体的信息：格式、音频流、视频流、帧、包、支持的像素格式。</li>
+    <li>读取ffmpeg的信息：版本、格式、支持的编码解码器、支持的滤镜，以及自定义查询参数。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-makeMedia.jpg" alt="截屏-makeMedia"></p>
+</a><h3><a id="ffmpeg">游戏-消消乐</a><a id="gameElimination"></a></h3><a id="gameElimination">
+<ol>
+    <li>可选棋子的图片、个数、尺寸、显示效果（是否阴影/圆角）。</li>
+    <li>棋子可以是预定义图片、用户指定的任意图片、或用户选择的颜色。</li>
+    <li>可选音效：来自乖乖的赞许、来自笨笨的赞许、3连由笨笨赞许其它由乖乖赞许、静音、或任意mp3/wav文件。</li>
+    <li>可选计分的棋子：只有消除选择的棋子的连线，才能得分。</li>
+    <li>可设置得分规则：定义不同的连接个数对应的分数值。</li>
+    <li>可设置僵局（没有有效的交换步骤）时的处理策略：保留得分并重置游戏、制造机会、或弹出提示让用户选择。</li>
+    <li>可设置：自动玩游戏的速度、消除时的闪烁次数、是否弹出得分。</li>
+    <li>"帮我"按钮：为用户提示有效的步骤。</li>
+    <li>"自动玩"按钮：点击即自动玩游戏、再次点击则停止自动玩。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-game.jpg" alt="截屏-game"></p>
+</a><h3><a id="gameElimination">游戏-挖雷</a><a id="gameMine"></a></h3><a id="gameMine">
+<ol>
+    <li>可以设置格子大小和地雷的个数，提供示例。</li>
+    <li>可以偷看地雷。</li>
+    <li>触雷后可以恢复棋局。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-mine.jpg" alt="截屏-game"></p>
+</a><h3><a id="gameMine">其它</a><a id="mediaOthers"></a></h3><a id="mediaOthers">
+<ol>
+    <li>记录系统粘贴板中的图像：保存或查看粘贴板中的图像，可选无损图像或压缩类型。</li>
+    <li>闹钟，包括时间选项和音乐选项，支持铃音"喵"、wav铃音、和MP3铃音，可以在后端运行。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-snap.jpg" alt="截屏-snap"></p>
+</a><h2><a id="mediaOthers">网络工具</a><a id="netTools"></a></h2><a id="netTools">
+</a><h3><a id="netTools">下载第一级链接</a><a id="downloadFirstLevelLinks"></a></h3><a id="downloadFirstLevelLinks">
+<ol>
+    <li>列出给定网址中的第一级链接。</li>
+    <li>下载用户选择的链接:
+        <ul>
+            <li>选择有用的链接。无意义的链接可能生成无用文件并且干扰最后的目录索引。</li>
+            <li>使用功能“设置子目录名”以使子目录名字合理。</li>
+            <li>使用功能“以链接名/标题/地址为文件名”以使文件名有意义。</li>
+            <li>使用功能“在文件名前添加序号”以使文件名能正确排序。<br>
+                MyBox可以正确排序形如"xxx9", “xxx36”, "xxx157"的文件名。</li>
+        </ul>
+    </li>
+    <li>选项：重写网页中的链接、生成目录索引、修改网页编码、合并为文本/网页/Markdown/PDF。</li>
+    <li>可以设置网页样式和PDF的字体。</li>
+</ol>
+</a><h3><a id="downloadFirstLevelLinks">微博截图工具</a><a id="weiboSnap"></a></h3><a id="weiboSnap">
+<ol>
+    <li>自动保存任意微博账户的任意月份的微博内容、或者其点赞的内容。</li>
+    <li>设置起止月份。</li>
+    <li>确保页面完全加载，可以展开页面包含的评论、可以展开页面包含的所有图片。</li>
+    <li>将页面保存为本地html文件。由于微博是动态加载内容，本地网页无法正常打开，仅供获取其中的文本内容。</li>
+    <li>将页面截图保存为PDF。可以设置截图的格式、像素密度，和PDF的页尺寸、边距、作者等。</li>
+    <li>将页面包含的所有图片的原图全部单独保存下来。</li>
+    <li>实时显示处理进度。</li>
+    <li>可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。</li>
+    <li>可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-weibo.jpg" alt="截屏-weibo"></p>
+</a><h3><a id="weiboSnap">解码/编码URL</a><a id="encodeDecodeURL"></a></h3><a id="encodeDecodeURL">
+<p>此工具帮助将字符串与application/x-www-form-urlencoded MIME之间转换。<br>
+在编码时应用以下规则：</p>
+<ul>
+    <li>"a"到"z"之间的字母、 "A"到 "Z"之间的字母、以及 "0"到 "9"之间的数字保留原样。</li>
+    <li>特殊字符".", “-”, “*”, 和 "_"保留原样。</li>
+    <li>空字符" “转换为加号”+"</li>
+    <li>其它所有字符被认为是不安全的，首先采用指定的字符集转换为1个或多个字节。<br>
+        然后每个字节被表达为形如 "%xy"的3个字符的字符串，其中xy是字节的十六进制两位数字表示。</li>
+</ul>
+<p>解码反过来。</p>
+</a><h3><a id="encodeDecodeURL">浏览器</a><a id="webBrowser"></a></h3><a id="webBrowser">
+<ol>
+    <li>多页签显示网页</li>
+    <li>管理浏览历史</li>
+    <li>在线安装网站SSL证书。</li>
+    <li>可选忽略指定网站或全部网站的SSL证书的验证（可用于证书有问题的网页，但是可能导致安全风险）。</li>
+</ol>
+</a><h3><a id="webBrowser">管理安全证书</a><a id="securityCerificates"></a></h3><a id="securityCerificates">
+<ol>
+    <li>读取任意密钥库文件中的证书内容，可导出为html文件</li>
+    <li>添加/读取任意证书文件的内容</li>
+    <li>下载并安装任意网址的证书。</li>
+    <li>删除密钥库中的证书。</li>
+    <li>修改密钥库时自动备份</li>
+</ol>
+</a><h2><a id="securityCerificates">设置</a><a id="settings"></a></h2><a id="settings">
+<ol>
+    <li>界面：
+        <ul>
+            <li>语言、字体大小、图标大小</li>
+            <li>可选择高清晰图标（100px）还是普通图标（40px）。<br>
+                显示器分辨率不高于120dpi时，建议选择普通图标。在非高清晰的显示器上显示高清晰图标反而会模糊。</li>
+            <li>控件颜色、是否显示控件文字、界面风格</li>
+            <li>是否恢复界面上次尺寸</li>
+            <li>是否在新窗口中打开界面</li>
+            <li>显示/隐藏面板的方式：鼠标经过、点击鼠标</li>
+        </ul>
+    </li>
+    <li>基础：
+        <ul>
+            <li>JVM最大可用内存</li>
+            <li>是否关闭分辨率感知</li>
+        </ul>
+    </li>
+    <li>数据：
+        <ul>
+            <li>数据目录</li>
+            <li>Derby运行模式：嵌入模式、网络模式（只允许本地）</li>
+            <li>是否弹出最近访问的文件/目录、以及弹出个数</li>
+            <li>退出程序时是否关闭闹钟</li>
+        </ul>
+    </li>
+    <li>PDF工具：
+        <ul>
+            <li>PDF可用最大主内存</li>
+        </ul>
+    </li>
+    <li>图像工具：
+        <ul>
+            <li>画笔/锚点的宽度和颜色、锚点是否实心</li>
+            <li>不支持Alpha时要替换的颜色（建议为白色）</li>
+            <li>缩略图宽度</li>
+            <li>采样图像最大显示宽度</li>
+            <li>是否往系统粘贴板中复制图片</li>
+        </ul>
+    </li>
+    <li>地图：
+        <ul>
+            <li>设置数据密钥</li>
+        </ul>
+    </li>
+    <li>开发：
+        <ul>
+            <li>开启/关闭“开发模式”</li>
+            <li>源码目录</li>
+        </ul>
+    </li>
+    <li>清除个人设置。</li>
+    <li>打开数据目录。</li>
+</ol>
+</a><h2><a id="settings">窗口</a><a id="windows"></a></h2><a id="windows">
+<ol>
+    <li>开/关内存监视条</li>
+    <li>开/关CPU监视条</li>
+    <li>刷新/重置/全屏窗口</li>
+    <li>关闭其它窗口</li>
+    <li>最近访问的工具</li>
+</ol>
+</a><h2><a id="windows">帮助</a><a id="helps"></a></h2><a id="helps">
+<ol>
+    <li>MyBox快捷键列表</li>
+    <li>MyBox的属性</li>
+    <li>文档：帮助用户启动下载任务。若数据目录下已有MyBox文档，则MyBox会自动发现它们。</li>
+</ol>
+</a><h2><a id="helps">对于高清晰屏幕的支持</a><a id="Hidpi"></a></h2><a id="Hidpi">
+<ol>
+    <li>Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。MyBox支持在线关闭/打开DPI敏感，修改时MyBox会自动重启。<br>
+        开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。</li>
+    <li>用户可以选择高清晰图标还是普通图标。</li>
+</ol>
+</a><h2><a id="Hidpi">开发模式</a><a id="DevMode"></a></h2><a id="DevMode">
+<ol>
+    <li>在“设置”中开启/关闭开发模式。</li>
+    <li>以下功能只有处于“开发模式”才可见：
+        <ul>
+            <li>菜单项：“帮助”-“制作图标”</li>
+            <li>颜色管理的菜单项：“导入MyBox颜色”</li>
+        </ul>
+    </li>
+    <li>类型为“调试”的日志只在开发模式下才写入数据库。</li>
+</ol>
+</a><h2><a id="DevMode">MyBox日志</a><a id="MyBoxLogs"></a></h2><a id="MyBoxLogs">
+<ol>
+    <li>MyBox日志类型包括：错误、信息、调试、终端：
+        <ul>
+            <li>所有日志都会显示在终端。</li>
+            <li>“错误”和“信息”总是写入数据库。</li>
+            <li>”调试“只在开发模式下才写入数据库。</li>
+            <li>”终端“从不写入数据库。</li>
+        </ul>
+    </li>
+    <li>字段：标识、时间、类型、文件名、类名、方法名、行号、调用者、注释。</li>
+    <li>“调用者”是调用链，每行是一个节点：文件名、类名、方法名、行号。调用链只记录MyBox自身的方法。</li>
+    <li>“错误”会导致查看日志的界面被弹出。</li>
+</ol>
+</a><h1><a id="MyBoxLogs">开发日志</a><a id="devLog"></a></h1><a id="devLog">
+<p>2020-12-03 版本6.3.7</p>
+</a><ul><a id="devLog">
+    <li>添加：从ttc文件中提取ttf文件。内置一个开源免费的ttf文件。</li>
+    <li>改进：可以选择高清晰图标和普通图标。可以批量设置html的编码。统一PDF字体选择控件。图像伸缩处理时可以设置渲染参数。设置mac的缺省视频解码器为VideoToolBox。</li>
+    </a><li><a id="devLog">解决的主要问题：解压缩gz文件会毁坏源文件并且不断增大文件。html编码可能解析错误。字节编辑的右面板只显示一行。<br>
+        </a><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7">此版本关闭的需求/问题列表</a></li>
+</ul>
+<p>2020-11-29 版本6.3.6</p>
+<ul>
+    <li>代码：升级到java 15.0.1和javafx15.0.1（除javafx-web模块）。MyBox日志自行实现，不再依赖log4j2。</li>
+    <li>文件：增加文件删除/重命名/移动的健壮性。可删除系统临时目录下的文件。</li>
+    <li>颜色：量化后的结果可导入调色盘。kmeans cluster量化可设置最大循环数。可导入用户的颜色csv文件。颜色导入的关键字可以是rgb。</li>
+    <li>解决的主要问题：文件删除会造成最近访问文件列表弹出错误。合并图片设置列数会出错。<br>
+        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.6">此版本关闭的需求/问题列表</a></li>
+</ul>
+<p>2020-11-18 版本6.3.5</p>
+<ul>
+    <li>改进：文档的查找/替换有效处理正则表达式和分页；完善读取图片的算法；更顺畅地处理大图片；调整网页编辑器界面。</li>
+    <li>增加：每个版本都有自己的配置文件；菜单按钮；若干文档转换功能；编码/解码URI字串；下载第一级链接。</li>
+    <li>移除：启动时不再允许改变derby模式；删除“管理下载”功能。</li>
+    <li>解决的主要问题：文档的查找/替换对于分页处理不准确；图片列表不应加载原文件；批处理可能产生无限嵌套目录；图片处理界面有错误的处理。<br>
+        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5">此版本关闭的需求/问题列表</a><br>
+        感谢<a href="https://github.com/Mararsh/MyBox/issues/781">beijingjazzpanda</a>的帮助。</li>
+</ul>
+<p>2020-10-11 版本6.3.4</p>
+<ul>
+    <li>编辑器：查找/替换支持多行、忽略大小写、从光标处、和正则表达式的示例；弹出文档；关闭/打开右面板；设置是否同步更新右面板。</li>
+    <li>OCR：基于tesseract命令行，支持win/linux/mac，兼容版本3/4/5；支持设置psm和所有参数，提供参数列表。</li>
+    <li>录屏：支持mac；开始和结束时都喵；缺省设置帧率和码率。</li>
+    <li>游戏“挖雷”：可以设置格子大小和地雷的个数，提供示例；可以偷看地雷；触雷后可以恢复棋局。</li>
+    <li>解决的主要问题：文档的查找/替换对于正则表达式的定位不准确；版本升级的逻辑不正确。<br>
+        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.4">此版本关闭的需求/问题列表</a></li>
+</ul>
+<p>2020-9-27 版本6.3.3</p>
+<ul>
+    <li>图像处理：显示/隐藏范围面板和图片面板；当粘贴超出边界时增大图片；混合模式的示例；卷积核参数“反色”。</li>
+    <li>数据工具：方便输入CSV；时间支持毫秒和时区；地图逐点显示；疫情报告保存为一组截图。</li>
+    <li>颜色：输入颜色列表；设置颜色、图片取色、调色板管理分为不同的界面；可改变调色板上颜色的顺序。</li>
+    <li>其它：表格和图片的右键菜单；编辑器定时自动保存；录屏可延时；录屏支持Linux；开发模式。</li>
+    <li>解决的主要问题：“清除个人设置”是删除用户配置数据而不是删除所有数据；一些数据表处理错误；快捷键在Linux上无效；新位置数据无法添加到新数据集。<br>
+        <a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3">此版本关闭的需求/问题列表</a></li>
+</ul>
+<p>这一版献给中国，祝她生日快乐！</p>
+<p>2020-8-27 版本6.3.2  完善“位置数据”。按“位置分布”和“时间序列”在地图上显示数据。3个数据集的示例。可导入movebank.org的数据文件。<br>
+完善数据在地图上的显示。支持天地图和高德地图的切换。<br>
+“位置工具”：转换坐标的小数值和度分秒；把坐标值转换为其它坐标系统。<br>
+FFmpeg应用：录屏。目前只支持windows。<br>
+以CSV格式导入/导出颜色数据。<br>
+全自动的打包脚本。《开发指南》v2.1。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2">此版本关闭的需求/问题列表</a></p>
+<p>2020-6-11 版本6.3.1  升级至java 14.0.1 + javaFx 14.0.1(除“javafx-web”模块) + NetBeans 11.3。<br>
+仍支持旧版本的迁移而不是截断版本。<br>
+完善“地理编码”表定义以提高查询速度。“面积”单位由平方公里改为平方米。<br>
+可以设置地图的数据密钥。<br>
+解决问题：“最近访问的文件”列表没有限制长度。“疫情报告”的饼图数据值应当是百分值。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1">此版本关闭的需求/问题列表</a></p>
+<p>2020-5-25 版本6.3  重新设计和实现"地理编码"和"疫情报告"。<br>
+音/视频转换时提供音频参数的选择。<br>
+提供常用中国颜色和常用日本颜色。<br>
+解决问题：文本编辑保存后光标应留在原地。选项"为目录下文件计数"可能使批处理失败。<br>
+这一版献给我妈。祝所有母亲都爱与被爱。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3">此版本关闭的需求/问题列表</a></p>
+<p>2020-3-3 版本6.2.1  完善疫情报告。节点"除了中国"：查询和显示中国以外的数据。<br>
+填充的数据用不同颜色显示。编辑填充的数据或点按钮"确认"以把填充数据改为正常状态。<br>
+支持不包含"省"级的"国家-城市"的结构（除中国以外的其它国家是这种行政层级）。<br>
+解决问题："地理代码"和"疫情报告"的编辑界面没有正确处理。截图时可能内存溢出。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2.1">此版本关闭的需求/问题列表</a></p>
+<p>2020-2-28 版本6.2  完善疫情报告。“填充数据空洞”：按前面的数据自动添加缺失的数据。<br>
+动态条图和多位置时间序列线图。可选是否在图示上显示数据值。可以设置动态图的每帧时长。<br>
+数据导出格式添加xlsx(Excel2007)。自增字段不再被导出，且不影响导入。<br>
+解决问题：负值坐标显示被空白；疫情报告的统计值没有被正确更新；疫情报告的编辑界面缺少字段"级别"；改变动态gif的宽度时没有正确处理。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2">此版本关闭的需求/问题列表</a></p>
+<p>2020-2-21 版本6.1.5  读取"新型冠状病毒肺炎"的数据。解析百度数据页面，获得当前最新实时数据；调用腾讯查询接口，获得从2020-1-20起的中国省/市/区的历史数据。
+加入地理属性。数据写为html、json、xml，并可写入"疫情报告"表中。<br>
+完善疫情报告。位置分四级：全球、国家、省、市/区。统计属性"新增值"及其图示。示例包含2020-1-20到2020-2-21中国省和市区的数据以及部分国家的数据。<br>
+完善地理代码。修正错误和残缺。<br>
+解决问题：编辑器的过滤功能出现错误。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1.5">此版本关闭的需求/问题列表</a></p>
+<p>2020-2-11 版本6.1  地图上的位置：通过点击地图、输入地址、或输入坐标来查询和显示位置数据。可设置地图的标记、文字、图层、语言等。<br>
+通用的数据表管理基础：增/删/改数据；分页显示；导入/导出；全部或选择导出为html。<br>
+管理地理编码：在地图上查询和显示定位。示例：所有国家和中国省/直辖市/特别行政区。<br>
+管理位置数据：属性包含位置信息、数据集/标签/值/规模/时间/图像/说明等。数据时间支持"公元前"。示例：中国早期文化（未完成）。<br>
+地图上的位置数据：在地图上显示数据集的分布。可按照数据值设置地图的标记、文字、弹出信息。<br>
+疫情报告：属性包含位置信息、疫情数据。示例：新型冠状病毒肺炎（不完整且可能有错）。数据分析：维度包括时间和位置；时间分量为全球和中国；位置分量为国家和中国省。
+图示：基于位置分量的数值条图/比率条图/饼图/数值地图、基于时间分量的数值线图/比率线图/动态数值地图。 数据和图示可导出为html文件。<br>
+支持ico图像文件的读/写/转换。<br>
+动态gif：解释更多的元数据；按实际间隔显示每帧；编辑时可为每帧单独设置间隔。<br>
+管理颜色：增/删/改颜色库；把颜色加入/移出调色板；导出全部或选择的颜色；简单/全部显示颜色属性；合并/分列显示颜色属性。<br>
+微博截图工具：可以保存博主点赞的页面及其引用的图片。<br>
+文件工具：删除目录下所有的空目录；删除"无限嵌套目录"（由于软件错误而生成的无法正常删除的目录）。<br>
+改善游戏消消乐：棋子可为任意图片文件或任意颜色；声效可以是任意mp3/wav文件；优化消除算法；“帮我"按钮为用户提示有效的步骤；可自动玩游戏。<br>
+解决问题：目录操作可能生成"无限嵌套目录”；“将图片和音频合成为视频”：错误处理小于1秒的时长、错误处理多帧图片；"编辑html"在高清屏下截图不完整；
+首次运行时无法打开Markdown文件。<br>
+这一版献给中国和她的孩子们，他们正在与病魔战斗。期盼春暖花开！<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1">此版本关闭的需求/问题列表</a></p>
+<p>2020-1-2 版本6.0  图像浏览界面可以方便地弹出大图。<br>
+支持在线翻译MyBox：在表格中对照英语翻译。资源文件可分享给别人：把新资源文件复制到数据目录下，则MyBox即时感知到新语言。<br>
+游戏消消乐： 可选棋子的图片、个数、尺寸、是否阴影/圆角；音效：来自乖乖或笨笨的赞许；可选计分棋子；可设置不同连接个数对应的分数值。<br>
+下载管理：添加、删除、启动、取消下载任务；断点续传；读取下载地址的头数据。<br>
+解决问题：修正多个关于图像处理的问题。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.0">此版本关闭的需求/问题列表</a></p>
+<p>2019-12-26 版本5.95  改进批处理界面：使用多页签而不是把控件挤在一个页面上。<br>
+解决问题：避免微博截图工具414错误；图像处理的界面控件显示逻辑混乱；图像批处理的保存格式不生效。<br>
+今天缅怀毛主席和他的战友， 他们使中国人民站起来了。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95">此版本关闭的需求/问题列表</a></p>
+<p>2019-12-21 版本5.9 支持多页签的浏览器。 可管理浏览历史、在线安装网站SSL证书。<br>
+读取任意密钥库文件中的证书内容，可导出为html文件。在密钥库中添加证书文件的内容、或下载安装网址的证书。<br>
+视频/音频播放器，可设置自动播放、显示毫秒、循环次数、随机顺序、音量、速度、静音、全屏等。乖乖和笨笨的声音。管理播放列表。<br>
+封装ffmpeg的功能：批量转换音频/视频、把图片和音频合成为视频、读取媒体的信息、读取ffmpeg的信息。<br>
+消息摘要扩展为12种算法。<br>
+解决问题：表单元失焦时应自动提交修改；检查文件冗余时抛出并发异常；添加包含大量文件的目录会使界面僵住；批处理解包7z格式失败；zip包中文件大小未知。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.9">此版本关闭的需求/问题列表</a></p>
+<p>2019-11-18 版本5.8  升级至jdk13+javafx13+derby15。<br>
+Derby数据库可以在网络模式和嵌入模式之间切换。提醒：在一些机器上启动和关闭Derby网络模式都非常慢。<br>
+可对文件或输入文本生成消息摘要。支持：MD5/SHA1/SHA256。<br>
+文件的归档/压缩/解压/解档。支持：zip, tar, 7z, ar, cpio, gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed等。<br>
+检查文件冗余：根据MD5查找重复的文件，提供树状结构方便用户删除冗余文件，可边查边删。<br>
+html与Markdown之间批量互换。<br>
+解决问题：多个界面上有失效控件；无内容页面会阻塞微博截图工具；图像混合时还要考虑背景透明的情形；图像"换色"功能失效。<br>
+《开发者指南》v2.0。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.8">此版本关闭的需求/问题列表</a></p>
+<p>2019-10-26 版本5.7  编辑Markdown。同步转换html和Markdown。<br>
+增加图像量化的算法并用于分析图象：K-Means适用于计算最不同的颜色，统计量化适用于计算出现最多的颜色。图象数据可以保存为html文件。<br>
+文件/目录操作：查找、删除、复制、移动，并改进重命名功能。<br>
+改进批量处理时选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。<br>
+改进多个工具的界面以平衡控件的布局。<br>
+改进微博截图工具：提高在高清屏幕上截图的分辨率；截图保存为文件以免内存溢出。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.7">此版本关闭的需求/问题列表</a></p>
+<p>2019-10-01 版本5.6 配置文件仍定位于用户目录。<br>
+对于OCR，图像预处理选项：九种增强算法、伸缩比例、黑白阈值、旋转角度、是否自动矫正偏斜、是否反色。
+识别选项：数据文件列表及其顺序、是否生成"区域"/"词"数据及其粒度。
+批量识别选项：是否生成html或PDF、是否合并识别出文字。
+内置英文和中文的"最快的"数据文件，在windows上解包即用。<br>
+生成13种一维码和3种二维码。一维码选项：朝向、宽高、分辨率、文字位置、字体大小、空白区宽度等。
+二维码选项：宽高、边沿、纠错级别、压缩模式。不同类型的选项不同。
+二维码QR_Code可以在中心显示一个图片。根据纠错级别自动调整图片大小。<br>
+解码9种一维码和3种二维码，显示条码内容和元数据（条码类型、纠错级别等）。<br>
+调色盘：可命名颜色；增加显示cmyk值和cie值。<br>
+生日快乐，中国！<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.6">此版本关闭的需求/问题列表</a></p>
+<p>2019-9-19 版本5.5 基于tess4j支持识别图像和PDF中的文字。单图识别可选择矩形区域。PDF批量识别可设置转换图像的色彩空间和像素密度。目前只限Windows，并且用户需要下载数据文件。<br>
+生成windows/linux/mac的自包含程序包。<br>
+优化代码：只用maven打包而脱离对java 8的依赖；利用最新jpackage制作自包含包。<br>
+修正问题：上一版本中微博截图工具挂了；在mac上微博截图工具首次运行后再也无法使用；linux上点击链接则程序僵死；计算CIELuv和CIELab时不应该归一化。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.5">此版本关闭的需求/问题列表</a></p>
+<p>2019-9-15 版本5.4  “数据目录"改为"运行目录"而不是以前的"用户目录”。用配置文件来保存基础参数。<br>
+在线修改运行参数：最大可用内存、是否关闭分辨率感知、数据目录。修改这几个参数将会使MyBox自动重启。<br>
+基于pdf2dom，以网页模式查看PDF页面。批量把PDF转换为网页。<br>
+重构图像处理的界面：左右幕布式区域、上下风箱式菜单、多页签切换目标、子功能区更细化的显示/隐藏/调整。“按需可见”。<br>
+粘贴板：保存多个来源的图片以供粘贴，在图片上拖拉来调整位置和大小，可选混合模式，可旋转被粘贴图片。提供示例图片。<br>
+调色盘：可保存上千种色彩，可自动填写139种常用色彩，可导出为html页面，可在当前图片、图片历史、或参照图上点击取色。<br>
+新的范围类型"轮廓"：把背景透明的图片的轮廓自动提取出来，作为操作的范围。提供示例图片。<br>
+保存和管理图像处理的"范围"：增、删、改、清除，应用已保存的范围。<br>
+统一快捷键，并提供帮助页面。<br>
+优化代码：用公开的API替换掉内部类引用。确保单例程任务互斥进入和干净退出。写文件时先写到临时文件中以免意外导致源文件损害。<br>
+修正问题。上一版本中以下工具失效：“修改PDF属性”、“压缩PDF”、“分割PDF”。阴影处理和3种混合模式中遗漏对于透明像素的处理。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.4">此版本关闭的需求/问题列表</a></p>
+<p>2019-8-8 版本5.3 迁移至： netbeans 11 + Java 12。<br>
+优化批量处理界面：可添加目录、展开目录、过滤文件名、选择如何处理重名文件。<br>
+优化图像转换：可选择更多的颜色空间并支持引用外部ICC特性文件、可选图像嵌入ICC特性文件、可选对透明通道的处理。<br>
+优化图像元数据的解码：可读取图像中嵌入的ICC特性文件。<br>
+优化代码：利用匿名类和嵌入fxml尽可能减少重复代码；整理类继承的关系；使项目配置文件支持多平台构建。<br>
+初版《开发指南》。<br>
+修正问题："图像处理-颜色-透明度"的预乘透明算法用错了；在linux上另存图像时未自动添加扩展名而导致保存失败；<br>
+linux上无法打开链接；ICC特性文件版本解码/编码错误、数据太多时界面会僵住、未解码的数据会导致xml无法生成。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.3">此版本关闭的需求/问题列表</a></p>
+<p>2019-6-30 版本5.2 图像解码：可读Adobe YCCK/CMYK的jpg图像；读取和显示多帧图像文件中所有图像的属性和元数据。<br>
+PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如作者、版本、用户密码、用户权限、所有者密码等。<br>
+编辑矩阵数据：适应带格式的输入数据；自动把当前矩阵数据转变为行向量、列向量、或指定列数的矩阵；<br>
+自动生成单位矩阵、随机方阵、或随机矩阵。<br>
+矩阵一元计算，包括转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解、逆矩阵-用消元法求解、<br>
+逆矩阵-用伴随矩阵求解、矩阵的秩、伴随矩阵、余子式、归一化、设置小数位数、设为整型、乘以数值、除以数值、幂。<br>
+矩阵二元计算，包括加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。<br>
+色彩空间的工具：绘制色度图；编辑ICC色彩特性文件；RGB色彩空间基色的色适应；线性RGB与XYZ之间的转换矩阵；<br>
+线性RGB到线性RGB的转换矩阵；颜色值的色适应；标准光源；色度适应矩阵。<br>
+修正问题：微博截图工具经常"414 Request-URI Too Large"；按钮的提示在屏幕边沿闪烁；一些链接不可用。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.2">此版本关闭的需求/问题列表</a></p>
+<p>2019-5-1 版本5.1 界面：控件显示为图片，5种颜色可选，可选是否显示控件文字。<br>
+简化小提示，以适应14英寸的笔记本屏幕。<br>
+图像工具：提取/添加透明通道。<br>
+修正若干问题，包括：图像处理中过滤透明像素的错误条件。<br>
+劳动节快乐！<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.1">此版本关闭的需求/问题列表</a></p>
+<p>2019-4-21 版本5.0 以拖拉锚点的方式选择图像操作的区域。<br>
+“涂鸦”：在图像上粘贴图片、添加形状（矩形/圆形/椭圆/多边形）的线条或填充形状、绘制多笔一线或一笔一线。<br>
+画笔的宽度、颜色、实虚可选。<br>
+查看图像：设置加载宽度；选择显示坐标和标尺；旋转可保存。<br>
+浏览图像：缩略图格栅模式、缩略图列表模式、文件列表模式；可设置加载宽度；旋转可保存。<br>
+图像处理：抖动处理扩展到除抠图以外的所有范围；利用预乘透明技术使不支持Alpha通道的格式也可展示透明效果；<br>
+模糊边沿；低层实现阴影效果；拖动锚点以修改大小或边沿；多种形状的剪裁；文字可垂直。<br>
+界面：只显示有用控件；足够但不叨扰的提示信息；快捷键/主键/缺省键；实时监视内存/CPU状态；<br>
+查看JVM属性；刷新/重置窗口；保存和恢复界面尺寸；弹出最近访问的文件/目录；记录最近使用的工具。<br>
+代码重构：以子类而不是分支语句来实现选择逻辑、把判断移至循环外；循环中避免浮点计算；理顺继承关系、减少重复代码；<br>
+统一管理窗口的打开和关闭、避免线程残留。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.0">此版本关闭的需求/问题列表</a></p>
+<p>2019-2-20 版本4.9 图像对比度处理，可选算法。颜色量化时可选是否抖动处理。<br>
+图像的统计数据分析，包含各颜色通道的均值/方差/斜率/中值/众数以及直方图。<br>
+系统粘贴板内图像的记录工具。<br>
+随时修改界面字体。<br>
+查看图像：可选择区域来剪裁、复制、保存。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.9">此版本关闭的需求/问题列表</a></p>
+<p>2019-1-29 版本4.8 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。<br>
+文本/字节编辑器的"定位"功能：跳转到指定的字符/字节位置、或跳转到指定的行号。<br>
+切割文件：按文件数、按字节数、或按起止列表把文件切割为多个文件。<br>
+合并文件：把多个文件按字节合并为一个新文件。<br>
+程序可以跟一个文件名作为参数，以用MyBox直接打开此文件。<br>
+在Windows上可以把图片/文本/PDF文件的打开方式缺省关联到MyBox.exe，可以在以双击文件时直接用MyBox打开。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.8">此版本关闭的需求/问题列表</a></p>
+<p>2019-1-15 版本4.7  编辑字节：常用ASCII字符的输入选择框；按字节数、或按一组字节值来换行；查找与替换，本页或整个文件，计数功能；<br>
+行过滤，“包含任一”、“不含所有”、“包含所有”、“不含任一”，累加过滤，保存过滤结果，是否包含行号；<br>
+选择字符集来解码，同步显示、同步滚动、同步选择；<br>
+分页，可用于查看和编辑非常大的文件，如几十G的二进制文件，设置页尺寸，对于跨页字节组，确保查找、替换、过滤的正确性。<br>
+批量改变文件的换行符。<br>
+合并"文件重命名"和"目录文件重命名"。<br>
+图像模糊改为"平均模糊"算法，它足够好且更快。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.7">此版本关闭的需求/问题列表</a></p>
+<p>2018-12-31 版本4.6  编辑文本：自动检测换行符；转换换行符；支持LF（Unix/Linux）、CR（iOS）、CRLF（Windows）。<br>
+查找与替换，可只本页查找、或整个文件查找。<br>
+行过滤，匹配类型：“包含字串之一”、“不包含所有字串”，可累加过滤，可保存过滤结果。<br>
+分页：可用于查看和编辑非常大的文件，如几十G的运行日志；可设置页尺寸；对于跨页字符串确保查找、替换、过滤的正确性。<br>
+先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。<br>
+进度等待界面添加按钮"MyBox"和"取消"，以使用户可使用其它功能、或取消当前进程。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.6">此版本关闭的需求/问题列表</a></p>
+<p>2018-12-15 版本4.5 文字编码：自动检测或手动设置文件编码；设置目标文件编码以实现转码；支持BOM设置；<br>
+十六进制同步显示、同步选择；显示行号。批量文字转码。<br>
+图像分割支持按尺寸的方式。<br>
+可将图像或图像的选中部分复制到系统粘贴板（Ctrl-c）。<br>
+在查看图像的界面可裁剪保存。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.5">此版本关闭的需求/问题列表</a></p>
+<p>2018-12-03 版本4.4 多帧图像文件的查看、提取、创建、编辑。支持多帧Tiff文件。<br>
+对于所有以图像文件为输入的操作，处理多帧图像文件的情形。<br>
+对于所有以图像文件为输入的操作，处理极大图像（加载所需内存超出可用内存）的情形。自动评估、判断、给出提示信息和下一步处理的选择。<br>
+对于极大图像，支持局部读取、边读边写的图像分割，可保存为多个图像文件、多帧Tiff、或者PDF。<br>
+对于极大图像，支持降采样。可设置采样区域和采样比率。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.4">此版本关闭的需求/问题列表</a></p>
+<p>2018-11-22 版本4.3 支持动画Gif。查看动画Gif：设置间隔、暂停/继续、显示指定帧并导览上下帧。<br>
+提取动画Gif：可选择起止帧、文件类型。<br>
+创建/编辑动画Gif：增删图片、调整顺序、设置间隔、是否循环、选择保持图片尺寸、或统一设置图片尺寸、另存，所见即所得。<br>
+更简洁更强力的图像处理"范围"：全部、矩形、圆形、抠图、颜色匹配、矩形中颜色匹配、圆形中颜色匹配；<br>
+颜色匹配可针对：红/蓝/绿通道、饱和度、明暗、色相；可方便地增减抠图的点集和颜色列表；均可反选。<br>
+归并图像处理的"颜色"、“滤镜”、“效果”、“换色”，以减少界面选择和用户输入。<br>
+多图查看界面：可调整每屏文件数；更均匀地显示图片。<br>
+<a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.3">此版本关闭的需求/问题列表</a></p>
+<p>2018-11-13 版本4.2 图像处理的"范围"：全部、抠图、矩形、圆形、色彩匹配、色相匹配、矩形/圆形累加色彩/色相匹配。<br>
+"抠图"如PhotoShop的魔术棒或者windows画图的油漆桶。<br>
+"范围"可应用于：色彩增减、滤镜、效果、卷积、换色。可简单通过左右键点击来确定范围。<br>
+卷积管理器：可自动填写高斯分布值；添加处理边缘像素的选项。<br>
+目录重命名：可设置关键字列表来过滤要处理的文件。<br>
+调整和优化图像处理的代码。<br>
+更多的快捷键。</p>
+<p>2018-11-08 版本4.1 图像的"覆盖"处理。可在图像上覆盖：矩形马赛克、圆形马赛克、矩形磨砂玻璃、圆形磨砂玻璃、或者图片。<br>
+可设置马赛克或磨砂玻璃的范围和粒度；可选内部图片或用户自己的图片；可设置图片的大小和透明度。<br>
+图像的"卷积"处理。可选择卷积核来加工图像。可批量处理。<br>
+卷积核管理器。自定义（增/删/改/复制）图像处理的卷积核，可自动归一化，可测试。提供示例数据。<br>
+图像滤镜：新增黄/青/紫通道。</p>
+<p>2018-11-04 版本4.0  图像色彩调整：新增黄/青/紫通道。尤其黄色通道方便生成"暖色"调图片。<br>
+图像滤镜：新增"褐色"。可以生成怀旧风格的图片。<br>
+图像效果：新增"浮雕"，可以设置方向、半径、是否转换为灰色。<br>
+图像的混合：可设置图像交叉位置、可选择多种常用混合模式。<br>
+在线帮助：新增一些关键信息。</p>
+<p>2018-10-26 版本3.9  内嵌Derby数据库以保存程序数据；确保数据正确从配置文件迁移到数据库。<br>
+图像处理：保存修改历史，以便退回到前面的修改；用户可以设置历史个数。<br>
+用户手册的英文版。</p>
+<p>2018-10-15 版本3.8 优化代码：拆分图像处理的大类为各功能的子类。<br>
+优化界面控件，使工具更易使用。设置快捷键。<br>
+图像处理添加三个滤镜：红/蓝/绿的单通道反色。水印文字可以设置为"轮廓"。</p>
+<p>2018-10-09 版本3.7 微博截图工具：利用Javascript事件来依次加载图片，确保最小间隔以免被服务器判定为不善访问，<br>
+同时监视最大加载间隔以免因图片挂了或者加载太快未触发事件而造成迭代中断。<br>
+图像处理"效果"：模糊、锐化、边沿检测、海报（减色）、阈值化。</p>
+<p>2018-10-04 版本3.6 微博截图工具：继续调优程序逻辑以确保界面图片全部加载；整理代码以避免内存泄露。<br>
+降低界面皮肤背景的明亮度和饱和度。<br>
+在文档中添加关于界面分辨率的介绍。</p>
+<p>2018-10-01 版本3.5 微博截图工具：调优程序逻辑，以确保界面图片全部加载。<br>
+提供多种界面皮肤。</p>
+<p>2018-09-30 版本3.4 修正问题：1）微博截图工具，调整页面加载完成的判断条件，以保证页面信息被完整保存。<br>
+2）关闭/切换窗口时若任务正在执行，用户选择"取消"时应留在当前窗口。<br>
+新增功能：1）可以设置PDF处理的最大主内存和临时文件的目录；2）可以清除个人设置。</p>
+<p>2018-09-30 版本3.3 最终解决微博网站认证的问题。已在Windows、CentOS、Mac上验证。</p>
+<p>2018-09-29 版本3.2 微博截图功能：1）在Linux和Windows上自动导入微博证书而用户无需登录可直接使用工具。<br>
+但在Mac上没有找到导入证书的途径，因此苹果用户只好登录以后才能使用。<br>
+2）可以展开页面上所有评论和所有图片然后截图。<br>
+3）可以将页面中所有图片的原图保存下来。（感觉好酷）</p>
+<p>2018-09-26 版本3.1 所有图像操作都可以批量处理了。修正颜色处理算法。<br>
+设置缺省字体大小以适应屏幕分辨率的变化。用户手册拆分成各个工具的分册了。<br>
+提示用户：在使用微博截图功能之前需要在MyBox浏览器里成功登录一次以安装微博证书、<br>
+（正在寻求突破这一限制的办法。Mybox没有兴趣接触用户个人信息）。</p>
+<p>2018-09-18 版本3.0 微博截图工具：可以只截取有效内容（速度提高一倍并且文件大小减小一半）、<br>
+可以展开评论（好得意这个功能！）、可以设置合并PDF的最大尺寸。<br>
+修正html编辑器的错误并增强功能。</p>
+<p>2018-09-17 版本2.14 微博截图工具：设置失败时重试次数、以应对网络状况很糟的情况；<br>
+当某个月的微博页数很多时，不合并当月的PDF文件，以避免无法生成非常大的PDF文件的情况（有位博主一个月发了36页微博~）。。</p>
+<p>2018-09-15 版本2.13 分开参照图和范围图。确保程序退出时不残留线程。批量PDF压缩图片。<br>
+微博截图工具：自动保存任意微博账户的所有微博内容，可以设置起止月份，可以截图为PDF、也可以保存html文件<br>
+（由于微博是动态加载内容，本地网页无法正常打开，仅供获取其中的文本内容）。<br>
+如果微博修改网页访问方式，此工具将可能失效。</p>
+<p>2018-09-11 版本2.12 合并多个图片为PDF文件、压缩PDF文件的图片、合并PDF、分割PDF。<br>
+支持PDF写中文，程序自动定位系统中的字体文件，用户也可以输入ttf字体文件路径。<br>
+提示信息的显示更平滑友好。网页浏览器：字体缩放，设置截图延迟、截图可保存为PDF。</p>
+<p>2018-09-06 版本2.11 图片的合并，支持排列选项、背景颜色、间隔、边沿、和尺寸选项。<br>
+网页浏览器，同步网页编辑器，把网页完整内容保存为一张图片。图片处理：阴影、圆角、加边。<br>
+确保大图片处理的正确性和性能。</p>
+<p>2018-08-11 版本2.10 图像的分割，支持均等分割个和定制分割。使图像处理的"范围"更易用。<br>
+同屏查看多图不限制文件个数了。</p>
+<p>2018-08-07 版本2.9 图像的裁剪。图像处理的"范围"：依据区域（矩形或圆形）和颜色匹配，可用于局部处理图像。</p>
+<p>2018-07-31 版本2.8 图像的切边、水印、撤销、重做。Html编辑器、文本编辑器。</p>
+<p>2018-07-30 版本2.7 图像的变形：旋转、斜拉、镜像。</p>
+<p>2018-07-26 版本2.6 增强图像的换色：可以选择多个原色，可以按色彩距离或者色相距离来匹配。支持透明度处理。</p>
+<p>2018-07-25 版本2.5 调色盘。图像的换色：可以精确匹配颜色、或者设置色距，此功能可以替换图像背景色、或者清除色彩噪声。</p>
+<p>2018-07-24 版本2.4 完善图像处理和多图查看：平滑切换、对照图、像素调整。</p>
+<p>2018-07-18 版本2.3 闹钟，包括时间选项和音乐选项，支持wav铃音和MP3铃音，可以在后端运行。感谢我家乖乖贡献了"喵"。</p>
+<p>2018-07-11 版本2.2 修正线程处理逻辑的漏洞。整理文件，将文件按修改时间或者生成时间重新归类在新目录下。<br>
+此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。</p>
+<p>2018-07-09 版本2.1 完善图片处理的界面，支持导览。<br>
+目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。</p>
+<p>2018-07-06 版本2.0 批量提取PDF文字、批量转换图片。<br>
+目录文件重命名，包含文件名和排序的选项，被重命名的文件可以全部恢复或者指定恢复原来的名字。</p>
+<p>2018-07-03 版本1.9 修正问题。提取PDF文字时可以定制页分割行。<br>
+完善图像处理：参数化调整饱和度、明暗、色相；滤镜：灰色、反色、黑白色。</p>
+<p>2018-07-01 版本1.8 将PDF文件中的文字提取出来。处理图片：调整饱和度、明暗，或者转换为灰色、反色。</p>
+<p>2018-06-30 版本1.7 完善像素计算器。支持同屏查看最多十张图，可以分别或者同步旋转和缩放。</p>
+<p>2018-06-27 版本1.6 将图片转换为其它格式，支持色彩、长宽、压缩、质量等选项。<br>
+提供像素计算器。新增图像格式：gif, wbmp, pnm, pcx。</p>
+<p>2018-06-24 版本1.5 提取PDF中的图片保存为原格式。<br>
+支持批量转换和批量提取。感谢 “https://shuge.org/” 的帮助：书格提出提取PDF中图片的需求。</p>
+<p>2018-06-21 版本1.4 读写图像的元数据,目前支持图像格式：png, jpg, bmp, tif。<br>
+感谢 “https://shuge.org/” 的帮助：书格提出图像元数据读写的需求。</p>
+<p>2018-06-15 版本1.3 修正OTSU算法的灰度计算；优化代码：提取共享部件；支持PDF密码；使界面操作更友好。</p>
+<p>2018-06-14 版本1.2 针对黑白色添加色彩转换的选项；自动保存用户的选择；优化帮助文件的读取。<br>
+感谢 “https://shuge.org/” 的帮助：书格提出二值化转换阈值的需求。</p>
+<p>2018-06-13 版本1.1 添加：转换格式tiff和raw，压缩和质量选项，以及帮助信息。<br>
+感谢 “https://shuge.org/” 的帮助：书格提出tiff转换的需求。</p>
+<p>2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。</p>
+<p><a href="https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone">未定义版本的已关闭的需求/问题列表</a></p>
+
+</body></html>

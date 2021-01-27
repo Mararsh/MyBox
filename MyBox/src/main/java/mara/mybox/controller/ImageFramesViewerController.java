@@ -9,7 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
@@ -28,7 +28,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageFramesViewerController extends ImagesListController {
+public class ImageFramesViewerController extends BaseImagesListController {
 
     @FXML
     protected Button extractButton, editButton;

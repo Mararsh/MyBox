@@ -3,34 +3,33 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
-## What's New
-2020-12-03 v6.3.7                  
--  Add: Extract ttf from ttc. Embed an open source ttf file.                     
--  Improve: high dpi icons and common icons can be selected.  Set html charset in batch.  Consistent control to select PDF font file. 
-Rendering parameters can be set when scale images. Set default video decoder on mac as VideoToolBox.             
--  Solved problems. Source file is destoryed when decompress gzip file and it becomes larger and larger.  Charset of html may be parsed incorrectly. 
-Only one line is shown in right pane when edit bytes.                          
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.7)             
+## What's New        
+2021-1-27 v6.3.8                  
+-  Add: Edit and convert csv file and excel file. Data clipboard. Edit and save matrix. Set html style in batch.               
+-  Improve: Channels' weights can be set for image quantization. Shortcuts can omit Ctrl/Alt when focus is not in "Text Input" controls.  Stream reading when convert/export data.                       
+-  Solved problems. Distance not work when replace images' color in batch. User password and owner password are messed for PDF.  
+Pagination not work in text filter interface. Table labels need translation too. BC dates are parsed incorrectly in time tree.        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8)             
   
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Source Codes   
-[MyBox-6.3.7-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-src.zip)   37M        
+[MyBox-6.3.8-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-src.zip)   37M        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) and 
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)                       
     
 
 ### Self-contain packages 
-Self-contain packages include all files and need not java env nor installation.   (Please unpack it under path with pure-English name.)   
+Self-contain packages include all files and need not java env nor installation.   (Please unpack it under path in pure-English name.)   
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win x64 | [MyBox-6.3.7-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-exe.zip)  | 292MB | MyBox.exe |       
-| linux x64 | [MyBox-6.3.7-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux.tar.gz)  | 298MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.7-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac.dmg)  | 305MB  |  MyBox-6.3.7.app   |   
+| win x64 | [MyBox-6.3.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-exe.zip)  | 292MB | MyBox.exe |       
+| linux x64 | [MyBox-6.3.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux.tar.gz)  | 299MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac.dmg)  | 306MB  |  MyBox-6.3.8.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -40,16 +39,16 @@ When JRE or JDK 15 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.7-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-win-jar.zip)  | 148MB | Java 15.0.1 or higher |    
-| linux | [MyBox-6.3.7-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-linux-jar.zip)  | 155MB  | Java 15.0.1 or higher |    
-| mac | [MyBox-6.3.7-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.7/MyBox-6.3.7-mac-jar.zip)  |  152MB  | Java 15.0.1 or higher |    
+| win | [MyBox-6.3.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-jar.zip)  | 148MB | Java 15.0.1 or higher |    
+| linux | [MyBox-6.3.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux-jar.zip)  | 155MB  | Java 15.0.1 or higher |    
+| mac | [MyBox-6.3.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac-jar.zip)  |  152MB  | Java 15.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.7.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.8.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.7.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.8.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -64,13 +63,13 @@ A bug has been reported to jpackage dev team:
 Each version has itself's configuration file. New version can copy parameters from existed versions.      
 
 ## Configuration <a id="Config"></a>     
-Configuration file `MyBox_v<Version>.ini` is under "User Home":                
+Configuration file is under "User Home":                
         
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |        
-| win | `C:\users\UserName\mybox\`  |       
-| linux | `/home/UserName/mybox/` |       
-| mac | `/Users/UserName/mybox/` |           
+| win | `C:\users\UserName\mybox\MyBox_v6.3.8.ini`  |       
+| linux | `/home/UserName/mybox/MyBox_v6.3.8.ini` |       
+| mac | `/Users/UserName/mybox/MyBox_v6.3.8.ini` |           
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.         
 Function "Settings" can be used to change configuration values.       
@@ -90,8 +89,8 @@ Function "Settings" can be used to change configuration values.
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.7 | 2020-12-03 | [html](#devLog) |
-| Shortcuts | 6.3.5 | 2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs | 6.3.8 | 2021-1-27 | [html](#devLog) |
+| Shortcuts | 6.3.8 | 2021-1-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
@@ -136,7 +135,7 @@ MyBox is based on following open sources:
 | AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | GaoDe | Map | https://lbs.amap.com/api/javascript-api/summary |      
 | GaoDe | Coordinate | https://lbs.amap.com/api/webservice/guide/api/georegeo |      
-| WeiXin | Image materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+| WeiBo | Image materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | Baidu | COVID-19 data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | Tecent | COVID-19 data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 | poi | Excel | https://poi.apache.org |   
@@ -148,7 +147,7 @@ MyBox is based on following open sources:
 | JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |      
 | Website | Color data | https://tool.lanrentuku.com/color/china.html |      
 | Book | Materials | https://book.douban.com/subject/3894923/ |      
-| TianDiTu| Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
+| National Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
 | movebank | Location data | https://www.datarepository.movebank.org |      
 | CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |      
 | JavaMail | email | https://javaee.github.io/javamail/ |    
@@ -158,7 +157,7 @@ MyBox is based on following open sources:
 | ttc2ttf | Extract ttf | https://github.com/fermi1981/TTC_TTF |          
 
 # Current Version
-Current version is 6.3.7. Its features are mentioned below in summary:   
+Current version is 6.3.8. Its features are mentioned below in summary:   
  
 * [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -169,6 +168,7 @@ Current version is 6.3.7. Its features are mentioned below in summary:
     - [Edit Text](#editText)
     - [Edit Bytes](#editBytes)
     - [Edit Html](#htmlEditor)
+    - [Html Tools](#htmlTools)
     - [Edit Markdown](#markdownEditor)
     - [Convert Documents](#convertDocuments)
 * [Image Tools](#imageTools)
@@ -187,6 +187,9 @@ Current version is 6.3.7. Its features are mentioned below in summary:
     - [Others](#imageOthers)
     - [Big Image](#bigImage)
 * [Data Tools](#dataTools)
+    - [Data File](#dataFiles)
+    - [Data Clipboard](#dataClipboard)
+    - [Matrix](#matrix)
     - [Common Data Management](#dataManage)
     - [Map Data](#mapData)
     - [Geography Codes](#geographyCode)
@@ -226,15 +229,23 @@ Current version is 6.3.7. Its features are mentioned below in summary:
   
 ## Cross Platforms <a id="Cross-platform"></a>       
 
-MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 15.
+MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 15.        
 Versions before v5.3 are based on Java 8.       
     
-## Internationalized <a id="Internationalized"></a> 
-1. All codes of MyBox are internationalized. Currently MyBox supports Chinese and English. 
-2. User can switch language in time.
-3. To support a new language is just to edit a new resource file.   
-4. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.    
-5. Translated files can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.    
+## Internationalized <a id="Internationalized"></a>     
+1. All codes of MyBox are internationalized. Language can be switched in time.     
+2. Each langauge is defined in two resource files, like: "Messages_NAME.properties" and "TableMessages_NAME.properties"。  
+3. Embed Chinese and English, whose files are under path `MyBox/src/main/resources/bundles/`.       
+
+| Language | Resource file of interface | Resource file of data tables |            
+| --- | --- |  --- |        
+| Chinese | Messages_zh_CN.properties | TableMessages_zh_CN.properties |                 
+| English | Messages_en.properties | TableMessages_en.properties |        
+
+4. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.              
+Example,  the new language is named as “aa”, and its resource files are Messages_aa.properties and TableMessages_aa.properties.     
+5. Translated languages can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.        
+   
       
 ![Snap-Cover](https://mararsh.github.io/MyBox/snap-cover-en.jpg)
 
@@ -264,9 +275,9 @@ Versions before v5.3 are based on Java 8.
 	-  Recognize texts(OCR) in images of PDF files. 
 5. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
 6. Merge multiple PDF files.
-7. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
-   Support Chinese and tool can locate system font files. User can input path of ttf font file.
-8. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
+7. Combine multiple images as PDF file. 
+8. Options to write PDF like page size,  image attributes, font file, margin size, header, author, etc. 
+9. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.        
 
 ![Snap-pdf](https://mararsh.github.io/MyBox/snap-pdf-en.jpg)       
 
@@ -283,7 +294,7 @@ Versions before v5.3 are based on Java 8.
 	-  Conditions: Include/Not include One, Include/Not Include All, Include/Not Include Regular Expression, Match/Not Match Regular Expression.     
 	-  Cumulative filter. 
 	-  Filtered results can be saved. Select whether include lines number.    
-5. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
+5. Paginate. Good at viewing or editing very large file, such as logs in size of several GBs.
 	-  Set page size.
 	-  Pages navigation bar
 	-  Load and display first page, and scan the file in background to count characters number and lines number. 
@@ -317,7 +328,12 @@ Versions before v5.3 are based on Java 8.
 	-  Extracted headers in page.
 	-  Extracts links in page.         
 
-![Snap-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor-en.jpg)        
+![Snap-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor-en.jpg)         
+
+### Html Tools<a id="htmlTools" />      
+	-  Snap html page. Dpi can be set. Save as one image or images in PDF.
+	-  Merge multiple pages as one html/Markdown/texts/PDF.
+	-  Generate frameset file for multiple files.
 
 
 ### Edit Markdown<a id="markdownEditor" />
@@ -340,11 +356,7 @@ Versions before v5.3 are based on Java 8.
 	-  Convert htmls as texts.
 	-  Convert htmls as PDFs.
 	-  Change htmls' encoding.
-3. Other html tools:
-	-  Snap html page. Dpi can be set. Save as one image or images in PDF.
-	-  Merge multiple pages as one html/Markdown/texts/PDF.
-	-  Generate frameset file for multiple files.
-4. Convert Markdown in batch:
+3. Convert Markdown in batch:
 	-  Convert Markdown as html.
 	-  Convert Markdown as texts.
 	-  Convert Markdown as PDFs.
@@ -355,14 +367,14 @@ Versions before v5.3 are based on Java 8.
 ### View Image <a id="viewImage"></a>      
 
 1. "Load Width". Read image file with "Original Size" or with defined width.
-2. "Select Mode". When in this mode, Crop, Copy, and Save As are against the selected area. Or else these operations are against whole image.
+2. "Select Mode". 
 3. Rotation can be saved.
 4. Recover, Rename, Delete.
 5. Select whether display Corodinate, X/Y Rulers, Data.
 6. Image attributes and image meta. ICC profile embedded in image can be decoded.
 7. Navigation of images under same directory.
 8. Context menu.
-9. "Crop", "Copy", "Save As", and all operations are for current image in memory.         
+9. "Crop", "Copy", "Save As", and all operations are for selected area of current image in memory.         
 
 ![Snap-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer-en.jpg)       
 
@@ -402,23 +414,23 @@ Versions before v5.3 are based on Java 8.
  	-  Set background color.
 3. Clipboard
 	-  Clip sources:    
-		-  "Copy"(CTRL+c) against whole image or selected part of image    
+		- "Copy"(CTRL+c) against whole image or selected part of image    
 		- Cutted part of image     
 		- System clipboard    
-		-  Image files in system    
-		-  Example clips      
+		- Image files in system    
+		- Example clips      
 	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
 	-  Click button "Paste"(CTRL+v) anytime while editing image, to paste the first image in clipboard onto current edited image. Or double click item in the clipboard to paste it.
 	-  Drag and move pasted clip on current edited image, to adjust clip's size and location.
 	-  Options to paste: whether keep aspect ratio, blending mode, opacity, rotation angle.
 4. Scale: By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping aspect ratio. Rendering parameters can be set.       
-5. Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity. 
-   Premultiplied Alpha is supported for setting opacity.
+5. Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity.             
+    Premultiplied Alpha is supported for setting opacity.
 6. Effect. Posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss, edges detect. Algorithms and parameters can be set.
-7. Enhancement. Contrast, smooth, sharpen, convolution. Algorithms and parameters can be set.
-   Algorithms and parameters can be set. Convolution can be defined and referred to make more effects.
-8. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.
-   Due to implementation of snapshots, results look blur. I have not found solution. 
+7. Enhancement. Contrast, smooth, sharpen, convolution. Algorithms and parameters can be set.                       
+    Algorithms and parameters can be set. Convolution can be defined and referred to make more effects.
+8. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.                       
+    Due to implementation of snapshots, results look blur. I have not found solution. (Not support in current version)
 9. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
 10. Pen:
 	-  Polyline: One line by multiple drawing. Options: stroke width, color, whether dotted, opacity.
@@ -516,13 +528,10 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 
 
 ### Color Management<a id="ColorManagement" />   
-1. Add/Delete/Edit any colors in color library. Provide "Common web color", "Traditional Chinese colors", and "Traditional Japanese Colors".     
-2. Name colors. 
-3. Add/Remove colors in palette.  
-4. Display colors in simple/all columns.   
-5. Display colors in merged/separated columns.   
-6. Export all or selected data as html or csv file.
-7. Import color file in CSV format:
+1. Add/Delete/Edit any colors in color library. Name colors. Add/Remove colors in palette.  
+2. Display colors in simple/all columns, or display colors in merged/separated columns.   
+3. Export current page, all, or selected rows as html or csv file.
+4. Import color file in CSV format:
 	-  File encoding is UTF-8 or ASCII.
 	-  The first line defines data headers which are delimited by English commas.
 	-  Followed each line defines one data row. Data fields are delimited by English commas.
@@ -530,9 +539,9 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
                  rgba  or rgb                      
 	-  Following fields are optional:              
                  name              
-8. User can input colors list. Examples are provided.         
+5. User can input colors list. Examples are provided.          
 Valid color value is like:              
- 	  	 	  	orange [Web Colors](http://mararsh.github.io/MyBox_data/colors/WebColors.html)               
+ 	  	 	  	orange          
  	  	 	  	0xff668840             
  	  	 	  	0xff6688         
  	  	 	  	#ff6688            
@@ -542,7 +551,9 @@ Valid color value is like:
  	  	 	  	rgba(255,102,136,0.25)             
  	  	 	  	rgba(255,50%,50%,0.25)             
  	  	 	  	hsl(240,100%,100%)             
- 	  	 	  	hsla(120,0%,0%,0.25)             
+ 	  	 	  	hsla(120,0%,0%,0.25)          
+[Web Colors](http://mararsh.github.io/MyBox_data/colors/WebColors.html)           
+6. Embed: "Common web color", "Traditional Chinese colors", "Traditional Japanese Colors", and "Colors from colorhexa.com".     
 
 ### Color Palette <a id="ColorPalette"></a>     
 1. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
@@ -605,7 +616,56 @@ Valid color value is like:
 5. The sampled image is mainly for displaying, and not suitable for operations against whole image and images merging.
 6. Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images. Sampled image is displayed while original image is handled.
 
-## Data Tools <a id="dataTools"></a>     
+## Data Tools <a id="dataTools"></a>        
+
+### Data File<a id="dataFiles" />
+1. Edit data file:
+	- To CSV file
+ 		- Options include charset, whether has first line as field names, and delimiter of data.
+	- To Excel file:
+ 		- Options include sheet number and whether has first line as field names.
+ 		- Tool can only handle base data in Excel file. If file includes format, style, or chart, suggest to save changes as new file to avoid data loss.
+	- Data in file should be in same width. That is all rows have equal number of columns.
+	- Data are loaded in sheet: 
+ 		- Edit values in sheet cells.
+ 		- Move mouse upon column/row header to pop functions menu of this column/row.
+ 		- Move mouse upon buttons to pop functions menu of all/selected columns/rows.
+ 		- Functions include: set column width, select/set/copy/paste/insert/delete/sort columns and rows.
+	- Data are paginated: 
+ 		- When function is beyond current page, changes of current page should be saved before the function.
+ 		- Changing of all pages is written in file directly and can not be recovered.
+	- Data Definition is to describe and constrain data:
+ 		- Column name should not be null nor duplicate.
+ 		- Data type and "Not Null" are to validate data value.
+ 		- Definitions are saved in database whatever file has or has not header line.
+ 		- Click "Clear" button to remove data definitions in database. File will be reloaded. 
+	- Text format and html are displayed synchronously:
+ 		- Delimiter can be choiced for text format.
+ 		- Input/modify data by data clipboard.
+2. Convert data files in batch:
+	- Source files' formats can be csv and excel. Options of source files can be set.     
+	- Target files' formats include csv, excel, xml, json, html, pdf. Options of target files can be set.     
+
+
+### Data Clipboard<a id="dataClipboard" />       
+1. Paste or input text, and tool parses the data as defined delimiter line by line.           
+2. Text format and html are displayed synchronously.           
+
+
+
+### Matrix<a id="matrix"></a>     
+1. Edit matrix:
+	- Define matrix attributes including name, rows number, columns number, scale, decription.          
+	- Modify values in sheet cells.
+	- Move mouse upon column/row header to pop functions menu of this column/row.
+	- Move mouse upon buttons to pop functions menu of all/selected columns/rows.
+	- Functions include: set column width, select/set/copy/paste/insert/delete/sort columns and rows.
+	- Text format and html are displayed synchronously.
+	- Input/modify data by data clipboard. Special characters can be ignored.  
+2. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Multiply Number, Divide By Number, Power.
+3. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
+4. Save matrix. Matrix after edited or calculated can be saved and reused.          	
+
 
 ### Common Data Management<a id="dataManage" />    
 1. Define data.
@@ -998,14 +1058,6 @@ Valid color value is like:
 ![Snap-epidemicReport](https://mararsh.github.io/MyBox/snap-epidemicReport-en.jpg)    
 
 
-### Matrices Calculation <a id="matrixTool"></a>     
-1. Edit matrix data:
-	-  Filter special characters in input/pasted data to fit for data in some format.
-	-  Convert current matrix data into row vector, column vector, or matrix in defined columns number automatically.
-	-  Generate identify matrix, random matrix, or random square matrix automatically.
-2. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.
-3. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
-	
 ### Create Barcodes<a id="createBarcodes" />
 1. Supported 1-d barcodes: Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE,
    Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail
@@ -1035,7 +1087,8 @@ Valid color value is like:
 3. Arrange files and reorganize them under new directories by modifed time. This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
 4. Delete all empty sub-directories under directory.
 5. Delete "infinite-nested directory" which is created by bug of some softwares, like MyBox v6.0, and can not be deleted by normal way.         
-6. Delete files under system temporary path.           
+6. Delete files under system temporary path.     
+7. Extract ttf files from ttc file.      
 
 ### Archive/Compress/Decompress/Unarchive<a id="archiveCompress" />  
 1. Archiving is the process to collect multiple files/directories as single file. Some archive formats like zip and 7z implement compression too. Unarchiving is the inverse process of archiving.    
@@ -1244,7 +1297,9 @@ Decoding does reverse conversion.
 5. Recent visited tools.
 
 ## Helps <a id="helps"></a>     
-1. MyBox shortcuts
+1. MyBox shortcuts:      
+	- When focus is in "Text Input" control, Delete/Home/End/PageUp/PageDown/Ctrl-c/v/z/y/x work for texts in the focus.  Or else shortcuts work for interface.</BR>
+	- When focus is not in "Text Input" control,  Ctrl/Alt can be omitted. Example, if an image is currently foused, press "c" to copy and press "2" to set as pane size.
 2. MyBox Attributes
 3. Documents：Help user start download tasks. If MyBox documents are put into data path, MyBox will find them automatically.     
 
@@ -1273,7 +1328,14 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 3. "Callers" is the calling chain. Each line is one node and records: file, class, method, line. Calling chains only include methods of MyBox itself.      
 4. "Error" will cause interface of MyBox Logs Viewer is popped.                 
 
-# Development Logs <a id="devLog"></a>           
+# Development Logs <a id="devLog"></a>            
+2021-1-27 v6.3.8                  
+-  Add: Edit and convert csv file and excel file. Data clipboard. Edit and save matrix. Set html style in batch.               
+-  Improve: Channels' weights can be set for image quantization. Shortcuts can omit Ctrl/Alt when focus is not in "Text Input" controls.  Stream reading when convert/export data.                       
+-  Solved problems. Distance not work when replace images' color in batch. User password and owner password are messed for PDF.  
+Pagination not work in text filter interface. Table labels need translation too. BC dates are parsed incorrectly in time tree.        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8)         
+
 2020-12-03 v6.3.7                   
 -  Add: Extract ttf from ttc. Embed an open source ttf file.                     
 -  Improve: high dpi icons and common icons can be selected.  Set html charset in batch.  Consistent control to select PDF font file. 

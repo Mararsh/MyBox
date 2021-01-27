@@ -178,7 +178,7 @@ public class DownloadController extends BaseController {
             if (dtask != null) {
                 MyBoxLog.debug(dtask.getState() + "");
             }
-            if (dtask != null && dtask.isRunning()) {
+            if (dtask != null && !dtask.isQuit()) {
                 continue;
             }
             dtask = download(item);

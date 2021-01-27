@@ -9,14 +9,14 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.db.TableEpidemicReport;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -107,7 +107,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
 
     protected void loadDatasets() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -135,7 +135,8 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -342,7 +343,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             popError(message("ValuesShouldNotZero"));
             return;
         }
-        if (task != null && !task.isQuit() ) {
+        if (task != null && !task.isQuit()) {
             return;
         }
         task = new SingletonTask<Void>() {
@@ -358,15 +359,15 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 report.setDead(dead);
                 report.setTime(time);
                 if (predefinedRadio.isSelected()) {
-                    report.setSource(1);
+                    report.setSource((short) 1);
                 } else if (inputtedRadio.isSelected()) {
-                    report.setSource(2);
+                    report.setSource((short) 2);
                 } else if (filledRadio.isSelected()) {
-                    report.setSource(3);
+                    report.setSource((short) 3);
                 } else if (statisticRadio.isSelected()) {
-                    report.setSource(4);
+                    report.setSource((short) 4);
                 } else {
-                    report.setSource(2);
+                    report.setSource((short) 2);
                 }
                 return TableEpidemicReport.write(report);
             }
@@ -388,7 +389,8 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
-        task.setSelf(task);Thread thread = new Thread(task);
+        task.setSelf(task);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }

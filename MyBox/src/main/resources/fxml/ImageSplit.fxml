@@ -145,7 +145,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="savePdfButton" mnemonicParsing="false" onAction="#saveAsPdfAction">
+                                <Button fx:id="savePdfButton" mnemonicParsing="false" onAction="#saveAsPdfAction" onMouseEntered="#popSaveAsPdf">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -154,7 +154,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="saveTiffButton" mnemonicParsing="false" onAction="#saveAsTiffAction">
+                                <Button fx:id="saveTiffButton" mnemonicParsing="false" onAction="#saveAsTiffAction" onMouseEntered="#popSaveAsTif">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -163,7 +163,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="saveImagesButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAsImagesAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                <Button fx:id="saveImagesButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAsImagesAction" onMouseEntered="#popSaveAs" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -302,62 +302,18 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </VBox>
                                                         <Label fx:id="promptLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
+                                                        <Label fx:id="sizeLabel"  minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane expanded="false" maxWidth="1.7976931348623157E308" text="%PdfOptions">
+                                        <TitledPane maxWidth="1.7976931348623157E308" text="%PdfOptions">
                                             <content>
-                                                <VBox fx:id="pdfBox" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
-                                                    <children>
-                                                        <Label text="%PageSize" />
-                                                        <RadioButton mnemonicParsing="false" selected="true" text="%ImagesSize">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="pdfSizeGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <FlowPane hgap="5.0" layoutX="32.0" layoutY="32.0" vgap="5.0">
-                                                            <children>
-                                                                <RadioButton fx:id="eachHeightRadio" mnemonicParsing="false" text="%StandardSize" toggleGroup="$pdfSizeGroup" />
-                                                                <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="150.0" />
-                                                                <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="100.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" layoutX="32.0" layoutY="468.0" vgap="5.0">
-                                                            <children>
-                                                                <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$pdfSizeGroup" />
-                                                                <Label text="%UnitPixels" />
-                                                                <TextField fx:id="customWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
-                                                                <TextField fx:id="customHeightInput" disable="true" prefWidth="70.0" promptText="%Height" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <Label text="%Author" />
-                                                                <TextField fx:id="authorInput" prefWidth="100.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" layoutX="32.0" layoutY="32.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%PageHeader" />
-                                                                <TextField fx:id="headerInput" prefWidth="140.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" layoutX="32.0" layoutY="196.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%FontFile" />
-                                                                <ComboBox fx:id="fontBox" editable="true" prefWidth="140.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" layoutX="32.0" layoutY="273.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%Margin" />
-                                                                <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%PageNumber2" />
-                                                    </children>
-                                                </VBox>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                    <content>
+                                                        <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
+                                                    </content>
+                                                </ScrollPane>
                                             </content>
                                         </TitledPane>
                                     </children>

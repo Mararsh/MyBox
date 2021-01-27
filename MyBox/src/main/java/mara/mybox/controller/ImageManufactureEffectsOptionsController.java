@@ -20,7 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -42,14 +42,15 @@ import static mara.mybox.value.AppVariables.message;
 public class ImageManufactureEffectsOptionsController extends ImageManufactureOperationController {
 
     protected OperationType effectType;
-    protected int intPara1, intPara2, intPara3, bitDepth, quanColors, kmeansLoop;
+    protected int intPara1, intPara2, intPara3, regionSize, weight1, weight2, weight3,
+            quanColors, kmeansLoop;
     protected ConvolutionKernel kernel;
     protected QuantizationAlgorithm quantizationAlgorithm;
     protected ChangeListener<String> intBoxListener, stringBoxListener, intInputListener,
             intInput2Listener, intInput3Listener;
     protected ChangeListener<Number> numberBoxListener;
     protected ImageView calculatorView;
-    protected Button paletteAddButton;
+    protected Button paletteAddButton, htmlButton;
 
     @FXML
     protected ToggleGroup effectGroup, bwGroup, quanGroup;
@@ -67,15 +68,15 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected FlowPane stringBoxPane, intBoxPane, intInputPane,
             intInputPane2, intInputPane3, othersPane;
     @FXML
-    protected HBox depthBox, loopBox;
+    protected HBox regionBox, loopBox;
     @FXML
-    protected ComboBox<String> intBox, stringBox, depthSelector, quanColorsSelector,
-            kmeansLoopSelector;
+    protected ComboBox<String> intBox, stringBox, weightSelector, quanColorsSelector,
+            regionSizeSelector, kmeansLoopSelector;
     @FXML
-    protected CheckBox valueCheck, quanDitherCheck, quanDataCheck;
+    protected CheckBox valueCheck, quanDitherCheck, quanDataCheck, ceilCheck;
     @FXML
-    protected Label intBoxLabel, intLabel, intLabel2, intLabel3, stringLabel, depthLabel,
-            actualLoopLabel;
+    protected Label intBoxLabel, intLabel, intLabel2, intLabel3, stringLabel,
+            actualLoopLabel, weightLabel;
     @FXML
     protected Button button;
     @FXML
@@ -132,6 +133,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             okButton = pController.okButton;
             imageView = pController.imageView;
             paletteAddButton = pController.paletteAddButton;
+            htmlButton = pController.htmlButton;
         }
     }
 
@@ -139,9 +141,16 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         try {
             if (imageController != null) {
                 imageController.resetImagePane();
-                imageController.showScopePane();
-                imageController.hideImagePane();
+                if (scopeController != null && scopeController.scope != null
+                        && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
+                    imageController.hideImagePane();
+                    imageController.showScopePane();
+                } else {
+                    imageController.hideScopePane();
+                    imageController.showImagePane();
+                }
             }
+
             clearValues();
             if (okButton != null && effectGroup.getSelectedToggle() == null) {
                 okButton.setDisable(true);
@@ -203,9 +212,11 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 }
             });
 
-            quanColors = 27;
+            quanColors = AppVariables.getUserConfigInt(baseName + "QuanColorsNumber", 256);
+            quanColors = regionSize <= 0 ? 256 : quanColors;
             quanColorsSelector.getItems().addAll(Arrays.asList(
                     "27", "64", "8", "16", "256", "512", "1024", "2048", "4096", "216", "343", "128", "1000", "729", "1728", "8000"));
+            quanColorsSelector.setValue(quanColors + "");
             quanColorsSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -213,7 +224,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             quanColors = v;
-                            AppVariables.setUserConfigValue(baseName + "QuanColorsNumber", v + "");
+                            AppVariables.setUserConfigInt(baseName + "QuanColorsNumber", quanColors);
                             FxmlControl.setEditorNormal(intBox);
                         } else {
                             FxmlControl.setEditorBadStyle(intBox);
@@ -223,26 +234,60 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                     }
                 }
             });
-            quanColorsSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "QuanColorsNumber", "27"));
 
-            bitDepth = 4;
-            depthSelector.getItems().addAll(Arrays.asList(
-                    "4", "5", "6", "7", "8", "3", "2", "1"));
-            depthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            regionSize = AppVariables.getUserConfigInt(baseName + "RegionSize", 256);
+            regionSize = regionSize <= 0 ? 256 : regionSize;
+            regionSizeSelector.getItems().addAll(Arrays.asList("256", "1024", "64", "512", "1024", "4096", "128"));
+            regionSizeSelector.setValue(regionSize + "");
+            regionSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        bitDepth = Integer.valueOf(newValue);
-                        AppVariables.setUserConfigValue(baseName + "QuanDepth", bitDepth + "");
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            regionSize = v;
+                            AppVariables.setUserConfigInt(baseName + "RegionSize", regionSize);
+                            regionSizeSelector.getEditor().setStyle(null);
+                        } else {
+                            regionSizeSelector.getEditor().setStyle(badStyle);
+                        }
                     } catch (Exception e) {
+                        regionSizeSelector.getEditor().setStyle(badStyle);
                     }
                 }
             });
-            depthSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "QuanDepth", "4"));
 
-            kmeansLoop = 10000;
+            weightSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        String[] values = newValue.split(":");
+                        int v1 = Integer.parseInt(values[0]);
+                        int v2 = Integer.parseInt(values[1]);
+                        int v3 = Integer.parseInt(values[2]);
+                        if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
+                            weightSelector.getEditor().setStyle(badStyle);
+                            return;
+                        }
+                        weight1 = v1;
+                        weight2 = v2;
+                        weight3 = v3;
+                        weightSelector.getEditor().setStyle(null);
+                        AppVariables.setUserConfigValue(baseName + (hsbQuanRadio.isSelected() ? "HSBWeights" : "RGBWeights"), newValue);
+                    } catch (Exception e) {
+                        weightSelector.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+            kmeansLoop = AppVariables.getUserConfigInt(baseName + "KmeansLoop", 10000);
+            kmeansLoop = kmeansLoop <= 0 ? 10000 : kmeansLoop;
             kmeansLoopSelector.getItems().addAll(Arrays.asList(
-                    "10000", "5000", "3000", "1000", "20000"));
+                    "10000", "5000", "3000", "1000", "500", "100", "20000"));
+            kmeansLoopSelector.setValue(kmeansLoop + "");
             kmeansLoopSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -250,6 +295,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             kmeansLoop = v;
+                            AppVariables.setUserConfigInt(baseName + "KmeansLoop", kmeansLoop);
                             FxmlControl.setEditorNormal(kmeansLoopSelector);
                         } else {
                             FxmlControl.setEditorBadStyle(kmeansLoopSelector);
@@ -259,23 +305,30 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                     }
                 }
             });
-            kmeansLoopSelector.getSelectionModel().select(0);
 
+            quanDitherCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "QuanDither", true));
             quanDitherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     AppVariables.setUserConfigValue(baseName + "QuanDither", newValue);
                 }
             });
-            quanDitherCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "QuanDither", true));
 
+            quanDataCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "QuanData", true));
             quanDataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     AppVariables.setUserConfigValue(baseName + "QuanData", newValue);
                 }
             });
-            quanDataCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "QuanData", true));
+
+            ceilCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "QuanCeil", true));
+            ceilCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "QuanCeil", newValue);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -293,26 +346,65 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         if (paletteAddButton != null) {
             paletteAddButton.setVisible(false);
         }
-        if (quantizationAlgorithm == QuantizationAlgorithm.HSBUniformQuantization
-                || quantizationAlgorithm == QuantizationAlgorithm.RGBUniformQuantization) {
-            if (quanBox.getChildren().contains(depthBox)) {
-                quanBox.getChildren().removeAll(depthBox, loopBox, actualLoopLabel);
-            }
-        } else {
-            if (!quanBox.getChildren().contains(depthBox)) {
-                quanBox.getChildren().add(depthBox);
-            }
-            if (quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
+        if (htmlButton != null) {
+            htmlButton.setVisible(false);
+        }
+        switch (quantizationAlgorithm) {
+            case HSBUniformQuantization:
+                if (quanBox.getChildren().contains(regionBox)) {
+                    quanBox.getChildren().removeAll(regionBox, loopBox, actualLoopLabel);
+                }
+                weightLabel.setText(message("HSBWeight"));
+                break;
+            case RGBUniformQuantization:
+                if (quanBox.getChildren().contains(regionBox)) {
+                    quanBox.getChildren().removeAll(regionBox, loopBox, actualLoopLabel);
+                }
+                weightLabel.setText(message("RGBWeight"));
+                break;
+            case KMeansClustering:
+                if (!quanBox.getChildren().contains(regionBox)) {
+                    quanBox.getChildren().add(7, regionBox);
+                }
                 if (!quanBox.getChildren().contains(loopBox)) {
-                    quanBox.getChildren().addAll(loopBox, actualLoopLabel);
+                    quanBox.getChildren().add(8, loopBox);
+                    quanBox.getChildren().add(actualLoopLabel);
                 }
                 actualLoopLabel.setText("");
-            } else {
+                weightLabel.setText(message("RGBWeight"));
+                break;
+            case PopularityQuantization:
+                if (!quanBox.getChildren().contains(regionBox)) {
+                    quanBox.getChildren().add(7, regionBox);
+                }
                 if (quanBox.getChildren().contains(loopBox)) {
                     quanBox.getChildren().removeAll(loopBox, actualLoopLabel);
                 }
-            }
+                weightLabel.setText(message("RGBWeight"));
         }
+        isSettingValues = true;
+        weightSelector.getItems().clear();
+        if (hsbQuanRadio.isSelected()) {
+            weight1 = 4;
+            weight2 = 4;
+            weight3 = 1;
+            String defaultV = AppVariables.getUserConfigValue(baseName + "HSBWeights", "4:4:1");
+            weightSelector.getItems().addAll(Arrays.asList(
+                    "4:4:1", "4:4:2", "1:1:1", "5:3:2", "2:2:1", "4:2:1"
+            ));
+            weightSelector.setValue(defaultV);
+        } else {
+            weight1 = 2;
+            weight2 = 4;
+            weight3 = 4;
+            String defaultV = AppVariables.getUserConfigValue(baseName + "RGBWeights", "2:4:3");
+            weightSelector.getItems().addAll(Arrays.asList(
+                    "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
+            ));
+            weightSelector.setValue(defaultV);
+        }
+
+        isSettingValues = false;
     }
 
     protected void clearValues() {
@@ -353,6 +445,9 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         actualLoopLabel.setText("");
         if (paletteAddButton != null) {
             paletteAddButton.setVisible(false);
+        }
+        if (htmlButton != null) {
+            htmlButton.setVisible(false);
         }
         if (okButton != null) {
             okButton.disableProperty().unbind();

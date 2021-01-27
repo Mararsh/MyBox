@@ -5,12 +5,12 @@ import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.ProcessParameters;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -21,13 +21,12 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  * @Description
  * @License Apache License Version 2.0
  */
-public abstract class PdfBatchController extends BatchController<PdfInformation> {
+public abstract class PdfBatchController extends BaseBatchController<PdfInformation> {
 
-    protected PdfsTableController pdfsTableController;
+    protected ControlPdfsTable pdfsTableController;
     protected String password, currentTargetFile;
     protected int fromPage, toPage, startPage;
     protected PDDocument doc;
-    protected boolean needUserPassword, needOwnerPassword;
 
     public PdfBatchController() {
         SourceFileType = VisitHistory.FileType.PDF;
@@ -40,9 +39,6 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
         sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
         targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
 
-        needUserPassword = true;
-        needOwnerPassword = false;
-
         targetSubdirKey = "PdfCreatSubdir";
         previewKey = "PdfPreview";
 
@@ -54,23 +50,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
     public void initValues() {
         try {
             super.initValues();
-            pdfsTableController = (PdfsTableController) tableController;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-            if (!needUserPassword) {
-                tableView.getColumns().remove(pdfsTableController.getUserPasswordColumn());
-            }
-            if (!needOwnerPassword) {
-                tableView.getColumns().remove(pdfsTableController.getOwnerPasswordColumn());
-            }
-
+            pdfsTableController = (ControlPdfsTable) tableController;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -128,16 +108,15 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
             currentParameters.currentSourceFile = srcFile;
             if (!isPreview) {
                 PdfInformation info = tableData.get(currentParameters.currentIndex);
-                actualParameters.fromPage = info.getFromPage();
-                if (actualParameters.fromPage <= 0) {
-                    actualParameters.fromPage = 1;
+                currentParameters.fromPage = info.getFromPage();
+                if (currentParameters.fromPage <= 0) {
+                    currentParameters.fromPage = 1;
                 }
-                actualParameters.toPage = info.getToPage();
-                actualParameters.password = info.getUserPassword();
-                actualParameters.startPage = actualParameters.fromPage;
-                actualParameters.currentPage = actualParameters.fromPage;
+                currentParameters.toPage = info.getToPage();
+                currentParameters.password = info.getUserPassword();
+                currentParameters.startPage = currentParameters.fromPage;
+                currentParameters.currentPage = currentParameters.fromPage;
             }
-
             try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                     currentParameters.password, AppVariables.pdfMemUsage)) {
                 doc = pd;
@@ -158,7 +137,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
                     updateFileProgress(0, total);
                     for (currentParameters.currentPage = currentParameters.startPage;
                             currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
-                        if (task.isCancelled()) {
+                        if (task == null || task.isCancelled()) {
                             break;
                         }
 

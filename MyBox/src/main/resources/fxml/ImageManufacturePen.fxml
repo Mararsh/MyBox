@@ -214,6 +214,6 @@
                 </FlowPane>
             </children>
         </VBox>
-        <Label fx:id="commentsLabel" prefWidth="200.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
+        <Label fx:id="commentsLabel" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
     </children>
 </VBox>

@@ -234,8 +234,8 @@
                         </FlowPane>
                         <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
                             <children>
-                                <TextField fx:id="distanceInput" prefWidth="80.0" />
-                                <CheckBox fx:id="distanceExcludeCheck" mnemonicParsing="false" text="%Excluded" />
+                        <ComboBox fx:id="distanceSelector" editable="true" minWidth="-Infinity" prefWidth="100.0" />
+                                <CheckBox fx:id="distanceExcludeCheck" minWidth="-Infinity" mnemonicParsing="false" text="%Excluded" />
                             </children>
                         </FlowPane>
                         <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
@@ -251,7 +251,7 @@
                 </VBox>
             </children>
         </VBox>
-        <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" wrapText="true">
+        <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true">
             <VBox.margin>
                 <Insets top="10.0" />
             </VBox.margin>

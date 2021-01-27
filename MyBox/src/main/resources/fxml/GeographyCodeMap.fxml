@@ -28,18 +28,18 @@ License:    Apache License Version 2.0
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                             <children>
-                                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                                 <Label text="%SnapDPI" />
-                                <ComboBox fx:id="dpiSelector" editable="true" prefWidth="80.0" />
-                                <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction" onMouseEntered="#popSaveAs">
+                                <ComboBox fx:id="dpiSelector" editable="true" prefWidth="100.0" />
+                                <Button fx:id="snapshotButton" mnemonicParsing="false" onMouseEntered="#popSnapMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconHtml.png" />
+                                                <Image url="@../buttons/iconSnapshot.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
+                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                 <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -56,18 +56,30 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </children>
                         </HBox>
-                        <WebView fx:id="mapView" minHeight="200.0" minWidth="200.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                        <HBox alignment="CENTER_LEFT"> 
+                        <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                <Label fx:id="frameLabel" />
+                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="frameLabel" minWidth="-Infinity" />
+                                    </children>
+                                </HBox>
+                                <WebView fx:id="mapView" minHeight="200.0" minWidth="200.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
                             </children>
-                        </HBox>
+                        </VBox>
+                        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" />
                     </children>
                 </VBox>
                 <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="883.0">
                     <content>
-                        <fx:include fx:id="mapOptions" source="MapOptions.fxml" />
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                                <fx:include fx:id="mapOptions" source="ControlMapOptions.fxml" />
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
+                        </VBox>
                     </content>
                 </ScrollPane>
             </items>

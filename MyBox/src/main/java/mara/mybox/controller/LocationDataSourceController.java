@@ -3,9 +3,9 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.CheckBoxTreeItem;
-import mara.mybox.data.Dataset;
-import mara.mybox.fxml.ConditionNode;
+import mara.mybox.db.data.Dataset;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ConditionNode;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -26,7 +26,7 @@ public class LocationDataSourceController extends ControlConditionTree {
             super.initControls();
             List<String> s = new ArrayList();
             s.add(message("Dataset"));
-            treeView.setSelectedTitles(s);
+//            treeView.setSelectedTitles(s);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -56,7 +56,7 @@ public class LocationDataSourceController extends ControlConditionTree {
                 CheckBoxTreeItem<ConditionNode> datasetItem = new CheckBoxTreeItem(
                         ConditionNode.create(name)
                                 .setTitle(name)
-                                .setCondition(" datasetid=" + dataset.getDsid())
+                                .setCondition(" datasetid=" + dataset.getId())
                 );
                 datasetItem.setExpanded(true);
                 allItem.getChildren().add(datasetItem);

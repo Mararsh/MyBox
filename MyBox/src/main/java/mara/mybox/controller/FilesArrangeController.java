@@ -61,15 +61,15 @@ public class FilesArrangeController extends FilesBatchController {
     }
 
     @FXML
-    private ToggleGroup filesGroup, byGroup, dirGroup, replaceGroup;
+    protected ToggleGroup filesGroup, byGroup, dirGroup, replaceGroup;
     @FXML
     protected VBox dirsBox, conditionsBox, logsBox;
     @FXML
-    private RadioButton copyRadio, moveRadio, replaceModifiedRadio, replaceRadio, renameRadio, notCopyRadio;
+    protected RadioButton copyRadio, moveRadio, replaceModifiedRadio, replaceRadio, renameRadio, notCopyRadio;
     @FXML
-    private RadioButton modifiyTimeRadio, createTimeRadio, monthRadio, dayRadio, yearRadio;
+    protected RadioButton modifiyTimeRadio, createTimeRadio, monthRadio, dayRadio, yearRadio;
     @FXML
-    private CheckBox handleSubdirCheck;
+    protected CheckBox handleSubdirCheck;
 
     public FilesArrangeController() {
         baseTitle = AppVariables.message("FilesArrangement");

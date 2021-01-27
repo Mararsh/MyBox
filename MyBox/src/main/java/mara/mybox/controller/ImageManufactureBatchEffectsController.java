@@ -2,7 +2,8 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
-import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageGray;
@@ -11,7 +12,6 @@ import mara.mybox.image.ImageMosaic;
 import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -83,8 +83,10 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         ImageQuantization quantization = ImageQuantization.create(
                                 ImageManufacture.removeAlpha(source),
                                 null, optionsController.quantizationAlgorithm,
-                                optionsController.quanColors, optionsController.bitDepth,
-                                optionsController.quanDataCheck.isSelected(), optionsController.quanDitherCheck.isSelected());
+                                optionsController.quanColors, optionsController.regionSize,
+                                optionsController.weight1, optionsController.weight2, optionsController.weight3,
+                                optionsController.quanDataCheck.isSelected(), optionsController.quanDitherCheck.isSelected(),
+                                 optionsController.ceilCheck.isSelected());
                         target = quantization.operate();
                         break;
                     case Gray:

@@ -1,9 +1,14 @@
 package mara.mybox.controller;
 
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
@@ -18,8 +23,41 @@ import mara.mybox.value.CommonValues;
  */
 public class MyBoxLogViewerController extends HtmlViewerController {
 
+    protected TableMyBoxLog logTable;
+
+    @FXML
+    protected CheckBox popCheck;
+
     public MyBoxLogViewerController() {
         baseTitle = AppVariables.message("MyBoxLogsViewer");
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            logTable = new TableMyBoxLog();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.popErrorLogs = popCheck.isSelected();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -53,14 +91,14 @@ public class MyBoxLogViewerController extends HtmlViewerController {
 
     public void addLog(MyBoxLog myboxLog) {
         body = (body != null ? body : "")
-                + "</br><hr></br>\n" + myboxLog.html();
+                + "</br><hr></br>\n" + BaseDataTools.htmlData(logTable, myboxLog);
         loadBody(body);
     }
 
     public void setLogs(List<MyBoxLog> logs) {
         body = "";
         for (MyBoxLog log : logs) {
-            body += "</br><hr></br>\n" + log.html();
+            body += "</br><hr></br>\n" + BaseDataTools.htmlData(logTable, log);
         }
         loadBody(body);
     }

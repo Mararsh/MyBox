@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -15,7 +16,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -28,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -39,7 +40,6 @@ import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -70,7 +70,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             colorYellowRadio, colorCyanRadio, colorMagentaRadio,
             distanceColorRadio, distanceHueRadio;
     @FXML
-    protected ComboBox<String> valueSelector;
+    protected ComboBox<String> valueSelector, distanceSelector;
     @FXML
     protected Label colorLabel, colorUnit, commentsLabel;
     @FXML
@@ -80,8 +80,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected CheckBox preAlphaCheck, distanceExcludeCheck;
     @FXML
     protected ImageView preAlphaTipsView, distanceTipsView;
-    @FXML
-    protected TextField distanceInput;
     @FXML
     protected ColorSetController originalColorSetController;
     @FXML
@@ -118,23 +116,28 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             originalColorSetController.init(this, baseName + "OriginalColor", Color.WHITE);
             newColorSetController.init(this, baseName + "NewColor", Color.TRANSPARENT);
 
-            distanceInput.textProperty().addListener(new ChangeListener<String>() {
+            colorDistance = AppVariables.getUserConfigInt(baseName + "ColorDistance", 20);
+            colorDistance = colorDistance <= 0 ? 20 : colorDistance;
+            distanceSelector.getItems().addAll(Arrays.asList(
+                    "20", "50", "80", "100", "10", "5", "120", "160", "127", "200", "180", "220", "230", "245"));
+            distanceSelector.setValue(colorDistance + "");
+            distanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
                             colorDistance = v;
-                            distanceInput.setStyle(null);
+                            AppVariables.setUserConfigInt(baseName + "ColorDistance", colorDistance);
+                            FxmlControl.setEditorNormal(distanceSelector);
                         } else {
-                            distanceInput.setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(distanceSelector);
                         }
                     } catch (Exception e) {
-                        distanceInput.setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(distanceSelector);
                     }
                 }
             });
-            distanceInput.setText("0");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -163,16 +166,22 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 return;
             }
             if (colorReplaceRadio.isSelected()) {
-                imageController.showImagePane();
                 imageController.hideScopePane();
-                okButton.disableProperty().bind(distanceInput.styleProperty().isEqualTo(badStyle));
+                imageController.showImagePane();
+                okButton.disableProperty().bind(distanceSelector.getEditor().styleProperty().isEqualTo(badStyle));
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(replaceBox);
                 commentsLabel.setText(message("ManufactureWholeImage"));
 
             } else {
-                imageController.showScopePane();
-                imageController.hideImagePane();
+                if (scopeController != null && scopeController.scope != null
+                        && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
+                    imageController.hideImagePane();
+                    imageController.showScopePane();
+                } else {
+                    imageController.hideScopePane();
+                    imageController.showImagePane();
+                }
                 okButton.setDisable(true);
                 commentsLabel.setText(message("DefineScopeAndManufacture"));
 
@@ -350,7 +359,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -430,7 +439,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

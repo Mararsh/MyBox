@@ -23,10 +23,11 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -45,7 +46,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     protected FontWeight fontWeight;
 
     @FXML
-    protected TextField textInput;
+    protected TextField textInput, xInput, yInput;
     @FXML
     protected ComboBox<String> sizeBox, opacityBox, styleBox, familyBox, angleBox, shadowBox;
     @FXML
@@ -64,7 +65,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         try {
             isSettingValues = true;
 
-            fontFamily = AppVariables.getUserConfigValue("ImageTextFontFamily", "Arial");
+            fontFamily = AppVariables.getUserConfigValue(baseName + "TextFontFamily", "Arial");
             fontWeight = FontWeight.NORMAL;
             fontPosture = FontPosture.REGULAR;
             fontSize = 24;
@@ -72,20 +73,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             shadow = 0;
             angle = 0;
 
-            textInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable,
-                        Boolean oldValue, Boolean newValue) {
-                    String v = textInput.getText();
-                    if (!newValue && !v.isBlank()) {
-                        AppVariables.setUserConfigValue("ImageTextValue", v);
-                        write(true);
-                    }
-                }
-            });
-            textInput.setText(AppVariables.getUserConfigValue("ImageTextValue", "MyBox"));
-
-            colorSetController.init(this, baseName + "Color", Color.ORANGE);
+            colorSetController.init(this, baseName + "TextColor", Color.ORANGE);
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
@@ -99,7 +87,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     fontFamily = newValue;
-                    AppVariables.setUserConfigValue("ImageTextFontFamily", newValue);
+                    AppVariables.setUserConfigValue(baseName + "TextFontFamily", newValue);
                     write(true);
                 }
             });
@@ -142,7 +130,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             fontSize = v;
-                            AppVariables.setUserConfigInt("ImageTextFontSize", v);
+                            AppVariables.setUserConfigInt(baseName + "TextFontSize", v);
                             write(true);
                             FxmlControl.setEditorNormal(sizeBox);
                         } else {
@@ -153,7 +141,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                 }
             });
-            sizeBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageTextFontSize", 72) + "");
+            sizeBox.getSelectionModel().select(AppVariables.getUserConfigInt(baseName + "TextFontSize", 72) + "");
 
             opacityBox.getItems().addAll(Arrays.asList("1.0", "0.5", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacityBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -163,6 +151,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         float f = Float.valueOf(newValue);
                         if (f >= 0.0f && f <= 1.0f) {
                             fontOpacity = f;
+                            AppVariables.setUserConfigValue(baseName + "TextFontOpacity", f + "");
                             FxmlControl.setEditorNormal(opacityBox);
                             write(true);
                         } else {
@@ -173,7 +162,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                 }
             });
-            opacityBox.getSelectionModel().select(0);
+            opacityBox.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "TextFontOpacity", "1.0"));
 
             shadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
             shadowBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -183,7 +172,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             shadow = v;
-                            AppVariables.setUserConfigInt("ImageTextShadow", v);
+                            AppVariables.setUserConfigInt(baseName + "TextShadow", v);
                             FxmlControl.setEditorNormal(shadowBox);
                             write(true);
                         } else {
@@ -194,7 +183,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                 }
             });
-            shadowBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageTextShadow", 0) + "");
+            shadowBox.getSelectionModel().select(AppVariables.getUserConfigInt(baseName + "TextShadow", 0) + "");
 
             angleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
@@ -205,7 +194,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             angle = v;
-                            AppVariables.setUserConfigInt("ImageTextAngle", v);
+                            AppVariables.setUserConfigInt(baseName + "TextAngle", v);
                             FxmlControl.setEditorNormal(angleBox);
                             write(true);
                         } else {
@@ -216,29 +205,32 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                 }
             });
-            angleBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageTextAngle", 0) + "");
+            angleBox.getSelectionModel().select(AppVariables.getUserConfigInt(baseName + "TextAngle", 0) + "");
 
             outlineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> observable,
-                        Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "TextOutline", outlineCheck.isSelected());
                     write(true);
                 }
             });
+            outlineCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "TextOutline", false));
 
             verticalCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> observable,
-                        Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "TextVertical", verticalCheck.isSelected());
                     write(true);
                 }
             });
+            verticalCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "TextVertical", false));
 
             isSettingValues = false;
 
-            x = (int) (imageView.getImage().getWidth() / 2);
-            y = (int) (imageView.getImage().getHeight() / 2);
-            write(true);
+            textInput.setText(AppVariables.getUserConfigValue(baseName + "TextValue", "MyBox"));
+            xInput.setText((int) (imageView.getImage().getWidth() / 2) + "");
+            yInput.setText((int) (imageView.getImage().getHeight() / 2) + "");
+            goAction();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -248,8 +240,10 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
     @Override
     protected void paneExpanded() {
-        imageController.showImagePane();
+        imageController.showRightPane();
+        imageController.resetImagePane();
         imageController.hideScopePane();
+        imageController.showImagePane();
     }
 
     @FXML
@@ -264,21 +258,20 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             return;
         }
         imageView.setCursor(Cursor.HAND);
-        x = (int) Math.round(p.getX());
-        y = (int) Math.round(p.getY());
-        write(true);
+        xInput.setText((int) Math.round(p.getX()) + "");
+        yInput.setText((int) Math.round(p.getY()) + "");
+        goAction();
     }
 
     public void write(boolean editing) {
-        if (isSettingValues || imageView.getImage() == null
-                || x < 0 || y < 0
+        if (isSettingValues || x < 0 || y < 0
                 || x >= imageView.getImage().getWidth()
                 || y >= imageView.getImage().getHeight()
                 || textInput.getText().isBlank()) {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -300,7 +293,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                             font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
                         }
                     }
-                    newImage = FxmlImageManufacture.addText(imageView.getImage(), textInput.getText(),
+                    newImage = FxmlImageManufacture.addText(imageView.getImage(), textInput.getText().trim(),
                             font, (Color) colorSetController.rect.getFill(), x, y,
                             fontOpacity, shadow, angle,
                             outlineCheck.isSelected(), verticalCheck.isSelected());
@@ -318,16 +311,67 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
                     } else {
                         imageController.popSuccessful();
-                        imageController.updateImage(ImageOperation.Text, textInput.getText(), null, newImage, cost);
+                        imageController.updateImage(ImageOperation.Text, textInput.getText().trim(), null, newImage, cost);
                     }
                 }
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    public boolean check() {
+        if (imageView.getImage() == null) {
+            return false;
+        }
+        try {
+            int v = Integer.parseInt(xInput.getText().trim());
+            if (v < 0 || v >= imageView.getImage().getWidth()) {
+                xInput.setStyle(badStyle);
+                return false;
+            } else {
+                x = v;
+                xInput.setStyle(null);
+            }
+        } catch (Exception e) {
+            xInput.setStyle(badStyle);
+            return false;
+        }
+        try {
+            int v = Integer.parseInt(yInput.getText().trim());
+            if (v < 0 || v >= imageView.getImage().getHeight()) {
+                yInput.setStyle(badStyle);
+                return false;
+            } else {
+                y = v;
+                yInput.setStyle(null);
+            }
+        } catch (Exception e) {
+            yInput.setStyle(badStyle);
+            return false;
+        }
+        if (textInput.getText().isBlank()) {
+            textInput.setStyle(badStyle);
+            return false;
+        } else {
+            textInput.setStyle(null);
+            AppVariables.setUserConfigValue(baseName + "TextValue", textInput.getText().trim());
+        }
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        if (!check()) {
+            popError(message("InvalidParameters"));
+            return;
+        }
+        write(true);
     }
 
     @FXML

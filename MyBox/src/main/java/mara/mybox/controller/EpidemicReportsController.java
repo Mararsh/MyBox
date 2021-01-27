@@ -35,22 +35,24 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.QueryCondition;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.EpidemicReportTools;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.QueryCondition;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlStage.openScene;
 import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -59,7 +61,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-2-2
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsController extends DataAnalysisController<EpidemicReport> {
+public class EpidemicReportsController extends BaseDataManageController<EpidemicReport> {
 
     protected String dataFetch;
     protected LoadingController loading;
@@ -76,9 +78,9 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     @FXML
     protected EpidemicReportsChartController chartController;
     @FXML
-    protected EpidemicReportsSettingsController settingsController;
+    protected EpidemicReportsColorsController colorsController;
     @FXML
-    protected Tab chartsTab;
+    protected Tab chartsTab, colorsTab;
     @FXML
     protected Button chinaButton, globalButton, statisticButton, dataExportChartsButton, fillButton;
     @FXML
@@ -109,7 +111,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
 
     @Override
     public void setTableDefinition() {
-        tableDefinition = new TableEpidemicReport().readDefinitionFromDB("Epidemic_Report_Statistic_View");
+        tableDefinition = new TableEpidemicReport(false).readDefinitionFromDB("Epidemic_Report_Statistic_View");
         tableDefinition.setIdColumn("epid");
         tableDefinition.getPrimaryColumns().add("epid");
     }
@@ -143,9 +145,9 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             geoController.setUserController(this);
             timeController.setUserController(this);
             chartController.setReportsController(this);
-            chartController.setSettingsController(settingsController);
-            settingsController.setReportsController(this);
-            settingsController.setChartController(chartController);
+            chartController.setColorsController(colorsController);
+            colorsController.setReportsController(this);
+            colorsController.setChartController(chartController);
 
             initOrder();
 
@@ -200,19 +202,19 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             }
             if (this.isSelected()) {
                 setStyle("-fx-background-color:  #0096C9; -fx-text-background-color: white");
-            } else if (settingsController != null) {
+            } else if (colorsController != null) {
                 switch (item.getSource()) {
                     case 1:
-                        setStyle("-fx-background-color: " + settingsController.predefinedColorSetController.rgb());
+                        setStyle("-fx-background-color: " + colorsController.predefinedColorSetController.rgb());
                         break;
                     case 2:
-                        setStyle("-fx-background-color: " + settingsController.inputtedColorSetController.rgb());
+                        setStyle("-fx-background-color: " + colorsController.inputtedColorSetController.rgb());
                         break;
                     case 3:
-                        setStyle("-fx-background-color: " + settingsController.filledColorSetController.rgb());
+                        setStyle("-fx-background-color: " + colorsController.filledColorSetController.rgb());
                         break;
                     case 4:
-                        setStyle("-fx-background-color: " + settingsController.statisticColorSetController.rgb());
+                        setStyle("-fx-background-color: " + colorsController.statisticColorSetController.rgb());
                         break;
                     default:
                         setStyle(null);
@@ -283,7 +285,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         try {
             super.afterSceneLoaded();
 
-//            settingsController.afterSceneLoaded();
+//            colorsController.afterSceneLoaded();
             chartController.initMap(this);
 
             setButtons();
@@ -312,7 +314,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             timer = null;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -365,7 +367,8 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -499,11 +502,11 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         tabsPane.getTabs().clear();
         topNumber = queryCondition.getTop();
         if (topNumber > 0) {
-            tabsPane.getTabs().addAll(chartsTab, dataTab, infoTab, settingsTab);
-            settingsController.adjustTabs(true);
+            tabsPane.getTabs().addAll(chartsTab, dataTab, infoTab, colorsTab);
+            colorsController.adjustTabs(true);
         } else {
-            tabsPane.getTabs().addAll(dataTab, infoTab, settingsTab);
-            settingsController.adjustTabs(false);
+            tabsPane.getTabs().addAll(dataTab, infoTab, colorsTab);
+            colorsController.adjustTabs(false);
         }
         if (tabsPane.getTabs().contains(currentTab)) {
             tabsPane.getSelectionModel().select(currentTab);
@@ -585,7 +588,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                         report.setLocation(location);
                         timeReports.add(report);
                         totalSize++;
-                        Number n = report.getNumber(valueName);
+                        Number n = EpidemicReportTools.getNumber(report, valueName);
                         if (n != null) {
                             double value = n.doubleValue();
                             if (value > maxValue) {
@@ -607,7 +610,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             locationsReports.clear();
             try ( PreparedStatement statement = conn.prepareStatement(TableEpidemicReport.LocationidQuery)) {
                 for (GeographyCode location : dataLocations) {
-                    statement.setLong(1, location.getGcid());
+                    statement.setLong(1, location.getId());
                     try ( ResultSet results = statement.executeQuery()) {
                         while (results.next()) {
                             EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, false);
@@ -656,7 +659,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         pageQueryString = pageQueryString + "</br>" + message("NumberTopDataDaily") + ": " + topNumber;
         List<EpidemicReport> data = new ArrayList();
         int start = 0;
-        int targetStart = currentPageStart;
+        int targetStart = currentPageStart - 1;
         int targetEnd = currentPageStart + currentPageSize;
         for (String date : dataTimes) {
             List<EpidemicReport> reports = timesReports.get(date);
@@ -725,7 +728,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         if (selected == null) {
             return;
         }
-        HtmlTools.viewHtml(message("LocationData"), selected.info("</br>"));
+        HtmlTools.viewHtml(baseTitle, BaseDataTools.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML
@@ -755,14 +758,14 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         final List<EpidemicReport> reports = new ArrayList();
         reports.addAll(selected);
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
 
                 @Override
                 protected boolean handle() {
-                    int source = EpidemicReport.source(sourceType);
+                    short source = EpidemicReport.source(sourceType);
                     for (EpidemicReport report : reports) {
                         report.setSource(source);
                     }
@@ -777,15 +780,11 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
-    }
-
-    @Override
-    protected DataExportController dataExporter() {
-        return (EpidemicReportsExportController) openStage(CommonValues.EpidemicReportsExportFxml);
     }
 
     @FXML
@@ -995,7 +994,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             sourceController.leavingScene();
             timeController.leavingScene();
             chartController.leavingScene();
-            settingsController.leavingScene();
+            colorsController.leavingScene();
 
         } catch (Exception e) {
         }

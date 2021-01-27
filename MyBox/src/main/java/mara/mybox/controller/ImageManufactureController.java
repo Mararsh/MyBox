@@ -43,9 +43,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.db.TableImageHistory;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.table.TableImageHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -452,25 +452,31 @@ public class ImageManufactureController extends ImageViewerController {
             loadImageHistories();
             updateBottom(message("Loaded"));
 
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            fitSize();
-                            refinePane();
-                        }
-                    });
-                }
-            }, 200);
+            autoSize();
 
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
+    }
+
+    public void autoSize() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        fitSize();
+                    }
+                });
+            }
+        }, 200);
     }
 
     @FXML
@@ -533,8 +539,11 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     public void showScopePane() {
-        if (isSettingValues || !imagePaneControl.isVisible()
-                || mainSplitPane.getItems().contains(scopePane)) {
+        if (isSettingValues || !imagePaneControl.isVisible()) {
+            return;
+        }
+        if (mainSplitPane.getItems().contains(scopePane)) {
+            autoSize();
             return;
         }
         isSettingValues = true;
@@ -550,7 +559,7 @@ public class ImageManufactureController extends ImageViewerController {
 //        if (scopeController.scopeAllRadio.isSelected()) {
 //            scopeController.scopeRectangleRadio.fire();
 //        }
-        fitSize();
+        autoSize();
         mainSplitPane.applyCss();
         isSettingValues = false;
     }
@@ -565,7 +574,7 @@ public class ImageManufactureController extends ImageViewerController {
         mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
         mainSplitPane.getItems().remove(scopePane);
         ControlStyle.setIconName(imagePaneControl, "iconDoubleRight.png");
-        fitSize();
+        autoSize();
         mainSplitPane.applyCss();
         isSettingValues = false;
     }
@@ -582,8 +591,11 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     public void showImagePane() {
-        if (isSettingValues || !scopePaneControl.isVisible()
-                || mainSplitPane.getItems().contains(imagePane)) {
+        if (isSettingValues || !scopePaneControl.isVisible()) {
+            return;
+        }
+        if (mainSplitPane.getItems().contains(imagePane)) {
+            autoSize();
             return;
         }
         isSettingValues = true;
@@ -596,7 +608,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
         ControlStyle.setIconName(scopePaneControl, "iconDoubleRight.png");
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-        fitSize();
+        autoSize();
         mainSplitPane.applyCss();
         isSettingValues = false;
     }
@@ -755,7 +767,7 @@ public class ImageManufactureController extends ImageViewerController {
                         try {
                             currentFile = sourceFile;
                             BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(newImage);
-                            if (isCancelled()) {
+                            if (task == null || isCancelled()) {
                                 return false;
                             }
                             String filename = getFilename();
@@ -765,14 +777,14 @@ public class ImageManufactureController extends ImageViewerController {
                             filename = new File(filename).getAbsolutePath();
                             finalname = new File(filename + ".png").getAbsolutePath();
                             ImageFileWriters.writeImageFile(bufferedImage, "png", finalname);
-                            if (isCancelled()) {
+                            if (task == null || isCancelled()) {
                                 return false;
                             }
 
                             thumbnail = ImageManufacture.scaleImageWidthKeep(bufferedImage,
                                     AppVariables.getUserConfigInt("ThumbnailWidth", 100));
                             String thumbname = new File(filename + "_thumbnail.png").getAbsolutePath();
-                            if (isCancelled()) {
+                            if (task == null || isCancelled()) {
                                 return false;
                             }
                             if (!ImageFileWriters.writeImageFile(thumbnail, "png", thumbname)) {

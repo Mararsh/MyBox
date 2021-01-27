@@ -13,8 +13,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
@@ -56,7 +59,7 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
  */
 public class BarcodeCreatorController extends ImageViewerController {
 
-    protected int dpi, fontSize, orientation, qrWidth, qrHeight, qrMargin,
+    protected int fontSize, orientation, qrWidth, qrHeight, qrMargin,
             pdf417ErrorCorrectionLevel, pdf417Width, pdf417Height, pdf417Margin,
             dmWidth, dmHeight;
     protected double narrowWidth, height1, barRatio, quietWidth;
@@ -70,7 +73,9 @@ public class BarcodeCreatorController extends ImageViewerController {
     @FXML
     protected VBox optionsBox, d1ParaBox, qrParaBox, pdf417ParaBox, dmParaBox;
     @FXML
-    protected ComboBox<String> dpiSelector, typeSelecor, sizeSelector, fontSelector,
+    protected ToggleGroup typeGroup;
+    @FXML
+    protected ComboBox<String> sizeSelector, fontSelector,
             orientationSelecor, barRatioSelecor, textPositionSelector, qrErrorCorrectionSelecor,
             pdf417ErrorCorrectionSelecor, pdf417CompactionSelecor;
     @FXML
@@ -108,23 +113,18 @@ public class BarcodeCreatorController extends ImageViewerController {
 
     protected void initCodeBox() {
         try {
-            codeType = BarcodeType.Code39;
+            codeType = BarcodeType.QR_Code;
 
-            for (BarcodeType type : BarcodeType.values()) {
-                typeSelecor.getItems().add(type.name());
-            }
-            typeSelecor.getItems().add(0, "-------" + message("2DimensionalBarcode") + "-------");
-            typeSelecor.getItems().add(4, "-------" + message("1DimensionalBarcode") + "-------");
-            typeSelecor.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    if (newV.startsWith("-----")) {
-                        createButton.setDisable(true);
+                public void changed(ObservableValue<? extends Toggle> v, Toggle oldV, Toggle newV) {
+                    if (newV == null) {
+                        startButton.setDisable(true);
                         return;
                     }
-                    createButton.setDisable(false);
-                    codeType = BarcodeType.valueOf(newV);
-                    AppVariables.setUserConfigValue("BarcodeType", newV);
+                    startButton.setDisable(false);
+                    codeType = BarcodeType.valueOf(((RadioButton) newV).getText());
+                    AppVariables.setUserConfigValue("BarcodeType", codeType.name());
 
                     optionsBox.getChildren().clear();
                     switch (codeType) {
@@ -196,7 +196,7 @@ public class BarcodeCreatorController extends ImageViewerController {
 
                 }
             });
-            typeSelecor.getSelectionModel().select(
+            FxmlControl.setRadioSelected(typeGroup,
                     AppVariables.getUserConfigValue("BarcodeType", BarcodeType.QR_Code.name()));
 
         } catch (Exception e) {
@@ -206,19 +206,6 @@ public class BarcodeCreatorController extends ImageViewerController {
 
     protected void initD1ParaBox() {
         try {
-            dpi = 300;
-            dpiSelector.getItems().addAll(Arrays.asList(
-                    "300", "160", "96", "72", "240", "120", "600", "400"
-            ));
-            dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    dpi = Integer.valueOf(dpiSelector.getValue());
-                    AppVariables.setUserConfigInt("BarcodeDpi", dpi);
-                }
-            });
-            dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("BarcodeDpi", "300"));
-
             orientation = 0;
             orientationSelecor.getItems().addAll(Arrays.asList(
                     "0", "90", "180", "270"
@@ -664,13 +651,13 @@ public class BarcodeCreatorController extends ImageViewerController {
 
     @FXML
     @Override
-    public void cancelAction() {
+    public void clearAction() {
         sourceFileInput.setText("");
     }
 
     @FXML
     @Override
-    public void createAction() {
+    public void startAction() {
         try {
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
@@ -682,7 +669,6 @@ public class BarcodeCreatorController extends ImageViewerController {
                     @Override
                     protected boolean handle() {
                         try {
-
                             AbstractBarcodeBean bean = null;
                             switch (codeType) {
                                 case QR_Code:
@@ -764,7 +750,6 @@ public class BarcodeCreatorController extends ImageViewerController {
                             if (bean == null) {
                                 return false;
                             }
-
                             bean.setFontName(fontName);
                             bean.setFontSize(fontSize);
                             bean.setModuleWidth(narrowWidth);

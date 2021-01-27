@@ -12,34 +12,28 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
-import mara.mybox.controller.MapOptionsController.MapName;
-import mara.mybox.data.Location;
-import mara.mybox.data.StringTable;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.controller.ControlMapOptions.MapName;
+import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.data.Location;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
@@ -47,11 +41,9 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -59,7 +51,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-1-24
  * @License Apache License Version 2.0
  */
-public class LocationDataMapController extends MapBaseController {
+public class LocationDataMapController extends BaseMapController {
 
     protected LocationDataController dataController;
     protected String dataSet;
@@ -74,11 +66,9 @@ public class LocationDataMapController extends MapBaseController {
     @FXML
     protected ToggleGroup displayGroup;
     @FXML
-    protected VBox viewBox, dataOptionsBox;
+    protected VBox dataOptionsBox, playBox;
     @FXML
     protected CheckBox overlayCheck, centerCheck, accumulateCheck, linkCheck;
-    @FXML
-    protected FlowPane sequenceOptionsPane;
     @FXML
     protected Button snapshotButton;
 
@@ -187,10 +177,7 @@ public class LocationDataMapController extends MapBaseController {
         Location center = locations.get(0);
         webEngine.executeScript("setCenter(" + center.getLongitude() + ", " + center.getLatitude() + ");");
         if (distributionRadio.isSelected()) {
-            playBox.setVisible(false);
-            if (dataOptionsBox.getChildren().contains(sequenceOptionsPane)) {
-                dataOptionsBox.getChildren().remove(sequenceOptionsPane);
-            }
+            playBox.setDisable(true);
             drawLocations();
             return;
         }
@@ -199,10 +186,7 @@ public class LocationDataMapController extends MapBaseController {
         } else {
             drawn.clear();
         }
-        playBox.setVisible(true);
-        if (!dataOptionsBox.getChildren().contains(sequenceOptionsPane)) {
-            dataOptionsBox.getChildren().add(sequenceOptionsPane);
-        }
+        playBox.setDisable(false);
         drawSequence();
     }
 
@@ -227,7 +211,7 @@ public class LocationDataMapController extends MapBaseController {
                         List<Location> points = new ArrayList<>();
                         Location point;
                         for (Location location : locations) {
-                            if (!location.validCoordinate()) {
+                            if (!Location.valid(location)) {
                                 continue;
                             }
                             if (mapOptionsController.mapName == MapName.GaoDe) {
@@ -277,7 +261,8 @@ public class LocationDataMapController extends MapBaseController {
                                     frameEnd = false;
                                     Location location = locations.get(index);
                                     drawPoint(location.getLongitude(), location.getLatitude(),
-                                            markerLabel(location), markerImage(location), location.info("</BR>"),
+                                            markerLabel(location), markerImage(location),
+                                            BaseDataTools.displayData(dataController.tableDefinition, location, null, true),
                                             textColor(location));
                                     if (!centered) {
                                         webEngine.executeScript("setCenter(" + location.getLongitude() + ", " + location.getLatitude() + ");");
@@ -290,7 +275,7 @@ public class LocationDataMapController extends MapBaseController {
                                             timer.cancel();
                                             timer = null;
                                         }
-                                        if (mapOptionsController.mapName == MapOptionsController.MapName.GaoDe
+                                        if (mapOptionsController.mapName == ControlMapOptions.MapName.GaoDe
                                                 && mapOptionsController.fitViewCheck.isSelected()) {
                                             webEngine.executeScript("map.setFitView();");
                                         }
@@ -330,18 +315,14 @@ public class LocationDataMapController extends MapBaseController {
         if (locations == null || locations.isEmpty()) {
             return "";
         }
-        List<String> names = new ArrayList<>();
-        names.addAll(dataController.tableDefinition.importAllFields());
-        StringTable table = new StringTable(names);
+        List<BaseData> list = new ArrayList<>();
         for (Location location : locations) {
             if (task == null || task.isCancelled()) {
                 return "";
             }
-            List<String> row = new ArrayList<>();
-            row.addAll(Location.externalValues(location));
-            table.add(row);
+            list.add(location);
         }
-        return StringTable.tableDiv(table);
+        return BaseDataTools.htmlDataList(dataController.tableDefinition, list, null);
     }
 
     public String markerImage(Location location) {
@@ -382,7 +363,7 @@ public class LocationDataMapController extends MapBaseController {
             label += location.getAddress();
         }
         if (mapOptionsController.markerCoordinateCheck.isSelected()
-                && location.validCoordinate()) {
+                && Location.valid(location)) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
@@ -488,7 +469,7 @@ public class LocationDataMapController extends MapBaseController {
                         startTimes = new ArrayList<>();
                         Location point;
                         for (Location location : locations) {
-                            if (!location.validCoordinate()) {
+                            if (!Location.valid(location)) {
                                 continue;
                             }
                             if (mapOptionsController.mapName == MapName.GaoDe) {
@@ -680,7 +661,7 @@ public class LocationDataMapController extends MapBaseController {
                     continue;
                 }
                 Location location = locations.get(i);
-                if (!location.validCoordinate()) {
+                if (!Location.valid(location)) {
                     continue;
                 }
                 long locationStart = location.getStartTime();
@@ -709,7 +690,8 @@ public class LocationDataMapController extends MapBaseController {
             }
             Color color = textColor(location);
             drawPoint(longitude, latitude,
-                    markerLabel(location), markerImage(location), location.info("</BR>"),
+                    markerLabel(location), markerImage(location),
+                    BaseDataTools.displayData(dataController.tableDefinition, location, null, true),
                     color);
             if (linkCheck.isSelected() && lastPointIndex >= 0) {
                 Location lastPoint = locations.get(lastPointIndex);
@@ -755,134 +737,17 @@ public class LocationDataMapController extends MapBaseController {
         dataController.reloadChart();
     }
 
-    @FXML
-    protected void popSnapMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            menu = new MenuItem(message("HtmlDataAndCurrentFrame"));
-            menu.setOnAction((ActionEvent event) -> {
-                super.htmlAction(title, viewBox);
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("SnapCurrentFrame"));
-            menu.setOnAction((ActionEvent event) -> {
-                snapCurrentFrame();
-            });
-            popMenu.getItems().add(menu);
-
-            if (sequenceRadio.isSelected()) {
-
-                menu = new MenuItem(message("JpgAllFrames"));
-                menu.setOnAction((ActionEvent event) -> {
-                    snapAllFrames("jpg");
-                });
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("PngAllFrames"));
-                menu.setOnAction((ActionEvent event) -> {
-                    snapAllFrames("png");
-                });
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(message("GifAllFrames"));
-                menu.setOnAction((ActionEvent event) -> {
-                    snapAllFrames("gif");
-                });
-                popMenu.getItems().add(menu);
-
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    @Override
+    protected void snapAllMenu() {
+        if (sequenceRadio.isSelected()) {
+            super.snapAllMenu();
         }
     }
 
-    protected void snapCurrentFrame() {
-        String name = titleLabel.getText()
-                + (!frameLabel.getText().isBlank() ? " " + frameLabel.getText() : "")
-                + ".png";
-        File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                name, CommonFxValues.ImageExtensionFilter);
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file, VisitHistory.FileType.Image);
-
-        double scale = dpi / Screen.getPrimary().getDpi();
-        scale = scale > 1 ? scale : 1;
-        SnapshotParameters snapPara = new SnapshotParameters();
-        snapPara.setFill(Color.TRANSPARENT);
-        snapPara.setTransform(Transform.scale(scale, scale));
-
-        Bounds bounds = viewBox.getLayoutBounds();
-        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-        final Image mapSnap = viewBox.snapshot(snapPara, snapshot);
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        String format = FileTools.getFileSuffix(file);
-                        format = format == null || format.isBlank() ? "png" : format;
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                        return file.exists();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    FxmlStage.openImageViewer(file);
-                }
-
-            };
-            if (parentController != null) {
-                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            } else {
-                openHandlingStage(task, Modality.WINDOW_MODAL);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-
-    }
-
+    @Override
     protected void snapAllFrames(String format) {
         if (distributionRadio.isSelected()) {
-            super.htmlAction(title, viewBox);
+            snapHtml();
             return;
         }
         try {
@@ -897,10 +762,10 @@ public class LocationDataMapController extends MapBaseController {
             }
             recordFileWritten(directory, VisitHistory.FileType.Image);
 
-            String name = title.replaceAll("\\\"|\n|:", "");
-            String filePath = directory.getAbsolutePath() + File.separator + name + File.separator;
-            new File(filePath).mkdirs();
-            final String filePrefix = filePath + File.separator + name;
+            String snapName = snapName(false);
+            File filePath = new File(directory.getAbsolutePath() + File.separator + snapName + File.separator);
+            filePath.mkdirs();
+            String filePrefix = filePath + File.separator + snapName;
 
             if (loading != null) {
                 loading.closeStage();
@@ -917,7 +782,7 @@ public class LocationDataMapController extends MapBaseController {
             snapPara.setFill(Color.TRANSPARENT);
             snapPara.setTransform(Transform.scale(scale, scale));
 
-            Bounds bounds = viewBox.getLayoutBounds();
+            Bounds bounds = snapBox.getLayoutBounds();
             int imageWidth = (int) Math.round(bounds.getWidth() * scale);
             int imageHeight = (int) Math.round(bounds.getHeight() * scale);
 
@@ -985,7 +850,7 @@ public class LocationDataMapController extends MapBaseController {
 
                 private void snap() {
                     try {
-                        Image snap = viewBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
+                        Image snap = snapBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
                         File imageFile = new File(filePrefix + "_Frame" + frameIndex + "." + rformat);
                         ImageFileWriters.writeImageFile(bufferedImage, rformat, imageFile.getAbsolutePath());
@@ -1023,7 +888,7 @@ public class LocationDataMapController extends MapBaseController {
                                         controller.sourceFileChanged(gifFile);
                                     }
                                 } else {
-                                    browseURI(directory.toURI());
+                                    browseURI(filePath.toURI());
                                 }
                             }
                             if (loading != null) {

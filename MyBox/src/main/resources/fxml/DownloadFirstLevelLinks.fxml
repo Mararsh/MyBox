@@ -189,12 +189,7 @@ License:    Apache License Version 2.0
                                                         </FlowPane>
                                                         <VBox fx:id="pdfOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                                             <children>
-                                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="830.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%FontFile" wrapText="true" HBox.hgrow="NEVER" />
-                                                                        <ComboBox fx:id="ttfSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                    </children>
-                                                                </HBox>
+                                                                <fx:include fx:id="ttf" source="ControlTTFSelector.fxml" />
                                                                 <Label minHeight="-Infinity" text="%HtmlToPdfStyle" wrapText="true" VBox.vgrow="NEVER" />
                                                                 <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="180.0" VBox.vgrow="ALWAYS" />
                                                             </children>

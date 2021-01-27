@@ -17,13 +17,12 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import mara.mybox.controller.AlarmClockController;
-import mara.mybox.data.CustomizedLanguage;
-import mara.mybox.db.TableSystemConf;
-import mara.mybox.db.TableUserConf;
+import mara.mybox.data.UserLanguage;
+import mara.mybox.data.UserTableLanguage;
+import mara.mybox.db.table.TableSystemConf;
+import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
-import static mara.mybox.value.CommonValues.BundleEn;
-import static mara.mybox.value.CommonValues.BundleZhCN;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
@@ -39,7 +38,7 @@ public class AppVariables {
     public static String MyboxDataPath, AlarmClocksFile;
     public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath, MyBoxDownloadsPath;
     public static List<File> MyBoxReservePaths;
-    public static ResourceBundle currentBundle;
+    public static ResourceBundle currentBundle, currentTableBundle;
     public static Map<String, String> userConfigValues;
     public static Map<String, String> systemConfigValues;
     public static ScheduledExecutorService executorService;
@@ -48,7 +47,7 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
-            disableHiDPI, devMode, hidpiIcons;
+            disableHiDPI, devMode, hidpiIcons, ignoreDbUnavailable, popErrorLogs;
     public static ControlStyle.ColorStyle ControlColor;
     public static SSLSocketFactory defaultSSLSocketFactory;
     public static HostnameVerifier defaultHostnameVerifier;
@@ -61,6 +60,7 @@ public class AppVariables {
             userConfigValues = new HashMap<>();
             systemConfigValues = new HashMap<>();
             getBundle();
+            getTableBundle();
             getPdfMem();
             devMode = getUserConfigBoolean("DevMode", false);
             openStageInNewWindow = getUserConfigBoolean("OpenStageInNewWindow", false);
@@ -73,7 +73,8 @@ public class AppVariables {
             controlDisplayText = getUserConfigBoolean("ControlDisplayText", false);
             hidpiIcons = getUserConfigBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
             devMode = getUserConfigBoolean("DevMode", false);
-            disableHiDPI = false;
+            disableHiDPI = ignoreDbUnavailable = false;
+            popErrorLogs = true;
             if (defaultSSLSocketFactory == null) {
                 defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
                 defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
@@ -98,100 +99,109 @@ public class AppVariables {
         return getLanguage().startsWith("zh");
     }
 
-    public static ResourceBundle setLanguage(String lang) {
+    public static void setLanguage(String lang) {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
         setUserConfigValue("language", lang);
-        return getBundle();
+        currentBundle = getBundle(lang);
+        currentTableBundle = getTableBundle(lang);
     }
 
     public static ResourceBundle getBundle() {
-        String lang = getLanguage();
-        if (lang == null) {
-            lang = Locale.getDefault().getLanguage().toLowerCase();
-        }
-        if (lang.startsWith("zh")) {
-            currentBundle = CommonValues.BundleZhCN;
-        } else if (lang.startsWith("en")) {
-            currentBundle = CommonValues.BundleEn;
-        } else {
-            try {
-                currentBundle = new CustomizedLanguage(lang);
-            } catch (Exception e) {
-            }
-            if (currentBundle == null) {
-                currentBundle = CommonValues.BundleEn;
-            }
+        if (currentBundle == null) {
+            currentBundle = getBundle(getLanguage());
         }
         return currentBundle;
     }
 
-    public static String message(String language, String thestr) {
-        try {
-            if (thestr.trim().isEmpty()) {
-                return thestr;
-            }
-            if (language == null) {
-                language = Locale.getDefault().getLanguage().toLowerCase();
-            }
-            String value;
-            String lang = language.toLowerCase();
-            if (lang.startsWith("zh")) {
-                value = BundleZhCN.getString(thestr);
-            } else {
-                value = BundleEn.getString(thestr);
-            }
-//            MyBoxLog.debug(language + " " + thestr + " " + value);
-            return value;
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return thestr;
-        }
-    }
-
-    public static String message(String thestr) {
-        try {
-            if (currentBundle == null) {
-                currentBundle = CommonValues.BundleEn;
-            }
-            return currentBundle.getString(thestr);
-        } catch (Exception e) {
-            return thestr;
-        }
-    }
-
-    public static ResourceBundle getTableBundle() {
-        return getTableBundle(getLanguage());
-    }
-
-    public static ResourceBundle getTableBundle(String language) {
+    public static ResourceBundle getBundle(String language) {
         String lang = language;
-        if (language == null) {
-            lang = Locale.getDefault().getLanguage();
+        if (lang == null) {
+            lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        lang = lang.toLowerCase();
-        ResourceBundle bundle;
+        ResourceBundle bundle = null;
         if (lang.startsWith("zh")) {
-            bundle = CommonValues.TableBundleZhCN;
+            bundle = CommonValues.BundleZhCN;
+        } else if (lang.startsWith("en")) {
+            bundle = CommonValues.BundleEn;
         } else {
-            bundle = CommonValues.TableBundleEn;
+            try {
+                bundle = new UserLanguage(lang);
+            } catch (Exception e) {
+            }
+            if (bundle == null) {
+                bundle = CommonValues.BundleEn;
+            }
         }
         return bundle;
     }
 
-    public static String tableMessage(String language, String thestr) {
+    public static String message(String language, String msg) {
         try {
-            String s = thestr.toLowerCase();
-            ResourceBundle bundle = getTableBundle(language);
-            return bundle.getString(s);
+            if (msg.isBlank()) {
+                return msg;
+            }
+            ResourceBundle bundle = getBundle(language);
+            return bundle.getString(msg);
         } catch (Exception e) {
-            return thestr;
+            return msg;
         }
     }
 
-    public static String tableMessage(String thestr) {
-        return tableMessage(getLanguage(), thestr);
+    public static String message(String msg) {
+        try {
+            return getBundle().getString(msg);
+        } catch (Exception e) {
+            return msg;
+        }
+    }
+
+    public static ResourceBundle getTableBundle() {
+        if (currentTableBundle == null) {
+            currentTableBundle = getTableBundle(getLanguage());
+        }
+        return currentTableBundle;
+    }
+
+    public static ResourceBundle getTableBundle(String language) {
+        String lang = language;
+        if (lang == null) {
+            lang = Locale.getDefault().getLanguage().toLowerCase();
+        }
+        ResourceBundle bundle = null;
+        if (lang.startsWith("zh")) {
+            bundle = CommonValues.TableBundleZhCN;
+        } else if (lang.startsWith("en")) {
+            bundle = CommonValues.TableBundleEn;
+        } else {
+            try {
+                bundle = new UserTableLanguage(lang);
+            } catch (Exception e) {
+            }
+            if (bundle == null) {
+                bundle = CommonValues.TableBundleEn;
+            }
+        }
+        return bundle;
+    }
+
+    public static String tableMessage(String language, String msg) {
+        try {
+            String s = msg.toLowerCase();
+            ResourceBundle bundle = getTableBundle(language);
+            return bundle.getString(s);
+        } catch (Exception e) {
+            return msg;
+        }
+    }
+
+    public static String tableMessage(String msg) {
+        try {
+            return getTableBundle().getString(msg);
+        } catch (Exception e) {
+            return msg;
+        }
     }
 
     public static TimeZone getTimeZone() {
@@ -251,8 +261,8 @@ public class AppVariables {
     }
 
     public static boolean setSceneFontSize(int size) {
+        sceneFontSize = size;
         if (setUserConfigInt("SceneFontSize", size)) {
-            sceneFontSize = size;
             return true;
         } else {
             return false;
@@ -260,8 +270,8 @@ public class AppVariables {
     }
 
     public static boolean setIconSize(int size) {
+        iconSize = size;
         if (setUserConfigInt("IconSize", size)) {
-            iconSize = size;
             return true;
         } else {
             return false;
@@ -310,7 +320,6 @@ public class AppVariables {
 
     public static String getUserConfigValue(String key, String defaultValue) {
         try {
-//            MyBoxLog.debug("getUserConfigValue:" + key);
             String value;
             if (userConfigValues.containsKey(key)) {
                 value = userConfigValues.get(key);
@@ -326,31 +335,35 @@ public class AppVariables {
     }
 
     public static int getUserConfigInt(String key, int defaultValue) {
-        try {
-            int v;
-            if (userConfigValues.containsKey(key)) {
-                v = Integer.valueOf(userConfigValues.get(key));
-            } else {
-                v = TableUserConf.readInt(key, defaultValue);
-                userConfigValues.put(key, v + "");
+        if (userConfigValues.containsKey(key)) {
+            try {
+                int v = Integer.valueOf(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
             }
+        }
+        try {
+            int v = TableUserConf.readInt(key, defaultValue);
+            userConfigValues.put(key, v + "");
             return v;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return defaultValue;
         }
     }
 
     public static long getUserConfigLong(String key, long defaultValue) {
-        try {
-            long v;
-            if (userConfigValues.containsKey(key)) {
-                v = Long.valueOf(userConfigValues.get(key));
-            } else {
-                String s = TableUserConf.readString(key, defaultValue + "");
-                v = Long.valueOf(s);
-                userConfigValues.put(key, v + "");
+        if (userConfigValues.containsKey(key)) {
+            try {
+                long v = Long.valueOf(userConfigValues.get(key));
+                return v;
+            } catch (Exception e) {
             }
+        }
+        try {
+            String s = TableUserConf.readString(key, defaultValue + "");
+            long v = Long.valueOf(s);
+            userConfigValues.put(key, v + "");
             return v;
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
@@ -359,14 +372,16 @@ public class AppVariables {
     }
 
     public static boolean getUserConfigBoolean(String key, boolean defaultValue) {
-        try {
-            boolean v;
-            if (userConfigValues.containsKey(key)) {
-                v = userConfigValues.get(key).equals("true");
-            } else {
-                v = TableUserConf.readBoolean(key, defaultValue);
-                userConfigValues.put(key, v ? "true" : "false");
+        if (userConfigValues.containsKey(key)) {
+            try {
+                boolean v = userConfigValues.get(key).equals("true");
+                return v;
+            } catch (Exception e) {
             }
+        }
+        try {
+            boolean v = TableUserConf.readBoolean(key, defaultValue);
+            userConfigValues.put(key, v ? "true" : "false");
             return v;
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
@@ -433,17 +448,18 @@ public class AppVariables {
     }
 
     public static boolean setUserConfigValue(String key, String value) {
-        if (TableUserConf.writeString(key, value) > 0) {
-            userConfigValues.put(key, value);
+        userConfigValues.put(key, value);
+        if (TableUserConf.writeString(key, value) >= 0) {
             return true;
         } else {
+            MyBoxLog.console(key + " " + value);
             return false;
         }
     }
 
     public static boolean setUserConfigValue(Connection conn, String key, String value) {
-        if (TableUserConf.writeString(conn, key, value) > 0) {
-            userConfigValues.put(key, value);
+        userConfigValues.put(key, value);
+        if (TableUserConf.writeString(conn, key, value) >= 0) {
             return true;
         } else {
             return false;
@@ -451,8 +467,8 @@ public class AppVariables {
     }
 
     public static boolean setUserConfigInt(String key, int value) {
+        userConfigValues.put(key, value + "");
         if (TableUserConf.writeInt(key, value) > 0) {
-            userConfigValues.put(key, value + "");
             return true;
         } else {
             return false;
@@ -460,8 +476,8 @@ public class AppVariables {
     }
 
     public static boolean setUserConfigValue(String key, boolean value) {
+        userConfigValues.put(key, value ? "true" : "false");
         if (TableUserConf.writeBoolean(key, value) > 0) {
-            userConfigValues.put(key, value ? "true" : "false");
             return true;
         } else {
             return false;
@@ -523,8 +539,8 @@ public class AppVariables {
     }
 
     public static boolean setSystemConfigValue(String key, String value) {
+        systemConfigValues.put(key, value);
         if (TableSystemConf.writeString(key, value) >= 0) {
-            systemConfigValues.put(key, value);
             return true;
         } else {
             return false;
@@ -532,8 +548,8 @@ public class AppVariables {
     }
 
     public static boolean setSystemConfigInt(String key, int value) {
+        systemConfigValues.put(key, value + "");
         if (TableSystemConf.writeInt(key, value) >= 0) {
-            systemConfigValues.put(key, value + "");
             return true;
         } else {
             return false;
@@ -541,8 +557,8 @@ public class AppVariables {
     }
 
     public static boolean setSystemConfigValue(String key, boolean value) {
+        systemConfigValues.put(key, value ? "true" : "false");
         if (TableSystemConf.writeBoolean(key, value) >= 0) {
-            systemConfigValues.put(key, value ? "true" : "false");
             return true;
         } else {
             return false;

@@ -6,9 +6,7 @@ import com.github.jaiimageio.impl.plugins.wbmp.WBMPMetadata;
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
-
 import mara.mybox.dev.MyBoxLog;
-
 
 /**
  * @Author Mara
@@ -18,17 +16,16 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ImageWbmpFile {
 
-    
-
     public static WBMPMetadata getWbmpMetadata(File file) {
         try {
+            WBMPMetadata metadata;
             WBMPImageReader reader = new WBMPImageReader(new WBMPImageReaderSpi());
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
-                WBMPMetadata metadata = (WBMPMetadata) reader.getImageMetadata(0);
+                metadata = (WBMPMetadata) reader.getImageMetadata(0);
                 reader.dispose();
-                return metadata;
             }
+            return metadata;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

@@ -19,8 +19,8 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.PdfInformation;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
@@ -162,7 +162,7 @@ public class PdfHtmlViewerController extends PdfViewController {
                             }
                             if (atBottom) {  // Go next at second time
                                 atBottom = false;
-                                nextAction();
+                                pageNextAction();
                             } else {         // buffering at first time
                                 atBottom = true;
                                 setScroll = true;
@@ -176,7 +176,7 @@ public class PdfHtmlViewerController extends PdfViewController {
                             }
                             if (atTop) {  // Go previous at second time
                                 atTop = false;
-                                previousAction();
+                                pagePreviousAction();
                             } else {         // buffering at first time
                                 atTop = true;
                                 setScroll = true;
@@ -195,7 +195,7 @@ public class PdfHtmlViewerController extends PdfViewController {
                 public void changed(ObservableValue ov, State oldState, State newState) {
                     try {
                         if (newState == State.SUCCEEDED) {
-                            String contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
+                            String contents = FxmlControl.getHtml(webEngine);
                             htmlEditor.setHtmlText(contents);
                             textArea.setText(contents);
                         }
@@ -216,7 +216,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             webEngine.load(null);
             currentPage = page;
             infoLoaded.set(false);
-            pageSelector.setValue("1");
+            pageSelector.setValue(null);
             pageLabel.setText("");
             thumbBox.getChildren().clear();
             outlineTree.setRoot(null);
@@ -300,9 +300,11 @@ public class PdfHtmlViewerController extends PdfViewController {
                     atBottom = false;
 
                     getMyStage().setTitle(getBaseTitle() + " " + title);
+                    isSettingValues = true;
                     pageSelector.setValue((currentPage + 1) + "");
-                    previousButton.setDisable(currentPage <= 0);
-                    nextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
+                    isSettingValues = false;
+                    pagePreviousButton.setDisable(currentPage <= 0);
+                    pageNextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL,

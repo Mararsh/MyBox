@@ -90,8 +90,9 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @Override
     protected void paneExpanded() {
         imageController.showRightPane();
-        imageController.showImagePane();
+        imageController.resetImagePane();
         imageController.hideScopePane();
+        imageController.showImagePane();
     }
 
     @FXML

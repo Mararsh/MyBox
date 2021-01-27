@@ -67,10 +67,10 @@ License:    Apache License Version 2.0
                                 <Image url="@../buttons/iconTips.png" />
                             </image>
                         </ImageView>
-                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="dpi" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="DPI" HBox.hgrow="ALWAYS" />
                         <ComboBox fx:id="dpiSelector" editable="true" prefWidth="100.0" />
-                        <Label text="%LoadRetryDelay" />
-                        <ComboBox fx:id="delayBox" editable="true" prefWidth="100.0" />
+                        <Label text="%RetryDelay" />
+                        <ComboBox fx:id="delayBox" editable="true" prefWidth="80.0" />
                         <RadioButton mnemonicParsing="false" selected="true" text="%OneImage">
                             <toggleGroup>
                                 <ToggleGroup fx:id="snapGroup" />

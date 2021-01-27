@@ -1,16 +1,18 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.stage.Modality;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.StringTable;
-import mara.mybox.data.tools.GeographyCodeTools;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -20,12 +22,26 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class GeographyCodeMapController extends MapBaseController {
+public class GeographyCodeMapController extends BaseMapController {
 
+    protected TableGeographyCode geoTable;
+    protected BaseDataManageController dataController;
     protected List<GeographyCode> geographyCodes;
 
     public GeographyCodeMapController() {
         baseTitle = message("Map") + " - " + message("GeographyCode");
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            geoTable = new TableGeographyCode();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -43,8 +59,8 @@ public class GeographyCodeMapController extends MapBaseController {
         }
     }
 
-    public void initMap(BaseController dataController) {
-        parentController = dataController;
+    public void initMap(BaseDataManageController dataController) {
+        this.dataController = dataController;
         initSplitPanes();
     }
 
@@ -62,7 +78,7 @@ public class GeographyCodeMapController extends MapBaseController {
                 return;
             }
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -72,9 +88,9 @@ public class GeographyCodeMapController extends MapBaseController {
                     @Override
                     protected boolean handle() {
                         points = new ArrayList<>();
-                        if (mapOptionsController.mapName == MapOptionsController.MapName.GaoDe) {
+                        if (mapOptionsController.mapName == ControlMapOptions.MapName.GaoDe) {
                             points = GeographyCodeTools.toGCJ02(geographyCodes);
-                        } else if (mapOptionsController.mapName == MapOptionsController.MapName.TianDiTu) {
+                        } else if (mapOptionsController.mapName == ControlMapOptions.MapName.TianDiTu) {
                             points = GeographyCodeTools.toCGCS2000(geographyCodes, false);
                         }
                         return true;
@@ -112,10 +128,12 @@ public class GeographyCodeMapController extends MapBaseController {
                                         frameEnd = false;
                                         GeographyCode geographyCode = points.get(index);
                                         drawPoint(geographyCode.getLongitude(), geographyCode.getLatitude(),
-                                                markerLabel(geographyCode), markerImage(), geographyCode.info("</BR>"),
+                                                markerLabel(geographyCode), markerImage(),
+                                                BaseDataTools.displayData(geoTable, geographyCode, null, true),
                                                 textColor());
                                         if (!centered) {
-                                            webEngine.executeScript("setCenter(" + geographyCode.getLongitude() + ", " + geographyCode.getLatitude() + ");");
+                                            webEngine.executeScript("setCenter(" + geographyCode.getLongitude()
+                                                    + ", " + geographyCode.getLatitude() + ");");
                                             centered = true;
                                         }
                                         index++;
@@ -125,7 +143,7 @@ public class GeographyCodeMapController extends MapBaseController {
                                                 timer.cancel();
                                                 timer = null;
                                             }
-                                            if (mapOptionsController.mapName == MapOptionsController.MapName.GaoDe
+                                            if (mapOptionsController.mapName == ControlMapOptions.MapName.GaoDe
                                                     && mapOptionsController.fitViewCheck.isSelected()) {
                                                 webEngine.executeScript("map.setFitView();");
                                             }
@@ -140,12 +158,13 @@ public class GeographyCodeMapController extends MapBaseController {
 
                     }
                 };
-                if (parentController != null) {
-                    parentController.openHandlingStage(task, Modality.WINDOW_MODAL, "Loading map data");
+                if (dataController != null) {
+                    dataController.openHandlingStage(task, Modality.WINDOW_MODAL, "Loading map data");
                 } else {
                     openHandlingStage(task, Modality.WINDOW_MODAL, "Loading map data");
                 }
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -154,23 +173,24 @@ public class GeographyCodeMapController extends MapBaseController {
         }
     }
 
+    protected List<String> displayNames() {
+        return Arrays.asList("level", "coordinate_system", "longitude", "latitude",
+                "chinese_name", "english_name", "alias1", "code1", "area", "population");
+    }
+
     @Override
     protected String writePointsTable() {
         if (geographyCodes == null || geographyCodes.isEmpty()) {
             return "";
         }
-        List<String> names = new ArrayList<>();
-        names.addAll(new TableGeographyCode().importAllFields());
-        StringTable table = new StringTable(names);
+        List<BaseData> list = new ArrayList<>();
         for (GeographyCode geographyCode : geographyCodes) {
             if (task == null || task.isCancelled()) {
                 return "";
             }
-            List<String> row = new ArrayList<>();
-            row.addAll(GeographyCodeTools.externalValues(geographyCode));
-            table.add(row);
+            list.add(geographyCode);
         }
-        return StringTable.tableDiv(table);
+        return BaseDataTools.htmlDataList(geoTable, list, displayNames());
     }
 
     public String markerLabel(GeographyCode geographyCode) {
@@ -191,7 +211,7 @@ public class GeographyCodeMapController extends MapBaseController {
             }
         }
         if (mapOptionsController.markerCoordinateCheck.isSelected()
-                && geographyCode.validCoordinate()) {
+                && GeographyCodeTools.validCoordinate(geographyCode)) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
@@ -216,6 +236,11 @@ public class GeographyCodeMapController extends MapBaseController {
         drawPoints();
     }
 
+    @Override
+    protected void snapAllMenu() {
+
+    }
+
     @FXML
     @Override
     public void clearAction() {
@@ -229,8 +254,8 @@ public class GeographyCodeMapController extends MapBaseController {
 
     @Override
     public void reloadData() {
-        if (parentController != null && parentController instanceof DataAnalysisController) {
-            ((DataAnalysisController) parentController).reloadChart();
+        if (dataController != null) {
+            dataController.reloadChart();
         }
     }
 

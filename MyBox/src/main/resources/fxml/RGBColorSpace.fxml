@@ -48,42 +48,67 @@ License:    Apache License Version 2.0
       <FlowPane hgap="5.0" layoutX="20.0" layoutY="193.0" vgap="5.0" />
         <VBox fx:id="primariesBox" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-            <FlowPane hgap="5.0" vgap="5.0">
+                  <Label minWidth="-Infinity" text="%Red" VBox.vgrow="NEVER" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                <children>
-                        <Label prefWidth="80.0" text="%Red" />
                         <Label fx:id="redXLabel" text="X" />
                         <TextField fx:id="redXInput" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="50.0" spacing="5.0">
+               <children>
                         <Label fx:id="redYLabel" text="Y" />
                         <TextField fx:id="redYInput" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="478.0" spacing="5.0">
+               <children>
                         <Label fx:id="redZLabel" text="Z" />
                         <TextField fx:id="redZInput" prefWidth="150.0" />
                </children>
-            </FlowPane>
-            <FlowPane hgap="5.0" vgap="5.0">
+            </HBox>
+                  <Label minWidth="-Infinity" text="%Green" />
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="478.0" spacing="5.0">
                <children>
-                        <Label prefWidth="80.0" text="%Green" />
                         <Label fx:id="greenXLabel" text="X" />
                         <TextField fx:id="greenXInput" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="483.0" spacing="5.0">
+               <children>
                         <Label fx:id="greenYLabel" text="Y" />
                         <TextField fx:id="greenYInput" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="488.0" spacing="5.0">
+               <children>
                         <Label fx:id="greenZLabel" text="Z" />
                         <TextField fx:id="greenZInput" prefWidth="150.0" />
                </children>
-            </FlowPane>
-            <FlowPane hgap="5.0" vgap="5.0">
+            </HBox>
+                  <Label minWidth="-Infinity" text="%Blue" />
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="493.0" spacing="5.0">
                <children>
-                        <Label prefWidth="80.0" text="%Blue" />
                         <Label fx:id="blueXLabel" text="X" />
                         <TextField fx:id="blueXInput" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="551.0" spacing="5.0">
+               <children>
                         <Label fx:id="blueYLabel" text="Y" />
                         <TextField fx:id="blueYInput" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="546.0" spacing="5.0">
+               <children>
                         <Label fx:id="blueZLabel" text="Z" />
                         <TextField fx:id="blueZInput" prefWidth="150.0" />
                </children>
-            </FlowPane>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="536.0" spacing="5.0" />
             </children>
             <VBox.margin>
-                <Insets left="20.0" />
+                <Insets />
             </VBox.margin>
         </VBox>
         <VBox fx:id="whiteVBox" spacing="5.0">
@@ -99,27 +124,30 @@ License:    Apache License Version 2.0
                </children>
             </FlowPane>
                   <RadioButton fx:id="inputWPRadio" mnemonicParsing="false" text="%InputWhitePoint" toggleGroup="$wGroup" />
-                <HBox fx:id="whiteHBox" alignment="CENTER_LEFT" spacing="10.0">
-                    <children>
-                        <Label prefWidth="80.0" text="%White" />
-                        <Label fx:id="whiteXLabel" text="X">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </Label>
-                        <TextField fx:id="whiteXInput" prefWidth="150.0" />
-                        <Label fx:id="whiteYLabel" text="Y" />
-                        <TextField fx:id="whiteYInput" prefWidth="150.0" />
-                        <Label fx:id="whiteZLabel" text="Z" />
-                        <TextField fx:id="whiteZInput" prefWidth="150.0" />
-                    </children>
-                    <VBox.margin>
-                        <Insets left="30.0" />
-                    </VBox.margin>
-                </HBox>
+            <VBox fx:id="whiteValuesBox" spacing="5.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                              <Label fx:id="whiteXLabel" text="X" />
+                              <TextField fx:id="whiteXInput" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                              <Label fx:id="whiteYLabel" text="Y" />
+                              <TextField fx:id="whiteYInput" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                              <Label fx:id="whiteZLabel" text="Z" />
+                              <TextField fx:id="whiteZInput" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             </children>
         </VBox>
-      <FlowPane hgap="5.0" layoutX="20.0" layoutY="643.0" vgap="5.0" />
     </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

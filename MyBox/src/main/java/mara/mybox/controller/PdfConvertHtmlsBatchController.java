@@ -12,11 +12,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.PdfInformation;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.tools.FileTools;
-import mara.mybox.data.tools.VisitHistoryTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
@@ -141,7 +141,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
                     }
                     for (currentParameters.currentPage = currentParameters.startPage;
                             currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
-                        if (task.isCancelled()) {
+                        if (task == null || task.isCancelled()) {
                             break;
                         }
                         updateLogs(message("HandlingPage") + ":" + currentParameters.currentPage, true, true);

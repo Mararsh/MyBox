@@ -263,7 +263,6 @@ public class ImageManufacture {
     }
 
     public static BufferedImage scaleImageHeightKeep(BufferedImage source, int height) {
-        int width = source.getWidth() * height / source.getHeight();
         return scaleImageHeightKeep(source, height, -1, -1, -1, -1);
     }
 
@@ -1978,7 +1977,6 @@ public class ImageManufacture {
             BufferedImage[] bfs = new BufferedImage[2];
             int width = source.getWidth();
             int height = source.getHeight();
-            int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage alphaImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             BufferedImage noAlphaImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Color color, newColor;

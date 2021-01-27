@@ -19,12 +19,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebEngine;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.NetworkTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -44,7 +44,7 @@ public class WebBrowserController extends BaseController {
     protected float zoomScale;
     protected boolean loadSynchronously, isFrameSet;
     protected int cols, rows;
-    protected Map<Tab, WebBrowserBoxController> tabControllers;
+    protected Map<Tab, ControlWebBrowserBox> tabControllers;
 
     @FXML
     protected Button loadButton;
@@ -124,7 +124,7 @@ public class WebBrowserController extends BaseController {
             return null;
         }
         for (Tab tab : tabControllers.keySet()) {
-            WebBrowserBoxController c = tabControllers.get(tab);
+            ControlWebBrowserBox c = tabControllers.get(tab);
             return c.webEngine;
         }
         return null;
@@ -135,10 +135,10 @@ public class WebBrowserController extends BaseController {
         newTabAction(null, true);
     }
 
-    protected WebBrowserBoxController newTabAction(String address, boolean focus) {
+    protected ControlWebBrowserBox newTabAction(String address, boolean focus) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(
-                    CommonValues.WebBrowserBoxFxml), AppVariables.currentBundle);
+                    CommonValues.ControlWebBrowserBoxFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
             ImageView tabImage = new ImageView("img/MyBox.png");
@@ -151,7 +151,7 @@ public class WebBrowserController extends BaseController {
                 tabPane.getSelectionModel().select(tab);
             }
 
-            WebBrowserBoxController controller = (WebBrowserBoxController) fxmlLoader.getController();
+            ControlWebBrowserBox controller = (ControlWebBrowserBox) fxmlLoader.getController();
             controller.parent = this;
             controller.tab = tab;
             tabControllers.put(tab, controller);
@@ -174,14 +174,14 @@ public class WebBrowserController extends BaseController {
     }
 
     public void loadFile(File file) {
-        WebBrowserBoxController c = newTabAction(null, true);
+        ControlWebBrowserBox c = newTabAction(null, true);
         c.loadFile(file);
     }
 
     @FXML
     protected void editAction() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        WebBrowserBoxController controller = tabControllers.get(tab);
+        ControlWebBrowserBox controller = tabControllers.get(tab);
         if (controller == null) {
             return;
         }
@@ -192,7 +192,7 @@ public class WebBrowserController extends BaseController {
     @FXML
     protected void zoomIn() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        WebBrowserBoxController controller = tabControllers.get(tab);
+        ControlWebBrowserBox controller = tabControllers.get(tab);
         if (controller == null) {
             return;
         }
@@ -202,7 +202,7 @@ public class WebBrowserController extends BaseController {
     @FXML
     protected void zoomOut() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        WebBrowserBoxController controller = tabControllers.get(tab);
+        ControlWebBrowserBox controller = tabControllers.get(tab);
         if (controller == null) {
             return;
         }
@@ -212,7 +212,7 @@ public class WebBrowserController extends BaseController {
     @FXML
     protected void backAction() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        WebBrowserBoxController controller = tabControllers.get(tab);
+        ControlWebBrowserBox controller = tabControllers.get(tab);
         if (controller == null) {
             return;
         }
@@ -222,7 +222,7 @@ public class WebBrowserController extends BaseController {
     @FXML
     protected void forwardAction() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        WebBrowserBoxController controller = tabControllers.get(tab);
+        ControlWebBrowserBox controller = tabControllers.get(tab);
         if (controller == null) {
             return;
         }
@@ -232,7 +232,7 @@ public class WebBrowserController extends BaseController {
     @FXML
     protected void refreshAction() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        WebBrowserBoxController controller = tabControllers.get(tab);
+        ControlWebBrowserBox controller = tabControllers.get(tab);
         if (controller == null) {
             return;
         }

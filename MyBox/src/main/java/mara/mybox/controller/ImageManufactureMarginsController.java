@@ -22,11 +22,11 @@ import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -48,11 +48,11 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
             preAlphaCheck;
     @FXML
-    private FlowPane colorBox, distanceBox, marginsBox, alphaBox;
+    protected FlowPane colorBox, distanceBox, marginsBox, alphaBox;
     @FXML
-    private HBox widthBox;
+    protected HBox widthBox;
     @FXML
-    private TextField distanceInput;
+    protected TextField distanceInput;
     @FXML
     protected RadioButton dragRadio, addRadio, blurRadio, cutColorRadio, cutWidthRadio;
     @FXML
@@ -133,13 +133,14 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     @Override
     protected void paneExpanded() {
+        imageController.showRightPane();
         checkOperationType();
     }
 
     private void checkOperationType() {
         imageController.resetImagePane();
-        imageController.showImagePane();
         imageController.hideScopePane();
+        imageController.showImagePane();
         setBox.getChildren().clear();
         FxmlControl.setEditorNormal(marginWidthBox);
         distanceInput.setStyle(null);

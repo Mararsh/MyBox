@@ -2,18 +2,22 @@ package mara.mybox.controller;
 
 import java.util.Date;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import mara.mybox.db.TableMyBoxLog;
+import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableDateCell;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -22,7 +26,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-2-3
  * @License Apache License Version 2.0
  */
-public class MyBoxLogController extends DataAnalysisController<MyBoxLog> {
+public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
 
     @FXML
     protected MyBoxLogTypeController typeController;
@@ -35,6 +39,8 @@ public class MyBoxLogController extends DataAnalysisController<MyBoxLog> {
     protected TableColumn<MyBoxLog, Long> mblidColumn;
     @FXML
     protected TableColumn<MyBoxLog, Date> timeColumn;
+    @FXML
+    protected CheckBox popCheck;
 
     public MyBoxLogController() {
         baseTitle = message("MyBoxLogs");
@@ -45,10 +51,6 @@ public class MyBoxLogController extends DataAnalysisController<MyBoxLog> {
         tableDefinition = new TableMyBoxLog();
     }
 
-//    @Override
-//    protected DataExportController dataExporter() {
-//        return (MyBoxLogExportController) openStage(CommonValues.MyBoxLogExportFxml);
-//    }
     @Override
     protected void initColumns() {
         try {
@@ -98,6 +100,13 @@ public class MyBoxLogController extends DataAnalysisController<MyBoxLog> {
     public void initControls() {
         try {
             super.initControls();
+
+            popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.popErrorLogs = popCheck.isSelected();
+                }
+            });
 
             typeController.loadTree();
         } catch (Exception e) {

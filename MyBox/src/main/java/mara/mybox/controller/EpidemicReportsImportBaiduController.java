@@ -25,24 +25,23 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import mara.mybox.data.EpidemicReport;
-import static mara.mybox.data.EpidemicReport.create;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
-import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
-
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.EpidemicReport;
+import static mara.mybox.db.data.EpidemicReport.create;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -51,7 +50,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-2-16
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsImportBaiduController extends DataTaskController {
+public class EpidemicReportsImportBaiduController extends BaseTaskController {
 
     protected EpidemicReportsController parent;
     protected Date reportTime;
@@ -94,11 +93,11 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
     protected boolean doTask() {
         try {
             if (TableGeographyCode.China() == null) {
-                updateLogs(message("LoadingPredefinedGeographyCodes"), true);
+                updateLogs(message("LoadingPredefinedGeographyCodes"));
                 GeographyCodeTools.importPredefined();
             }
             reports = new ArrayList();
-            updateLogs(address, true);
+            updateLogs(address);
             URL url = new URL(address);
             File pageFile = FileTools.getTempFile(".txt");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -118,20 +117,20 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
                     outputStream.write(buf, 0, len);
                 }
             } catch (Exception e) {
-                updateLogs(e.toString(), true);
+                updateLogs(e.toString());
             }
-            updateLogs(pageFile.getAbsolutePath(), true);
+            updateLogs(pageFile.getAbsolutePath());
 
             readData(pageFile);
 
             if (task == null || task.isCancelled()) {
                 return false;
             }
-            updateLogs(message("Importing") + " " + message("DataSize") + ":" + reports.size(), true);
+            updateLogs(message("Importing") + " " + message("DataSize") + ":" + reports.size());
             return TableEpidemicReport.write(reports, replaceCheck.isSelected()) > 0;
 
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
             return false;
         }
 
@@ -174,7 +173,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             int pos = jsonString.indexOf("2020");
             String dateString = jsonString.substring(pos, pos + 10) + EpidemicReport.COVID19TIME;
             reportTime = DateTools.stringToDatetime(dateString, CommonValues.DatetimeFormat6);
-            updateLogs(dateString, true);
+            updateLogs(dateString);
 
             try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
                 while (true) {
@@ -201,12 +200,12 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             } catch (Exception e) {
                 MyBoxLog.error(e);
                 MyBoxLog.debug(e.toString());
-                updateLogs(e.toString(), true);
+                updateLogs(e.toString());
             }
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
         }
     }
 
@@ -261,18 +260,18 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             if (code == null) {
                 code = new GeographyCode();
                 code.setChineseName(area);
-                code.setLevelCode(new GeographyCodeLevel(3));
+                code.setLevelCode(new GeographyCodeLevel((short) 3));
                 TableGeographyCode.insert(conn, code);
             }
             EpidemicReport areaReport = create().
-                    setDataSet(Dataset).setSource(2)
+                    setDataSet(Dataset).setSource((short) 2)
                     .setTime(reportTime.getTime())
-                    .setLocationid(code.getGcid()).setLocation(code)
+                    .setLocationid(code.getId()).setLocation(code)
                     .setConfirmed(confirmed).setHealed(crued).setDead(died);
 
             if (confirmed > 0 || died > 0 || crued > 0) {
                 reports.add(areaReport);
-                updateLogs(Dataset + " " + code.getName() + " " + confirmed + " " + crued + " " + died, false);
+                updateLogs(Dataset + " " + code.getName() + " " + confirmed + " " + crued + " " + died);
             }
 
             startPos = areaValues.indexOf("\"subList\":[");
@@ -287,7 +286,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
         }
     }
 
@@ -319,8 +318,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
         }
     }
 
@@ -387,22 +385,22 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             if (code == null) {
                 code = new GeographyCode();
                 code.setChineseName(city);
-                code.setLevelCode(new GeographyCodeLevel(5));
+                code.setLevelCode(new GeographyCodeLevel((short) 5));
                 code.setCountry(area.getCountry());
                 code.setProvince(area.getProvince());
                 TableGeographyCode.insert(conn, code);
             }
             EpidemicReport cityReport = create().
-                    setDataSet(Dataset).setSource(2)
+                    setDataSet(Dataset).setSource((short) 2)
                     .setTime(reportTime.getTime())
-                    .setLocationid(code.getGcid()).setLocation(code)
+                    .setLocationid(code.getId()).setLocation(code)
                     .setConfirmed(confirmed).setHealed(crued).setDead(died);
-            updateLogs(Dataset + " " + code.getName() + " " + confirmed + " " + crued + " " + died, false);
+            updateLogs(Dataset + " " + code.getName() + " " + confirmed + " " + crued + " " + died);
 
             return cityReport;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
 
         }
         return null;

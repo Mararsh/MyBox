@@ -45,7 +45,7 @@ License:    Apache License Version 2.0
                 <Label text="%License" GridPane.rowIndex="3" />
                 <Label text="%FreeOpenSource" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <Hyperlink fx:id="licenseLink" onAction="#link" text="http://www.apache.org/licenses/LICENSE-2.0" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label text="%SourceCode" GridPane.rowIndex="5" />
+                <Label text="%MainPage" GridPane.rowIndex="5" />
                 <Hyperlink fx:id="sourceLink" onAction="#link" text="https://github.com/Mararsh/MyBox" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <Label text="%LatestRelease" GridPane.rowIndex="6" />
                 <Hyperlink fx:id="releasesLink" onAction="#link" text="https://github.com/Mararsh/MyBox/releases" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />

@@ -9,12 +9,16 @@ package mara.mybox.tools;
  */
 public class FloatTools {
 
+    public static float scale(float fvalue, int scale) {
+        return (float) DoubleTools.scale(fvalue, scale);
+    }
+
     public static float roundFloat2(float fvalue) {
-        return (float) DoubleTools.scale(fvalue, 2);
+        return scale(fvalue, 2);
     }
 
     public static float roundFloat5(float fvalue) {
-        return (float) DoubleTools.scale(fvalue, 5);
+        return scale(fvalue, 5);
     }
 
     public static double[] toDouble(float[] f) {

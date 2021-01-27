@@ -23,7 +23,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchController extends ImagesBatchController {
+public class ImageManufactureBatchController extends BaseImagesBatchController {
 
     protected String errorString, targetFormat;
 
@@ -58,9 +58,9 @@ public class ImageManufactureBatchController extends ImagesBatchController {
     protected void checkFileType() {
         RadioButton selected = (RadioButton) fileTypeGroup.getSelectedToggle();
         if (message("OriginalType").equals(selected.getText())) {
-            targetFileType = null;
+            targetFileSuffix = null;
         } else {
-            targetFileType = selected.getText();
+            targetFileSuffix = selected.getText();
         }
     }
 
@@ -76,7 +76,7 @@ public class ImageManufactureBatchController extends ImagesBatchController {
             }
             String targetName = target.getAbsolutePath();
             BufferedImage sourceImage = ImageFileReaders.readImage(srcFile);
-            targetFormat = targetFileType;
+            targetFormat = targetFileSuffix;
             if (targetFormat == null) {
                 targetFormat = FileTools.getFileSuffix(srcFile.getName());
             }

@@ -57,21 +57,21 @@ public class MainMenuController extends BaseController {
     private BaseTask iconTask;
 
     @FXML
-    private Pane mainMenuPane;
+    protected Pane mainMenuPane;
     @FXML
-    private ToggleGroup langGroup;
+    protected ToggleGroup langGroup;
     @FXML
-    private RadioMenuItem chineseMenuItem, englishMenuItem,
+    protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
             normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
             pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem;
     @FXML
-    private CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
+    protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
             newWindowCheck, restoreStagesSizeCheck, popRecentCheck, controlTextCheck, hidpiIconsCheck;
     @FXML
-    private Menu settingsMenu, recentMenu, helpMenu;
+    protected Menu settingsMenu, recentMenu, helpMenu;
     @FXML
-    private MenuItem manageLanguagesMenuItem, makeIconsItem;
+    protected MenuItem manageLanguagesMenuItem, makeIconsItem;
 
     @Override
     public void initControls() {
@@ -98,7 +98,7 @@ public class MainMenuController extends BaseController {
         }
     }
 
-    private void checkSettings() {
+    protected void checkSettings() {
         checkLanguage();
         checkFontSize();
         checkIconSize();
@@ -122,7 +122,7 @@ public class MainMenuController extends BaseController {
         for (int i = pos2 - 1; i > pos1; --i) {
             items.remove(i);
         }
-        List<String> languages = ConfigTools.languages();
+        List<String> languages = ConfigTools.userLanguages();
         if (languages != null && !languages.isEmpty()) {
             String lang = AppVariables.getLanguage();
             for (int i = 0; i < languages.size(); ++i) {
@@ -233,6 +233,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    protected void closeWindow(ActionEvent event) {
+        parentController.closeStage();
+    }
+
+    @FXML
     protected void closeOtherWindows(ActionEvent event) {
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
@@ -264,7 +269,7 @@ public class MainMenuController extends BaseController {
         openStage(CommonValues.ShortcutsFxml);
     }
 
-    private void makeMemoryMonitorBox() {
+    protected void makeMemoryMonitorBox() {
         sysMemLabel = new Label();
         sysMemBar = new ProgressBar();
         sysMemBar.setPrefHeight(20);
@@ -293,7 +298,7 @@ public class MainMenuController extends BaseController {
         }
     }
 
-    private void startMemoryMonitorTimer() {
+    protected void startMemoryMonitorTimer() {
         try {
             if (memoryBox == null) {
                 return;
@@ -365,7 +370,7 @@ public class MainMenuController extends BaseController {
         }
     }
 
-    private void makeCpuMonitorBox() {
+    protected void makeCpuMonitorBox() {
         sysCpuLabel = new Label();
         sysCpuBar = new ProgressBar();
         sysCpuBar.setPrefHeight(20);
@@ -390,7 +395,7 @@ public class MainMenuController extends BaseController {
         }
     }
 
-    private void startCpuMonitorTimer() {
+    protected void startCpuMonitorTimer() {
         try {
             if (cpuBox == null) {
                 return;
@@ -694,7 +699,7 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void exit(ActionEvent event) {
+    protected void exit(ActionEvent event) {
         FxmlStage.appExit();
     }
 
@@ -718,578 +723,593 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openPdfView(ActionEvent event) {
+    protected void openPdfView(ActionEvent event) {
         loadScene(CommonValues.PdfViewFxml);
     }
 
     @FXML
-    private void openPdfHtmlViewer(ActionEvent event) {
+    protected void openPdfHtmlViewer(ActionEvent event) {
         loadScene(CommonValues.PdfHtmlViewerFxml);
     }
 
     @FXML
-    private void openPDFAttributes(ActionEvent event) {
+    protected void openPDFAttributes(ActionEvent event) {
         loadScene(CommonValues.PdfAttributesFxml);
     }
 
     @FXML
-    private void openPDFAttributesBatch(ActionEvent event) {
+    protected void openPDFAttributesBatch(ActionEvent event) {
         loadScene(CommonValues.PdfAttributesBatchFxml);
     }
 
     @FXML
-    private void openPdfConvertImagesBatch(ActionEvent event) {
+    protected void openPdfConvertImagesBatch(ActionEvent event) {
         loadScene(CommonValues.PdfConvertImagesBatchFxml);
     }
 
     @FXML
-    private void openPdfConvertHtmlsBatch(ActionEvent event) {
+    protected void openPdfConvertHtmlsBatch(ActionEvent event) {
         loadScene(CommonValues.PdfConvertHtmlsBatchFxml);
     }
 
     @FXML
-    private void openImagesCombinePdf(ActionEvent event) {
+    protected void openImagesCombinePdf(ActionEvent event) {
         loadScene(CommonValues.ImagesCombinePdfFxml);
     }
 
     @FXML
-    private void openPdfExtractTextsBatch(ActionEvent event) {
+    protected void openPdfExtractTextsBatch(ActionEvent event) {
         loadScene(CommonValues.PdfExtractTextsBatchFxml);
     }
 
     @FXML
-    private void openPdfExtractImagesBatch(ActionEvent event) {
+    protected void openPdfExtractImagesBatch(ActionEvent event) {
         loadScene(CommonValues.PdfExtractImagesBatchFxml);
     }
 
     @FXML
-    private void openPdfImagesConvertBatch(ActionEvent event) {
+    protected void openPdfImagesConvertBatch(ActionEvent event) {
         loadScene(CommonValues.PdfImagesConvertBatchFxml);
     }
 
     @FXML
-    private void openMergePdf(ActionEvent event) {
+    protected void openMergePdf(ActionEvent event) {
         loadScene(CommonValues.PdfMergeFxml);
     }
 
     @FXML
-    private void openPdfSplitBatch(ActionEvent event) {
+    protected void openPdfSplitBatch(ActionEvent event) {
         loadScene(CommonValues.PdfSplitBatchFxml);
     }
 
     @FXML
-    private void openPdfOCRBatch(ActionEvent event) {
+    protected void openPdfOCRBatch(ActionEvent event) {
         loadScene(CommonValues.PdfOCRBatchFxml);
     }
 
     @FXML
-    private void openCompressPdfImagesBatch(ActionEvent event) {
+    protected void openCompressPdfImagesBatch(ActionEvent event) {
         loadScene(CommonValues.PdfCompressImagesBatchFxml);
     }
 
     @FXML
-    private void openImageViewer(ActionEvent event) {
+    protected void openImageViewer(ActionEvent event) {
         loadScene(CommonValues.ImageViewerFxml);
     }
 
     @FXML
-    private void openImagesBrowser(ActionEvent event) {
+    protected void openImagesBrowser(ActionEvent event) {
         loadScene(CommonValues.ImagesBrowserFxml);
     }
 
     @FXML
-    private void openImageData(ActionEvent event) {
+    protected void openImageData(ActionEvent event) {
         loadScene(CommonValues.ImageAnalyseFxml);
     }
 
     @FXML
-    private void openImageConverterBatch(ActionEvent event) {
+    protected void openImageConverterBatch(ActionEvent event) {
         loadScene(CommonValues.ImageConverterBatchFxml);
     }
 
     @FXML
-    private void openImageManufacture(ActionEvent event) {
+    protected void openImageManufacture(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchSize(ActionEvent event) {
+    protected void openImageManufactureBatchSize(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchSizeFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchCrop(ActionEvent event) {
+    protected void openImageManufactureBatchCrop(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchCropFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchColor(ActionEvent event) {
+    protected void openImageManufactureBatchColor(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchColorFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchEffects(ActionEvent event) {
+    protected void openImageManufactureBatchEffects(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchEffectsFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchEnhancement(ActionEvent event) {
+    protected void openImageManufactureBatchEnhancement(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchEnhancementFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchReplaceColor(ActionEvent event) {
+    protected void openImageManufactureBatchReplaceColor(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchReplaceColorFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchText(ActionEvent event) {
+    protected void openImageManufactureBatchText(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchTextFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchArc(ActionEvent event) {
+    protected void openImageManufactureBatchArc(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchArcFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchShadow(ActionEvent event) {
+    protected void openImageManufactureBatchShadow(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchShadowFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchTransform(ActionEvent event) {
+    protected void openImageManufactureBatchTransform(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchTransformFxml);
     }
 
     @FXML
-    private void openImageManufactureBatchMargins(ActionEvent event) {
+    protected void openImageManufactureBatchMargins(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchMarginsFxml);
     }
 
     @FXML
-    private void openImageSplit(ActionEvent event) {
+    protected void openImageSplit(ActionEvent event) {
         loadScene(CommonValues.ImageSplitFxml);
     }
 
     @FXML
-    private void openImageSample(ActionEvent event) {
+    protected void openImageSample(ActionEvent event) {
         loadScene(CommonValues.ImageSampleFxml);
     }
 
     @FXML
-    private void openImagesCombine(ActionEvent event) {
+    protected void openImagesCombine(ActionEvent event) {
         loadScene(CommonValues.ImagesCombineFxml);
     }
 
     @FXML
-    private void openImageGifViewer(ActionEvent event) {
+    protected void openImageGifViewer(ActionEvent event) {
         loadScene(CommonValues.ImageGifViewerFxml);
     }
 
     @FXML
-    private void openImageGifEditer(ActionEvent event) {
+    protected void openImageGifEditer(ActionEvent event) {
         loadScene(CommonValues.ImageGifEditerFxml);
     }
 
     @FXML
-    private void openImageTiffEditer(ActionEvent event) {
+    protected void openImageTiffEditer(ActionEvent event) {
         loadScene(CommonValues.ImageTiffEditerFxml);
     }
 
     @FXML
-    private void openImageFramesViewer(ActionEvent event) {
+    protected void openImageFramesViewer(ActionEvent event) {
         loadScene(CommonValues.ImageFramesViewerFxml);
     }
 
     @FXML
-    private void openImagesBlend(ActionEvent event) {
+    protected void openImagesBlend(ActionEvent event) {
         loadScene(CommonValues.ImagesBlendFxml);
     }
 
     @FXML
-    private void openImageStatistic(ActionEvent event) {
+    protected void openImageStatistic(ActionEvent event) {
         loadScene(CommonValues.ImageStatisticFxml);
     }
 
     @FXML
-    private void openImageAlphaExtract(ActionEvent event) {
+    protected void openImageAlphaExtract(ActionEvent event) {
         loadScene(CommonValues.ImageAlphaExtractBatchFxml);
     }
 
     @FXML
-    private void openImageAlphaAdd(ActionEvent event) {
+    protected void openImageAlphaAdd(ActionEvent event) {
         loadScene(CommonValues.ImageAlphaAddBatchFxml);
     }
 
     @FXML
-    private void openImageOCR(ActionEvent event) {
+    protected void openImageOCR(ActionEvent event) {
         loadScene(CommonValues.ImageOCRFxml);
     }
 
     @FXML
-    private void openImageOCRBatch(ActionEvent event) {
+    protected void openImageOCRBatch(ActionEvent event) {
         loadScene(CommonValues.ImageOCRBatchFxml);
     }
 
     @FXML
-    private void openConvolutionKernelManager(ActionEvent event) {
+    protected void openConvolutionKernelManager(ActionEvent event) {
         loadScene(CommonValues.ConvolutionKernelManagerFxml);
     }
 
     @FXML
-    private void openColorPalette(ActionEvent event) {
+    protected void openColorPalette(ActionEvent event) {
         openStage(CommonValues.ColorPaletteManageFxml);
     }
 
     @FXML
-    private void openManageColors(ActionEvent event) {
+    protected void openManageColors(ActionEvent event) {
         loadScene(CommonValues.ManageColorsFxml);
     }
 
     @FXML
-    private void openIccProfileEditor(ActionEvent event) {
+    protected void openIccProfileEditor(ActionEvent event) {
         loadScene(CommonValues.IccProfileEditorFxml);
     }
 
     @FXML
-    private void openChromaticityDiagram(ActionEvent event) {
+    protected void openChromaticityDiagram(ActionEvent event) {
         loadScene(CommonValues.ChromaticityDiagramFxml);
     }
 
     @FXML
-    private void openChromaticAdaptationMatrix(ActionEvent event) {
+    protected void openChromaticAdaptationMatrix(ActionEvent event) {
         loadScene(CommonValues.ChromaticAdaptationMatrixFxml);
     }
 
     @FXML
-    private void openColorConversion(ActionEvent event) {
+    protected void openColorConversion(ActionEvent event) {
         loadScene(CommonValues.ColorConversionFxml);
     }
 
     @FXML
-    private void openRGBColorSpaces(ActionEvent event) {
+    protected void openRGBColorSpaces(ActionEvent event) {
         loadScene(CommonValues.RGBColorSpacesFxml);
     }
 
     @FXML
-    private void openRGB2XYZConversionMatrix(ActionEvent event) {
+    protected void openRGB2XYZConversionMatrix(ActionEvent event) {
         loadScene(CommonValues.RGB2XYZConversionMatrixFxml);
     }
 
     @FXML
-    private void openRGB2RGBConversionMatrix(ActionEvent event) {
+    protected void openRGB2RGBConversionMatrix(ActionEvent event) {
         loadScene(CommonValues.RGB2RGBConversionMatrixFxml);
     }
 
     @FXML
-    private void openIlluminants(ActionEvent event) {
+    protected void openIlluminants(ActionEvent event) {
         loadScene(CommonValues.IlluminantsFxml);
     }
 
     @FXML
-    private void openMatricesCalculation(ActionEvent event) {
-        loadScene(CommonValues.MatricesCalculationFxml);
+    protected void openMatricesManage(ActionEvent event) {
+        loadScene(CommonValues.MatricesManageFxml);
     }
 
     @FXML
-    private void openPixelsCalculator(ActionEvent event) {
+    protected void openMatrixUnaryCalculation(ActionEvent event) {
+        loadScene(CommonValues.MatrixUnaryCalculationFxml);
+    }
+
+    @FXML
+    protected void openMatricesBinaryCalculation(ActionEvent event) {
+        loadScene(CommonValues.MatricesBinaryCalculationFxml);
+    }
+
+    @FXML
+    protected void openPixelsCalculator(ActionEvent event) {
         openStage(CommonValues.PixelsCalculatorFxml);
     }
 
     @FXML
-    private void openFilesRename(ActionEvent event) {
+    protected void openFilesRename(ActionEvent event) {
         loadScene(CommonValues.FilesRenameFxml);
     }
 
     @FXML
-    private void openDirectorySynchronize(ActionEvent event) {
+    protected void openDirectorySynchronize(ActionEvent event) {
         loadScene(CommonValues.DirectorySynchronizeFxml);
     }
 
     @FXML
-    private void openFilesArrangement(ActionEvent event) {
+    protected void openFilesArrangement(ActionEvent event) {
         loadScene(CommonValues.FilesArrangementFxml);
     }
 
     @FXML
-    private void openDeleteEmptyDirectories(ActionEvent event) {
+    protected void openDeleteEmptyDirectories(ActionEvent event) {
         loadScene(CommonValues.FilesDeleteEmptyDirFxml);
     }
 
     @FXML
-    private void openDeleteSysTempPath(ActionEvent event) {
+    protected void openDeleteSysTempPath(ActionEvent event) {
         loadScene(CommonValues.FilesDeleteSysTempFxml);
     }
 
     @FXML
-    private void openDeleteNestedDirectories(ActionEvent event) {
+    protected void openDeleteNestedDirectories(ActionEvent event) {
         loadScene(CommonValues.FilesDeleteNestedDirFxml);
     }
 
     @FXML
-    private void openAlarmClock(ActionEvent event) {
+    protected void openAlarmClock(ActionEvent event) {
         loadScene(CommonValues.AlarmClockFxml);
     }
 
     @FXML
-    private void openHtmlEditor(ActionEvent event) {
+    protected void openHtmlEditor(ActionEvent event) {
         loadScene(CommonValues.HtmlEditorFxml);
     }
 
     @FXML
-    private void openTextEditer(ActionEvent event) {
+    protected void openTextEditer(ActionEvent event) {
         loadScene(CommonValues.TextEditerFxml);
     }
 
     @FXML
-    private void openTextEncodingBatch(ActionEvent event) {
+    protected void openTextEncodingBatch(ActionEvent event) {
         loadScene(CommonValues.TextEncodingBatchFxml);
     }
 
     @FXML
-    private void openTextLineBreakBatch(ActionEvent event) {
+    protected void openTextLineBreakBatch(ActionEvent event) {
         loadScene(CommonValues.TextLineBreakBatchFxml);
     }
 
     @FXML
-    private void openTextReplaceBatch(ActionEvent event) {
+    protected void openTextReplaceBatch(ActionEvent event) {
         loadScene(CommonValues.TextReplaceBatchFxml);
     }
 
     @FXML
-    private void openTextToHtml(ActionEvent event) {
+    protected void openTextToHtml(ActionEvent event) {
         loadScene(CommonValues.TextToHtmlFxml);
     }
 
     @FXML
-    private void openBytesEditer(ActionEvent event) {
+    protected void openBytesEditer(ActionEvent event) {
         loadScene(CommonValues.BytesEditerFxml);
     }
 
     @FXML
-    private void openFileCut(ActionEvent event) {
+    protected void openFileCut(ActionEvent event) {
         loadScene(CommonValues.FileCutFxml);
     }
 
     @FXML
-    private void openFilesMerge(ActionEvent event) {
+    protected void openFilesMerge(ActionEvent event) {
         loadScene(CommonValues.FilesMergeFxml);
     }
 
     @FXML
-    private void openFilesDelete(ActionEvent event) {
+    protected void openFilesDelete(ActionEvent event) {
         loadScene(CommonValues.FilesDeleteFxml);
     }
 
     @FXML
-    private void openFilesCopy(ActionEvent event) {
+    protected void openFilesCopy(ActionEvent event) {
         loadScene(CommonValues.FilesCopyFxml);
     }
 
     @FXML
-    private void openFilesMove(ActionEvent event) {
+    protected void openFilesMove(ActionEvent event) {
         loadScene(CommonValues.FilesMoveFxml);
     }
 
     @FXML
-    private void openFilesFind(ActionEvent event) {
+    protected void openFilesFind(ActionEvent event) {
         loadScene(CommonValues.FilesFindFxml);
     }
 
     @FXML
-    private void openMarkdownEditer(ActionEvent event) {
+    protected void openMarkdownEditer(ActionEvent event) {
         loadScene(CommonValues.MarkdownEditorFxml);
     }
 
     @FXML
-    private void openMarkdownToHtml(ActionEvent event) {
+    protected void openMarkdownToHtml(ActionEvent event) {
         loadScene(CommonValues.MarkdownToHtmlFxml);
     }
 
     @FXML
-    private void openMarkdownToText(ActionEvent event) {
+    protected void openMarkdownToText(ActionEvent event) {
         loadScene(CommonValues.MarkdownToTextFxml);
     }
 
     @FXML
-    private void openMarkdownToPdf(ActionEvent event) {
+    protected void openMarkdownToPdf(ActionEvent event) {
         loadScene(CommonValues.MarkdownToPdfFxml);
     }
 
     @FXML
-    private void openHtmlToMarkdown(ActionEvent event) {
+    protected void openHtmlToMarkdown(ActionEvent event) {
         loadScene(CommonValues.HtmlToMarkdownFxml);
     }
 
     @FXML
-    private void openHtmlToText(ActionEvent event) {
+    protected void openHtmlToText(ActionEvent event) {
         loadScene(CommonValues.HtmlToTextFxml);
     }
 
     @FXML
-    private void openHtmlToPdf(ActionEvent event) {
+    protected void openHtmlToPdf(ActionEvent event) {
         loadScene(CommonValues.HtmlToPdfFxml);
     }
 
     @FXML
-    private void openHtmlSetCharset(ActionEvent event) {
+    protected void openHtmlSetCharset(ActionEvent event) {
         loadScene(CommonValues.HtmlSetCharsetFxml);
     }
 
     @FXML
-    private void openHtmlSnap(ActionEvent event) {
+    protected void openHtmlSetStyle(ActionEvent event) {
+        loadScene(CommonValues.HtmlSetStyleFxml);
+    }
+
+    @FXML
+    protected void openHtmlSnap(ActionEvent event) {
         loadScene(CommonValues.HtmlSnapFxml);
     }
 
     @FXML
-    private void openHtmlMergeAsHtml(ActionEvent event) {
+    protected void openHtmlMergeAsHtml(ActionEvent event) {
         loadScene(CommonValues.HtmlMergeAsHtmlFxml);
     }
 
     @FXML
-    private void openHtmlMergeAsMarkdown(ActionEvent event) {
+    protected void openHtmlMergeAsMarkdown(ActionEvent event) {
         loadScene(CommonValues.HtmlMergeAsMarkdownFxml);
     }
 
     @FXML
-    private void openHtmlMergeAsPDF(ActionEvent event) {
+    protected void openHtmlMergeAsPDF(ActionEvent event) {
         loadScene(CommonValues.HtmlMergeAsPDFFxml);
     }
 
     @FXML
-    private void openHtmlMergeAsText(ActionEvent event) {
+    protected void openHtmlMergeAsText(ActionEvent event) {
         loadScene(CommonValues.HtmlMergeAsTextFxml);
     }
 
     @FXML
-    private void openHtmlFrameset(ActionEvent event) {
+    protected void openHtmlFrameset(ActionEvent event) {
         loadScene(CommonValues.HtmlFramesetFxml);
     }
 
     @FXML
-    private void openRecordImages(ActionEvent event) {
+    protected void openRecordImages(ActionEvent event) {
         loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
     }
 
     @FXML
-    private void openWeiboSnap(ActionEvent event) {
+    protected void openWeiboSnap(ActionEvent event) {
         WeiboSnapController controller
                 = (WeiboSnapController) loadScene(CommonValues.WeiboSnapFxml);
     }
 
     @FXML
-    private void openBarcodeCreator(ActionEvent event) {
+    protected void openBarcodeCreator(ActionEvent event) {
         loadScene(CommonValues.BarcodeCreatorFxml);
     }
 
     @FXML
-    private void openBarcodeDecoder(ActionEvent event) {
+    protected void openBarcodeDecoder(ActionEvent event) {
         loadScene(CommonValues.BarcodeDecoderFxml);
     }
 
     @FXML
-    private void openMessageDigest(ActionEvent event) {
+    protected void openMessageDigest(ActionEvent event) {
         loadScene(CommonValues.MessageDigestFxml);
     }
 
     @FXML
-    private void openFilesCompare(ActionEvent event) {
+    protected void openFilesCompare(ActionEvent event) {
         loadScene(CommonValues.FilesCompareFxml);
     }
 
     @FXML
-    private void openFilesArchiveCompress(ActionEvent event) {
+    protected void openFilesArchiveCompress(ActionEvent event) {
         loadScene(CommonValues.FilesArchiveCompressFxml);
     }
 
     @FXML
-    private void openFilesCompressBatch(ActionEvent event) {
+    protected void openFilesCompressBatch(ActionEvent event) {
         loadScene(CommonValues.FilesCompressBatchFxml);
     }
 
     @FXML
-    private void openFileDecompressUnarchive(ActionEvent event) {
+    protected void openFileDecompressUnarchive(ActionEvent event) {
         loadScene(CommonValues.FileDecompressUnarchiveFxml);
     }
 
     @FXML
-    private void openFilesDecompressUnarchiveBatch(ActionEvent event) {
+    protected void openFilesDecompressUnarchiveBatch(ActionEvent event) {
         loadScene(CommonValues.FilesDecompressUnarchiveBatchFxml);
     }
 
     @FXML
-    private void openFilesRedundancy(ActionEvent event) {
+    protected void openFilesRedundancy(ActionEvent event) {
         loadScene(CommonValues.FilesRedundancyFxml);
     }
 
     @FXML
-    private void openTTC2TTF(ActionEvent event) {
+    protected void openTTC2TTF(ActionEvent event) {
         loadScene(CommonValues.FileTTC2TTFFxml);
     }
 
     @FXML
-    private void openWebBrowser(ActionEvent event) {
+    protected void openWebBrowser(ActionEvent event) {
         loadScene(CommonValues.WebBrowserFxml);
     }
 
     @FXML
-    private void openConvertUrl(ActionEvent event) {
+    protected void openConvertUrl(ActionEvent event) {
         loadScene(CommonValues.HtmlConvertUrlFxml);
     }
 
     @FXML
-    private void openMediaPlayer(ActionEvent event) {
+    protected void openMediaPlayer(ActionEvent event) {
         loadScene(CommonValues.MediaPlayerFxml);
     }
 
     @FXML
-    private void openMediaList(ActionEvent event) {
+    protected void openMediaList(ActionEvent event) {
         loadScene(CommonValues.MediaListFxml);
     }
 
     @FXML
-    private void openScreenRecorder(ActionEvent event) {
+    protected void openScreenRecorder(ActionEvent event) {
         loadScene(CommonValues.FFmpegScreenRecorderFxml);
     }
 
     @FXML
-    private void openFFmpegMergeImages(ActionEvent event) {
+    protected void openFFmpegMergeImages(ActionEvent event) {
         loadScene(CommonValues.FFmpegMergeImagesFxml);
     }
 
     @FXML
-    private void openFFmpegMergeImageFiles(ActionEvent event) {
+    protected void openFFmpegMergeImageFiles(ActionEvent event) {
         loadScene(CommonValues.FFmpegMergeImageFilesFxml);
     }
 
     @FXML
-    private void openFFmpegInformation(ActionEvent event) {
+    protected void openFFmpegInformation(ActionEvent event) {
         loadScene(CommonValues.FFmpegInformationFxml);
     }
 
     @FXML
-    private void openFFmpegProbeMediaInformation(ActionEvent event) {
+    protected void openFFmpegProbeMediaInformation(ActionEvent event) {
         loadScene(CommonValues.FFmpegProbeMediaInformationFxml);
     }
 
     @FXML
-    private void openFFmpegConvertMediaFiles(ActionEvent event) {
+    protected void openFFmpegConvertMediaFiles(ActionEvent event) {
         loadScene(CommonValues.FFmpegConvertMediaFilesFxml);
     }
 
     @FXML
-    private void openFFmpegConvertMediaStreams(ActionEvent event) {
+    protected void openFFmpegConvertMediaStreams(ActionEvent event) {
         loadScene(CommonValues.FFmpegConvertMediaStreamsFxml);
     }
 
     @FXML
-    private void openSecurityCertificates(ActionEvent event) {
+    protected void openSecurityCertificates(ActionEvent event) {
         loadScene(CommonValues.SecurityCertificatesFxml);
     }
 
     @FXML
-    private void restoreCheckingSSLCertifications(ActionEvent event) {
+    protected void restoreCheckingSSLCertifications(ActionEvent event) {
         restoreCheckingSSL();
     }
 
@@ -1304,62 +1324,87 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openGameElimniation(ActionEvent event) {
+    protected void openGameElimniation(ActionEvent event) {
         loadScene(CommonValues.GameElimniationFxml);
     }
 
     @FXML
-    private void openGameMine(ActionEvent event) {
+    protected void openGameMine(ActionEvent event) {
         loadScene(CommonValues.GameMineFxml);
     }
 
     @FXML
-    private void openDataset(ActionEvent event) {
+    protected void openDataset(ActionEvent event) {
         loadScene(CommonValues.DatasetFxml);
     }
 
     @FXML
-    private void openLocationData(ActionEvent event) {
+    protected void openLocationData(ActionEvent event) {
         loadScene(CommonValues.LocationDataFxml);
     }
 
     @FXML
-    private void openGeographyCode(ActionEvent event) {
+    protected void openGeographyCode(ActionEvent event) {
         loadScene(CommonValues.GeographyCodeFxml);
     }
 
     @FXML
-    private void openLocationsDataInMap(ActionEvent event) {
+    protected void openLocationsDataInMap(ActionEvent event) {
         loadScene(CommonValues.LocationsDataInMapFxml);
     }
 
     @FXML
-    private void openLocationInMap(ActionEvent event) {
+    protected void openLocationInMap(ActionEvent event) {
         loadScene(CommonValues.LocationInMapFxml);
     }
 
     @FXML
-    private void openLocationTools(ActionEvent event) {
+    protected void openLocationTools(ActionEvent event) {
         loadScene(CommonValues.LocationToolsFxml);
     }
 
     @FXML
-    private void openEpidemicReports(ActionEvent event) {
+    protected void openEpidemicReports(ActionEvent event) {
         loadScene(CommonValues.EpidemicReportsFxml);
     }
 
     @FXML
-    private void messageAuthor(ActionEvent event) {
+    protected void openDataClipboard(ActionEvent event) {
+        loadScene(CommonValues.DataClipboardFxml);
+    }
+
+    @FXML
+    protected void openDataCsv(ActionEvent event) {
+        loadScene(CommonValues.DataFileCSVFxml);
+    }
+
+    @FXML
+    protected void openDataExcel(ActionEvent event) {
+        loadScene(CommonValues.DataFileExcelFxml);
+    }
+
+    @FXML
+    protected void openExcelConvert(ActionEvent event) {
+        loadScene(CommonValues.DataConvertExcelFxml);
+    }
+
+    @FXML
+    protected void openCsvConvert(ActionEvent event) {
+        loadScene(CommonValues.DataConvertCsvFxml);
+    }
+
+    @FXML
+    protected void messageAuthor(ActionEvent event) {
         openStage(CommonValues.MessageAuthorFxml);
     }
 
     @FXML
-    private void showAbout(ActionEvent event) {
+    protected void showAbout(ActionEvent event) {
         openStage(CommonValues.AboutFxml);
     }
 
     @FXML
-    private void settingsAction(ActionEvent event) {
+    protected void settingsAction(ActionEvent event) {
         BaseController c = openStage(CommonValues.SettingsFxml);
         c.setParentController(parentController);
         c.setParentFxml(parentFxml);

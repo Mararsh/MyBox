@@ -5,9 +5,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.db.TableBase;
-import mara.mybox.db.TableEpidemicReport;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -24,7 +24,7 @@ public class EpidemicReportsImportController extends DataImportController<Epidem
     }
 
     @Override
-    public TableBase getTableDefinition() {
+    public BaseTable getTableDefinition() {
         if (tableDefinition == null) {
             tableDefinition = new TableEpidemicReport();
         }

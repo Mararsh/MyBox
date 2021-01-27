@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import javafx.beans.value.ChangeListener;
@@ -29,6 +30,8 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
@@ -41,6 +44,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -48,12 +52,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
@@ -81,7 +88,6 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 11:19:42
- * @Description
  * @License Apache License Version 2.0
  */
 public class FxmlControl {
@@ -587,6 +593,39 @@ public class FxmlControl {
         setEditorStyle(box, null);
     }
 
+    public static Node getFocus(BaseController c) {
+        try {
+            return c.getMyScene().getFocusOwner();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean textInputFocus(BaseController c) {
+        Node focused = getFocus(c);
+        if (focused == null) {
+            return false;
+        }
+        if (focused instanceof TextInputControl) {
+            return true;
+        }
+        if (focused instanceof ComboBox) {
+            ComboBox cb = (ComboBox) focused;
+            return cb.isEditable();
+        }
+        if (focused instanceof WebView) {
+            WebView wb = (WebView) focused;
+            Parent p = wb.getParent();
+            while (p != null) {
+                if (p instanceof HTMLEditor) {
+                    return true;
+                }
+                p = p.getParent();
+            }
+        }
+        return false;
+    }
+
     public static double getX(Node node) {
         return node.getScene().getWindow().getX() + node.getScene().getX()
                 + node.localToScene(0, 0).getX();
@@ -669,8 +708,8 @@ public class FxmlControl {
                     || sPane == null) {
                 return;
             }
-            iView.setFitWidth(sPane.getBoundsInLocal().getWidth());
-            iView.setFitHeight(sPane.getBoundsInLocal().getHeight());
+            iView.setFitWidth(sPane.getBoundsInLocal().getWidth() - 40);
+            iView.setFitHeight(sPane.getBoundsInLocal().getHeight() - 40);
             FxmlControl.moveCenter(sPane, iView);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
@@ -782,12 +821,12 @@ public class FxmlControl {
 
     public static void locateBelow(Node node, PopupWindow window) {
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
-        window.show(node, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight() + 5);
+        window.show(node, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());
     }
 
     public static void locateBelow(Region region, PopupWindow window) {
         Bounds bounds = region.localToScreen(region.getBoundsInLocal());
-        window.show(region, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight() + 5);
+        window.show(region, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());
     }
 
     public static void locateRightTop(Region region, PopupWindow window) {
@@ -1154,8 +1193,7 @@ public class FxmlControl {
             final ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
+            List<String> values = Arrays.asList(
                     "^      " + message("StartLocation"),
                     "$      " + message("EndLocation"),
                     "*      " + message("ZeroOrNTimes"),
@@ -1183,7 +1221,7 @@ public class FxmlControl {
                     "[a-zA-z]+://[^\\s]*       " + message("URL"),
                     "\\n\\s*\\r      " + message("BlankLine"),
                     "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP")
-            ));
+            );
 
             MenuItem menu;
             for (String value : values) {
@@ -1304,6 +1342,83 @@ public class FxmlControl {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
+        }
+    }
+
+    public static boolean copyToSystemClipboard(String string) {
+        try {
+            if (string == null || string.isBlank()) {
+                return false;
+            }
+            ClipboardContent cc = new ClipboardContent();
+            cc.putString(string);
+            Clipboard.getSystemClipboard().setContent(cc);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public static String getSystemClipboardString() {
+        return Clipboard.getSystemClipboard().getString();
+    }
+
+    public static String askValue(String title, String header, String name, String initValue) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
+        dialog.setContentText(name);
+        dialog.getEditor().setText(initValue);
+        dialog.getEditor().setPrefWidth(200);
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        Optional<String> result = dialog.showAndWait();
+        if (!result.isPresent()) {
+            return null;
+        }
+        String value = result.get();
+        return value;
+    }
+
+    public static boolean askSure(String title, String sureString) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setContentText(sureString);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == buttonSure;
+    }
+
+    public static String getHtml(WebView webView) {
+        if (webView == null) {
+            return "";
+        }
+        return getHtml(webView.getEngine());
+    }
+
+    public static String getHtml(WebEngine engine) {
+        try {
+            if (engine == null) {
+                return "";
+            }
+            Object c = engine.executeScript("document.documentElement.outerHTML");
+            if (c == null) {
+                return "";
+            }
+            return (String) c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return "";
         }
     }
 

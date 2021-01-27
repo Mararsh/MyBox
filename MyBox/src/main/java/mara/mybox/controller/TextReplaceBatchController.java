@@ -110,7 +110,9 @@ public class TextReplaceBatchController extends FilesBatchController {
             }
             if (FileTools.rename(tmpFile, target)) {
                 targetFileGenerated(target);
-                return MessageFormat.format(message("ReplaceAllOk"), replace.getCount());
+                String info = MessageFormat.format(message("ReplaceAllOk"), replace.getCount());
+                updateLogs(info);
+                return info;
             } else {
                 return message("Failed");
             }

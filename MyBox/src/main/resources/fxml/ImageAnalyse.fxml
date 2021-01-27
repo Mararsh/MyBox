@@ -155,8 +155,10 @@ License:    Apache License Version 2.0
                                                             </Button>
                                                                                 <Label fx:id="intBoxLabel" text="%ColorsNumber" />
                                                                                 <ComboBox fx:id="colorsNumberSelectors1" editable="true" prefWidth="100.0" />
-                                                                                <Label fx:id="depthLabel" text="%RegionsBitDepth" />
-                                                                                <ComboBox fx:id="regionsDepthSelector1" prefWidth="80.0" />
+                                                            <Label text="%PreprocessedRegionSize" />
+                                                            <ComboBox fx:id="regionSizeSelector1" editable="true" prefWidth="100.0" />
+                                                            <Label fx:id="weightLabel" text="%RGBWeight" />
+                                                            <ComboBox fx:id="weightSelector1" editable="true" prefWidth="120.0" />
                                                             <Label fx:id="intBoxLabel2" layoutX="10.0" layoutY="19.0" text="%MaximumLoop" />
                                                             <ComboBox fx:id="kmeansLoopSelector" editable="true" layoutX="229.0" layoutY="10.0" prefWidth="100.0" />
                                                             <Label fx:id="actualLoopLabel" minHeight="-Infinity" wrapText="true" />
@@ -185,8 +187,10 @@ License:    Apache License Version 2.0
                                                             </Button>
                                                                                 <Label fx:id="intBoxLabel1" text="%ColorsNumber" />
                                                                                 <ComboBox fx:id="colorsNumberSelectors2" editable="true" prefWidth="100.0" />
-                                                                                <Label fx:id="depthLabel1" text="%RegionsBitDepth" />
-                                                                                <ComboBox fx:id="regionsDepthSelector2" prefWidth="80.0" />
+                                                            <Label text="%PreprocessedRegionSize" />
+                                                            <ComboBox fx:id="regionSizeSelector2" editable="true" prefWidth="100.0" />
+                                                            <Label fx:id="weightLabel1" text="%RGBWeight" />
+                                                            <ComboBox fx:id="weightSelector2" editable="true" prefWidth="120.0" />
                                                                                 <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
                                                                                         <Image url="@../buttons/iconTips.png" />

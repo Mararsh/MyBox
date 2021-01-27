@@ -6,13 +6,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableBase;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVFormat;
@@ -36,7 +36,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
     }
 
     @Override
-    public TableBase getTableDefinition() {
+    public BaseTable getTableDefinition() {
         if (tableDefinition == null) {
             tableDefinition = new TableGeographyCode();
         }
@@ -84,7 +84,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                     try {
                         code = new GeographyCode();
                         code.setContinent(countryCode.getContinent());
-                        code.setCountry(countryCode.getGcid());
+                        code.setCountry(countryCode.getId());
                         code.setEnglishName(place);
                         code.setCode1(record.get(1));
                         code.setCoordinateSystem(CoordinateSystem.WGS84());
@@ -93,7 +93,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                         String county = record.get(7);
                         double longitude = Double.valueOf(record.get(10));
                         double latitude = Double.valueOf(record.get(9));
-                        int level;
+                        short level;
                         if (county != null) {
                             level = 7;
                         } else if (city != null) {
@@ -110,7 +110,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                         if (province != null) {
                             if (!province.equals(lastProvince)) {
                                 sql = "SELECT * FROM Geography_Code WHERE "
-                                        + " level=4 AND country=" + countryCode.getGcid() + " AND "
+                                        + " level=4 AND country=" + countryCode.getId() + " AND "
                                         + "  ( " + TableGeographyCode.nameEqual(province) + " )";
                                 provinceCode = TableGeographyCode.queryCode(conn, sql, false);
                             }
@@ -118,10 +118,10 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                                 provinceCode = new GeographyCode();
                                 provinceCode.setSource(GeographyCode.AddressSource.Geonames);
                                 provinceCode.setContinent(countryCode.getContinent());
-                                provinceCode.setCountry(countryCode.getGcid());
+                                provinceCode.setCountry(countryCode.getId());
                                 provinceCode.setEnglishName(province);
                                 provinceCode.setCode1(record.get(4));
-                                provinceCode.setLevelCode(new GeographyCodeLevel(4));
+                                provinceCode.setLevelCode(new GeographyCodeLevel((short) 4));
                                 provinceCode.setLatitude(latitude);
                                 provinceCode.setLongitude(longitude);
                                 provinceCode.setCoordinateSystem(CoordinateSystem.WGS84());
@@ -139,7 +139,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                                     continue;
                                 }
                             }
-                            code.setProvince(provinceCode.getGcid());
+                            code.setProvince(provinceCode.getId());
                             name += " - " + province;
                         } else {
                             provinceCode = null;
@@ -149,9 +149,9 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                         if (city != null) {
                             if (!city.equals(lastCity)) {
                                 sql = "SELECT * FROM Geography_Code WHERE "
-                                        + " level=5 AND country=" + countryCode.getGcid() + " AND ";
+                                        + " level=5 AND country=" + countryCode.getId() + " AND ";
                                 if (provinceCode != null) {
-                                    sql += " province=" + provinceCode.getGcid() + " AND ";
+                                    sql += " province=" + provinceCode.getId() + " AND ";
                                 }
                                 sql += " ( " + TableGeographyCode.nameEqual(city) + " )";
                                 cityCode = TableGeographyCode.queryCode(conn, sql, false);
@@ -160,13 +160,13 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                                 cityCode = new GeographyCode();
                                 cityCode.setSource(GeographyCode.AddressSource.Geonames);
                                 cityCode.setContinent(countryCode.getContinent());
-                                cityCode.setCountry(countryCode.getGcid());
+                                cityCode.setCountry(countryCode.getId());
                                 if (provinceCode != null) {
-                                    cityCode.setProvince(provinceCode.getGcid());
+                                    cityCode.setProvince(provinceCode.getId());
                                 }
                                 cityCode.setEnglishName(city);
                                 cityCode.setCode1(record.get(6));
-                                cityCode.setLevelCode(new GeographyCodeLevel(5));
+                                cityCode.setLevelCode(new GeographyCodeLevel((short) 5));
                                 cityCode.setLatitude(latitude);
                                 cityCode.setLongitude(longitude);
                                 cityCode.setCoordinateSystem(CoordinateSystem.WGS84());
@@ -184,7 +184,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                                     continue;
                                 }
                             }
-                            code.setCity(cityCode.getGcid());
+                            code.setCity(cityCode.getId());
                             name += " - " + city;
                         } else {
                             cityCode = null;
@@ -194,12 +194,12 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                         if (county != null) {
                             if (!county.equals(lastCounty)) {
                                 sql = "SELECT * FROM Geography_Code WHERE "
-                                        + " level=6 AND country=" + countryCode.getGcid() + " AND ";
+                                        + " level=6 AND country=" + countryCode.getId() + " AND ";
                                 if (provinceCode != null) {
-                                    sql += " province=" + provinceCode.getGcid() + " AND ";
+                                    sql += " province=" + provinceCode.getId() + " AND ";
                                 }
                                 if (cityCode != null) {
-                                    sql += " city=" + cityCode.getGcid() + " AND ";
+                                    sql += " city=" + cityCode.getId() + " AND ";
                                 }
                                 sql += " ( " + TableGeographyCode.nameEqual(county) + " )";
                                 countyCode = TableGeographyCode.queryCode(conn, sql, false);
@@ -208,16 +208,16 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                                 countyCode = new GeographyCode();
                                 countyCode.setSource(GeographyCode.AddressSource.Geonames);
                                 countyCode.setContinent(countryCode.getContinent());
-                                countyCode.setCountry(countryCode.getGcid());
+                                countyCode.setCountry(countryCode.getId());
                                 if (provinceCode != null) {
-                                    countyCode.setProvince(provinceCode.getGcid());
+                                    countyCode.setProvince(provinceCode.getId());
                                 }
                                 if (cityCode != null) {
-                                    countyCode.setCity(cityCode.getGcid());
+                                    countyCode.setCity(cityCode.getId());
                                 }
                                 countyCode.setEnglishName(county);
                                 countyCode.setCode1(record.get(8));
-                                countyCode.setLevel(6);
+                                countyCode.setLevel((short) 6);
                                 countyCode.setLatitude(latitude);
                                 countyCode.setLongitude(longitude);
                                 countyCode.setCoordinateSystem(CoordinateSystem.WGS84());
@@ -235,7 +235,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                                     continue;
                                 }
                             }
-                            code.setCounty(countyCode.getGcid());
+                            code.setCounty(countyCode.getId());
                             name += " - " + county;
                         } else {
                             countyCode = null;
@@ -247,7 +247,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                         GeographyCode exist = TableGeographyCode.readCode(conn, code, false);
                         if (exist != null) {
                             if (replaceCheck.isSelected()) {
-                                code.setGcid(exist.getGcid());
+                                code.setId(exist.getId());
                                 if (TableGeographyCode.update(conn, update, code)) {
                                     updateCount++;
                                     importCount++;

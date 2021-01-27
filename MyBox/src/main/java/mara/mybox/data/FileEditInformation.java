@@ -8,12 +8,12 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import thridparty.EncodingDetect;
@@ -218,8 +218,7 @@ public abstract class FileEditInformation extends FileInformation {
                 char[] buf = new char[CommonValues.IOBufferLength];
                 int bufLen;
                 while ((bufLen = reader.read(buf)) > 0) {
-                    String text = new String(buf, 0, bufLen);
-                    writer.write(text);
+                    writer.write(new String(buf, 0, bufLen));
                 }
             }
             return true;

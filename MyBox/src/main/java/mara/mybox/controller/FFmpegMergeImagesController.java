@@ -17,8 +17,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
@@ -36,16 +36,16 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegMergeImagesController extends FFmpegBatchController {
+public class FFmpegMergeImagesController extends BaseFFmpegBatchController {
 
     protected ObservableList<MediaInformation> audiosData;
 
     @FXML
     protected Tab imagesTab, audiosTab;
     @FXML
-    protected ImagesTableController imagesTableController;
+    protected ControlImagesTable imagesTableController;
     @FXML
-    protected FFmpegAudiosTableController audiosTableController;
+    protected ControlFFmpegAudiosTable audiosTableController;
     @FXML
     protected CheckBox stopCheck;
     @FXML

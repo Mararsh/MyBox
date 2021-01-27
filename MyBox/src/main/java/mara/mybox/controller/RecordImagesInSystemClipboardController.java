@@ -22,8 +22,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -67,7 +67,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     @FXML
-    private Button openTargetButton, functionsButton;
+    protected Button openTargetButton, functionsButton;
     @FXML
     protected TitledPane targetPane;
     @FXML

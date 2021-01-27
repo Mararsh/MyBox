@@ -3,10 +3,10 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.db.TableBase;
-import mara.mybox.db.TableGeographyCode;
-import mara.mybox.data.tools.GeographyCodeTools;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVRecord;
@@ -23,7 +23,7 @@ public class GeographyCodeImportExternalCSVController extends DataImportControll
     }
 
     @Override
-    public TableBase getTableDefinition() {
+    public BaseTable getTableDefinition() {
         if (tableDefinition == null) {
             tableDefinition = new TableGeographyCode();
         }

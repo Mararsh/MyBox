@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVariables;
@@ -25,7 +25,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageGifEditerController extends ImagesListController {
+public class ImageGifEditerController extends BaseImagesListController {
 
     protected int currentIndex, width;
     private boolean keepSize;
@@ -35,7 +35,7 @@ public class ImageGifEditerController extends ImagesListController {
     @FXML
     protected TextField widthInput;
     @FXML
-    private CheckBox loopCheck;
+    protected CheckBox loopCheck;
 
     public ImageGifEditerController() {
         baseTitle = AppVariables.message("ImageGifEditer");

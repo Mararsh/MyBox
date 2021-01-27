@@ -13,12 +13,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -35,9 +35,9 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     @FXML
     protected ColorSetController colorSetController;
     @FXML
-    private ToggleGroup shadowGroup;
+    protected ToggleGroup shadowGroup;
     @FXML
-    private ComboBox<String> perBox, shadowBox;
+    protected ComboBox<String> perBox, shadowBox;
     @FXML
     protected CheckBox preAlphaCheck;
 
@@ -69,7 +69,9 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
         try {
             super.initOptionsSection();
 
+            shadow = AppVariables.getUserConfigInt(baseName + "Shadow", 15);
             shadowBox.getItems().addAll(Arrays.asList("8", "5", "15", "3", "6", "1", "20", "30"));
+            shadowBox.setValue(shadow + "");
             shadowBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -80,7 +82,9 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
 
             FxmlControl.setTooltip(perBox, new Tooltip("1~100"));
 
+            percent = AppVariables.getUserConfigInt(baseName + "Percent", 5);
             perBox.getItems().addAll(Arrays.asList("2", "1", "3", "5", "4", "6", "8", "7", "10", "9"));
+            perBox.setValue(percent + "");
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -127,31 +131,30 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
 
     private void checkPercent() {
         try {
-            percent = Integer.valueOf(perBox.getValue());
-            if (percent > 0 && percent <= 100) {
+            int v = Integer.valueOf(perBox.getValue());
+            if (v > 0 && v <= 100) {
+                percent = v;
+                AppVariables.setUserConfigInt(baseName + "Percent", percent);
                 FxmlControl.setEditorNormal(perBox);
             } else {
-                percent = 15;
                 FxmlControl.setEditorBadStyle(perBox);
             }
         } catch (Exception e) {
-            percent = 15;
             FxmlControl.setEditorBadStyle(perBox);
         }
     }
 
     private void checkShadow() {
         try {
-            shadow = Integer.valueOf(shadowBox.getValue());
-            if (shadow >= 0) {
+            int v = Integer.valueOf(shadowBox.getValue());
+            if (v > 0) {
+                shadow = v;
+                AppVariables.setUserConfigInt(baseName + "Shadow", shadow);
                 FxmlControl.setEditorNormal(shadowBox);
             } else {
-                shadow = 0;
                 FxmlControl.setEditorBadStyle(shadowBox);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            shadow = 0;
             FxmlControl.setEditorBadStyle(shadowBox);
         }
     }

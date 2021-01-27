@@ -34,15 +34,15 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
     private ColorActionType colorActionType;
 
     @FXML
-    private ToggleGroup colorGroup, opGroup;
+    protected ToggleGroup colorGroup, opGroup;
     @FXML
-    private RadioButton setRadio, invertRadio, increaseRadio, decreaseRadio, filterRadio;
+    protected RadioButton setRadio, invertRadio, increaseRadio, decreaseRadio, filterRadio;
     @FXML
-    private Slider colorSlider;
+    protected Slider colorSlider;
     @FXML
-    private TextField colorInput;
+    protected TextField colorInput;
     @FXML
-    private Label colorUnit;
+    protected Label colorUnit;
     @FXML
     protected CheckBox preAlphaCheck, ignoreTransparentCheck;
     @FXML

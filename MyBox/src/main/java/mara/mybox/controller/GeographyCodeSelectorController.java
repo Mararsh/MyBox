@@ -12,13 +12,13 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableGeographyCode;
-import mara.mybox.data.tools.GeographyCodeTools;
+import mara.mybox.db.table.TableGeographyCode;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -46,7 +46,7 @@ public class GeographyCodeSelectorController extends BaseController {
     protected void loadTree() {
         treeView.setRoot(null);
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -82,7 +82,7 @@ public class GeographyCodeSelectorController extends BaseController {
                         String condition = "";
                         for (int i = 3; i <= 9; i++) {
                             String ic = "level=" + i;
-                            for (int j = 3; j < i; j++) {
+                            for (short j = 3; j < i; j++) {
                                 GeographyCodeLevel jLevel = new GeographyCodeLevel(j);
                                 ic += " AND " + jLevel.getKey() + "<=0 ";
                             }
@@ -141,7 +141,8 @@ public class GeographyCodeSelectorController extends BaseController {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -153,7 +154,7 @@ public class GeographyCodeSelectorController extends BaseController {
             return;
         }
         for (GeographyCode code : codes) {
-            long codeid = code.getGcid();
+            long codeid = code.getId();
             Text codeNode = new Text(code.getName());
             codeNode.setOnMouseClicked((MouseEvent event) -> {
                 userController.codeSelected(code);
@@ -194,7 +195,7 @@ public class GeographyCodeSelectorController extends BaseController {
         }
         parent.getChildren().clear();
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -206,7 +207,7 @@ public class GeographyCodeSelectorController extends BaseController {
                     try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
                         conn.setReadOnly(true);
                         GeographyCodeLevel level = code.getLevelCode();
-                        int codeLevel = level.getLevel();
+                        short codeLevel = level.getLevel();
                         if (level.getKey() == null || codeLevel < 2 || codeLevel > 8) {
                             return false;
                         }
@@ -218,7 +219,7 @@ public class GeographyCodeSelectorController extends BaseController {
                         for (int i = codeLevel + 1; i <= 9; i++) {
                             String ic = "level=" + i;
                             for (int j = codeLevel + 1; j < i; j++) {
-                                GeographyCodeLevel jLevel = new GeographyCodeLevel(j);
+                                GeographyCodeLevel jLevel = new GeographyCodeLevel(Short.valueOf(j + ""));
                                 ic += " AND " + jLevel.getKey() + "<=0 ";
                             }
                             if (condition.isBlank()) {
@@ -229,7 +230,7 @@ public class GeographyCodeSelectorController extends BaseController {
                         }
                         String sql = "SELECT * FROM Geography_Code WHERE "
                                 + " ( " + condition + " ) AND "
-                                + level.getKey() + "=" + code.getGcid()
+                                + level.getKey() + "=" + code.getId()
                                 + " ORDER BY gcid ";
                         children = TableGeographyCode.queryCodes(conn, sql, true);
                         if (children == null || children.isEmpty()) {
@@ -258,7 +259,8 @@ public class GeographyCodeSelectorController extends BaseController {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -277,12 +279,12 @@ public class GeographyCodeSelectorController extends BaseController {
         }
         if (node.getValue().getUserData() != null) {
             long current = (long) (node.getValue().getUserData());
-            if (current == parent.getGcid()) {
+            if (current == parent.getId()) {
                 Text childNode = new Text(child.getName());
                 childNode.setOnMouseClicked((MouseEvent event) -> {
                     userController.codeSelected(child);
                 });
-                childNode.setUserData(child.getGcid());
+                childNode.setUserData(child.getId());
                 TreeItem<Text> codeItem = new TreeItem(childNode);
                 node.getChildren().add(codeItem);
                 node.setExpanded(true);
@@ -311,7 +313,7 @@ public class GeographyCodeSelectorController extends BaseController {
         for (TreeItem<Text> subNode : node.getChildren()) {
             if (subNode.getValue().getUserData() != null) {
                 long subCode = (long) (subNode.getValue().getUserData());
-                if (subCode == code.getGcid()) {
+                if (subCode == code.getId()) {
                     node.getChildren().remove(subNode);
                     return;
                 }

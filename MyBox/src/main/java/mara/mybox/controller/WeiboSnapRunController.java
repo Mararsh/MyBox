@@ -47,7 +47,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.WeiboSnapParameters;
-import mara.mybox.db.TableStringValues;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;

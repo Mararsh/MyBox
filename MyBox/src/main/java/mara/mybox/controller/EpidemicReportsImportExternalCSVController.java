@@ -7,12 +7,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.tools.EpidemicReportTools;
-import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.EpidemicReportTools;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -98,7 +98,7 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
                     }
                     EpidemicReport report = (EpidemicReport) ret.get("report");
                     if (predefined) {
-                        report.setSource(1);
+                        report.setSource((short) 1);
                     }
                     String date = DateTools.datetimeToString(report.getTime()).substring(0, 10) + EpidemicReport.COVID19TIME;
                     equalQuery.setString(1, report.getDataSet());

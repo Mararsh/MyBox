@@ -17,18 +17,19 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.Dataset;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.Location;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.db.TableLocationData;
+import mara.mybox.db.data.Dataset;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.Location;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableLocationData;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.ListDatasetCell;
 import mara.mybox.tools.DateTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonFxValues;
@@ -262,7 +263,7 @@ public class LocationDataEditController extends BaseController {
     @Override
     public void setGeographyCode(GeographyCode code) {
         try {
-            if (code == null || !code.validCoordinate()) {
+            if (code == null || !GeographyCodeTools.validCoordinate(code)) {
                 return;
             }
             longitudeInput.setText(code.getLongitude() + "");
@@ -420,7 +421,7 @@ public class LocationDataEditController extends BaseController {
             timer = null;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             datasetSelector.getItems().clear();
@@ -446,7 +447,8 @@ public class LocationDataEditController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -590,7 +592,7 @@ public class LocationDataEditController extends BaseController {
                 location.setLdid(Long.valueOf(dataidInput.getText()));
             }
             location.setDataset(dataset);
-            location.setDatasetid(dataset.getDsid());
+            location.setDatasetid(dataset.getId());
             location.setLabel(labelInput.getText().trim());
             location.setAddress(addressInput.getText().trim());
             location.setLongitude(longitude);
@@ -606,7 +608,7 @@ public class LocationDataEditController extends BaseController {
             location.setEndTime(endTime);
             File file = new File(sourceFileInput.getText().trim());
             if (file.exists()) {
-                location.setImage(file.getAbsolutePath());
+                location.setImageName(file.getAbsolutePath());
             }
             if (!commentsArea.getText().trim().isBlank()) {
                 location.setComments(commentsArea.getText().trim());

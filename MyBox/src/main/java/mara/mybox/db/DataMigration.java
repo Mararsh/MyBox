@@ -17,25 +17,32 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.data.ColorData;
-import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.Dataset;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
-import mara.mybox.data.Location;
-import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.dropTables;
 import static mara.mybox.db.DerbyBase.initTables;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import static mara.mybox.db.TableColorData.read;
-import static mara.mybox.db.TableColorData.write;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.Dataset;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.data.Location;
+import mara.mybox.db.table.TableColorData;
+import static mara.mybox.db.table.TableColorData.read;
+import static mara.mybox.db.table.TableColorData.write;
+import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableLocationData;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -76,6 +83,9 @@ public class DataMigration {
                 if (lastVersion < 6003006) {
                     updateIn636(conn);
                 }
+                if (lastVersion < 6003008) {
+                    updateIn638(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", CommonValues.AppVersion);
             conn.setAutoCommit(true);
@@ -83,6 +93,29 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn638(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.3.8...");
+            if (AppVariables.MyBoxLanguagesPath.exists() && AppVariables.MyBoxLanguagesPath.isDirectory()) {
+                File[] files = AppVariables.MyBoxLanguagesPath.listFiles();
+                if (files != null && files.length > 0) {
+                    MyBoxLog.info("Change language files names...");
+                    for (File file : files) {
+                        String name = file.getName();
+                        if (!file.isFile() || (name.endsWith(".properties") && name.startsWith("Messages_"))) {
+                            continue;
+                        }
+                        FileTools.rename(file, ConfigTools.interfaceLanguageFile(name));
+                    }
+                }
+            }
+            TableStringValues.add(conn, "InstalledVersions", "6.3.8");
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     private static void updateIn636(Connection conn) {
@@ -322,7 +355,7 @@ public class DataMigration {
                     if (d != null) {
                         data.setStartTime(d.getTime() * (results.getShort("data_time_bc") >= 0 ? 1 : -1));
                     }
-                    data.setImage(results.getString("image_location"));
+                    data.setImageName(results.getString("image_location"));
                     data.setComments(results.getString("comments"));
                     tableLocationData.setInsertStatement(conn, locationIinsert, data);
                     locationIinsert.addBatch();
@@ -513,7 +546,7 @@ public class DataMigration {
                     if (exist == null) {
                         MyBoxLog.debug(code.getLevelName() + " " + code.getCountryName()
                                 + " " + code.getProvinceName() + " " + code.getCityName()
-                                + " " + code.getGcid() + " " + code.getOwner());
+                                + " " + code.getId() + " " + code.getOwner());
                         continue;
                     }
                     EpidemicReport report = new EpidemicReport();
@@ -528,9 +561,9 @@ public class DataMigration {
                     if (d != null) {
                         report.setTime(d.getTime());
                     }
-                    report.setSource("Filled".equals(results.getString("comments")) ? 3 : 2);
+                    report.setSource("Filled".equals(results.getString("comments")) ? (short) 3 : (short) 2);
                     report.setLocation(exist);
-                    report.setLocationid(exist.getGcid());
+                    report.setLocationid(exist.getId());
                     reports.add(report);
                 } catch (Exception e) {
                     MyBoxLog.debug(e.toString());

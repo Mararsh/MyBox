@@ -20,12 +20,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -36,22 +36,21 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ImageManufactureBatchTextController extends ImageManufactureBatchController {
 
-    private final String ImageTextShadowKey, ImageFontFamilyKey;
-    private int waterSize, waterAngle, waterShadow, waterX, waterY, positionType, textWidth, textHeight, margin;
+    private int fontSize, angle, shadow, waterX, waterY, positionType, textWidth, textHeight, margin;
     private float opacity;
     private java.awt.Font font;
     private java.awt.Color color;
 
     @FXML
-    private ChoiceBox<String> waterFamilyBox, waterStyleBox;
+    protected ChoiceBox<String> waterFamilyBox, waterStyleBox;
     @FXML
-    private ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacityBox;
+    protected ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacityBox;
     @FXML
     protected ColorSetController colorSetController;
     @FXML
-    private ToggleGroup positionGroup;
+    protected ToggleGroup positionGroup;
     @FXML
-    private TextField waterInput, waterXInput, waterYInput, marginInput;
+    protected TextField waterInput, waterXInput, waterYInput, marginInput;
     @FXML
     protected CheckBox outlineCheck, verticalCheck;
 
@@ -67,9 +66,6 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
     public ImageManufactureBatchTextController() {
         baseTitle = AppVariables.message("ImageManufactureBatchText");
-
-        ImageTextShadowKey = "ImageTextShadowKey";
-        ImageFontFamilyKey = "ImageFontFamilyKey";
 
     }
 
@@ -112,16 +108,19 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                 }
             });
 
+            fontSize = AppVariables.getUserConfigInt(baseName + "FontSize", 72);
             List<String> sizes = Arrays.asList(
                     "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
             waterSizeBox.getItems().addAll(sizes);
+            waterSizeBox.setValue(fontSize + "");
             waterSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
-                            waterSize = v;
+                            fontSize = v;
+                            AppVariables.setUserConfigInt(baseName + "FontSize", fontSize);
                             FxmlControl.setEditorNormal(waterSizeBox);
                         } else {
                             FxmlControl.setEditorBadStyle(waterSizeBox);
@@ -131,9 +130,17 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     }
                 }
             });
-            waterSizeBox.getSelectionModel().select(0);
 
+            try {
+                float f = Float.valueOf(AppVariables.getUserConfigValue(baseName + "Opacity", "1.0"));
+                if (f >= 0.0f && f <= 1.0f) {
+                    opacity = f;
+                }
+            } catch (Exception e) {
+                opacity = 1.0f;
+            }
             opacityBox.getItems().addAll(Arrays.asList("1.0", "0.5", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            opacityBox.setValue(opacity + "");
             opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -141,6 +148,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                         float f = Float.valueOf(newValue);
                         if (f >= 0.0f && f <= 1.0f) {
                             opacity = f;
+                            AppVariables.setUserConfigValue(baseName + "Opacity", opacity + "");
                             FxmlControl.setEditorNormal(opacityBox);
                         } else {
                             FxmlControl.setEditorBadStyle(opacityBox);
@@ -150,17 +158,18 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     }
                 }
             });
-            opacityBox.getSelectionModel().select(0);
 
+            shadow = AppVariables.getUserConfigInt(baseName + "Shadow", 0);
             waterShadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
+            waterShadowBox.setValue(shadow + "");
             waterShadowBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
-                            waterShadow = v;
-                            AppVariables.setUserConfigValue(ImageTextShadowKey, newValue);
+                            shadow = v;
+                            AppVariables.setUserConfigInt(baseName + "Shadow", shadow);
                             FxmlControl.setEditorNormal(waterShadowBox);
                         } else {
                             FxmlControl.setEditorBadStyle(waterShadowBox);
@@ -170,7 +179,6 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     }
                 }
             });
-            waterShadowBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageTextShadowKey, "0"));
 
             List<String> styles = Arrays.asList(message("Regular"), message("Bold"), message("Italic"), message("Bold Italic"));
             waterStyleBox.getItems().addAll(styles);
@@ -179,26 +187,31 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
             String[] fontNames = e.getAvailableFontFamilyNames();
             waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
-            waterFamilyBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageFontFamilyKey, fontNames[0]));
+            waterFamilyBox.setValue(AppVariables.getUserConfigValue(baseName + "FontFamily", fontNames[0]));
             waterFamilyBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    AppVariables.setUserConfigValue(ImageFontFamilyKey, newValue);
+                    if (newValue != null) {
+                        AppVariables.setUserConfigValue(baseName + "FontFamily", newValue);
+                    }
                 }
             });
 
             colorSetController.init(this, baseName + "Color", Color.RED);
 
+            angle = AppVariables.getUserConfigInt(baseName + "Angle", 0);
             waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
             waterAngleBox.setVisibleRowCount(10);
+            waterAngleBox.setValue(angle + "");
             waterAngleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
-                            waterAngle = v;
+                            angle = v;
+                            AppVariables.setUserConfigInt(baseName + "Angle", angle);
                             FxmlControl.setEditorNormal(waterAngleBox);
                         } else {
                             FxmlControl.setEditorBadStyle(waterAngleBox);
@@ -208,9 +221,9 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     }
                 }
             });
-            waterAngleBox.getSelectionModel().select(0);
-            waterAngle = 0;
 
+            margin = AppVariables.getUserConfigInt(baseName + "Margin", 20);
+            marginInput.setText(margin + "");
             positionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -270,6 +283,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             int v = Integer.valueOf(marginInput.getText());
             if (v >= 0) {
                 margin = v;
+                AppVariables.setUserConfigInt(baseName + "Margin", margin);
                 marginInput.setStyle(null);
             } else {
                 marginInput.setStyle(badStyle);
@@ -313,25 +327,25 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             return false;
         }
 
-        String fontFamily = waterFamilyBox.getSelectionModel().getSelectedItem();
-        String fontStyle = waterStyleBox.getSelectionModel().getSelectedItem();
+        String fontFamily = waterFamilyBox.getValue();
+        String fontStyle = waterStyleBox.getValue();
 
         Font FxFont;
         if (AppVariables.message("Bold").equals(fontStyle)) {
-            font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, waterSize);
-            FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.REGULAR, waterSize);
+            font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, fontSize);
+            FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.REGULAR, fontSize);
 
         } else if (AppVariables.message("Italic").equals(fontStyle)) {
-            font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, waterSize);
-            FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, waterSize);
+            font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
+            FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, fontSize);
 
         } else if (AppVariables.message("Bold Italic").equals(fontStyle)) {
-            font = new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, waterSize);
-            FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, waterSize);
+            font = new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, fontSize);
+            FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, fontSize);
 
         } else {
-            font = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, waterSize);
-            FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, waterSize);
+            font = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, fontSize);
+            FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, fontSize);
         }
 
         color = FxmlImageManufacture.toAwtColor((Color) colorSetController.rect.getFill());
@@ -381,7 +395,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
             BufferedImage target = ImageManufacture.addText(source,
                     waterInput.getText().trim(), font, color,
-                    x, y, opacity, waterShadow, waterAngle,
+                    x, y, opacity, shadow, angle,
                     outlineCheck.isSelected(), verticalCheck.isSelected());
 
             return target;

@@ -49,13 +49,14 @@ public class ImageTiffFile {
 
     public static IIOMetadata getTiffIIOMetadata(File file) {
         try {
+            IIOMetadata metadata;
             ImageReader reader = ImageIO.getImageReadersByFormatName("tif").next();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
-                IIOMetadata metadata = reader.getImageMetadata(0);
+                metadata = reader.getImageMetadata(0);
                 reader.dispose();
-                return metadata;
             }
+            return metadata;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

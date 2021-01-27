@@ -8,8 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javax.sound.sampled.Clip;
-import mara.mybox.data.AlarmClock;
-import static mara.mybox.data.AlarmClock.getTypeString;
+import mara.mybox.db.data.AlarmClock;
+import static mara.mybox.db.data.AlarmClock.getTypeString;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
@@ -31,7 +31,7 @@ public class AlarmClockRunController extends BaseController {
     private Task playTask;
 
     @FXML
-    private Label descLabel, soundLabel, timeLabel;
+    protected Label descLabel, soundLabel, timeLabel;
 
     public AlarmClockRunController() {
         baseTitle = AppVariables.message("AlarmClock");
@@ -165,7 +165,7 @@ public class AlarmClockRunController extends BaseController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (playTask != null && playTask.isRunning()) {
+        if (playTask != null && !playTask.isDone()) {
             playTask.cancel();
             playTask = null;
         }

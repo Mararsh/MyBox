@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.color.SRGB;
-import mara.mybox.data.ColorData;
-import mara.mybox.db.TableColorData;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.table.TableColorData;
 import static mara.mybox.value.AppVariables.message;
 
 /**

@@ -91,8 +91,8 @@ public class ListKMeans<T> {
         }
         clusters = new ArrayList[k];
         try {
-//            MyBoxLog.console("data: " + data.size() + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
-            while (loopCount++ < maxIteration) {
+//            MyBoxLog.console("data: " + data.size() + " k:" + k + "   maxIteration:" + maxIteration + "  loopCount:" + loopCount);
+            while (true) {
                 for (int i = 0; i < k; ++i) {
                     clusters[i] = new ArrayList<>();
                 }
@@ -110,7 +110,6 @@ public class ListKMeans<T> {
                     }
                     clusters[index].add(i);
                 }
-
                 boolean centerchange = false;
                 for (int i = 0; i < k; ++i) {
                     T newCenter = calculateCenters(clusters[i]);
@@ -120,7 +119,8 @@ public class ListKMeans<T> {
                         centers.set(i, newCenter);
                     }
                 }
-                if (!centerchange) {
+                loopCount++;
+                if (!centerchange || loopCount >= maxIteration) {
                     break;
                 }
             }

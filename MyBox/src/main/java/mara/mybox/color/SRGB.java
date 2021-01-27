@@ -8,7 +8,7 @@ import static mara.mybox.color.RGBColorSpace.linearSRGB;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageValue;
-import mara.mybox.tools.MatrixTools;
+import mara.mybox.tools.MatrixDoubleTools;
 
 /**
  * @Author Mara
@@ -46,7 +46,7 @@ public class SRGB {
             {0.2224884033203125, 0.7168731689453125, 0.06060791015625},
             {0.013916015625, 0.097076416015625, 0.7140960693359375}
         };
-        double[] xyz = MatrixTools.multiply(matrix, linearRGB);
+        double[] xyz = MatrixDoubleTools.multiply(matrix, linearRGB);
         return xyz;
     }
 
@@ -62,7 +62,7 @@ public class SRGB {
             {0.2126729, 0.7151522, 0.0721750},
             {0.0193339, 0.1191920, 0.9503041}
         };
-        double[] xyz = MatrixTools.multiply(matrix, linearRGB);
+        double[] xyz = MatrixDoubleTools.multiply(matrix, linearRGB);
         return xyz;
     }
 

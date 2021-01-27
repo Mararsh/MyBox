@@ -25,7 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -61,23 +61,23 @@ public class ImagesBlendController extends ImageViewerController {
     private ImageInformation foreInfo, backInfo;
 
     @FXML
-    private VBox targetBox;
+    protected VBox targetBox;
     @FXML
-    private ScrollPane foreScroll, backScroll;
+    protected ScrollPane foreScroll, backScroll;
     @FXML
-    private ImageView foreView, backView;
+    protected ImageView foreView, backView;
     @FXML
-    private HBox foreBox, backBox, opacityHBox, toolBox;
+    protected HBox foreBox, backBox, opacityHBox, toolBox;
     @FXML
-    private ToggleGroup locationGroup;
+    protected ToggleGroup locationGroup;
     @FXML
-    private ComboBox<String> blendModeBox, opacityBox;
+    protected ComboBox<String> blendModeBox, opacityBox;
     @FXML
-    private Label foreTitle, foreLabel, backTitle, backLabel, pointLabel;
+    protected Label foreTitle, foreLabel, backTitle, backLabel, pointLabel;
     @FXML
-    private TextField pointX, pointY;
+    protected TextField pointX, pointY;
     @FXML
-    private CheckBox intersectOnlyCheck;
+    protected CheckBox intersectOnlyCheck;
 
     public ImagesBlendController() {
         baseTitle = AppVariables.message("ImagesBlend");
@@ -398,20 +398,20 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void openForegroundImage(ActionEvent event) {
+    protected void openForegroundImage(ActionEvent event) {
         if (foreFile != null) {
             FxmlStage.openImageViewer(foreFile);
         }
     }
 
     @FXML
-    private void setForegroundPaneSize(ActionEvent event) {
+    protected void setForegroundPaneSize(ActionEvent event) {
         foreView.setFitWidth(foreScroll.getWidth() - 1);
         foreView.setFitHeight(foreScroll.getHeight() - 5);
     }
 
     @FXML
-    private void setForegroundImageSize(ActionEvent event) {
+    protected void setForegroundImageSize(ActionEvent event) {
         foreView.setFitWidth(foreView.getImage().getWidth());
         foreView.setFitHeight(foreView.getImage().getHeight());
     }
@@ -546,20 +546,20 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void openBackgroundImage(ActionEvent event) {
+    protected void openBackgroundImage(ActionEvent event) {
         if (backFile != null) {
             FxmlStage.openImageViewer(backFile);
         }
     }
 
     @FXML
-    private void setBackgroundPaneSize(ActionEvent event) {
+    protected void setBackgroundPaneSize(ActionEvent event) {
         backView.setFitWidth(backScroll.getWidth() - 1);
         backView.setFitHeight(backScroll.getHeight() - 5);
     }
 
     @FXML
-    private void setBackgroundImageSize(ActionEvent event) {
+    protected void setBackgroundImageSize(ActionEvent event) {
         backView.setFitWidth(backView.getImage().getWidth());
         backView.setFitHeight(backView.getImage().getHeight());
     }
@@ -627,12 +627,12 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void newWindow(ActionEvent event) {
+    protected void newWindow(ActionEvent event) {
         FxmlStage.openImageViewer(image);
     }
 
     @FXML
-    private void openTargetPath(ActionEvent event) {
+    protected void openTargetPath(ActionEvent event) {
         try {
             browseURI(targetPath.toURI());
             recordFileOpened(targetPath);
@@ -642,7 +642,7 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void foreClicked(MouseEvent event) {
+    protected void foreClicked(MouseEvent event) {
         if (foreImage == null || location != ImagesRelativeLocation.Background_In_Foreground) {
             return;
         }
@@ -656,7 +656,7 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void backClicked(MouseEvent event) {
+    protected void backClicked(MouseEvent event) {
         if (backImage == null || location != ImagesRelativeLocation.Foreground_In_Background) {
             return;
         }

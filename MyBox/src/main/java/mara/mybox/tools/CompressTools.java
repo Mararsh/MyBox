@@ -251,11 +251,7 @@ public class CompressTools {
             try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
                 final byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
-                while ((len = compressorInputStream.read(buf)) != -1) {  //******debug
-                    if (len <= 0) {
-                        MyBoxLog.console(len);
-                        break;
-                    }
+                while ((len = compressorInputStream.read(buf)) > 0) {
                     out.write(buf, 0, len);
                 }
             }

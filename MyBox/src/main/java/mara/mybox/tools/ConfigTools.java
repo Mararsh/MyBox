@@ -78,14 +78,26 @@ public class ConfigTools {
         }
     }
 
-    public static List<String> languages() {
+    public static List<String> userLanguages() {
         List<String> languages = new ArrayList<>();
         try {
             File[] files = AppVariables.MyBoxLanguagesPath.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isFile()) {
-                        languages.add(file.getName());
+                    if (!file.isFile()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.endsWith(".properties")) {
+                        name = name.substring(0, name.length() - ".properties".length());
+                    }
+                    if (name.startsWith("Messages_")) {
+                        name = name.substring("Messages_".length());
+                    } else if (name.startsWith("TableMessages_")) {
+                        name = name.substring("TableMessages_".length());
+                    }
+                    if (!languages.contains(name)) {
+                        languages.add(name);
                     }
                 }
             }
@@ -94,12 +106,23 @@ public class ConfigTools {
         return languages;
     }
 
+    public static File interfaceLanguageFile(String langName) {
+        return new File(AppVariables.MyBoxLanguagesPath + File.separator + "Messages_" + langName + ".properties");
+    }
+
+    public static File tableLanguageFile(String langName) {
+        return new File(AppVariables.MyBoxLanguagesPath + File.separator + "TableMessages_" + langName + ".properties");
+    }
+
     /*
         General config
      */
     public static Map<String, String> readValues(File file) {
         Map<String, String> values = new HashMap<>();
         try {
+            if (file == null || !file.exists()) {
+                return values;
+            }
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 Properties conf = new Properties();
                 conf.load(in);

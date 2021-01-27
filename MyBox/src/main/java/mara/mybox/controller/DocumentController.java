@@ -21,7 +21,7 @@ import static mara.mybox.value.AppVariables.message;
 public class DocumentController extends BaseController {
 
     @FXML
-    private Button overviewButton, pdfButton, imageButton, networkButton, desktopButton, devButton;
+    protected Button overviewButton, pdfButton, imageButton, networkButton, desktopButton, devButton;
     @FXML
     protected Label label;
 

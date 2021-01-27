@@ -61,7 +61,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <children>
-                        <fx:include fx:id="table" source="ImagesTableReadOnly.fxml" />
+                        <fx:include fx:id="table" source="ControlImagesTableReadOnly.fxml" />
                     </children>
                 </VBox>
 

@@ -10,11 +10,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -25,13 +24,13 @@ import static mara.mybox.value.AppVariables.message;
 public class HtmlConvertUrlController extends BaseController {
 
     @FXML
-    private RadioButton decodeRadio, encodeRadio;
+    protected RadioButton decodeRadio, encodeRadio;
     @FXML
-    private TextField valueInput, resultInput;
+    protected TextField valueInput, resultInput;
     @FXML
-    private ComboBox<String> charsetsSelector;
+    protected ComboBox<String> charsetsSelector;
     @FXML
-    private Button equalButton;
+    protected Button equalButton;
 
     public HtmlConvertUrlController() {
         baseTitle = AppVariables.message("HtmlConvertUrl");
@@ -76,7 +75,7 @@ public class HtmlConvertUrlController extends BaseController {
     @FXML
     @Override
     public void pasteAction() {
-        String string = Clipboard.getSystemClipboard().getString();
+        String string = FxmlControl.getSystemClipboardString();
         if (string != null && !string.isBlank()) {
             valueInput.setText(string);
         }
@@ -85,16 +84,8 @@ public class HtmlConvertUrlController extends BaseController {
     @FXML
     @Override
     public void copyAction() {
-        try {
-            String string = resultInput.getText();
-            if (string != null && !string.isBlank()) {
-                ClipboardContent cc = new ClipboardContent();
-                cc.putString(string);
-                Clipboard.getSystemClipboard().setContent(cc);
-                popInformation(message("CopySuccessfully"));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (FxmlControl.copyToSystemClipboard(resultInput.getText())) {
+            popInformation(message("CopiedToSystemClipboard"));
         }
     }
 

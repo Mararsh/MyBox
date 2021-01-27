@@ -10,11 +10,11 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageScope;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -30,7 +30,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     @FXML
     protected ColorSetController colorSetController;
     @FXML
-    protected CheckBox clipboardCheck, copyToSystemClipboardCheck, marginsCheck;
+    protected CheckBox clipboardCheck, marginsCheck;
 
     @Override
     public void initPane() {
@@ -68,14 +68,23 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
 
     @Override
     protected void paneExpanded() {
-        imageController.showScopePane();
+        imageController.showRightPane();
+        imageController.resetImagePane();
+        if (scopeController != null && scopeController.scope != null
+                && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
+            imageController.hideImagePane();
+            imageController.showScopePane();
+        } else {
+            imageController.hideScopePane();
+            imageController.showImagePane();
+        }
     }
 
     @FXML
     @Override
     public void okAction() {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -134,7 +143,8 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

@@ -22,11 +22,11 @@ import static mara.mybox.value.AppVariables.message;
 public class WhitePointController extends XYZController {
 
     @FXML
-    private ComboBox<String> wpSelector;
+    protected ComboBox<String> wpSelector;
     @FXML
-    private ToggleGroup sourceGroup;
+    protected ToggleGroup sourceGroup;
     @FXML
-    private RadioButton standardRadio, inputRadio;
+    protected RadioButton standardRadio, inputRadio;
 
     public WhitePointController() {
     }
@@ -55,6 +55,8 @@ public class WhitePointController extends XYZController {
             });
 
             super.initControls();
+
+            wpSelector.getSelectionModel().select(0);
 
         } catch (Exception e) {
 

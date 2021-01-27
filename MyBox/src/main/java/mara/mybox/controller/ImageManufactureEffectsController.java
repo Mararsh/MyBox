@@ -13,9 +13,9 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
-import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
@@ -46,11 +46,12 @@ import mara.mybox.value.CommonValues;
 public class ImageManufactureEffectsController extends ImageManufactureOperationController {
 
     protected List<Color> quantizationColors;
+    protected StringTable quanTable;
 
     @FXML
     protected ImageManufactureEffectsOptionsController optionsController;
     @FXML
-    protected Button demoButton, paletteAddButton;
+    protected Button demoButton, paletteAddButton, htmlButton;
 
     @Override
     public void initPane() {
@@ -66,8 +67,13 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     protected void paneExpanded() {
         imageController.showRightPane();
         optionsController.checkEffectType();
+
         FxmlControl.setTooltip(paletteAddButton, message("AddInColorPalette"));
         paletteAddButton.setVisible(false);
+
+        FxmlControl.setTooltip(htmlButton, message("ShowData"));
+        htmlButton.setVisible(false);
+
     }
 
     @FXML
@@ -75,6 +81,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     public void okAction() {
         quantizationColors = null;
         paletteAddButton.setVisible(false);
+        htmlButton.setVisible(false);
+        quanTable = null;
         optionsController.actualLoopLabel.setText("");
         if (imageController == null || optionsController.effectType == null) {
             return;
@@ -125,8 +133,9 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                             case Quantization:
                                 quantization = ImageQuantization.create(imageView.getImage(),
                                         scopeController.scope, optionsController.quantizationAlgorithm,
-                                        optionsController.quanColors, optionsController.bitDepth,
-                                        true, optionsController.quanDitherCheck.isSelected());
+                                        optionsController.quanColors, optionsController.regionSize,
+                                        optionsController.weight1, optionsController.weight2, optionsController.weight3,
+                                        true, optionsController.quanDitherCheck.isSelected(), optionsController.ceilCheck.isSelected());
                                 if (optionsController.quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
                                     KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
                                     q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
@@ -209,11 +218,12 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         if (imageController.sourceFile != null) {
                             name = imageController.sourceFile.getName();
                         }
-                        StringTable table = quantization.countTable(name);
-                        if (table != null && optionsController.quanDataCheck.isSelected()) {
-                            HtmlViewerController controller
-                                    = (HtmlViewerController) FxmlStage.openStage(CommonValues.HtmlViewerFxml);
-                            controller.loadTable(table);
+                        quanTable = quantization.countTable(name);
+                        if (quanTable != null) {
+                            htmlButton.setVisible(true);
+                            if (optionsController.quanDataCheck.isSelected()) {
+                                htmlAction();
+                            }
                         }
                         if (actualLoop >= 0) {
                             optionsController.actualLoopLabel.setText(message("ActualLoop") + ":" + actualLoop);
@@ -237,6 +247,16 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    @FXML
+    public void htmlAction() {
+        if (quanTable == null) {
+            return;
+        }
+        HtmlViewerController controller
+                = (HtmlViewerController) FxmlStage.openStage(CommonValues.HtmlViewerFxml);
+        controller.loadTable(quanTable);
     }
 
     @FXML
@@ -278,7 +298,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
                     ImageQuantization quantization
                             = ImageQuantization.create(image, scope,
-                                    QuantizationAlgorithm.PopularityQuantization, 16, 4, false, true);
+                                    QuantizationAlgorithm.PopularityQuantization, 16, 256, 2, 4, 3, false, true, true);
                     bufferedImage = quantization.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("Posterizing") + ".png";

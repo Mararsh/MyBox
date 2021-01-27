@@ -25,11 +25,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -37,7 +37,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-12-4
  * @License Apache License Version 2.0
  */
-public class FFmpegInformationController extends FFmpegOptionsController {
+public class FFmpegInformationController extends ControlFFmpegOptions {
 
     protected ObservableList<FFmpegFormat> formatsData;
     protected ObservableList<FFmpegCodec> codecsData;
@@ -572,10 +572,10 @@ public class FFmpegInformationController extends FFmpegOptionsController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if ((formatsTask != null && formatsTask.isRunning())
-                || (codecsTask != null && codecsTask.isRunning())
-                || (queryTask != null && queryTask.isRunning())
-                || (filtersTask != null && filtersTask.isRunning())) {
+        if ((formatsTask != null && !formatsTask.isQuit())
+                || (codecsTask != null && !codecsTask.isQuit())
+                || (queryTask != null && !queryTask.isQuit())
+                || (filtersTask != null && !filtersTask.isQuit())) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVariables.message("TaskRunning"));

@@ -48,7 +48,6 @@ public class ImageJpgFile {
             int index, Rectangle bounds, int xscale, int yscale) {
         BufferedImage bufferedImage = null;
         try {
-
             if (imageInfo.getColorChannels() != 4) {
                 return null;
             }

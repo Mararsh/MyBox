@@ -729,7 +729,8 @@ public class DirectorySynchronizeController extends FilesBatchController {
 
     protected boolean copyFile(File sourceFile, File targetFile) {
         try {
-            if (task.isCancelled() || sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
+            if (task == null || task.isCancelled()
+                    || sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
                 return false;
             }
             if (!targetFile.exists()) {

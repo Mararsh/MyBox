@@ -220,16 +220,17 @@ public class ImageColor {
         return srgb;
     }
 
+    // Generally not use this value. Use distance square instead.
     public static int calculateColorDistance(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
             return Integer.MAX_VALUE;
         }
-        int v = calculateColorDistance2(color1, color2);
+        int v = calculateColorDistanceSquare(color1, color2);
         return (int) Math.round(Math.sqrt(v));
     }
 
     // https://en.wikipedia.org/wiki/Color_difference
-    public static int calculateColorDistance2(Color color1, Color color2) {
+    public static int calculateColorDistanceSquare(Color color1, Color color2) {
         if (color1 == null || color2 == null) {
             return Integer.MAX_VALUE;
         }
@@ -250,16 +251,16 @@ public class ImageColor {
 //                + ((767 - redAvg) * blueDiff * blueDiff) >> 8);
 //    }
     // distance2 = Math.pow(distance, 2)
-    public static boolean isColorMatch2(Color color1, Color color2, int distance2) {
+    public static boolean isColorMatchSquare(Color color1, Color color2, int distanceSquare) {
         if (color1 == null || color2 == null) {
             return false;
         }
         if (color1.getRGB() == color2.getRGB()) {
             return true;
-        } else if (distance2 == 0 || color1.getRGB() == 0 || color2.getRGB() == 0) {
+        } else if (distanceSquare == 0 || color1.getRGB() == 0 || color2.getRGB() == 0) {
             return false;
         }
-        return calculateColorDistance2(color1, color2) <= distance2;
+        return calculateColorDistanceSquare(color1, color2) <= distanceSquare;
     }
 
     // distance: 0.0-1.0

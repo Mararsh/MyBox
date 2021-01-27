@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.data.GeographyCode;
+import mara.mybox.db.data.GeographyCode;
 import mara.mybox.dev.MyBoxLog;
 
 /**

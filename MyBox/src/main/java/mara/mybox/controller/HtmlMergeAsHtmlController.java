@@ -11,8 +11,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data.FileInformation;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
@@ -34,7 +34,7 @@ public class HtmlMergeAsHtmlController extends FilesBatchController {
     @FXML
     protected TextField titleInput;
     @FXML
-    private CheckBox deleteCheck;
+    protected CheckBox deleteCheck;
     @FXML
     protected ControlFileSelecter targetFileController;
 

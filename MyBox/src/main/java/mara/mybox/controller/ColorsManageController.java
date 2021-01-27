@@ -24,11 +24,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
-import mara.mybox.data.VisitHistory.FileType;
-import mara.mybox.data.tools.VisitHistoryTools;
-import mara.mybox.db.TableColorData;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ColorDataTools;
+import mara.mybox.db.data.VisitHistory.FileType;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
@@ -45,7 +46,7 @@ import thridparty.TableAutoCommitCell;
  * @CreateDate 2020-1-7
  * @License Apache License Version 2.0
  */
-public class ColorsManageController extends TableManageController<ColorData> {
+public class ColorsManageController extends BaseDataTableController<ColorData> {
 
     @FXML
     protected TableColumn<ColorData, Integer> colorValueColumn;
@@ -223,7 +224,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
 
     @Override
     public List<ColorData> readPageData() {
-        return TableColorData.readPage(currentPageStart, currentPageSize);
+        return TableColorData.readPage(currentPageStart - 1, currentPageSize);
     }
 
     @Override
@@ -306,7 +307,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
     }
 
     @Override
-    protected boolean clearData() {
+    protected int clearData() {
         return new TableColorData().clear();
     }
 
@@ -414,9 +415,9 @@ public class ColorsManageController extends TableManageController<ColorData> {
                 @Override
                 protected boolean handle() {
                     if ("all".equals(type)) {
-                        ColorData.exportCSV(file);
+                        ColorDataTools.exportCSV(file);
                     } else {
-                        ColorData.exportCSV(rows, file);
+                        ColorDataTools.exportCSV(rows, file);
                     }
                     return true;
                 }

@@ -19,8 +19,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
@@ -45,7 +45,7 @@ import net.sourceforge.tess4j.util.ImageHelper;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageOCRBatchController extends ImagesBatchController {
+public class ImageOCRBatchController extends BaseImagesBatchController {
 
     protected float scale;
     protected int threshold, rotate, regionLevel, wordLevel, tesseractVersion;
@@ -63,7 +63,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
     @FXML
     protected CheckBox deskewCheck, invertCheck, mergeCheck;
     @FXML
-    protected ImageOCROptionsController ocrOptionsController;
+    protected ControlOCROptions ocrOptionsController;
     @FXML
     protected Tab ocrOptionsTab;
 
@@ -177,6 +177,21 @@ public class ImageOCRBatchController extends ImagesBatchController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    @FXML
+    public void clearAlgorithm() {
+        algorithmSelector.setValue(null);
+    }
+
+    @FXML
+    public void clearThreadhold() {
+        binarySelector.setValue(null);
+    }
+
+    @FXML
+    public void clearRotate() {
+        rotateSelector.setValue(null);
     }
 
     @Override

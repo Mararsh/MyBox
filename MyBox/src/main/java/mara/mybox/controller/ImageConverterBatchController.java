@@ -21,12 +21,12 @@ import static mara.mybox.value.AppVariables.setUserConfigValue;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageConverterBatchController extends ImagesBatchController {
+public class ImageConverterBatchController extends BaseImagesBatchController {
 
     protected ImageAttributes attributes;
 
     @FXML
-    protected ImageConverterOptionsController optionsController;
+    protected ControlImageConverterOptions optionsController;
     @FXML
     protected CheckBox appendColorCheck, appendCompressionCheck, appendQualityCheck;
 

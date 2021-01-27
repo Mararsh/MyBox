@@ -6,17 +6,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.BrowserHistory;
-import mara.mybox.db.TableBrowserHistory;
+import mara.mybox.db.table.TableBrowserHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TableImageFileCell;
 import mara.mybox.fxml.TableTimeCell;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class WebBrowserHistoryController extends TableManageController<BrowserHistory> {
+public class WebBrowserHistoryController extends BaseDataTableController<BrowserHistory> {
 
     protected WebBrowserController browserConroller;
 
@@ -87,7 +87,7 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
     }
 
     @Override
-    protected boolean clearData() {
+    protected int clearData() {
         return new TableBrowserHistory().clear();
     }
 

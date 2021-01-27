@@ -32,51 +32,45 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab closable="false" text="%AdaptPrimaries">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="5.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Hyperlink onAction="#aboutColor" text="%AboutColor" />
-                                                <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                    <children>
-                                                        <Label text="%DecimalScale">
-                                                            <HBox.margin>
-                                                                <Insets />
-                                                            </HBox.margin>
-                                                        </Label>
-                                                        <TextField fx:id="scaleInput" prefWidth="60.0" />
-                                                        <Label layoutX="220.0" layoutY="15.0" text="%Algorithm">
-                                                            <HBox.margin>
-                                                                <Insets left="30.0" />
-                                                            </HBox.margin>
-                                                        </Label>
-                                                        <RadioButton mnemonicParsing="false" selected="true" text="Bradford">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="algorithmGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton mnemonicParsing="false" text="XYZ Scaling" toggleGroup="$algorithmGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="Von Kries" toggleGroup="$algorithmGroup" />
-                                                    </children>
-                                                </HBox>
-                                                <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconCalculator.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
-                                        <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                        <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <items>
-                                                <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="674.0" prefViewportWidth="1313.0">
+                                                <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="674.0" prefViewportWidth="1313.0">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                             <children>
+                                                                <TitledPane layoutX="10.0" layoutY="10.0" text="%Options">
+                                                                    <content>
+                                                                        <VBox spacing="5.0">
+                                                                            <children>
+                                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                                    <children>
+                                                                                        <Label text="%DecimalScale">
+                                                                                            <HBox.margin>
+                                                                                                <Insets />
+                                                                                            </HBox.margin>
+                                                                                        </Label>
+                                                                                        <TextField fx:id="scaleInput" prefWidth="60.0" />
+                                                                                    </children>
+                                                                                </HBox>
+                                                                                <Label text="%Algorithm" />
+                                                                                <FlowPane>
+                                                                                    <children>
+                                                                                        <RadioButton mnemonicParsing="false" selected="true" text="Bradford">
+                                                                                            <toggleGroup>
+                                                                                                <ToggleGroup fx:id="algorithmGroup" />
+                                                                                            </toggleGroup>
+                                                                                        </RadioButton>
+                                                                                        <RadioButton mnemonicParsing="false" text="XYZ Scaling" toggleGroup="$algorithmGroup" />
+                                                                                        <RadioButton mnemonicParsing="false" text="Von Kries" toggleGroup="$algorithmGroup" />
+                                                                                    </children>
+                                                                                </FlowPane>
+                                                                                <Hyperlink onAction="#aboutColor" text="%AboutColor" />
+                                                                            </children>
+                                                                        </VBox>
+                                                                    </content>
+                                                                </TitledPane>
                                                                 <TitledPane text="%LinearRGB" VBox.vgrow="NEVER">
                                                                     <content>
                                                                         <fx:include fx:id="rgb" source="RGBColorSpace.fxml" />
@@ -91,20 +85,35 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </ScrollPane>
-                                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Result">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <TextArea fx:id="calculateArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconDoubleLeft.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction" HBox.hgrow="NEVER">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconCalculator.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
-                                                        </VBox>
-                                                    </content>
-                                                </TitledPane>
+                                                        </HBox>
+                                                        <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
                                             </items>
                                         </SplitPane>
                                     </children>
                                     <padding>
-                                        <Insets top="10.0" />
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </VBox>
                             </content>

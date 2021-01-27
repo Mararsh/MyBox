@@ -33,14 +33,38 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                        <Label text="%2DimensionalBarcode" />
+                                        <FlowPane hgap="5.0" vgap="5.0">
                                             <children>
-                                                <Label text="%Type" />
-                                                <ComboBox fx:id="typeSelecor" prefWidth="300.0" />
+                                                <RadioButton mnemonicParsing="false" text="QR_Code">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="typeGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="PDF_417" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="DataMatrix" toggleGroup="$typeGroup" />
                                             </children>
-                                        </HBox>
+                                        </FlowPane>
+                                        <Label layoutX="20.0" layoutY="20.0" text="%1DimensionalBarcode" />
+                                        <FlowPane hgap="5.0" layoutX="20.0" layoutY="60.0" vgap="5.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" text="Code39" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="Code128" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="Codabar" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="Interleaved2Of5" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="ITF_14" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="POSTNET" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="EAN13" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="EAN8" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="EAN_128" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="UPCA" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="UPCE" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="Royal_Mail_Customer_Barcode" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="USPS_Intelligent_Mail" toggleGroup="$typeGroup" />
+                                            </children>
+                                        </FlowPane>
                                         <Label text="%Code" VBox.vgrow="NEVER" />
-                                        <TextArea fx:id="codeInput" maxWidth="1.7976931348623157E308" prefHeight="200.0" text="1234567890" VBox.vgrow="NEVER" />
+                                        <TextArea fx:id="codeInput" maxWidth="1.7976931348623157E308" prefHeight="120.0" text="1234567890" VBox.vgrow="NEVER" />
                                         <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                                             <children>
                                                 <VBox fx:id="d1ParaBox" spacing="5.0">
@@ -126,11 +150,11 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="cancelButton" onAction="#cancelAction">
+                                                                <Button fx:id="clearButton" onAction="#clearAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconCancel.png" />
+                                                                                <Image url="@../buttons/iconClear.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -238,7 +262,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="validateButton" mnemonicParsing="false" onAction="#validateAction" onMouseEntered="#popSaveAs">
+                                                <Button fx:id="validateButton" mnemonicParsing="false" onAction="#validateAction" >
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -247,11 +271,12 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="createButton" defaultButton="true" mnemonicParsing="false" onAction="#createAction" onMouseEntered="#popSaveAs" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
+                                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconAdd.png" />
+                                                                <Image url="@../buttons/iconStart.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

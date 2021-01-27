@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
-import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageContrast;

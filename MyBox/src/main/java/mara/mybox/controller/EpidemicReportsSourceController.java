@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.CheckBoxTreeItem;
-import mara.mybox.data.EpidemicReport;
+import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;

@@ -19,7 +19,7 @@
                 </ImageView>
             </graphic>
         </Button>
-        <Label fx:id="commentsLabel" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%DefineScopeAndManufacture" wrapText="true" VBox.vgrow="NEVER" />
+        <Label fx:id="commentsLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DefineScopeAndManufacture" wrapText="true" VBox.vgrow="NEVER" />
         <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

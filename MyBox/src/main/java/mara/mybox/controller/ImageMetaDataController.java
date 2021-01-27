@@ -9,8 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
@@ -26,9 +26,9 @@ import mara.mybox.value.CommonFxValues;
 public class ImageMetaDataController extends BaseController {
 
     @FXML
-    private TextField fileInput;
+    protected TextField fileInput;
     @FXML
-    private TextArea metaDataInput;
+    protected TextArea metaDataInput;
 
     public ImageMetaDataController() {
         baseTitle = AppVariables.message("ImageMetaData");

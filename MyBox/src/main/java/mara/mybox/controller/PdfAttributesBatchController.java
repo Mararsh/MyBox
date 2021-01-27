@@ -19,11 +19,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -59,8 +59,6 @@ public class PdfAttributesBatchController extends PdfBatchController {
 
     public PdfAttributesBatchController() {
         baseTitle = AppVariables.message("PDFAttributesBatch");
-        needUserPassword = false;
-        needOwnerPassword = true;
     }
 
     @Override
@@ -74,7 +72,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
 
             pdfsTableController.tableCommentsLabel.setText(message("PdfAttributesTableComments"));
 
-            FxmlControl.setTooltip(pdfsTableController.passwordInput, new Tooltip(message("OwnerPassword")));
+            FxmlControl.setTooltip(pdfsTableController.passwordInput, new Tooltip(message("UserPassword")));
 
             titleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -361,7 +359,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
         try {
             countHandling(srcFile);
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
-            String filePassword = rowInfo.getOwnerPassword();
+            String filePassword = rowInfo.getUserPassword();
             try ( PDDocument pd = PDDocument.load(srcFile, filePassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {

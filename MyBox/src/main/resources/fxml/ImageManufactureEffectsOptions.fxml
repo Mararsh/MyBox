@@ -66,10 +66,16 @@
                                 <ComboBox fx:id="quanColorsSelector" editable="true" maxWidth="1.7976931348623157E308" prefWidth="140.0" />
                             </children>
                         </HBox>
-                        <HBox fx:id="depthBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                  <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="277.0" spacing="5.0">
+                     <children>
+                        <Label fx:id="weightLabel" text="%RGBWeight" />
+                        <ComboBox fx:id="weightSelector" editable="true" prefWidth="160.0" />
+                     </children>
+                  </HBox>
+                        <HBox fx:id="regionBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                             <children>
-                                <Label fx:id="depthLabel" text="%RegionsBitDepth" />
-                                <ComboBox fx:id="depthSelector" prefWidth="100.0" />
+                                <Label fx:id="depthLabel" text="%PreprocessedRegionSize" />
+                                <ComboBox fx:id="regionSizeSelector" editable="true" prefWidth="120.0" />
                             </children>
                         </HBox>
                   <HBox fx:id="loopBox" alignment="CENTER_LEFT" layoutX="15.0" layoutY="277.0" spacing="5.0">
@@ -79,11 +85,8 @@
                      </children>
                   </HBox>
                   <Label fx:id="actualLoopLabel" minHeight="-Infinity" wrapText="true" />
-                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                            <children>
-                                <CheckBox fx:id="quanDitherCheck" mnemonicParsing="false" selected="true" text="%Dithering" />
-                            </children>
-                        </HBox>
+                          <CheckBox fx:id="ceilCheck" mnemonicParsing="false" selected="true" text="%MathCeil" />
+                  <CheckBox fx:id="quanDitherCheck" mnemonicParsing="false" selected="true" text="%Dithering" />
                         <CheckBox fx:id="quanDataCheck" mnemonicParsing="false" selected="true" text="%ShowData" />
                     </children>
                 </VBox>

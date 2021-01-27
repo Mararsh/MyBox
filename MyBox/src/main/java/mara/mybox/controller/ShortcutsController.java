@@ -53,7 +53,9 @@ public class ShortcutsController extends HtmlViewerController {
                 table();
             }
             String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
-            html = HtmlTools.html(message("Shortcuts"), htmlStyle, StringTable.tableDiv(table));
+            html = "<P class=\"valueText\">" + message("ShortcutsTips") + "</P>\n"
+                    + StringTable.tableDiv(table);
+            html = HtmlTools.html(message("Shortcuts"), htmlStyle, html);
             webView.getEngine().loadContent​(html);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -116,8 +118,8 @@ public class ShortcutsController extends HtmlViewerController {
             key("ALT", "5", message("Invert"), "");
             key("ALT", "PAGE_UP", message("Previous"), "PAGE_UP");
             key("ALT", "PAGE_DOWN", message("Next"), "PAGE_DOWN");
-            key("ALT", "HOME", message("First"), "");
-            key("ALT", "END", message("Last"), "");
+            key("ALT", "HOME", message("First"), "HOME");
+            key("ALT", "END", message("Last"), "END");
 
             key("s / S", "", message("Play") + " / " + message("Pause"), "");
             key("q / Q", "", message("Stop"), "");

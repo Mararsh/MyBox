@@ -636,14 +636,14 @@ public class ImageScope {
             int colorDistance2, Color color) {
         if (colorExcluded) {
             for (Color oColor : colors) {
-                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
+                if (ImageColor.isColorMatchSquare(color, oColor, colorDistance2)) {
                     return false;
                 }
             }
             return true;
         } else {
             for (Color oColor : colors) {
-                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
+                if (ImageColor.isColorMatchSquare(color, oColor, colorDistance2)) {
                     return true;
                 }
             }
@@ -857,7 +857,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 
@@ -895,7 +895,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 
@@ -1037,7 +1037,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 
@@ -1233,7 +1233,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 
@@ -1431,7 +1431,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 
@@ -1637,7 +1637,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 
@@ -1823,7 +1823,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 
@@ -1837,7 +1837,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
         }
     }
 

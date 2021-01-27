@@ -7,15 +7,15 @@ import java.sql.ResultSet;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVFormat;
@@ -205,7 +205,7 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
                     if (FIPS != null && locationCode.getCode5() == null) {
                         locationCode.setCode5(FIPS);
                     }
-                    long locationid = locationCode.getGcid();
+                    long locationid = locationCode.getId();
                     String dateSting = DateTools.datetimeToString(date.getTime());
                     equalQuery.setString(1, EpidemicReport.COVID19JHU);
                     equalQuery.setString(2, dateSting);
@@ -232,7 +232,7 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
                     report.setConfirmed(confirmed);
                     report.setHealed(recovered);
                     report.setDead(deaths);
-                    report.setSource(2);
+                    report.setSource((short) 2);
                     if (existed) {
                         if (update == null) {
                             skipCount++;

@@ -4,9 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import mara.mybox.data.Dataset;
+import mara.mybox.db.data.Dataset;
 import mara.mybox.data.Era;
-import mara.mybox.db.TableDataset;
+import mara.mybox.db.table.TableDataset;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableBooleanCell;
@@ -22,7 +22,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-7-18
  * @License Apache License Version 2.0
  */
-public class DatasetController extends DataAnalysisController<Dataset> {
+public class DatasetController extends BaseDataManageController<Dataset> {
 
     protected String predefinedColor, inputtedColor;
     protected LoadingController loading;

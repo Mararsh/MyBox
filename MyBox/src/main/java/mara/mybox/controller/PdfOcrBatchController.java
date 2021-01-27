@@ -24,7 +24,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -86,7 +86,7 @@ public class PdfOcrBatchController extends PdfBatchController {
     @FXML
     protected FlowPane imageOptionsPane;
     @FXML
-    protected ImageOCROptionsController ocrOptionsController;
+    protected ControlOCROptions ocrOptionsController;
 
     public PdfOcrBatchController() {
         baseTitle = AppVariables.message("PdfOCRBatch");
@@ -113,32 +113,6 @@ public class PdfOcrBatchController extends PdfBatchController {
                 }
             });
             checkGetImageType();
-
-            dpi = 96;
-            dpiSelector.getItems().addAll(Arrays.asList(
-                    "96", "72", "300", "160", "240", "120", "600", "400"
-            ));
-            dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    try {
-                        if (newV == null || newV.isEmpty()) {
-                            return;
-                        }
-                        int i = Integer.valueOf(newV);
-                        if (i > 0) {
-                            dpi = i;
-                            dpiSelector.getEditor().setStyle(null);
-                            AppVariables.setUserConfigInt("PdfOcrDpi", dpi);
-                        } else {
-                            dpiSelector.getEditor().setStyle(badStyle);
-                        }
-                    } catch (Exception e) {
-                        dpiSelector.getEditor().setStyle(badStyle);
-                    }
-                }
-            });
-            dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("PdfOcrDpi", "96"));
 
             scale = 1.0f;
             scaleSelector.getItems().addAll(Arrays.asList(
@@ -253,6 +227,21 @@ public class PdfOcrBatchController extends PdfBatchController {
             }
             scale = Float.valueOf(scaleSelector.getValue());
         }
+    }
+
+    @FXML
+    public void clearAlgorithm() {
+        algorithmSelector.setValue(null);
+    }
+
+    @FXML
+    public void clearThreadhold() {
+        binarySelector.setValue(null);
+    }
+
+    @FXML
+    public void clearRotate() {
+        rotateSelector.setValue(null);
     }
 
     @Override
@@ -384,7 +373,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                 Iterator<COSName> pageIterator = iterable.iterator();
                 int index = 0;
                 while (pageIterator.hasNext()) {
-                    if (task.isCancelled()) {
+                    if (task == null || task.isCancelled()) {
                         break;
                     }
                     COSName cosName = pageIterator.next();

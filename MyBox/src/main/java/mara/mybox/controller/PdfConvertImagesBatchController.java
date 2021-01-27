@@ -31,7 +31,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
     protected PDFRenderer renderer;
 
     @FXML
-    protected ImageConverterOptionsController optionsController;
+    protected ControlImageConverterOptions optionsController;
     @FXML
     protected CheckBox appendColorCheck, appendCompressionCheck, appendQualityCheck, appendDensityCheck;
 

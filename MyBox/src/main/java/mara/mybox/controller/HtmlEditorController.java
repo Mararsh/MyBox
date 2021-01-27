@@ -47,7 +47,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -68,7 +67,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class HtmlEditorController extends HtmlBaseController {
+public class HtmlEditorController extends BaseHtmlController {
 
     protected boolean isFrameSet;
     protected Parser htmlParser, textParser;
@@ -388,7 +387,7 @@ public class HtmlEditorController extends HtmlBaseController {
             return;
         }
         try {
-            String html = getHtml(webEngine);
+            String html = FxmlControl.getHtml(webEngine);
             if (tabPane.getTabs().contains(editorTab)) {
                 Platform.runLater(() -> {
                     loadEditor(html);
@@ -577,22 +576,6 @@ public class HtmlEditorController extends HtmlBaseController {
         isSettingValues = false;
     }
 
-    protected String getHtml(WebEngine engine) {
-        try {
-            if (engine == null) {
-                return "";
-            }
-            Object c = engine.executeScript("document.documentElement.outerHTML");
-            if (c == null) {
-                return "";
-            }
-            return (String) c;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return "";
-        }
-    }
-
     @FXML
     public void popPanesMenu(MouseEvent mouseEvent) {
         try {
@@ -610,7 +593,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 } else {
                     tabPane.getTabs().add(editorTab);
                     Platform.runLater(() -> {
-                        String html = getHtml(webEngine);
+                        String html = FxmlControl.getHtml(webEngine);
                         loadEditor(html);
                     });
                 }
@@ -627,7 +610,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 } else {
                     tabPane.getTabs().add(markdownTab);
                     Platform.runLater(() -> {
-                        String html = getHtml(webEngine);
+                        String html = FxmlControl.getHtml(webEngine);
                         html2markdown(html);
                     });
                 }
@@ -644,7 +627,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 } else {
                     tabPane.getTabs().add(codesTab);
                     Platform.runLater(() -> {
-                        String html = getHtml(webEngine);
+                        String html = FxmlControl.getHtml(webEngine);
                         codesArea.setText(html);
                     });
                 }
@@ -661,7 +644,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 } else {
                     tabPane.getTabs().add(textTab);
                     Platform.runLater(() -> {
-                        String html = getHtml(webEngine);
+                        String html = FxmlControl.getHtml(webEngine);
                         html2markdown(html);
                     });
                 }
@@ -678,7 +661,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 } else {
                     tabPane.getTabs().add(tocTab);
                     Platform.runLater(() -> {
-                        String html = getHtml(webEngine);
+                        String html = FxmlControl.getHtml(webEngine);
                         html2markdown(html);
                     });
                 }
@@ -695,7 +678,7 @@ public class HtmlEditorController extends HtmlBaseController {
                 } else {
                     tabPane.getTabs().add(linksTab);
                     Platform.runLater(() -> {
-                        String html = getHtml(webEngine);
+                        String html = FxmlControl.getHtml(webEngine);
                         html2markdown(html);
                     });
                 }

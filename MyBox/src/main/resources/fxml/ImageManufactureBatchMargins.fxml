@@ -64,7 +64,6 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <HBox fx:id="colorBox" alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
-                                                        <Rectangle fx:id="bgRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
                                                         <fx:include fx:id="colorSet" source="ColorSet.fxml" />
                                                     </children>
                                                 </HBox>
@@ -88,6 +87,15 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
                                             </children>
                                         </FlowPane>
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPreview.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -117,15 +125,6 @@ License:    Apache License Version 2.0
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/iconBrowse.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPreview.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

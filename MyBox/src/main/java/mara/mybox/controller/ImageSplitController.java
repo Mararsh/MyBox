@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import javafx.application.Platform;
@@ -16,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -40,11 +38,15 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory.FileType;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
@@ -54,15 +56,15 @@ import static mara.mybox.image.file.ImageTiffFile.getWriterMeta;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 /**
  * @Author Mara
@@ -73,38 +75,36 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 public class ImageSplitController extends ImageViewerController {
 
     private List<Integer> rows, cols;
-    private int rowsNumber, colsNumber, width, height,
-            marginSize, pageWidth, pageHeight, jpegQuality, threshold;
+    private int rowsNumber, colsNumber, width, height;
     protected SimpleBooleanProperty splitValid;
     private SplitMethod splitMethod;
-    private LoadingController imageController, pdfController, tiffController;
+    private LoadingController imageLoading, pdfLoading, tiffLoading;
     private SingletonTask imageTask, pdfTask, tiffTask;
-    private boolean pdfImageSize;
 
     public static enum SplitMethod {
         Predefined, ByNumber, BySize, Customize
     }
 
     @FXML
-    private ToggleGroup splitGroup, pdfSizeGroup;
+    protected ToggleGroup splitGroup;
     @FXML
-    private FlowPane splitPredefinedPane, splitSizePane, splitNumberPane,
+    protected FlowPane splitPredefinedPane, splitSizePane, splitNumberPane,
             splitCustomized1Pane, splitCustomized2Pane;
     @FXML
-    private Button saveImagesButton, saveTiffButton, savePdfButton;
+    protected Button saveImagesButton, saveTiffButton, savePdfButton;
     @FXML
-    private TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
-            widthInput, heightInput, customWidthInput, customHeightInput, authorInput, headerInput;
+    protected TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
+            widthInput, heightInput;
     @FXML
-    private CheckBox displaySizeCheck, pageNumberCheck;
+    protected CheckBox displaySizeCheck;
     @FXML
-    protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, fontBox;
+    protected ControlPdfWriteOptions pdfOptionsController;
     @FXML
-    private VBox splitOptionsBox, optionsBox, showBox;
+    protected VBox splitOptionsBox, optionsBox, showBox;
     @FXML
-    private HBox opBox;
+    protected HBox opBox;
     @FXML
-    private Label promptLabel;
+    protected Label promptLabel, sizeLabel;
 
     public ImageSplitController() {
         baseTitle = AppVariables.message("ImageSplit");
@@ -130,7 +130,7 @@ public class ImageSplitController extends ImageViewerController {
 
             initCommon();
             initSplitTab();
-            initPdfTab();
+            pdfOptionsController.set(baseName, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -140,7 +140,6 @@ public class ImageSplitController extends ImageViewerController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         checkSplitMethod();
-        checkPageSize();
         FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
 
     }
@@ -165,8 +164,11 @@ public class ImageSplitController extends ImageViewerController {
         );
         savePdfButton.disableProperty().bind(
                 splitValid.not()
-                        .or(customWidthInput.styleProperty().isEqualTo(badStyle))
-                        .or(customHeightInput.styleProperty().isEqualTo(badStyle))
+                        .or(pdfOptionsController.customWidthInput.styleProperty().isEqualTo(badStyle))
+                        .or(pdfOptionsController.customHeightInput.styleProperty().isEqualTo(badStyle))
+                        .or(pdfOptionsController.marginSelector.styleProperty().isEqualTo(badStyle))
+                        .or(pdfOptionsController.jpegQualitySelector.styleProperty().isEqualTo(badStyle))
+                        .or(pdfOptionsController.thresholdInput.styleProperty().isEqualTo(badStyle))
         );
         saveTiffButton.disableProperty().bind(
                 splitValid.not()
@@ -238,6 +240,7 @@ public class ImageSplitController extends ImageViewerController {
                 node = null;
             }
         }
+        sizeLabel.setText("");
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
         if (AppVariables.message("Predefined").equals(selected.getText())) {
             splitMethod = SplitMethod.Predefined;
@@ -401,265 +404,6 @@ public class ImageSplitController extends ImageViewerController {
         } else {
             popInformation(message("SplitCustomComments"));
         }
-    }
-
-    protected void initPdfTab() {
-
-        pdfSizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> ov,
-                    Toggle old_toggle, Toggle new_toggle) {
-                checkPageSize();
-            }
-        });
-
-        standardSizeBox.getItems().addAll(Arrays.asList("A4-" + message("Horizontal") + " (16k)  29.7cm x 21.0cm",
-                "A4 (16k)  21.0cm x 29.7cm",
-                "A5 (32k)  14.8cm x 21.0cm",
-                "A6 (64k)  10.5cm x 14.8cm",
-                "A3 (8k)   29.7cm x 42.0cm",
-                "A2 (4k)   42.0cm x 59.4cm",
-                "A1 (2k)   59.4cm x 84.1cm",
-                "A0 (1k)   84.1cm x 118.9cm",
-                "B5        17.6cm x 25.0cm",
-                "B4	    25.0cm x 35.3cm",
-                "B2	    35.3cm x 50.0cm",
-                "C4	    22.9cm x 32.4cm",
-                "C5	    16.2cm x 22.9cm",
-                "C6	    11.4cm x 16.2cm"
-        ));
-        standardSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                checkStandardValues();
-            }
-        });
-        standardSizeBox.getSelectionModel().select(0);
-        pdfImageSize = true;
-
-        standardDpiBox.getItems().addAll(Arrays.asList(
-                "72 dpi",
-                "96 dpi",
-                "150 dpi",
-                "300 dpi",
-                "450 dpi",
-                "720 dpi",
-                "120 dpi",
-                "160 dpi",
-                "240 dpi",
-                "320 dpi"
-        ));
-        standardDpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                checkStandardValues();
-            }
-        });
-        standardDpiBox.getSelectionModel().select(0);
-
-        customWidthInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                checkPdfCustomValues();
-            }
-        });
-        customHeightInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                checkPdfCustomValues();
-            }
-        });
-
-        MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
-        MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    marginSize = Integer.valueOf(newValue);
-                    if (marginSize >= 0) {
-                        FxmlControl.setEditorNormal(MarginsBox);
-                    } else {
-                        marginSize = 0;
-                        FxmlControl.setEditorBadStyle(MarginsBox);
-                    }
-
-                } catch (Exception e) {
-                    marginSize = 0;
-                    FxmlControl.setEditorBadStyle(MarginsBox);
-                }
-            }
-        });
-        MarginsBox.getSelectionModel().select("20");
-
-        fontBox.getItems().addAll(SystemTools.ttfList());
-        fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue == null || newValue.isBlank()) {
-                    return;
-                }
-                AppVariables.setUserConfigValue(baseName + "TTF", newValue);
-            }
-        });
-        String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
-        if (d == null) {
-            if (!fontBox.getItems().isEmpty()) {
-                fontBox.getSelectionModel().select(0);
-            }
-        } else {
-            fontBox.setValue(d);
-        }
-
-        authorInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                AppVariables.setUserConfigValue("AuthorKey", newValue);
-            }
-        });
-        authorInput.setText(AppVariables.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
-
-    }
-
-    protected void checkPageSize() {
-        standardSizeBox.setDisable(true);
-        standardDpiBox.setDisable(true);
-        customWidthInput.setDisable(true);
-        customHeightInput.setDisable(true);
-        customWidthInput.setStyle(null);
-        customHeightInput.setStyle(null);
-        pdfImageSize = false;
-
-        RadioButton selected = (RadioButton) pdfSizeGroup.getSelectedToggle();
-        if (AppVariables.message("ImagesSize").equals(selected.getText())) {
-            pdfImageSize = true;
-        } else if (AppVariables.message("StandardSize").equals(selected.getText())) {
-            standardSizeBox.setDisable(false);
-            standardDpiBox.setDisable(false);
-            checkStandardValues();
-
-        } else if (AppVariables.message("Custom").equals(selected.getText())) {
-            customWidthInput.setDisable(false);
-            customHeightInput.setDisable(false);
-            checkPdfCustomValues();
-        }
-
-//        AppVariables.setUserConfigValue(ImageCombineSizeKey, selected.getText());
-    }
-
-    private int calculateCmPixels(float cm, int dpi) {
-        return (int) Math.round(cm * dpi / 2.54);
-    }
-
-    protected void checkStandardValues() {
-        String d = standardDpiBox.getSelectionModel().getSelectedItem();
-        int dpi = 72;
-        try {
-            dpi = Integer.valueOf(d.substring(0, d.length() - 4));
-        } catch (Exception e) {
-        }
-        String s = standardSizeBox.getSelectionModel().getSelectedItem();
-        if (s.startsWith("A4-" + message("Horizontal"))) {
-            pageWidth = calculateCmPixels(29.7f, dpi);
-            pageHeight = calculateCmPixels(21.0f, dpi);
-        } else {
-            switch (s.substring(0, 2)) {
-                case "A4":
-                    pageWidth = calculateCmPixels(21.0f, dpi);
-                    pageHeight = calculateCmPixels(29.7f, dpi);
-                    break;
-                case "A5":
-                    pageWidth = calculateCmPixels(14.8f, dpi);
-                    pageHeight = calculateCmPixels(21.0f, dpi);
-                    break;
-                case "A6":
-                    pageWidth = calculateCmPixels(10.5f, dpi);
-                    pageHeight = calculateCmPixels(14.8f, dpi);
-                    break;
-                case "A3":
-                    pageWidth = calculateCmPixels(29.7f, dpi);
-                    pageHeight = calculateCmPixels(42.0f, dpi);
-                    break;
-                case "A2":
-                    pageWidth = calculateCmPixels(42.0f, dpi);
-                    pageHeight = calculateCmPixels(59.4f, dpi);
-                    break;
-                case "A1":
-                    pageWidth = calculateCmPixels(59.4f, dpi);
-                    pageHeight = calculateCmPixels(84.1f, dpi);
-                    break;
-
-                case "A0":
-                    pageWidth = calculateCmPixels(84.1f, dpi);
-                    pageHeight = calculateCmPixels(118.9f, dpi);
-                    break;
-                case "B5":
-                    pageWidth = calculateCmPixels(17.6f, dpi);
-                    pageHeight = calculateCmPixels(25.0f, dpi);
-                    break;
-                case "B4":
-                    pageWidth = calculateCmPixels(25.0f, dpi);
-                    pageHeight = calculateCmPixels(35.3f, dpi);
-                    break;
-                case "B2":
-                    pageWidth = calculateCmPixels(35.3f, dpi);
-                    pageHeight = calculateCmPixels(50.0f, dpi);
-                    break;
-                case "C4":
-                    pageWidth = calculateCmPixels(22.9f, dpi);
-                    pageHeight = calculateCmPixels(32.4f, dpi);
-                    break;
-                case "C5":
-                    pageWidth = calculateCmPixels(16.2f, dpi);
-                    pageHeight = calculateCmPixels(22.9f, dpi);
-                    break;
-                case "C6":
-                    pageWidth = calculateCmPixels(11.4f, dpi);
-                    pageHeight = calculateCmPixels(16.2f, dpi);
-                    break;
-            }
-        }
-        customWidthInput.setText(pageWidth + "");
-        customHeightInput.setText(pageHeight + "");
-    }
-
-    protected void checkPdfCustomValues() {
-
-        RadioButton selected = (RadioButton) pdfSizeGroup.getSelectedToggle();
-        if (!AppVariables.message("Custom").equals(selected.getText())) {
-            return;
-        }
-        try {
-            pageWidth = Integer.valueOf(customWidthInput.getText());
-            if (pageWidth > 0) {
-                customWidthInput.setStyle(null);
-            } else {
-                pageWidth = 0;
-                customWidthInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            pageWidth = 0;
-            customWidthInput.setStyle(badStyle);
-        }
-
-        try {
-            pageHeight = Integer.valueOf(customHeightInput.getText());
-            if (pageHeight > 0) {
-                customHeightInput.setStyle(null);
-            } else {
-                pageHeight = 0;
-                customHeightInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            pageHeight = 0;
-            customHeightInput.setStyle(badStyle);
-        }
-
     }
 
     @Override
@@ -955,7 +699,7 @@ public class ImageSplitController extends ImageViewerController {
             } else {
                 comments += "  " + AppVariables.message("EachSplittedImageActualSizeComments");
             }
-            promptLabel.setText(comments);
+            sizeLabel.setText(comments);
             splitValid.set(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -970,7 +714,75 @@ public class ImageSplitController extends ImageViewerController {
         indicateSplit();
     }
 
-    private File validationBeforeSave(List<FileChooser.ExtensionFilter> ext, String diagTitle) {
+    @FXML
+    public void popSaveAsPdf(MouseEvent event) { //
+        if (AppVariables.fileRecentNumber <= 0) {
+            return;
+        }
+        new RecentVisitMenu(this, event) {
+            @Override
+            public List<VisitHistory> recentFiles() {
+                return null;
+            }
+
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentTargetPaths();
+            }
+
+            @Override
+            public void handleSelect() {
+                saveAsPdfAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.setFileType(FileType.PDF).pop();
+    }
+
+    @FXML
+    public void popSaveAsTif(MouseEvent event) { //
+        if (AppVariables.fileRecentNumber <= 0) {
+            return;
+        }
+        new RecentVisitMenu(this, event) {
+            @Override
+            public List<VisitHistory> recentFiles() {
+                return null;
+            }
+
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentTargetPaths();
+            }
+
+            @Override
+            public void handleSelect() {
+                saveAsTiffAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.setFileType(FileType.Tif).pop();
+    }
+
+    private File validationBeforeSave(List<FileChooser.ExtensionFilter> ext, int fileType, String diagTitle) {
         if (image == null || !splitValid.getValue()
                 || rows == null || cols == null
                 || rows.size() < 1 || cols.size() < 1) {
@@ -980,13 +792,11 @@ public class ImageSplitController extends ImageViewerController {
         if (sourceFile != null) {
             prefix = FileTools.getFilePrefix(sourceFile.getName());
         }
-        final File tFile = chooseSaveFile(diagTitle, AppVariables.getUserConfigPath(targetPathKey),
-                prefix, ext);
+        final File tFile = chooseSaveFile(diagTitle, VisitHistoryTools.getSavedPath(fileType), prefix, ext);
         if (tFile == null) {
             return null;
         }
-        recordFileWritten(tFile);
-
+        recordFileWritten(tFile, fileType);
         return tFile;
     }
 
@@ -997,13 +807,13 @@ public class ImageSplitController extends ImageViewerController {
             return;
         }
         final File tFile
-                = validationBeforeSave(CommonFxValues.ImageExtensionFilter, message("FilePrefixInput"));
+                = validationBeforeSave(CommonFxValues.ImageExtensionFilter, FileType.Image, message("FilePrefixInput"));
         if (tFile == null) {
             return;
         }
         if (imageTask != null) {
             imageTask.cancel();
-            imageController = null;
+            imageLoading = null;
         }
         imageTask = new SingletonTask<Void>() {
             List<String> fileNames = new ArrayList<>();
@@ -1060,12 +870,12 @@ public class ImageSplitController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        if (imageTask == null || !imageTask.isRunning() || imageController == null) {
+                        if (imageTask == null || imageTask.isQuit() || imageLoading == null) {
                             return;
                         }
-                        imageController.setInfo(MessageFormat.format(AppVariables.message("NumberFileGenerated"),
+                        imageLoading.setInfo(MessageFormat.format(AppVariables.message("NumberFileGenerated"),
                                 number + "/" + total, "\"" + fileName + "\""));
-                        imageController.setProgress(number * 1f / total);
+                        imageLoading.setProgress(number * 1f / total);
                     }
                 });
             }
@@ -1076,7 +886,7 @@ public class ImageSplitController extends ImageViewerController {
             }
 
         };
-        imageController = openHandlingStage(imageTask, Modality.WINDOW_MODAL);
+        imageLoading = openHandlingStage(imageTask, Modality.WINDOW_MODAL);
         Thread thread = new Thread(imageTask);
         thread.setDaemon(true);
         thread.start();
@@ -1089,16 +899,13 @@ public class ImageSplitController extends ImageViewerController {
                 || cols == null || cols.isEmpty()) {
             return;
         }
-        final File tFile = validationBeforeSave(CommonFxValues.PdfExtensionFilter, null);
+        final File tFile = validationBeforeSave(CommonFxValues.PdfExtensionFilter, FileType.PDF, null);
         if (tFile == null) {
             return;
         }
-        final boolean inPageNumber = pageNumberCheck.isSelected();
-        final String header = headerInput.getText();
-        final String fontFile = fontBox.getSelectionModel().getSelectedItem();
         if (pdfTask != null) {
             pdfTask.cancel();
-            pdfController = null;
+            pdfLoading = null;
         }
         pdfTask = new SingletonTask<Void>() {
 
@@ -1116,13 +923,11 @@ public class ImageSplitController extends ImageViewerController {
                     }
                     File tmpFile = FileTools.getTempFile();
                     try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
-                        PDFont font = PdfTools.getFont(document, fontFile);
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
                         info.setModificationDate(Calendar.getInstance());
                         info.setProducer("MyBox v" + CommonValues.AppVersion);
-
-                        info.setAuthor(authorInput.getText());
+                        info.setAuthor(pdfOptionsController.authorInput.getText());
                         document.setDocumentInformation(info);
                         document.setVersion(1.0f);
                         int x1, y1, x2, y2;
@@ -1149,14 +954,20 @@ public class ImageSplitController extends ImageViewerController {
                                 if (pdfTask == null || isCancelled()) {
                                     return false;
                                 }
-                                PdfTools.writePage(document, font, sourceFormat, target,
-                                        ++count, total, PdfImageFormat.Original,
-                                        threshold, jpegQuality, pdfImageSize, inPageNumber,
-                                        pageWidth, pageHeight, marginSize, header, true);
 
+                                PdfTools.writePage(document, sourceFormat, target, ++count, total, pdfOptionsController);
                                 updateLabel(total, (i + 1) * (j + 1));
                             }
                         }
+                        PDPage page = document.getPage(0);
+                        PDPageXYZDestination dest = new PDPageXYZDestination();
+                        dest.setPage(page);
+                        dest.setZoom(pdfOptionsController.zoom / 100.0f);
+                        dest.setTop((int) page.getCropBox().getHeight());
+                        PDActionGoTo action = new PDActionGoTo();
+                        action.setDestination(dest);
+                        document.getDocumentCatalog().setOpenAction(action);
+
                         document.save(tmpFile);
                         document.close();
                     }
@@ -1171,12 +982,12 @@ public class ImageSplitController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        if (pdfTask == null || !pdfTask.isRunning() || pdfController == null) {
+                        if (pdfTask == null || pdfTask.isQuit() || pdfLoading == null) {
                             return;
                         }
-                        pdfController.setInfo(MessageFormat.format(AppVariables.message("NumberPageWritten"),
+                        pdfLoading.setInfo(MessageFormat.format(AppVariables.message("NumberPageWritten"),
                                 number + "/" + total));
-                        pdfController.setProgress(number * 1f / total);
+                        pdfLoading.setProgress(number * 1f / total);
                     }
                 });
             }
@@ -1188,25 +999,25 @@ public class ImageSplitController extends ImageViewerController {
             }
 
         };
-        pdfController = openHandlingStage(pdfTask, Modality.WINDOW_MODAL);
+        pdfLoading = openHandlingStage(pdfTask, Modality.WINDOW_MODAL);
         Thread thread = new Thread(pdfTask);
         thread.setDaemon(true);
         thread.start();
     }
 
     @FXML
-    protected void saveAsTiffAction(ActionEvent event) {
+    protected void saveAsTiffAction() {
         if (image == null || rows == null || rows.isEmpty()
                 || cols == null || cols.isEmpty()) {
             return;
         }
-        final File tFile = validationBeforeSave(CommonFxValues.TiffExtensionFilter, null);
+        final File tFile = validationBeforeSave(CommonFxValues.TiffExtensionFilter, FileType.Tif, null);
         if (tFile == null) {
             return;
         }
         if (tiffTask != null) {
             tiffTask.cancel();
-            tiffController = null;
+            tiffLoading = null;
         }
         tiffTask = new SingletonTask<Void>() {
 
@@ -1276,12 +1087,12 @@ public class ImageSplitController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        if (tiffTask == null || !tiffTask.isRunning() || tiffController == null) {
+                        if (tiffTask == null || tiffTask.isQuit() || tiffLoading == null) {
                             return;
                         }
-                        tiffController.setInfo(MessageFormat.format(AppVariables.message("NumberImageWritten"),
+                        tiffLoading.setInfo(MessageFormat.format(AppVariables.message("NumberImageWritten"),
                                 number + "/" + total));
-                        tiffController.setProgress(number * 1f / total);
+                        tiffLoading.setProgress(number * 1f / total);
                     }
                 });
             }
@@ -1295,7 +1106,7 @@ public class ImageSplitController extends ImageViewerController {
             }
 
         };
-        tiffController = openHandlingStage(tiffTask, Modality.WINDOW_MODAL);
+        tiffLoading = openHandlingStage(tiffTask, Modality.WINDOW_MODAL);
         Thread thread = new Thread(tiffTask);
         thread.setDaemon(true);
         thread.start();
@@ -1304,15 +1115,15 @@ public class ImageSplitController extends ImageViewerController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (imageTask != null && imageTask.isRunning()) {
+        if (imageTask != null && !imageTask.isQuit()) {
             imageTask.cancel();
             imageTask = null;
         }
-        if (pdfTask != null && pdfTask.isRunning()) {
+        if (pdfTask != null && !pdfTask.isQuit()) {
             pdfTask.cancel();
             pdfTask = null;
         }
-        if (tiffTask != null && tiffTask.isRunning()) {
+        if (tiffTask != null && !tiffTask.isQuit()) {
             tiffTask.cancel();
             tiffTask = null;
         }

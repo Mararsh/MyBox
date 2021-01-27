@@ -1,9 +1,8 @@
 package mara.mybox.data;
 
+import mara.mybox.db.data.BaseData;
 import java.io.File;
 import java.util.Date;
-import mara.mybox.db.TableBase;
-import mara.mybox.db.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -11,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2020-9-7
  * @License Apache License Version 2.0
  */
-public class FileHistory extends TableData {
+public class FileHistory extends BaseData {
 
     protected long fhid;
     protected String category;
@@ -30,47 +29,41 @@ public class FileHistory extends TableData {
         init();
     }
 
-    @Override
-    public TableBase getTable() {
-        if (table == null) {
-            table = new TableMyBoxLog();
-        }
-        return table;
-    }
-
-    @Override
-    public boolean setValue(String column, Object value) {
-        if (column == null) {
+    /*
+        customized get/set
+     */
+    public static boolean setValue(FileHistory data, String column, Object value) {
+        if (data == null || column == null) {
             return false;
         }
         try {
             switch (column) {
                 case "fhid":
-                    fhid = value == null ? -1 : (long) value;
+                    data.setFhid(value == null ? -1 : (long) value);
                     return true;
                 case "category":
-                    category = value == null ? null : (String) value;
+                    data.setCategory(value == null ? null : (String) value);
                     return true;
                 case "history":
-                    history = null;
+                    data.setHistory(null);
                     if (value != null) {
                         File f = new File((String) value);
                         if (f.exists()) {
-                            history = f;
+                            data.setHistory(f);
                         }
                     }
                     return true;
                 case "file":
-                    file = null;
+                    data.setFile(null);
                     if (value != null) {
                         File f = new File((String) value);
                         if (f.exists()) {
-                            file = f;
+                            data.setFile(f);
                         }
                     }
                     return true;
                 case "record_time":
-                    recordTime = value == null ? null : (Date) value;
+                    data.setRecordTime(value == null ? null : (Date) value);
                     return true;
             }
         } catch (Exception e) {
@@ -79,35 +72,36 @@ public class FileHistory extends TableData {
         return false;
     }
 
-    @Override
-    public Object getValue(String column) {
-        if (column == null) {
+    public static Object getValue(FileHistory data, String column) {
+        if (data == null || column == null) {
             return null;
         }
         switch (column) {
             case "fhid":
-                return fhid;
+                return data.getFhid();
             case "category":
-                return category;
+                return data.getCategory();
             case "history":
-                return history != null ? history.getAbsolutePath() : null;
+                return data.getHistory() != null ? data.getHistory().getAbsolutePath() : null;
             case "file":
-                return file != null ? file.getAbsolutePath() : null;
+                return data.getFile() != null ? data.getFile().getAbsolutePath() : null;
             case "record_time":
-                return recordTime;
+                return data.getRecordTime();
         }
         return null;
     }
 
-    @Override
-    public boolean valid() {
-        return category != null
-                && history != null && history.exists()
-                && file != null && file.exists()
-                && recordTime != null;
+    public static boolean valid(FileHistory data) {
+        return data != null
+                && data.getHistory() != null && data.getHistory().exists()
+                && data.getFile() != null && data.getFile().exists()
+                && data.getRecordTime() != null;
     }
 
-    public void setFile(String string) {
+    /*
+        customized get/set
+     */
+    public void setFilename(String string) {
         if (string != null) {
             File f = new File((String) string);
             if (f.exists()) {
@@ -115,7 +109,6 @@ public class FileHistory extends TableData {
             }
         }
     }
-
 
     /*
         get/set

@@ -17,10 +17,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
@@ -158,7 +158,7 @@ public class MarkdownToHtmlController extends FilesBatchController {
             } else {
                 style = null;
             }
-            html = HtmlTools.htmlStyleValue(titleInput.getText(), style, html);
+            html = HtmlTools.htmlWithStyleValue(titleInput.getText(), style, html);
 
             FileTools.writeFile(target, html, Charset.forName("utf-8"));
             updateLogs(MessageFormat.format(message("ConvertSuccessfully"),

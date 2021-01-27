@@ -55,11 +55,11 @@ License:    Apache License Version 2.0
                                                 </Label>
                                                 <ComboBox fx:id="iconSizeBox" editable="true" prefWidth="100.0" />
                                                 <Label text="px" />
-                                    <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">
-                                       <HBox.margin>
-                                          <Insets left="40.0" />
-                                       </HBox.margin>
-                                    </CheckBox>
+                                                <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">
+                                                    <HBox.margin>
+                                                        <Insets left="40.0" />
+                                                    </HBox.margin>
+                                                </CheckBox>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" spacing="10.0" VBox.vgrow="NEVER">
@@ -125,7 +125,7 @@ License:    Apache License Version 2.0
                                                     </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton fx:id="splitPaneClickedRadio" layoutX="124.0" layoutY="15.0" mnemonicParsing="false" onAction="#setSplitPaneClicked" text="%MouseClicked" toggleGroup="$splitPanesGroup" />
-                                    <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
+                                                <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -393,7 +393,7 @@ License:    Apache License Version 2.0
                                                 <ComboBox fx:id="imageWidthBox" editable="true" prefWidth="150.0" />
                                             </children>
                                         </HBox>
-                                        <CheckBox fx:id="copyToSystemClipboardCheck" mnemonicParsing="false" selected="true" text="%CopyToSystemClipboard" VBox.vgrow="NEVER" />
+                                        <CheckBox fx:id="copyToSystemClipboardCheck" mnemonicParsing="false" selected="true" text="%CopyImageToSystemClipboard" VBox.vgrow="NEVER" />
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />

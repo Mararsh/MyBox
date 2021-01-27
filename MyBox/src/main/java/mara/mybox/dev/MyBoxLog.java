@@ -3,10 +3,10 @@ package mara.mybox.dev;
 import java.util.Date;
 import javafx.application.Platform;
 import mara.mybox.controller.MyBoxLogViewerController;
-import mara.mybox.data.TableData;
-import mara.mybox.db.ColumnDefinition;
-import mara.mybox.db.TableBase;
-import mara.mybox.db.TableMyBoxLog;
+import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -16,7 +16,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-11-24
  * @License Apache License Version 2.0
  */
-public class MyBoxLog extends TableData {
+public class MyBoxLog extends BaseData {
 
     protected long mblid;
     protected Date time;
@@ -24,7 +24,7 @@ public class MyBoxLog extends TableData {
     protected String fileName, className, methodName, log, comments, callers, typeName;
     protected int line;
 
-    public enum LogType {
+    public static enum LogType {
         Console, Error, Debug, Info
     }
 
@@ -34,86 +34,49 @@ public class MyBoxLog extends TableData {
         logType = LogType.Console;
     }
 
-    public short logType() {
-        return logType(logType);
+    /*
+        static methods;
+     */
+    public static MyBoxLog create() {
+        return new MyBoxLog();
     }
 
-    public String print(boolean printCallers) {
-        return print("  ", printCallers);
-    }
-
-    public String println(boolean printCallers) {
-        return println("  ", printCallers);
-    }
-
-    public String println(String separator, boolean printCallers) {
-        return print(separator, printCallers) + "\n";
-    }
-
-    public String print(String separator, boolean printCallers) {
-        String s = DateTools.datetimeToString(time)
-                + (logType != null && logType != LogType.Console ? separator + logType : "")
-                + (fileName != null ? separator + fileName : "")
-                + (className != null ? separator + className : "")
-                + (methodName != null ? separator + methodName : "")
-                + (line >= 0 ? separator + line : "")
-                + (log != null ? separator + log : "")
-                + (comments != null ? separator + comments : "");
-        if (printCallers && callers != null && !callers.isBlank()) {
-            String[] array = callers.split("\n");
-            for (String a : array) {
-                s += "\n\t\t\t\t" + a;
-            }
-        }
-        return s;
-    }
-
-    @Override
-    public TableBase getTable() {
-        if (table == null) {
-            table = new TableMyBoxLog();
-        }
-        return table;
-    }
-
-    @Override
-    public boolean setValue(String column, Object value) {
-        if (column == null) {
+    public static boolean setValue(MyBoxLog data, String column, Object value) {
+        if (data == null || column == null) {
             return false;
         }
         try {
             switch (column) {
                 case "mblid":
-                    mblid = value == null ? -1 : (long) value;
+                    data.setMblid(value == null ? -1 : (long) value);
                     return true;
                 case "time":
-                    time = value == null ? null : (Date) value;
+                    data.setTime(value == null ? null : (Date) value);
                     return true;
                 case "log_type":
-                    logType = logType((short) value);
+                    data.setLogType(logType((short) value));
                     return true;
                 case "file_name":
-                    fileName = value == null ? null : (String) value;
+                    data.setFileName(value == null ? null : (String) value);
                     return true;
                 case "class_name":
-                    className = value == null ? null : (String) value;
+                    data.setClassName(value == null ? null : (String) value);
                     return true;
                 case "method_name":
-                    methodName = value == null ? null : (String) value;
+                    data.setMethodName(value == null ? null : (String) value);
                     return true;
                 case "line":
-                    line = (int) value;
+                    data.setLine((int) value);
                     return true;
                 case "log":
-                    log = value == null ? null : (String) value;
+                    data.setLog(value == null ? null : (String) value);
                     return true;
                 case "comments":
-                    comments = value == null ? null : (String) value;
+                    data.setComments(value == null ? null : (String) value);
                     return true;
                 case "callers":
-                    callers = value == null ? null : (String) value;
+                    data.setCallers(value == null ? null : (String) value);
                     return true;
-
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -121,57 +84,48 @@ public class MyBoxLog extends TableData {
         return false;
     }
 
-    @Override
-    public Object getValue(String column) {
-        if (column == null) {
+    public static Object getValue(MyBoxLog data, String column) {
+        if (data == null || column == null) {
             return null;
         }
         switch (column) {
             case "mblid":
-                return mblid;
+                return data.getMblid();
             case "time":
-                return time;
+                return data.getTime();
             case "log_type":
-                return logType(logType);
+                return logType(data.getLogType());
             case "file_name":
-                return fileName;
+                return data.getFileName();
             case "class_name":
-                return className;
+                return data.getClassName();
             case "method_name":
-                return methodName;
+                return data.getMethodName();
             case "line":
-                return line;
+                return data.getLine();
             case "log":
-                return log;
+                return data.getLog();
             case "comments":
-                return comments;
+                return data.getComments();
             case "callers":
-                return callers;
+                return data.getCallers();
         }
         return null;
     }
 
-    @Override
-    public boolean valid() {
-        return time != null && log != null && logType != null;
+    public static boolean valid(MyBoxLog data) {
+        return data != null
+                && data.getTime() != null && data.getLog() != null && data.getLogType() != null;
     }
 
-    @Override
-    protected String display(ColumnDefinition column, Object value) {
-        if (column == null || value == null) {
+    public static String displayColumn(MyBoxLog data, ColumnDefinition column, Object value) {
+        if (data == null || column == null || value == null) {
             return null;
         }
         if ("log_type".equals(column.getName())) {
-            return message(logType.name());
+            return message(data.getLogType().name());
         }
-        return super.display(column, value);
-    }
-
-    /*
-        static methods;
-     */
-    public static MyBoxLog create() {
-        return new MyBoxLog();
+        return BaseDataTools.displayColumnBase(data, column, value);
     }
 
     public static short logType(LogType logType) {
@@ -238,6 +192,18 @@ public class MyBoxLog extends TableData {
 
     private static MyBoxLog log(LogType type, Object log, String comments) {
         try {
+            if (type == null || log == null) {
+                return null;
+            }
+            String logString = log.toString();
+            if (logString.contains("java.sql.SQLException: No suitable driver found")
+                    || logString.contains("java.sql.SQLNonTransientConnectionException")) {
+                if (AppVariables.ignoreDbUnavailable) {
+                    return null;
+                }
+                AppVariables.ignoreDbUnavailable = true; // Record only once
+            }
+
             StackTraceElement[] stacks = new Throwable().getStackTrace();
             if (stacks.length <= 2) {
                 return null;
@@ -262,16 +228,16 @@ public class MyBoxLog extends TableData {
             }
             MyBoxLog myboxLog = MyBoxLog.create()
                     .setLogType(type)
-                    .setLog(log.toString())
+                    .setLog(logString)
                     .setComments(comments)
                     .setFileName(stack.getFileName())
                     .setClassName(stack.getClassName())
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
-            String logText = myboxLog.println(type == LogType.Error);
+            String logText = println(myboxLog, type == LogType.Error);
             System.out.print(logText);
-            if (type == LogType.Error) {
+            if (AppVariables.popErrorLogs && type == LogType.Error) {
                 Platform.runLater(() -> {
                     MyBoxLogViewerController controller = MyBoxLogViewerController.oneOpen();
                     if (controller != null) {
@@ -288,6 +254,36 @@ public class MyBoxLog extends TableData {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String print(MyBoxLog log, boolean printCallers) {
+        return print(log, "  ", printCallers);
+    }
+
+    public static String println(MyBoxLog log, boolean printCallers) {
+        return println(log, "  ", printCallers);
+    }
+
+    public static String println(MyBoxLog log, String separator, boolean printCallers) {
+        return print(log, separator, printCallers) + "\n";
+    }
+
+    public static String print(MyBoxLog log, String separator, boolean printCallers) {
+        String s = DateTools.datetimeToString(log.getTime())
+                + (log.getLogType() != null && log.getLogType() != LogType.Console ? separator + log.getLogType() : "")
+                + (log.getFileName() != null ? separator + log.getFileName() : "")
+                + (log.getClassName() != null ? separator + log.getClassName() : "")
+                + (log.getMethodName() != null ? separator + log.getMethodName() : "")
+                + (log.getLine() >= 0 ? separator + log.getLine() : "")
+                + (log.getLog() != null ? separator + log.getLog() : "")
+                + (log.getComments() != null ? separator + log.getComments() : "");
+        if (printCallers && log.getCallers() != null && !log.getCallers().isBlank()) {
+            String[] array = log.getCallers().split("\n");
+            for (String a : array) {
+                s += "\n\t\t\t\t" + a;
+            }
+        }
+        return s;
     }
 
     /*

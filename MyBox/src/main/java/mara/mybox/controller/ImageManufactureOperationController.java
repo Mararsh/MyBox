@@ -10,7 +10,7 @@ import mara.mybox.value.AppVariables;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureOperationController extends ImageBaseController {
+public class ImageManufactureOperationController extends BaseImageController {
 
     protected ImageManufactureController imageController;
     protected ImageManufactureScopeController scopeController;
@@ -38,7 +38,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
     }
 
     @Override
-    public ImageBaseController refresh() {
+    public BaseImageController refresh() {
         return null;  //Bypass since this is part of frame
     }
 

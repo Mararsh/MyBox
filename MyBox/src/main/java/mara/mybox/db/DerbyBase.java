@@ -11,7 +11,32 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import mara.mybox.data.tools.GeographyCodeTools;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableAlarmClock;
+import mara.mybox.db.table.TableBrowserBypassSSL;
+import mara.mybox.db.table.TableBrowserHistory;
+import mara.mybox.db.table.TableColorData;
+import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableDataColumn;
+import mara.mybox.db.table.TableDataDefinition;
+import mara.mybox.db.table.TableDataset;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableFloatMatrix;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableImageHistory;
+import mara.mybox.db.table.TableImageScope;
+import mara.mybox.db.table.TableLocationData;
+import mara.mybox.db.table.TableMatrix;
+import mara.mybox.db.table.TableMatrixCell;
+import mara.mybox.db.table.TableMedia;
+import mara.mybox.db.table.TableMediaList;
+import mara.mybox.db.table.TableMyBoxLog;
+import mara.mybox.db.table.TableQueryCondition;
+import mara.mybox.db.table.TableStringValue;
+import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.table.TableSystemConf;
+import mara.mybox.db.table.TableUserConf;
+import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
@@ -99,29 +124,27 @@ public class DerbyBase {
         }
     }
 
-    public boolean clear(Connection conn) {
+    public int clear(Connection conn) {
         if (conn == null) {
-            return false;
+            return -1;
         }
         String sql = "DELETE FROM " + Table_Name;
         try ( Statement Statement = conn.createStatement()) {
-            Statement.executeUpdate(sql);
-            return true;
+            return Statement.executeUpdate(sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
-            return false;
+            return -1;
         }
     }
 
-    public boolean clear() {
+    public int clear() {
         String sql = "DELETE FROM " + Table_Name;
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement Statement = conn.createStatement()) {
-            Statement.executeUpdate(sql);
-            return true;
+            return Statement.executeUpdate(sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
-            return false;
+            return -1;
         }
     }
 
@@ -492,6 +515,18 @@ public class DerbyBase {
             if (!tables.contains("MyBox_Log".toUpperCase())) {
                 new TableMyBoxLog().createTable(conn);
             }
+            if (!tables.contains("Matrix".toUpperCase())) {
+                new TableMatrix().createTable(conn);
+            }
+            if (!tables.contains("Matrix_Cell".toUpperCase())) {
+                new TableMatrixCell().createTable(conn);
+            }
+            if (!tables.contains("Data_Definition".toUpperCase())) {
+                new TableDataDefinition().createTable(conn);
+            }
+            if (!tables.contains("Data_Column".toUpperCase())) {
+                new TableDataColumn().createTable(conn);
+            }
 
             return true;
         } catch (Exception e) {
@@ -509,7 +544,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!indexes.contains("Geography_Code_code_index".toUpperCase())) {
@@ -517,7 +551,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!indexes.contains("Geography_Code_gcid_index".toUpperCase())) {
@@ -525,7 +558,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!indexes.contains("Epidemic_Report_DatasetTimeDesc_index".toUpperCase())) {
@@ -533,7 +565,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!indexes.contains("Epidemic_Report_DatasetTimeAsc_index".toUpperCase())) {
@@ -541,7 +572,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!indexes.contains("Epidemic_Report_timeAsc_index".toUpperCase())) {
@@ -549,7 +579,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!indexes.contains("Dataset_unique_index".toUpperCase())) {
@@ -557,7 +586,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableDataset.Create_Index_unique);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
 //            if (!indexes.contains("File_History_unique_index".toUpperCase())) {
@@ -565,7 +593,6 @@ public class DerbyBase {
 //                    statement.executeUpdate(TableMyBoxLog.Create_Index_unique);
 //                } catch (Exception e) {
 ////                    MyBoxLog.error(e);
-////                    MyBoxLog.debug(e.toString());
 //                }
 //            }
             if (!indexes.contains("MyBox_Log_index".toUpperCase())) {
@@ -573,7 +600,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
 //            if (!indexes.contains("Download_History_url_index".toUpperCase())) {
@@ -581,7 +607,6 @@ public class DerbyBase {
 //                    statement.executeUpdate(TableDownloadHistory.Create_Index_url);
 //                } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
 //                }
 //            }
 //            if (!indexes.contains("Download_History_filename_index".toUpperCase())) {
@@ -589,9 +614,22 @@ public class DerbyBase {
 //                    statement.executeUpdate(TableDownloadHistory.Create_Index_filename);
 //                } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
 //                }
 //            }
+            if (!indexes.contains("Data_Definition_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableDataDefinition.Create_Index_unique);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Data_Column_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableDataColumn.Create_Index_unique);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -614,6 +652,14 @@ public class DerbyBase {
             if (!views.contains("Location_Data_View".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableLocationData.CreateView);
+                } catch (Exception e) {
+//                    MyBoxLog.error(e);
+//                    MyBoxLog.debug(e.toString());
+                }
+            }
+            if (!views.contains("Data_Column_View".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableDataColumn.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
 //                    MyBoxLog.debug(e.toString());
@@ -669,6 +715,11 @@ public class DerbyBase {
             }
             new TableLocationData().dropTable(conn);
             new TableMyBoxLog().dropTable(conn);
+            new TableMatrix().dropTable(conn);
+            new TableMatrixCell().dropTable(conn);
+            new TableDataDefinition().dropTable(conn);
+            new TableDataColumn().dropTable(conn);
+
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -698,6 +749,10 @@ public class DerbyBase {
             new TableDataset().clearData(conn);
             new TableLocationData().clearData(conn);
             new TableMyBoxLog().clearData(conn);
+            new TableMatrix().clearData(conn);
+            new TableMatrixCell().clearData(conn);
+            new TableDataDefinition().clearData(conn);
+            new TableDataColumn().clearData(conn);
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);

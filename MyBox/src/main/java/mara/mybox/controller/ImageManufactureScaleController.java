@@ -181,8 +181,8 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     protected void checkScaleType() {
         try {
             imageController.resetImagePane();
-            imageController.showImagePane();
             imageController.hideScopePane();
+            imageController.showImagePane();
             setBox.getChildren().clear();
             widthInput.setStyle(null);
             heightInput.setStyle(null);

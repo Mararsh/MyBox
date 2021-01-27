@@ -25,12 +25,12 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileFilterController extends FileEditerController {
+public class FileFilterController extends BaseFileEditerController {
 
     @FXML
     protected ComboBox<String> filterTypeSelector;
     @FXML
-    private TextField filterConditionsLabel;
+    protected TextField filterConditionsLabel;
     @FXML
     protected Button exampleRegexButton;
 
@@ -185,7 +185,7 @@ public class FileFilterController extends FileEditerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    FileEditerController controller = openNewStage();
+                    BaseFileEditerController controller = openNewStage();
                     controller.openFile(file);
                     popSuccessful();
                     FxmlStage.closeStage(getMyStage());

@@ -37,12 +37,12 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2018-12-09
  * @License Apache License Version 2.0
  */
-public class BytesEditerController extends FileEditerController {
+public class BytesEditerController extends BaseFileEditerController {
 
     @FXML
     protected TextField lbWidthInput, lbBytesInput;
     @FXML
-    private RadioButton lbWidthRadio, bytesRadio, lbLFRadio, lbCRRadio, lbCRLFRsadio;
+    protected RadioButton lbWidthRadio, bytesRadio, lbLFRadio, lbCRRadio, lbCRLFRsadio;
 
     public BytesEditerController() {
         baseTitle = AppVariables.message("BytesEditer");
@@ -268,7 +268,6 @@ public class BytesEditerController extends FileEditerController {
             String[] lines = text.split("\n");
             StringBuilder bytes = new StringBuilder();
             String lineText;
-            MyBoxLog.console(lines.length);
             for (String line : lines) {
                 lineText = new String(ByteTools.hexFormatToBytes(line), sourceInformation.getCharset());
                 lineText = lineText.replaceAll("\n|\r", " ") + "\n";

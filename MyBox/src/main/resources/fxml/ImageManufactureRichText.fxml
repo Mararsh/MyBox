@@ -87,7 +87,8 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
+                <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction"
+                        styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -107,6 +108,6 @@
                 </Button>
             </children>
         </HBox>
-        <Label fx:id="commentLabel" prefWidth="200.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%ImageRichTextTips" wrapText="true" />
+        <Label fx:id="commentLabel" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ImageRichTextTips" wrapText="true" />
     </children>
 </VBox>

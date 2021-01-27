@@ -31,11 +31,11 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     private float shearX;
 
     @FXML
-    private ToggleGroup transformGroup;
+    protected ToggleGroup transformGroup;
     @FXML
-    private ComboBox<String> shearBox, angleBox;
+    protected ComboBox<String> shearBox, angleBox;
     @FXML
-    private Slider angleSlider;
+    protected Slider angleSlider;
 
     private static class TransformType {
 
@@ -82,11 +82,20 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
             });
             checkTransformType();
 
+            try {
+                float f = Float.valueOf(AppVariables.getUserConfigValue(baseName + "Shear", "0.5"));
+                if (f >= 0.0f && f <= 1.0f) {
+                    shearX = 0.5f;
+                }
+            } catch (Exception e) {
+                shearX = 1.0f;
+            }
             List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
                     "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
                     "1.5", "-1.5", "2", "-2");
             shearBox.getItems().addAll(shears);
+            shearBox.setValue(shearX + "");
             shearBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -103,8 +112,10 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
                 }
             });
 
+            rotateAngle = AppVariables.getUserConfigInt(baseName + "Rotate", 0);
             angleBox.getItems().addAll(Arrays.asList("90", "180", "45", "30", "60", "15", "75", "120", "135"));
             angleBox.setVisibleRowCount(10);
+            angleBox.setValue(rotateAngle + "");
             angleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -149,9 +160,9 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     private void checkShear() {
         try {
             shearX = Float.valueOf(shearBox.getValue());
+            AppVariables.setUserConfigValue(baseName + "Shear", shearX + "");
             FxmlControl.setEditorNormal(shearBox);
         } catch (Exception e) {
-            shearX = 0;
             FxmlControl.setEditorBadStyle(shearBox);
         }
     }
@@ -160,6 +171,7 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
         try {
             rotateAngle = Integer.valueOf(angleBox.getValue());
             angleSlider.setValue(rotateAngle);
+            AppVariables.setUserConfigInt(baseName + "Rotate", rotateAngle);
             FxmlControl.setEditorNormal(angleBox);
         } catch (Exception e) {
             rotateAngle = 0;

@@ -9,8 +9,9 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -71,7 +72,7 @@ public class ImageTextController extends BaseController {
     public void init(ImageManufactureRichTextController parent) {
         this.parent = parent;
 
-        Object contents = parent.webEngine.executeScript("document.documentElement.outerHTML");
+        Object contents = FxmlControl.getHtml(parent.webEngine);
         if (contents != null) {
             htmlEditor.setHtmlText((String) contents);
         } else {

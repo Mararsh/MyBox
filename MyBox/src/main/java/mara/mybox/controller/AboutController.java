@@ -16,9 +16,9 @@ import mara.mybox.value.CommonValues;
 public class AboutController extends BaseController {
 
     @FXML
-    private Label version, date;
+    protected Label version, date;
     @FXML
-    private Hyperlink userGuideLink;
+    protected Hyperlink userGuideLink;
 
     public AboutController() {
         baseTitle = AppVariables.message("About");
@@ -34,6 +34,7 @@ public class AboutController extends BaseController {
                 : "https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf");
 
         FxmlControl.miao5();
+
     }
 
 }

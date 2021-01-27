@@ -11,6 +11,7 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
+import mara.mybox.controller.ControlPdfWriteOptions;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.dev.MyBoxLog;
@@ -144,13 +145,30 @@ public class PdfTools {
         }
     }
 
-    public static boolean writePage(PDDocument document, PDFont font,
+    public static boolean writePage(PDDocument document,
+            String sourceFormat, BufferedImage bufferedImage, int pageNumber, int total,
+            ControlPdfWriteOptions options) {
+        try {
+            PDFont font = PdfTools.getFont(document, options.getTtfFile());
+            return writePage(document, font, options.getFontSize(), sourceFormat, bufferedImage,
+                    pageNumber, total, options.getImageFormat(),
+                    options.getThreshold(), options.getJpegQuality(),
+                    options.isIsImageSize(), options.isShowPageNumber(),
+                    options.getPageWidth(), options.getPageHeight(),
+                    options.getMarginSize(), options.getHeader(),
+                    options.isDithering());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean writePage(PDDocument document, PDFont font, int fontSize,
             String sourceFormat, BufferedImage bufferedImage,
-            int index, int total, PdfImageFormat targetFormat,
+            int pageNumber, int total, PdfImageFormat targetFormat,
             int threshold, int jpegQuality, boolean isImageSize,
-            boolean pageNumber,
-            int pageWidth, int pageHeight, int marginSize, String header,
-            boolean dithering) {
+            boolean showPageNumber, int pageWidth, int pageHeight, int marginSize,
+            String header, boolean dithering) {
         try {
             PDImageXObject imageObject;
             switch (targetFormat) {
@@ -195,20 +213,20 @@ public class PdfTools {
                     }
                 }
                 content.drawImage(imageObject, marginSize, page.getTrimBox().getHeight() - marginSize - h, w, h);
-                if (pageNumber) {
+                if (showPageNumber) {
                     content.beginText();
                     if (font != null) {
-                        content.setFont(font, 12);
+                        content.setFont(font, fontSize);
                     }
                     content.newLineAtOffset(w + marginSize - 80, 5);
-                    content.showText(index + " / " + total);
+                    content.showText(pageNumber + " / " + total);
                     content.endText();
                 }
                 if (header != null && !header.trim().isEmpty()) {
                     try {
                         content.beginText();
                         if (font != null) {
-                            content.setFont(font, 16);
+                            content.setFont(font, fontSize);
                         }
                         content.newLineAtOffset(marginSize, page.getTrimBox().getHeight() - marginSize + 2);
                         content.showText(header.trim());
@@ -300,10 +318,10 @@ public class PdfTools {
     }
 
     public static boolean imageInPdf(PDDocument document,
-            BufferedImage bufferedImage,
-            WeiboSnapParameters p, int pageNumber, int totalPage, PDFont font) {
-        return writePage(document, font, "png", bufferedImage,
-                pageNumber, totalPage, p.getFormat(),
+            BufferedImage bufferedImage, WeiboSnapParameters p,
+            int showPageNumber, int totalPage, PDFont font) {
+        return writePage(document, font, p.getFontSize(),
+                "png", bufferedImage, showPageNumber, totalPage, p.getFormat(),
                 p.getThreshold(), p.getJpegQuality(), p.isIsImageSize(), p.isAddPageNumber(),
                 p.getPageWidth(), p.getPageHeight(), p.getMarginSize(), p.getTitle(), p.isDithering());
     }
@@ -488,10 +506,9 @@ public class PdfTools {
     public static boolean writeSplitImages(String sourceFormat, String sourceFile,
             ImageInformation imageInformation, List<Integer> rows, List<Integer> cols,
             ImageAttributes attributes, File targetFile,
-            PdfImageFormat pdfFormat, String fontFile, String author,
-            int threshold, int jpegQuality, boolean isImageSize,
-            boolean pageNumber,
-            int pageWidth, int pageHeight, int marginSize, String header) {
+            PdfImageFormat pdfFormat, String fontFile, int fontSize,
+            String author, int threshold, int jpegQuality, boolean isImageSize,
+            boolean pageNumber, int pageWidth, int pageHeight, int marginSize, String header) {
         try {
             if (sourceFormat == null || sourceFile == null || imageInformation == null
                     || rows == null || rows.isEmpty()
@@ -500,14 +517,6 @@ public class PdfTools {
             }
             File tmpFile = FileTools.getTempFile();
             try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
-                PDFont font = PdfTools.getFont(document, fontFile);
-                PDDocumentInformation info = new PDDocumentInformation();
-                info.setCreationDate(Calendar.getInstance());
-                info.setModificationDate(Calendar.getInstance());
-                info.setProducer("MyBox v" + CommonValues.AppVersion);
-                info.setAuthor(author);
-                document.setDocumentInformation(info);
-                document.setVersion(1.0f);
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (imageInformation.getImage() != null && !imageInformation.isIsScaled()) {
@@ -515,6 +524,7 @@ public class PdfTools {
                 }
                 int count = 0;
                 int total = (rows.size() - 1) * (cols.size() - 1);
+                PDFont font = PdfTools.getFont(document, fontFile);
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
@@ -527,12 +537,12 @@ public class PdfTools {
                         } else {
                             target = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                         }
-                        PdfTools.writePage(document, font, sourceFormat, target,
-                                ++count, total, pdfFormat,
-                                threshold, jpegQuality, isImageSize, pageNumber,
+                        PdfTools.writePage(document, font, fontSize, sourceFormat, target,
+                                ++count, total, pdfFormat, threshold, jpegQuality, isImageSize, pageNumber,
                                 pageWidth, pageHeight, marginSize, header, attributes.isIsDithering());
                     }
                 }
+                setValues(document, author, "MyBox v" + CommonValues.AppVersion, 100, 1.0f);
                 document.save(tmpFile);
                 document.close();
             }
@@ -574,8 +584,7 @@ public class PdfTools {
     }
 
     // page is 0-based
-    public static BufferedImage page2image(File file, String password, int page,
-            int dpi, ImageType imageType) {
+    public static BufferedImage page2image(File file, String password, int page, int dpi, ImageType imageType) {
         try {
             try ( PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
@@ -589,14 +598,13 @@ public class PdfTools {
         }
     }
 
-    public static boolean setAttributes(File file, String ownerPassword,
-            PdfInformation info) {
+    public static boolean setAttributes(File file, String password, PdfInformation info) {
         try {
             if (file == null || info == null) {
                 return false;
             }
 
-            try ( PDDocument doc = PDDocument.load(file, ownerPassword, AppVariables.pdfMemUsage)) {
+            try ( PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
                 docInfo.setTitle(info.getTitle());
@@ -618,6 +626,7 @@ public class PdfTools {
                     doc.setVersion(info.getVersion());
                 }
 
+                doc.setAllSecurityToBeRemoved(true);
                 StandardProtectionPolicy policy = new StandardProtectionPolicy(
                         info.getOwnerPassword(), info.getUserPassword(), info.getAccess());
                 doc.protect(policy);
@@ -628,6 +637,35 @@ public class PdfTools {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
+        }
+    }
+
+    public static void setValues(PDDocument doc, String author, String producer, int defaultZoom, float version) {
+        try {
+            if (doc == null) {
+                return;
+            }
+            PDDocumentInformation info = new PDDocumentInformation();
+            info.setCreationDate(Calendar.getInstance());
+            info.setModificationDate(Calendar.getInstance());
+            info.setProducer(producer);
+            info.setAuthor(author);
+            doc.setDocumentInformation(info);
+            doc.setVersion(version);
+
+            if (doc.getNumberOfPages() > 0) {
+                PDPage page = doc.getPage(0);
+                PDPageXYZDestination dest = new PDPageXYZDestination();
+                dest.setPage(page);
+                dest.setZoom(defaultZoom / 100.0f);
+                dest.setTop((int) page.getCropBox().getHeight());
+                PDActionGoTo action = new PDActionGoTo();
+                action.setDestination(dest);
+                doc.getDocumentCatalog().setOpenAction(action);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

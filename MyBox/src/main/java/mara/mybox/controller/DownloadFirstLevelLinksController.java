@@ -67,7 +67,7 @@ import mara.mybox.data.DownloadTask;
 import mara.mybox.data.Link;
 import mara.mybox.data.Link.FilenameType;
 import mara.mybox.data.StringTable;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -75,7 +75,6 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -148,7 +147,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     protected VBox optionsBox, htmlOptionsBox, pdfOptionsBox;
     @FXML
-    protected ComboBox<String> ttfSelector;
+    protected ControlTTFSelecter ttfController;
     @FXML
     protected TextArea cssArea;
 
@@ -194,7 +193,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     .name(baseName + "TargatPath", true)
                     .isSource(false).isDirectory(true).mustExist(false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -209,7 +208,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             initOptionsTab();
             initLogsTab();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -257,7 +256,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             htmlButton.disableProperty().bind(linksTableView.itemsProperty().isNull());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -280,7 +279,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -304,7 +303,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -359,39 +358,17 @@ public class DownloadFirstLevelLinksController extends BaseController {
                         AppVariables.setUserConfigValue(baseName + "MergeMarkdown", mdCheck.isSelected());
                     });
 
-            List<String> ttfList = SystemTools.ttfList();
-            ttfSelector.getItems().addAll(ttfList);
-            ttfSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            ttfController.name(baseName);
+            ttfController.ttfSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue == null || newValue.isBlank()) {
                         return;
                     }
-                    int pos = newValue.indexOf("    ");
-                    if (pos < 0) {
-                        ttf = newValue;
-                    } else {
-                        ttf = newValue.substring(0, pos);
-                    }
-                    AppVariables.setUserConfigValue(baseName + "TTF", newValue);
-                    String css = "@font-face {\n"
-                            + "  font-family: 'myFont';\n"
-                            + "  src: url('file:///" + ttf.replaceAll("\\\\", "/") + "');\n"
-                            + "  font-weight: normal;\n"
-                            + "  font-style: normal;\n"
-                            + "}\n"
-                            + " body { font-family:  'myFont';}";
-                    cssArea.setText(css);
+                    checkTtf();
                 }
             });
-            String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
-            if (d == null) {
-                if (!ttfSelector.getItems().isEmpty()) {
-                    ttfSelector.getSelectionModel().select(0);
-                }
-            } else {
-                ttfSelector.setValue(d);
-            }
+            checkTtf();
 
             webConnectTimeoutInput.setText(AppVariables.getUserConfigInt("WebConnectTimeout", 10000) + "");
             webReadTimeoutInput.setText(AppVariables.getUserConfigInt("WebReadTimeout", 10000) + "");
@@ -452,8 +429,28 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
+    }
+
+    public void checkTtf() {
+        String value = ttfController.ttfSelector.getValue();
+        int pos = value.indexOf("    ");
+        String ttf;
+        if (pos < 0) {
+            ttf = value;
+        } else {
+            ttf = value.substring(0, pos);
+        }
+        String css = "@font-face {\n"
+                + "  font-family: 'myFont';\n"
+                + "  src: url('file:///" + ttf.replaceAll("\\\\", "/") + "');\n"
+                + "  font-weight: normal;\n"
+                + "  font-style: normal;\n"
+                + "}\n"
+                + " body { font-family:  'myFont';}";
+        cssArea.setText(css);
+        cssArea.setText(css);
     }
 
     public void initLogsTab() {
@@ -462,7 +459,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             maxLogsinput.setText(maxLogs + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -501,7 +498,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
                 updateLogs(message("DownloadThread") + ": " + downloadThreads.size());
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.console(e.toString());
             }
         }
     }
@@ -660,7 +657,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             checkData();
             tabPane.getSelectionModel().select(logsTab);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -750,7 +747,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.console(e.toString());
         }
     }
 
@@ -1104,7 +1101,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 downloadThreads.clear();
                 updateLogs(message("DownloadThread") + ": " + downloadThreads.size());
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.console(e.toString());
             }
         }
         checkData();
@@ -1189,7 +1186,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                                 + message("Count") + ": " + downloadThreads.size());
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.console(e.toString());
                 }
             }
         }
@@ -1333,9 +1330,9 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     }
                     return;
                 }
-                MyBoxLog.error(link, error);
+                MyBoxLog.console(link, error);
             } catch (Exception e) {
-                MyBoxLog.error(link, e.toString());
+                MyBoxLog.console(link, e.toString());
             }
         }
 

@@ -32,9 +32,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.BaseTask;
-import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.TableColorData;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.table.TableColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
@@ -98,7 +98,7 @@ public class ColorPaletteManageController extends BaseController {
                         if (isSettingValues) {
                             return;
                         }
-                        setColor(newVal);
+                        addColor(newVal);
                     });
 
             deleteButton.disableProperty().bind(
@@ -143,7 +143,7 @@ public class ColorPaletteManageController extends BaseController {
                     isSettingValues = true;
                     for (ColorData data : colors) {
                         try {
-                            addColor(data, false);
+                            ColorPaletteManageController.this.makeColor(data, false);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());
                         }
@@ -169,13 +169,13 @@ public class ColorPaletteManageController extends BaseController {
 
     }
 
-    public boolean setColor(Color color) {
+    public boolean addColor(Color color) {
         if (isSettingValues) {
             return false;
         }
         Rectangle rect = findRect(color);
         if (rect == null) {
-            rect = addColor(color, true);
+            rect = makeColor(color, true);
         }
         if (rect != null) {
             FxmlControl.fireMouseClicked(rect);
@@ -230,7 +230,7 @@ public class ColorPaletteManageController extends BaseController {
         return -1;
     }
 
-    protected Rectangle addColor(Color color, boolean ahead) {
+    private Rectangle makeColor(Color color, boolean ahead) {
         try {
             if (color == null) {
                 return null;
@@ -241,13 +241,13 @@ public class ColorPaletteManageController extends BaseController {
             } else {
                 data = TableColorData.endPalette(color);
             }
-            return addColor(data, ahead);
+            return makeColor(data, ahead);
         } catch (Exception e) {
             return null;
         }
     }
 
-    protected Rectangle addColor(ColorData data, boolean ahead) {
+    private Rectangle makeColor(ColorData data, boolean ahead) {
         try {
             if (data == null) {
                 return null;
@@ -560,14 +560,14 @@ public class ColorPaletteManageController extends BaseController {
             BaseTask addTask = new BaseTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    List<Color> palette = new ArrayList<>();
+                    List<String> palette = new ArrayList<>();
                     for (Node node : colorsPane.getChildren()) {
                         Rectangle rect = (Rectangle) node;
-                        palette.add((Color) rect.getFill());
+                        palette.add(FxmlColor.color2rgba((Color) rect.getFill()));
                     }
                     List<Color> newColors = new ArrayList<>();
                     for (Color color : data) {
-                        if (!palette.contains(color)) {
+                        if (!palette.contains(FxmlColor.color2rgba(color))) {
                             newColors.add(color);
                         }
                     }
@@ -607,8 +607,8 @@ public class ColorPaletteManageController extends BaseController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (parentController != null && (parentController instanceof ImageBaseController)) {
-            ImageBaseController c = (ImageBaseController) parentController;
+        if (parentController != null && (parentController instanceof BaseImageController)) {
+            BaseImageController c = (BaseImageController) parentController;
             if (c.pickColorCheck != null && c.pickColorCheck.isSelected()) {
                 c.pickColorCheck.setSelected(false);
             }

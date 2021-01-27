@@ -22,16 +22,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import mara.mybox.data.ConvolutionKernel;
-import mara.mybox.db.TableConvolutionKernel;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageContrast.ContrastAlgorithm;
 import mara.mybox.image.ImageConvolution.SharpenAlgorithm;
 import mara.mybox.image.ImageConvolution.SmoothAlgorithm;
+import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation.OperationType;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -134,7 +135,16 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
         try {
             if (imageController != null) {
                 imageController.resetImagePane();
+                if (scopeController != null && scopeController.scope != null
+                        && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
+                    imageController.hideImagePane();
+                    imageController.showScopePane();
+                } else {
+                    imageController.hideScopePane();
+                    imageController.showImagePane();
+                }
             }
+
             clearValues();
             if (okButton != null && enhancementGroup.getSelectedToggle() == null) {
                 okButton.setDisable(true);

@@ -365,13 +365,13 @@ public class FilesRenameController extends FilesBatchController {
             switch (renameType) {
                 case ReplaceSubString:
                     newName = file.getName().replaceAll(
-                            oldStringInput.getText(), newStringInput.getText());
+                            oldStringInput.getText(), FileTools.filenameFilter(newStringInput.getText()));
                     break;
                 case AppendPrefix:
-                    newName = prefixInput.getText() + file.getName();
+                    newName = FileTools.filenameFilter(prefixInput.getText()) + file.getName();
                     break;
                 case AppendSuffix:
-                    newName = FileTools.appendName(file.getName(), suffixInput.getText());
+                    newName = FileTools.appendName(file.getName(), FileTools.filenameFilter(suffixInput.getText()));
                     break;
                 case AddSequenceNumber:
                     newName = "";
@@ -379,7 +379,7 @@ public class FilesRenameController extends FilesBatchController {
                         newName += FileTools.getFilePrefix(file.getName());
                     }
                     if (stringCheck.isSelected()) {
-                        newName += stringInput.getText();
+                        newName += FileTools.filenameFilter(stringInput.getText());
                     }
                     String pageNumber = currentAccum + "";
                     if (fillZeroCheck.isSelected()) {
@@ -390,7 +390,7 @@ public class FilesRenameController extends FilesBatchController {
                     newName += "." + FileTools.getFileSuffix(file.getName());
                     break;
                 case ChangeExtension:
-                    newName = FileTools.replaceFileSuffix(file.getName(), newExtInput.getText());
+                    newName = FileTools.replaceFileSuffix(file.getName(), FileTools.filenameFilter(newExtInput.getText()));
                     break;
                 default:
                     return null;

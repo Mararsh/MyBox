@@ -32,26 +32,25 @@ public class ImageQuantization extends PixelsOperation {
     }
 
     protected QuantizationAlgorithm algorithm;
-    protected int quantizationSize;
-    // Each channel is 4 bit depth and reigons size = 16 *16 * 16 = 4096
-    // When ditDepth is larger than 4, the results maybe worse due to
-    // similiar selected colors  by too small regions.
-    protected int bitDepth = 4, intValue;
-    protected boolean recordCount;
+    protected int quantizationSize, regionSize, weight1, weight2, weight3, intValue;
+    protected boolean recordCount, ceil;
     protected Map<Color, Long> counts;
     protected List<ColorCount> sortedCounts;
     protected long totalCount;
 
     public static ImageQuantization create(Image image, ImageScope scope,
-            QuantizationAlgorithm algorithm, int quantizationSize, int bitDepth,
-            boolean recordCount, boolean dithering) throws Exception {
+            QuantizationAlgorithm algorithm, int quantizationSize,
+            int regionSize, int weight1, int weight2, int weight3,
+            boolean recordCount, boolean dithering, boolean ceil) throws Exception {
         return create(SwingFXUtils.fromFXImage(image, null), scope,
-                algorithm, quantizationSize, bitDepth, recordCount, dithering);
+                algorithm, quantizationSize, regionSize, weight1, weight2, weight3,
+                recordCount, dithering, ceil);
     }
 
     public static ImageQuantization create(BufferedImage image, ImageScope scope,
-            QuantizationAlgorithm algorithm, int quantizationSize, int bitDepth,
-            boolean recordCount, boolean dithering) throws Exception {
+            QuantizationAlgorithm algorithm, int quantizationSize,
+            int regionSize, int weight1, int weight2, int weight3,
+            boolean recordCount, boolean dithering, boolean ceil) throws Exception {
         ImageQuantization quantization;
         switch (algorithm) {
             case RGBUniformQuantization:
@@ -73,11 +72,12 @@ public class ImageQuantization extends PixelsOperation {
                 break;
         }
         quantization.setAlgorithm(algorithm).
-                setQuantizationSize(quantizationSize).
-                setBitDepth(bitDepth).
-                setRecordCount(recordCount).
-                setOperationType(OperationType.Quantization).
-                setImage(image).setScope(scope).setIsDithering(dithering);
+                setQuantizationSize(quantizationSize)
+                .setRegionSize(regionSize)
+                .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                .setRecordCount(recordCount).setCeil(ceil)
+                .setOperationType(OperationType.Quantization)
+                .setImage(image).setScope(scope).setIsDithering(dithering);
         return quantization.build();
     }
 
@@ -188,38 +188,31 @@ public class ImageQuantization extends PixelsOperation {
 
         @Override
         public RGBUniformQuantization build() throws Exception {
-            switch (quantizationSize) {
-                case 16:
-                    redMod = 256 / 4;
-                    greenMod = 256 / 2;
-                    blueMod = 256 / 2;
-                    break;
-                case 256:
-                    redMod = 256 / 8;
-                    greenMod = 256 / 8;
-                    blueMod = 256 / 4;
-                    break;
-                default:
-                    int channelSize = (int) Math.round(Math.pow(quantizationSize, 1.0 / 3.0));
-                    if (256 % channelSize == 0) {
-                        redMod = blueMod = 256 / channelSize;
-                    } else {
-                        redMod = blueMod = 256 / channelSize + 1;
-                    }
-                    channelSize = quantizationSize / (channelSize * channelSize);
-                    if (256 % channelSize == 0) {
-                        greenMod = 256 / channelSize;
-                    } else {
-                        greenMod = 256 / channelSize + 1;
-                    }
-            }
-            redOffset = redMod / 2;
-            greenOffset = greenMod / 2;
-            blueOffset = blueMod / 2;
-//            MyBoxLog.debug(quantizationSize + "  " + redMod + " " + greenMod + " " + blueMod);
+            double redWegiht = weight1 < 1 ? 1 : weight1;
+            double greenWegiht = weight2 < 1 ? 1 : weight2;
+            double blueWegiht = weight3 < 1 ? 1 : weight3;
+            double sum = weight1 + weight2 + weight3;
+            redWegiht = redWegiht / sum;
+            greenWegiht = greenWegiht / sum;
+            blueWegiht = blueWegiht / sum;
+            double x = Math.pow(quantizationSize * 1d / (redWegiht * greenWegiht * blueWegiht), 1d / 3d);
+
+            double redValue = 256d / (redWegiht * x);
+            redMod = ceil ? (int) (redValue) : (int) Math.ceil(redValue);
+            double greenValue = 256d / (greenWegiht * x);
+            greenMod = ceil ? (int) (greenValue) : (int) Math.ceil(greenValue);
+            double blueValue = 256d / (blueWegiht * x);
+            blueMod = ceil ? (int) (blueValue) : (int) Math.ceil(blueValue);
+
+//            MyBoxLog.console(redMod + " " + greenMod + " " + blueMod + " ");
             if (redMod <= 0 || greenMod <= 0 || blueMod <= 0) {
                 throw new Exception(AppVariables.message("InvalidParameters"));
             }
+
+            redOffset = redMod / 2;
+            greenOffset = greenMod / 2;
+            blueOffset = blueMod / 2;
+
             if (recordCount) {
                 counts = new HashMap<>();
             }
@@ -264,23 +257,30 @@ public class ImageQuantization extends PixelsOperation {
 
         @Override
         public HSBUniformQuantization build() throws Exception {
-            int channelSize = (int) Math.round(Math.pow(quantizationSize, 1.0 / 3.0));
-            if (100 % channelSize == 0) {
-                saturationMod = brightnessMod = 100 / channelSize;
-            } else {
-                saturationMod = brightnessMod = 100 / channelSize + 1;
-            }
-            saturationOffset = brightnessOffset = saturationMod / 2;
-            channelSize = quantizationSize / (channelSize * channelSize);
-            if (360 % channelSize == 0) {
-                hueMod = 360 / channelSize;
-            } else {
-                hueMod = 360 / channelSize + 1;
-            }
-            hueOffset = hueMod / 2;
+            double hueWegiht = weight1 < 1 ? 1 : weight1;
+            double saturationWegiht = weight2 < 1 ? 1 : weight2;
+            double brightnessWegiht = weight3 < 1 ? 1 : weight3;
+            double sum = hueWegiht + saturationWegiht + brightnessWegiht;
+            hueWegiht = hueWegiht / sum;
+            saturationWegiht = saturationWegiht / sum;
+            brightnessWegiht = brightnessWegiht / sum;
+            double x = Math.pow(quantizationSize * 1d / (hueWegiht * saturationWegiht * brightnessWegiht), 1d / 3d);
+
+            double hueValue = 360d / (hueWegiht * x);
+            hueMod = ceil ? (int) (hueValue) : (int) Math.ceil(hueValue);
+            double saturationValue = 100d / (saturationWegiht * x);
+            saturationMod = ceil ? (int) (saturationValue) : (int) Math.ceil(saturationValue);
+            double brightnessValue = 100d / (brightnessWegiht * x);
+            brightnessMod = ceil ? (int) (brightnessValue) : (int) Math.ceil(brightnessValue);
+
             if (hueMod <= 0 || saturationMod <= 0 || brightnessMod <= 0) {
                 throw new Exception(AppVariables.message("InvalidParameters"));
             }
+
+            hueOffset = hueMod / 2;
+            saturationOffset = saturationMod / 2;
+            brightnessOffset = brightnessMod / 2;
+
             if (recordCount) {
                 counts = new HashMap<>();
             }
@@ -323,9 +323,12 @@ public class ImageQuantization extends PixelsOperation {
         protected boolean large;
 
         public static RegionQuantization create(BufferedImage image,
-                ImageScope scope, boolean dithering, int bitDepth) {
+                ImageScope scope, boolean dithering,
+                int regionSize, int weight1, int weight2, int weight3) {
             RegionQuantization palette = new RegionQuantization();
-            palette.setBitDepth(bitDepth).setImage(image).setScope(scope).
+            palette.setRegionSize(regionSize)
+                    .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                    .setImage(image).setScope(scope).
                     setOperationType(OperationType.Quantization).
                     setIsDithering(dithering);
             palette.build();
@@ -336,13 +339,12 @@ public class ImageQuantization extends PixelsOperation {
         public RegionQuantization build() {
             this.recordCount = false;   // never count in this regionQuantization
             try {
-                int channelSize = (int) Math.pow(2, bitDepth);
-                int regionsSize = (int) Math.pow(channelSize, 3);
-//                MyBoxLog.debug(bitDepth + "  " + channelSize + "  " + regionsSize);
-                large = image.getWidth() * image.getHeight() > regionsSize;
+                large = image.getWidth() * image.getHeight() > regionSize;
                 if (large) {
                     rgbPalette = RGBUniformQuantization.create();
-                    rgbPalette.setQuantizationSize(regionsSize).setRecordCount(false).build();
+                    rgbPalette.setQuantizationSize(regionSize)
+                            .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                            .setRecordCount(false).build();
                 }
             } catch (Exception e) {
                 MyBoxLog.debug(e.toString());
@@ -391,9 +393,12 @@ public class ImageQuantization extends PixelsOperation {
         protected Map<Color, PopularityRegion> regionsMap;
 
         public static PopularityRegionQuantization create(BufferedImage image,
-                ImageScope scope, boolean dithering, int bitDepth) {
+                ImageScope scope, boolean dithering,
+                int regionSize, int weight1, int weight2, int weight3) {
             PopularityRegionQuantization palette = new PopularityRegionQuantization();
-            palette.setBitDepth(bitDepth).setImage(image).setScope(scope).
+            palette.setRegionSize(regionSize)
+                    .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                    .setImage(image).setScope(scope).
                     setOperationType(OperationType.Quantization).
                     setIsDithering(dithering);
             palette.build();
@@ -470,7 +475,7 @@ public class ImageQuantization extends PixelsOperation {
         public PopularityQuantization build() {
             try {
                 regionQuantization = PopularityRegionQuantization.create(image,
-                        scope, isDithering, bitDepth);
+                        scope, isDithering, regionSize, weight1, weight2, weight3);
                 regionQuantization.operate();
                 regions = regionQuantization.getRegions(quantizationSize);
 
@@ -502,7 +507,7 @@ public class ImageQuantization extends PixelsOperation {
                 PopularityRegion nearestRegion = regions.get(0);
                 for (int i = 0; i < regions.size(); ++i) {
                     PopularityRegion region = regions.get(i);
-                    int distance = ImageColor.calculateColorDistance2(region.averageColor, color);
+                    int distance = ImageColor.calculateColorDistanceSquare(region.averageColor, color);
                     if (distance < minDistance) {
                         minDistance = distance;
                         nearestRegion = region;
@@ -521,9 +526,12 @@ public class ImageQuantization extends PixelsOperation {
         protected List<Color> regionColors;
 
         public static KMeansRegionQuantization create(BufferedImage image,
-                ImageScope scope, boolean dithering, int bitDepth) {
+                ImageScope scope, boolean dithering,
+                int regionSize, int weight1, int weight2, int weight3) {
             KMeansRegionQuantization palette = new KMeansRegionQuantization();
-            palette.setBitDepth(bitDepth).setImage(image).setScope(scope).
+            palette.setRegionSize(regionSize)
+                    .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                    .setImage(image).setScope(scope).
                     setOperationType(OperationType.Quantization).
                     setIsDithering(dithering);
             palette.build();
@@ -557,8 +565,10 @@ public class ImageQuantization extends PixelsOperation {
         @Override
         public KMeansClusteringQuantization build() {
             kmeans = ImageRGBKMeans.create();
-            kmeans.setSourceImage(image).setScope(scope).setIsDithering(isDithering).
-                    setBitDepth(bitDepth).setK(quantizationSize);
+            kmeans.setSourceImage(image).setScope(scope).setIsDithering(isDithering)
+                    .setRegionSize(regionSize)
+                    .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                    .setK(quantizationSize);
             if (kmeans.init().run()) {
                 kmeans.makeMap();
             }
@@ -928,12 +938,30 @@ public class ImageQuantization extends PixelsOperation {
         return this;
     }
 
-    public int getBitDepth() {
-        return bitDepth;
+    public int getWeight1() {
+        return weight1;
     }
 
-    public ImageQuantization setBitDepth(int bitDepth) {
-        this.bitDepth = bitDepth;
+    public ImageQuantization setWeight1(int weight1) {
+        this.weight1 = weight1;
+        return this;
+    }
+
+    public int getWeight2() {
+        return weight2;
+    }
+
+    public ImageQuantization setWeight2(int weight2) {
+        this.weight2 = weight2;
+        return this;
+    }
+
+    public int getWeight3() {
+        return weight3;
+    }
+
+    public ImageQuantization setWeight3(int weight3) {
+        this.weight3 = weight3;
         return this;
     }
 
@@ -959,24 +987,45 @@ public class ImageQuantization extends PixelsOperation {
         return sortedCounts;
     }
 
-    public void setSortedCounts(List<ColorCount> sortedCounts) {
+    public ImageQuantization setSortedCounts(List<ColorCount> sortedCounts) {
         this.sortedCounts = sortedCounts;
+        return this;
     }
 
     public long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(long totalCount) {
+    public ImageQuantization setTotalCount(long totalCount) {
         this.totalCount = totalCount;
+        return this;
     }
 
     public int getIntValue() {
         return intValue;
     }
 
-    public void setIntValue(int intValue) {
+    public ImageQuantization setIntValue(int intValue) {
         this.intValue = intValue;
+        return this;
+    }
+
+    public int getRegionSize() {
+        return regionSize;
+    }
+
+    public ImageQuantization setRegionSize(int regionSize) {
+        this.regionSize = regionSize;
+        return this;
+    }
+
+    public boolean isCeil() {
+        return ceil;
+    }
+
+    public ImageQuantization setCeil(boolean ceil) {
+        this.ceil = ceil;
+        return this;
     }
 
 }

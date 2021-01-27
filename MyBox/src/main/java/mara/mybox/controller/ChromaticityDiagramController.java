@@ -37,8 +37,8 @@ import mara.mybox.color.ChromaticityDiagram;
 import mara.mybox.color.ChromaticityDiagram.DataType;
 import mara.mybox.color.ColorValue;
 import mara.mybox.color.SRGB;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -60,7 +60,7 @@ import mara.mybox.value.CommonFxValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ChromaticityDiagramController extends ImageBaseController {
+public class ChromaticityDiagramController extends BaseImageController {
 
     protected boolean isLine, inputInit = true;
     protected int dotSize, fontSize;

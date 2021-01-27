@@ -19,14 +19,15 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.tools.GeographyCodeTools;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -96,7 +97,7 @@ public class LocationInMapController extends GeographyCodeMapController {
         } else if (addressRadio.isSelected()) {
             FxmlControl.setTooltip(locateInput, message("MapAddressComments"));
             locateInput.setText(AppVariables.isChinese() ? "拙政园"
-                    : (mapOptionsController.mapName == MapOptionsController.MapName.TianDiTu ? "Paris" : "巴黎"));
+                    : (mapOptionsController.mapName == ControlMapOptions.MapName.TianDiTu ? "Paris" : "巴黎"));
             locateInput.setEditable(true);
             startButton.setDisable(false);
         } else {
@@ -167,7 +168,7 @@ public class LocationInMapController extends GeographyCodeMapController {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -205,7 +206,7 @@ public class LocationInMapController extends GeographyCodeMapController {
                         return;
                     }
                     loading = false;
-                    dataArea.setText(geographyCode.info("\n"));
+                    dataArea.setText(BaseDataTools.displayData(geoTable, geographyCode, null, false));
                     setButtons();
                     try {
                         if (geographyCodes == null) {
@@ -222,7 +223,8 @@ public class LocationInMapController extends GeographyCodeMapController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

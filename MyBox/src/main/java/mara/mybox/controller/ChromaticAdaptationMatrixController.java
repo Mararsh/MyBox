@@ -14,12 +14,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.color.ChromaticAdaptation;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.MatrixDoubleTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -40,7 +41,9 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
     @FXML
     protected TextField scaleMatricesInput;
     @FXML
-    protected TextArea calculateArea, allArea;
+    protected TextArea allArea;
+    @FXML
+    protected WebView webView;
     @FXML
     protected TableView<ChromaticAdaptation> allTableView;
     @FXML
@@ -134,7 +137,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
 
     @FXML
     public void calculateAction(ActionEvent event) {
-        calculateArea.clear();
+        webView.getEngine().loadContent("");
         if (calculateButton.isDisabled()) {
             return;
         }
@@ -145,20 +148,19 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
         }
         Map<String, Object> run = ChromaticAdaptation.matrixDemo(
                 swp[0], swp[1], swp[2], twp[0], twp[1], twp[2], algorithm, scale);
-        calculateArea.setText(MatrixTools.print((double[][]) run.get("matrix"), 0, scale));
-        calculateArea.appendText("\n\n----------------" + message("CalculationProcedure") + "----------------\n");
-        calculateArea.appendText(message("ReferTo") + "： \n");
-        calculateArea.appendText("            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n");
-        calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");
-        calculateArea.appendText((String) run.get("procedure"));
-        calculateArea.home();
-
+        String s = MatrixDoubleTools.print((double[][]) run.get("matrix"), 0, scale)
+                + "\n\n----------------" + message("CalculationProcedure") + "----------------\n"
+                + message("ReferTo") + "： \n"
+                + "            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n"
+                + "            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n"
+                + (String) run.get("procedure");
+        webView.getEngine().loadContent("<pre>" + s + "</pre>");
     }
 
     @FXML
     public void calculateAllAction(ActionEvent event) {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -181,7 +183,8 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

@@ -8,7 +8,7 @@ import mara.mybox.color.ChromaticAdaptation.ChromaticAdaptationAlgorithm;
 import static mara.mybox.color.ChromaticAdaptation.matrix;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
-import mara.mybox.tools.MatrixTools;
+import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
@@ -325,7 +325,7 @@ public class RGBColorSpace extends CIEData {
     }
 
     public static double[][] whitePointMatrix(ColorSpaceType colorSpaceType) {
-        return MatrixTools.columnVector(whitePoint(colorSpaceType));
+        return MatrixDoubleTools.columnVector(whitePoint(colorSpaceType));
     }
 
     public static String illuminantName(String csName) {
@@ -396,11 +396,11 @@ public class RGBColorSpace extends CIEData {
             double[][] adaptMatrix;
             String adaptString = null;
             Map<String, Object> adapt = null;
-            if (MatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
+            if (MatrixDoubleTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
                     adapt = new HashMap<>();
                     adapt.put("procedure", message("NeedNotAdaptChromatic"));
-                    adapt.put("matrix", MatrixTools.identityDouble(3));
+                    adapt.put("matrix", MatrixDoubleTools.identityDouble(3));
                     adapt.put("adaptedPrimaries", primaries);
                     return adapt;
                 } else {
@@ -415,19 +415,19 @@ public class RGBColorSpace extends CIEData {
             } else {
                 adaptMatrix = (double[][]) adaptObject;
             }
-            double[][] sourceRed = MatrixTools.columnVector(primaries[0]);
-            double[][] adaptedRed = MatrixTools.multiply(adaptMatrix, sourceRed);
-            double[][] sourceGreen = MatrixTools.columnVector(primaries[1]);
-            double[][] adaptedGreen = MatrixTools.multiply(adaptMatrix, sourceGreen);
-            double[][] sourceBlue = MatrixTools.columnVector(primaries[2]);
-            double[][] adaptedBlue = MatrixTools.multiply(adaptMatrix, sourceBlue);
+            double[][] sourceRed = MatrixDoubleTools.columnVector(primaries[0]);
+            double[][] adaptedRed = MatrixDoubleTools.multiply(adaptMatrix, sourceRed);
+            double[][] sourceGreen = MatrixDoubleTools.columnVector(primaries[1]);
+            double[][] adaptedGreen = MatrixDoubleTools.multiply(adaptMatrix, sourceGreen);
+            double[][] sourceBlue = MatrixDoubleTools.columnVector(primaries[2]);
+            double[][] adaptedBlue = MatrixDoubleTools.multiply(adaptMatrix, sourceBlue);
             double[][] adaptedPrimaries = {
-                MatrixTools.columnValues(adaptedRed, 0),
-                MatrixTools.columnValues(adaptedGreen, 0),
-                MatrixTools.columnValues(adaptedBlue, 0)
+                MatrixDoubleTools.columnValues(adaptedRed, 0),
+                MatrixDoubleTools.columnValues(adaptedGreen, 0),
+                MatrixDoubleTools.columnValues(adaptedBlue, 0)
             };
             if (scale >= 0) {
-                adaptedPrimaries = MatrixTools.scale(adaptedPrimaries, scale);
+                adaptedPrimaries = MatrixDoubleTools.scale(adaptedPrimaries, scale);
             } else {
                 scale = 8;
             }
@@ -437,19 +437,19 @@ public class RGBColorSpace extends CIEData {
                 s += adaptString + "\n";
                 s += "\naaaaaaaaaaaaa " + message("Step") + " - " + message("ChromaticAdaptation") + " aaaaaaaaaaaaa\n";
                 s += "\nsourceRed = \n";
-                s += MatrixTools.print(sourceRed, 20, scale);
+                s += MatrixDoubleTools.print(sourceRed, 20, scale);
                 s += "\nadaptedRed = M * sourceRed  = \n";
-                s += MatrixTools.print(adaptedRed, 20, scale);
+                s += MatrixDoubleTools.print(adaptedRed, 20, scale);
                 s += "\nsourceGreen = \n";
-                s += MatrixTools.print(sourceGreen, 20, scale);
+                s += MatrixDoubleTools.print(sourceGreen, 20, scale);
                 s += "\nadaptedGreen = M * sourceGreen  = \n";
-                s += MatrixTools.print(adaptedGreen, 20, scale);
+                s += MatrixDoubleTools.print(adaptedGreen, 20, scale);
                 s += "\nsourceBlue = \n";
-                s += MatrixTools.print(sourceBlue, 20, scale);
+                s += MatrixDoubleTools.print(sourceBlue, 20, scale);
                 s += "\nadaptedBlue = M * sourceBlue  = \n";
-                s += MatrixTools.print(adaptedBlue, 20, scale);
+                s += MatrixDoubleTools.print(adaptedBlue, 20, scale);
                 s += "\nadaptedPrimaries = \n";
-                s += MatrixTools.print(adaptedPrimaries, 20, scale);
+                s += MatrixDoubleTools.print(adaptedPrimaries, 20, scale);
                 adapt.put("procedure", s);
                 adapt.put("adaptedPrimaries", adaptedPrimaries);
                 return adapt;

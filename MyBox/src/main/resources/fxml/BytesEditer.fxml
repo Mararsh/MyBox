@@ -263,7 +263,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox>
                                                     <children>
-                                                        <Label prefWidth="400.0" text="%BytesPaginateComment" wrapText="true" />
+                                                        <Label minHeight="-Infinity" text="%BytesPaginateComment" wrapText="true" />
                                                         <FlowPane hgap="5.0" vgap="5.0">
                                                             <children>
                                                                 <Label text="%PageSize" />
@@ -430,8 +430,11 @@ License:    Apache License Version 2.0
                                 <Insets />
                             </HBox.margin>
                         </Label>
-                        <HBox fx:id="pageBox" alignment="CENTER_LEFT" spacing="5.0">
+                        <HBox fx:id="pageBox" alignment="CENTER_LEFT" minWidth="-Infinity" spacing="5.0">
                             <children>
+                                <Label minWidth="-Infinity" text="%Page" />
+                                <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" HBox.hgrow="NEVER" />
+                                <Label fx:id="pageLabel" />
                                 <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -464,18 +467,6 @@ License:    Apache License Version 2.0
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconLast.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Label text="%Page" />
-                                <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" HBox.hgrow="NEVER" />
-                                <Label fx:id="pageLabel" />
-                                <Button fx:id="goButton" mnemonicParsing="false" onAction="#goPageAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconGo.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

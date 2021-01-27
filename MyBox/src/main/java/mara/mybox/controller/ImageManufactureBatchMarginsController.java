@@ -16,12 +16,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -38,18 +38,18 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     @FXML
     protected ToggleGroup opGroup;
     @FXML
-    protected ComboBox marginWidthBox;
+    protected ComboBox<String> marginWidthBox;
     @FXML
     protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
             preAlphaCheck;
     @FXML
     protected FlowPane setPane;
     @FXML
-    private HBox colorBox, distanceBox, widthBox;
+    protected HBox colorBox, distanceBox, widthBox;
     @FXML
     protected ColorSetController colorSetController;
     @FXML
-    private TextField distanceInput;
+    protected TextField distanceInput;
     @FXML
     protected RadioButton blurMarginsRadio;
     @FXML
@@ -98,6 +98,8 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                 }
             });
 
+            distance = AppVariables.getUserConfigInt(baseName + "Distance", 20);
+            distanceInput.setText(distance + "");
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -106,8 +108,10 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                 }
             });
 
+            width = AppVariables.getUserConfigInt(baseName + "Width", 20);
             marginWidthBox.getItems().addAll(Arrays.asList(
                     "50", "20", "10", "5", "100", "200", "300", "150", "500"));
+            marginWidthBox.setValue(width + "");
             marginWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -160,33 +164,31 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
 
     private void checkMarginWidth() {
         try {
-            width = Integer.valueOf((String) marginWidthBox.getSelectionModel().getSelectedItem());
-            if (width > 0) {
+            int v = Integer.valueOf(marginWidthBox.getValue());
+            if (v > 0) {
+                width = v;
+                AppVariables.setUserConfigInt(baseName + "Width", width);
                 FxmlControl.setEditorNormal(marginWidthBox);
             } else {
-                width = 0;
                 FxmlControl.setEditorBadStyle(marginWidthBox);
             }
-
         } catch (Exception e) {
-            width = 0;
             FxmlControl.setEditorBadStyle(marginWidthBox);
         }
     }
 
     protected void checkColor() {
         try {
-            distance = Integer.valueOf(distanceInput.getText());
-            distanceInput.setStyle(null);
-            if (distance >= 0 && distance <= 255) {
+            int v = Integer.valueOf(distanceInput.getText());
+            if (v >= 0 && v <= 255) {
+                distance = v;
+                AppVariables.setUserConfigInt(baseName + "Distance", distance);
                 distanceInput.setStyle(null);
             } else {
                 distanceInput.setStyle(badStyle);
-                distance = 0;
             }
         } catch (Exception e) {
             distanceInput.setStyle(badStyle);
-            distance = 0;
         }
     }
 

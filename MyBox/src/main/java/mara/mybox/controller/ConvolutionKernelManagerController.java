@@ -40,10 +40,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mara.mybox.data.ConvolutionKernel;
-import mara.mybox.data.ConvolutionKernel.Convolution_Type;
-import mara.mybox.db.TableConvolutionKernel;
-import mara.mybox.db.TableFloatMatrix;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.ConvolutionKernel.Convolution_Type;
+import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
@@ -71,29 +71,29 @@ public class ConvolutionKernelManagerController extends BaseController {
     private ConvolutionKernel kernel;
 
     @FXML
-    private VBox mainPane;
+    protected VBox mainPane;
     @FXML
-    private Button editButton, gaussButton;
+    protected Button editButton, gaussButton;
     @FXML
-    private TableView<ConvolutionKernel> tableView;
+    protected TableView<ConvolutionKernel> tableView;
     @FXML
-    private TableColumn<ConvolutionKernel, String> nameColumn, modifyColumn, createColumn, desColumn;
+    protected TableColumn<ConvolutionKernel, String> nameColumn, modifyColumn, createColumn, desColumn;
     @FXML
-    private TableColumn<ConvolutionKernel, Integer> widthColumn, heightColumn;
+    protected TableColumn<ConvolutionKernel, Integer> widthColumn, heightColumn;
     @FXML
-    private ToggleGroup typeGroup, edgesGroup;
+    protected ToggleGroup typeGroup, edgesGroup;
     @FXML
-    private TextField nameInput, desInput;
+    protected TextField nameInput, desInput;
     @FXML
-    private ComboBox<String> widthBox, heightBox;
+    protected ComboBox<String> widthBox, heightBox;
     @FXML
-    private HBox actionBox;
+    protected HBox actionBox;
     @FXML
-    private ScrollPane scrollPane;
+    protected ScrollPane scrollPane;
     @FXML
-    private CheckBox grayCheck, invertCheck;
+    protected CheckBox grayCheck, invertCheck;
     @FXML
-    private RadioButton zeroRadio, keepRadio;
+    protected RadioButton zeroRadio, keepRadio;
 
     public ConvolutionKernelManagerController() {
         baseTitle = AppVariables.message("ConvolutionKernelManager");
@@ -444,7 +444,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void editAction() {
+    protected void editAction() {
         final List<ConvolutionKernel> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
@@ -594,7 +594,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void normalization(ActionEvent event) {
+    protected void normalization(ActionEvent event) {
         float sum = 0.0f;
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
@@ -615,7 +615,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void gaussianDistribution() {
+    protected void gaussianDistribution() {
         if (width != height || width < 3) {
             gaussButton.setDisable(true);
             return;
@@ -632,7 +632,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void zeroAction() {
+    protected void zeroAction() {
         if (width < 3 || height < 3) {
             return;
         }

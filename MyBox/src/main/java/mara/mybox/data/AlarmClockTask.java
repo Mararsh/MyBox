@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import mara.mybox.db.data.AlarmClock;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import mara.mybox.controller.AlarmClockRunController;
-import mara.mybox.data.AlarmClock.AlarmType;
+import mara.mybox.db.data.AlarmClock.AlarmType;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.scheduledTasks;

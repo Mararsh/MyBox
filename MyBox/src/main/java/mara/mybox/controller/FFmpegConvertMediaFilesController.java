@@ -18,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.DateTools;
@@ -25,7 +26,6 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -34,7 +34,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegConvertMediaFilesController extends FFmpegBatchController {
+public class FFmpegConvertMediaFilesController extends BaseFFmpegBatchController {
 
     public FFmpegConvertMediaFilesController() {
         baseTitle = AppVariables.message("FFmpegConvertMediaFiles");
@@ -241,9 +241,9 @@ public class FFmpegConvertMediaFilesController extends FFmpegBatchController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if ((ffmpegOptionsController.encoderTask != null && ffmpegOptionsController.encoderTask.isRunning())
-                || (ffmpegOptionsController.muxerTask != null && ffmpegOptionsController.muxerTask.isRunning())
-                || (ffmpegOptionsController.queryTask != null && ffmpegOptionsController.queryTask.isRunning())) {
+        if ((ffmpegOptionsController.encoderTask != null && !ffmpegOptionsController.encoderTask.isQuit())
+                || (ffmpegOptionsController.muxerTask != null && !ffmpegOptionsController.muxerTask.isQuit())
+                || (ffmpegOptionsController.queryTask != null && !ffmpegOptionsController.queryTask.isQuit())) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVariables.message("TaskRunning"));

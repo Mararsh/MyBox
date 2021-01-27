@@ -50,13 +50,14 @@ public class ImagePcxFile {
 
     public static PCXMetadata getPcxMetadata(File file) {
         try {
+            PCXMetadata metadata = null;
             PCXImageReader reader = new PCXImageReader(new PCXImageReaderSpi());
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
-                PCXMetadata metadata = (PCXMetadata) reader.getImageMetadata(0);
+                metadata = (PCXMetadata) reader.getImageMetadata(0);
                 reader.dispose();
-                return metadata;
             }
+            return metadata;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

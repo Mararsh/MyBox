@@ -45,6 +45,8 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                                  <CheckBox fx:id="startCheck" mnemonicParsing="false" text="%StartWhenImageLoad" />
+                                                  <CheckBox fx:id="LoadCheck" mnemonicParsing="false" text="%LoadAfterSaveAs" />
                                                 <VBox fx:id="imageOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -79,8 +81,6 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                        <CheckBox fx:id="startCheck" mnemonicParsing="false" text="%StartWhenImageLoad" />
-                                                        <CheckBox fx:id="LoadCheck" mnemonicParsing="false" text="%LoadAfterSaveAs" />
                                                         <Separator prefWidth="200.0" />
                                                         <Label text="%Scale" />
                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
@@ -132,6 +132,9 @@ License:    Apache License Version 2.0
                                                     </children>
                                                 </VBox>
                                             </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
                                         </VBox>
                                         <VBox fx:id="imagesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
@@ -389,8 +392,7 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
-                                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -409,7 +411,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                     <content>
-                                                                        <fx:include fx:id="ocrOptions" source="ImageOCROptions.fxml" />
+                                                                        <fx:include fx:id="ocrOptions" source="ControlOCROptions.fxml" />
                                                                     </content>
                                                                 </ScrollPane>
                                                             </children>

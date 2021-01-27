@@ -20,7 +20,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
-import mara.mybox.data.AlarmClock;
+import mara.mybox.db.data.AlarmClock;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
@@ -50,11 +50,11 @@ public class AlarmClockController extends BaseController {
     protected MediaPlayer mediaPlayer;
 
     @FXML
-    private ToggleGroup typeGroup, soundGroup, unitGroup;
+    protected ToggleGroup typeGroup, soundGroup, unitGroup;
     @FXML
-    private TextField descInput, startInput, everyInput, sysInput, localInput, loopInput, urlInput;
+    protected TextField descInput, startInput, everyInput, sysInput, localInput, loopInput, urlInput;
     @FXML
-    private CheckBox activeCheck;
+    protected CheckBox activeCheck;
     @FXML
     protected Pane alertClockTable;
     @FXML
@@ -281,7 +281,7 @@ public class AlarmClockController extends BaseController {
     }
 
     @FXML
-    private void playSound() {
+    protected void playSound() {
         if (mediaPlayer != null) {
             mediaPlayer.dispose();
             mediaPlayer = null;
@@ -308,7 +308,7 @@ public class AlarmClockController extends BaseController {
     }
 
     @FXML
-    private void selectSys() {
+    protected void selectSys() {
         try {
             final FileChooser fileChooser = new FileChooser();
             String defaultPath = AppVariables.MyboxDataPath;
@@ -336,7 +336,7 @@ public class AlarmClockController extends BaseController {
     }
 
     @FXML
-    private void selectLocal(ActionEvent event) {
+    protected void selectLocal(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
             File path = AppVariables.getUserConfigPath(MusicPathKey);

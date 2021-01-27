@@ -12,12 +12,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -34,9 +34,9 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     @FXML
     protected ColorSetController colorSetController;
     @FXML
-    private ComboBox<String> arcBox, perBox;
+    protected ComboBox<String> arcBox, perBox;
     @FXML
-    private ToggleGroup arcGroup;
+    protected ToggleGroup arcGroup;
 
     public ImageManufactureBatchArcController() {
         baseTitle = AppVariables.message("ImageManufactureBatchArc");
@@ -66,25 +66,27 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
         try {
             super.initOptionsSection();
 
+            arc = AppVariables.getUserConfigInt(baseName + "Arc", 15);
             arcBox.getItems().addAll(Arrays.asList("15", "30", "50", "150", "300", "10", "3"));
+            arcBox.setValue(arc + "");
             arcBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkArc();
                 }
             });
-            arcBox.getSelectionModel().select(0);
 
             FxmlControl.setTooltip(perBox, new Tooltip("1~100"));
 
+            percent = AppVariables.getUserConfigInt(baseName + "Percent", 15);
             perBox.getItems().addAll(Arrays.asList("15", "25", "30", "10", "12", "8"));
+            perBox.setValue(percent + "");
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkPercent();
                 }
             });
-            perBox.getSelectionModel().select(0);
 
             arcGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -124,32 +126,30 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
 
     private void checkPercent() {
         try {
-            percent = Integer.valueOf(perBox.getValue());
-            if (percent > 0 && percent <= 100) {
+            int v = Integer.valueOf(perBox.getValue());
+            if (v > 0 && v <= 100) {
+                percent = v;
+                AppVariables.setUserConfigInt(baseName + "Percent", percent);
                 FxmlControl.setEditorNormal(perBox);
             } else {
-                percent = 15;
                 FxmlControl.setEditorBadStyle(perBox);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            percent = 15;
             FxmlControl.setEditorBadStyle(perBox);
         }
     }
 
     private void checkArc() {
         try {
-            arc = Integer.valueOf(arcBox.getValue());
-            if (arc >= 0) {
+            int v = Integer.valueOf(arcBox.getValue());
+            if (v > 0) {
+                arc = v;
+                AppVariables.setUserConfigInt(baseName + "Arc", arc);
                 FxmlControl.setEditorNormal(arcBox);
             } else {
-                arc = 0;
                 FxmlControl.setEditorBadStyle(arcBox);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            arc = 0;
             FxmlControl.setEditorBadStyle(arcBox);
         }
     }

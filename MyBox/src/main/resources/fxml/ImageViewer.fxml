@@ -49,24 +49,24 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                          <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/iconTips.png" />
-                                                              </image>
-                                                          </ImageView>
-                                                          <ImageView fx:id="sampledView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/iconSampled.png" />
-                                                              </image>
-                                                          </ImageView>
+                                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                                <ImageView fx:id="sampledView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconSampled.png" />
+                                                                    </image>
+                                                                </ImageView>
                                                             </children>
                                                         </HBox>
-                                                          <HBox fx:id="widthHBox" alignment="CENTER_LEFT" spacing="5.0">
-                                                              <children>
-                                                                  <Label text="%LoadWidth" />
-                                                                  <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
-                                                              </children>
-                                                          </HBox>
+                                                        <HBox fx:id="widthHBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <Label text="%LoadWidth" />
+                                                                <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                                            </children>
+                                                        </HBox>
                                                         <VBox fx:id="fileBox" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
@@ -155,7 +155,7 @@ License:    Apache License Version 2.0
                                                                 </CheckBox>
                                                             </children>
                                                         </FlowPane>
-                                                        <CheckBox fx:id="copyToSystemClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyToSystemClipboard" wrapText="true" />
+                                                        <CheckBox fx:id="copyToSystemClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyImageToSystemClipboard" wrapText="true" />
                                                         <CheckBox fx:id="contextMenuCheck" layoutX="32.0" layoutY="74.0" mnemonicParsing="false" selected="true" text="%ContextMenu" />
                                                     </children>
                                                 </VBox>
@@ -237,7 +237,7 @@ License:    Apache License Version 2.0
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                            <children> 
+                                                            <children>
                                                                 <FlowPane hgap="5.0" vgap="5.0">
                                                                     <children>
                                                                         <RadioButton mnemonicParsing="false" selected="true" text="png">
@@ -305,7 +305,8 @@ License:    Apache License Version 2.0
                                                                 <RadioButton fx:id="NameAscRadio" mnemonicParsing="false" selected="true" text="%NameAsc">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="sortGroup" />
-                                                                    </toggleGroup></RadioButton>
+                                                                    </toggleGroup>
+                                                                </RadioButton>
                                                                 <RadioButton fx:id="NameDescRadio" mnemonicParsing="false" text="%NameDesc" toggleGroup="$sortGroup" />
                                                                 <RadioButton fx:id="FormatAscRadio" mnemonicParsing="false" text="%FormatAsc" toggleGroup="$sortGroup" />
                                                                 <RadioButton fx:id="FormatDescRadio" mnemonicParsing="false" text="%FormatDesc" toggleGroup="$sortGroup" />

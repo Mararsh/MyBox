@@ -40,15 +40,15 @@ public class ImageSampleController extends ImageViewerController {
     private double x1, y1, x2, y2;
 
     @FXML
-    private HBox opBox;
+    protected HBox opBox;
     @FXML
-    private Label infoLabel;
+    protected Label infoLabel;
     @FXML
-    private CheckBox openSaveCheck;
+    protected CheckBox openSaveCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput;
     @FXML
-    private ComboBox<String> widthScaleSelector, heightScaleSelector;
+    protected ComboBox<String> widthScaleSelector, heightScaleSelector;
 
     public ImageSampleController() {
         baseTitle = AppVariables.message("ImageSample");

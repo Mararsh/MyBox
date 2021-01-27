@@ -18,7 +18,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-9-5
  * @License Apache License Version 2.0
  */
-public class ImageManufactureOperationsController extends ImageBaseController {
+public class ImageManufactureOperationsController extends BaseImageController {
 
     protected ImageManufactureController imageController;
 
@@ -256,13 +256,14 @@ public class ImageManufactureOperationsController extends ImageBaseController {
     }
 
     @Override
-    public ImageBaseController refresh() {
+    public BaseImageController refresh() {
         return null;  //Bypass since this is part of frame
     }
 
     /*
         events passed from image pane
      */
+    @Override
     public void imageClicked(MouseEvent event, DoublePoint p) {
         if (currentController != null) {
             currentController.imageClicked(event, p);

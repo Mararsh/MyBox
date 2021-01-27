@@ -14,13 +14,13 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -36,11 +36,11 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     private java.awt.Color originalColor, newColor;
 
     @FXML
-    private TextField distanceInput;
+    protected TextField distanceInput;
     @FXML
-    private ToggleGroup replaceScopeGroup;
+    protected ToggleGroup replaceScopeGroup;
     @FXML
-    private CheckBox excludeCheck, ignoreTransparentCheck;
+    protected CheckBox excludeCheck, ignoreTransparentCheck;
     @FXML
     protected ColorSetController originalColorSetController, newColorSetController;
 
@@ -74,6 +74,8 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             originalColorSetController.init(this, baseName + "OriginalColor", Color.WHITE);
             newColorSetController.init(this, baseName + "NewColor", Color.TRANSPARENT);
 
+            distance = AppVariables.getUserConfigInt(baseName + "Distance", 20);
+            distanceInput.setText(distance + "");
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -110,7 +112,6 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     private void checkDistance() {
         try {
             int v = Integer.valueOf(distanceInput.getText());
-
             if (v == 0
                     && ((Color) originalColorSetController.rect.getFill()).equals(((Color) newColorSetController.rect.getFill()))) {
                 popError(message("OriginalNewSameColor"));
@@ -121,8 +122,9 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             if (!isColor) {
                 max = 360;
             }
-            if (distance >= 0 && distance <= max) {
+            if (v >= 0 && v <= max) {
                 distance = v;
+                AppVariables.setUserConfigInt(baseName + "Distance", distance);
                 distanceInput.setStyle(null);
             } else {
                 distanceInput.setStyle(badStyle);

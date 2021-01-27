@@ -10,7 +10,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.ChromaticAdaptation.ChromaticAdaptationAlgorithm;
@@ -38,11 +37,11 @@ public class RGBColorSpaceController extends BaseController {
     }
 
     @FXML
-    private ComboBox<String> csSelector, illumSelector;
+    protected ComboBox<String> csSelector, illumSelector;
     @FXML
-    private ToggleGroup valueGroup, pGroup, wGroup;
+    protected ToggleGroup valueGroup, pGroup, wGroup;
     @FXML
-    private RadioButton standardIllumRadio, inputWPRadio;
+    protected RadioButton standardIllumRadio, inputWPRadio;
     @FXML
     protected TextField redXInput, redYInput, redZInput, greenXInput, greenYInput, greenZInput,
             blueXInput, blueYInput, blueZInput, whiteXInput, whiteYInput, whiteZInput;
@@ -51,9 +50,7 @@ public class RGBColorSpaceController extends BaseController {
             blueXLabel, blueYLabel, blueZLabel, whiteXLabel, whiteYLabel, whiteZLabel,
             commentsLabel;
     @FXML
-    protected VBox primariesBox, whiteVBox;
-    @FXML
-    protected HBox whiteHBox;
+    protected VBox primariesBox, whiteVBox, whiteValuesBox;
 
     public RGBColorSpaceController() {
     }
@@ -182,6 +179,9 @@ public class RGBColorSpaceController extends BaseController {
 
             checkValueType();
 
+            csSelector.getSelectionModel().select(0);
+            illumSelector.getSelectionModel().select(0);
+
         } catch (Exception e) {
 
         }
@@ -218,6 +218,9 @@ public class RGBColorSpaceController extends BaseController {
     }
 
     public void checkValueType() {
+        if (isSettingValues) {
+            return;
+        }
         clear();
         isSettingValues = true;
         redXInput.setText("");
@@ -395,11 +398,11 @@ public class RGBColorSpaceController extends BaseController {
         try {
             RadioButton selected = (RadioButton) wGroup.getSelectedToggle();
             if (message("StandardIlluminant").equals(selected.getText())) {
-                whiteHBox.setDisable(true);
+                whiteValuesBox.setDisable(true);
                 checkIlluminant();
             } else if (message("InputWhitePoint").equals(selected.getText())) {
                 currentWhiteName = null;
-                whiteHBox.setDisable(false);
+                whiteValuesBox.setDisable(false);
                 checkWhiteInputs();
             }
         } catch (Exception e) {

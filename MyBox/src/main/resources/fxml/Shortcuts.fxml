@@ -27,11 +27,11 @@ License:    Apache License Version 2.0
                     </graphic>
                 </Button>
                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs">
+                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction" onMouseEntered="#popSaveAs">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconSave.png" />
+                                <Image url="@../buttons/iconEdit.png" />
                             </image>
                         </ImageView>
                     </graphic>

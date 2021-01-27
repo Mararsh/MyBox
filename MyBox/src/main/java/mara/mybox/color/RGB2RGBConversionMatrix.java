@@ -8,7 +8,7 @@ import mara.mybox.color.ChromaticAdaptation.ChromaticAdaptationAlgorithm;
 import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
-import mara.mybox.tools.MatrixTools;
+import mara.mybox.tools.MatrixDoubleTools;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -49,7 +49,7 @@ public class RGB2RGBConversionMatrix {
                     c.setTarget(RGBColorSpace.name(target));
                     c.setTargetWhite(RGBColorSpace.illuminantType(target) + "");
                     c.setAlgorithm(algorithm + "");
-                    c.setSource2target(MatrixTools.print(source2target, 0, scale));
+                    c.setSource2target(MatrixDoubleTools.print(source2target, 0, scale));
                     data.add(c);
                 }
             }
@@ -79,7 +79,7 @@ public class RGB2RGBConversionMatrix {
                     s.append(message("AdaptationAlgorithm")).append(": ").
                             append(algorithm).append("\n");
                     s.append(message("LinearRGB2RGBMatrix")).append(": \n");
-                    s.append(MatrixTools.print(source2target, 20, scale)).append("\n");
+                    s.append(MatrixDoubleTools.print(source2target, 20, scale)).append("\n");
                 }
             }
         }
@@ -136,7 +136,7 @@ public class RGB2RGBConversionMatrix {
                 xyz2rgbMatrix = (double[][]) xyz2rgbObject;
             }
 
-            double[][] conversionMatrix = MatrixTools.multiply(xyz2rgbMatrix, rgb2xyzMatrix);
+            double[][] conversionMatrix = MatrixDoubleTools.multiply(xyz2rgbMatrix, rgb2xyzMatrix);
             Object ret;
             if (isDemo) {
                 String s = "ccccccccccccc " + message("Step") + " - Source Linear RGB -> XYZ  ccccccccccccc\n";
@@ -145,7 +145,7 @@ public class RGB2RGBConversionMatrix {
                 s += xyz2rgbString + "\n";
                 s += "\nccccccccccccc " + message("Step") + " -  Source Linear RGB -> target Linear RGB  ccccccccccccc\n";
                 s += "\nRGB_to_RGB_Matrix = XYZ_to_RGB_Matrix * RGB_to_XYZ_Matrix =\n";
-                s += MatrixTools.print(conversionMatrix, 20, scale);
+                s += MatrixDoubleTools.print(conversionMatrix, 20, scale);
                 map = new HashMap<>();
                 map.put("procedure", s);
                 map.put("conversionMatrix", conversionMatrix);

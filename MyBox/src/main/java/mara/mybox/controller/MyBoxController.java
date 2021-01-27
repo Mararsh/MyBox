@@ -28,8 +28,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import mara.mybox.MyBox;
-import mara.mybox.data.AlarmClock;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
@@ -307,6 +307,11 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.HtmlSetCharsetFxml);
         });
 
+        MenuItem HtmlSetStyle = new MenuItem(AppVariables.message("HtmlSetStyle"));
+        HtmlSetStyle.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.HtmlSetStyleFxml);
+        });
+
         MenuItem HtmlSnap = new MenuItem(AppVariables.message("HtmlSnap"));
         HtmlSnap.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.HtmlSnapFxml);
@@ -339,7 +344,7 @@ public class MyBoxController extends BaseController {
 
         htmlMenu.getItems().addAll(
                 htmlEditor, HtmlSnap, new SeparatorMenuItem(),
-                htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, new SeparatorMenuItem(),
+                htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );
 
@@ -846,7 +851,7 @@ public class MyBoxController extends BaseController {
 
         Menu fileDeleteMenu = new Menu(AppVariables.message("FilesDelete"));
         fileDeleteMenu.getItems().addAll(
-                filesDelete, DeleteEmptyDirectories, DeleteSysTemporaryPathFiles, DeleteNestedDirectories
+                DeleteSysTemporaryPathFiles, DeleteEmptyDirectories, filesDelete, DeleteNestedDirectories
         );
 
         MenuItem filesArchiveCompress = new MenuItem(AppVariables.message("FilesArchiveCompress"));
@@ -945,7 +950,7 @@ public class MyBoxController extends BaseController {
             isSettingValues = false;
         }
 
-        List<String> languages = ConfigTools.languages();
+        List<String> languages = ConfigTools.userLanguages();
         if (languages != null && !languages.isEmpty()) {
 
             for (int i = 0; i < languages.size(); ++i) {
@@ -1084,6 +1089,36 @@ public class MyBoxController extends BaseController {
     protected void showDataMenu(MouseEvent event) {
         hideMenu(event);
 
+        MenuItem EditCSV = new MenuItem(AppVariables.message("EditCSV"));
+        EditCSV.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataFileCSVFxml);
+        });
+
+        MenuItem EditExcel = new MenuItem(AppVariables.message("EditExcel"));
+        EditExcel.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataFileExcelFxml);
+        });
+
+        MenuItem ExcelConvert = new MenuItem(AppVariables.message("ExcelConvert"));
+        ExcelConvert.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataConvertExcelFxml);
+        });
+
+        MenuItem CsvConvert = new MenuItem(AppVariables.message("CsvConvert"));
+        CsvConvert.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataConvertCsvFxml);
+        });
+
+        Menu DataFile = new Menu(AppVariables.message("DataFile"));
+        DataFile.getItems().addAll(
+                EditCSV, CsvConvert, new SeparatorMenuItem(), EditExcel, ExcelConvert
+        );
+
+        MenuItem DataClipboard = new MenuItem(AppVariables.message("DataClipboard"));
+        DataClipboard.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataClipboardFxml);
+        });
+
         MenuItem Dataset = new MenuItem(AppVariables.message("Dataset"));
         Dataset.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.DatasetFxml);
@@ -1124,12 +1159,19 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.EpidemicReportsFxml);
         });
 
-//        Menu fetchDataOnInternetMenu = new Menu(AppVariables.message("FetchDataOnInternet"));
-//        fetchDataOnInternetMenu.getItems().addAll(
-//        );
-        MenuItem MatricesCalculation = new MenuItem(AppVariables.message("MatricesCalculation"));
-        MatricesCalculation.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.MatricesCalculationFxml);
+        MenuItem MatricesManage = new MenuItem(AppVariables.message("MatricesManage"));
+        MatricesManage.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.MatricesManageFxml);
+        });
+
+        MenuItem MatrixUnaryCalculation = new MenuItem(AppVariables.message("MatrixUnaryCalculation"));
+        MatrixUnaryCalculation.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.MatrixUnaryCalculationFxml);
+        });
+
+        MenuItem MatricesBinaryCalculation = new MenuItem(AppVariables.message("MatricesBinaryCalculation"));
+        MatricesBinaryCalculation.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.MatricesBinaryCalculationFxml);
         });
 
         MenuItem barcodeCreator = new MenuItem(AppVariables.message("BarcodeCreator"));
@@ -1147,16 +1189,13 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.MessageDigestFxml);
         });
 
-//        Menu miscellaneousMenu = new Menu(AppVariables.message("Miscellaneous"));
-//        miscellaneousMenu.getItems().addAll(
-//                barcodeCreator, barcodeDecoder, new SeparatorMenuItem(),
-//                messageDigest);
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
+                DataFile, DataClipboard, new SeparatorMenuItem(),
+                MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationData, LocationTools, new SeparatorMenuItem(),
                 EpidemicReport, new SeparatorMenuItem(),
-                MatricesCalculation, new SeparatorMenuItem(),
                 barcodeCreator, barcodeDecoder, new SeparatorMenuItem(),
                 messageDigest
         );

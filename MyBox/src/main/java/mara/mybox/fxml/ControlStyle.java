@@ -455,6 +455,9 @@ public class ControlStyle {
             case "pickColorCheck":
                 return new ControlStyle(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
 
+            case "ditherCheck":
+                return new ControlStyle(id, message("DitherComments"), "", "");
+
             default:
                 return null;
         }
@@ -473,6 +476,18 @@ public class ControlStyle {
             return new ControlStyle(id, "", "", "iconSampled.png");
         }
 
+        if (id.startsWith("leftPane")) {
+            return new ControlStyle(id, "", "", "iconDoubleLeft.png");
+        }
+
+        if (id.startsWith("rightPane")) {
+            return new ControlStyle(id, "", "", "iconDoubleRight.png");
+        }
+
+        if (id.startsWith("links")) {
+            return new ControlStyle(id, "", message("Links"), "iconLink.png");
+        }
+
         if (id.toLowerCase().endsWith("tipsview")) {
             switch (id) {
                 case "refTipsView":
@@ -480,9 +495,6 @@ public class ControlStyle {
 
                 case "distanceTipsView":
                     return new ControlStyle(id, "", message("ColorMatchComments"), "", "iconTips.png");
-
-                case "ditherTipsView":
-                    return new ControlStyle(id, "", message("DitherComments"), "", "iconTips.png");
 
                 case "BWThresholdTipsView":
                     return new ControlStyle(id, "", message("BWThresholdComments"), "", "iconTips.png");
@@ -505,23 +517,8 @@ public class ControlStyle {
                 default:
                     return new ControlStyle(id, "", "", "iconTips.png");
             }
-
         }
-
-        switch (id) {
-
-            case "linksView":
-                return new ControlStyle("linksView", "", message("Links"), "", "iconLink.png");
-
-            case "leftPaneControl":
-                return new ControlStyle("leftPaneControl", "", "", "", "iconDoubleLeft.png");
-
-            case "rightPaneControl":
-                return new ControlStyle("rightPaneControl", "", "", "", "iconDoubleRight.png");
-
-            default:
-                return null;
-        }
+        return null;
 
     }
 
@@ -685,7 +682,7 @@ public class ControlStyle {
             return new ControlStyle(id, "SQL", "", "iconSQL.png");
         }
         if (id.startsWith("charts")) {
-            return new ControlStyle(id, "Charts", "", "iconCharts.png");
+            return new ControlStyle(id, message("Charts"), "", "iconCharts.png");
         }
         if (id.startsWith("recover")) {
             switch (id) {
@@ -719,6 +716,35 @@ public class ControlStyle {
 
                 default:
                     return new ControlStyle(id, message("ZoomOut"), "", "iconZoomOut.png");
+            }
+        }
+
+        if (id.startsWith("copy")) {
+            switch (id) {
+                case "copyButton":
+                    return new ControlStyle(id, message("Copy"), "CTRL+c / ALT+c ", "iconCopy.png");
+
+                case "copyAsAButton":
+                    return new ControlStyle("copyAsAButton", message("CopyAsMatrixA"), "", "iconCopyA.png");
+
+                case "copyAsBButton":
+                    return new ControlStyle("copyAsAButton", message("CopyAsMatrixB"), "", "iconCopyB.png");
+
+                case "copyEnglishButton":
+                    return new ControlStyle(id, message("CopyEnglish"), "CTRL+e / ALT+e ", "iconCopy.png");
+
+                default:
+                    return new ControlStyle(id, message("Copy"), "", "iconCopy.png");
+            }
+        }
+
+        if (id.startsWith("paste")) {
+            switch (id) {
+                case "pasteButton":
+                    return new ControlStyle(id, message("Paste"), "CTRL+v / ALT+v", "iconPaste.png");
+
+                default:
+                    return new ControlStyle(id, message("Paste"), "", "iconPaste.png");
             }
         }
 
@@ -823,6 +849,10 @@ public class ControlStyle {
             }
         }
 
+        if (id.startsWith("size")) {
+            return new ControlStyle(id, message("Size"), "", "iconSplit.png");
+        }
+
         if (id.startsWith("selectImage")) {
             return new ControlStyle(id, message("Image"), "", "iconFolderImage.png");
         }
@@ -906,6 +936,29 @@ public class ControlStyle {
             return new ControlStyle(id, message("Count"), "", "iconCalculator.png");
         }
 
+        if (id.startsWith("delimiter")) {
+            return new ControlStyle(id, message("Delimiter"), "", "iconDelimiter.png");
+        }
+
+        if (id.startsWith("matrixA")) {
+            return new ControlStyle(id, message("SetAsMatrixA"), "", "iconA.png");
+        }
+
+        if (id.startsWith("matrixB")) {
+            return new ControlStyle(id, message("SetAsMatrixB"), "", "iconB.png");
+        }
+
+        if (id.startsWith("width")) {
+            return new ControlStyle(id, message("Width"), "", "iconXRuler.png");
+        }
+        if (id.startsWith("go")) {
+            return new ControlStyle(id, message("Go"), "", "iconGo.png");
+        }
+
+        if (id.startsWith("preview")) {
+            return new ControlStyle(id, message("PreviewComments"), "", "iconPreview.png");
+        }
+
         switch (id) {
 
             case "selectButton":
@@ -925,12 +978,6 @@ public class ControlStyle {
 
             case "cancelButton":
                 return new ControlStyle("cancelButton", message("Cancel"), "ESC", "iconCancel.png");
-
-            case "copyButton":
-                return new ControlStyle("copyButton", message("Copy"), "CTRL+c / ALT+c ", "iconCopy.png");
-
-            case "pasteButton":
-                return new ControlStyle("pasteButton", message("Paste"), "CTRL+v / ALT+v", "iconPaste.png");
 
             case "cropButton":
                 return new ControlStyle("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
@@ -952,9 +999,6 @@ public class ControlStyle {
 
             case "lastButton":
                 return new ControlStyle("lastButton", message("Last"), "ALT+END", "iconLast.png");
-
-            case "goButton":
-                return new ControlStyle("goButton", message("Go"), "", "iconGo.png");
 
             case "popButton":
                 return new ControlStyle("popButton", message("Pop"), "CTRL+p", "iconPop.png");
@@ -998,9 +1042,6 @@ public class ControlStyle {
             case "downFilesButton":
                 return new ControlStyle("downFilesButton", message("MoveDown"), "", "iconDown.png");
 
-            case "previewButton":
-                return new ControlStyle(id, message("PreviewComments"), "", "iconPreview.png");
-
             case "closeButton":
                 return new ControlStyle("closeButton", message("Close"), "F4", "iconClose.png");
 
@@ -1028,12 +1069,6 @@ public class ControlStyle {
             case "openTargetButton":
                 return new ControlStyle("openTargetButton", message("Open"), "", "iconOpen.png");
 
-            case "viewTargetFileButton":
-                return new ControlStyle("viewTargetFileButton", message("View"), "", "iconView.png");
-
-            case "viewFileButton":
-                return new ControlStyle("viewFileButton", message("View"), "", "iconView.png");
-
             case "browseButton":
                 return new ControlStyle("browseButton", message("Browse"), "", "iconBrowse.png");
 
@@ -1058,9 +1093,6 @@ public class ControlStyle {
             case "openForeImageButton":
                 return new ControlStyle("openForeImageButton", message("Select"), "", "iconOpen.png");
 
-            case "viewForeImageButton":
-                return new ControlStyle("viewForeImageButton", message("View"), "", "iconView.png");
-
             case "foreImagePaneSizeButton":
                 return new ControlStyle("foreImagePaneSizeButton", message("PaneSize"), "", "iconPicBig.png");
 
@@ -1069,9 +1101,6 @@ public class ControlStyle {
 
             case "openBackImageButton":
                 return new ControlStyle("openBackImageButton", message("Select"), "", "iconOpen.png");
-
-            case "viewBackImageButton":
-                return new ControlStyle("viewBackImageButton", message("View"), "", "iconView.png");
 
             case "backImagePaneSizeButton":
                 return new ControlStyle("backImagePaneSizeButton", message("PaneSize"), "", "iconPicBig.png");
@@ -1169,12 +1198,6 @@ public class ControlStyle {
             case "validateButton":
                 return new ControlStyle("validateButton", message("Validate"), "", "iconView.png");
 
-            case "copyAsAButton":
-                return new ControlStyle("copyAsAButton", message("CopyAsMatrixA"), "", "iconCopyA.png");
-
-            case "copyAsBButton":
-                return new ControlStyle("copyAsAButton", message("CopyAsMatrixB"), "", "iconCopyB.png");
-
             case "calculateXYZButton":
                 return new ControlStyle("calculateXYZButton", message("Calculate"), "", "iconCalculator.png");
 
@@ -1204,27 +1227,6 @@ public class ControlStyle {
 
             case "calculateButton":
                 return new ControlStyle("calculateButton", message("Calculate"), "", "iconCalculator.png");
-
-            case "matrixPlusButton":
-                return new ControlStyle("matrixPlusButton", message("A + B"), "", "iconPlus.png");
-
-            case "matrixMinusButton":
-                return new ControlStyle("matrixMinusButton", message("A - B"), "", "iconMinus.png");
-
-            case "matrixMultiplyButton":
-                return new ControlStyle("matrixMultiplyButton", message("AB"), "", "iconMultiply.png");
-
-            case "hadamardProductButton":
-                return new ControlStyle("hadamardProductButton", message("HadamardProductComments"), "", "iconAsterisk.png");
-
-            case "kroneckerProductButton":
-                return new ControlStyle("kroneckerProductButton", message("KroneckerProductComments"), "", "iconCancel.png");
-
-            case "verticalMergeButton":
-                return new ControlStyle("verticalMergeButton", message("VerticalMergeComments"), "", "iconVerticalMerge.png");
-
-            case "horizontalMergeButton":
-                return new ControlStyle("horizontalMergeButton", message("HorizontalMergeComments"), "", "iconHorizontalMerge.png");
 
             case "calculateAllButton":
                 return new ControlStyle("calculateAllButton", message("Calculate"), "", "iconCalculator.png");
@@ -1281,16 +1283,16 @@ public class ControlStyle {
                 return new ControlStyle("paneSize2Button", message("PaneSize"), "", "iconPicBig.png");
 
             case "pagePreviousButton":
-                return new ControlStyle("pagePreviousButton", message("Previous"), "ALT+PAGE_UP", "iconPrevious.png");
+                return new ControlStyle("pagePreviousButton", message("PreviousPage"), "ALT+PAGE_UP", "iconPrevious.png");
 
             case "pageNextButton":
-                return new ControlStyle("pageNextButton", message("Next"), "ALT+PAGE_DOWN", "iconNext.png");
+                return new ControlStyle("pageNextButton", message("NextPage"), "ALT+PAGE_DOWN", "iconNext.png");
 
             case "pageFirstButton":
-                return new ControlStyle("pageFirstButton", message("First"), "ALT+HOME", "iconFirst.png");
+                return new ControlStyle("pageFirstButton", message("FirstPage"), "ALT+HOME", "iconFirst.png");
 
             case "pageLastButton":
-                return new ControlStyle("pageLastButton", message("Last"), "ALT+END", "iconLast.png");
+                return new ControlStyle("pageLastButton", message("LastPage"), "ALT+END", "iconLast.png");
 
             case "allButton":
                 return new ControlStyle("allButton", message("All"), "CTRL+a", "iconCheckAll.png");
@@ -1309,9 +1311,6 @@ public class ControlStyle {
 
             case "helpMeButton":
                 return new ControlStyle(id, message("HelpMe"), "", "iconCatFoot.png");
-
-            case "copyEnglishButton":
-                return new ControlStyle(id, message("CopyEnglish"), "CTRL+e / ALT+e ", "iconCopy.png");
 
             case "pickColorButton":
                 return new ControlStyle(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
@@ -1356,9 +1355,6 @@ public class ControlStyle {
         ControlStyle style = getControlStyle(node);
         setTips(node, style);
 
-        if (node.getStyleClass().contains("main-button")) {
-            return;
-        }
         setColorStyle(node, style, AppVariables.ControlColor);
 //        if (mustStyle || AppVariables.ControlColor != ColorStyle.Default) {
 //            setColorStyle(node, style, AppVariables.ControlColor);
@@ -1461,7 +1457,10 @@ public class ControlStyle {
             return;
         }
         ControlStyle style = getControlStyle(node);
-        String tips = getTips(node, style);
+        setTips(node, style);
+    }
+
+    public static void setTips(Node node, String tips) {
         if (tips == null || tips.isEmpty()) {
             return;
         }
@@ -1469,14 +1468,10 @@ public class ControlStyle {
     }
 
     public static void setTips(Node node, ControlStyle style) {
-        if (node == null) {
+        if (node == null || style == null) {
             return;
         }
-        String tips = getTips(node, style);
-        if (tips == null || tips.isEmpty()) {
-            return;
-        }
-        FxmlControl.setTooltip(node, new Tooltip(tips));
+        setTips(node, getTips(node, style));
     }
 
     public static void setName(Node node, String name) {
@@ -1500,13 +1495,12 @@ public class ControlStyle {
         setTips(node, style);
     }
 
-    public static void setIconTooltips(Node node, String iconName, String tooltip) {
+    public static void setIconTooltips(Node node, String iconName, String tips) {
         setIconName(node, iconName);
-        FxmlControl.setTooltip(node, new Tooltip(tooltip));
+        setTips(node, tips);
     }
 
-    public static void setTextStyle(Node node, ControlStyle controlStyle,
-            ColorStyle colorStyle) {
+    public static void setTextStyle(Node node, ControlStyle controlStyle, ColorStyle colorStyle) {
         try {
             if (node == null
                     || controlStyle == null
@@ -1583,6 +1577,9 @@ public class ControlStyle {
                     if (node.getStyleClass().contains("big")) {
                         v.setFitWidth(AppVariables.iconSize * 2);
                         v.setFitHeight(AppVariables.iconSize * 2);
+                    } else if (node.getStyleClass().contains("halfBig")) {
+                        v.setFitWidth(AppVariables.iconSize * 1.5);
+                        v.setFitHeight(AppVariables.iconSize * 1.5);
                     } else {
                         v.setFitWidth(AppVariables.iconSize);
                         v.setFitHeight(AppVariables.iconSize);
@@ -1621,17 +1618,26 @@ public class ControlStyle {
     }
 
     public static String getIcon(ColorStyle style, String iconName) {
-        String path = getIconPath(style);
-        String finalName = iconName;
-        if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
-            finalName = iconName.substring(0, iconName.length() - 4) + "_100.png";
-            try {
-                new ImageView(path + finalName);
-            } catch (Exception e) {
-                finalName = iconName;
-            }
+        if (style == null || iconName == null || iconName.isBlank()) {
+            return null;
         }
-        return path + finalName;
+        try {
+            String path = getIconPath(style);
+            String finalName = iconName;
+            if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
+                finalName = iconName.substring(0, iconName.length() - 4) + "_100.png";
+                try {
+                    new ImageView(path + finalName);
+                } catch (Exception e) {
+                    finalName = iconName;
+                }
+            }
+            return path + finalName;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+
     }
 
     public static String getIcon(String iconName) {

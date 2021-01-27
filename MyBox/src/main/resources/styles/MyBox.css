@@ -2,37 +2,23 @@
  * @Author Mara
  * @License Apache License Version 2.0
  */
-.root{
-    -fx-font-size: 1.0em;
-}
 
+/*
+    standard class
+*/
 .button:default {
     -fx-base: #f4f4f4;
     -fx-border-color: #961c1c;
 }
 
-/*
-https://old.icons8.com/
-Icons color           -> lightBlue             #4788c7  #dff0fe
-Hue reduce 215    -> red              #c94d58   #feb6be
-Hue increase 171   -> Orange      #c8754b      #fecdb6
-Saturation increase 50% -> Blue       #0066cc            #92cbfe
-Red increase 151 -> pink                #de88c7         #ffdcfe
-*/
-
-/*.label {
-    -fx-text-overrun: leading-ellipsis ;
-}*/
-
-.appTitle {
-    -fx-font-size: 1.8em;
-}
-
-.title, .title:focused {
+.column-header.editable-column > .label {
+    -fx-text-fill: darkblue;
     -fx-font-weight: bolder;
-    -fx-font-size: 1.5em;
 }
 
+/*
+    mybox class
+*/
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
@@ -76,7 +62,7 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
     -fx-text-fill: #2e598a;
-    -fx-font-size: 1.0em;
+    -fx-font-size: 1em;
 }
 
 .displayField, .displayField:focused {
@@ -110,56 +96,16 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-padding: 5 5 5 5;
 }
 
-/*
-    style set by codes
-*/
-.big {
-}
-
-
-.transparentDisable:disabled, .transparentDisable:disabled > * {
-    -fx-opacity: 0.8;
-}
-
-.table-row-cell:empty, .table-cell {
-    -fx-border-width: 0px;
-}
-
-.column-header.editable-column > .label {
+.boldTitle > .title .text, .boldTitle:focused > .title .text {
+    -fx-font-weight: bold;
     -fx-text-fill: darkblue;
-    -fx-font-weight: bolder;
 }
 
-.small-label, .small-label:focused {
-    -fx-background-color: transparent ;
-    -fx-background-insets: 0px ;
-    -fx-font-size: 0.6em;
-    -fx-text-fill: #2e598a;
-}
 
-.open-button {
-    -fx-background-image: url("../img/iconOpen.png");
-    -fx-background-size: 20 20;
-    -fx-background-repeat: no-repeat;
-    -fx-background-color: transparent;
-    -fx-background-position:center center;
-}
 
-/*  http://fxexperience.com/2011/12/styling-fx-buttons-with-css/  */
-.main-button, .main-button:pressed, .main-button:hover, .main-button:focused {
-    -fx-padding: 8 15 15 15;
-    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
-    -fx-background-radius: 9;
-    -fx-background-color:
-        linear-gradient(from 0% 93% to 0% 100%, #660e0e 0%, #6b0d0d 100%),
-        #771c1c,
-        #d23d3d,
-        radial-gradient(center 50% 50%, radius 100%, #d23d3d, #771c1c);
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
-    /*-fx-font-weight: bold;*/
-    -fx-font-size: 1.0em;
-    -fx-text-fill: white;
-}
+/*
+    defined id
+*/
 
 #topCheck:selected > .box {
     -fx-background-color: black;
@@ -180,43 +126,34 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-background-color: red;
 }
 
-.cie-chart-symbol{
-    -fx-stroke: black;
-    -fx-shape: "M0,4 L2,4 L4,8 L7,0 L9,0 L4,11 Z";
+/*
+    style by class "mara.mybox.fxml.ControlStyle"
+*/
+.big {
+}
+
+.halfBig {
 }
 
 
-
-
-
-/*.table-view .column-header .label .editable{
-    -fx-text-fill: #2e598a;
+/*  http://fxexperience.com/2011/12/styling-fx-buttons-with-css/  */
+/*.main-button, .main-button:pressed, .main-button:hover, .main-button:focused {
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 9;
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, #660e0e 0%, #6b0d0d 100%),
+        #771c1c,
+        #d23d3d,
+        radial-gradient(center 50% 50%, radius 100%, #d23d3d, #771c1c);
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+    -fx-font-weight: bold;
+    -fx-font-size: 1.0em;
+    -fx-text-fill: white;
 }*/
 
-/*.table-view .column-header,
-.table-view .column-header .filler,
-.table-view .column-header-background .filler {
-    -fx-background-color: red;
-}
 
-设置表格头靠左、字体大小，字体颜色
-.table-view .column-header .label{
-    -fx-alignment: center-left;
-    -fx-font-family: "Arial";
-    -fx-text-fill: rgba(68,68,68,0.96);
-    -fx-font-size: 12;
-}
 
-设置表格头高度
-.table-view > .column-header-background{
-    -fx-pref-height: 40;
-}
 
-设置每一列内容居中，每一行高度
-.table-row-cell{
-    -fx-cell-size: 45px;
-    -fx-alignment: center;
-}
-*/
 
 

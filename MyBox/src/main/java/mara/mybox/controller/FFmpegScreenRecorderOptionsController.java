@@ -30,7 +30,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-06-26
  * @License Apache License Version 2.0
  */
-public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsController {
+public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions {
 
     protected Rectangle snapArea;
     protected int audioThreadQueueSize, videoThreadQueueSize,
@@ -169,27 +169,9 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
 
             delayController.permitInvalid(false).permitNotSetting(true)
                     .init(baseName + "Delay", 5);
-            delayController.changed.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean oldValue, Boolean newValue) {
-                    if (newValue) {
-                        delayController.checked();
-                    }
-                }
-            });
 
             durationController.permitInvalid(false).permitNotSetting(true)
                     .init(baseName + "Duration", -1);
-            durationController.changed.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean oldValue, Boolean newValue) {
-                    if (newValue) {
-                        durationController.checked();
-                    }
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

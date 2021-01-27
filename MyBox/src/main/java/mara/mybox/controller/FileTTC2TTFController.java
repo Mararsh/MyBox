@@ -7,8 +7,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
@@ -50,12 +50,9 @@ public class FileTTC2TTFController extends HtmlViewerController {
         try {
             super.initControls();
 
-            ttcController.changed.addListener(
+            ttcController.notify.addListener(
                     (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                        if (ttcController.changed.get()) {
-                            ttcController.changed.set(false);
-                            loadFile();
-                        }
+                        loadFile();
                     });
 
             ttcController.type(VisitHistory.FileType.TTC)

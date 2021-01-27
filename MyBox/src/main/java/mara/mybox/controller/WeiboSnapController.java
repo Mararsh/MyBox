@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -19,17 +18,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.stage.Screen;
 import mara.mybox.data.WeiboSnapParameters;
-import mara.mybox.db.TableBrowserBypassSSL;
-import mara.mybox.db.TableStringValues;
+import mara.mybox.db.table.TableBrowserBypassSSL;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.message;
@@ -60,24 +57,26 @@ public class WeiboSnapController extends BaseController {
     private List<String> addressList;
 
     @FXML
-    private ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
+    protected ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
     @FXML
-    private ComboBox<String> addressBox, zoomBox, widthBox, retryBox, dpiSelector,
-            MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox, fontBox;
+    protected ComboBox<String> addressBox, zoomBox, widthBox, retryBox,
+            MarginsBox, standardSizeBox, jpegBox, pdfScaleBox;
     @FXML
-    private TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
+    protected TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
             snapIntervalInput, customWidthInput, customHeightInput, authorInput, thresholdInput,
             headerInput, likeStartPageInput;
     @FXML
-    private Button recoverPassportButton;
+    protected Button recoverPassportButton;
     @FXML
-    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
+    protected CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck,
             bypassSSLCheck, likeCheck, postsCheck;
     @FXML
-    private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
+    protected RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
             pdfSize500MRadio, pdfSize1GRadio, pdfSize2GRadio, pdfSizeUnlimitRadio;
+    @FXML
+    protected ControlTTFSelecter ttfController;
 
     public WeiboSnapController() {
         baseTitle = AppVariables.message("WeiboSnap");
@@ -349,31 +348,6 @@ public class WeiboSnapController extends BaseController {
 
     private void initSnapOptions() {
 
-        dpi = 120;
-        List<String> dpiValues = new ArrayList();
-        dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
-        String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
-        if (dpiValues.contains(sValue)) {
-            dpiValues.remove(sValue);
-        }
-        dpiValues.add(0, sValue);
-        sValue = (int) Screen.getPrimary().getDpi() + "";
-        if (dpiValues.contains(sValue)) {
-            dpiValues.remove(sValue);
-        }
-        dpiValues.add(sValue);
-        dpiSelector.getItems().addAll(dpiValues);
-        dpiSelector.getSelectionModel().selectedItemProperty().addListener(
-                (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                    try {
-                        dpi = Integer.parseInt(newValue);
-                        AppVariables.setUserConfigValue("WeiboSnapDPI", dpi + "");
-                    } catch (Exception e) {
-                        dpi = 120;
-                    }
-                });
-        dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("WeiboSnapDPI", "120"));
-
         zoomBox.getItems().addAll(Arrays.asList("1.0", "1.5", "2", "1.6", "1.8", "0.8"));
         zoomBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -570,27 +544,6 @@ public class WeiboSnapController extends BaseController {
         standardSizeBox.getSelectionModel().select(0);
         isImageSize = true;
 
-        standardDpiBox.getItems().addAll(Arrays.asList(
-                "72 dpi",
-                "96 dpi",
-                "150 dpi",
-                "300 dpi",
-                "450 dpi",
-                "720 dpi",
-                "120 dpi",
-                "160 dpi",
-                "240 dpi",
-                "320 dpi"
-        ));
-        standardDpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                checkStandardValues();
-            }
-        });
-        standardDpiBox.getSelectionModel().select(0);
-
         customWidthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -659,24 +612,7 @@ public class WeiboSnapController extends BaseController {
         });
         authorInput.setText(AppVariables.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
-        fontBox.getItems().addAll(SystemTools.ttfList());
-        fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue == null || newValue.isBlank()) {
-                    return;
-                }
-                AppVariables.setUserConfigValue(baseName + "TTF", newValue);
-            }
-        });
-        String d = AppVariables.getUserConfigValue(baseName + "TTF", null);
-        if (d == null) {
-            if (!fontBox.getItems().isEmpty()) {
-                fontBox.getSelectionModel().select(0);
-            }
-        } else {
-            fontBox.setValue(d);
-        }
+        ttfController.name(baseName);
 
         String pdfSize = AppVariables.getUserConfigValue("WeiBoSnapPdfSize", "500M");
         if ("1G".equals(pdfSize)) {
@@ -701,7 +637,6 @@ public class WeiboSnapController extends BaseController {
 
     private void checkPageSize() {
         standardSizeBox.setDisable(true);
-        standardDpiBox.setDisable(true);
         customWidthInput.setDisable(true);
         customHeightInput.setDisable(true);
         customWidthInput.setStyle(null);
@@ -713,7 +648,6 @@ public class WeiboSnapController extends BaseController {
             isImageSize = true;
         } else if (AppVariables.message("StandardSize").equals(selected.getText())) {
             standardSizeBox.setDisable(false);
-            standardDpiBox.setDisable(false);
             checkStandardValues();
 
         } else if (AppVariables.message("Custom").equals(selected.getText())) {
@@ -730,12 +664,6 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void checkStandardValues() {
-        String d = standardDpiBox.getSelectionModel().getSelectedItem();
-        int dpi = 72;
-        try {
-            dpi = Integer.valueOf(d.substring(0, d.length() - 4));
-        } catch (Exception e) {
-        }
         String s = standardSizeBox.getSelectionModel().getSelectedItem();
         if (s.startsWith("A4-" + message("Horizontal"))) {
             pageWidth = calculateCmPixels(29.7f, dpi);
@@ -1123,7 +1051,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setTempdir(AppVariables.MyBoxTempPath);
             parameters.setPdfScale(pdfScale);
             parameters.setOpenPathWhenStop(openPathCheck.isSelected());
-            parameters.setFontFile(fontBox.getSelectionModel().getSelectedItem());
+            parameters.setFontFile(ttfController.ttfFile);
             parameters.setDithering(ditherCheck.isSelected());
             parameters.setUseTempFiles(true);
             parameters.setSnapInterval(snapInterval);

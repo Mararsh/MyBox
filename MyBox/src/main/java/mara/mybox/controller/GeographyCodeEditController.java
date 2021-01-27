@@ -12,13 +12,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
-import mara.mybox.db.TableGeographyCode;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -260,7 +260,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             if (code == null) {
                 return;
             }
-            if (loadedCode != null && loadedCode.getGcid() > 0
+            if (loadedCode != null && loadedCode.getId() > 0
                     && !gcidInput.getText().isBlank()) {
                 if (code.getLongitude() >= -180 && code.getLongitude() <= 180) {
                     longitudeInput.setText(code.getLongitude() + "");
@@ -275,14 +275,14 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 return;
             }
 
-            if (loadedCode != null && loadedCode.getGcid() > 0) {
-                gcidInput.setText(loadedCode.getGcid() + "");
-            } else if (code.getGcid() > 0) {
-                gcidInput.setText(code.getGcid() + "");
+            if (loadedCode != null && loadedCode.getId() > 0) {
+                gcidInput.setText(loadedCode.getId() + "");
+            } else if (code.getId() > 0) {
+                gcidInput.setText(code.getId() + "");
             } else {
                 gcidInput.clear();
             }
-            predefinedCheck.setSelected(code.isPredefined());
+            predefinedCheck.setSelected(GeographyCode.isPredefined(code));
             // can not locate the code in the tree since the tree is loaded lazily
             int level = code.getLevel();
             switch (level) {
@@ -427,25 +427,25 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
 
             GeographyCodeLevel level;
             if (globalRadio.isSelected()) {
-                level = new GeographyCodeLevel(1);
+                level = new GeographyCodeLevel((short) 1);
             } else if (continentRadio.isSelected()) {
-                level = new GeographyCodeLevel(2);
+                level = new GeographyCodeLevel((short) 2);
             } else if (countryRadio.isSelected()) {
-                level = new GeographyCodeLevel(3);
+                level = new GeographyCodeLevel((short) 3);
             } else if (provinceRadio.isSelected()) {
-                level = new GeographyCodeLevel(4);
+                level = new GeographyCodeLevel((short) 4);
             } else if (cityRadio.isSelected()) {
-                level = new GeographyCodeLevel(5);
+                level = new GeographyCodeLevel((short) 5);
             } else if (countyRadio.isSelected()) {
-                level = new GeographyCodeLevel(6);
+                level = new GeographyCodeLevel((short) 6);
             } else if (townRadio.isSelected()) {
-                level = new GeographyCodeLevel(7);
+                level = new GeographyCodeLevel((short) 7);
             } else if (villageRadio.isSelected()) {
-                level = new GeographyCodeLevel(8);
+                level = new GeographyCodeLevel((short) 8);
             } else if (buildingRadio.isSelected()) {
-                level = new GeographyCodeLevel(9);
+                level = new GeographyCodeLevel((short) 9);
             } else {
-                level = new GeographyCodeLevel(10);
+                level = new GeographyCodeLevel((short) 10);
             }
             if (selectedCode == null) {
                 if (!globalRadio.isSelected()) {
@@ -461,9 +461,9 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             GeographyCode newCode = new GeographyCode();
 
             if (gcidInput.getText() == null || gcidInput.getText().isBlank()) {
-                newCode.setGcid(-1);
+                newCode.setId(-1);
             } else {
-                newCode.setGcid(Long.valueOf(gcidInput.getText()));
+                newCode.setId(Long.valueOf(gcidInput.getText()));
             }
             if (predefinedCheck.isSelected()) {
                 newCode.setSource(GeographyCode.AddressSource.PredefinedData);
@@ -496,7 +496,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             newCode.setAlias4(alias4Input.getText().trim());
             newCode.setAlias5(alias5Input.getText().trim());
             if (selectedCode != null) {
-                newCode.setOwner(selectedCode.getGcid());
+                newCode.setOwner(selectedCode.getId());
                 newCode.setContinent(selectedCode.getContinent());
                 newCode.setCountry(selectedCode.getCountry());
                 newCode.setProvince(selectedCode.getProvince());
@@ -537,7 +537,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
         gcidInput.setText("");
         popInformation(message("DataCopyComments"));
         if (loadedCode != null) {
-            loadedCode.setGcid(-1);
+            loadedCode.setId(-1);
         }
     }
 

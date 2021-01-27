@@ -34,6 +34,7 @@ import javafx.util.Callback;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -46,7 +47,6 @@ import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -243,6 +243,10 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     @Override
     protected void paneExpanded() {
+        imageController.showRightPane();
+        imageController.hideScopePane();
+        imageController.resetImagePane();
+        imageController.showImagePane();
         refreshButton.requestFocus();
     }
 
@@ -329,6 +333,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 @Override
                 protected void whenSucceeded() {
                     thumbnails.add(0, clip);
+                    refreshButton.requestFocus();
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -370,6 +375,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     @Override
                     protected void whenSucceeded() {
                         thumbnails.add(0, clip);
+                        refreshButton.requestFocus();
                     }
                 };
                 imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -469,6 +475,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 @Override
                 protected void whenSucceeded() {
                     thumbnails.addAll(0, clips);
+                    refreshButton.requestFocus();
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -703,6 +710,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             protected void succeeded() {
                 super.succeeded();
                 demoButton.setVisible(true);
+                refreshButton.requestFocus();
                 if (files.isEmpty()) {
                     return;
                 }

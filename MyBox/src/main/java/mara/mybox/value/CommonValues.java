@@ -1,6 +1,6 @@
 package mara.mybox.value;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.7";
-    public static final String AppVersionDate = "2020-12-03";
+    public static final String AppVersion = "6.3.8";
+    public static final String AppVersionDate = "2021-1-27";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -113,7 +113,9 @@ public class CommonValues {
     public static final String RGB2XYZConversionMatrixFxml = "/fxml/RGB2XYZConversionMatrix.fxml";
     public static final String RGB2RGBConversionMatrixFxml = "/fxml/RGB2RGBConversionMatrix.fxml";
     public static final String IlluminantsFxml = "/fxml/Illuminants.fxml";
-    public static final String MatricesCalculationFxml = "/fxml/MatricesCalculation.fxml";
+    public static final String MatricesManageFxml = "/fxml/MatricesManage.fxml";
+    public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
+    public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
@@ -136,6 +138,7 @@ public class CommonValues {
     public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
     public static final String FileFilterFxml = "/fxml/FileFilter.fxml";
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
+    public static final String FileRenameFxml = "/fxml/FileRename.fxml";
     public static final String FilesMergeFxml = "/fxml/FilesMerge.fxml";
     public static final String FilesDeleteFxml = "/fxml/FilesDelete.fxml";
     public static final String FilesCopyFxml = "/fxml/FilesCopy.fxml";
@@ -153,6 +156,7 @@ public class CommonValues {
     public static final String HtmlToTextFxml = "/fxml/HtmlToText.fxml";
     public static final String HtmlToPdfFxml = "/fxml/HtmlToPdf.fxml";
     public static final String HtmlSetCharsetFxml = "/fxml/HtmlSetCharset.fxml";
+    public static final String HtmlSetStyleFxml = "/fxml/HtmlSetStyle.fxml";
     public static final String HtmlSnapFxml = "/fxml/HtmlSnap.fxml";
     public static final String HtmlMergeAsHtmlFxml = "/fxml/HtmlMergeAsHtml.fxml";
     public static final String HtmlMergeAsMarkdownFxml = "/fxml/HtmlMergeAsMarkdown.fxml";
@@ -171,7 +175,7 @@ public class CommonValues {
     public static final String FilesDecompressUnarchiveBatchFxml = "/fxml/FilesDecompressUnarchiveBatch.fxml";
     public static final String FileTTC2TTFFxml = "/fxml/FileTTC2TTF.fxml";
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
-    public static final String WebBrowserBoxFxml = "/fxml/WebBrowserBox.fxml";
+    public static final String ControlWebBrowserBoxFxml = "/fxml/ControlWebBrowserBox.fxml";
     public static final String WebBrowserHistoryFxml = "/fxml/WebBrowserHistory.fxml";
     public static final String HtmlConvertUrlFxml = "/fxml/HtmlConvertUrl.fxml";
     public static final String MediaPlayerFxml = "/fxml/MediaPlayer.fxml";
@@ -196,7 +200,6 @@ public class CommonValues {
     public static final String GeographyCodeImportInternalCSVFxml = "/fxml/GeographyCodeImportInternalCSV.fxml";
     public static final String GeographyCodeImportExternalCSVFxml = "/fxml/GeographyCodeImportExternalCSV.fxml";
     public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";
-    public static final String GeographyCodeExportFxml = "/fxml/GeographyCodeExport.fxml";
     public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
     public static final String LocationDataFxml = "/fxml/LocationData.fxml";
     public static final String LocationsDataInMapFxml = "/fxml/LocationsDataInMap.fxml";
@@ -212,17 +215,19 @@ public class CommonValues {
     public static final String EpidemicReportsImport621ExternalFxml = "/fxml/EpidemicReportsImport621External.fxml";
     public static final String EpidemicReportsImportJHUTimeSeriesFxml = "/fxml/EpidemicReportsImportJHUTimeSeries.fxml";
     public static final String EpidemicReportsImportJHUDailyFxml = "/fxml/EpidemicReportsImportJHUDaily.fxml";
-    public static final String EpidemicReportsExportFxml = "/fxml/EpidemicReportsExport.fxml";
     public static final String EpidemicReportsStatisticFxml = "/fxml/EpidemicReportsStatistic.fxml";
+    public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
+    public static final String DataConvertCsvFxml = "/fxml/DataConvertCsv.fxml";
+    public static final String DataConvertExcelFxml = "/fxml/DataConvertExcel.fxml";
+    public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
+    public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
+    public static final String SheetPasteFxml = "/fxml/SheetPaste.fxml";
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
-    public static final String TableManageSelectFxml = "/fxml/TableManageSelect.fxml";
-    public static final String TableDataEditFxml = "/fxml/TableDataEdit.fxml";
     public static final String DatasetFxml = "/fxml/Dataset.fxml";
     public static final String DatasetEditFxml = "/fxml/DatasetEdit.fxml";
     public static final String LocationDataImportCSVFxml = "/fxml/LocationDataImportCSV.fxml";
     public static final String LocationDataImportMovebankFxml = "/fxml/LocationDataImportMovebank.fxml";
-    public static final String LocationDataExportFxml = "/fxml/LocationDataExport.fxml";
     public static final String LocationToolsFxml = "/fxml/LocationTools.fxml";
     public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
 
@@ -284,6 +289,10 @@ public class CommonValues {
     public static final String TianDiTuWebKey = "0ddeb917def62b4691500526cc30a9b1";
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
+    public static final String DataIgnoreChars
+            = "[\\$\\(\\)\\*\\?\\\\/\\^\\{\\}\\|\\[\\]\\-\"`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
+    public static final String FileNameSpecialChars
+            = "[\\\\/\\*\\?\n\":<>]|&nbsp;|&lt;|&gt;|&amp;|&quot;";
 
     public static final String MyBoxStyle = "/styles/MyBox.css";
     public static final String DefaultStyle = "/styles/modena/modena.css";
@@ -297,78 +306,31 @@ public class CommonValues {
     public static final String BlackOnYellowStyle = "/styles/modena/blackOnYellow.css";
     public static final String caspianStyle = "/styles/caspian/caspian.css";
 
-    public static List<String> SupportedImages = new ArrayList<String>() {
-        {
-            add("png");
-            add("jpg");
-            add("jpeg");
-//            add("jpx");
-//            add("jpeg2000");
-//            add("jp2");
-//            add("jpm");
-            add("bmp");
-            add("tif");
-            add("tiff");
-            add("gif");
-            add("pcx");
-            add("pnm");
-            add("wbmp");
-            add("ico");
-            add("icon");
-        }
-    };
+    public static List<String> SupportedImages = Arrays.asList(
+            "png", "jpg", "jpeg", "bmp", "tif", "tiff", "gif", "pcx", "pnm", "wbmp", "ico", "icon"
+    );
 
-    public static List<String> NoAlphaImages = new ArrayList<String>() {
-        {
-            add("jpg");
-            add("jpeg");
-//            add("jpx");
-//            add("jpeg2000");
-//            add("jp2");
-//            add("jpm");
-            add("bmp");
-            add("pnm");
-            add("gif");
-            add("wbmp");
-            add("pcx");
-        }
-    };
+    public static List<String> NoAlphaImages = Arrays.asList(
+            "jpg", "jpeg", "bmp", "pnm", "gif", "wbmp", "pcx"
+    );
 
-    public static List<String> AlphaImages = new ArrayList<String>() {
-        {
-            add("png");
-            add("tif");
-            add("tiff");
-            add("ico");
-            add("icon");
-        }
-    };
+    public static List<String> AlphaImages = Arrays.asList(
+            "png", "tif", "tiff", "ico", "icon"
+    );
 
     // PNG does not support premultiplyAlpha
     // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8229013
-    public static List<String> PremultiplyAlphaImages = new ArrayList<String>() {
-        {
-            add("tif");
-            add("tiff");
-        }
-    };
+    public static List<String> PremultiplyAlphaImages = Arrays.asList(
+            "tif", "tiff"
+    );
 
-    public static List<String> CMYKImages = new ArrayList<String>() {
-        {
-//            add("jpg");
-//            add("jpeg");
-            add("tif");
-            add("tiff");
-        }
-    };
+    public static List<String> CMYKImages = Arrays.asList(
+            "tif", "tiff"
+    );
 
-    public static List<String> MultiFramesImages = new ArrayList<String>() {
-        {
-            add("gif");
-            add("tif");
-            add("tiff");
-        }
-    };
+    public static List<String> MultiFramesImages = Arrays.asList(
+            "gif", "tif", "tiff"
+    );
 
     public static String[] TextFileSuffix = {"txt", "java", "fxml", "xml",
         "json", "log", "js", "css", "csv",

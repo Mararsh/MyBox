@@ -18,18 +18,18 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
-import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
-import mara.mybox.tools.DateTools;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -37,7 +37,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-5-20
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsStatisticController extends DataTaskController {
+public class EpidemicReportsStatisticController extends BaseTaskController {
 
     protected EpidemicReportsController parent;
     protected String dataset;
@@ -123,11 +123,11 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                  PreparedStatement update = conn.prepareStatement(TableEpidemicReport.UpdateAsEPid)) {
             Earch = TableGeographyCode.earth(conn);
             if (Earch == null) {
-                updateLogs(message("LoadingPredefinedGeographyCodes"), true);
+                updateLogs(message("LoadingPredefinedGeographyCodes"));
                 GeographyCodeTools.importPredefined(conn);
                 Earch = TableGeographyCode.earth(conn);
                 if (Earch == null) {
-                    updateLogs(message("Failed"), true);
+                    updateLogs(message("Failed"));
                     return false;
                 }
             }
@@ -148,44 +148,44 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             }
 
             if (globalIncreasedCheck.isSelected()) {
-                calculateIncreased(conn, update, 3);
+                calculateIncreased(conn, update, (short) 3);
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                calculateIncreased(conn, update, 2);
+                calculateIncreased(conn, update, (short) 2);
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
-                calculateIncreased(conn, update, 1);
+                calculateIncreased(conn, update, (short) 1);
             }
 
             if (task == null || task.isCancelled()) {
                 return false;
             }
             if (provinceIncreasedCheck.isSelected()) {
-                calculateIncreased(conn, update, 4);
+                calculateIncreased(conn, update, (short) 4);
             }
             if (task == null || task.isCancelled()) {
                 return false;
             }
             if (cityIncreasedCheck.isSelected()) {
-                calculateIncreased(conn, update, 5);
+                calculateIncreased(conn, update, (short) 5);
             }
             if (task == null || task.isCancelled()) {
                 return false;
             }
             if (countyIncreasedCheck.isSelected()) {
-                calculateIncreased(conn, update, 6);
+                calculateIncreased(conn, update, (short) 6);
             }
             if (task == null || task.isCancelled()) {
                 return false;
             }
             if (townIncreasedCheck.isSelected()) {
-                calculateIncreased(conn, update, 7);
+                calculateIncreased(conn, update, (short) 7);
             }
             return true;
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
             MyBoxLog.debug(e.toString());
             return false;
         }
@@ -194,7 +194,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
     protected void sum(Connection conn, PreparedStatement equalQuery,
             PreparedStatement insert, PreparedStatement update) {
         try {
-            updateLogs(message("AccumulateData") + "  " + message("Country"), true);
+            updateLogs(message("AccumulateData") + "  " + message("Country"));
             String sql = "SELECT * FROM Geography_Code WHERE level=3 ORDER BY gcid asc";
             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                 while (results.next()) {
@@ -210,7 +210,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                 return;
             }
 
-            updateLogs(message("AccumulateData") + "  " + message("Continent"), true);
+            updateLogs(message("AccumulateData") + "  " + message("Continent"));
             sql = "SELECT * FROM Geography_Code WHERE level=2 ORDER BY gcid asc";
             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                 while (results.next()) {
@@ -224,10 +224,10 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             if (task == null || task.isCancelled()) {
                 return;
             }
-            updateLogs(message("AccumulateData") + "  " + message("Earth"), true);
+            updateLogs(message("AccumulateData") + "  " + message("Earth"));
             sum(conn, equalQuery, insert, update, Earch);
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
             MyBoxLog.debug(e.toString());
         }
     }
@@ -238,9 +238,9 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             if (code == null) {
                 return;
             }
-            updateLogs(message("AccumulateData") + " " + code.getName(), true);
+            updateLogs(message("AccumulateData") + " " + code.getName());
             conn.setAutoCommit(false);
-            long locationid = code.getGcid();
+            long locationid = code.getId();
             int confirmed = 0, healed = 0, dead = 0, skipped = 0;
             String level = code.getLevelName();
             for (Date d : times) {
@@ -278,7 +278,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                 if (confirmed <= 0 && healed <= 0 && dead <= 0) {
                     skipped++;
                     if (skipped % 30 == 0) {
-                        updateLogs(message("Skipped") + " " + skipped + " " + date, true);
+                        updateLogs(message("Skipped") + " " + skipped + " " + date);
                     }
                     continue;
                 }
@@ -297,7 +297,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                             .setDataSet(dataset)
                             .setLocationid(locationid).setTime(d.getTime())
                             .setConfirmed(confirmed).setHealed(healed).setDead(dead)
-                            .setSource(4);
+                            .setSource((short) 4);
                     ok = TableEpidemicReport.insert(insert, report);
                     String info = level + "  " + code.getName() + " " + date + " "
                             + message("Confirmed") + ":" + confirmed + " "
@@ -306,11 +306,11 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                     if (ok) {
                         sumCount++;
                         info = message("Insert") + " " + sumCount + "  " + info;
-                        updateLogs(info, true);
+                        updateLogs(info);
                     } else {
                         failedCount++;
                         info = message("Failed") + " " + failedCount + "  " + info;
-                        updateLogs(info, true);
+                        updateLogs(info);
                     }
                 } else {
                     long rconfirmed = report.getConfirmed();
@@ -336,35 +336,35 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                     info = report.getEpid() + " " + level + "  " + code.getName() + " "
                             + date + "  " + info;
                     if (changed) {
-                        report.setSource(4);
+                        report.setSource((short) 4);
                         ok = TableEpidemicReport.updateAsEPid(update, report);
                         if (ok) {
                             sumCount++;
                             info = message("Update") + " " + sumCount + "   " + info;
-                            updateLogs(info, true);
+                            updateLogs(info);
                         } else {
                             failedCount++;
                             info = message("Failed") + " " + failedCount + "   " + info;
-                            updateLogs(info, true);
+                            updateLogs(info);
                         }
                     } else {
                         unchangedCount++;
                         info = message("Unchanged") + " " + info;
-                        updateLogs(info, true);
+                        updateLogs(info);
                     }
                 }
             }
             conn.commit();
 
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
             MyBoxLog.debug(e.toString());
         }
     }
 
-    protected void calculateIncreased(Connection conn, PreparedStatement update, int level) {
+    protected void calculateIncreased(Connection conn, PreparedStatement update, short level) {
         try {
-            updateLogs(message("SubtractData") + "  " + new GeographyCodeLevel(level).getName(), true);
+            updateLogs(message("SubtractData") + "  " + new GeographyCodeLevel(level).getName());
             EpidemicReport todayReport, yesterdayReport;
             String sql = TableEpidemicReport.StatisticViewSelect + " WHERE "
                     + " data_set='" + DerbyBase.stringValue(dataset) + "' AND "
@@ -378,8 +378,8 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                     }
                     todayReport = TableEpidemicReport.statisticViewQuery(conn, results, false);
                     GeographyCode location = todayReport.getLocation();
-                    yesterdayReport = yesterdayReports.get(location.getGcid());
-                    yesterdayReports.put(location.getGcid(), todayReport);
+                    yesterdayReport = yesterdayReports.get(location.getId());
+                    yesterdayReports.put(location.getId(), todayReport);
                     if (yesterdayReport != null) {
                         long IncreasedConfirmed = todayReport.getConfirmed() - yesterdayReport.getConfirmed();
                         long IncreasedHealed = todayReport.getHealed() - yesterdayReport.getHealed();
@@ -395,13 +395,13 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                             info = message("Unchanged") + " " + info;
                             unchangedCount++;
                             if (unchangedCount % 100 == 0) {
-                                updateLogs(info, true);
+                                updateLogs(info);
                             }
                             continue;
                         }
                         if (IncreasedConfirmed < 0 || IncreasedHealed < 0 || IncreasedDead < 0) {
                             info = message("InvalidData") + " " + info;
-                            updateLogs(info, true);
+                            updateLogs(info);
                         }
                         todayReport.setIncreasedConfirmed(IncreasedConfirmed);
                         todayReport.setIncreasedHealed(IncreasedHealed);
@@ -410,12 +410,12 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                             increasedCount++;
                             info = message("Update") + " " + increasedCount + "  " + info;
                             if (increasedCount % 100 == 0) {
-                                updateLogs(info, true);
+                                updateLogs(info);
                             }
                         } else {
                             failedCount++;
                             info = message("Failed") + " " + failedCount + "  " + info;
-                            updateLogs(info, true);
+                            updateLogs(info);
                         }
                     }
                 }
@@ -423,8 +423,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             conn.commit();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            updateLogs(e.toString(), true);
+            updateLogs(e.toString());
         }
     }
 

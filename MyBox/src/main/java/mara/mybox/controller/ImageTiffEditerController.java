@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.stage.Modality;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
@@ -16,7 +16,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageTiffEditerController extends ImagesListController {
+public class ImageTiffEditerController extends BaseImagesListController {
 
     public ImageTiffEditerController() {
         baseTitle = AppVariables.message("ImageTiffEditer");

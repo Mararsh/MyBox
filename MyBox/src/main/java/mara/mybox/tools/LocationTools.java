@@ -1,11 +1,11 @@
 package mara.mybox.tools;
 
-import mara.mybox.data.tools.GeographyCodeTools;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.data.CoordinateSystem.Value.GCJ_02;
-import mara.mybox.data.Location;
+import mara.mybox.db.data.Location;
+import mara.mybox.db.data.GeographyCodeTools;
 import thridparty.CoordinateConverter;
 
 /**
@@ -251,7 +251,7 @@ public class LocationTools {
         }
         List<Location> newLocations = new ArrayList<>();
         for (Location location : locations) {
-            if (!location.validCoordinate()) {
+            if (!Location.valid(location)) {
                 continue;
             }
             Location newLocation = toCGCS2000(location);
@@ -264,7 +264,7 @@ public class LocationTools {
 
     public static Location toWGS84(Location location) {
         try {
-            if (location == null || !location.validCoordinate()
+            if (location == null || !Location.valid(location)
                     || location.getCoordinateSystem() == null) {
                 return location;
             }
@@ -304,7 +304,7 @@ public class LocationTools {
         }
         List<Location> newLocations = new ArrayList<>();
         for (Location location : locations) {
-            if (!location.validCoordinate()) {
+            if (!Location.valid(location)) {
                 continue;
             }
             Location newLocation = toWGS84(location);
@@ -317,7 +317,7 @@ public class LocationTools {
 
     public static Location toGCJ02(Location location) {
         try {
-            if (location == null || !location.validCoordinate()
+            if (location == null || !Location.valid(location)
                     || location.getCoordinateSystem() == null) {
                 return location;
             }
@@ -349,16 +349,16 @@ public class LocationTools {
         }
     }
 
-    public static List<Location> toGCJ02(List<Location> codes) {
-        if (codes == null) {
-            return codes;
+    public static List<Location> toGCJ02(List<Location> locations) {
+        if (locations == null) {
+            return locations;
         }
         List<Location> newLocations = new ArrayList<>();
-        for (Location code : codes) {
-            if (!code.validCoordinate()) {
+        for (Location location : locations) {
+            if (!Location.valid(location)) {
                 continue;
             }
-            Location newLocation = toGCJ02(code);
+            Location newLocation = toGCJ02(location);
             if (newLocation != null) {
                 newLocations.add(newLocation);
             }

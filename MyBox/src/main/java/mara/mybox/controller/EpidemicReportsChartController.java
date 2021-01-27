@@ -29,21 +29,15 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -51,11 +45,16 @@ import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.QueryCondition;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.EpidemicReportTools;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.data.QueryCondition;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
@@ -70,11 +69,9 @@ import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import thridparty.LabeledBarChart;
 import thridparty.LabeledHorizontalBarChart;
@@ -87,7 +84,7 @@ import thridparty.LabeledHorizontalBarChart;
 public class EpidemicReportsChartController extends GeographyCodeMapController {
 
     protected EpidemicReportsController reportsController;
-    protected EpidemicReportsSettingsController settingsController;
+    protected EpidemicReportsColorsController colorsController;
     protected QueryCondition queryCondition;
     protected String chartQuerySQL, chartName;
     protected List<String> orderNames, valuesNames;
@@ -106,17 +103,11 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     @FXML
     protected StackPane chartPane;
     @FXML
-    protected TabPane optionsTabPane;
-    @FXML
-    protected Tab chartOptionsTab, mapOptionsTab;
-    @FXML
-    protected ComboBox<String> labelSizeSelector;
+    protected ComboBox<String> labelSizeSelector, gifWidthSelector;
     @FXML
     protected ToggleGroup chartGroup, labelGroup, legendGroup, numberCoordinateGroup;
     @FXML
-    protected HBox chartTypeBox, titleBox;
-    @FXML
-    protected VBox viewBox, chartBox, mapBox, valueTypeBox, chartSnapBox;
+    protected VBox chartBox, mapBox, valueTypeBox, displayBox, mapOptionsBox;
     @FXML
     protected CheckBox categoryAxisCheck, confirmedCheck, healedCheck, deadCheck,
             increasedConfirmedCheck, increasedHealedCheck, increasedDeadCheck,
@@ -137,12 +128,26 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            geoTable = new TableGeographyCode();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
             valuesNames = new ArrayList();
+
             initChartOptions();
             initMapOptions();
+            initSnapOptions();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -292,6 +297,30 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         }
     }
 
+    protected void initSnapOptions() {
+        try {
+            snapWidth = AppVariables.getUserConfigInt(baseName + "SnapWidth", 800);
+            List<String> widthValues = new ArrayList();
+            widthValues.addAll(Arrays.asList("800", "1000", "500", "300", "1200", "1600", "2000", "2500"));
+            gifWidthSelector.getItems().addAll(widthValues);
+            gifWidthSelector.setValue(snapWidth + "");
+            gifWidthSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            int v = Integer.parseInt(newValue);
+                            if (v > 0) {
+                                snapWidth = v;
+                                AppVariables.setUserConfigInt(baseName + "SnapWidth", snapWidth);
+                            }
+                        } catch (Exception e) {
+                        }
+                    });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     protected void initMapOptions() {
         try {
             mapOptionsController.markerTextBox.getChildren().removeAll(mapOptionsController.baseTextPane);
@@ -311,7 +340,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         if (!initCharts()) {
             return;
         }
-        settingsController.reset();
+        colorsController.reset();
         drawChart();
     }
 
@@ -349,7 +378,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         setValuesChecks();
 
         if (chartTimes.size() > 1) {
-            playBox.setVisible(true);
+            displayBox.setDisable(false);
             isSettingValues = true;
             setPause(false);
             List<String> frames = new ArrayList<>();
@@ -361,7 +390,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             frameSelector.getItems().addAll(frames);
             isSettingValues = false;
         } else {
-            playBox.setVisible(false);
+            displayBox.setDisable(true);
         }
         return true;
     }
@@ -542,18 +571,14 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             titleLabel.setText(queryCondition.getTitle().replaceAll("\n", " "));
 
             if (mapRadio.isSelected()) {
-//                chartOptionsTab.setDisable(true);
-                mapOptionsTab.setDisable(false);
-//                optionsTabPane.getSelectionModel().select(mapOptionsTab);
+                mapOptionsBox.setDisable(false);
                 chartName = message("Map");
                 chartBox.getChildren().clear();
                 chartBox.setVisible(false);
                 mapBox.setVisible(true);
                 mapBox.toFront();
             } else {
-//                chartOptionsTab.setDisable(false);
-                mapOptionsTab.setDisable(true);
-                optionsTabPane.getSelectionModel().select(chartOptionsTab);
+                mapOptionsBox.setDisable(true);
                 mapBox.setVisible(false);
                 chartBox.setVisible(true);
                 chartBox.toFront();
@@ -749,7 +774,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             }
             float total = 0;
             for (EpidemicReport report : timeReports) {
-                Number value = report.getNumber(valueName);
+                Number value = EpidemicReportTools.getNumber(report, valueName);
                 if (value == null) {
                     continue;
                 }
@@ -766,7 +791,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             List<String> palette = new ArrayList();
             for (EpidemicReport report : timeReports) {
                 String name = (multipleDatasets ? report.getDataSet() + " - " : "") + report.getLocationFullName();
-                Number value = report.getNumber(valueName);
+                Number value = EpidemicReportTools.getNumber(report, valueName);
                 if (value == null) {
                     continue;
                 }
@@ -793,7 +818,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 if (labelType == LabelType.Pop) {
                     FxmlControl.setTooltip(item.getNode(), name + " " + percent + "% " + labelValue);
                 }
-                palette.add(settingsController.locationColor(report.getLocationFullName()));
+                palette.add(colorsController.locationColor(report.getLocationFullName()));
             }
 
             FxmlControl.setPieColors(pie, palette, legendSide != null);
@@ -950,7 +975,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 for (int j = 0; j < reports.size(); j++) {
                     EpidemicReport report = reports.get(j);
-                    Number value = report.getNumber(valueName);
+                    Number value = EpidemicReportTools.getNumber(report, valueName);
                     if (value == null) {
                         continue;
                     }
@@ -963,7 +988,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         series.setName(lineName);
                         lineChart.getData().add(series);
                         seriesMap.put(lineName, series);
-                        palette.put(lineName, settingsController.locationColor(locationName));
+                        palette.put(lineName, colorsController.locationColor(locationName));
                     }
                     if (dateCompare == 0) {
                         series.getData().add(lineDataNode(date, lineName, value.doubleValue(), vertical, true));
@@ -1058,14 +1083,14 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 series.setName(valueName);
                 seriesList.add(series);
                 barChart.getData().add(i, series);
-                palette.put(valueName, settingsController.rgb(valueName));
+                palette.put(valueName, colorsController.rgb(valueName));
             }
             for (EpidemicReport report : timeReports) {
                 String label = (multipleDatasets ? report.getDataSet() + " - " : "") + report.getLocationFullName();
                 for (int i = 0; i < valuesNames.size(); i++) {
                     XYChart.Series series = seriesList.get(i);
                     String valueName = valuesNames.get(i);
-                    Number value = report.getNumber(valueName);
+                    Number value = EpidemicReportTools.getNumber(report, valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1098,7 +1123,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 series.setName(valueName);
                 seriesList.add(series);
                 barChart.getData().add(i, series);
-                palette.put(valueName, settingsController.rgb(valueName));
+                palette.put(valueName, colorsController.rgb(valueName));
             }
             for (int i = timeReports.size() - 1; i >= 0; i--) {
                 EpidemicReport report = timeReports.get(i);
@@ -1106,7 +1131,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 for (int j = 0; j < valuesNames.size(); j++) {
                     XYChart.Series series = seriesList.get(j);
                     String valueName = valuesNames.get(j);
-                    Number value = report.getNumber(valueName);
+                    Number value = EpidemicReportTools.getNumber(report, valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1138,14 +1163,14 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             String location = report.getLocationFullName();
             String label = (multipleDatasets ? report.getDataSet() + " - " : "") + location;
 
-            Number value = report.getNumber(valueName);
+            Number value = EpidemicReportTools.getNumber(report, valueName);
             if (value == null) {
                 continue;
             }
             double coordinateValue = FxmlControl.coordinateValue(chartCoordinate, value.doubleValue());
             XYChart.Series series = new XYChart.Series();
             series.setName(label);
-            palette.put(label, settingsController.locationColor(location));
+            palette.put(label, colorsController.locationColor(location));
             XYChart.Data item = new XYChart.Data(label, coordinateValue);
             series.getData().add(item);
             barChart.getData().add(series);
@@ -1168,8 +1193,8 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             EpidemicReport report = timeReports.get(i);
             String location = report.getLocationFullName();
             String label = (multipleDatasets ? report.getDataSet() + " - " : "") + location;
-            palette.put(label, settingsController.locationColor(location));
-            Number value = report.getNumber(valueName);
+            palette.put(label, colorsController.locationColor(location));
+            Number value = EpidemicReportTools.getNumber(report, valueName);
             if (value == null) {
                 continue;
             }
@@ -1195,7 +1220,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             webEngine.executeScript("clearMap();");
             for (EpidemicReport report : timeReports) {
                 GeographyCode location = report.getLocation();
-                if (!location.validCoordinate()) {
+                if (!GeographyCodeTools.validCoordinate(location)) {
                     continue;
                 }
                 if (!mapCentered) {
@@ -1209,7 +1234,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         : "<span style=\"color:" + FxmlColor.color2rgb(textColor) + "\">" + name + "</span>";
                 String value = "";
                 for (String valueName : valuesNames) {
-                    value += " <span style=\"color:" + settingsController.rgb(valueName) + "\">" + report.getNumber(valueName) + "</span> ";
+                    value += " <span style=\"color:" + colorsController.rgb(valueName) + "\">" + EpidemicReportTools.getNumber(report, valueName) + "</span> ";
                 }
                 String label;
                 switch (labelType) {
@@ -1229,8 +1254,9 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         break;
                 }
                 String info = mapOptionsController.popInfoCheck.isSelected()
-                        ? "<div>" + name + value + "</div></br>" + location.info("</br>") : "";
-                mapOptionsController.markerSize = markSize(report.getNumber(orderNames.get(0)).doubleValue());
+                        ? "<div>" + name + value + "</div></br>"
+                        + BaseDataTools.displayData(reportsController.tableDefinition, report, displayNames(), true) : "";
+                mapOptionsController.markerSize = markSize(EpidemicReportTools.getNumber(report, orderNames.get(0)).doubleValue());
                 drawPoint(location.getLongitude(), location.getLatitude(),
                         label, circleImage(), info, null);
             }
@@ -1279,121 +1305,28 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         }
     }
 
-    @FXML
-    protected void popSnapMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+    @Override
+    protected void snapAllMenu() {
+        MenuItem menu = new MenuItem(message("JpgAllFrames"));
+        menu.setOnAction((ActionEvent event) -> {
+            snapAllFrames("jpg");
+        });
+        popMenu.getItems().add(menu);
 
-            MenuItem menu;
+        menu = new MenuItem(message("PngAllFrames"));
+        menu.setOnAction((ActionEvent event) -> {
+            snapAllFrames("png");
+        });
+        popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SnapCurrentFrame"));
-            menu.setOnAction((ActionEvent event) -> {
-                snapCurrentFrame();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("JpgAllFrames"));
-            menu.setOnAction((ActionEvent event) -> {
-                snapAllFrames("jpg");
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("PngAllFrames"));
-            menu.setOnAction((ActionEvent event) -> {
-                snapAllFrames("png");
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("GifAllFrames"));
-            menu.setOnAction((ActionEvent event) -> {
-                snapAllFrames("gif");
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        menu = new MenuItem(message("GifAllFrames"));
+        menu.setOnAction((ActionEvent event) -> {
+            snapAllFrames("gif");
+        });
+        popMenu.getItems().add(menu);
     }
 
-    protected void snapCurrentFrame() {
-        String name = titleLabel.getText()
-                + (frameLabel.getText().isBlank() ? "" : " " + frameLabel.getText())
-                + ".png";
-        File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                name, CommonFxValues.ImageExtensionFilter);
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file, VisitHistory.FileType.Image);
-
-        double scale = dpi / Screen.getPrimary().getDpi();
-        scale = scale > 1 ? scale : 1;
-        SnapshotParameters snapPara = new SnapshotParameters();
-        snapPara.setFill(Color.TRANSPARENT);
-        snapPara.setTransform(Transform.scale(scale, scale));
-
-        Bounds bounds = chartSnapBox.getLayoutBounds();
-        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-        final Image mapSnap = chartSnapBox.snapshot(snapPara, snapshot);
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        String format = FileTools.getFileSuffix(file);
-                        format = format == null || format.isBlank() ? "png" : format;
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                        return file.exists();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    FxmlStage.openImageViewer(file);
-                }
-
-            };
-            if (parentController != null) {
-                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            } else {
-                openHandlingStage(task, Modality.WINDOW_MODAL);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-
-    }
-
+    @Override
     protected void snapAllFrames(String format) {
         try {
             if (isSettingValues) {
@@ -1409,10 +1342,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 return;
             }
             recordFileWritten(directory, VisitHistory.FileType.Image);
-            String name = queryCondition.getTitle().replaceAll("\\\"|\n|:", "");
-            String filePath = directory.getAbsolutePath() + File.separator + name + File.separator;
-            new File(filePath).mkdirs();
-            final String filePrefix = filePath + File.separator + name;
+            String snapName = snapName(false);
+            File filePath = new File(directory.getAbsolutePath() + File.separator + snapName + File.separator);
+            filePath.mkdirs();
+            final String filePrefix = filePath + File.separator + snapName;
 
             if (timer != null) {
                 timer.cancel();
@@ -1428,8 +1361,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 loading.closeStage();
                 loading = null;
             }
-            snapWidth = settingsController.snapWidth;
-            dpi = settingsController.dpi;
 
             String rformat = format.equals("gif") ? "png" : format;
             final SnapshotParameters snapPara;
@@ -1440,7 +1371,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             snapPara.setFill(Color.WHITE);
             snapPara.setTransform(Transform.scale(scale, scale));
 
-            Bounds bounds = chartSnapBox.getLayoutBounds();
+            Bounds bounds = snapBox.getLayoutBounds();
             int imageWidth = (int) Math.round(bounds.getWidth() * scale);
             int imageHeight = (int) Math.round(bounds.getHeight() * scale);
 
@@ -1507,7 +1438,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
                 private void snap() {
                     try {
-                        Image snap = chartSnapBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
+                        Image snap = snapBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
                         if (format.equals("gif") && bufferedImage.getWidth() > snapWidth) {
                             bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, snapWidth);
@@ -1549,7 +1480,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                                     }
 
                                 } else {
-                                    browseURI(directory.toURI());
+                                    browseURI(filePath.toURI());
                                 }
                             }
                             if (loading != null) {
@@ -1571,6 +1502,31 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             MyBoxLog.debug(e.toString());
         }
 
+    }
+
+    @Override
+    protected List<String> displayNames() {
+        return Arrays.asList("data_set", " time", "confirmed", "healed", "dead",
+                "increased_confirmed", "increased_healed", "increased_dead",
+                "level", " longitude", "latitude",
+                "chinese_name", "english_name", "alias1", "code1", "area", "population");
+    }
+
+    @Override
+    protected String writePointsTable() {
+        try {
+            List<BaseData> list = new ArrayList<>();
+            for (EpidemicReport report : timesReports.get(chartTimes.get(frameIndex))) {
+                if (task == null || task.isCancelled()) {
+                    return "";
+                }
+                list.add(report);
+            }
+            return BaseDataTools.htmlDataList(reportsController.tableDefinition, list, displayNames());
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
     }
 
     @FXML
@@ -1606,12 +1562,12 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         this.reportsController = reportsController;
     }
 
-    public EpidemicReportsSettingsController getSettingsController() {
-        return settingsController;
+    public EpidemicReportsColorsController getColorsController() {
+        return colorsController;
     }
 
-    public void setSettingsController(EpidemicReportsSettingsController settingsController) {
-        this.settingsController = settingsController;
+    public void setColorsController(EpidemicReportsColorsController colorsController) {
+        this.colorsController = colorsController;
     }
 
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -18,14 +17,14 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -230,7 +229,7 @@ public class PdfAttributesController extends BaseController {
 
     public void loadPdfInformation(final String password) {
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             infoButton.setDisable(true);
@@ -252,32 +251,17 @@ public class PdfAttributesController extends BaseController {
                     pop = false;
                     try {
                         try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
-                            pdfInfo.setOwnerPassword(password);
+                            pdfInfo.setUserPassword(password);
                             pdfInfo.readInfo(doc);
                             doc.close();
                             ok = true;
                         }
                     } catch (InvalidPasswordException e) {
                         pop = true;
+                        return false;
                     } catch (IOException e) {
-                    }
-                    if (pop) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextInputDialog dialog = new TextInputDialog();
-                                dialog.setHeaderText(AppVariables.message("OwnerPasswordComments"));
-                                dialog.setContentText(AppVariables.message("OwnerPassword"));
-                                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                                stage.setAlwaysOnTop(true);
-                                stage.toFront();
-
-                                Optional<String> result = dialog.showAndWait();
-                                if (result.isPresent()) {
-                                    loadPdfInformation(result.get());
-                                }
-                            }
-                        });
+                        error = e.toString();
+                        return false;
                     }
                     return true;
                 }
@@ -288,9 +272,31 @@ public class PdfAttributesController extends BaseController {
                     infoButton.setDisable(false);
                     resetAction();
                 }
+
+                @Override
+                protected void whenFailed() {
+                    if (pop) {
+                        TextInputDialog dialog = new TextInputDialog();
+                        dialog.setContentText(AppVariables.message("UserPassword"));
+                        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                        stage.setAlwaysOnTop(true);
+                        stage.toFront();
+                        Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()) {
+                            loadPdfInformation(result.get());
+                        }
+                        return;
+                    }
+                    if (error != null) {
+                        popError(AppVariables.message(error));
+                    } else {
+                        popFailed();
+                    }
+                }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -323,8 +329,8 @@ public class PdfAttributesController extends BaseController {
         }
         ownerPasswordInput.setText(pdfInfo.getOwnerPassword());
         ownerPasswordInput2.setText(pdfInfo.getOwnerPassword());
-        userPasswordInput.setText("");
-        userPasswordInput2.setText("");
+        userPasswordInput.setText(pdfInfo.getUserPassword());
+        userPasswordInput2.setText(pdfInfo.getUserPassword());
 
     }
 
@@ -393,7 +399,8 @@ public class PdfAttributesController extends BaseController {
         if (version > 0) {
             modify.setVersion(version);
         }
-        modify.setUserPassword(userPasswordInput.getText());
+        String userPassword = userPasswordInput.getText();
+        modify.setUserPassword(userPassword);
         modify.setOwnerPassword(ownerPasswordInput.getText());
         AccessPermission acc = AccessPermission.getOwnerAccessPermission();
         acc.setCanAssembleDocument(assembleCheck.isSelected());
@@ -407,27 +414,26 @@ public class PdfAttributesController extends BaseController {
         modify.setAccess(acc);
 
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
 
-                private boolean pop;
-
                 @Override
                 protected boolean handle() {
-                    return PdfTools.setAttributes(sourceFile, pdfInfo.getOwnerPassword(), modify);
+                    return PdfTools.setAttributes(sourceFile, pdfInfo.getUserPassword(), modify);
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    loadPdfInformation(ownerPasswordInput.getText());
+                    loadPdfInformation(userPassword);
                     popSuccessful();
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

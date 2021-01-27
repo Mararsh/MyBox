@@ -9,10 +9,10 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -33,11 +33,12 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
         try {
             colorSetController.init(this, baseName + "Color");
 
-            arcBox.getItems().clear();
+            arc = AppVariables.getUserConfigInt(baseName + "Arc", 20);
             int width = (int) imageView.getImage().getWidth();
             arcBox.getItems().addAll(Arrays.asList(
                     width / 6 + "", width / 8 + "", width / 4 + "", width / 10 + "",
                     "0", "15", "30", "50", "150", "300", "10", "3"));
+            arcBox.setValue(arc + "");
             arcBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -45,19 +46,16 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             arc = v;
+                            AppVariables.setUserConfigInt(baseName + "Arc", arc);
                             FxmlControl.setEditorNormal(arcBox);
-                            AppVariables.setUserConfigValue("ImageArcSize", newValue);
                         } else {
-                            arc = 0;
                             FxmlControl.setEditorBadStyle(arcBox);
                         }
                     } catch (Exception e) {
-                        arc = 0;
                         FxmlControl.setEditorBadStyle(arcBox);
                     }
                 }
             });
-            arcBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageArcSize", 20) + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -67,8 +65,10 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
     @Override
     protected void paneExpanded() {
-        imageController.showImagePane();
+        imageController.showRightPane();
+        imageController.resetImagePane();
         imageController.hideScopePane();
+        imageController.showImagePane();
     }
 
     @FXML
@@ -78,7 +78,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -102,7 +102,8 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

@@ -68,7 +68,7 @@ public class Era {
         return values;
     }
 
-    public static Format format(int value) {
+    public static Format format(short value) {
         switch (value) {
             case 2:
                 return Format.Date;

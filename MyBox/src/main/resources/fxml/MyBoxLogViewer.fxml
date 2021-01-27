@@ -27,6 +27,7 @@ License:    Apache License Version 2.0
                     </graphic>
                 </Button>
                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="popCheck" mnemonicParsing="false" selected="true" text="%PopErrorLogs" />
                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

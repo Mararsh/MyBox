@@ -45,8 +45,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.PdfInformation;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -75,13 +75,12 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 /**
  * @Author Mara
  * @CreateDate 2018-6-20
- * @Description
  * @License Apache License Version 2.0
  */
 public class PdfViewController extends ImageViewerController {
 
     protected PdfInformation pdfInformation;
-    protected int currentPage, currentPageTmp, percent, orcPage;
+    protected int currentPage, percent, orcPage;
     protected SimpleBooleanProperty infoLoaded;
     protected boolean isTransparent, scrollEnd, scrollStart, scrolledSet;
     protected Task outlineTask, thumbTask;
@@ -110,7 +109,7 @@ public class PdfViewController extends ImageViewerController {
     @FXML
     protected Label pageLabel, resultLabel;
     @FXML
-    protected ImageOCROptionsController ocrOptionsController;
+    protected ControlOCROptions ocrOptionsController;
 
     public PdfViewController() {
         baseTitle = AppVariables.message("PdfView");
@@ -194,19 +193,24 @@ public class PdfViewController extends ImageViewerController {
                         if (isSettingValues) {
                             return;
                         }
+                        if (newValue == null) {
+                            currentPage = -1;
+                            pageSelector.getEditor().setStyle(null);
+                            return;
+                        }
                         try {
                             int v = Integer.valueOf(newValue) - 1;
                             if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
-                                currentPageTmp = v;
+                                if (currentPage != v) {
+                                    currentPage = v;
+                                    loadPage();
+                                }
                                 pageSelector.getEditor().setStyle(null);
-                                goButton.setDisable(false);
                             } else {
                                 pageSelector.getEditor().setStyle(badStyle);
-                                goButton.setDisable(true);
                             }
                         } catch (Exception e) {
                             pageSelector.getEditor().setStyle(badStyle);
-                            goButton.setDisable(true);
                         }
                     }
                 });
@@ -314,14 +318,14 @@ public class PdfViewController extends ImageViewerController {
                             if (deltaY > 0) {
                                 if (scrollPane.getVvalue() == scrollPane.getVmin()) {
                                     event.consume();
-                                    previousAction();
+                                    pagePreviousAction();
                                 }
                             } else {
 
                                 if (scrollPane.getHeight() >= imageView.getFitHeight()
                                         || scrollPane.getVvalue() == scrollPane.getVmax()) {
                                     event.consume();
-                                    nextAction();
+                                    pageNextAction();
                                 }
                             }
                         }
@@ -434,7 +438,7 @@ public class PdfViewController extends ImageViewerController {
             currentPage = page;
             orcPage = -1;
             infoLoaded.set(pdfInfo != null);
-            pageSelector.setValue("1");
+            pageSelector.setValue(null);
             pageLabel.setText("");
             percent = 0;
             thumbBox.getChildren().clear();
@@ -465,59 +469,73 @@ public class PdfViewController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
+            bottomLabel.setText("");
+            isSettingValues = true;
+            pageSelector.getItems().clear();
+            isSettingValues = false;
+            pageLabel.setText("");
             task = new SingletonTask<Void>() {
                 protected boolean pop;
+                protected int size;
 
                 @Override
                 protected boolean handle() {
-                    try {
-                        try ( PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVariables.pdfMemUsage)) {
-                            password = inPassword;
-                            pdfInformation.setUserPassword(inPassword);
-                            pdfInformation.readInfo(doc);
-                            infoLoaded.set(true);
-                            doc.close();
-                            ok = true;
-                        }
+                    try ( PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVariables.pdfMemUsage)) {
+                        password = inPassword;
+                        pdfInformation.setUserPassword(inPassword);
+                        pdfInformation.readInfo(doc);
+                        infoLoaded.set(true);
+                        doc.close();
+                        ok = true;
                     } catch (InvalidPasswordException e) {
                         pop = true;
+                        return false;
                     } catch (IOException e) {
+                        error = e.toString();
+                        return false;
                     }
-                    if (pop) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextInputDialog dialog = new TextInputDialog();
-                                dialog.setContentText(AppVariables.message("Password"));
-                                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                                stage.setAlwaysOnTop(true);
-                                stage.toFront();
-                                Optional<String> result = dialog.showAndWait();
-                                if (result.isPresent()) {
-                                    loadInformation(result.get());
-                                }
-                            }
-                        });
-                    }
-                    return true;
+                    size = pdfInformation.getNumberOfPages();
+                    return size > 0;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    bottomLabel.setText("");
-                    int size = pdfInformation.getNumberOfPages();
-                    pageSelector.getItems().clear();
                     List<String> pages = new ArrayList<>();
                     for (int i = 1; i <= size; i++) {
                         pages.add(i + "");
                     }
+                    isSettingValues = true;
+                    pageSelector.getItems().clear();
                     pageSelector.getItems().setAll(pages);
-                    pageSelector.setValue(size + "");
-                    pageLabel.setText("/" + pdfInformation.getNumberOfPages());
+                    pageSelector.setValue("1");
+                    pageLabel.setText("/" + size);
+                    isSettingValues = false;
                     loadPage();
                     checkOutline();
                     checkThumbs();
                 }
+
+                @Override
+                protected void whenFailed() {
+                    if (pop) {
+                        TextInputDialog dialog = new TextInputDialog();
+                        dialog.setContentText(AppVariables.message("UserPassword"));
+                        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                        stage.setAlwaysOnTop(true);
+                        stage.toFront();
+                        Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()) {
+                            loadInformation(result.get());
+                        }
+                        return;
+                    }
+                    if (error != null) {
+                        popError(AppVariables.message(error));
+                    } else {
+                        popFailed();
+                    }
+                }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingFileInfo"));
             task.setSelf(task);
@@ -546,9 +564,11 @@ public class PdfViewController extends ImageViewerController {
             } else if (infoLoaded.get() && currentPage >= pdfInformation.getNumberOfPages()) {
                 currentPage = pdfInformation.getNumberOfPages() - 1;
             }
+            isSettingValues = true;
             pageSelector.setValue((currentPage + 1) + "");
-            previousButton.setDisable(currentPage <= 0);
-            nextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
+            isSettingValues = false;
+            pagePreviousButton.setDisable(currentPage <= 0);
+            pageNextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
             bottomLabel.setText("");
             task = new SingletonTask<Void>() {
 
@@ -685,7 +705,7 @@ public class PdfViewController extends ImageViewerController {
 
     protected void loadThumbs() {
         if (!infoLoaded.get()
-                || (thumbTask != null && thumbTask.isRunning())) {
+                || (thumbTask != null && !thumbTask.isDone())) {
             return;
         }
         if (thumbBox.getChildren().isEmpty()) {
@@ -832,7 +852,7 @@ public class PdfViewController extends ImageViewerController {
 
     @FXML
     @Override
-    public void nextAction() {
+    public void pageNextAction() {
         if (pdfInformation == null
                 || currentPage >= pdfInformation.getNumberOfPages() - 1) {
             return;
@@ -843,7 +863,7 @@ public class PdfViewController extends ImageViewerController {
 
     @FXML
     @Override
-    public void previousAction() {
+    public void pagePreviousAction() {
         if (pdfInformation == null || currentPage <= 0) {
             return;
         }
@@ -853,7 +873,7 @@ public class PdfViewController extends ImageViewerController {
 
     @FXML
     @Override
-    public void firstAction() {
+    public void pageFirstAction() {
         if (pdfInformation == null) {
             return;
         }
@@ -863,19 +883,13 @@ public class PdfViewController extends ImageViewerController {
 
     @FXML
     @Override
-    public void lastAction() {
+    public void pageLastAction() {
         if (pdfInformation == null) {
             return;
         }
         currentPage = pdfInformation.getNumberOfPages() - 1;
         loadPage();
 
-    }
-
-    @FXML
-    protected void goPageAction() {
-        currentPage = currentPageTmp;
-        loadPage();
     }
 
     public void setSizeBox() {
@@ -1134,11 +1148,11 @@ public class PdfViewController extends ImageViewerController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (outlineTask != null && outlineTask.isRunning()) {
+        if (outlineTask != null && !outlineTask.isDone()) {
             outlineTask.cancel();
             outlineTask = null;
         }
-        if (thumbTask != null && thumbTask.isRunning()) {
+        if (thumbTask != null && !thumbTask.isDone()) {
             thumbTask.cancel();
             thumbTask = null;
         }

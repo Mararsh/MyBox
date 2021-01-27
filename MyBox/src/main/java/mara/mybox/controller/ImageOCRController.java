@@ -37,9 +37,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import mara.mybox.data.ConvolutionKernel;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.data.tools.VisitHistoryTools;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -103,7 +103,7 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected HtmlViewerController regionsTableController, wordsTableController, htmlController;
     @FXML
-    protected ImageOCROptionsController ocrOptionsController;
+    protected ControlOCROptions ocrOptionsController;
     @FXML
     protected Button demoButton;
     @FXML
@@ -360,7 +360,7 @@ public class ImageOCRController extends ImageViewerController {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        String s = (int) image.getWidth() + " x " + (int) image.getHeight();
+        String s = (int) (imageView.getImage().getWidth()) + " x " + (int) (imageView.getImage().getHeight());
         if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
             s += "  " + message("SelectedSize") + ": "
                     + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
@@ -390,15 +390,15 @@ public class ImageOCRController extends ImageViewerController {
                 return;
             }
             task = new SingletonTask<Void>() {
-                private Image ocrImage;
+                private Image changedImage;
 
                 @Override
                 protected boolean handle() {
                     try {
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
                         bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, scale);
-                        ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return ocrImage != null;
+                        changedImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                        return changedImage != null;
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -407,7 +407,7 @@ public class ImageOCRController extends ImageViewerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    setPreprocessImage(ocrImage);
+                    setPreprocessImage(changedImage);
 
                 }
 

@@ -4,8 +4,8 @@ import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -13,11 +13,7 @@ import mara.mybox.dev.MyBoxLog;
  * @Description
  * @License Apache License Version 2.0
  */
-
-/*
-    T must be subClass of FileInformation
- */
-public class FilesTableController extends BatchTableController<FileInformation> {
+public class FilesTableController extends BaseBatchTableController<FileInformation> {
 
     public FilesTableController() {
     }

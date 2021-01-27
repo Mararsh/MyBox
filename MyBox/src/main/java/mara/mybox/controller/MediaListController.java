@@ -20,7 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
-import mara.mybox.db.TableMediaList;
+import mara.mybox.db.table.TableMediaList;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
@@ -42,7 +42,7 @@ public class MediaListController extends BaseController {
     @FXML
     protected TableColumn<MediaList, String> nameColumn;
     @FXML
-    protected MediaTableController tableController;
+    protected ControlMediaTable tableController;
     @FXML
     protected ImageView supportTipsView;
 
