@@ -331,9 +331,9 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 ![Snap-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor-en.jpg)         
 
 ### Html Tools<a id="htmlTools" />      
-	-  Snap html page. Dpi can be set. Save as one image or images in PDF.
-	-  Merge multiple pages as one html/Markdown/texts/PDF.
-	-  Generate frameset file for multiple files.
+1. Snap html page. Dpi can be set. Save as one image or images in PDF.
+2. Merge multiple pages as one html/Markdown/texts/PDF.
+3. Generate frameset file for multiple files.
 
 
 ### Edit Markdown<a id="markdownEditor" />
