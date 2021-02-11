@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
@@ -48,6 +49,11 @@ public class ImageManufactureOperationController extends BaseImageController {
     @Override
     public void imageClicked(MouseEvent event, DoublePoint p) {
 
+    }
+
+    @FXML
+    public void scopeAction() {
+        imageController.controlScopePane();
     }
 
     public void quitPane() {

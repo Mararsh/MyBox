@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -651,17 +653,16 @@ public class FxmlStage {
         }
         if (controller != null) {
             if (controller.getMyStage() != null) {
-                controller.getMyStage().toFront();
+                controller.getMyStage().requestFocus();
             }
         }
         return controller;
     }
 
-    public static boolean browseURI(Stage myStage, URI uri) {
+    public static void browseURI(Stage myStage, URI uri) {
         if (uri == null) {
-            return false;
+            return;
         }
-
         if (SystemTools.isLinux()) {
             // On my CentOS 7, system hangs when both Desktop.isDesktopSupported() and
             // desktop.isSupported(Desktop.Action.BROWSE) are true.
@@ -670,7 +671,7 @@ public class FxmlStage {
             try {
                 if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() > 0) {
                     Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
-                    return true;
+                    return;
                 } else {
                 }
             } catch (Exception e) {
@@ -681,7 +682,7 @@ public class FxmlStage {
             try {
                 Runtime rt = Runtime.getRuntime();
                 rt.exec("open " + uri.toString());
-                return true;
+                return;
             } catch (Exception e) {
             }
 
@@ -690,9 +691,21 @@ public class FxmlStage {
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
                 try {
                     desktop.browse(uri);
-                    return true;
+                    // https://stackoverflow.com/questions/23176624/javafx-freeze-on-desktop-openfile-desktop-browseuri?r=SearchResults
+                    // Menus are blocked after system explorer is opened
+                    if (myStage != null) {
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                Platform.runLater(() -> {
+                                    myStage.requestFocus();
+                                });
+                            }
+                        }, 1000);
+                    }
+                    return;
                 } catch (Exception e) {
-//                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e.toString());
                 }
             }
         }
@@ -704,7 +717,7 @@ public class FxmlStage {
                 alertError(myStage, message("DesktopNotSupportBrowse"));
             }
         }
-        return true;
+
     }
 
     public static Alert alertError(String information) {

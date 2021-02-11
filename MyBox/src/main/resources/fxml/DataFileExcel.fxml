@@ -64,8 +64,8 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </FlowPane>
-                                          <VBox fx:id="fileOptionsBox" spacing="5.0">
-                                             <children>
+                                                        <VBox fx:id="fileOptionsBox" spacing="5.0">
+                                                            <children>
                                                                 <FlowPane fx:id="sheetNumberPane" hgap="5.0" vgap="5.0">
                                                                     <children>
                                                                         <Label text="%Sheet" />
@@ -82,29 +82,29 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </FlowPane>
-                                                              <VBox minHeight="-Infinity" spacing="5.0">
-                                                                  <children>
-                                                                      <Label fx:id="loadedLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
-                                                                      <Label layoutX="10.0" layoutY="76.0" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DataFileExcelNotice" wrapText="true" VBox.vgrow="NEVER" />
-                                                                  </children>
-                                                              </VBox>
+                                                                <VBox minHeight="-Infinity" spacing="5.0">
+                                                                    <children>
+                                                                        <Label fx:id="loadedLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
+                                                                        <Label layoutX="10.0" layoutY="76.0" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DataFileExcelNotice" wrapText="true" VBox.vgrow="NEVER" />
+                                                                    </children>
+                                                                </VBox>
                                                                 <Separator prefWidth="200.0" />
-                                                <VBox layoutX="32.0" layoutY="90.0" spacing="5.0">
-                                                   <children>
-                                                                      <CheckBox fx:id="sourceWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstRowDefineNames" wrapText="true" />
-                                                                      <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                                          <graphic>
-                                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                  <image>
-                                                                                      <Image url="@../buttons/iconRefresh.png" />
-                                                                                  </image>
-                                                                              </ImageView>
-                                                                          </graphic>
-                                                                      </Button>
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </VBox>
+                                                                <VBox layoutX="32.0" layoutY="90.0" spacing="5.0">
+                                                                    <children>
+                                                                        <CheckBox fx:id="sourceWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstRowDefineNames" wrapText="true" />
+                                                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconRefresh.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                        </VBox>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -114,7 +114,7 @@ License:    Apache License Version 2.0
                                                 <VBox minHeight="-Infinity" spacing="5.0">
                                                     <children>
                                                         <CheckBox fx:id="targetWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstRowDefineNames" wrapText="true" />
-                                          <CheckBox fx:id="currentOnlyCheck" layoutX="32.0" layoutY="32.0" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
+                                                        <CheckBox fx:id="currentOnlyCheck" layoutX="32.0" layoutY="32.0" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
                                                                 <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
@@ -247,7 +247,7 @@ License:    Apache License Version 2.0
                                                                                     <image>
                                                                                         <Image url="@../buttons/iconClear.png" />
                                                                                     </image>
-                                                                                </ImageView> 
+                                                                                </ImageView>
                                                                             </graphic>
                                                                         </Button>
                                                                         <Button fx:id="recoverDefButton" layoutX="242.0" layoutY="10.0" mnemonicParsing="false" onAction="#recoverDefAction">
@@ -384,6 +384,15 @@ License:    Apache License Version 2.0
                         <Label minWidth="-Infinity" text="%Page" />
                         <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="100.0" />
                         <Label fx:id="pageLabel" minWidth="-Infinity" />
+                        <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconGo.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

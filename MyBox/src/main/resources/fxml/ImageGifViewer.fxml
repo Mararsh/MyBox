@@ -50,6 +50,7 @@ License:    Apache License Version 2.0
                         <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
                         <HBox fx:id="operationBox" alignment="CENTER_LEFT" spacing="5.0">
                             <children>
+                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
                                 <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -109,6 +110,15 @@ License:    Apache License Version 2.0
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconEdit.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="thumbsListButton" mnemonicParsing="false" onAction="#editFrames">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconThumbsList.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

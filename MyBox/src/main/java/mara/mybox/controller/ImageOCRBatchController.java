@@ -45,7 +45,7 @@ import net.sourceforge.tess4j.util.ImageHelper;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageOCRBatchController extends BaseImagesBatchController {
+public class ImageOCRBatchController extends BaseBatchImageController {
 
     protected float scale;
     protected int threshold, rotate, regionLevel, wordLevel, tesseractVersion;

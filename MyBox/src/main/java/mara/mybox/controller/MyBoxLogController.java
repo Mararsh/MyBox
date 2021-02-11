@@ -189,7 +189,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
             controller = (MyBoxLogController) FxmlStage.openStage(CommonValues.MyBoxLogsFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         }
         return controller;
     }

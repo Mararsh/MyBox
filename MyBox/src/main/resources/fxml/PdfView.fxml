@@ -74,6 +74,7 @@ License:    Apache License Version 2.0
                                                                 </FlowPane>
                                                             </children>
                                                         </VBox>
+                                                        <Label fx:id="imageInfoLabel" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -92,6 +93,12 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <ComboBox fx:id="percentBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                                                 <Label text="\%" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="32.0" layoutY="90.0" vgap="5.0">
+                                                            <children>
+                                                                <Label text="%ZoomStep" />
+                                                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
                                                             </children>
                                                         </FlowPane>
                                                         <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
@@ -335,6 +342,15 @@ License:    Apache License Version 2.0
                                                         <Label text="%Page" />
                                                         <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
                                                         <Label fx:id="pageLabel" />
+                                                        <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconGo.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                         <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -8,9 +8,9 @@ import mara.mybox.data.FileInformation;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesBatchController extends BaseBatchController<FileInformation> {
+public class BaseBatchFileController extends BaseBatchController<FileInformation> {
 
-    public FilesBatchController() {
+    public BaseBatchFileController() {
 
     }
 

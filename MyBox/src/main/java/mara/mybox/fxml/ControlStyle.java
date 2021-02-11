@@ -234,6 +234,9 @@ public class ControlStyle {
         }
         switch (id) {
 
+            case "scopeButton":
+                return new ControlStyle(id, "", message("Scope"), "F7", "iconTarget.png");
+
             case "scopeAllRadio":
                 return new ControlStyle("scopeAllRadio", "", message("WholeImage"), "", "iconPicSmall.png");
 
@@ -379,6 +382,11 @@ public class ControlStyle {
         if (id == null || id.isEmpty()) {
             return null;
         }
+
+        if (id.startsWith("coordinate")) {
+            return new ControlStyle(id, "", message("Coordinate"), "", "iconLocation.png");
+        }
+
         switch (id) {
 
             case "tableSubdirCheck":
@@ -406,7 +414,7 @@ public class ControlStyle {
                 return new ControlStyle("openCheck", "", message("OpenWhenComplete"), "", "iconOpen2.png");
 
             case "selectAreaCheck":
-                return new ControlStyle("selectAreaCheck", "", message("SelectArea"), "", "iconTarget.png");
+                return new ControlStyle("selectAreaCheck", "", message("SelectArea"), "CTRL+t / ALT+t", "iconTarget.png");
 
             case "openSaveCheck":
                 return new ControlStyle("openSaveCheck", "", message("OpenAfterSave"), "", "iconOpen2.png");
@@ -419,9 +427,6 @@ public class ControlStyle {
             case "thumbCheck":
                 return new ControlStyle("thumbCheck", "", message("Thumbnails"), "", "iconBrowse.png");
 
-            case "coordinateCheck":
-                return new ControlStyle("coordinateCheck", "", message("Coordinate"), "", "iconLocation.png");
-
             case "rulerXCheck":
                 return new ControlStyle("rulerXCheck", "", message("RulerX"), "", "iconXRuler.png");
 
@@ -433,6 +438,9 @@ public class ControlStyle {
 
             case "transparentBackgroundCheck":
                 return new ControlStyle("transparentBackgroundCheck", "", message("TransparentBackground"), "", "iconOpacity.png");
+
+            case "transparentCheck":
+                return new ControlStyle(id, "", message("CountTransparent"), "", "iconOpacity.png");
 
             case "displaySizeCheck":
                 return new ControlStyle("displaySizeCheck", "", message("DisplaySize"), "", "iconIdea.png");
@@ -453,7 +461,7 @@ public class ControlStyle {
                 return new ControlStyle(id, message("Pop"), "", "iconPop.png");
 
             case "pickColorCheck":
-                return new ControlStyle(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
+                return new ControlStyle(id, message("PickColor"), message("ColorPickerComments"), "CTRL+k / ALT+k", "iconPickColor.png");
 
             case "ditherCheck":
                 return new ControlStyle(id, message("DitherComments"), "", "");
@@ -862,12 +870,26 @@ public class ControlStyle {
         }
 
         if (id.startsWith("selectAll")) {
-            return new ControlStyle(id, message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
+            switch (id) {
+                case "selectAllButton":
+                    return new ControlStyle(id, message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
+
+                default:
+                    return new ControlStyle(id, message("SelectAll"), "", "iconSelectAll.png");
+            }
+
         }
 
         if (id.startsWith("selectNone")) {
-            return new ControlStyle(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
+            switch (id) {
+                case "selectNoneButton":
+                    return new ControlStyle(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
+
+                default:
+                    return new ControlStyle(id, message("UnselectAll"), "", "iconSelectNone.png");
+            }
         }
+
         if (id.startsWith("use")) {
             return new ControlStyle(id, message("Use"), "", "iconYes.png");
         }
@@ -959,6 +981,18 @@ public class ControlStyle {
             return new ControlStyle(id, message("PreviewComments"), "", "iconPreview.png");
         }
 
+        if (id.startsWith("rotateLeft")) {
+            return new ControlStyle(id, message("RotateLeft"), "", "iconRotateLeft.png");
+        }
+
+        if (id.startsWith("rotateRight")) {
+            return new ControlStyle(id, message("RotateRight"), "", "iconRotateRight.png");
+        }
+
+        if (id.startsWith("turnOver")) {
+            return new ControlStyle(id, message("TurnOver"), "", "iconTurnOver.png");
+        }
+
         switch (id) {
 
             case "selectButton":
@@ -1020,15 +1054,6 @@ public class ControlStyle {
 
             case "paneSizeButton":
                 return new ControlStyle("paneSizeButton", message("PaneSize"), "CTRL+2", "iconPicBig.png");
-
-            case "rotateLeftButton":
-                return new ControlStyle("rotateLeftButton", message("RotateLeft"), "", "iconRotateLeft.png");
-
-            case "rotateRightButton":
-                return new ControlStyle("rotateRightButton", message("RotateRight"), "", "iconRotateRight.png");
-
-            case "turnOverButton":
-                return new ControlStyle("turnOverButton", message("TurnOver"), "", "iconTurnOver.png");
 
             case "moveLeftButton":
                 return new ControlStyle("moveLeftButton", message("MoveLeft"), "", "iconLeft.png");

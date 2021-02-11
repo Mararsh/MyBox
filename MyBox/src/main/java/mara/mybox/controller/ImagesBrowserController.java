@@ -6,7 +6,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -16,11 +15,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -35,21 +31,16 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
@@ -69,21 +60,17 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-28
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImagesBrowserController extends ImageViewerController {
 
     private final ObservableList<File> imageFileList = FXCollections.observableArrayList();
     private final ObservableList<ImageInformation> tableData = FXCollections.observableArrayList();
-    private int rowsNum, colsNum, filesNumber, popSize = 500;
+    private int rowsNum, colsNum, filesNumber, thumbWidth, currentIndex;
     private List<VBox> imageBoxList;
     private List<ScrollPane> imageScrollList;
     private List<ImageView> imageViewList;
     private List<Label> imageTitleList;
-    private Popup imagePop;
-    private ImageView popView;
-    private Text popText;
 
     private TableView<ImageInformation> tableView;
     private TableColumn<ImageInformation, ImageInformation> imageColumn;
@@ -106,11 +93,9 @@ public class ImagesBrowserController extends ImageViewerController {
     @FXML
     protected VBox imagesPane, mainBox, viewBox, gridOptionsBox;
     @FXML
-    protected HBox fileOpBox;
+    protected ComboBox<String> colsnumBox, filesBox, thumbWidthSelector;
     @FXML
-    protected ComboBox<String> colsnumBox, filesBox, popSizeSelector;
-    @FXML
-    protected CheckBox saveRotationCheck, popCheck;
+    protected CheckBox saveRotationCheck, loadOnMousePassCheck;
     @FXML
     protected Label totalLabel;
     @FXML
@@ -127,9 +112,10 @@ public class ImagesBrowserController extends ImageViewerController {
             super.initValues();
 
             colsNum = -1;
-            currentAngle = 0;
             displayMode = DisplayMode.ImagesGrid;
-            defaultLoadWidth = 512;
+            currentIndex = -1;
+            thumbWidth = AppVariables.getUserConfigInt("ThumbnailWidth", 100);
+            thumbWidth = thumbWidth > 0 ? thumbWidth : 100;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -196,36 +182,27 @@ public class ImagesBrowserController extends ImageViewerController {
                 }
             });
 
-            List<String> sizeValues = Arrays.asList("500", "400", "600", "300", "200", "700");
-            popSizeSelector.getItems().addAll(sizeValues);
-            popSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            thumbWidthSelector.getItems().addAll(Arrays.asList("100", "150", "50", "200", "300"));
+            thumbWidthSelector.setValue(thumbWidth + "");
+            thumbWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         if (isSettingValues) {
                             return;
                         }
                         int v = Integer.valueOf(newValue);
-                        if (v >= 0) {
-                            FxmlControl.setEditorNormal(popSizeSelector);
-                            popSize = v;
-                            AppVariables.setUserConfigInt("ImageBrowserPopSize", popSize);
+                        if (v > 0) {
+                            FxmlControl.setEditorNormal(thumbWidthSelector);
+                            thumbWidth = v;
+                            AppVariables.setUserConfigInt("ThumbnailWidth", thumbWidth);
+                            loadImages();
                         } else {
-                            FxmlControl.setEditorBadStyle(popSizeSelector);
+                            FxmlControl.setEditorBadStyle(thumbWidthSelector);
                         }
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(popSizeSelector);
+                        FxmlControl.setEditorBadStyle(thumbWidthSelector);
                     }
-                }
-            });
-            popSizeSelector.getSelectionModel().select(AppVariables.getUserConfigInt("ImageBrowserPopSize", 400) + "");
-
-            popCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Pop", true));
-            popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue(baseName + "Pop", popCheck.isSelected());
                 }
             });
 
@@ -255,101 +232,41 @@ public class ImagesBrowserController extends ImageViewerController {
         FxmlControl.setTooltip(selectFileButton, new Tooltip(message("SelectMultipleFilesBrowse")));
     }
 
-    @Override
-    protected void setLoadWidth() {
-        makeImagesPane();
+    @FXML
+    public void rotateRightImages() {
+        rotateImages(90);
     }
 
-    public void paneSize(int index) {
-        ImageView iView = imageViewList.get(index);
-        ScrollPane sPane = imageScrollList.get(index);
-        if (iView == null || iView.getImage() == null
-                || sPane == null) {
-            return;
-        }
-        FxmlControl.paneSize(sPane, iView);
+    @FXML
+    public void rotateLeftImages() {
+        rotateImages(270);
     }
 
-    public void imageSize(int index) {
-        ImageView iView = imageViewList.get(index);
-        ScrollPane sPane = imageScrollList.get(index);
-        if (iView == null || iView.getImage() == null) {
-            return;
-        }
-        FxmlControl.imageSize(sPane, iView);
+    @FXML
+    public void turnOverImages() {
+        rotateImages(180);
     }
 
-    public void zoomIn(int index) {
-        ImageView iView = imageViewList.get(index);
-        ScrollPane sPane = imageScrollList.get(index);
-        if (iView == null || iView.getImage() == null) {
-            return;
-        }
-        FxmlControl.zoomIn(sPane, iView, xZoomStep, yZoomStep);
-    }
-
-    public void zoomOut(int index) {
-        ImageView iView = imageViewList.get(index);
-        ScrollPane sPane = imageScrollList.get(index);
-        if (iView == null || iView.getImage() == null) {
-            return;
-        }
-        FxmlControl.zoomOut(sPane, iView, xZoomStep, yZoomStep);
-    }
-
-    public void moveRight(int index) {
-        ScrollPane sPane = imageScrollList.get(index);
-        if (sPane == null) {
-            return;
-        }
-        FxmlControl.setScrollPane(sPane, -40, sPane.getVvalue());
-    }
-
-    public void moveLeft(int index) {
-        ScrollPane sPane = imageScrollList.get(index);
-        if (sPane == null) {
-            return;
-        }
-        FxmlControl.setScrollPane(sPane, 40, sPane.getVvalue());
-    }
-
-    public void moveUp(int index) {
-        ScrollPane sPane = imageScrollList.get(index);
-        if (sPane == null) {
-            return;
-        }
-        FxmlControl.setScrollPane(sPane, sPane.getHvalue(), 40);
-    }
-
-    public void moveDown(int index) {
-        ScrollPane sPane = imageScrollList.get(index);
-        if (sPane == null) {
-            return;
-        }
-        FxmlControl.setScrollPane(sPane, sPane.getHvalue(), -40);
-    }
-
-    @Override
-    public void rotate(int rotateAngle) {
-        currentAngle = rotateAngle;
+    public void rotateImages(int rotateAngle) {
         if (saveRotationCheck.isSelected()) {
             saveRotation(selectedIndexes, rotateAngle);
         } else {
-            rotate(selectedIndexes, rotateAngle);
+            rotateImages(selectedIndexes, rotateAngle);
         }
     }
 
-    public void rotate(int index, int rotateAngle) {
+    public void rotateImages(int index, int rotateAngle) {
         List<Integer> indexs = new ArrayList<>();
         indexs.add(index);
+        MyBoxLog.debug(indexs);
         if (saveRotationCheck.isSelected()) {
             saveRotation(indexs, rotateAngle);
         } else {
-            rotate(indexs, rotateAngle);
+            rotateImages(indexs, rotateAngle);
         }
     }
 
-    public void rotate(List<Integer> indexs, int rotateAngle) {
+    public void rotateImages(List<Integer> indexs, int rotateAngle) {
         switch (displayMode) {
             case FilesList:
                 break;
@@ -376,16 +293,17 @@ public class ImagesBrowserController extends ImageViewerController {
                 }
                 break;
             case ImagesGrid:
+                MyBoxLog.debug(indexs);
                 if (indexs == null || indexs.isEmpty()) {
                     for (int i = 0; i < imageViewList.size(); ++i) {
                         ImageView iView = imageViewList.get(i);
-                        iView.setRotate(iView.getRotate() + currentAngle);
+                        iView.setRotate(iView.getRotate() + rotateAngle);
                     }
                 } else {
                     for (int i = 0; i < indexs.size(); ++i) {
                         int index = indexs.get(i);
                         ImageView iView = imageViewList.get(index);
-                        iView.setRotate(iView.getRotate() + currentAngle);
+                        iView.setRotate(iView.getRotate() + rotateAngle);
                     }
                 }
                 break;
@@ -409,7 +327,7 @@ public class ImagesBrowserController extends ImageViewerController {
                             ImageInformation info = tableData.get(i);
                             ImageInformation newInfo = saveRotation(info, rotateAngle);
                             if (displayMode == DisplayMode.ImagesGrid) {
-                                newInfo.loadImage(loadWidth);
+                                newInfo.loadImage(thumbWidth);
                             } else if (displayMode == DisplayMode.ThumbnailsList) {
                                 newInfo.loadThumbnail();
                             }
@@ -421,7 +339,7 @@ public class ImagesBrowserController extends ImageViewerController {
                             ImageInformation info = tableData.get(index);
                             ImageInformation newInfo = saveRotation(info, rotateAngle);
                             if (displayMode == DisplayMode.ImagesGrid) {
-                                newInfo.loadImage(loadWidth);
+                                newInfo.loadImage(thumbWidth);
                             } else if (displayMode == DisplayMode.ThumbnailsList) {
                                 newInfo.loadThumbnail();
                             }
@@ -485,119 +403,6 @@ public class ImagesBrowserController extends ImageViewerController {
 
     @FXML
     @Override
-    public void paneSize() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                paneSize(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                paneSize(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
-    public void loadedSize() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                imageSize(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                imageSize(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
-    public void zoomIn() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                zoomIn(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                zoomIn(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
-    public void zoomOut() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                zoomOut(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                zoomOut(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
-    public void moveRight() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                moveRight(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                moveRight(i);
-            }
-        }
-
-    }
-
-    @FXML
-    @Override
-    public void moveLeft() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                moveLeft(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                moveLeft(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
-    public void moveUp() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                moveUp(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                moveUp(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
-    public void moveDown() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                moveDown(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); ++i) {
-                moveDown(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
     public void nextAction() {
         if (nextFiles != null) {
             previousFiles = imageFileList;
@@ -618,17 +423,10 @@ public class ImagesBrowserController extends ImageViewerController {
         }
     }
 
-    @FXML
-    public void viewAction() {
-        try {
-            if (selectedImages == null || selectedImages.isEmpty()) {
-                fileOpBox.setDisable(true);
-                return;
-            }
-            view(selectedIndexes.get(0));
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    @Override
+    public void fileRenamed(File newFile) {
+        super.fileRenamed(newFile);
+        fileRenamed(currentIndex, newFile);
     }
 
     public void view(int index) {
@@ -641,20 +439,6 @@ public class ImagesBrowserController extends ImageViewerController {
                 File file = imageInfo.getImageFileInformation().getFile();
                 FxmlStage.openImageViewer(null, file);
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void renameAction() {
-        try {
-            if (selectedImages == null || selectedImages.isEmpty()) {
-                fileOpBox.setDisable(true);
-                return;
-            }
-            rename(selectedIndexes.get(0));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -717,23 +501,10 @@ public class ImagesBrowserController extends ImageViewerController {
     public void deleteFilesAction() {
         try {
             if (selectedImages == null || selectedImages.isEmpty()) {
-                fileOpBox.setDisable(true);
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(AppVariables.message("SureDelete"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() != buttonSure) {
+                if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureDelete"))) {
                     return;
                 }
             }
@@ -759,19 +530,7 @@ public class ImagesBrowserController extends ImageViewerController {
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(AppVariables.message("SureDelete"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() != buttonSure) {
+                if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureDelete"))) {
                     return;
                 }
             }
@@ -783,23 +542,6 @@ public class ImagesBrowserController extends ImageViewerController {
             popSuccessful();
             makeImagesNevigator(true);
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void infoAction() {
-        try {
-            if (selectedImages == null || selectedImages.isEmpty()) {
-                fileOpBox.setDisable(true);
-                return;
-            }
-            ImageInformation info = selectedImages.get(0);
-            if (info != null) {
-                FxmlStage.showImageInformation(info);
-            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -842,21 +584,18 @@ public class ImagesBrowserController extends ImageViewerController {
             imageScrollList = new ArrayList<>();
             selectedImages = new ArrayList<>();
             selectedIndexes = new ArrayList<>();
-            fileOpBox.setDisable(true);
             rowsNum = 0;
 
             if (displayMode == DisplayMode.ThumbnailsList || displayMode == DisplayMode.FilesList) {
                 if (viewBox.getChildren().contains(gridOptionsBox)) {
                     viewBox.getChildren().remove(gridOptionsBox);
                 }
-                loadWidthBox.setDisable(true);
                 makeListBox();
 
             } else if (colsNum > 0) {
                 if (!viewBox.getChildren().contains(gridOptionsBox)) {
                     viewBox.getChildren().add(gridOptionsBox);
                 }
-                loadWidthBox.setDisable(false);
                 makeImagesGrid();
             }
             FxmlControl.refreshStyle(thisPane);
@@ -951,7 +690,7 @@ public class ImagesBrowserController extends ImageViewerController {
 
             ImageInformation imageInfo = tableData.get(i);
             File file = imageInfo.getImageFileInformation().getFile();
-            iView.setImage(imageInfo.loadImage(loadWidth));
+            iView.setImage(imageInfo.loadImage(thumbWidth));
 
             String title = file.getName();
             if (imageInfo.isIsMultipleFrames()) {
@@ -962,6 +701,17 @@ public class ImagesBrowserController extends ImageViewerController {
 
             final int index = i;
             vbox.setOnMouseClicked((MouseEvent event) -> {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    if (contextMenuCheck.isSelected()) {
+                        popImageMenu(index, iView, event);
+                    }
+                    return;
+                } else if (event.getClickCount() > 1) {
+                    FxmlStage.openImageViewer(null, file);
+                    return;
+                }
+                currentIndex = index;
+                loadImage(file, 0, loadWidth);
                 if (selectedImages.contains(imageInfo)) {
                     selectedImages.remove(imageInfo);
                     vbox.setStyle(null);
@@ -975,38 +725,13 @@ public class ImagesBrowserController extends ImageViewerController {
                 } else {
                     selectedIndexes.add(o);
                 }
-                fileOpBox.setDisable(selectedImages.isEmpty());
-                viewButton.setDisable(selectedImages.size() > 1);
-                infoButton.setDisable(selectedImages.size() > 1);
-                renameButton.setDisable(selectedImages.size() > 1);
-
-                if (event.getClickCount() > 1) {
-                    FxmlStage.openImageViewer(null, file);
-                }
-
-                if (!needNotContextMenu && contextMenuCheck.isSelected()
-                        && event.getButton() == MouseButton.SECONDARY) {
-                    popImageMenu(index, iView, event);
-                }
 
             });
 
             vbox.setOnMouseEntered((MouseEvent event) -> {
-                String str1 = imageInfo.getFileName() + " "
-                        + AppVariables.message("Format") + ":" + imageInfo.getImageFormat() + "  "
-                        + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + " "
-                        + AppVariables.message("Size") + ":" + FileTools.showFileSize(file.length()) + "  "
-                        + AppVariables.message("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "  "
-                        + AppVariables.message("LoadedSize") + ":"
-                        + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "  "
-                        + AppVariables.message("DisplayedSize") + ":"
-                        + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
-                bottomLabel.setText(str1);
-                if (imagePop != null) {
-                    imagePop.hide();
-                }
-                if (popCheck.isSelected()) {
-                    makeImagePopup(vbox, imageInfo, iView);
+                if (loadOnMousePassCheck.isSelected()) {
+                    currentIndex = index;
+                    loadImage(file, 0, loadWidth);
                 }
             });
 
@@ -1027,62 +752,38 @@ public class ImagesBrowserController extends ImageViewerController {
         // https://stackoverflow.com/questions/26152642/get-the-height-of-a-node-in-javafx-generate-a-layout-pass
         imagesPane.applyCss();
         imagesPane.layout();
-        paneSize();
 
     }
 
     protected void popImageMenu(int index, ImageView iView, MouseEvent event) {
-        if (needNotContextMenu || iView == null || iView.getImage() == null) {
+        if (iView == null || iView.getImage() == null) {
             return;
         }
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
-        menu = new MenuItem(message("LoadedSize") + "  CTRL+1");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            imageSize(index);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("PaneSize") + "  CTRL+2");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            paneSize(index);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("ZoomIn") + "  CTRL+3");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            zoomIn(index);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("ZoomOut") + "  CTRL+4");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            zoomIn(index);
-        });
-        items.add(menu);
-
         menu = new MenuItem(message("RotateLeft"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rotate(index, 270);
+            MyBoxLog.debug(index);
+            rotateImages(index, 270);
         });
         items.add(menu);
 
         menu = new MenuItem(message("RotateRight"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rotate(index, 90);
+            rotateImages(index, 90);
         });
         items.add(menu);
 
         menu = new MenuItem(message("RotateLeft"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rotate(index, 270);
+            rotateImages(index, 270);
         });
         items.add(menu);
 
         menu = new MenuItem(message("TurnOver"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rotate(index, 180);
+            rotateImages(index, 180);
         });
         items.add(menu);
 
@@ -1108,13 +809,13 @@ public class ImagesBrowserController extends ImageViewerController {
 
         menu = new MenuItem(message("SelectAll"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            selectAllAction();
+            selectAllImages();
         });
         items.add(menu);
 
         menu = new MenuItem(message("SelectNone"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            selectNoneAction();
+            selectNoneImages();
         });
         items.add(menu);
 
@@ -1151,58 +852,6 @@ public class ImagesBrowserController extends ImageViewerController {
         popMenu.getItems().addAll(items);
         popMenu.show(iView, event.getScreenX(), event.getScreenY());
 
-    }
-
-    private void makeImagePopup(VBox imageBox, ImageInformation imageInfo, ImageView iView) {
-        try {
-            File file = imageInfo.getImageFileInformation().getFile();
-            Image iImage = imageInfo.loadImage(loadWidth);
-            imagePop = new Popup();
-            imagePop.setWidth(popSize + 40);
-            imagePop.setHeight(popSize + 40);
-            imagePop.setAutoHide(true);
-
-            VBox vbox = new VBox();
-            VBox.setVgrow(vbox, Priority.ALWAYS);
-            HBox.setHgrow(vbox, Priority.ALWAYS);
-            vbox.setMaxWidth(Double.MAX_VALUE);
-            vbox.setMaxHeight(Double.MAX_VALUE);
-            vbox.setStyle("-fx-background-color: white;");
-            imagePop.getContent().add(vbox);
-
-            popView = new ImageView();
-            popView.setImage(iImage);
-            if (iImage.getWidth() > iImage.getHeight()) {
-                popView.setFitWidth(popSize);
-            } else {
-                popView.setFitHeight(popSize);
-            }
-            popView.setPreserveRatio(true);
-            vbox.getChildren().add(popView);
-
-            popText = new Text();
-            popText.setStyle("-fx-font-size: 1.0em;");
-
-            vbox.getChildren().add(popText);
-            vbox.setPadding(new Insets(15, 15, 15, 15));
-
-            String info = imageInfo.getFileName() + "\n"
-                    + AppVariables.message("Format") + ":" + imageInfo.getImageFormat() + "  "
-                    + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + "\n"
-                    + AppVariables.message("Size") + ":" + FileTools.showFileSize(file.length()) + "  "
-                    + AppVariables.message("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "\n"
-                    + AppVariables.message("LoadedSize") + ":"
-                    + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "  "
-                    + AppVariables.message("DisplayedSize") + ":"
-                    + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
-            popText.setText(info);
-            popText.setWrappingWidth(popSize);
-            Bounds bounds = imageBox.localToScreen(imageBox.getBoundsInLocal());
-            imagePop.show(imageBox, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY());
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     private void makeSourceTable() {
@@ -1382,10 +1031,6 @@ public class ImagesBrowserController extends ImageViewerController {
                     if (!isSettingValues) {
                         selectedImages = tableView.getSelectionModel().getSelectedItems();
                         selectedIndexes = tableView.getSelectionModel().getSelectedIndices();
-                        fileOpBox.setDisable(selectedImages.isEmpty());
-                        viewButton.setDisable(selectedImages.size() > 1);
-                        infoButton.setDisable(selectedImages.size() > 1);
-                        renameButton.setDisable(selectedImages.size() > 1);
                     }
                 }
             });
@@ -1393,28 +1038,27 @@ public class ImagesBrowserController extends ImageViewerController {
             tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    ImageInformation info = tableView.getSelectionModel().getSelectedItem();
-                    if (info == null) {
-                        return;
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        if (isSettingValues || !contextMenuCheck.isSelected()) {
+                            return;
+                        }
+                        int index = tableView.getSelectionModel().getSelectedIndex();
+                        if (index < 0) {
+                            return;
+                        }
+                        popTableMenu(event, index);
+                    } else {
+                        ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+                        if (info == null) {
+                            return;
+                        }
+                        File file = info.getImageFileInformation().getFile();
+                        if (event.getClickCount() > 1) {
+                            FxmlStage.openImageViewer(null, file);
+                        } else {
+                            loadImage(file, 0, loadWidth);
+                        }
                     }
-                    File file = info.getImageFileInformation().getFile();
-                    if (event.getClickCount() > 1) {
-                        FxmlStage.openImageViewer(null, file);
-                    }
-                }
-            });
-
-            tableView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                @Override
-                public void handle(ContextMenuEvent event) {
-                    if (isSettingValues || !contextMenuCheck.isSelected()) {
-                        return;
-                    }
-                    int index = tableView.getSelectionModel().getSelectedIndex();
-                    if (index < 0) {
-                        return;
-                    }
-                    popTableMenu(event, index);
                 }
             });
 
@@ -1423,7 +1067,7 @@ public class ImagesBrowserController extends ImageViewerController {
         }
     }
 
-    protected void popTableMenu(ContextMenuEvent event, int index) {
+    protected void popTableMenu(MouseEvent event, int index) {
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
@@ -1449,31 +1093,31 @@ public class ImagesBrowserController extends ImageViewerController {
 
         menu = new MenuItem(message("RotateLeft"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rotate(index, 270);
+            rotateImages(index, 270);
         });
         items.add(menu);
 
         menu = new MenuItem(message("RotateRight"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rotate(index, 90);
+            rotateImages(index, 90);
         });
         items.add(menu);
 
         menu = new MenuItem(message("TurnOver"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            rotate(index, 180);
+            rotateImages(index, 180);
         });
         items.add(menu);
 
         menu = new MenuItem(message("SelectAll"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            selectAllAction();
+            selectAllImages();
         });
         items.add(menu);
 
         menu = new MenuItem(message("SelectNone"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            selectNoneAction();
+            selectNoneImages();
         });
         items.add(menu);
 
@@ -1571,26 +1215,19 @@ public class ImagesBrowserController extends ImageViewerController {
 
     private ImageInformation loadImageInfo(File file) {
         ImageInformation imageInfo;
-        int width;
-        if (displayMode == DisplayMode.ImagesGrid) {
-            width = loadWidth;
-        } else {
-            width = 100;
-        }
         ImageFileInformation finfo = ImageInformation.loadImageFileInformation(file);
         if (finfo == null) {
             return null;
         }
         imageInfo = finfo.getImageInformation();
         if (displayMode != DisplayMode.FilesList) {
-            ImageInformation.loadImage(imageInfo, width);
+            ImageInformation.loadImage(imageInfo, thumbWidth);
         }
         return imageInfo;
     }
 
     @Override
     public void makeImageNevigator() {
-        makeImagesNevigator(true);
     }
 
     private void makeImagesNevigator(boolean makeCurrentList) {
@@ -1829,7 +1466,6 @@ public class ImagesBrowserController extends ImageViewerController {
         try {
             path = null;
             filesNumber = 0;
-            currentAngle = 0;
             totalLabel.setText("");
             getMyStage().setTitle(getBaseTitle());
             if (imageFileList == null || imageFileList.isEmpty() || colsNum <= 0) {
@@ -1884,6 +1520,16 @@ public class ImagesBrowserController extends ImageViewerController {
     }
 
     @Override
+    public void refinePane() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        imageView.setLayoutX(0);
+        scrollPane.setVvalue(scrollPane.getVmin());
+        updateLabelsTitle();
+    }
+
+    @Override
     public ImagesBrowserController refresh() {
         makeImagesNevigator(true);
         return this;
@@ -1905,8 +1551,7 @@ public class ImagesBrowserController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void selectAllAction() {
+    public void selectAllImages() {
         if (displayMode == DisplayMode.ThumbnailsList || displayMode == DisplayMode.FilesList) {
             tableView.getSelectionModel().selectAll();
         } else {
@@ -1918,16 +1563,11 @@ public class ImagesBrowserController extends ImageViewerController {
                 VBox vbox = imageBoxList.get(i);
                 vbox.setStyle("-fx-background-color:dodgerblue;-fx-text-fill:white;");
             }
-            fileOpBox.setDisable(selectedImages.isEmpty());
-            viewButton.setDisable(selectedImages.size() > 1);
-            infoButton.setDisable(selectedImages.size() > 1);
-            renameButton.setDisable(selectedImages.size() > 1);
         }
     }
 
     @FXML
-    @Override
-    public void selectNoneAction() {
+    public void selectNoneImages() {
         if (displayMode == DisplayMode.ThumbnailsList || displayMode == DisplayMode.FilesList) {
             tableView.getSelectionModel().clearSelection();
         } else {
@@ -1937,10 +1577,6 @@ public class ImagesBrowserController extends ImageViewerController {
                 VBox vbox = imageBoxList.get(i);
                 vbox.setStyle(null);
             }
-            fileOpBox.setDisable(true);
-            viewButton.setDisable(false);
-            infoButton.setDisable(false);
-            renameButton.setDisable(false);
         }
     }
 

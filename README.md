@@ -1,20 +1,20 @@
-# [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png)   
+ [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png)   
 
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。  
   
-## 新内容      
-2021-1-27 版本6.3.8                  
--  添加：编辑和转换csv和excel文件。数据粘贴板。编辑和保存矩阵。批量设置html的风格。          
--  改进：颜色量化可以设置通道权重。焦点不在文本输入控件时快捷键可以省略Ctrl/Alt。数据转换/导出采用流读取。                 
--  解决的主要问题：批量替换图片颜色的距离不生效。PDF的用户密码和所有者密码混乱。文本过滤界面分页错误。表字段也需要翻译。时间树上公元前的时间解析错误。                    
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8)                   
+## 新内容         
+2021-2-11 版本6.3.9                  
+-  改进：查看/编辑多帧图像时可选择帧。读取CSV/Excel时总是使用iterator。修改PDF属性时可选清除安全属性。               
+-  解决的主要问题：编辑保存CSV/Excel后总是回到第一页。解档文件总是失败。解档zip时非英文解析为乱码。           
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)               
+春节快乐！牛年大吉！             
 
  ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。    
  
 ### 源码   
-[MyBox-6.3.8-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-src.zip)   37M  
+[MyBox-6.3.9-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-src.zip)   38M  
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) 和 
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)             
@@ -25,9 +25,9 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |                                                                               
-| win x64 | [MyBox-6.3.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-exe.zip)  | 292MB | MyBox.exe |       
-| linux x64 | [MyBox-6.3.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux.tar.gz)  | 299MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac.dmg)  | 306MB  |  MyBox-6.3.8.app   |   
+| win x64 | [MyBox-6.3.9-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-win-exe.zip)  | 297MB | MyBox.exe |       
+| linux x64 | [MyBox-6.3.9-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-linux.tar.gz)  | 305MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.9-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-mac.dmg)  | 312MB  |  MyBox-6.3.9.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -37,14 +37,14 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-jar.zip)  | 148MB | Java 15.0.1或更高版本 |    
-| linux | [MyBox-6.3.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux-jar.zip)  | 155MB  | Java 15.0.1或更高版本 |    
-| mac | [MyBox-6.3.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac-jar.zip)  |  152MB  | Java 15.0.1或更高版本 |    
+| win | [MyBox-6.3.9-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-win-jar.zip)  | 151MB | Java 15.0.1或更高版本 |    
+| linux | [MyBox-6.3.9-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-linux-jar.zip)  | 159MB  | Java 15.0.1或更高版本 |    
+| mac | [MyBox-6.3.9-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-mac-jar.zip)  |  156MB  | Java 15.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.3.8.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.9.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.3.8.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.9.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -61,9 +61,9 @@
 配置文件在"用户目录"下:                 
 | 平台 | MyBox配置文件的目录 |        
 | --- | --- |        
-| win | `C:\用户\用户名\mybox\MyBox_v6.3.8.ini`  |         
-| linux | `/home/用户名/mybox/MyBox_v6.3.8.ini` |        
-| mac | `/Users/用户名/mybox/MyBox_v6.3.8.ini` |         
+| win | `C:\用户\用户名\mybox\MyBox_v6.3.9.ini`  |         
+| linux | `/home/用户名/mybox/MyBox_v6.3.9.ini` |        
+| mac | `/Users/用户名/mybox/MyBox_v6.3.9.ini` |         
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。
 利用“设置”功能也可以修改配置参数。
@@ -82,8 +82,8 @@
 # 文档         
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
-| 开发日志 | 6.3.8 |  2021-1-27 | [html](#devLog) |
-| 快捷键 | 6.3.8 |  2021-1-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.3.9 |  2021-2-11 | [html](#devLog) |
+| 快捷键 | 6.3.9 |  2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
@@ -148,10 +148,11 @@ MyBox基于以下开源资源：
 | colorhexa | 色彩数据 | https://www.colorhexa.com/color-names |      
 | 文泉驿 | 开源字体 | http://wenq.org/wqy2/ |      
 | ttc2ttf | 提取ttf | https://github.com/fermi1981/TTC_TTF |      
+| sfds | 书法 | http://www.sfds.cn/725B/ |      
 
 
 # 当前版本
-当前是版本6.3.8，已实现的特点概述如下:
+当前是版本6.3.9，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [本机](#localhost)
@@ -1077,8 +1078,8 @@ MyBox v5.3以前的版本均基于Java 8。
 ### 归档/压缩/解压/解档<a id="archiveCompress" />  
 1. 归档是把多个文件/目录聚集为单个文件的过程，有的归档格式支持同时实现压缩（如zip和7z）。解档是还原归档文件的过程。 
 2. 压缩是把单个文件转变为一个更小的文件的过程。通常是先归档再压缩。解压是还原压缩文件的过程。  
-3. 支持归档格式： zip, tar, 7z, ar, cpio。  
-4. 支持解档格式： zip, tar, 7z, ar, cpio, arj, dump。  
+3. 支持归档格式： zip, tar, 7z（只支持部分算法）, ar, cpio。  
+4. 支持解档格式： zip, tar, 7z（只支持部分算法）, ar, cpio, arj, dump。  
 5. 支持压缩格式：gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed。 
 6. 支持解压格式：gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, DEFLATE64,  Z。 
 7. 解档/解压时，可自动检测格式，也可由用户指定格式（有的格式无法自动检测出来）。 
@@ -1244,12 +1245,14 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 ## 设置<a id="settings" />
 1. 界面：
 	-  语言、字体大小、图标大小
-	-  可选择高清晰图标（100px）还是普通图标（40px）。         
+	-  选择高清晰图标（100x100）还是普通图标（40x40）。         
            显示器分辨率不高于120dpi时，建议选择普通图标。在非高清晰的显示器上显示高清晰图标反而会模糊。          
 	-  控件颜色、是否显示控件文字、界面风格
 	-  是否恢复界面上次尺寸
 	-  是否在新窗口中打开界面
-	-  显示/隐藏面板的方式：鼠标经过、点击鼠标
+	-  是否在鼠标经过按钮时弹出“设置颜色”
+	-  是否在鼠标经过按钮时显示/隐藏面板
+	-  界面消息的颜色、时长和字体大小。
 2. 基础：
 	-  JVM最大可用内存
 	-  是否关闭分辨率感知
@@ -1312,7 +1315,13 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 4. “错误”会导致查看日志的界面被弹出。
 
 # 开发日志<a id="devLog" />          
-2021-1-27 版本6.3.8                  
+2021-2-11 版本6.3.9                  
+-  改进：查看/编辑多帧图像时可选择帧。读取CSV/Excel时总是使用iterator。修改PDF属性时可选清除安全属性。
+-  解决的主要问题：编辑保存CSV/Excel后总是回到第一页。解档文件总是失败。解档zip时非英文解析为乱码。          
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                   
+春节快乐！牛年大吉！         
+
+2021-1-27 版本6.3.9                  
 -  添加：编辑和转换csv和excel文件。数据粘贴板。编辑和保存矩阵。批量设置html的风格。          
 -  改进：颜色量化可以设置通道权重。焦点不在文本输入控件时快捷键可以省略Ctrl/Alt。数据转换/导出采用流读取。                 
 -  解决的主要问题：批量替换图片颜色的距离不生效。PDF的用户密码和所有者密码混乱。文本过滤界面分页错误。表字段也需要翻译。时间树上公元前的时间解析错误。                    

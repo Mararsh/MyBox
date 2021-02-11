@@ -60,7 +60,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     @FXML
     protected VBox setBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected Label commentsLabel;
 
@@ -190,7 +190,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             imageController.drawMaskRectangleLineAsData();
             commentsLabel.setText(message("DragMarginsComments"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
         }
 
     }

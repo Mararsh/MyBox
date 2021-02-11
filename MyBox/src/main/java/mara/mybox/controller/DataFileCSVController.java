@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -187,7 +188,7 @@ public class DataFileCSVController extends BaseDataFileController {
             if (iterator == null || !iterator.hasNext()) {
                 return false;
             }
-            while (iterator.hasNext()) {
+            while (backgroundTask != null && !backgroundTask.isCancelled() && iterator.hasNext()) {
                 iterator.next();
                 totalSize++;
             }
@@ -759,7 +760,7 @@ public class DataFileCSVController extends BaseDataFileController {
             }
             if (!FxmlControl.askSure(baseTitle, colName(col) + " - "
                     + (asc ? message("Ascending") : message("Descending")) + "\n"
-                    + message("NoticeAllChangeUnrecover") + "\n" + message("DataFileOrderNotice"))) {
+                    + message("DataFileOrderNotice"))) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -817,30 +818,52 @@ public class DataFileCSVController extends BaseDataFileController {
 
     @Override
     protected void copyAllSelectedCols() {
+        int cols = 0;
+        for (CheckBox c : colsCheck) {
+            if (c.isSelected()) {
+                cols++;
+            }
+        }
+        if (cols < 1) {
+            popError(message("NoData"));
+            return;
+        }
         if (sourceFile == null || pagesNumber <= 1) {
             copySelectedCols();
             return;
         }
+        int selectedCols = cols;
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
-                StringBuilder s;
+                private StringBuilder s;
+                private int lines;
 
                 @Override
                 protected boolean handle() {
                     try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
                         s = new StringBuilder();
                         String p = TextTools.delimiterText(delimiter);
+                        lines = 0;
                         for (CSVRecord record : parser) {
+                            String row = null;
                             for (int i = 0; i < colsCheck.length; ++i) {
                                 if (colsCheck[i].isSelected()) {
                                     String d = record.get(i);
-                                    s.append(d == null ? "" : d).append(p);
+                                    d = d == null ? "" : d;
+                                    if (row == null) {
+                                        row = d;
+                                    } else {
+                                        row += p + d;
+                                    }
                                 }
                             }
-                            s.append("\n");
+                            if (row != null) {
+                                s.append(row).append("\n");
+                                lines++;
+                            }
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -852,7 +875,9 @@ public class DataFileCSVController extends BaseDataFileController {
                 @Override
                 protected void whenSucceeded() {
                     if (FxmlControl.copyToSystemClipboard(s.toString())) {
-                        popInformation(message("CopiedToSystemClipboard"));
+                        popInformation(message("CopiedToSystemClipboard") + "\n"
+                                + message("RowsNumber") + ":" + lines + "\n"
+                                + message("ColumnsNumber") + ":" + selectedCols);
                     } else {
                         popFailed();
                     }
@@ -1003,7 +1028,7 @@ public class DataFileCSVController extends BaseDataFileController {
             controller = (DataFileCSVController) FxmlStage.openStage(CommonValues.DataFileCSVFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         }
         return controller;
     }

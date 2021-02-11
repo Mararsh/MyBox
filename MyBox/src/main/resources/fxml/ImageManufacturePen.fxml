@@ -210,6 +210,15 @@
                                 </ImageView>
                             </graphic>
                         </Button>
+                  <CheckBox fx:id="coordinatePenCheck" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconLocation.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </CheckBox>
                     </children>
                 </FlowPane>
             </children>

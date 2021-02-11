@@ -59,7 +59,7 @@ public class MatricesManageController extends BaseController {
             controller = (MatricesManageController) FxmlStage.openStage(CommonValues.MatricesManageFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         }
         return controller;
     }

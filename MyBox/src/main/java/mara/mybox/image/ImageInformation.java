@@ -192,7 +192,6 @@ public class ImageInformation extends ImageFileInformation {
             } else if (imageInfo.getThumbnail() != null && (int) (imageInfo.getThumbnail().getWidth()) == checkWidth) {
                 image = imageInfo.getThumbnail();
             }
-
             if (image == null) {
                 String fileName = imageInfo.getFileName();
                 String format = imageInfo.getImageFormat();
@@ -223,7 +222,7 @@ public class ImageInformation extends ImageFileInformation {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
         }
         return image;
     }

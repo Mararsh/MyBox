@@ -59,6 +59,7 @@ public abstract class PixelBlend {
 
     protected ImagesBlendMode blendMode;
     protected float alpha;
+    protected boolean orderReversed = false;
 
     protected Color foreColor, backColor;
     protected int red, green, blue;
@@ -73,6 +74,12 @@ public abstract class PixelBlend {
     public PixelBlend(ImagesBlendMode blendMode, float alpha) {
         this.blendMode = blendMode;
         this.alpha = alpha;
+    }
+
+    public PixelBlend(ImagesBlendMode blendMode, float alpha, boolean orderReversed) {
+        this.blendMode = blendMode;
+        this.alpha = alpha;
+        this.orderReversed = orderReversed;
     }
 
     public PixelBlend(float alpha) {
@@ -175,8 +182,13 @@ public abstract class PixelBlend {
         if (backPixel == 0) {                       // Pass transparency
             return forePixel;
         }
-        foreColor = new Color(forePixel);
-        backColor = new Color(backPixel);
+        if (orderReversed) {
+            foreColor = new Color(forePixel);
+            backColor = new Color(backPixel);
+        } else {
+            foreColor = new Color(backPixel);
+            backColor = new Color(forePixel);
+        }
         makeRGB();
         Color newColor = new Color(
                 Math.min(Math.max(red, 0), 255),
@@ -192,6 +204,9 @@ public abstract class PixelBlend {
         blue = (int) (foreColor.getBlue() * alpha + backColor.getBlue() * (1.0f - alpha));
     }
 
+    /*
+        static methods
+     */
     public static PixelBlend newColorBlend(ImagesBlendMode blendMode, float alpha) {
         switch (blendMode) {
             case NORMAL:
@@ -717,6 +732,73 @@ public abstract class PixelBlend {
             Color cColor = Color.getHSBColor(cA[0], cA[1], cB[2]);
             return cColor.getRGB();
         }
+    }
+
+    /*
+        get/set
+     */
+    public ImagesBlendMode getBlendMode() {
+        return blendMode;
+    }
+
+    public void setBlendMode(ImagesBlendMode blendMode) {
+        this.blendMode = blendMode;
+    }
+
+    public float getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
+    }
+
+    public boolean isOrderReversed() {
+        return orderReversed;
+    }
+
+    public void setOrderReversed(boolean orderReversed) {
+        this.orderReversed = orderReversed;
+    }
+
+    public Color getForeColor() {
+        return foreColor;
+    }
+
+    public void setForeColor(Color foreColor) {
+        this.foreColor = foreColor;
+    }
+
+    public Color getBackColor() {
+        return backColor;
+    }
+
+    public void setBackColor(Color backColor) {
+        this.backColor = backColor;
+    }
+
+    public int getRed() {
+        return red;
+    }
+
+    public void setRed(int red) {
+        this.red = red;
+    }
+
+    public int getGreen() {
+        return green;
+    }
+
+    public void setGreen(int green) {
+        this.green = green;
+    }
+
+    public int getBlue() {
+        return blue;
+    }
+
+    public void setBlue(int blue) {
+        this.blue = blue;
     }
 
 }

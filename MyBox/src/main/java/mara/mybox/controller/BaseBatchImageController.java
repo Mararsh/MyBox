@@ -15,11 +15,11 @@ import mara.mybox.value.CommonFxValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public abstract class BaseImagesBatchController extends FilesBatchController {
+public abstract class BaseBatchImageController extends BaseBatchFileController {
 
     protected ImageInformation imageInformation;
 
-    public BaseImagesBatchController() {
+    public BaseBatchImageController() {
         SourceFileType = VisitHistory.FileType.Image;
         SourcePathType = VisitHistory.FileType.Image;
         TargetPathType = VisitHistory.FileType.Image;

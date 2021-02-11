@@ -39,7 +39,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class DirectorySynchronizeController extends FilesBatchController {
+public class DirectorySynchronizeController extends BaseBatchFileController {
 
     protected boolean isConditional, startHandle;
     protected String lastFileName;

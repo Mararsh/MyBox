@@ -349,14 +349,14 @@ public class ImageOCRController extends ImageViewerController {
     protected void setPreprocessImage(Image image) {
         imageView.setImage(image);
         FxmlControl.paneSize(scrollPane, imageView);
-        updateLabelTitle();
+        updateLabelsTitle();
         if (startCheck.isSelected()) {
             startAction();
         }
     }
 
     @Override
-    public void updateLabelTitle() {
+    public void updateLabelsTitle() {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
@@ -1144,7 +1144,7 @@ public class ImageOCRController extends ImageViewerController {
                 @Override
                 protected void whenSucceeded() {
                     if (texts.length() == 0) {
-                        popText(message("OCRMissComments"), 5000, "white", "1.1em", null);
+                        popWarn(message("OCRMissComments"));
                     }
                     textArea.setText(texts);
                     resultLabel.setText(MessageFormat.format(message("OCRresults"),
@@ -1167,8 +1167,8 @@ public class ImageOCRController extends ImageViewerController {
                                     i + "", rect.x + "", rect.y + "", rect.width + "", rect.height + ""
                             ));
                             regionsTableController.addData(data);
-                            regionsTableController.displayHtml();
                         }
+                        regionsTableController.displayHtml();
                     } else {
                         regionsTableController.clear();
                     }

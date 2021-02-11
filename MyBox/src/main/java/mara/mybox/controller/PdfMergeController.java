@@ -23,7 +23,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfMergeController extends PdfBatchController {
+public class PdfMergeController extends BaseBatchPdfController {
 
     private PDFMergerUtility mergePdf;
     private PageExtractor extractor;

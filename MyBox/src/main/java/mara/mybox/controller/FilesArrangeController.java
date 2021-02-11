@@ -35,7 +35,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesArrangeController extends FilesBatchController {
+public class FilesArrangeController extends BaseBatchFileController {
 
     protected String lastFileName;
     private boolean startHandle, isCopy, byModifyTime;

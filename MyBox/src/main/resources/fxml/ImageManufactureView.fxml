@@ -40,17 +40,13 @@
                 </CheckBox>
          </children>
       </FlowPane>
-          <Label text="%ZoomStep" />
         <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
-                <ComboBox fx:id="zoomStepSelector" prefWidth="120.0" />
-                <Label fx:id="zoomValue" text="\%">
-                    <padding>
-                        <Insets right="30.0" />
-                    </padding>
-                </Label>
+                <Label text="%ZoomStep" />
+                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
             </children>
         </FlowPane>
       <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true" text="%ContextMenu" />
+      <CheckBox fx:id="fitSizeCheck" layoutX="10.0" layoutY="110.0" mnemonicParsing="false" selected="true" text="%FitSizeWhenPanesChanged" />
     </children>
 </VBox>

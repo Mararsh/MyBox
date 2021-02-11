@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.data.IntStatistic;
-import mara.mybox.image.ImageColor.ColorComponent;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.ImageColor.ColorComponent;
 
 /**
  * @Author Mara
@@ -19,6 +19,7 @@ public class ImageStatistic {
 
     protected BufferedImage image;
     protected Map<ColorComponent, ComponentStatistic> data;
+    protected long nonTransparent;
 
     public static ImageStatistic create(BufferedImage image) {
         return new ImageStatistic().setImage(image).setData(new HashMap<>());
@@ -45,9 +46,15 @@ public class ImageStatistic {
             int[] hueHistogram = new int[361];
             int[] saturationHistogram = new int[101];
             int[] brightnessHistogram = new int[101];
+            nonTransparent = 0;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
-                    color = new Color(image.getRGB(x, y));
+                    int p = image.getRGB(x, y);
+                    if (p == 0) {
+                        continue;
+                    }
+                    nonTransparent++;
+                    color = new Color(p);
 
                     v = color.getRed();
                     redHistogram[v]++;
@@ -131,16 +138,18 @@ public class ImageStatistic {
 
                 }
             }
+            if (nonTransparent == 0) {
+                return null;
+            }
 
-            long pxielsNumber = image.getWidth() * image.getHeight();
-            int redMean = (int) (redSum / pxielsNumber);
-            int greenMean = (int) (greenSum / pxielsNumber);
-            int blueMean = (int) (blueSum / pxielsNumber);
-            int alphaMean = (int) (alphaSum / pxielsNumber);
-            int hueMean = (int) (hueSum / pxielsNumber);
-            int saturationMean = (int) (saturationSum / pxielsNumber);
-            int brightnessMean = (int) (brightnessSum / pxielsNumber);
-            int grayMean = (int) (graySum / pxielsNumber);
+            int redMean = (int) (redSum / nonTransparent);
+            int greenMean = (int) (greenSum / nonTransparent);
+            int blueMean = (int) (blueSum / nonTransparent);
+            int alphaMean = (int) (alphaSum / nonTransparent);
+            int hueMean = (int) (hueSum / nonTransparent);
+            int saturationMean = (int) (saturationSum / nonTransparent);
+            int brightnessMean = (int) (brightnessSum / nonTransparent);
+            int grayMean = (int) (graySum / nonTransparent);
 
             long redVariable, greenVariable, blueVariable, alphaVariable, hueVariable, saturationVariable, brightnessVariable, grayVariable;
             redVariable = greenVariable = blueVariable = alphaVariable = hueVariable = saturationVariable = brightnessVariable = grayVariable = 0;
@@ -148,7 +157,11 @@ public class ImageStatistic {
             redSkewness = greenSkewness = blueSkewness = alphaSkewness = hueSkewness = saturationSkewness = brightnessSkewness = graySkewness = 0;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
-                    color = new Color(image.getRGB(x, y));
+                    int p = image.getRGB(x, y);
+                    if (p == 0) {
+                        continue;
+                    }
+                    color = new Color(p);
 
                     v = color.getRed();
                     redVariable += Math.pow(v - redMean, 2);
@@ -185,23 +198,23 @@ public class ImageStatistic {
                 }
             }
 
-            redVariable = (int) Math.sqrt(redVariable / pxielsNumber);
-            greenVariable = (int) Math.sqrt(greenVariable / pxielsNumber);
-            blueVariable = (int) Math.sqrt(blueVariable / pxielsNumber);
-            alphaVariable = (int) Math.sqrt(alphaVariable / pxielsNumber);
-            hueVariable = (int) Math.sqrt(hueVariable / pxielsNumber);
-            saturationVariable = (int) Math.sqrt(saturationVariable / pxielsNumber);
-            brightnessVariable = (int) Math.sqrt(brightnessVariable / pxielsNumber);
-            grayVariable = (int) Math.sqrt(grayVariable / pxielsNumber);
+            redVariable = (int) Math.sqrt(redVariable / nonTransparent);
+            greenVariable = (int) Math.sqrt(greenVariable / nonTransparent);
+            blueVariable = (int) Math.sqrt(blueVariable / nonTransparent);
+            alphaVariable = (int) Math.sqrt(alphaVariable / nonTransparent);
+            hueVariable = (int) Math.sqrt(hueVariable / nonTransparent);
+            saturationVariable = (int) Math.sqrt(saturationVariable / nonTransparent);
+            brightnessVariable = (int) Math.sqrt(brightnessVariable / nonTransparent);
+            grayVariable = (int) Math.sqrt(grayVariable / nonTransparent);
 
-            redSkewness = (int) Math.pow(redSkewness / pxielsNumber, 1.0 / 3);
-            greenSkewness = (int) Math.pow(greenSkewness / pxielsNumber, 1.0 / 3);
-            blueSkewness = (int) Math.pow(blueSkewness / pxielsNumber, 1.0 / 3);
-            alphaSkewness = (int) Math.pow(alphaSkewness / pxielsNumber, 1.0 / 3);
-            hueSkewness = (int) Math.pow(hueSkewness / pxielsNumber, 1.0 / 3);
-            saturationSkewness = (int) Math.pow(saturationSkewness / pxielsNumber, 1.0 / 3);
-            brightnessSkewness = (int) Math.pow(brightnessSkewness / pxielsNumber, 1.0 / 3);
-            graySkewness = (int) Math.pow(graySkewness / pxielsNumber, 1.0 / 3);
+            redSkewness = (int) Math.pow(redSkewness / nonTransparent, 1.0 / 3);
+            greenSkewness = (int) Math.pow(greenSkewness / nonTransparent, 1.0 / 3);
+            blueSkewness = (int) Math.pow(blueSkewness / nonTransparent, 1.0 / 3);
+            alphaSkewness = (int) Math.pow(alphaSkewness / nonTransparent, 1.0 / 3);
+            hueSkewness = (int) Math.pow(hueSkewness / nonTransparent, 1.0 / 3);
+            saturationSkewness = (int) Math.pow(saturationSkewness / nonTransparent, 1.0 / 3);
+            brightnessSkewness = (int) Math.pow(brightnessSkewness / nonTransparent, 1.0 / 3);
+            graySkewness = (int) Math.pow(graySkewness / nonTransparent, 1.0 / 3);
 
             IntStatistic grayStatistic = new IntStatistic(ColorComponent.Gray.name(),
                     graySum, grayMean, (int) grayVariable, (int) graySkewness,
@@ -346,6 +359,14 @@ public class ImageStatistic {
     public ImageStatistic setData(Map<ColorComponent, ComponentStatistic> data) {
         this.data = data;
         return this;
+    }
+
+    public long getNonTransparent() {
+        return nonTransparent;
+    }
+
+    public void setNonTransparent(long nonTransparent) {
+        this.nonTransparent = nonTransparent;
     }
 
 }

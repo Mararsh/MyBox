@@ -14,9 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -29,13 +27,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -146,10 +144,12 @@ public class MyBoxLanguagesController extends BaseController {
                 }
             });
 
-            interfaceView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+            interfaceView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
-                public void handle(ContextMenuEvent event) {
-                    popMenu(interfaceView, event);
+                public void handle(MouseEvent event) {
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        popMenu(interfaceView, event);
+                    }
                 }
             });
 
@@ -188,10 +188,12 @@ public class MyBoxLanguagesController extends BaseController {
                 }
             });
 
-            tableView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+            tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
-                public void handle(ContextMenuEvent event) {
-                    popMenu(tableView, event);
+                public void handle(MouseEvent event) {
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        popMenu(tableView, event);
+                    }
                 }
             });
 
@@ -324,7 +326,7 @@ public class MyBoxLanguagesController extends BaseController {
         }
     }
 
-    protected void popMenu(TableView<LanguageItem> view, ContextMenuEvent event) {
+    protected void popMenu(TableView<LanguageItem> view, MouseEvent event) {
         if (view.getSelectionModel().getSelectedItem() == null) {
             return;
         }
@@ -383,18 +385,7 @@ public class MyBoxLanguagesController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVariables.message("SureDelete"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureDelete"))) {
             return;
         }
         for (String name : selected) {

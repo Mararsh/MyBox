@@ -30,7 +30,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
     @FXML
     protected CheckBox preAlphaCheck;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
 
     @Override
     public void initPane() {

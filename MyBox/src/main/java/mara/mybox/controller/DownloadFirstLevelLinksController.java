@@ -37,9 +37,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -1714,19 +1712,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
             }
             if (ask) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(AppVariables.message("TaskRunning"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonSure) {
+                if (FxmlControl.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
                     stopped = true;
                 } else {
                     return false;

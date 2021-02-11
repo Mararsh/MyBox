@@ -362,14 +362,18 @@ public class FxmlControl {
         if (fullPath == null) {
             return null;
         }
-        String fname;
-        int pos = fullPath.lastIndexOf('/');
-        if (pos < 0) {
-            fname = fullPath;
-        } else {
-            fname = fullPath.substring(pos + 1);
+        try {
+            String fname;
+            int pos = fullPath.lastIndexOf('/');
+            if (pos < 0) {
+                fname = fullPath;
+            } else {
+                fname = fullPath.substring(pos + 1);
+            }
+            return fname.substring(0, fname.length() - 5);
+        } catch (Exception e) {
+            return null;
         }
-        return fname.substring(0, fname.length() - 5);
     }
 
     public static int getInputInt(TextField input) {
@@ -1384,8 +1388,15 @@ public class FxmlControl {
     }
 
     public static boolean askSure(String title, String sureString) {
+        return askSure(title, null, sureString);
+    }
+
+    public static boolean askSure(String title, String header, String sureString) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
+        if (header != null) {
+            alert.setHeaderText(header);
+        }
         alert.setContentText(sureString);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));

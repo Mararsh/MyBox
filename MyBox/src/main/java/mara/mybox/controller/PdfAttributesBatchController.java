@@ -3,31 +3,29 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Region;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 
 /**
@@ -36,7 +34,7 @@ import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfAttributesBatchController extends PdfBatchController {
+public class PdfAttributesBatchController extends BaseBatchPdfController {
 
     private float version;
     private Date createTime, modifyTime;
@@ -46,7 +44,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
     protected TextField titleInput, subjectInput, authorInput, creatorInput, producerInput,
             createTimeInput, modifyTimeInput, keywordInput, versionInput;
     @FXML
-    protected PasswordField userPasswordInput, userPasswordInput2, ownerPasswordInput, ownerPasswordInput2;
+    protected TextField userPasswordInput, userPasswordInput2, ownerPasswordInput, ownerPasswordInput2;
     @FXML
     protected CheckBox titleCheck, subjectCheck, keywordsCheck, creatorCheck, productorCheck,
             authorCheck, versionCheck, createTimeCheck, modifyTimeCheck,
@@ -56,6 +54,10 @@ public class PdfAttributesBatchController extends PdfBatchController {
     protected VBox protectionBox;
     @FXML
     protected Button nowCreateButton, nowModifyButton;
+    @FXML
+    protected RadioButton clearProtectionRadio, changeProtectionRadio;
+    @FXML
+    protected ToggleGroup protectionGroup;
 
     public PdfAttributesBatchController() {
         baseTitle = AppVariables.message("PDFAttributesBatch");
@@ -69,10 +71,6 @@ public class PdfAttributesBatchController extends PdfBatchController {
             tableView.getColumns().removeAll(pdfsTableController.fromColumn, pdfsTableController.toColumn);
 
             pdfsTableController.setPDFPane.getChildren().remove(pdfsTableController.fromToBox);
-
-            pdfsTableController.tableCommentsLabel.setText(message("PdfAttributesTableComments"));
-
-            FxmlControl.setTooltip(pdfsTableController.passwordInput, new Tooltip(message("UserPassword")));
 
             titleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -160,6 +158,19 @@ public class PdfAttributesBatchController extends PdfBatchController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkModifyTime();
+                }
+            });
+
+            protectionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    protectionBox.setDisable(!changeProtectionRadio.isSelected());
+                    if (!changeProtectionRadio.isSelected()) {
+                        userPasswordInput.setText("");
+                        userPasswordInput2.setText("");
+                        ownerPasswordInput.setText("");
+                        ownerPasswordInput2.setText("");
+                    }
                 }
             });
 
@@ -272,10 +283,10 @@ public class PdfAttributesBatchController extends PdfBatchController {
     public void checkUserPassword() {
         String p1 = userPasswordInput.getText();
         String p2 = userPasswordInput2.getText();
-        if (p1 == null || p1.isEmpty()) {
+        if (p1 == null || p1.isBlank()) {
             p1 = null;
         }
-        if (p2 == null || p2.isEmpty()) {
+        if (p2 == null || p2.isBlank()) {
             p2 = null;
         }
         if ((p1 == null && p2 == null) || (p1 != null && p1.equals(p2))) {
@@ -315,39 +326,31 @@ public class PdfAttributesBatchController extends PdfBatchController {
         modifyTimeInput.setText(DateTools.nowString());
     }
 
+    @FXML
+    public void clearUserPassword() {
+        userPasswordInput.setText("");
+        userPasswordInput2.setText("");
+        newUserPassword = null;
+    }
+
+    @FXML
+    public void clearOwnerPassword() {
+        ownerPasswordInput.setText("");
+        ownerPasswordInput2.setText("");
+        newOwnerPassword = null;
+    }
+
     @Override
     public boolean makeActualParameters() {
-        if (newUserPassword != null || newOwnerPassword != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(myStage.getTitle());
-            alert.setContentText(message("SureSetPasswords"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != buttonSure) {
-                return false;
-            }
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(myStage.getTitle());
-            alert.setContentText(message("SureUnsetPasswords"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != buttonSure) {
-                return false;
+        if (changeProtectionRadio.isSelected()) {
+            if (newUserPassword != null || newOwnerPassword != null) {
+                if (!FxmlControl.askSure(myStage.getTitle(), message("SureSetPasswords"))) {
+                    return false;
+                }
+            } else {
+                if (!FxmlControl.askSure(myStage.getTitle(), message("SureUnsetPasswords"))) {
+                    return false;
+                }
             }
         }
 
@@ -360,7 +363,9 @@ public class PdfAttributesBatchController extends PdfBatchController {
             countHandling(srcFile);
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
             String filePassword = rowInfo.getUserPassword();
-            try ( PDDocument pd = PDDocument.load(srcFile, filePassword, AppVariables.pdfMemUsage)) {
+            File tmpFile = FileTools.getTempFile();
+            FileTools.copyFile(srcFile, tmpFile);
+            try ( PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {
                     docInfo.setAuthor(authorInput.getText());
@@ -395,31 +400,39 @@ public class PdfAttributesBatchController extends PdfBatchController {
                     pd.setVersion(version);
                 }
 
-                AccessPermission acc = AccessPermission.getOwnerAccessPermission();
-                acc.setCanAssembleDocument(permissionAssembleCheck.isSelected());
-                acc.setCanExtractContent(permissionExtractCheck.isSelected());
-                acc.setCanExtractForAccessibility(permissionExtractCheck.isSelected());
-                acc.setCanFillInForm(permissionFillCheck.isSelected());
-                acc.setCanModify(permissionModifyCheck.isSelected());
-                acc.setCanModifyAnnotations(permissionModifyCheck.isSelected());
-                acc.setCanPrint(permissionPrintCheck.isSelected());
-                acc.setCanPrintDegraded(permissionPrintCheck.isSelected());
+                // https://stackoverflow.com/questions/63653107/pdfbox-disable-copy-paste-with-standardprotectionpolicy?r=SearchResults
+                // If a program can open a PDF for reading, that program can do anything with the PDF, no matter how restricted it is configured to be.
+                if (clearProtectionRadio.isSelected()) {
+                    pd.setAllSecurityToBeRemoved(true);
 
-                StandardProtectionPolicy policy = new StandardProtectionPolicy(newOwnerPassword, newUserPassword, acc);
-                pd.protect(policy);
-                pd.save(srcFile);
+                } else if (changeProtectionRadio.isSelected()) {
+                    AccessPermission acc = AccessPermission.getOwnerAccessPermission();
+                    acc.setCanAssembleDocument(permissionAssembleCheck.isSelected());
+                    acc.setCanExtractContent(permissionExtractCheck.isSelected());
+                    acc.setCanExtractForAccessibility(permissionExtractCheck.isSelected());
+                    acc.setCanFillInForm(permissionFillCheck.isSelected());
+                    acc.setCanModify(permissionModifyCheck.isSelected());
+                    acc.setCanModifyAnnotations(permissionModifyCheck.isSelected());
+                    acc.setCanPrint(permissionPrintCheck.isSelected());
+                    acc.setCanPrintDegraded(permissionPrintCheck.isSelected());
+
+                    StandardProtectionPolicy policy = new StandardProtectionPolicy(newOwnerPassword, newUserPassword, acc);
+                    pd.protect(policy);
+                }
+                pd.save(tmpFile);
                 pd.close();
             }
-            return message("Successful");
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            if (e.toString().contains("the password is incorrect")) {
-                return message("PasswordIncorrect");
+            if (FileTools.rename(tmpFile, srcFile, true)) {
+                return message("Successful");
             } else {
                 return message("Failed");
             }
-        }
 
+        } catch (InvalidPasswordException e) {
+            return message("PasswordIncorrect");
+        } catch (Exception e) {
+            return e.toString();
+        }
     }
 
 }

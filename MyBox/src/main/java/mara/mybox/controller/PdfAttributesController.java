@@ -1,19 +1,19 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.layout.Region;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
@@ -23,14 +23,17 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
+import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 
 /**
  * @Author Mara
@@ -48,10 +51,16 @@ public class PdfAttributesController extends BaseController {
     protected TextField titleInput, subjectInput, authorInput, creatorInput, producerInput,
             createTimeInput, modifyTimeInput, keywordInput, versionInput;
     @FXML
-    protected PasswordField userPasswordInput, userPasswordInput2, ownerPasswordInput, ownerPasswordInput2;
+    protected TextField userPasswordInput, userPasswordInput2, ownerPasswordInput, ownerPasswordInput2;
     @FXML
     protected CheckBox assembleCheck, extractCheck, modifyCheck, fillCheck, printCheck,
             viewPasswordCheck;
+    @FXML
+    protected RadioButton clearProtectionRadio, changeProtectionRadio;
+    @FXML
+    protected ToggleGroup protectionGroup;
+    @FXML
+    protected VBox protectionBox;
 
     public PdfAttributesController() {
         baseTitle = AppVariables.message("PDFAttributes");
@@ -132,6 +141,19 @@ public class PdfAttributesController extends BaseController {
                     }
                 } catch (Exception e) {
                     modifyTimeInput.setStyle(badStyle);
+                }
+            }
+        });
+
+        protectionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                protectionBox.setDisable(!changeProtectionRadio.isSelected());
+                if (!changeProtectionRadio.isSelected()) {
+                    userPasswordInput.setText("");
+                    userPasswordInput2.setText("");
+                    ownerPasswordInput.setText("");
+                    ownerPasswordInput2.setText("");
                 }
             }
         });
@@ -259,7 +281,7 @@ public class PdfAttributesController extends BaseController {
                     } catch (InvalidPasswordException e) {
                         pop = true;
                         return false;
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         error = e.toString();
                         return false;
                     }
@@ -360,26 +382,36 @@ public class PdfAttributesController extends BaseController {
     }
 
     @FXML
+    public void clearUserPassword() {
+        userPasswordInput.setText("");
+        userPasswordInput2.setText("");
+    }
+
+    @FXML
+    public void clearOwnerPassword() {
+        ownerPasswordInput.setText("");
+        ownerPasswordInput2.setText("");
+    }
+
+    @FXML
     @Override
     public void saveAction() {
         if (sourceFile == null) {
             return;
         }
-        if ((userPasswordInput.getText() != null && !userPasswordInput.getText().isEmpty())
-                || (ownerPasswordInput.getText() != null && !ownerPasswordInput.getText().isEmpty())) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(myStage.getTitle());
-            alert.setContentText(AppVariables.message("SureSetPassword"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != buttonSure) {
-                return;
+        String userPassword = userPasswordInput.getText();
+        userPassword = userPassword == null || userPassword.isBlank() ? null : userPassword;
+        String ownerPassword = ownerPasswordInput.getText();
+        ownerPassword = ownerPassword == null || ownerPassword.isBlank() ? null : ownerPassword;
+        if (changeProtectionRadio.isSelected()) {
+            if (userPassword != null || ownerPassword != null) {
+                if (!FxmlControl.askSure(myStage.getTitle(), message("SureSetPasswords"))) {
+                    return;
+                }
+            } else {
+                if (!FxmlControl.askSure(myStage.getTitle(), message("SureUnsetPasswords"))) {
+                    return;
+                }
             }
         }
 
@@ -399,9 +431,9 @@ public class PdfAttributesController extends BaseController {
         if (version > 0) {
             modify.setVersion(version);
         }
-        String userPassword = userPasswordInput.getText();
+
         modify.setUserPassword(userPassword);
-        modify.setOwnerPassword(ownerPasswordInput.getText());
+        modify.setOwnerPassword(ownerPassword);
         AccessPermission acc = AccessPermission.getOwnerAccessPermission();
         acc.setCanAssembleDocument(assembleCheck.isSelected());
         acc.setCanExtractContent(extractCheck.isSelected());
@@ -421,12 +453,12 @@ public class PdfAttributesController extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    return PdfTools.setAttributes(sourceFile, pdfInfo.getUserPassword(), modify);
+                    return setAttributes(sourceFile, pdfInfo.getUserPassword(), modify);
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    loadPdfInformation(userPassword);
+                    loadPdfInformation(modify.getUserPassword());
                     popSuccessful();
                 }
 
@@ -436,6 +468,55 @@ public class PdfAttributesController extends BaseController {
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
+        }
+    }
+
+    private boolean setAttributes(File file, String password, PdfInformation info) {
+        try {
+            if (file == null || info == null) {
+                return false;
+            }
+            File tmpFile = FileTools.getTempFile();
+            FileTools.copyFile(file, tmpFile);
+            try ( PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.pdfMemUsage)) {
+                PDDocumentInformation docInfo = doc.getDocumentInformation();
+                docInfo.setAuthor(info.getAuthor());
+                docInfo.setTitle(info.getTitle());
+                docInfo.setSubject(info.getSubject());
+                docInfo.setCreator(info.getCreator());
+                docInfo.setProducer(info.getProducer());
+                Calendar c = Calendar.getInstance();
+                if (info.getCreateTime() > 0) {
+                    c.setTimeInMillis​(info.getCreateTime());
+                    docInfo.setCreationDate(c);
+                }
+                if (info.getModifyTime() > 0) {
+                    c.setTimeInMillis​(info.getModifyTime());
+                    docInfo.setModificationDate(c);
+                }
+                docInfo.setKeywords(info.getKeywords());
+                doc.setDocumentInformation(docInfo);
+                if (info.getVersion() > 0) {
+                    doc.setVersion(info.getVersion());
+                }
+
+                if (clearProtectionRadio.isSelected()) {
+                    doc.setAllSecurityToBeRemoved(true);
+
+                } else if (changeProtectionRadio.isSelected()) {
+
+                    StandardProtectionPolicy policy = new StandardProtectionPolicy(
+                            info.getOwnerPassword(), info.getUserPassword(), info.getAccess());
+                    doc.protect(policy);
+                }
+
+                doc.save(tmpFile);
+                doc.close();
+            }
+            return FileTools.rename(tmpFile, file, true);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return false;
         }
     }
 

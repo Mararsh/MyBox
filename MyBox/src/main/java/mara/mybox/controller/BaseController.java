@@ -77,6 +77,12 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.getPopErrorColor;
+import static mara.mybox.value.AppVariables.getPopInfoColor;
+import static mara.mybox.value.AppVariables.getPopTextDuration;
+import static mara.mybox.value.AppVariables.getPopTextSize;
+import static mara.mybox.value.AppVariables.getPopTextbgColor;
+import static mara.mybox.value.AppVariables.getPopWarnColor;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.message;
@@ -204,6 +210,13 @@ public abstract class BaseController implements Initializable {
             }
             AppVariables.alarmClockController = null;
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void initBaseControls() {
+        try {
             setInterfaceStyle(AppVariables.getStyle());
             setSceneFontSize(AppVariables.sceneFontSize);
             if (thisPane != null) {
@@ -212,13 +225,6 @@ public abstract class BaseController implements Initializable {
                     keyEventsHandler(event);
                 });
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void initBaseControls() {
-        try {
 
             if (mainMenuController != null) {
                 mainMenuController.sourceExtensionFilter = sourceExtensionFilter;
@@ -428,14 +434,12 @@ public abstract class BaseController implements Initializable {
             }
 
             if (splitPane != null && leftPane != null && leftPaneControl != null) {
-                if (getUserConfigBoolean("ControlSplitPanesEntered", true)) {
-                    leftPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            controlLeftPane();
-                        }
-                    });
-                }
+                leftPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        controlLeftPaneOnMouseEnter();
+                    }
+                });
                 leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -446,14 +450,12 @@ public abstract class BaseController implements Initializable {
             }
 
             if (splitPane != null && rightPane != null && rightPaneControl != null) {
-                if (getUserConfigBoolean("ControlSplitPanesEntered", true)) {
-                    rightPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            controlRightPane();
-                        }
-                    });
-                }
+                rightPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        controlRightPaneOnMouseEnter();
+                    }
+                });
                 rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -607,7 +609,6 @@ public abstract class BaseController implements Initializable {
     public void toFront() {
         try {
             getMyStage().setIconified(false);
-            myStage.toFront();
             myStage.requestFocus();
             if (topCheck == null || !topCheck.isVisible() || topCheck.isDisabled()) {
                 return;
@@ -621,7 +622,6 @@ public abstract class BaseController implements Initializable {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        getMyStage().toFront();
                         checkAlwaysTop();
                     });
                 }
@@ -638,7 +638,7 @@ public abstract class BaseController implements Initializable {
         }
         myStage.setAlwaysOnTop(topCheck.isSelected());
         if (topCheck.isSelected()) {
-            popWarn(message("AlwaysTopWarning"), 5000);
+            popWarn(message("AlwaysTopWarning"), 6000);
             FadeTransition fade = new FadeTransition(Duration.millis(500));
             fade.setFromValue(1.0);
             fade.setToValue(0f);
@@ -769,6 +769,12 @@ public abstract class BaseController implements Initializable {
         }
     }
 
+    public void controlLeftPaneOnMouseEnter() {
+        if (getUserConfigBoolean("MousePassControlPanes", true)) {
+            controlLeftPane();
+        }
+    }
+
     @FXML
     public void controlLeftPane() {
         if (isSettingValues || splitPane == null || leftPane == null
@@ -811,6 +817,12 @@ public abstract class BaseController implements Initializable {
         setSplitDividerPositions();
         splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowLeftControl", true);
+    }
+
+    public void controlRightPaneOnMouseEnter() {
+        if (getUserConfigBoolean("MousePassControlPanes", true)) {
+            controlRightPane();
+        }
     }
 
     @FXML
@@ -1088,6 +1100,11 @@ public abstract class BaseController implements Initializable {
                     saveAction();
                 }
                 return;
+            case B:
+                if (saveAsButton != null && !saveAsButton.isDisabled()) {
+                    saveAsAction();
+                }
+                return;
             case I:
                 if (infoButton != null && !infoButton.isDisabled()) {
                     infoAction();
@@ -1356,7 +1373,7 @@ public abstract class BaseController implements Initializable {
                 p.refresh();
             }
             if (c.getMyStage() != null) {
-                c.getMyStage().toFront();
+                c.getMyStage().requestFocus();
                 c.getMyStage().setTitle(title);
             }
             return c;
@@ -2050,6 +2067,9 @@ public abstract class BaseController implements Initializable {
     //
     public File makeTargetFile(String fileName, File targetPath) {
         try {
+            if (fileName == null || targetPath == null) {
+                return null;
+            }
             String namePrefix = FileTools.namePrefix(fileName);
             String nameSuffix;
             if (targetFileSuffix != null) {
@@ -2326,22 +2346,10 @@ public abstract class BaseController implements Initializable {
     }
 
     public void clearUserSettings() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setHeaderText(AppVariables.message("ClearPersonalSettings"));
-        alert.setContentText(AppVariables.message("SureClear"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getBaseTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
         }
+
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -2403,8 +2411,8 @@ public abstract class BaseController implements Initializable {
         FxmlStage.openTarget(null, file);
     }
 
-    public boolean browseURI(URI uri) {
-        return FxmlStage.browseURI(getMyStage(), uri);
+    public void browseURI(URI uri) {
+        FxmlStage.browseURI(getMyStage(), uri);
     }
 
     @FXML
@@ -2469,23 +2477,12 @@ public abstract class BaseController implements Initializable {
                 timer = null;
             }
             if (task != null && !task.isQuit()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(AppVariables.message("TaskRunning"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonSure && task != null) {
+                if (!FxmlControl.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
+                    return false;
+                }
+                if (task != null) {
                     task.cancel();
                     task = null;
-                } else {
-                    return false;
                 }
             }
 
@@ -2606,11 +2603,7 @@ public abstract class BaseController implements Initializable {
         return popup;
     }
 
-    public void popText(String text, int delay, String color) {
-        popText(text, delay, color, "1.1em", null);
-    }
-
-    public void popText(String text, int delay, String color, String size, Region attach) {
+    public void popText(String text, int duration, String bgcolor, String color, String size, Region attach) {
         try {
             if (popup != null) {
                 popup.hide();
@@ -2618,7 +2611,7 @@ public abstract class BaseController implements Initializable {
             popup = getPopup();
             popup.setAutoFix(true);
             Label popupLabel = new Label(text);
-            popupLabel.setStyle("-fx-background-color:black;"
+            popupLabel.setStyle("-fx-background-color:" + bgcolor + ";"
                     + " -fx-text-fill: " + color + ";"
                     + " -fx-font-size: " + size + ";"
                     + " -fx-padding: 10px;"
@@ -2629,7 +2622,7 @@ public abstract class BaseController implements Initializable {
             popupLabel.setMinHeight(Region.USE_PREF_SIZE);
             popupLabel.applyCss();
 
-            if (delay > 0) {
+            if (duration > 0) {
                 if (popupTimer != null) {
                     popupTimer.cancel();
                 }
@@ -2641,7 +2634,7 @@ public abstract class BaseController implements Initializable {
                             hidePopup();
                         });
                     }
-                }, delay);
+                }, duration);
             }
 
             if (attach != null) {
@@ -2654,52 +2647,44 @@ public abstract class BaseController implements Initializable {
         }
     }
 
+    public void popInformation(String text, int duration, String size) {
+        popText(text, duration, getPopTextbgColor(), getPopInfoColor(), size, null);
+    }
+
+    public void popInformation(String text, int duration) {
+        popInformation(text, duration, getPopTextSize());
+    }
+
+    public void popInformation(String text) {
+        popInformation(text, getPopTextDuration(), getPopTextSize());
+    }
+
     public void popSuccessful() {
-        popBigInformation(message("Successful"));
+        popInformation(message("Successful"));
+    }
+
+    public void popError(String text, int duration, String size) {
+        popText(text, duration, getPopTextbgColor(), getPopErrorColor(), size, null);
+    }
+
+    public void popError(String text) {
+        popError(text, getPopTextDuration(), getPopTextSize());
     }
 
     public void popFailed() {
         popError(message("Failed"));
     }
 
-    public void popInsertSuccessful() {
-        popBigInformation(message("InsertSuccessfully"));
+    public void popWarn(String text, int duration, String size) {
+        popText(text, duration, getPopTextbgColor(), getPopWarnColor(), size, null);
     }
 
-    public void popUpdateSuccessful() {
-        popBigInformation(message("UpdateSuccessfully"));
-    }
-
-    public void popInformation(String text) {
-        popInformation(text, AppVariables.getCommentsDelay());
-    }
-
-    public void popBigInformation(String text) {
-        popInformation(text, "1.5em");
-    }
-
-    public void popInformation(String text, String size) {
-        popText(text, AppVariables.getCommentsDelay(), "white", size, bottomLabel);
-    }
-
-    public void popInformation(String text, int delay) {
-        popText(text, delay, "white");
-    }
-
-    public void popError(String text) {
-        popError(text, AppVariables.getCommentsDelay());
-    }
-
-    public void popError(String text, int delay) {
-        popText(text, delay, "red", "1.5em", null);
+    public void popWarn(String text, int duration) {
+        popWarn(text, duration, getPopTextSize());
     }
 
     public void popWarn(String text) {
-        popError(text, AppVariables.getCommentsDelay());
-    }
-
-    public void popWarn(String text, int delay) {
-        popText(text, delay, "orange", "1.5em", null);
+        popWarn(text, getPopTextDuration(), getPopTextSize());
     }
 
     public void hidePopup() {
@@ -2870,22 +2855,10 @@ public abstract class BaseController implements Initializable {
     }
 
     public void restoreCheckingSSL() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureRestoreCheckingSSL"));
-        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureRestoreCheckingSSL"))) {
             return;
         }
+
         NetworkTools.myBoxSSL();
         popSuccessful();
     }

@@ -84,8 +84,7 @@ public class ImageConvert {
         return 25.4f / dpi;
     }
 
-    public static BufferedImage convertColorType(BufferedImage bufferedImage,
-            ImageAttributes attributes) {
+    public static BufferedImage convertColorType(BufferedImage bufferedImage, ImageAttributes attributes) {
         try {
             if (bufferedImage == null || attributes == null || attributes.getColorType() == null) {
                 return bufferedImage;

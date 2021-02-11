@@ -204,14 +204,20 @@ public class ImageContrast extends PixelsOperation {
         int width = colorImage.getWidth();
         int height = colorImage.getHeight();
         int[] brightnessHistogram = new int[101];
+        int nonTransparent = 0;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int brightness = Math.round(ImageColor.getBrightness(new Color(colorImage.getRGB(x, y))) * 100);
+                int p = colorImage.getRGB(x, y);
+                if (p == 0) {                        // ignore transparent
+                    continue;
+                }
+                nonTransparent++;
+                int brightness = Math.round(ImageColor.getBrightness(new Color(p)) * 100);
                 brightnessHistogram[brightness]++;
             }
         }
 
-        float nf = 100.0f / (width * height);
+        float nf = 100.0f / nonTransparent;
         int cumulative = 0;
         int[] lookUpTable = new int[101];
         for (int i = 0; i < 101; ++i) {
@@ -222,10 +228,15 @@ public class ImageContrast extends PixelsOperation {
         BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                float[] hsb = ImageColor.getHSB(new Color(colorImage.getRGB(x, y)));
-                int brightness = Math.round(hsb[2] * 100);
-                brightness = lookUpTable[brightness];
-                target.setRGB(x, y, Color.HSBtoRGB(hsb[0], hsb[1], brightness / 100.0f));
+                int p = colorImage.getRGB(x, y);
+                if (p == 0) {
+                    target.setRGB(x, y, 0);
+                } else {
+                    float[] hsb = ImageColor.getHSB(new Color(p));
+                    int brightness = Math.round(hsb[2] * 100);
+                    brightness = lookUpTable[brightness];
+                    target.setRGB(x, y, Color.HSBtoRGB(hsb[0], hsb[1], brightness / 100.0f));
+                }
             }
         }
         return target;

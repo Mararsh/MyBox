@@ -140,7 +140,7 @@ public class GameEliminationController extends BaseController {
     @FXML
     protected Label soundFileLabel;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
 
     public GameEliminationController() {
         baseTitle = AppVariables.message("GameElimniation");
@@ -740,18 +740,7 @@ public class GameEliminationController extends BaseController {
                 }
             }
             if (countedChesses.isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getBaseTitle());
-                alert.setContentText(AppVariables.message("SureNoScore"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() != buttonSure) {
+                if (!FxmlControl.askSure(getBaseTitle(), message("SureNoScore"))) {
                     return;
                 }
             }

@@ -36,7 +36,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2019-11-13
  * @License Apache License Version 2.0
  */
-public class FilesRedundancyController extends FilesBatchController {
+public class FilesRedundancyController extends BaseBatchFileController {
 
     protected ObservableList<FileInformation> filesList;
     protected Map<String, List<FileInformation>> redundancy;

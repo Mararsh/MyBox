@@ -33,7 +33,7 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     private boolean isPercent;
 
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected ToggleGroup shadowGroup;
     @FXML

@@ -2,12 +2,9 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -21,7 +18,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.QueryCondition.DataOperation;
@@ -718,23 +714,8 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             return;
         }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClearConditions")
-                + "\n\n" + type + "\n" + title
-                + "\n\n" + sql
-                + "\n\n" + message("DataDeletedComments")
-        );
-        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureClearConditions")
+                + "\n\n" + type + "\n" + title + "\n\n" + sql + "\n\n" + message("DataDeletedComments"))) {
             return;
         }
 
@@ -788,26 +769,12 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             return;
         }
         setClearSQL();
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClearConditions")
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureClearConditions")
                 + "\n\n" + clearCondition.getTitle().replaceAll("</br>", "\n")
-                + "\n\n" + clearSQL
-                + "\n\n" + message("DataDeletedComments")
-        );
-        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+                + "\n\n" + clearSQL + "\n\n" + message("DataDeletedComments"))) {
             return;
         }
+
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -954,39 +921,22 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
     }
 
     @Override
-    public void controlHandler(KeyEvent event) {
-        if (event.isControlDown() && event.getCode() != null) {
-            switch (event.getCode()) {
-                case Q:
-                    queryData();
-                    return;
-                case E:
-                    exportData();
-                    return;
-                case R:
-                    clearAction();
-                    return;
-            }
+    public void controlAltHandler(KeyEvent event) {
+        if (event.getCode() == null) {
+            return;
         }
-        super.controlHandler(event);
-    }
-
-    @Override
-    public void altHandler(KeyEvent event) {
-        if (event.isAltDown() && event.getCode() != null) {
-            switch (event.getCode()) {
-                case Q:
-                    queryData();
-                    return;
-                case E:
-                    exportData();
-                    return;
-                case R:
-                    clearAction();
-                    return;
-            }
+        switch (event.getCode()) {
+            case Q:
+                queryData();
+                return;
+            case E:
+                exportData();
+                return;
+            case R:
+                clearAction();
+                return;
         }
-        super.altHandler(event);
+        super.controlAltHandler(event);
     }
 
     @Override

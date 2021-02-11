@@ -26,7 +26,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileCutController extends FilesBatchController {
+public class FileCutController extends BaseBatchFileController {
 
     private FileSplitType splitType;
     private long bytesNumber, filesNumber;

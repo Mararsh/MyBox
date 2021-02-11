@@ -245,7 +245,7 @@ public class ImageManufacture {
         return target;
     }
 
-    public static BufferedImage scaleImage(BufferedImage source, int width, int height) {
+    public static BufferedImage scaleImageBySize(BufferedImage source, int width, int height) {
         return scaleImage(source, width, height, -1, -1, -1, -1);
     }
 
@@ -276,13 +276,13 @@ public class ImageManufacture {
         return scaleImageByScale(source, scale, scale);
     }
 
+    public static BufferedImage scaleImageByScale(BufferedImage source, float xscale, float yscale) {
+        return scaleImageByScale(source, xscale, yscale, -1, -1, -1, -1);
+    }
+
     public static BufferedImage scaleImageByScale(BufferedImage source, float scale,
             int dither, int antiAlias, int quality, int interpolation) {
         return scaleImageByScale(source, scale, scale, dither, antiAlias, quality, interpolation);
-    }
-
-    public static BufferedImage scaleImageByScale(BufferedImage source, float xscale, float yscale) {
-        return scaleImageByScale(source, xscale, yscale, -1, -1, -1, -1);
     }
 
     public static BufferedImage scaleImageByScale(BufferedImage source, float xscale, float yscale,
@@ -350,7 +350,7 @@ public class ImageManufacture {
             finalW = wh[0];
             finalH = wh[1];
         }
-        return scaleImage(source, finalW, finalH);
+        return scaleImageBySize(source, finalW, finalH);
     }
 
     public static BufferedImage fitSize(BufferedImage source, int targetW, int targetH) {
@@ -1154,6 +1154,9 @@ public class ImageManufacture {
     }
 
     public static BufferedImage cropOutside(BufferedImage source, DoubleRectangle rectangle) {
+        if (rectangle == null) {
+            return source;
+        }
         return cropOutside(source, rectangle.getSmallX(), rectangle.getSmallY(),
                 rectangle.getBigX(), rectangle.getBigY());
     }
@@ -1222,12 +1225,15 @@ public class ImageManufacture {
 
     public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int xscale, int yscale) {
         try {
+            if (rectangle == null) {
+                return scaleImageByScale(source, xscale, yscale);
+            }
             int realXScale = xscale > 0 ? xscale : 1;
             int realYScale = yscale > 0 ? yscale : 1;
             BufferedImage bufferedImage = cropOutside(source, rectangle);
             int width = bufferedImage.getWidth() / realXScale;
             int height = bufferedImage.getHeight() / realYScale;
-            bufferedImage = scaleImage(bufferedImage, width, height);
+            bufferedImage = scaleImageBySize(bufferedImage, width, height);
             return bufferedImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1434,9 +1440,9 @@ public class ImageManufacture {
             }
 
             if (isTotalWidth) {
-                target = scaleImage(target, trueTotalWidth, (trueTotalWidth * totalHeight) / totalWidth);
+                target = scaleImageBySize(target, trueTotalWidth, (trueTotalWidth * totalHeight) / totalWidth);
             } else if (isTotalHeight) {
-                target = scaleImage(target, (trueTotalHeight * totalWidth) / totalHeight, trueTotalHeight);
+                target = scaleImageBySize(target, (trueTotalHeight * totalWidth) / totalHeight, trueTotalHeight);
             }
 
             javafx.scene.image.Image newImage = SwingFXUtils.toFXImage(target, null);

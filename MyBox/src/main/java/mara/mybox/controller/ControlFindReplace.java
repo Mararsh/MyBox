@@ -1,23 +1,18 @@
 package mara.mybox.controller;
 
 import java.text.MessageFormat;
-import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
@@ -137,32 +132,31 @@ public class ControlFindReplace extends BaseController {
     }
 
     @Override
-    public void keyEventsHandler(KeyEvent event) {
-        if (editerController == null) {
+    public void controlAltHandler(KeyEvent event) {
+        if (event.getCode() == null || editerController == null) {
             return;
         }
-        if (event.getCode() != null
-                && (event.isControlDown() || event.isAltDown())) {
-            switch (event.getCode()) {
-                case DIGIT1:
-                    findPreviousAction();
-                    event.consume();
-                    return;
-                case DIGIT2:
-                    findNextAction();
-                    event.consume();
-                    return;
-                case Q:
-                case H:
-                    replaceAction();
-                    event.consume();
-                    return;
-                case W:
-                    replaceAllAction();
-                    event.consume();
-                    return;
-            }
+        switch (event.getCode()) {
+            case DIGIT1:
+                findPreviousAction();
+                event.consume();
+                return;
+            case DIGIT2:
+                findNextAction();
+                event.consume();
+                return;
+            case Q:
+            case H:
+                replaceAction();
+                event.consume();
+                return;
+            case W:
+                replaceAllAction();
+                event.consume();
+                return;
         }
+
+        super.controlAltHandler(event);
     }
 
     protected void checkFindInput(String string) {
@@ -317,18 +311,7 @@ public class ControlFindReplace extends BaseController {
         }
 
         if (multiplePages && operation == Operation.ReplaceAll) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVariables.message("SureReplaceAll"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != buttonSure) {
+            if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureReplaceAll"))) {
                 return false;
             }
         }

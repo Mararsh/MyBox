@@ -62,158 +62,161 @@ public class ImageFileReaders {
     }
 
     public static List<BufferedImage> readFramesByWidth(String format, String filename, int width) {
-        try {
-            if (filename == null) {
-                return null;
-            }
-            if (format == null) {
-                format = FileTools.getFileSuffix(filename).toLowerCase();
-            }
-            List<BufferedImage> frames = new ArrayList<>();
-            if ("ico".equals(format) || "icon".equals(format)) {
+        if (filename == null) {
+            return null;
+        }
+        if (format == null) {
+            format = FileTools.getFileSuffix(filename).toLowerCase();
+        }
+        List<BufferedImage> frames = new ArrayList<>();
+        if ("ico".equals(format) || "icon".equals(format)) {
+            try {
                 List<BufferedImage> imageSrc = ICODecoder.read(new File(filename));
                 for (BufferedImage frame : imageSrc) {
                     frames.add(ImageManufacture.scaleImageWidthKeep(frame, width));
                 }
-                return frames;
-            }
-            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-                if (!readers.hasNext()) {
-                    return frames;
-                }
-                ImageReader reader = readers.next();
-                reader.setInput(in, false);
-                int index = 0;
-                ImageReadParam param = reader.getDefaultReadParam();
-                while (true) {
-                    int imageWidth = reader.getWidth(index);
-                    int scale = imageWidth / width;
-                    scale = scale > 1 ? scale : 1;
-                    param.setSourceSubsampling(scale, scale, 0, 0);
-                    BufferedImage frame;
-                    try {
-                        frame = reader.read(index, param);
-                    } catch (Exception e) {
-                        frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
-                    }
-                    if (frame != null) {
-                        frame = ImageManufacture.scaleImageWidthKeep(frame, width);
-                        frames.add(frame);
-                        index++;
-                    } else {
-                        break;
-                    }
-                }
-                reader.dispose();
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
             }
             return frames;
+        }
+        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+            if (!readers.hasNext()) {
+                return frames;
+            }
+            ImageReader reader = readers.next();
+            reader.setInput(in, false);
+            int index = 0;
+            ImageReadParam param = reader.getDefaultReadParam();
+            while (true) {
+                int imageWidth = reader.getWidth(index);
+                int scale = imageWidth / width;
+                scale = scale > 1 ? scale : 1;
+                param.setSourceSubsampling(scale, scale, 0, 0);
+                BufferedImage frame;
+                try {
+                    frame = reader.read(index, param);
+                } catch (Exception e) {
+                    frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
+                }
+                if (frame != null) {
+                    frame = ImageManufacture.scaleImageWidthKeep(frame, width);
+                    frames.add(frame);
+                    index++;
+                } else {
+                    break;
+                }
+            }
+            reader.dispose();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
+        return frames;
     }
 
     public static List<BufferedImage> readFramesByHeight(String format, String filename, int height) {
-        try {
-            if (filename == null) {
-                return null;
-            }
-            if (format == null) {
-                format = FileTools.getFileSuffix(filename).toLowerCase();
-            }
-            List<BufferedImage> frames = new ArrayList<>();
-            if ("ico".equals(format) || "icon".equals(format)) {
+        if (filename == null) {
+            return null;
+        }
+        if (format == null) {
+            format = FileTools.getFileSuffix(filename).toLowerCase();
+        }
+        List<BufferedImage> frames = new ArrayList<>();
+        if ("ico".equals(format) || "icon".equals(format)) {
+            try {
                 List<BufferedImage> imageSrc = ICODecoder.read(new File(filename));
                 for (BufferedImage frame : imageSrc) {
                     frames.add(ImageManufacture.scaleImageHeightKeep(frame, height));
                 }
-                return frames;
-            }
-            ImageReader reader = getReader(format);
-            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-                reader.setInput(in, false);
-                int index = 0;
-                ImageReadParam param = reader.getDefaultReadParam();
-                while (true) {
-                    int imageHeight = reader.getHeight(index);
-                    int scale = imageHeight / height;
-                    scale = scale > 1 ? scale : 1;
-                    param.setSourceSubsampling(scale, scale, 0, 0);
-                    BufferedImage frame;
-                    try {
-                        frame = reader.read(index, param);
-                    } catch (Exception e) {
-                        frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
-                    }
-                    if (frame != null) {
-                        frame = ImageManufacture.scaleImageHeightKeep(frame, height);
-                        frames.add(frame);
-                        index++;
-                    } else {
-                        break;
-                    }
-                }
-                reader.dispose();
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
             }
             return frames;
+        }
+        ImageReader reader = getReader(format);
+        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            reader.setInput(in, false);
+            int index = 0;
+            ImageReadParam param = reader.getDefaultReadParam();
+            while (true) {
+                int imageHeight = reader.getHeight(index);
+                int scale = imageHeight / height;
+                scale = scale > 1 ? scale : 1;
+                param.setSourceSubsampling(scale, scale, 0, 0);
+                BufferedImage frame;
+                try {
+                    frame = reader.read(index, param);
+                } catch (Exception e) {
+                    frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
+                }
+                if (frame != null) {
+                    frame = ImageManufacture.scaleImageHeightKeep(frame, height);
+                    frames.add(frame);
+                    index++;
+                } else {
+                    break;
+                }
+            }
+            reader.dispose();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
+        return frames;
     }
 
     public static List<BufferedImage> readFramesByScale(String format, String filename,
             Rectangle bounds, int xscale, int yscale) {
-        try {
-            if (filename == null) {
-                return null;
-            }
-            if (format == null) {
-                format = FileTools.getFileSuffix(filename).toLowerCase();
-            }
-            int realXScale = xscale > 0 ? xscale : 1;
-            int realYScale = yscale > 0 ? yscale : 1;
-            List<BufferedImage> images = new ArrayList<>();
-            if ("ico".equals(format) || "icon".equals(format)) {
+        if (filename == null) {
+            return null;
+        }
+        if (format == null) {
+            format = FileTools.getFileSuffix(filename).toLowerCase();
+        }
+        int realXScale = xscale > 0 ? xscale : 1;
+        int realYScale = yscale > 0 ? yscale : 1;
+        List<BufferedImage> images = new ArrayList<>();
+        if ("ico".equals(format) || "icon".equals(format)) {
+            try {
                 List<BufferedImage> imageSrc = ICODecoder.read(new File(filename));
                 for (BufferedImage image : imageSrc) {
                     int width = image.getWidth() / realXScale;
                     int height = image.getHeight() / realYScale;
-                    images.add(ImageManufacture.scaleImage(image, width, height));
+                    images.add(ImageManufacture.scaleImageBySize(image, width, height));
                 }
-                return images;
-            }
-            ImageReader reader = getReader(format);
-            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-                reader.setInput(in, false);
-                int index = 0;
-                ImageReadParam param = reader.getDefaultReadParam();
-                while (true) {
-                    BufferedImage frame;
-                    try {
-                        param.setSourceSubsampling(realXScale, realYScale, 0, 0);
-                        if (bounds != null) {
-                            param.setSourceRegion(bounds);
-                        }
-                        frame = reader.read(index, param);
-                    } catch (Exception e) {
-                        frame = readBrokenImage(e, new File(filename), index, bounds, realXScale, realYScale);
-                    }
-                    if (frame != null) {
-                        images.add(frame);
-                        index++;
-                    } else {
-                        break;
-                    }
-                }
-                reader.dispose();
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
             }
             return images;
+        }
+        ImageReader reader = getReader(format);
+        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            reader.setInput(in, false);
+            int index = 0;
+            ImageReadParam param = reader.getDefaultReadParam();
+            while (true) {
+                BufferedImage frame;
+                try {
+                    param.setSourceSubsampling(realXScale, realYScale, 0, 0);
+                    if (bounds != null) {
+                        param.setSourceRegion(bounds);
+                    }
+                    frame = reader.read(index, param);
+                } catch (Exception e) {
+                    frame = readBrokenImage(e, new File(filename), index, bounds, realXScale, realYScale);
+                }
+                if (frame != null) {
+                    images.add(frame);
+                    index++;
+                } else {
+                    break;
+                }
+            }
+            reader.dispose();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
+        return images;
     }
 
     public static List<BufferedImage> readFramesByScale(String format, String filename, int xscale, int yscale) {
@@ -236,93 +239,89 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFrameByWidth(String format, String filename, int index, int width) {
-        try {
-            if (filename == null) {
-                return null;
-            }
-            if (format == null) {
-                format = FileTools.getFileSuffix(filename).toLowerCase();
-            }
-            BufferedImage frame;
-            if ("ico".equals(format) || "icon".equals(format)) {
-                frame = readIcon(new File(filename), index);
-                frame = ImageManufacture.scaleImageWidthKeep(frame, width);
-                return frame;
-            }
-            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-                if (!readers.hasNext()) {
-                    return null;
-                }
-                ImageReader reader = readers.next();
-                reader.setInput(in, false);
-                ImageReadParam param = reader.getDefaultReadParam();
-                int imageWidth = reader.getWidth(index);
-                int scale = imageWidth / width;
-                scale = scale > 1 ? scale : 1;
-                if (scale > 1) {
-                    param.setSourceSubsampling(scale, scale, 0, 0);
-                }
-                try {
-                    frame = reader.read(index, param);
-                } catch (Exception e) {
-                    frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
-                }
-                if (frame != null) {
-                    frame = ImageManufacture.scaleImageWidthKeep(frame, width);
-                }
-                reader.dispose();
-            }
-            return frame;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (filename == null) {
             return null;
         }
+        if (format == null) {
+            format = FileTools.getFileSuffix(filename).toLowerCase();
+        }
+        BufferedImage frame = null;
+        if ("ico".equals(format) || "icon".equals(format)) {
+            frame = readIcon(new File(filename), index);
+            frame = ImageManufacture.scaleImageWidthKeep(frame, width);
+            return frame;
+        }
+        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+            if (!readers.hasNext()) {
+                return null;
+            }
+            ImageReader reader = readers.next();
+            reader.setInput(in, false);
+            ImageReadParam param = reader.getDefaultReadParam();
+            int imageWidth = reader.getWidth(index);
+            int requriedWidth = width <= 0 ? imageWidth : width;
+            int scale = imageWidth / requriedWidth;
+            scale = scale > 1 ? scale : 1;
+            if (scale > 1) {
+                param.setSourceSubsampling(scale, scale, 0, 0);
+            }
+            try {
+                frame = reader.read(index, param);
+            } catch (Exception e) {
+                frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
+            }
+            if (frame != null) {
+                frame = ImageManufacture.scaleImageWidthKeep(frame, requriedWidth);
+            }
+            reader.dispose();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return frame;
     }
 
     public static BufferedImage readFrameByHeight(String format, String filename, int index, int height) {
-        try {
-            if (filename == null) {
-                return null;
-            }
-            if (format == null) {
-                format = FileTools.getFileSuffix(filename).toLowerCase();
-            }
-            if ("ico".equals(format) || "icon".equals(format)) {
-                BufferedImage frame = readIcon(new File(filename), index);
-                frame = ImageManufacture.scaleImageHeightKeep(frame, height);
-                return frame;
-            }
-            BufferedImage frame = null;
-            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-                if (!readers.hasNext()) {
-                    return null;
-                }
-                ImageReader reader = readers.next();
-                reader.setInput(in, false);
-                ImageReadParam param = reader.getDefaultReadParam();
-                int imageHeight = reader.getHeight(index);
-                int scale = imageHeight / height;
-                scale = scale > 1 ? scale : 1;
-                if (scale > 1) {
-                    param.setSourceSubsampling(scale, scale, 0, 0);
-                }
-                try {
-                    frame = reader.read(index, param);
-                } catch (Exception e) {
-                    frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
-                }
-                if (frame != null) {
-                    frame = ImageManufacture.scaleImageHeightKeep(frame, height);
-                }
-                reader.dispose();
-            }
-            return frame;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (filename == null) {
             return null;
         }
+        if (format == null) {
+            format = FileTools.getFileSuffix(filename).toLowerCase();
+        }
+        BufferedImage frame = null;
+        if ("ico".equals(format) || "icon".equals(format)) {
+            frame = readIcon(new File(filename), index);
+            frame = ImageManufacture.scaleImageHeightKeep(frame, height);
+            return frame;
+        }
+        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+            if (!readers.hasNext()) {
+                return null;
+            }
+            ImageReader reader = readers.next();
+            reader.setInput(in, false);
+            ImageReadParam param = reader.getDefaultReadParam();
+            int imageHeight = reader.getHeight(index);
+            int requriedHeight = height <= 0 ? imageHeight : height;
+            int scale = imageHeight / requriedHeight;
+            scale = scale > 1 ? scale : 1;
+            if (scale > 1) {
+                param.setSourceSubsampling(scale, scale, 0, 0);
+            }
+            try {
+                frame = reader.read(index, param);
+            } catch (Exception e) {
+                frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
+            }
+            if (frame != null) {
+                frame = ImageManufacture.scaleImageHeightKeep(frame, requriedHeight);
+            }
+            reader.dispose();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return frame;
     }
 
     public static BufferedImage readImageByWidth(String format, String filename, int width) {
@@ -343,52 +342,54 @@ public class ImageFileReaders {
 
     public static BufferedImage readFrame(String format, String filename, int index,
             Rectangle rectangle, int xscale, int yscale) {
-        try {
-            if (filename == null) {
-                return null;
-            }
-            if (format == null) {
-                format = FileTools.getFileSuffix(filename).toLowerCase();
-            }
-            int realXScale = xscale > 0 ? xscale : 1;
-            int realYScale = yscale > 0 ? yscale : 1;
-            if ("ico".equals(format) || "icon".equals(format)) {
-                BufferedImage bufferedImage = readIcon(new File(filename), index);
-                bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(rectangle), xscale, yscale);
-                return bufferedImage;
-            }
-            BufferedImage frame;
-            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-                if (!readers.hasNext()) {
-                    return null;
-                }
-                ImageReader reader = readers.next();
-                reader.setInput(in, false);
-                ImageReadParam param = reader.getDefaultReadParam();
-
-                try {
-                    param.setSourceSubsampling(realXScale, realYScale, 0, 0);
-                    if (rectangle != null) {
-                        param.setSourceRegion(rectangle);
-                    }
-                    frame = reader.read(index, param);
-                } catch (Exception e) {
-                    frame = readBrokenImage(e, new File(filename), index, rectangle, realXScale, realYScale);
-                }
-                reader.dispose();
-            }
-            return frame;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (filename == null) {
             return null;
         }
+        if (format == null) {
+            format = FileTools.getFileSuffix(filename).toLowerCase();
+        }
+        int realXScale = xscale > 0 ? xscale : 1;
+        int realYScale = yscale > 0 ? yscale : 1;
+        BufferedImage frame = null;
+        if ("ico".equals(format) || "icon".equals(format)) {
+            frame = readIcon(new File(filename), index);
+            if (rectangle == null) {
+                frame = ImageManufacture.scaleImageByScale(frame, xscale, yscale);
+            } else {
+                frame = ImageManufacture.sample(frame, new DoubleRectangle(rectangle), xscale, yscale);
+            }
+            return frame;
+        }
+        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+            if (!readers.hasNext()) {
+                return null;
+            }
+            ImageReader reader = readers.next();
+            reader.setInput(in, false);
+            ImageReadParam param = reader.getDefaultReadParam();
+
+            try {
+                param.setSourceSubsampling(realXScale, realYScale, 0, 0);
+                if (rectangle != null) {
+                    param.setSourceRegion(rectangle);
+                }
+                frame = reader.read(index, param);
+            } catch (Exception e) {
+                frame = readBrokenImage(e, new File(filename), index, rectangle, realXScale, realYScale);
+            }
+            reader.dispose();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return frame;
     }
 
     public static BufferedImage readFrame(String format, String filename, int x1, int y1, int x2, int y2) {
         if (x1 >= x2 || y1 >= y2 || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0) {
             return null;
         }
+//        MyBoxLog.console(x1 + " " + y1 + " " + x2 + " " + y2);
         return readFrame(format, filename, 0, new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1), 1, 1);
     }
 
@@ -424,7 +425,11 @@ public class ImageFileReaders {
         Broken image
      */
     public static BufferedImage readBrokenImage(Exception e, File file) {
-        return readBrokenImage(e, file, 0, null, 1, 1);
+        return readBrokenImage(e, file, 0);
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, int index) {
+        return readBrokenImage(e, file, index, null, 1, 1);
     }
 
 //    public static BufferedImage readBrokenImage(Exception e, File file, int scale) {
@@ -439,7 +444,7 @@ public class ImageFileReaders {
             }
             image = readBrokenImage(e, file, finfo.getImageInformation(), index, bounds, xscale, yscale);
         } catch (Exception ex) {
-//            MyBoxLog.error(ex.toString());
+            MyBoxLog.error(ex.toString());
         }
         return image;
     }
@@ -455,6 +460,7 @@ public class ImageFileReaders {
         }
         BufferedImage image = null;
         String format = imageInfo.getImageFormat();
+        MyBoxLog.error(bounds != null);
         switch (format) {
             case "gif":
                 // Read Gif with JDK api normally. When broken, use DhyanB's API.
@@ -1022,22 +1028,19 @@ public class ImageFileReaders {
     }
 
     public static IIOMetadata getIIOMetadata(File file) {
-        try {
-            IIOMetadata iioMetaData = null;
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-                if (readers.hasNext()) {
-                    ImageReader reader = readers.next();
-                    reader.setInput(iis, false);
-                    iioMetaData = reader.getImageMetadata(0);
-                    reader.dispose();
-                }
+        IIOMetadata iioMetaData = null;
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            if (readers.hasNext()) {
+                ImageReader reader = readers.next();
+                reader.setInput(iis, false);
+                iioMetaData = reader.getImageMetadata(0);
+                reader.dispose();
             }
-            return iioMetaData;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
+        return iioMetaData;
     }
 
 }

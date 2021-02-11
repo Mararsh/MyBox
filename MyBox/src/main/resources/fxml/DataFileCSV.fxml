@@ -64,35 +64,35 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </FlowPane>
-                                          <VBox fx:id="fileOptionsBox" spacing="5.0">
-                                             <children>
+                                                        <VBox fx:id="fileOptionsBox" spacing="5.0">
+                                                            <children>
                                                                 <Label fx:id="loadedLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
-                                                <Button fx:id="editTextFileButton" mnemonicParsing="false" onAction="#editTextFile">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconEdit.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Separator prefWidth="200.0" />
-                                                              <VBox minHeight="-Infinity" spacing="5.0">
-                                                                  <children>
-                                                                      <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
-                                                                      <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                                          <graphic>
-                                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                  <image>
-                                                                                      <Image url="@../buttons/iconRefresh.png" />
-                                                                                  </image>
-                                                                              </ImageView>
-                                                                          </graphic>
-                                                                      </Button>
-                                                                  </children>
-                                                              </VBox>
-                                             </children>
-                                          </VBox>
+                                                                <Button fx:id="editTextFileButton" mnemonicParsing="false" onAction="#editTextFile">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconEdit.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Separator prefWidth="200.0" />
+                                                                <VBox minHeight="-Infinity" spacing="5.0">
+                                                                    <children>
+                                                                        <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
+                                                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconRefresh.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                        </VBox>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -228,15 +228,15 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                      <Button fx:id="clearDefButton" layoutX="519.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearDefAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/iconClear.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
+                                                                        <Button fx:id="clearDefButton" layoutX="519.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearDefAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconClear.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
                                                                         <Button fx:id="recoverDefButton" layoutX="242.0" layoutY="10.0" mnemonicParsing="false" onAction="#recoverDefAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -371,6 +371,15 @@ License:    Apache License Version 2.0
                         <Label minWidth="-Infinity" text="%Page" />
                         <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="100.0" />
                         <Label fx:id="pageLabel" minWidth="-Infinity" />
+                        <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                            <graphic> 
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconGo.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

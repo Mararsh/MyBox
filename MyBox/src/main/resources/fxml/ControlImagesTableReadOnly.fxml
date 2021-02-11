@@ -52,6 +52,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+                <Button fx:id="editFileButton" mnemonicParsing="false" onAction="#editFileAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconEdit.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="metaButton" mnemonicParsing="false" onAction="#metaAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

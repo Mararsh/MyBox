@@ -32,7 +32,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     private boolean isPercent;
 
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected ComboBox<String> arcBox, perBox;
     @FXML

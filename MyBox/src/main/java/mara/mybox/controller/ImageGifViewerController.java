@@ -91,7 +91,7 @@ public class ImageGifViewerController extends ImageViewerController {
                         String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(fromInput.getText());
-                        if (v >= 0 && v <= totalNumber - 1 && v <= toIndex) {
+                        if (v > 0 && v <= totalNumber) {
                             fromIndex = v;
                             fromInput.setStyle(null);
                         } else {
@@ -109,7 +109,7 @@ public class ImageGifViewerController extends ImageViewerController {
                         String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(toInput.getText());
-                        if (v >= 0 && v <= totalNumber - 1 && fromIndex <= v) {
+                        if (v > 0 && v <= totalNumber && fromIndex <= v) {
                             toIndex = v;
                             toInput.setStyle(null);
                         } else {
@@ -136,9 +136,7 @@ public class ImageGifViewerController extends ImageViewerController {
                     }
                     try {
                         int v = Integer.valueOf(newValue);
-                        if (v >= 0) {
-                            showGifFrame(v);
-                        }
+                        showGifFrame(v);
                     } catch (Exception e) {
                     }
                 }
@@ -174,12 +172,13 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     @Override
-    public void loadImage(final File file, final boolean onlyInformation,
-            final int inLoadWidth, final int inFrameIndex, boolean inCareFrames) {
+    public void loadImage(File file, boolean onlyInformation, int inLoadWidth, int inFrameIndex) {
         try {
             if (timer != null) {
                 timer.cancel();
             }
+            fromInput.setText("");
+            toInput.setText("");
             sourceFile = file;
             final String fileName = file.getPath();
             synchronized (this) {
@@ -233,10 +232,6 @@ public class ImageGifViewerController extends ImageViewerController {
                     @Override
                     protected void whenSucceeded() {
                         afterImageLoaded();
-                        isSettingValues = true;
-                        fromInput.setText("0");
-                        toInput.setText((totalNumber - 1) + "");
-                        isSettingValues = false;
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -259,14 +254,16 @@ public class ImageGifViewerController extends ImageViewerController {
             if (images == null || images.length == 0) {
                 return false;
             }
-            showGifImage(0);
+            showGifImage(1);
             List<String> frames = new ArrayList<>();
-            for (int i = 0; i < images.length; ++i) {
+            for (int i = 1; i <= images.length; ++i) {
                 frames.add(i + "");
             }
             frameBox.getItems().clear();
             frameBox.getItems().addAll(frames);
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+            fromInput.setText("1");
+            toInput.setText(totalNumber + "");
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -351,7 +348,7 @@ public class ImageGifViewerController extends ImageViewerController {
 
                     @Override
                     protected boolean handle() {
-                        filenames = ImageGifFile.extractGifImages(sourceFile, file, fromIndex, toIndex);
+                        filenames = ImageGifFile.extractGifImages(sourceFile, file, fromIndex - 1, toIndex - 1);
                         return filenames != null;
                     }
 
@@ -374,7 +371,18 @@ public class ImageGifViewerController extends ImageViewerController {
     @FXML
     public void editAction(ActionEvent event) {
         try {
-            final ImageGifEditerController controller
+            ImageManufactureController controller
+                    = (ImageManufactureController) openStage(CommonValues.ImageManufactureFxml);
+            controller.selectSourceFile(sourceFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void editFrames(ActionEvent event) {
+        try {
+            ImageGifEditerController controller
                     = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);
             controller.selectSourceFile(sourceFile);
         } catch (Exception e) {
@@ -424,24 +432,28 @@ public class ImageGifViewerController extends ImageViewerController {
         }
     }
 
+    // index is 1-based
     protected void setCurrentFrame() {
         try {
-            if (currentIndex > images.length - 1) {
-                currentIndex -= images.length;
-            } else if (currentIndex < 0) {
-                currentIndex += images.length;
+            if (currentIndex > images.length) {
+                currentIndex = 1;
+            } else if (currentIndex < 1) {
+                currentIndex = images.length;
             }
-            currentDelay = (int) (delays[currentIndex] * 10 / speed);
-            imageView.setImage(images[currentIndex]);
+            currentDelay = (int) (delays[currentIndex - 1] * 10 / speed);
+            imageView.setImage(images[currentIndex - 1]);
             refinePane();
             promptLabel.setText(AppVariables.message("TotalFrames") + ": " + images.length + "  "
                     + AppVariables.message("CurrentFrame") + ": " + currentIndex + "  "
                     + AppVariables.message("DurationMilliseconds") + ": " + currentDelay + "  "
-                    + AppVariables.message("Size") + ": " + (int) images[currentIndex].getWidth()
-                    + "*" + (int) images[currentIndex].getHeight());
+                    + AppVariables.message("Size") + ": " + (int) images[currentIndex - 1].getWidth()
+                    + "*" + (int) images[currentIndex - 1].getHeight());
             isSettingValues = true;
             frameBox.getSelectionModel().select(currentIndex + "");
             isSettingValues = false;
+
+            getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
+                    + " - " + message("Frame") + " " + currentIndex);
 
             currentIndex++;
         } catch (Exception e) {

@@ -1404,49 +1404,83 @@ public abstract class BaseSheetController extends BaseController {
         String p = TextTools.delimiterText(delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
+        int lines = 0;
         for (int j = 0; j < rowsNumber; ++j) {
             if (!rowsCheck[j].isSelected()) {
                 continue;
             }
+            String row = null;
             for (int i = 0; i < colsNumber; ++i) {
-                s += value(j, i) + p;
+                if (row == null) {
+                    row = value(j, i);
+                } else {
+                    row += p + value(j, i);
+                }
             }
-            s += "\n";
+            s += row + "\n";
         }
         if (s.isBlank()) {
             popError(message("NoData"));
         } else if (FxmlControl.copyToSystemClipboard(s)) {
-            popInformation(message("CopiedToSystemClipboard"));
+            popInformation(message("CopiedToSystemClipboard") + "\n"
+                    + message("RowsNumber") + ":" + lines + "\n"
+                    + message("ColumnsNumber") + ":" + colsNumber);
         }
     }
 
     public void copySelectedCols() {
+        int lines = 0, cols = 0;
+        for (CheckBox c : colsCheck) {
+            if (c.isSelected()) {
+                cols++;
+            }
+        }
+        if (cols < 1) {
+            popError(message("NoData"));
+            return;
+        }
         String s = "";
         String p = TextTools.delimiterText(delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
         for (int j = 0; j < rowsNumber; ++j) {
-            boolean has = false;
+            String row = null;
             for (int i = 0; i < colsNumber; ++i) {
                 if (!colsCheck[i].isSelected()) {
                     continue;
                 }
-                has = true;
-                s += value(j, i) + p;
+                if (row == null) {
+                    row = value(j, i);
+                } else {
+                    row += p + value(j, i);
+                }
             }
-            if (!has) {
+            if (row == null) {
                 break;
             }
-            s += "\n";
+            s += row + "\n";
+            lines++;
         }
         if (s.isBlank()) {
             popError(message("NoData"));
         } else if (FxmlControl.copyToSystemClipboard(s)) {
-            popInformation(message("CopiedToSystemClipboard"));
+            popInformation(message("CopiedToSystemClipboard") + "\n"
+                    + message("RowsNumber") + ":" + lines + "\n"
+                    + message("ColumnsNumber") + ":" + cols);
         }
     }
 
     public void copySelectedRowsCols() {
+        int lines = 0, cols = 0;
+        for (CheckBox c : colsCheck) {
+            if (c.isSelected()) {
+                cols++;
+            }
+        }
+        if (cols < 1) {
+            popError(message("NoData"));
+            return;
+        }
         String s = "";
         String p = TextTools.delimiterText(delimiter);
         int rowsNumber = inputs.length;
@@ -1455,23 +1489,29 @@ public abstract class BaseSheetController extends BaseController {
             if (!rowsCheck[j].isSelected()) {
                 continue;
             }
-            boolean has = false;
+            String row = null;
             for (int i = 0; i < colsNumber; ++i) {
                 if (!colsCheck[i].isSelected()) {
                     continue;
                 }
-                has = true;
-                s += value(j, i) + p;
+                if (row == null) {
+                    row = value(j, i);
+                } else {
+                    row += p + value(j, i);
+                }
             }
-            if (!has) {
+            if (row == null) {
                 break;
             }
-            s += "\n";
+            s += row + "\n";
+            lines++;
         }
         if (s.isBlank()) {
             popError(message("NoData"));
         } else if (FxmlControl.copyToSystemClipboard(s)) {
-            popInformation(message("CopiedToSystemClipboard"));
+            popInformation(message("CopiedToSystemClipboard") + "\n"
+                    + message("RowsNumber") + ":" + lines + "\n"
+                    + message("ColumnsNumber") + ":" + cols);
         }
     }
 

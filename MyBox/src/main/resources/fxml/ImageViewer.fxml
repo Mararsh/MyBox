@@ -61,7 +61,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </HBox>
-                                                        <HBox fx:id="widthHBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
                                                                 <Label text="%LoadWidth" />
                                                                 <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
@@ -69,6 +69,31 @@ License:    Apache License Version 2.0
                                                         </HBox>
                                                         <VBox fx:id="fileBox" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
+                                                                <FlowPane fx:id="frameSelectorPane" alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="10.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%Frame" />
+                                                                        <ComboBox fx:id="frameSelector" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
+                                                                        <Label fx:id="framesLabel" layoutX="10.0" layoutY="19.0" />
+                                                                        <Button fx:id="okFrameButton" mnemonicParsing="false" onAction="#loadFrame">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconOK.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="viewFramesButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#viewFrames">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconView.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
                                                                 <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
                                                                     <children>
                                                                         <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
@@ -116,11 +141,12 @@ License:    Apache License Version 2.0
                                                                 </FlowPane>
                                                             </children>
                                                         </VBox>
+                                                        <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="viewPane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%View">
+                                        <TitledPane fx:id="viewPane" expanded="false" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%View">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
@@ -155,13 +181,19 @@ License:    Apache License Version 2.0
                                                                 </CheckBox>
                                                             </children>
                                                         </FlowPane>
+                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                            <children>
+                                                                <Label text="%ZoomStep" />
+                                                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
+                                                            </children>
+                                                        </FlowPane>
                                                         <CheckBox fx:id="copyToSystemClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyImageToSystemClipboard" wrapText="true" />
                                                         <CheckBox fx:id="contextMenuCheck" layoutX="32.0" layoutY="74.0" mnemonicParsing="false" selected="true" text="%ContextMenu" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="editPane" layoutX="10.0" layoutY="433.0" maxWidth="1.7976931348623157E308" text="%Edit">
+                                        <TitledPane fx:id="editPane" expanded="false" layoutX="10.0" layoutY="433.0" maxWidth="1.7976931348623157E308" text="%Edit">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
@@ -232,15 +264,25 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="saveAsPane" expanded="false" maxWidth="1.7976931348623157E308" text="%SaveAs">
+                                        <TitledPane fx:id="saveAsPane" maxWidth="1.7976931348623157E308" text="%SaveAs">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
-                                                    <children>
-                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                <VBox fx:id="saveAsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                                                    <children> 
+                                                        <FlowPane fx:id="saveFramesPane" hgap="5.0" vgap="5.0">
                                                             <children>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <RadioButton fx:id="saveAllFramesRadio" mnemonicParsing="false" onAction="#saveAllFramesSelected" selected="true" text="%AllFrames">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="framesSaveGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="saveCurrentFramesRadio" mnemonicParsing="false" onAction="#saveCurrentFramesSelected" text="%CurrentFrame" toggleGroup="$framesSaveGroup" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <VBox fx:id="saveFormatsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <FlowPane fx:id="formatsPane1" hgap="5.0" vgap="5.0">
                                                                     <children>
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="png">
+                                                                        <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="png">
                                                                             <toggleGroup>
                                                                                 <ToggleGroup fx:id="fileTypeGroup" />
                                                                             </toggleGroup>
@@ -248,19 +290,19 @@ License:    Apache License Version 2.0
                                                                         <RadioButton mnemonicParsing="false" text="jpg" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="formatsPane2" hgap="5.0" vgap="5.0">
                                                                     <children>
-                                                                        <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="gif" toggleGroup="$fileTypeGroup" />
+                                                                        <RadioButton fx:id="tifRadio" mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
+                                                                        <RadioButton fx:id="gifRadio" mnemonicParsing="false" text="gif" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="formatsPane3" hgap="5.0" vgap="5.0">
                                                                     <children>
                                                                         <RadioButton mnemonicParsing="false" text="bmp" toggleGroup="$fileTypeGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="formatsPane4" hgap="5.0" vgap="5.0">
                                                                     <children>
                                                                         <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
@@ -296,7 +338,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="browsePane" maxWidth="1.7976931348623157E308" text="%Browse">
+                                        <TitledPane fx:id="browsePane" expanded="false" maxWidth="1.7976931348623157E308" text="%Browse">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
@@ -533,6 +575,6 @@ License:    Apache License Version 2.0
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER" />
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" />
     </bottom>
 </BorderPane>

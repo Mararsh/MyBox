@@ -25,7 +25,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfConvertImagesBatchController extends PdfBatchController {
+public class PdfConvertImagesBatchController extends BaseBatchPdfController {
 
     protected ImageAttributes attributes;
     protected PDFRenderer renderer;

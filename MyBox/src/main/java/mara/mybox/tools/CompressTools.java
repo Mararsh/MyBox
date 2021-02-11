@@ -18,7 +18,6 @@ import java.util.Set;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -29,6 +28,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  *
@@ -125,6 +125,30 @@ public class CompressTools {
         return archiveExtension().keySet();
     }
 
+    public static String decompressedName(File srcFile) {
+        return decompressedName(srcFile, detectCompressor(srcFile));
+    }
+
+    public static String decompressedName(File srcFile, String compressor) {
+        try {
+            if (srcFile == null || compressor == null) {
+                return null;
+            }
+            String ext = CompressTools.extensionByCompressor(compressor);
+            if (ext == null) {
+                return null;
+            }
+            String fname = srcFile.getName();
+            if (fname.toLowerCase().endsWith("." + ext)) {
+                return fname.substring(0, fname.length() - ext.length() - 1);
+            } else {
+                return fname + "." + ext;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String detectCompressor(File srcFile) {
         if (srcFile == null) {
             return null;
@@ -133,22 +157,22 @@ public class CompressTools {
         return detectCompressor(srcFile, compressorByExtension(ext));
     }
 
-    public static String detectCompressor(File srcFile, String name) {
-        if (srcFile == null || "none".equals(name)) {
+    public static String detectCompressor(File srcFile, String extIn) {
+        if (srcFile == null || "none".equals(extIn)) {
             return null;
         }
         String compressor = null;
-        String namein = (name != null) ? name.toLowerCase() : null;
+        String ext = (extIn != null) ? extIn.toLowerCase() : null;
         try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
             CompressorStreamFactory cFactory = new CompressorStreamFactory();
-            if (namein != null && cFactory.getInputStreamCompressorNames().contains(namein)) {
-                try ( CompressorInputStream in = cFactory.createCompressorInputStream(namein, fileIn)) {
-                    compressor = namein;
+            if (ext != null && cFactory.getInputStreamCompressorNames().contains(ext)) {
+                try ( CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
+                    compressor = ext;
                 } catch (Exception e) {
-                    compressor = detectCompressor(fileIn, namein);
+                    compressor = detectCompressor(fileIn, ext);
                 }
             } else {
-                compressor = detectCompressor(fileIn, namein);
+                compressor = detectCompressor(fileIn, ext);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e, srcFile.getAbsolutePath());
@@ -156,16 +180,16 @@ public class CompressTools {
         return compressor;
     }
 
-    public static String detectCompressor(BufferedInputStream fileIn, String name) {
+    public static String detectCompressor(BufferedInputStream fileIn, String extIn) {
         String compressor = null;
         try {
             compressor = CompressorStreamFactory.detect(fileIn);
         } catch (Exception ex) {
-            if ("lz4".equals(name)) {
+            if ("lz4".equals(extIn)) {
                 try ( CompressorInputStream in = new BlockLZ4CompressorInputStream(fileIn)) {
                     compressor = "lz4-block";
                 } catch (Exception e) {
-                    MyBoxLog.debug(e, name);
+                    MyBoxLog.debug(e, extIn);
                 }
             }
         }
@@ -177,19 +201,20 @@ public class CompressTools {
         return CompressTools.decompress(srcFile, CompressTools.compressorByExtension(ext), targetFile);
     }
 
-    public static Map<String, Object> decompress(File srcFile, String nameIn, File targetFile) {
+    public static Map<String, Object> decompress(File srcFile, String extIn, File targetFile) {
+        Map<String, Object> decompress = null;
         try {
             File decompressedFile = null;
             String compressor = null;
             boolean detect = false;
-            String name = (nameIn != null) ? nameIn.toLowerCase() : null;
+            String ext = (extIn != null) ? extIn.toLowerCase() : null;
             try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
                 CompressorStreamFactory cFactory = new CompressorStreamFactory();
-                if (name != null && cFactory.getInputStreamCompressorNames().contains(name)) {
-                    try ( CompressorInputStream in = cFactory.createCompressorInputStream(name, fileIn)) {
+                if (ext != null && cFactory.getInputStreamCompressorNames().contains(ext)) {
+                    try ( CompressorInputStream in = cFactory.createCompressorInputStream(ext, fileIn)) {
                         decompressedFile = decompress(in, targetFile);
                         if (decompressedFile != null) {
-                            compressor = name;
+                            compressor = ext;
                             detect = false;
                         }
                     } catch (Exception e) {
@@ -226,40 +251,36 @@ public class CompressTools {
                     }
                 }
             }
-            if (compressor != null && decompressedFile != null) {
-                Map<String, Object> decompress = new HashMap<>();
+            if (compressor != null && decompressedFile != null && decompressedFile.exists()) {
+                decompress = new HashMap<>();
                 decompress.put("compressor", compressor);
                 decompress.put("decompressedFile", decompressedFile);
                 decompress.put("detect", detect);
-                return decompress;
-            } else {
-                return null;
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            return null;
         }
+        return decompress;
     }
 
     public static File decompress(CompressorInputStream compressorInputStream, File targetFile) {
-        try {
-            if (compressorInputStream == null) {
-                return null;
-            }
-            File file = (targetFile == null) ? FileTools.getTempFile() : targetFile;
-            FileTools.delete(file);
-            try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
-                final byte[] buf = new byte[CommonValues.IOBufferLength];
-                int len;
-                while ((len = compressorInputStream.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-            return file;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (compressorInputStream == null) {
             return null;
         }
+        File file = FileTools.getTempFile();
+        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            IOUtils.copy(compressorInputStream, out);
+        } catch (Exception e) {
+            return null;
+        }
+        if (targetFile == null) {
+            return file;
+        } else if (FileTools.rename(file, targetFile)) {
+            return targetFile;
+        } else {
+            return null;
+        }
+
     }
 
     public static String detectArchiver(File srcFile) {
@@ -270,33 +291,33 @@ public class CompressTools {
         return detectArchiver(srcFile, ext);
     }
 
-    public static String detectArchiver(File srcFile, String nameIn) {
-        if (srcFile == null || "none".equals(nameIn)) {
+    public static String detectArchiver(File srcFile, String extIn) {
+        if (srcFile == null || "none".equals(extIn)) {
             return null;
         }
         String archiver = null;
-        String name = (nameIn != null) ? nameIn.toLowerCase() : null;
+        String ext = (extIn != null) ? extIn.toLowerCase() : null;
         try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
             ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
-            if (name != null && aFactory.getInputStreamArchiveNames().contains(name)) {
-                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(name, fileIn)) {
-                    archiver = name;
+            if (ext != null && aFactory.getInputStreamArchiveNames().contains(ext)) {
+                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(ext, fileIn)) {
+                    archiver = ext;
                 } catch (Exception e) {
                     try {
                         archiver = ArchiveStreamFactory.detect(fileIn);
                     } catch (Exception ex) {
-                        MyBoxLog.debug(ex, nameIn);
+                        MyBoxLog.debug(ex, extIn);
                     }
                 }
             } else {
                 try {
                     archiver = ArchiveStreamFactory.detect(fileIn);
                 } catch (Exception ex) {
-                    MyBoxLog.debug(ex, nameIn);
+                    MyBoxLog.debug(ex, extIn);
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e, nameIn);
+            MyBoxLog.debug(e, extIn);
         }
         return archiver;
     }
@@ -309,74 +330,53 @@ public class CompressTools {
         return readEntries(srcFile, ext, encoding);
     }
 
-    public static Map<String, Object> readEntries(File srcFile, String nameIn, String encodingIn) {
+    public static Map<String, Object> readEntries(File srcFile, String extIn, String encodingIn) {
+        Map<String, Object> unarchive = new HashMap<>();
         try {
-            if (srcFile == null || "none".equals(nameIn)) {
-                return null;
-            }
-            Map<String, Object> unarchive = null;
-            String name = (nameIn != null) ? nameIn.toLowerCase() : null;
-            if (ArchiveStreamFactory.SEVEN_Z.equals(name)) {
-                return readEntries7z(srcFile);
-            } else if (ArchiveStreamFactory.ZIP.equals(name)) {
-                return readEntriesZip(srcFile);
-            }
             String encoding = (encodingIn != null) ? encodingIn
                     : AppVariables.getUserConfigValue("FilesUnarchiveEncoding", Charset.defaultCharset().name());
-            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
-                ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
-                if (name != null && aFactory.getInputStreamArchiveNames().contains(name)) {
-                    try ( ArchiveInputStream in = aFactory.createArchiveInputStream(name, fileIn, encoding)) {
-                        List<FileInformation> entires = readEntries(in);
-                        String archiver = name;
-                        if (entires != null && !entires.isEmpty()) {
-                            unarchive = new HashMap<>();
-                            unarchive.put("archiver", archiver);
-                            unarchive.put("entries", entires);
-                        }
-                    } catch (Exception e) {
-                        unarchive = readEntries(srcFile, aFactory, fileIn, encoding);
-                    }
-                } else {
-                    unarchive = readEntries(srcFile, aFactory, fileIn, encoding);
-                }
-            }
-            return unarchive;
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static Map<String, Object> readEntries(
-            File srcFile, ArchiveStreamFactory aFactory,
-            BufferedInputStream fileIn, String encoding) {
-        try {
-            if (aFactory == null || fileIn == null) {
+            if (srcFile == null || "none".equals(extIn) || encoding == null) {
                 return null;
             }
-            Map<String, Object> unarchive = null;
-            String detected = ArchiveStreamFactory.detect(fileIn);
-            if (ArchiveStreamFactory.SEVEN_Z.equals(detected)) {
-                unarchive = readEntries7z(srcFile);
-            } else if (ArchiveStreamFactory.ZIP.equals(detected)) {
-                unarchive = readEntriesZip(srcFile);
-            } else {
-                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(detected, fileIn, encoding)) {
-                    List<FileInformation> entires = readEntries(in);
-                    String archiver = detected;
-                    if (entires != null && !entires.isEmpty()) {
-                        unarchive = new HashMap<>();
-                        unarchive.put("archiver", archiver);
-                        unarchive.put("entries", entires);
+            String ext = extIn;
+            if (ArchiveStreamFactory.SEVEN_Z.equals(ext)) {
+                return readEntries7z(srcFile, encoding);
+            } else if (ArchiveStreamFactory.ZIP.equals(ext)) {
+                return readEntriesZip(srcFile, encoding);
+            }
+            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile));) {
+                if (ext == null) {
+                    ext = ArchiveStreamFactory.detect(fileIn);
+                }
+                if (ext != null && !ArchiveStreamFactory.SEVEN_Z.equals(ext)
+                        && !ArchiveStreamFactory.ZIP.equals(ext)) {
+                    ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
+                    if (aFactory.getInputStreamArchiveNames().contains(ext)) {
+                        try ( ArchiveInputStream in = aFactory.createArchiveInputStream(ext, fileIn, encoding)) {
+                            List<FileInformation> entires = readEntries(in);
+                            if (entires != null && !entires.isEmpty()) {
+                                unarchive.put("archiver", ext);
+                                unarchive.put("entries", entires);
+                            }
+                        } catch (Exception e) {
+                            unarchive.put("error", e.toString());
+                        }
                     }
                 }
+            } catch (Exception e) {
+                unarchive.put("error", e.toString());
             }
-            return unarchive;
+            if (ext != null && unarchive.get("entries") == null) {
+                if (ArchiveStreamFactory.SEVEN_Z.equals(ext)) {
+                    return readEntries7z(srcFile, encoding);
+                } else if (ArchiveStreamFactory.ZIP.equals(ext)) {
+                    return readEntriesZip(srcFile, encoding);
+                }
+            }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return null;
+            unarchive.put("error", e.toString());
         }
+        return unarchive;
     }
 
     public static List<FileInformation> readEntries(ArchiveInputStream archiveInputStream) {
@@ -402,71 +402,53 @@ public class CompressTools {
                     MyBoxLog.debug(e.toString());
                 }
             }
-            return entries;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return entries;
     }
 
-    public static Map<String, Object> readEntriesZip(File srcFile) {
-        try {
-            if (srcFile == null) {
-                return null;
+    public static Map<String, Object> readEntriesZip(File srcFile, String encoding) {
+        Map<String, Object> unarchive = new HashMap<>();
+        try ( ZipFile zipFile = new ZipFile(srcFile, encoding)) {
+            List<FileInformation> fileEntries = new ArrayList();
+            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
+                FileInformation file = new FileInformation();
+                file.setFileName(entry.getName());
+                file.setModifyTime(entry.getLastModifiedDate().getTime());
+                file.setFileSize(entry.getSize());
+                file.setFileType(entry.isDirectory() ? "dir" : "file");
+                fileEntries.add(file);
             }
-
-            Map<String, Object> unarchive;
-            try ( ZipFile zipFile = new ZipFile(srcFile)) {
-
-                List<FileInformation> fileEntries = new ArrayList();
-                Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-                while (entries.hasMoreElements()) {
-                    ZipArchiveEntry entry = entries.nextElement();
-                    FileInformation file = new FileInformation();
-                    file.setFileName(entry.getName());
-                    file.setModifyTime(entry.getLastModifiedDate().getTime());
-                    file.setFileSize(entry.getSize());
-                    file.setFileType(entry.isDirectory() ? "dir" : "file");
-                    fileEntries.add(file);
-                }
-                unarchive = new HashMap<>();
-                unarchive.put("archiver", ArchiveStreamFactory.ZIP);
-                unarchive.put("entries", fileEntries);
-            }
-            return unarchive;
+            unarchive.put("archiver", ArchiveStreamFactory.ZIP);
+            unarchive.put("entries", fileEntries);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return null;
+            unarchive.put("error", e.toString());
         }
+        return unarchive;
     }
 
-    public static Map<String, Object> readEntries7z(File srcFile) {
-        try {
-            if (srcFile == null) {
-                return null;
+    public static Map<String, Object> readEntries7z(File srcFile, String encoding) {
+        Map<String, Object> unarchive = new HashMap<>();
+        try ( SevenZFile sevenZFile = new SevenZFile(srcFile)) {
+            SevenZArchiveEntry entry;
+            List<FileInformation> entries = new ArrayList();
+            while ((entry = sevenZFile.getNextEntry()) != null) {
+                FileInformation file = new FileInformation();
+                file.setFileName(entry.getName());
+//                file.setModifyTime(entry.getLastModifiedDate().getTime());
+//                file.setFileSize(entry.getSize());
+//                file.setFileType(entry.isDirectory() ? "dir" : "file");
+                entries.add(file);
             }
-            List<FileInformation> entries;
-            Map<String, Object> unarchive;
-            try ( SevenZFile sevenZFile = new SevenZFile(srcFile)) {
-                SevenZArchiveEntry entry;
-                entries = new ArrayList();
-                while ((entry = sevenZFile.getNextEntry()) != null) {
-                    FileInformation file = new FileInformation();
-                    file.setFileName(entry.getName());
-                    file.setModifyTime(entry.getLastModifiedDate().getTime());
-                    file.setFileSize(entry.getSize());
-                    file.setFileType(entry.isDirectory() ? "dir" : "file");
-                    entries.add(file);
-                }
-                unarchive = new HashMap<>();
-                unarchive.put("archiver", ArchiveStreamFactory.SEVEN_Z);
-                unarchive.put("entries", entries);
-            }
-            return unarchive;
+            unarchive.put("archiver", ArchiveStreamFactory.SEVEN_Z);
+            unarchive.put("entries", entries);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return null;
+            unarchive.put("error", e.toString());
         }
+        return unarchive;
     }
 
 }

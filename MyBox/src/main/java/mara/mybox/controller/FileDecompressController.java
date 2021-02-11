@@ -60,33 +60,28 @@ public class FileDecompressController extends BaseController {
                 return;
             }
             task = new SingletonTask<Void>() {
-                File decompressFile;
+                File decompressedFile;
                 String archiver;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        Map<String, Object> decompressedResults = null;
-                        String filename = sourceFile.getName();
-                        String suffix = CompressTools.extensionByCompressor(compressor);
-                        if (suffix != null && filename.toLowerCase().endsWith("." + suffix)) {
-                            File dFile = makeTargetFile(filename.substring(0, filename.length() - suffix.length() - 1), targetPath);
-                            if (dFile == null) {
-                                return true;
-                            }
-                            decompressedResults = CompressTools.decompress(sourceFile, compressor, dFile);
+                        decompressedFile = makeTargetFile(CompressTools.decompressedName(sourceFile, compressor), targetPath);
+                        if (decompressedFile == null) {
+                            return true;
                         }
+                        Map<String, Object> decompressedResults = CompressTools.decompress(sourceFile, compressor, decompressedFile);
                         if (decompressedResults == null) {
                             return false;
                         }
-                        decompressFile = (File) decompressedResults.get("decompressedFile");
-                        if (decompressFile == null || !decompressFile.exists()) {
+                        decompressedFile = (File) decompressedResults.get("decompressedFile");
+                        if (!decompressedFile.exists()) {
                             return false;
                         }
                         if (archiverChoice == null || "auto".equals(archiverChoice)) {
-                            archiver = CompressTools.detectArchiver(decompressFile);
+                            archiver = CompressTools.detectArchiver(decompressedFile);
                         } else {
-                            archiver = CompressTools.detectArchiver(decompressFile, archiverChoice);
+                            archiver = CompressTools.detectArchiver(decompressedFile, archiverChoice);
                         }
                         return true;
                     } catch (Exception e) {
@@ -97,16 +92,16 @@ public class FileDecompressController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (decompressFile == null || !decompressFile.exists()) {
+                    if (decompressedFile == null || !decompressedFile.exists()) {
                         popFailed();
                         return;
                     }
                     if (archiver != null) {
                         FileUnarchiveController controller
                                 = (FileUnarchiveController) openStage(CommonValues.FileUnarchiveFxml);
-                        controller.loadFile(decompressFile, archiver);
+                        controller.loadFile(decompressedFile, archiver);
                     } else {
-                        File path = decompressFile.getParentFile();
+                        File path = decompressedFile.getParentFile();
                         browseURI(path.toURI());
                         recordFileOpened(path);
                     }

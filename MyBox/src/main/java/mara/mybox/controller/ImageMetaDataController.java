@@ -91,7 +91,7 @@ public class ImageMetaDataController extends BaseController {
                         @Override
                         public void run() {
                             Platform.runLater(() -> {
-                                myStage.toFront();
+                                myStage.requestFocus();
                                 metaDataInput.home();
                                 metaDataInput.requestFocus();
                             });

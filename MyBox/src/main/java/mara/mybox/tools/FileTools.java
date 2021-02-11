@@ -93,7 +93,7 @@ public class FileTools {
         String fname = filename;
         int pos = fname.lastIndexOf(File.separator);
         if (pos >= 0) {
-            fname = fname.substring(pos + 1);
+            fname = (pos < fname.length() - 1) ? fname.substring(pos + 1) : "";
         }
         return fname;
     }
@@ -119,17 +119,13 @@ public class FileTools {
         int pos = file.lastIndexOf(File.separator);
         if (pos >= 0) {
             path = file.substring(0, pos + 1);
-            name = file.substring(pos + 1);
+            name = (pos < file.length() - 1) ? file.substring(pos + 1) : "";
         } else {
             path = "";
             name = file;
         }
         pos = name.lastIndexOf('.');
-        if (pos >= 0) {
-            return path + name.substring(0, pos);
-        } else {
-            return path + name;
-        }
+        return pos >= 0 ? path + name.substring(0, pos) : path + name;
     }
 
     public static String getFileSuffix(File file) {
@@ -144,16 +140,9 @@ public class FileTools {
         if (file == null || file.endsWith(File.separator)) {
             return null;
         }
-        if (file.endsWith(".")) {
-            return "";
-        }
         String name = getName(file);
         int pos = name.lastIndexOf('.');
-        if (pos >= 0) {
-            return name.substring(pos + 1);
-        } else {
-            return "";
-        }
+        return (pos >= 0 && pos < name.length() - 1) ? name.substring(pos + 1) : "";
     }
 
     public static String replaceFileSuffix(String file, String newSuffix) {
@@ -164,7 +153,7 @@ public class FileTools {
         int pos = file.lastIndexOf(File.separator);
         if (pos >= 0) {
             path = file.substring(0, pos + 1);
-            name = file.substring(pos + 1);
+            name = pos < file.length() - 1 ? file.substring(pos + 1) : "";
         } else {
             path = "";
             name = file;
@@ -189,7 +178,7 @@ public class FileTools {
         int pos = file.lastIndexOf(File.separator);
         if (pos >= 0) {
             path = file.substring(0, pos + 1);
-            name = file.substring(pos + 1);
+            name = pos < file.length() - 1 ? file.substring(pos + 1) : "";
         } else {
             path = "";
             name = file;
@@ -657,8 +646,15 @@ public class FileTools {
     }
 
     public static boolean rename(File sourceFile, File targetFile) {
+        return rename(sourceFile, targetFile, false);
+    }
+
+    public static boolean rename(File sourceFile, File targetFile, boolean noEmpty) {
         try {
             if (sourceFile == null || !sourceFile.exists() || targetFile == null) {
+                return false;
+            }
+            if (noEmpty && sourceFile.length() == 0) {
                 return false;
             }
             if (!delete(targetFile)) {

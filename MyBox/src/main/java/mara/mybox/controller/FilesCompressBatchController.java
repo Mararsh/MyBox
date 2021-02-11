@@ -37,7 +37,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * @License Apache License Version 2.0
  */
 // http://commons.apache.org/proper/commons-compress/examples.html
-public class FilesCompressBatchController extends FilesBatchController {
+public class FilesCompressBatchController extends BaseBatchFileController {
 
     protected String compressor, extension;
     protected SevenZMethod sevenCompress;

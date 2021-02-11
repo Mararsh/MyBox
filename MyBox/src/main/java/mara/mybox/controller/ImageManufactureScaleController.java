@@ -46,7 +46,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     protected int keepRatioType;
 
     @FXML
-    protected ToggleGroup scaleGroup, keepGroup;
+    protected ToggleGroup scaleGroup, keepGroup, interpolationGroup, ditherGroup, antiAliasGroup, qualityGroup;
     @FXML
     protected VBox setBox, pixelBox, keepBox, ratioBox, hintsBox;
     @FXML

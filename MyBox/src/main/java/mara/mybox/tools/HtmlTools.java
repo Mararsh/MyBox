@@ -154,8 +154,11 @@ public class HtmlTools {
         }
         String urlPath = url.getPath();
         int pos = urlPath.lastIndexOf("/");
-        String file = pos < 0 ? urlPath : urlPath.substring(pos + 1);
-        return file;
+        if (pos >= 0) {
+            return pos < urlPath.length() - 1 ? urlPath.substring(pos + 1) : null;
+        } else {
+            return urlPath;
+        }
     }
 
     public static String filePrefix(URL url) {
@@ -529,7 +532,8 @@ public class HtmlTools {
                 connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
                 connection.connect();
                 File tmpFile = FileTools.getTempFile();
-                try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream()); final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
+                        final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                     byte[] buf = new byte[CommonValues.IOBufferLength];
                     int len;
                     while ((len = inStream.read(buf)) > 0) {
@@ -566,7 +570,8 @@ public class HtmlTools {
             connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
             connection.connect();
             File tmpFile = FileTools.getTempFile();
-            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
                 while ((len = inStream.read(buf)) > 0) {
@@ -1038,7 +1043,9 @@ public class HtmlTools {
         if (file == null || !file.exists()) {
             return false;
         }
-        try (final Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login); final PreparedStatement filenameQeury = conn.prepareStatement(TableDownloadHistory.FilenameQeury); final PreparedStatement urlQuery = conn.prepareStatement(TableDownloadHistory.UrlQeury)) {
+        try (final Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login);
+                final PreparedStatement filenameQeury = conn.prepareStatement(TableDownloadHistory.FilenameQeury);
+                final PreparedStatement urlQuery = conn.prepareStatement(TableDownloadHistory.UrlQeury)) {
             return relinkPage(conn, filenameQeury, urlQuery, file, null);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1069,7 +1076,8 @@ public class HtmlTools {
             List<Link> links = new ArrayList<>();
             File tmpFile = FileTools.getTempFile();
             Charset charset = FileTools.charset(file);
-            try (final BufferedReader reader = new BufferedReader(new FileReader(file, charset)); final BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset))) {
+            try (final BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                    final BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     links.clear();

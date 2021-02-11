@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,9 +14,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -36,20 +33,18 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableFloatMatrix;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -501,19 +496,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVariables.message("SureDelete"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureDelete"))) {
             return;
         }
         synchronized (this) {
@@ -552,19 +535,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (tableData.isEmpty()) {
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVariables.message("SureDelete"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureDelete"))) {
             return;
         }
         synchronized (this) {

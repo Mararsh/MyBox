@@ -204,12 +204,12 @@ public class ControlImageConverterOptions extends BaseController {
         FxmlControl.setEditorNormal(qualitySelector);
         FxmlControl.setEditorNormal(icoWidthSelector);
         if ("ico".equals(format)) {
-            thisPane.getChildren().clear();
-            thisPane.getChildren().addAll(formatBox, icoPane);
+            thisPane.getChildren().remove(1, thisPane.getChildren().size());
+            thisPane.getChildren().addAll(icoPane);
             return;
         } else {
-            thisPane.getChildren().clear();
-            thisPane.getChildren().addAll(formatBox, colorspaceBox, alphaPane);
+            thisPane.getChildren().remove(1, thisPane.getChildren().size());
+            thisPane.getChildren().addAll(colorspaceBox, alphaPane);
             if (includeDpi) {
                 thisPane.getChildren().add(dpiPane);
             }

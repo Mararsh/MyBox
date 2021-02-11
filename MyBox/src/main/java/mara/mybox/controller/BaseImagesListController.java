@@ -15,10 +15,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -115,7 +117,7 @@ public abstract class BaseImagesListController extends ImageViewerController {
     }
 
     @Override
-    public void sourceFileChanged(final File file) {
+    public void sourceFileChanged(File file) {
         try {
             if (!checkSaving()) {
                 return;
@@ -172,7 +174,7 @@ public abstract class BaseImagesListController extends ImageViewerController {
     }
 
     @Override
-    public void updateLabelTitle() {
+    public void updateLabelsTitle() {
         try {
             if (getMyStage() == null) {
                 return;
@@ -246,24 +248,11 @@ public abstract class BaseImagesListController extends ImageViewerController {
             return;
         }
         if (tableController.hasSampled()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVariables.message("SureSampled"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSure) {
-                saveFileDo(outFile);
+            if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureSampled"))) {
+                return;
             }
-        } else {
-            saveFileDo(outFile);
         }
+        saveFileDo(outFile);
     }
 
     public void saveFileDo(final File outFile) {
@@ -298,6 +287,36 @@ public abstract class BaseImagesListController extends ImageViewerController {
     public void loadFiles(List<File> files) {
         tableController.tableData.clear();
         tableController.addFiles(0, files);
+    }
+
+    @FXML
+    public void viewAction() {
+        try {
+            if (sourceFile != null) {
+                final ImageFramesViewerController controller
+                        = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
+                controller.selectSourceFile(sourceFile);
+            } else {
+                viewCheck.setSelected(true);
+                saveAsAction();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void editAction() {
+        try {
+            if (sourceFile == null) {
+                return;
+            }
+            ImageManufactureController controller
+                    = (ImageManufactureController) openStage(CommonValues.ImageManufactureFxml);
+            controller.selectSourceFile(sourceFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override

@@ -154,7 +154,7 @@ public class FxmlImageManufacture {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageManufacture.scaleImage(source, width, height);
+        BufferedImage target = ImageManufacture.scaleImageBySize(source, width, height);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -490,11 +490,11 @@ public class FxmlImageManufacture {
                 PixelsOperation pixelsOperation = PixelsOperation.create(srcImage,
                         scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
                 pixelsOperation.setColorPara1(ImageColor.converColor(bgColor));
-                Image exclueImage = pixelsOperation.operateFxImage();
+                Image excludedImage = pixelsOperation.operateFxImage();
                 if (cutMargins) {
-                    return cutMarginsByColor(exclueImage, bgColor, 0, true, true, true, true);
+                    return cutMarginsByColor(excludedImage, bgColor, 0, true, true, true, true);
                 } else {
-                    return exclueImage;
+                    return excludedImage;
                 }
             }
         } catch (Exception e) {
@@ -966,14 +966,14 @@ public class FxmlImageManufacture {
     }
 
     public static Image blendImages(Image foreImage, Image backImage,
-            int x, int y, ImagesBlendMode blendMode, float opacity) {
+            int x, int y, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (foreImage == null || backImage == null || blendMode == null) {
             return null;
         }
         BufferedImage source1 = SwingFXUtils.fromFXImage(foreImage, null);
         BufferedImage source2 = SwingFXUtils.fromFXImage(backImage, null);
         BufferedImage target = ImageBlend.blendImages(source1, source2,
-                x, y, blendMode, opacity);
+                x, y, blendMode, opacity, orderReversed);
         if (target == null) {
             target = source1;
         }

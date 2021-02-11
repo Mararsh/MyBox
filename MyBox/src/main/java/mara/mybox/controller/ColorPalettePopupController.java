@@ -27,7 +27,7 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ColorPalettePopupController extends BaseController {
 
-    protected ColorSetController setController;
+    protected ColorSet setController;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
     protected double rectSize;
@@ -53,7 +53,7 @@ public class ColorPalettePopupController extends BaseController {
         setController.keyEventsHandler(event);
     }
 
-    public void load(ColorSetController parent, List<ColorData> colors) {
+    public void load(ColorSet parent, List<ColorData> colors) {
         try {
             thisPane.setStyle(" -fx-background-color: white;");
             FxmlControl.refreshStyle(thisPane);

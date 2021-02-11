@@ -25,7 +25,7 @@ import mara.mybox.value.AppVariables;
  */
 public class TableImageHistory extends DerbyBase {
 
-    private static final int Default_Max_Histories = 20;
+    public static final int Default_Max_Histories = 20;
 
     public TableImageHistory() {
         Table_Name = "image_history";
@@ -49,19 +49,22 @@ public class TableImageHistory extends DerbyBase {
                 + " )";
     }
 
-    public static List<ImageHistory> read(String image) {
+    public static List<ImageHistory> read(String filename) {
         List<ImageHistory> records = new ArrayList<>();
-        if (image == null || image.trim().isEmpty()) {
+        if (filename == null || filename.trim().isEmpty()) {
             return records;
         }
         int max = AppVariables.getUserConfigInt("MaxImageHistories", Default_Max_Histories);
+        if (max <= 0) {
+            max = TableImageHistory.Default_Max_Histories;
+        }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = " SELECT * FROM image_history WHERE image_location='" + image + "' ORDER BY operation_time DESC";
+            String sql = " SELECT * FROM image_history WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     ImageHistory his = new ImageHistory();
-                    his.setImage(image);
+                    his.setImage(filename);
                     his.setHistoryLocation(results.getString("history_location"));
                     his.setUpdateType(results.getString("update_type"));
                     his.setObjectType(results.getString("object_type"));
@@ -78,14 +81,14 @@ public class TableImageHistory extends DerbyBase {
                 String hisname = records.get(i).getHistoryLocation();
                 File hisFile = new File(hisname);
                 if (!hisFile.exists()) {
-                    deleteRecord(conn, image, hisname);
+                    deleteRecord(conn, filename, hisname);
                     continue;
                 }
                 valid.add(records.get(i));
             }
             if (valid.size() > max) {
                 for (int i = max; i < valid.size(); ++i) {
-                    deleteRecord(conn, image, valid.get(i).getHistoryLocation());
+                    deleteRecord(conn, filename, valid.get(i).getHistoryLocation());
                 }
                 return valid.subList(0, max);
             }

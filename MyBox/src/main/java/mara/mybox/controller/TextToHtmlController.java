@@ -17,7 +17,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2020-10-24
  * @License Apache License Version 2.0
  */
-public class TextToHtmlController extends FilesBatchController {
+public class TextToHtmlController extends BaseBatchFileController {
 
     @FXML
     protected TextArea headArea;

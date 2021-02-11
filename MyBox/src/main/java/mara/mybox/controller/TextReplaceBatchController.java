@@ -20,7 +20,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-11-4
  * @License Apache License Version 2.0
  */
-public class TextReplaceBatchController extends FilesBatchController {
+public class TextReplaceBatchController extends BaseBatchFileController {
 
     protected FindReplaceFile replace;
 

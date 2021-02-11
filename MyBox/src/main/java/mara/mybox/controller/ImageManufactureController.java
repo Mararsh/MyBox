@@ -12,7 +12,6 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -55,6 +54,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageHistory;
 import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.ImageScope;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -71,10 +71,9 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageManufactureController extends ImageViewerController {
 
-    protected SimpleBooleanProperty imageLoaded, imageUpdated;
+    protected SimpleBooleanProperty imageLoaded;
     protected String imageHistoriesPath;
-    protected int newWidth, newHeight, maxEditHistories;
-    protected SimpleIntegerProperty historyIndex;
+    protected int newWidth, newHeight, maxEditHistories, historyIndex;
     protected ChangeListener<Number> mainDividerListener;
     protected ImageOperation operation;
 
@@ -102,11 +101,11 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ImageManufactureScopeController scopeController;
     @FXML
-    protected Button clearHistoriesButton, deleteHistoriesButton, okHistoryButton, okHistoriesSizeButton;
+    protected Button clearHistoriesButton, deleteHistoriesButton, useHistoryButton, okHistoriesSizeButton;
     @FXML
     protected ListView<ImageHistory> historiesList;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected Label scopeLabel;
     @FXML
@@ -126,32 +125,8 @@ public class ImageManufactureController extends ImageViewerController {
             operationsController.imageView = imageView;
 
             imageLoaded = new SimpleBooleanProperty(false);
-            imageUpdated = new SimpleBooleanProperty(false);
-            historyIndex = new SimpleIntegerProperty(-1);
-            if (imageHistoriesPath == null) {
-                imageHistoriesPath = AppVariables.getImageHisPath();
-            }
-
-            imageUpdated.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    if (sourceFile != null) {
-                        String title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
-                        if (imageInformation != null) {
-                            if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
-                                title += " - " + message("Image") + " " + imageInformation.getIndex();
-                            }
-                            if (imageInformation.isIsScaled()) {
-                                title += " - " + message("Scaled");
-                            }
-                        }
-                        if (imageUpdated.get()) {
-                            title += "  " + "*";
-                        }
-                        getMyStage().setTitle(title);
-                    }
-                }
-            });
+            historyIndex = -1;
+            imageHistoriesPath = AppVariables.getImageHisPath();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -236,23 +211,28 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             historiesPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
+            recordHistoriesCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "RecordHistories", true));
+            checkRecordHistoriesStatus();
             recordHistoriesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     checkRecordHistoriesStatus();
                 }
             });
-            recordHistoriesCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "RecordHistories", true));
-            checkRecordHistoriesStatus();
 
+            maxEditHistories = AppVariables.getUserConfigInt("MaxImageHistories", TableImageHistory.Default_Max_Histories);
+            if (maxEditHistories <= 0) {
+                maxEditHistories = TableImageHistory.Default_Max_Histories;
+            }
+            maxHistoriesInput.setText(maxEditHistories + "");
             maxHistoriesInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(maxHistoriesInput.getText());
                         if (v >= 0) {
                             maxEditHistories = v;
+                            AppVariables.setUserConfigInt("MaxImageHistories", v);
                             maxHistoriesInput.setStyle(null);
                             okHistoriesSizeButton.setDisable(false);
                         } else {
@@ -265,8 +245,6 @@ public class ImageManufactureController extends ImageViewerController {
                     }
                 }
             });
-            maxEditHistories = AppVariables.getUserConfigInt("MaxImageHistories", 20);
-            maxHistoriesInput.setText(maxEditHistories + "");
 
             historiesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             historiesList.setCellFactory(new Callback<ListView<ImageHistory>, ListCell<ImageHistory>>() {
@@ -290,7 +268,7 @@ public class ImageManufactureController extends ImageViewerController {
                                 return;
                             }
                             String s = historyDescription(item);
-                            if (getIndex() == historyIndex.get()) {
+                            if (getIndex() == historyIndex) {
                                 setStyle("-fx-text-fill: #961c1c; -fx-font-weight: bolder;");
                                 s = "** " + message("CurrentImage") + " " + s;
                             } else {
@@ -312,19 +290,9 @@ public class ImageManufactureController extends ImageViewerController {
             });
 
             deleteHistoriesButton.disableProperty().bind(historiesList.getSelectionModel().selectedItemProperty().isNull());
-            okHistoryButton.disableProperty().bind(deleteHistoriesButton.disableProperty());
+            useHistoryButton.disableProperty().bind(deleteHistoriesButton.disableProperty());
 
-            historyIndex.addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
-                    if (newVal == null) {
-                        undoButton.setDisable(true);
-                        redoButton.setDisable(true);
-                        return;
-                    }
-                    checkHistoryIndex();
-                }
-            });
+            setHistoryIndex(-1);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -333,9 +301,9 @@ public class ImageManufactureController extends ImageViewerController {
 
     protected void initEditBar() {
         try {
-            recoverButton.disableProperty().bind(imageUpdated.not());
             redoButton.setDisable(true);
             undoButton.setDisable(true);
+            recoverButton.disableProperty().bind(undoButton.disableProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -344,14 +312,12 @@ public class ImageManufactureController extends ImageViewerController {
 
     protected void initMainSplitPane() {
         try {
-            if (AppVariables.getUserConfigBoolean("ControlSplitPanesEntered", true)) {
-                imagePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        controlScopePane();
-                    }
-                });
-            }
+            imagePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    controlScopePaneOnMouseEnter();
+                }
+            });
             imagePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -360,14 +326,12 @@ public class ImageManufactureController extends ImageViewerController {
             });
             imagePaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
 
-            if (AppVariables.getUserConfigBoolean("ControlSplitPanesEntered", true)) {
-                scopePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        controlImagePane();
-                    }
-                });
-            }
+            scopePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    controlImagePaneOnMouseEnter();
+                }
+            });
             scopePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -416,40 +380,13 @@ public class ImageManufactureController extends ImageViewerController {
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
-            if (imageInformation != null) {
-                if (imageInformation.getImageType() == BufferedImage.TYPE_BYTE_INDEXED
-                        && imageInformation.getColorChannels() == 4) {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    if (sourceFile != null) {
-                        alert.setTitle(sourceFile.getAbsolutePath());
-                    } else {
-                        alert.setTitle(getBaseTitle());
-                    }
-                    alert.setContentText(AppVariables.message("IndexedAlphaWarning"));
-                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                    ButtonType buttonConvert = new ButtonType(AppVariables.message("Convert"));
-                    ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
-                    alert.getButtonTypes().setAll(buttonConvert, buttonISee);
-                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    stage.setAlwaysOnTop(true);
-                    stage.toFront();
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == buttonConvert) {
-                        openStage(CommonValues.ImageConverterBatchFxml);
-                        return false;
-                    }
-                }
-            }
-
             imageLoaded.set(true);
-            imageUpdated.set(false);
+            imageChanged = false;
             scopeController.initController(this);
             operationsController.resetOperationPanes();
             resetImagePane();
 
-            historyIndex.set(-1);
-            loadImageHistories();
+            recordImageHistory(ImageOperation.Load, image);
             updateBottom(message("Loaded"));
 
             autoSize();
@@ -477,6 +414,24 @@ public class ImageManufactureController extends ImageViewerController {
                 });
             }
         }, 200);
+    }
+
+    @FXML
+    public void editFrames() {
+        if (sourceFile == null) {
+            return;
+        }
+        String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
+        if (format.contains("gif")) {
+            ImageGifEditerController controller
+                    = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);
+            controller.selectSourceFile(sourceFile);
+
+        } else {
+            ImageTiffEditerController controller
+                    = (ImageTiffEditerController) openStage(CommonValues.ImageTiffEditerFxml);
+            controller.selectSourceFile(sourceFile);
+        }
     }
 
     @FXML
@@ -510,6 +465,15 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @Override
+    protected void zoomStepChanged() {
+        xZoomStep = zoomStep;
+        yZoomStep = zoomStep;
+        scopeController.zoomStep = zoomStep;
+        scopeController.xZoomStep = zoomStep;
+        scopeController.yZoomStep = zoomStep;
+    }
+
+    @Override
     public void refinePane() {
         super.refinePane();
         maskView.setFitWidth(imageView.getFitWidth());
@@ -525,6 +489,12 @@ public class ImageManufactureController extends ImageViewerController {
                 = (ImageViewerController) openStage(CommonValues.ImagePopupFxml);
         controller.loadImage(imageView.getImage());
         controller.paneSize();
+    }
+
+    public void controlScopePaneOnMouseEnter() {
+        if (getUserConfigBoolean("MousePassControlPanes", true)) {
+            controlScopePane();
+        }
     }
 
     public void controlScopePane() {
@@ -543,7 +513,9 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         if (mainSplitPane.getItems().contains(scopePane)) {
-            autoSize();
+            if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
+                autoSize();
+            }
             return;
         }
         isSettingValues = true;
@@ -559,7 +531,9 @@ public class ImageManufactureController extends ImageViewerController {
 //        if (scopeController.scopeAllRadio.isSelected()) {
 //            scopeController.scopeRectangleRadio.fire();
 //        }
-        autoSize();
+        if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
+            autoSize();
+        }
         mainSplitPane.applyCss();
         isSettingValues = false;
     }
@@ -574,9 +548,17 @@ public class ImageManufactureController extends ImageViewerController {
         mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
         mainSplitPane.getItems().remove(scopePane);
         ControlStyle.setIconName(imagePaneControl, "iconDoubleRight.png");
-        autoSize();
+        if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
+            autoSize();
+        }
         mainSplitPane.applyCss();
         isSettingValues = false;
+    }
+
+    public void controlImagePaneOnMouseEnter() {
+        if (getUserConfigBoolean("MousePassControlPanes", true)) {
+            controlImagePane();
+        }
     }
 
     public void controlImagePane() {
@@ -595,7 +577,9 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         if (mainSplitPane.getItems().contains(imagePane)) {
-            autoSize();
+            if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
+                autoSize();
+            }
             return;
         }
         isSettingValues = true;
@@ -608,7 +592,9 @@ public class ImageManufactureController extends ImageViewerController {
         }
         ControlStyle.setIconName(scopePaneControl, "iconDoubleRight.png");
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-        autoSize();
+        if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
+            autoSize();
+        }
         mainSplitPane.applyCss();
         isSettingValues = false;
     }
@@ -627,6 +613,11 @@ public class ImageManufactureController extends ImageViewerController {
         isSettingValues = false;
     }
 
+    @FXML
+    public void scopeAction() {
+        controlScopePane();
+    }
+
     /*
         Histories
      */
@@ -634,40 +625,43 @@ public class ImageManufactureController extends ImageViewerController {
         if (recordHistoriesCheck.isSelected()) {
             if (!historiesBox.getChildren().contains(historiesListBox)) {
                 historiesBox.getChildren().add(historiesListBox);
-                loadImageHistories();
             }
+            loadImageHistories();
         } else {
             if (historiesBox.getChildren().contains(historiesListBox)) {
                 historiesBox.getChildren().remove(historiesListBox);
             }
-            redoButton.setDisable(true);
-            undoButton.setDisable(true);
+            historiesList.getItems().clear();
+            setHistoryIndex(-1);
         }
-
         historiesBox.applyCss();
         AppVariables.setUserConfigValue(baseName + "RecordHistories", recordHistoriesCheck.isSelected());
     }
 
-    protected void checkHistoryIndex() {
-        int index = historyIndex.get();
-        undoButton.setDisable(index < 0 || index >= historiesList.getItems().size() - 1);
-        redoButton.setDisable(index <= 0);
+    protected void setHistoryIndex(int historyIndex) {
+        this.historyIndex = historyIndex;
+        undoButton.setDisable(historyIndex < 0 || historyIndex >= historiesList.getItems().size() - 1);
+        redoButton.setDisable(historyIndex <= 0);
+        historiesList.getSelectionModel().clearSelection();
+        if (historyIndex >= 0 && historyIndex < historiesList.getItems().size()) {
+            historiesList.getSelectionModel().select(historyIndex);
+            // Force listView to refresh
+            // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
+            for (int i = 0; i < historiesList.getItems().size(); ++i) {
+                historiesList.getItems().set(i, historiesList.getItems().get(i));
+            }
+        }
     }
 
     protected void loadImageHistories() {
-        if (!recordHistoriesCheck.isSelected()) {
-            return;
-        }
         historiesList.getItems().clear();
-        int max = AppVariables.getUserConfigInt("MaxImageHistories", 20);
-        if (max <= 0 || sourceFile == null) {
-            redoButton.setDisable(true);
-            undoButton.setDisable(true);
+        setHistoryIndex(-1);
+        if (sourceFile == null || !recordHistoriesCheck.isSelected()) {
             return;
         }
         synchronized (this) {
-            if (loadTask != null) {
-                return;
+            if (loadTask != null && !loadTask.isQuit()) {
+                loadTask.cancel();
             }
             loadTask = new SingletonTask<Void>() {
                 private List<ImageHistory> list;
@@ -677,37 +671,30 @@ public class ImageManufactureController extends ImageViewerController {
                 protected boolean handle() {
                     try {
                         currentFile = sourceFile;
-                        int max = AppVariables.getUserConfigInt("MaxImageHistories", 20);
-                        if (max <= 0 || currentFile == null) {
-                            return false;
+                        String key = currentFile.getAbsolutePath();
+                        if (framesNumber > 1) {
+                            key += "-frame" + frameIndex;
                         }
-                        list = TableImageHistory.read(currentFile.getAbsolutePath());
+                        list = TableImageHistory.read(key);
                         if (list != null) {
                             for (ImageHistory his : list) {
-                                if (loadTask == null || isCancelled()
-                                        || !currentFile.equals(sourceFile)) {
+                                if (loadTask == null || loadTask.isCancelled() || !currentFile.equals(sourceFile)) {
                                     return false;
                                 }
                                 loadThumbnail(his);
                             }
                         }
-                        return true;
                     } catch (Exception e) {
                         error = e.toString();
-                        MyBoxLog.debug(e.toString());
-                        return false;
                     }
+                    return list != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     if (currentFile.equals(sourceFile)) {
-                        if (list != null) {
-                            if (currentFile.equals(sourceFile)) {
-                                historiesList.getItems().addAll(list);
-                            }
-                        }
-                        recordImageHistory(ImageOperation.Load, image);
+                        historiesList.getItems().addAll(list);
+                        setHistoryIndex(0);
                     }
                 }
 
@@ -726,11 +713,11 @@ public class ImageManufactureController extends ImageViewerController {
     protected void recordImageHistory(final ImageOperation operation,
             String objectType, String opType, final Image newImage) {
         try {
-            if (!recordHistoriesCheck.isSelected()) {
-                return;
-            }
-            int max = AppVariables.getUserConfigInt("MaxImageHistories", 20);
-            if (sourceFile == null || max <= 0 || operation == null || newImage == null) {
+            historiesList.getItems().clear();
+            redoButton.setDisable(true);
+            undoButton.setDisable(true);
+            if (sourceFile == null || !recordHistoriesCheck.isSelected()
+                    || operation == null || newImage == null) {
                 return;
             }
             if (imageHistoriesPath == null) {
@@ -744,23 +731,7 @@ public class ImageManufactureController extends ImageViewerController {
                     private File currentFile;
                     private String finalname;
                     private BufferedImage thumbnail;
-
-                    private String getFilename() {
-                        String name = imageHistoriesPath + File.separator
-                                + FileTools.getFilePrefix(currentFile.getName())
-                                + "_" + (new Date().getTime())
-                                + "_" + operation;
-                        if (objectType != null && !objectType.trim().isEmpty()) {
-                            name += "_" + objectType
-                                    + "_" + new Random().nextInt(1000);
-                        }
-                        if (opType != null && !opType.trim().isEmpty()) {
-                            name += "_" + opType
-                                    + "_" + new Random().nextInt(1000);
-                        }
-                        name += "_" + new Random().nextInt(1000);
-                        return name;
-                    }
+                    private List<ImageHistory> list;
 
                     @Override
                     protected boolean handle() {
@@ -777,21 +748,30 @@ public class ImageManufactureController extends ImageViewerController {
                             filename = new File(filename).getAbsolutePath();
                             finalname = new File(filename + ".png").getAbsolutePath();
                             ImageFileWriters.writeImageFile(bufferedImage, "png", finalname);
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
-
                             thumbnail = ImageManufacture.scaleImageWidthKeep(bufferedImage,
                                     AppVariables.getUserConfigInt("ThumbnailWidth", 100));
                             String thumbname = new File(filename + "_thumbnail.png").getAbsolutePath();
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
                             if (!ImageFileWriters.writeImageFile(thumbnail, "png", thumbname)) {
                                 return false;
                             }
-                            TableImageHistory.add(currentFile.getAbsolutePath(), finalname, operation.name(),
+                            if (task == null || isCancelled()) {
+                                return false;
+                            }
+                            String key = currentFile.getAbsolutePath();
+                            if (framesNumber > 1) {
+                                key += "-frame" + frameIndex;
+                            }
+                            TableImageHistory.add(key, finalname, operation.name(),
                                     objectType, opType, scopeController.scope);
+                            list = TableImageHistory.read(key);
+                            if (list != null) {
+                                for (ImageHistory his : list) {
+                                    if (task == null || task.isCancelled() || !currentFile.equals(sourceFile)) {
+                                        return false;
+                                    }
+                                    loadThumbnail(his);
+                                }
+                            }
                             return true;
                         } catch (Exception e) {
                             error = e.toString();
@@ -799,32 +779,33 @@ public class ImageManufactureController extends ImageViewerController {
                         }
                     }
 
+                    private String getFilename() {
+                        String prefix = FileTools.getFilePrefix(currentFile.getName());
+                        if (framesNumber > 1) {
+                            prefix += "-frame" + frameIndex;
+                        }
+                        File path = new File(imageHistoriesPath + File.separator + prefix + File.separator);
+                        path.mkdirs();
+                        String name = path.getAbsolutePath() + File.separator + prefix
+                                + "_" + (new Date().getTime()) + "_" + operation;
+                        if (objectType != null && !objectType.trim().isEmpty()) {
+                            name += "_" + objectType
+                                    + "_" + new Random().nextInt(1000);
+                        }
+                        if (opType != null && !opType.trim().isEmpty()) {
+                            name += "_" + opType
+                                    + "_" + new Random().nextInt(1000);
+                        }
+                        name += "_" + new Random().nextInt(1000);
+                        return name;
+                    }
+
                     @Override
                     protected void whenSucceeded() {
-                        if (!currentFile.equals(sourceFile)) { // The file may be changed while writing
-                            return;
+                        if (currentFile.equals(sourceFile)) {
+                            historiesList.getItems().setAll(list);
+                            setHistoryIndex(0);
                         }
-                        ImageHistory his = new ImageHistory();
-                        his.setImage(sourceFile.getAbsolutePath());
-                        his.setHistoryLocation(finalname);
-                        his.setUpdateType(operation.name());
-                        his.setObjectType(objectType);
-                        his.setOpType(opType);
-                        if (scopeController.scope != null) {
-                            his.setScopeType(scopeController.scope.getScopeType().name());
-                            his.setScopeName(scopeController.scope.getName());
-                        }
-                        his.setOperationTime(new Date());
-                        his.setThumbnail(SwingFXUtils.toFXImage(thumbnail, null));
-
-                        historiesList.getItems().add(0, his);
-                        historiesList.getSelectionModel().clearSelection();
-                        historiesList.getSelectionModel().select(0);
-                        historyIndex.set(0);
-                        for (int i = 0; i < historiesList.getItems().size(); ++i) {
-                            historiesList.getItems().set(i, historiesList.getItems().get(i));
-                        }
-                        checkHistoryIndex();
                     }
                 };
                 task.setSelf(task);
@@ -862,14 +843,8 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     protected void loadImageHistory(int index) {
-        if (!recordHistoriesCheck.isSelected()
+        if (sourceFile == null || !recordHistoriesCheck.isSelected()
                 || index < 0 || index > historiesList.getItems().size() - 1) {
-            return;
-        }
-        int max = AppVariables.getUserConfigInt("MaxImageHistories", 20);
-        if (max <= 0 || sourceFile == null) {
-            redoButton.setDisable(true);
-            undoButton.setDisable(true);
             return;
         }
         synchronized (this) {
@@ -902,7 +877,7 @@ public class ImageManufactureController extends ImageViewerController {
                         hisDesc = DateTools.datetimeToString(his.getOperationTime()) + " " + message(his.getUpdateType());
                         return true;
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        error = e.toString();
                         return false;
                     }
                 }
@@ -910,18 +885,9 @@ public class ImageManufactureController extends ImageViewerController {
                 @Override
                 protected void whenSucceeded() {
                     String info = MessageFormat.format(message("CurrentImageSetAs"), hisDesc);
-                    popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
+                    popInformation(info);
                     updateImage(hisImage, message("History"));
-
-                    historiesList.getSelectionModel().clearSelection();
-                    historiesList.getSelectionModel().select(index);
-                    historyIndex.set(index);
-                    // Force listView to refresh
-                    // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
-                    for (int i = 0; i < historiesList.getItems().size(); ++i) {
-                        historiesList.getItems().set(i, historiesList.getItems().get(i));
-                    }
-                    checkHistoryIndex();
+                    setHistoryIndex(index);
                 }
 
             };
@@ -951,27 +917,25 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
+    public void refreshHistories() {
+        loadImageHistories();
+    }
+
+    @FXML
     public void clearHistories() {
         if (sourceFile == null) {
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClear"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureClear"))) {
             return;
         }
         historiesList.getItems().clear();
-        TableImageHistory.clearImage(sourceFile.getAbsolutePath());
+        setHistoryIndex(-1);
+        String key = sourceFile.getAbsolutePath();
+        if (framesNumber > 1) {
+            key += "-frame" + frameIndex;
+        }
+        TableImageHistory.clearImage(key);
     }
 
     @FXML
@@ -1001,12 +965,22 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
+    public void hisPath() {
+        if (sourceFile == null) {
+            return;
+        }
+        File path = new File(imageHistoriesPath + File.separator
+                + FileTools.getFilePrefix(sourceFile.getName()) + File.separator);
+        browseURI(path.toURI());
+    }
+
+    @FXML
     @Override
     public void undoAction() {
         if (undoButton.isDisabled()) {
             return;
         }
-        loadImageHistory(historyIndex.get() + 1);
+        loadImageHistory(historyIndex + 1);
     }
 
     @FXML
@@ -1015,7 +989,7 @@ public class ImageManufactureController extends ImageViewerController {
         if (redoButton.isDisabled()) {
             return;
         }
-        loadImageHistory(historyIndex.get() - 1);
+        loadImageHistory(historyIndex - 1);
     }
 
     @FXML
@@ -1025,8 +999,7 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         updateImage(ImageOperation.Recover, image);
-        imageUpdated.set(false);
-        updateBottom(message("Recovered"));
+        setImageChanged(false);
         popInformation(message("Recovered"));
     }
 
@@ -1079,7 +1052,12 @@ public class ImageManufactureController extends ImageViewerController {
                     if (bufferedImage == null || task == null || isCancelled()) {
                         return false;
                     }
-                    ok = ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
+                    if (framesNumber > 1) {
+                        error = ImageFileWriters.writeFrame(sourceFile, frameIndex, bufferedImage);
+                        ok = error == null;
+                    } else {
+                        ok = ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
+                    }
                     if (!ok || task == null || isCancelled()) {
                         return false;
                     }
@@ -1093,7 +1071,7 @@ public class ImageManufactureController extends ImageViewerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    imageUpdated.set(false);
+                    setImageChanged(false);
                     updateBottom(message("Saved"));
                 }
 
@@ -1119,7 +1097,6 @@ public class ImageManufactureController extends ImageViewerController {
                 return;
             }
             recordFileWritten(file);
-
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
                     return;
@@ -1134,7 +1111,12 @@ public class ImageManufactureController extends ImageViewerController {
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                        if (framesNumber > 1 && saveAllFramesRadio.isSelected()) {
+                            error = ImageFileWriters.writeFrame(sourceFile, frameIndex, bufferedImage, file, format);
+                            return error == null;
+                        } else {
+                            return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                        }
                     }
 
                     @Override
@@ -1191,12 +1173,11 @@ public class ImageManufactureController extends ImageViewerController {
     public void updateImage(Image newImage, String info) {
         try {
             updateImage(newImage);
-            showImagePane();
+//            showImagePane();
             scopeController.updateImage(newImage);
-            imageUpdated.set(true);
             resetImagePane();
             operationsController.resetOperationPanes();
-            popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
+            popInformation(info);
             updateBottom(info);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -1208,9 +1189,8 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             updateImage(newImage);
             scopeController.updateImage(newImage);
-            imageUpdated.set(true);
             recordImageHistory(operation, null, null, newImage);
-            updateLabelTitle();
+            updateLabelsTitle();
             updateBottom(operation);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -1303,7 +1283,7 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         if (nextFile != null) {
-            loadImage(nextFile.getAbsoluteFile());
+            loadImage(nextFile.getAbsoluteFile(), loadWidth, 0);
         }
     }
 
@@ -1314,13 +1294,13 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         if (previousFile != null) {
-            loadImage(previousFile.getAbsoluteFile());
+            loadImage(previousFile.getAbsoluteFile(), loadWidth, 0);
         }
     }
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (!imageLoaded.get() || !imageUpdated.get()) {
+        if (!imageLoaded.get() || !imageChanged) {
             return true;
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1357,9 +1337,27 @@ public class ImageManufactureController extends ImageViewerController {
         operationsController.okAction();
     }
 
+    protected boolean isUsingScope() {
+        if (scopeController.scope == null
+                || scopeController.scope.getScopeType() == ImageScope.ScopeType.All) {
+            return false;
+        }
+        ImageManufactureOperationController c = operationsController.currentController;
+        if (c == null) {
+            return false;
+        }
+        return operationsController.cropController == c
+                || (operationsController.colorController == c && !operationsController.colorController.colorReplaceRadio.isSelected())
+                || operationsController.enhancementController == c
+                || operationsController.effectController == c
+                || (operationsController.copyController == c && !operationsController.copyController.wholeRadio.isSelected());
+    }
+
     @Override
     public void imageClicked(MouseEvent event, DoublePoint p) {
-        scopeController.imageClicked(event, p);
+        if (!isPickingColor && isUsingScope()) {
+            scopeController.imageClicked(event, p);
+        }
         operationsController.imageClicked(event, p);
         super.imageClicked(event, p);
     }
@@ -1379,6 +1377,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void mouseReleased(MouseEvent event) {
+        scrollPane.setPannable(true);
         operationsController.mouseReleased(event);
     }
 
@@ -1388,7 +1387,8 @@ public class ImageManufactureController extends ImageViewerController {
         if (xyText == null || !xyText.isVisible()) {
             return null;
         }
-        if (isPickingColor || scopeController.isPickingColor
+        if (isPickingColor
+                || (scopeController.isPickingColor && isUsingScope())
                 || (!needNotCoordinates && AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false))) {
             DoublePoint p = FxmlControl.getImageXY(event, imageView);
             showXY(event, p);
@@ -1402,17 +1402,13 @@ public class ImageManufactureController extends ImageViewerController {
     // should make sure no event conflicts in these panes
     @Override
     public void keyEventsHandler(KeyEvent event) {
-        if (event.getCode() != null) {
+        if (event.getCode() != null && imageView.getImage() != null) {
             switch (event.getCode()) {
                 case F7:
-                    if (imageView.getImage() != null) {
-                        controlScopePane();
-                    }
+                    controlScopePane();
                     return;
                 case F8:
-                    if (imageView.getImage() != null) {
-                        controlImagePane();
-                    }
+                    controlImagePane();
                     return;
             }
         }
@@ -1433,6 +1429,7 @@ public class ImageManufactureController extends ImageViewerController {
         initMaskControls(false);
         imageLabel.setText(message("ImagePaneTitle"));
         scopeLabel.setText(message("ScopePaneTitle"));
+
     }
 
 }

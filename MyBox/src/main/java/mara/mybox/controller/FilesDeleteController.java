@@ -16,7 +16,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-7-5
  * @License Apache License Version 2.0
  */
-public class FilesDeleteController extends FilesBatchController {
+public class FilesDeleteController extends BaseBatchFileController {
 
     @FXML
     protected RadioButton deleteRadio;

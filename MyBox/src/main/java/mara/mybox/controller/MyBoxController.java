@@ -92,8 +92,8 @@ public class MyBoxController extends BaseController {
     private void makeImagePopup() {
         try {
             imagePop = new Popup();
-            imagePop.setWidth(600);
-            imagePop.setHeight(600);
+            imagePop.setWidth(650);
+            imagePop.setHeight(650);
 
             VBox vbox = new VBox();
             VBox.setVgrow(vbox, Priority.ALWAYS);
@@ -254,14 +254,14 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.TextEditerFxml);
         });
 
-        MenuItem textEncodingBatch = new MenuItem(AppVariables.message("TextEncodingBatch"));
-        textEncodingBatch.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.TextEncodingBatchFxml);
+        MenuItem TextConvert = new MenuItem(AppVariables.message("TextConvertSplit"));
+        TextConvert.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.TextFilesConvertFxml);
         });
 
-        MenuItem textLineBreakBatch = new MenuItem(AppVariables.message("TextLineBreakBatch"));
-        textLineBreakBatch.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.TextLineBreakBatchFxml);
+        MenuItem TextMerge = new MenuItem(AppVariables.message("TextFilesMerge"));
+        TextMerge.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.TextFilesMergeFxml);
         });
 
         MenuItem TextReplaceBatch = new MenuItem(AppVariables.message("TextReplaceBatch"));
@@ -283,8 +283,7 @@ public class MyBoxController extends BaseController {
 
         MenuItem htmlEditor = new MenuItem(AppVariables.message("HtmlEditor"));
         htmlEditor.setOnAction((ActionEvent event1) -> {
-            HtmlEditorController controller
-                    = (HtmlEditorController) loadScene(CommonValues.HtmlEditorFxml);
+            loadScene(CommonValues.HtmlEditorFxml);
         });
 
         MenuItem htmlToMarkdown = new MenuItem(AppVariables.message("HtmlToMarkdown"));
@@ -381,8 +380,7 @@ public class MyBoxController extends BaseController {
                 pdfMenu, new SeparatorMenuItem(),
                 markdownMenu, new SeparatorMenuItem(),
                 htmlMenu, new SeparatorMenuItem(),
-                textEditer, textEncodingBatch, textLineBreakBatch, TextReplaceBatch,
-                TextToHtml, new SeparatorMenuItem(),
+                textEditer, TextConvert, TextMerge, TextToHtml, TextReplaceBatch, new SeparatorMenuItem(),
                 bytesEditer
         );
 
@@ -397,8 +395,8 @@ public class MyBoxController extends BaseController {
 
         showMenu(documentBox, event);
 
-        view.setImage(new Image("img/PdfTools.png"));
-        text.setText(message("PdfToolsImageTips"));
+        view.setImage(new Image("img/DocumentTools.png"));
+        text.setText(message("DocumentToolsImageTips"));
         text.setWrappingWidth(500);
         locateImage(documentBox, true);
 
@@ -1101,17 +1099,26 @@ public class MyBoxController extends BaseController {
 
         MenuItem ExcelConvert = new MenuItem(AppVariables.message("ExcelConvert"));
         ExcelConvert.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DataConvertExcelFxml);
+            loadScene(CommonValues.DataFileExcelConvertFxml);
         });
 
+//        MenuItem ExcelSplit = new MenuItem(AppVariables.message("ExcelSplit"));
+//        ExcelSplit.setOnAction((ActionEvent event1) -> {
+//            loadScene(CommonValues.DataFileExcelSplitFxml);
+//        });
         MenuItem CsvConvert = new MenuItem(AppVariables.message("CsvConvert"));
         CsvConvert.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DataConvertCsvFxml);
+            loadScene(CommonValues.DataFileCSVConvertFxml);
         });
 
+//        MenuItem CsvSplit = new MenuItem(AppVariables.message("CsvSplit"));
+//        CsvSplit.setOnAction((ActionEvent event1) -> {
+//            loadScene(CommonValues.DataFileCSVSplitFxml);
+//        });
         Menu DataFile = new Menu(AppVariables.message("DataFile"));
         DataFile.getItems().addAll(
-                EditCSV, CsvConvert, new SeparatorMenuItem(), EditExcel, ExcelConvert
+                EditCSV, CsvConvert, new SeparatorMenuItem(),
+                EditExcel, ExcelConvert
         );
 
         MenuItem DataClipboard = new MenuItem(AppVariables.message("DataClipboard"));

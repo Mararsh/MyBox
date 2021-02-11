@@ -46,7 +46,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     @FXML
     protected ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacityBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected ToggleGroup positionGroup;
     @FXML

@@ -16,12 +16,12 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import mara.mybox.data.FileInformation;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -38,7 +38,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-04-03
  * @License Apache License Version 2.0
  */
-public class DataImportController<D> extends FilesBatchController {
+public class DataImportController<D> extends BaseBatchFileController {
 
     protected BaseDataManageController parent;
     protected BaseTable tableDefinition;

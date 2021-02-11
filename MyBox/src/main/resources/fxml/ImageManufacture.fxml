@@ -49,15 +49,40 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                          <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/iconTips.png" />
-                                                              </image>
-                                                          </ImageView>
+                                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                    </image>
+                                                                </ImageView>
                                                             </children>
                                                         </HBox>
                                                         <VBox fx:id="fileBox" spacing="5.0">
                                                             <children>
+                                                                <FlowPane fx:id="frameSelectorPane" alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="10.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%Frame" />
+                                                                        <ComboBox fx:id="frameSelector" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
+                                                                        <Label fx:id="framesLabel" layoutX="10.0" layoutY="19.0" />
+                                                                        <Button fx:id="okFrameButton" mnemonicParsing="false" onAction="#loadFrame">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconOK.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="thumbsListButton" mnemonicParsing="false" onAction="#editFrames">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconThumbsList.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
                                                                 <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="22.0" spacing="5.0">
                                                                     <children>
                                                                         <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
@@ -84,6 +109,7 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0" />
                                                             </children>
                                                         </VBox>
+                                                        <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -127,13 +153,23 @@ License:    Apache License Version 2.0
                                         </TitledPane>
                                         <TitledPane fx:id="saveAsPane" expanded="false" maxWidth="1.7976931348623157E308" text="%SaveAs">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                                                <VBox fx:id="saveAsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
-                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                        <FlowPane fx:id="saveFramesPane" hgap="5.0" vgap="5.0">
                                                             <children>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <RadioButton fx:id="saveAllFramesRadio" mnemonicParsing="false" onAction="#saveAllFramesSelected" selected="true" text="%AllFrames">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="framesSaveGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="saveCurrentFramesRadio" mnemonicParsing="false" onAction="#saveCurrentFramesSelected" text="%CurrentFrame" toggleGroup="$framesSaveGroup" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <VBox fx:id="saveFormatsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <FlowPane fx:id="formatsPane1" hgap="5.0" vgap="5.0">
                                                                     <children>
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="png">
+                                                                        <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="png">
                                                                             <toggleGroup>
                                                                                 <ToggleGroup fx:id="fileTypeGroup" />
                                                                             </toggleGroup>
@@ -141,23 +177,23 @@ License:    Apache License Version 2.0
                                                                         <RadioButton mnemonicParsing="false" text="jpg" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="formatsPane2" hgap="5.0" vgap="5.0">
                                                                     <children>
-                                                                        <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="gif" toggleGroup="$fileTypeGroup" />
+                                                                        <RadioButton fx:id="tifRadio" mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
+                                                                        <RadioButton fx:id="gifRadio" mnemonicParsing="false" text="gif" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="formatsPane3" hgap="5.0" vgap="5.0">
                                                                     <children>
                                                                         <RadioButton mnemonicParsing="false" text="bmp" toggleGroup="$fileTypeGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
-                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                <FlowPane fx:id="formatsPane4" hgap="5.0" vgap="5.0">
                                                                     <children>
                                                                         <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
+                                                                        <RadioButton layoutX="108.0" layoutY="10.0" mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
                                                             </children>
@@ -198,6 +234,15 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                                     <children>
+                                                                        <Button fx:id="refreshHistoriesButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshHistories">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconRefresh.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
                                                                         <Button fx:id="clearHistoriesButton" mnemonicParsing="false" onAction="#clearHistories">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -216,11 +261,11 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                                        <Button fx:id="okHistoryButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#okHistory">
+                                                                        <Button fx:id="useHistoryButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#okHistory">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
-                                                                                        <Image url="@../buttons/iconOK.png" />
+                                                                                        <Image url="@../buttons/iconYes.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>
@@ -237,6 +282,15 @@ License:    Apache License Version 2.0
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
                                                                                         <Image url="@../buttons/iconOK.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="openFolderHisButton" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" onAction="#hisPath">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconOpen.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>
@@ -334,6 +388,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </CheckBox>
+                                                <Button fx:id="scopeButton" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#scopeAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconTarget.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

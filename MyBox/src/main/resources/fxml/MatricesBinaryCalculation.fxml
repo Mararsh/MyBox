@@ -66,7 +66,6 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                 <Button fx:id="matrixAButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#matrixAAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -85,6 +84,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
+                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                             </children>
                                                         </HBox>
                                                         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
@@ -145,6 +145,15 @@ License:    Apache License Version 2.0
                                                                 <Label text="%Page" />
                                                                 <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
                                                                 <Label fx:id="pageLabel" />
+                                                                <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconGo.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </HBox>
                                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1168.0" spacing="5.0">
@@ -176,8 +185,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </HBox>
-                                                        <TitledPane fx:id="matrixAPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                                                                    text="%MatrixA"  styleClass="boldTitle" stylesheets="@../styles/MyBox.css" >
+                                                        <TitledPane fx:id="matrixAPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixA">
                                                             <content>
                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                     <content>
@@ -186,8 +194,7 @@ License:    Apache License Version 2.0
                                                                 </ScrollPane>
                                                             </content>
                                                         </TitledPane>
-                                                        <TitledPane fx:id="matrixAPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                                                                    text="%MatrixB"  styleClass="boldTitle" stylesheets="@../styles/MyBox.css">
+                                                        <TitledPane fx:id="matrixAPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="boldTitle" stylesheets="@../styles/MyBox.css" text="%MatrixB">
                                                             <content>
                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                     <content>

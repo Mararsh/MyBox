@@ -40,7 +40,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <padding>
                                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                     </padding>
@@ -101,33 +101,65 @@ License:    Apache License Version 2.0
                                                                 <Button fx:id="nowModifyButton" disable="true" mnemonicParsing="false" onAction="#nowModifyTime" text="%Now" />
                                                             </children>
                                                         </HBox>
-                                                        <Label text="%UserPermission" />
-                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <CheckBox fx:id="permissionAssembleCheck" mnemonicParsing="false" text="%AssemblePages" />
-                                                                <CheckBox fx:id="permissionExtractCheck" mnemonicParsing="false" text="%ExtractContents" />
-                                                                <CheckBox fx:id="permissionModifyCheck" mnemonicParsing="false" text="%ModifyContents" />
-                                                                <CheckBox fx:id="permissionFillCheck" mnemonicParsing="false" text="%FillForm" />
-                                                                <CheckBox fx:id="permissionPrintCheck" mnemonicParsing="false" text="%Print" />
+                                                                <RadioButton fx:id="changeProtectionRadio" mnemonicParsing="false" selected="true" text="%ChangeProtection">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="protectionGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="clearProtectionRadio" mnemonicParsing="false" text="%ClearProtection" toggleGroup="$protectionGroup" />
                                                             </children>
-                                                        </FlowPane>
+                                                        </HBox>
+                                                        <VBox fx:id="protectionBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                    <children>
+                                                                        <CheckBox fx:id="permissionAssembleCheck" mnemonicParsing="false" selected="true" text="%AssemblePages" />
+                                                                        <CheckBox fx:id="permissionExtractCheck" mnemonicParsing="false" selected="true" text="%ExtractContents" />
+                                                                        <CheckBox fx:id="permissionModifyCheck" mnemonicParsing="false" selected="true" text="%ModifyContents" />
+                                                                        <CheckBox fx:id="permissionFillCheck" mnemonicParsing="false" selected="true" text="%FillForm" />
+                                                                        <CheckBox fx:id="permissionPrintCheck" mnemonicParsing="false" selected="true" text="%Print" />
+                                                                        <CheckBox fx:id="permissionAssembleCheck1" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%AssemblePages" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label text="%UserPassword" />
+                                                                        <TextField fx:id="userPasswordInput" prefWidth="200.0" />
+                                                                        <Label text="%PasswordAgain" />
+                                                                        <TextField fx:id="userPasswordInput2" prefWidth="200.0" />
+                                                                        <Button fx:id="clearUserPButton" mnemonicParsing="false" onAction="#clearUserPassword">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconClear.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%OwnerPassword" />
+                                                                        <TextField fx:id="ownerPasswordInput" prefWidth="200.0" />
+                                                                        <Label text="%PasswordAgain" />
+                                                                        <TextField fx:id="ownerPasswordInput2" prefWidth="200.0" />
+                                                                        <Button fx:id="clearOwnerPButton" mnemonicParsing="false" onAction="#clearOwnerPassword">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconClear.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
+                                                            </children>
+                                                        </VBox>
                                                         <Label minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfProtectionComments" wrapText="true" />
-                                                        <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <Label text="%UserPassword" />
-                                                                <PasswordField fx:id="userPasswordInput" prefWidth="200.0" />
-                                                                <Label text="%PasswordAgain" />
-                                                                <PasswordField fx:id="userPasswordInput2" prefWidth="200.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%OwnerPassword" />
-                                                                <PasswordField fx:id="ownerPasswordInput" prefWidth="200.0" />
-                                                                <Label text="%PasswordAgain" />
-                                                                <PasswordField fx:id="ownerPasswordInput2" prefWidth="200.0" />
-                                                            </children>
-                                                        </FlowPane>
                                                     </children>
                                                 </VBox>
                                             </content>

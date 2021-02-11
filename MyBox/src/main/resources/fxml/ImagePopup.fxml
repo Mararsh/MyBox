@@ -96,6 +96,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </CheckBox>
+                        <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

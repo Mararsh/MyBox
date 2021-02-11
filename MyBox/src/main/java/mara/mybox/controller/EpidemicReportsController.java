@@ -13,14 +13,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -34,7 +31,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
@@ -347,20 +343,10 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     sourceController.loadTree(datasets);
                     timeController.loadTree("time", times, false);
                     if (datasets == null || datasets.isEmpty()) {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setContentText(AppVariables.message("ImportEpidemicReportJHUPredefined") + " ?");
-                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                        ButtonType buttonYes = new ButtonType(AppVariables.message("Yes"));
-                        ButtonType buttonNo = new ButtonType(AppVariables.message("No"));
-                        alert.getButtonTypes().setAll(buttonYes, buttonNo);
-                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                        stage.setAlwaysOnTop(true);
-                        stage.toFront();
-
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == buttonYes) {
+                        if (FxmlControl.askSure(getBaseTitle(), message("ImportEpidemicReportJHUPredefined") + " ?")) {
                             predefined();
                         }
+
                     } else if (load) {
                         queryData();
                     }

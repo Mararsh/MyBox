@@ -49,6 +49,12 @@ License:    Apache License Version 2.0
                                                   <CheckBox fx:id="LoadCheck" mnemonicParsing="false" text="%LoadAfterSaveAs" />
                                                 <VBox fx:id="imageOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
+                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="68.0" spacing="5.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%StepPx" HBox.hgrow="ALWAYS" />
+                                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
+                                             </children>
+                                          </HBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />

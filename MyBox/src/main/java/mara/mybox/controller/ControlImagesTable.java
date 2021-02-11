@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableImageCell;
 import mara.mybox.image.ImageFileInformation;
@@ -23,9 +24,9 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -251,6 +252,21 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 return;
             }
             FxmlStage.openImageViewer(info);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void editFileAction() {
+        try {
+            ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+            if (info == null) {
+                return;
+            }
+            ImageManufactureController controller
+                    = (ImageManufactureController) openStage(CommonValues.ImageManufactureFxml);
+            controller.loadImage(info);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

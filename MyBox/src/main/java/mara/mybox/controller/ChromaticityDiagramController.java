@@ -18,14 +18,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -37,6 +34,7 @@ import mara.mybox.color.ChromaticityDiagram;
 import mara.mybox.color.ChromaticityDiagram.DataType;
 import mara.mybox.color.ColorValue;
 import mara.mybox.color.SRGB;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
@@ -76,37 +74,16 @@ public class ChromaticityDiagramController extends BaseImageController {
             cdSRGBCheck, cdECICheck, cdCIECheck, cdSMPTECCheck, degree2Check, degree10Check,
             waveCheck, whitePointsCheck, gridCheck, calculateCheck, inputCheck;
     @FXML
-    protected TextArea sourceInputArea, sourceDataArea, d2n1Area, d2n5Area, d10n1Area, d10n5Area;
+    protected TextArea sourceInputArea, sourceDataArea;
     @FXML
-    protected TableView<ColorValue> calculatedValuesTable;
-    @FXML
-    protected TableColumn<ColorValue, String> colorSpaceColumn, conditionsColumn, valuesColumn;
-    @FXML
-    protected TableView<CIEData> d2n1TableView, d2n5TableView, d10n1TableView, d10n5TableView, inputTableView;
-    @FXML
-    protected TableColumn<CIEData, Integer> wave2n1Column, wave10n1Column, wave2n5Column, wave10n5Column;
-    @FXML
-    protected TableColumn<CIEData, Double> tx2n1Column, ty2n1Column, tz2n1Column, nx2n1Column, ny2n1Column, nz2n1Column,
-            rx2n1Column, ry2n1Column, rz2n1Column, r2n1Column, g2n1Column, b2n1Column,
-            tx10n1Column, ty10n1Column, tz10n1Column, nx10n1Column, ny10n1Column, nz10n1Column,
-            rx10n1Column, ry10n1Column, rz10n1Column, r10n1Column, g10n1Column, b10n1Column;
-    @FXML
-    protected TableColumn<CIEData, Integer> ri2n1Column, gi2n1Column, bi2n1Column,
-            ri10n1Column, gi10n1Column, bi10n1Column;
-    @FXML
-    protected TableColumn<CIEData, Double> tx2n5Column, ty2n5Column, tz2n5Column, nx2n5Column, ny2n5Column, nz2n5Column,
-            rx2n5Column, ry2n5Column, rz2n5Column, r2n5Column, g2n5Column, b2n5Column,
-            tx10n5Column, ty10n5Column, tz10n5Column, nx10n5Column, ny10n5Column, nz10n5Column,
-            rx10n5Column, ry10n5Column, rz10n5Column, r10n5Column, g10n5Column, b10n5Column;
-    @FXML
-    protected TableColumn<CIEData, Integer> ri2n5Column, gi2n5Column, bi2n5Column,
-            ri10n5Column, gi10n5Column, bi10n5Column;
+    protected HtmlViewerController calculateViewController,
+            d2n1Controller, d2n5Controller, d10n1Controller, d10n5Controller;
     @FXML
     protected TextField XInput, YInput, ZInput, xInput, yInput;
     @FXML
     protected Button okSizeButton, calculateXYZButton, calculateXYButton, displayDataButton;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected ToggleGroup bgGroup, dotGroup;
     @FXML
@@ -137,7 +114,6 @@ public class ChromaticityDiagramController extends BaseImageController {
 
             initDisplay();
             initDataBox();
-            initCIETables();
             initCIEData();
             initDiagram();
 
@@ -444,10 +420,6 @@ public class ChromaticityDiagramController extends BaseImageController {
             displayDataButton.disableProperty().bind(Bindings.isEmpty(sourceDataArea.textProperty())
             );
 
-            colorSpaceColumn.setCellValueFactory(new PropertyValueFactory<>("colorSpace"));
-            conditionsColumn.setCellValueFactory(new PropertyValueFactory<>("conditions"));
-            valuesColumn.setCellValueFactory(new PropertyValueFactory<>("values"));
-
             sourceInputArea.setStyle(" -fx-text-fill: gray;");
             sourceInputArea.setText(message("ChromaticityDiagramTips"));
             sourceInputArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -487,77 +459,6 @@ public class ChromaticityDiagramController extends BaseImageController {
             popError(AppVariables.message("NoData"));
             sourceDataArea.clear();
         }
-    }
-
-    private void initCIETables() {
-        wave2n1Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
-        tx2n1Column.setCellValueFactory(new PropertyValueFactory<>("X"));
-        ty2n1Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
-        tz2n1Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
-        nx2n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
-        ny2n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
-        nz2n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
-        rx2n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
-        ry2n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
-        rz2n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
-        r2n1Column.setCellValueFactory(new PropertyValueFactory<>("red"));
-        g2n1Column.setCellValueFactory(new PropertyValueFactory<>("green"));
-        b2n1Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
-        ri2n1Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
-        gi2n1Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
-        bi2n1Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
-
-        wave2n5Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
-        tx2n5Column.setCellValueFactory(new PropertyValueFactory<>("X"));
-        ty2n5Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
-        tz2n5Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
-        nx2n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
-        ny2n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
-        nz2n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
-        rx2n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
-        ry2n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
-        rz2n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
-        r2n5Column.setCellValueFactory(new PropertyValueFactory<>("red"));
-        g2n5Column.setCellValueFactory(new PropertyValueFactory<>("green"));
-        b2n5Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
-        ri2n5Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
-        gi2n5Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
-        bi2n5Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
-
-        wave10n1Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
-        tx10n1Column.setCellValueFactory(new PropertyValueFactory<>("X"));
-        ty10n1Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
-        tz10n1Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
-        nx10n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
-        ny10n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
-        nz10n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
-        rx10n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
-        ry10n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
-        rz10n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
-        r10n1Column.setCellValueFactory(new PropertyValueFactory<>("red"));
-        g10n1Column.setCellValueFactory(new PropertyValueFactory<>("green"));
-        b10n1Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
-        ri10n1Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
-        gi10n1Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
-        bi10n1Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
-
-        wave10n5Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
-        tx10n5Column.setCellValueFactory(new PropertyValueFactory<>("X"));
-        ty10n5Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
-        tz10n5Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
-        nx10n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
-        ny10n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
-        nz10n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
-        rx10n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
-        ry10n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
-        rz10n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
-        r10n5Column.setCellValueFactory(new PropertyValueFactory<>("red"));
-        g10n5Column.setCellValueFactory(new PropertyValueFactory<>("green"));
-        b10n5Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
-        ri10n5Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
-        gi10n5Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
-        bi10n5Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
-
     }
 
     private void checkDotType() {
@@ -631,46 +532,37 @@ public class ChromaticityDiagramController extends BaseImageController {
                 return;
             }
             task = new SingletonTask<Void>() {
-                private String degree2nm1String, degree10nm1String,
-                        degree2nm5String, degree10nm5String;
+                private StringTable degree2nm1Table, degree10nm1Table, degree2nm5Table, degree10nm5Table;
 
                 @Override
                 protected boolean handle() {
-                    CIEData cieData = new CIEData();
                     ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
 
                     degree2nm1Data = FXCollections.observableArrayList();
-                    degree2nm1Data.addAll(cieData.cie1931Observer2Degree1nmData(cs));
-                    degree2nm1String = cieData.cie1931Observer2Degree1nmString(cs);
-
-                    degree10nm1Data = FXCollections.observableArrayList();
-                    degree10nm1Data.addAll(cieData.cie1964Observer10Degree1nmData(cs));
-                    degree10nm1String = cieData.cie1964Observer10Degree1nmString(cs);
+                    degree2nm1Data.addAll(CIEData.cie1931Observer2Degree1nmData(cs));
+                    degree2nm1Table = CIEData.cieTable(degree2nm1Data, cs, message("CIE1931Observer2DegreeAndSRGB"));
 
                     degree2nm5Data = FXCollections.observableArrayList();
-                    degree2nm5Data.addAll(cieData.cie1931Observer2Degree5nmData(cs));
-                    degree2nm5String = cieData.cie1931Observer2Degree5nmString(cs);
+                    degree2nm5Data.addAll(CIEData.cie1931Observer2Degree5nmData(cs));
+                    degree2nm5Table = CIEData.cieTable(degree2nm5Data, cs, message("CIE1931Observer2DegreeAndSRGB"));
+
+                    degree10nm1Data = FXCollections.observableArrayList();
+                    degree10nm1Data.addAll(CIEData.cie1964Observer10Degree1nmData(cs));
+                    degree10nm1Table = CIEData.cieTable(degree10nm1Data, cs, message("CIE1964Observer10DegreeAndSRGB"));
 
                     degree10nm5Data = FXCollections.observableArrayList();
-                    degree10nm5Data.addAll(cieData.cie1964Observer10Degree5nmData(cs));
-                    degree10nm5String = cieData.cie1964Observer10Degree5nmString(cs);
+                    degree10nm5Data.addAll(CIEData.cie1964Observer10Degree5nmData(cs));
+                    degree10nm5Table = CIEData.cieTable(degree10nm5Data, cs, message("CIE1964Observer10DegreeAndSRGB"));
 
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    d2n1TableView.setItems(degree2nm1Data);
-                    d2n1Area.setText(degree2nm1String);
-
-                    d10n1TableView.setItems(degree10nm1Data);
-                    d10n1Area.setText(degree10nm1String);
-
-                    d2n5TableView.setItems(degree2nm5Data);
-                    d2n5Area.setText(degree2nm5String);
-
-                    d10n5TableView.setItems(degree10nm5Data);
-                    d10n5Area.setText(degree10nm5String);
+                    d2n1Controller.loadTable(degree2nm1Table);
+                    d2n5Controller.loadTable(degree2nm5Table);
+                    d10n1Controller.loadTable(degree10nm1Table);
+                    d10n5Controller.loadTable(degree10nm5Table);
 
                     afterInitCIEData();
                 }
@@ -764,142 +656,6 @@ public class ChromaticityDiagramController extends BaseImageController {
             @Override
             public void handleSelect() {
                 saveAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleTargetPath(fname);
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void pop21Path(MouseEvent event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
-            }
-
-            @Override
-            public void handleSelect() {
-                export21Action();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleTargetPath(fname);
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void pop25Path(MouseEvent event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
-            }
-
-            @Override
-            public void handleSelect() {
-                export25Action();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleTargetPath(fname);
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void pop101Path(MouseEvent event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
-            }
-
-            @Override
-            public void handleSelect() {
-                export101Action();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleTargetPath(fname);
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void pop105Path(MouseEvent event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
-            }
-
-            @Override
-            public void handleSelect() {
-                export105Action();
             }
 
             @Override
@@ -1012,6 +768,12 @@ public class ChromaticityDiagramController extends BaseImageController {
             calculateColor = new java.awt.Color((float) pColor.getRed(), (float) pColor.getGreen(), (float) pColor.getBlue());
 
             List<ColorValue> values = new ArrayList<>();
+            double[] XYZ = {X, Y, Z};
+            values.add(new ColorValue("XYZ", "D50", XYZ));
+
+            double[] xyz = {x, y, 1 - x - y};
+            values.add(new ColorValue("xyz", "D50", xyz));
+
             double[] cieLab = CIEColorSpace.XYZd50toCIELab(X, Y, Z);
             values.add(new ColorValue("CIE-L*ab", "D50", cieLab));
 
@@ -1058,8 +820,16 @@ public class ChromaticityDiagramController extends BaseImageController {
 
             calculatedValues.clear();
             calculatedValues.addAll(values);
-            calculatedValuesTable.setItems(calculatedValues);
-            calculatedValuesTable.refresh();
+
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("ColorSpace"), message("Conditions"), message("Values")));
+            StringTable table = new StringTable(names, null);
+            for (ColorValue value : calculatedValues) {
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(value.getColorSpace(), value.getConditions(), value.getValues()));
+                table.add(row);
+            }
+            calculateViewController.loadTable(table);
 
             if (calculateCheck.isSelected()) {
                 displayChromaticityDiagram();
@@ -1068,7 +838,7 @@ public class ChromaticityDiagramController extends BaseImageController {
         } else {
             calculateColor = null;
             calculatedValues.clear();
-            calculatedValuesTable.refresh();
+            calculateViewController.clear();
         }
 
     }
@@ -1128,10 +898,6 @@ public class ChromaticityDiagramController extends BaseImageController {
                 protected void whenSucceeded() {
                     imageView.setImage(image);
                     FxmlControl.paneSize(scrollPane, imageView);
-                    d2n1Area.home();
-                    d2n5Area.home();
-                    d10n1Area.home();
-                    d10n5Area.home();
                 }
 
             };
@@ -1190,60 +956,6 @@ public class ChromaticityDiagramController extends BaseImageController {
             thread.setDaemon(true);
             thread.start();
         }
-    }
-
-    public void exportAction(String filename, TextArea textArea) {
-        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                filename, CommonFxValues.TextExtensionFilter);
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file, VisitHistory.FileType.Text);
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    return FileTools.writeFile(file, textArea.getText()) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    view(file);
-                    popSuccessful();
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void export21Action() {
-        exportAction("CIE1931Observer2Degree1nm", d2n1Area);
-    }
-
-    @FXML
-    public void export25Action() {
-        exportAction("CIE1931Observer2Degree5nm", d2n5Area);
-    }
-
-    @FXML
-    public void export101Action() {
-        exportAction("CIE1964Observer10Degree1nm", d10n1Area);
-    }
-
-    @FXML
-    public void export105Action() {
-        exportAction("CIE1964Observer10Degree5nm", d10n5Area);
     }
 
     @FXML

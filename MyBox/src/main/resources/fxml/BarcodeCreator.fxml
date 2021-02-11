@@ -251,7 +251,8 @@ License:    Apache License Version 2.0
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
-                                                </Button>
+                                                </Button> 
+                                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
                                                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                                                     <graphic>
@@ -262,7 +263,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="validateButton" mnemonicParsing="false" onAction="#validateAction" >
+                                                <Button fx:id="validateButton" mnemonicParsing="false" onAction="#validateAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -271,8 +272,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
-                                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

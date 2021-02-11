@@ -381,7 +381,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 if (saveCloseCheck.isSelected()) {
                     closeStage();
                     if (reportsController != null) {
-                        reportsController.getMyStage().toFront();
+                        reportsController.getMyStage().requestFocus();
                     }
                 } else {
                     popInformation(message("Written"));

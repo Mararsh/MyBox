@@ -27,7 +27,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
  * @CreateDate 2020-11-1
  * @License Apache License Version 2.0
  */
-public class PdfImagesConvertBatchController extends PdfBatchController {
+public class PdfImagesConvertBatchController extends BaseBatchPdfController {
 
     protected String format;
     protected PDDocument targetDoc;

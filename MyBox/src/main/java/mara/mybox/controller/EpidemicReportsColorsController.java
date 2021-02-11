@@ -41,7 +41,7 @@ public class EpidemicReportsColorsController extends BaseController {
     @FXML
     protected Tab sourcesColorsTab, valuesColorsTab, locationsColorsTab;
     @FXML
-    protected ColorSetController predefinedColorSetController, inputtedColorSetController,
+    protected ColorSet predefinedColorSetController, inputtedColorSetController,
             filledColorSetController, statisticColorSetController,
             confirmedColorSetController, healedColorSetController, deadColorSetController,
             IncreasedConfirmedColorSetController, IncreasedHealedColorSetController, IncreasedDeadColorSetController,
@@ -105,7 +105,7 @@ public class EpidemicReportsColorsController extends BaseController {
                 FXMLLoader fxmlLoader = new FXMLLoader(
                         FxmlStage.class.getResource(CommonValues.ColorSetFxml), AppVariables.currentBundle);
                 Pane pane = fxmlLoader.load();
-                ColorSetController controller = (ColorSetController) fxmlLoader.getController();
+                ColorSet controller = (ColorSet) fxmlLoader.getController();
                 controller.init(this, controllerName, Color.web(FxmlColor.randomRGB()));
 
                 String color = controller.rgb();

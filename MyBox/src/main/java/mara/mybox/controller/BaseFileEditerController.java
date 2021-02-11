@@ -233,27 +233,27 @@ public abstract class BaseFileEditerController extends BaseController {
     }
 
     @Override
-    public void keyEventsHandler(KeyEvent event) {
-        if (event.getCode() != null
-                && (event.isControlDown() || event.isAltDown())) {
-            switch (event.getCode()) {
-                case F:
-                    if (leftPaneControl != null) {
-                        showLeftPane();
-                    }
-                    if (findPane != null) {
-                        findPane.setExpanded(true);
-                    }
-                    if (findReplaceController != null && findReplaceController.findArea != null) {
-                        findReplaceController.findArea.requestFocus();
-                    }
-                    return;
-            }
+    public void controlAltHandler(KeyEvent event) {
+        if (event.getCode() == null) {
+            return;
+        }
+        switch (event.getCode()) {
+            case F:
+                if (leftPaneControl != null) {
+                    showLeftPane();
+                }
+                if (findPane != null) {
+                    findPane.setExpanded(true);
+                }
+                if (findReplaceController != null && findReplaceController.findArea != null) {
+                    findReplaceController.findArea.requestFocus();
+                }
+                return;
         }
         if (findReplaceController != null && findPane.isExpanded()) {
             findReplaceController.keyEventsHandler(event);
         }
-        super.keyEventsHandler(event);
+        super.controlAltHandler(event);
     }
 
     protected void initPage(File file) {
@@ -1063,7 +1063,7 @@ public abstract class BaseFileEditerController extends BaseController {
             return;
         }
         AppVariables.setUserConfigInt(baseName + "PageSize", pageSize);
-        popInformation(AppVariables.message("Saved"), 3000);
+        popInformation(AppVariables.message("Saved"));
         sourceInformation.setPageSize(pageSize);
         sourceInformation.setCurrentPage(1);
         if (sourceInformation.getLineBreak() == Line_Break.Width) {
@@ -1089,6 +1089,14 @@ public abstract class BaseFileEditerController extends BaseController {
         if (controller != null) {
             controller.filterFile(sourceInformation, filterConditions, filterLineNumberCheck.isSelected());
         }
+    }
+
+    @FXML
+    public void goPage() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        loadPage();
     }
 
     @FXML

@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPdfWriteOptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPdfWriteOptions">
     <children>
         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
@@ -33,13 +33,13 @@ License:    Apache License Version 2.0
                 </RadioButton>
                 <RadioButton fx:id="standardSizeRadio" mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
                 <ComboBox fx:id="standardSizeSelector" disable="true" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
+                <CheckBox fx:id="landscapeCheck" layoutX="10.0" layoutY="703.0" mnemonicParsing="false" selected="true" text="%Landscape" />
                 <HBox fx:id="dpiBox" alignment="CENTER_LEFT" spacing="5.0">
                     <children>
                         <Label text="DPI" />
                         <ComboBox fx:id="dpiSelector" editable="true" prefWidth="160.0" />
                     </children>
                 </HBox>
-                <CheckBox fx:id="landscapeCheck" layoutX="10.0" layoutY="703.0" mnemonicParsing="false" selected="true" text="%Landscape" />
                 <RadioButton fx:id="customSizeRadio" mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                     <children>
@@ -135,7 +135,7 @@ License:    Apache License Version 2.0
                         </Label>
                     </children>
                 </FlowPane>
-                <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$imageFormatGroup" />
+                <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%CCITT4" toggleGroup="$imageFormatGroup" wrapText="true" />
                 <FlowPane hgap="5.0" vgap="5.0">
                     <children>
                         <TextField fx:id="thresholdInput" prefWidth="100.0" promptText="0~255" />
@@ -149,9 +149,9 @@ License:    Apache License Version 2.0
                 </FlowPane>
             </children>
         </VBox>
+          <Label minHeight="-Infinity" text="%MaxMainMemPDF" wrapText="true" />
       <FlowPane hgap="5.0" vgap="5.0">
          <children>
-                <Label text="%MaxMainMemPDF" />
                 <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
                     <toggleGroup>
                         <ToggleGroup fx:id="pdfMemGroup" />
@@ -162,7 +162,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
          </children>
       </FlowPane>
-        <Label text="%PdfMemComments" />
+        <Label minHeight="-Infinity" text="%PdfMemComments" wrapText="true" />
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

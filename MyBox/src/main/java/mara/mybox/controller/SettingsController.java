@@ -5,15 +5,12 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -26,13 +23,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.MyBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
@@ -47,8 +42,11 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
+import static mara.mybox.value.AppVariables.getUserConfigInt;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.setUserConfigInt;
+import static mara.mybox.value.AppVariables.setUserConfigValue;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -70,7 +68,8 @@ public class SettingsController extends BaseController {
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
             copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
-            clearCurrentRootCheck, hidpiCheck, devModeCheck, splitPaneSensitiveCheck;
+            clearCurrentRootCheck, hidpiCheck, devModeCheck, splitPaneSensitiveCheck,
+            mousePassControlPanesCheck, popColorSetCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
             tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput,
@@ -79,7 +78,7 @@ public class SettingsController extends BaseController {
     protected VBox localBox, dataBox;
     @FXML
     protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox, iconSizeBox,
-            strokeWidthBox, anchorWidthBox;
+            strokeWidthBox, anchorWidthBox, popSizeSelector, popDurationSelector;
     @FXML
     protected HBox pdfMemBox, imageHisBox, derbyBox;
     @FXML
@@ -88,9 +87,10 @@ public class SettingsController extends BaseController {
     @FXML
     protected RadioButton chineseRadio, englishRadio, redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
-            splitPaneClickedRadio, splitPaneEnteredRadio, embeddedRadio, networkRadio;
+            embeddedRadio, networkRadio;
     @FXML
-    protected ColorSetController strokeColorSetController, anchorColorSetController, alphaColorSetController;
+    protected ColorSet strokeColorSetController, anchorColorSetController, alphaColorSetController,
+            popBgColorController, popInfoColorController, popErrorColorController, popWarnColorController;
     @FXML
     protected ListView languageList;
     @FXML
@@ -195,13 +195,9 @@ public class SettingsController extends BaseController {
 
             imageWidthBox.getSelectionModel().select(AppVariables.getUserConfigInt("MaxImageSampleWidth", 4096) + "");
 
-            if (getUserConfigBoolean("ControlSplitPanesEntered", true)) {
-                splitPaneEnteredRadio.fire();
-            } else {
-                splitPaneClickedRadio.fire();
-            }
-
             splitPaneSensitiveCheck.setSelected(getUserConfigBoolean("ControlSplitPanesSensitive", false));
+            mousePassControlPanesCheck.setSelected(getUserConfigBoolean("MousePassControlPanes", true));
+            popColorSetCheck.setSelected(getUserConfigBoolean("PopColorSet", true));
 
             checkLanguage();
             checkPdfMem();
@@ -337,6 +333,90 @@ public class SettingsController extends BaseController {
                 }
             });
 
+            popSizeSelector.getItems().addAll(Arrays.asList(
+                    "1.5", "1", "1.2", "2", "2.5", "0.8")
+            );
+            popSizeSelector.setValue(getUserConfigValue("PopTextSize", "1.5"));
+            popSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        try {
+                            float f = Float.parseFloat(newValue);
+                            if (f > 0) {
+                                setUserConfigValue("PopTextSize", newValue);
+                                FxmlControl.setEditorNormal(popSizeSelector);
+                                popSuccessful();
+                            } else {
+                                FxmlControl.setEditorBadStyle(popSizeSelector);
+                            }
+                        } catch (Exception e) {
+                            FxmlControl.setEditorBadStyle(popSizeSelector);
+                        }
+                    }
+                }
+            });
+
+            popDurationSelector.getItems().addAll(Arrays.asList(
+                    "3000", "5000", "2000", "1500", "1000", "4000", "2500")
+            );
+            popDurationSelector.setValue(getUserConfigInt("PopTextDuration", 3000) + "");
+            popDurationSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        try {
+                            int v = Integer.parseInt(newValue);
+                            if (v > 0) {
+                                setUserConfigInt("PopTextDuration", v);
+                                FxmlControl.setEditorNormal(popDurationSelector);
+                                popSuccessful();
+                            } else {
+                                FxmlControl.setEditorBadStyle(popDurationSelector);
+                            }
+                        } catch (Exception e) {
+                            FxmlControl.setEditorBadStyle(popDurationSelector);
+                        }
+                    }
+                }
+            });
+
+            popBgColorController.init(this, "PopTextBgColor", Color.BLACK);
+            popBgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    setUserConfigValue("PopTextBgColor", popBgColorController.rgb());
+                    popSuccessful();
+                }
+            });
+
+            popInfoColorController.init(this, "PopInfoColor", Color.WHITE);
+            popInfoColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    setUserConfigValue("PopInfoColor", popInfoColorController.rgb());
+                    popSuccessful();
+                }
+            });
+
+            popErrorColorController.init(this, "PopErrorColor", Color.AQUA);
+            popErrorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    setUserConfigValue("PopErrorColor", popErrorColorController.rgb());
+                    popSuccessful();
+                }
+            });
+
+            popWarnColorController.init(this, "PopWarnColor", Color.ORANGE);
+            popWarnColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    setUserConfigValue("PopWarnColor", popWarnColorController.rgb());
+                    popSuccessful();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -427,13 +507,13 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void setSplitPaneEntered() {
-        AppVariables.setUserConfigValue("ControlSplitPanesEntered", true);
+    protected void mousePassControlPanes() {
+        AppVariables.setUserConfigValue("MousePassControlPanes", mousePassControlPanesCheck.isSelected());
     }
 
     @FXML
-    protected void setSplitPaneClicked() {
-        AppVariables.setUserConfigValue("ControlSplitPanesEntered", false);
+    protected void popColorSet() {
+        AppVariables.setUserConfigValue("PopColorSet", popColorSetCheck.isSelected());
     }
 
     @FXML
@@ -574,19 +654,7 @@ public class SettingsController extends BaseController {
                     || newPath.trim().equals(AppVariables.MyboxDataPath)) {
                 return;
             }
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getBaseTitle());
-            alert.setContentText(AppVariables.message("ChangeDataPathConfirm"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != buttonSure) {
+            if (!FxmlControl.askSure(getBaseTitle(), message("ChangeDataPathConfirm"))) {
                 return;
             }
             popInformation(message("CopyingFilesFromTo"));
@@ -710,19 +778,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearFileHistories(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClear"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableVisitHistory().clear();
@@ -1035,19 +1091,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearImageHistories(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClear"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureClear"))) {
             return;
         }
         new TableImageHistory().clear();

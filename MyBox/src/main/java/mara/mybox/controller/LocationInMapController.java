@@ -201,7 +201,7 @@ public class LocationInMapController extends GeographyCodeMapController {
                 protected void whenSucceeded() {
                     if (parentController != null && !loading) {
                         parentController.setGeographyCode(geographyCode);
-                        parentController.getMyStage().toFront();
+                        parentController.getMyStage().requestFocus();
                         closeStage();
                         return;
                     }
@@ -280,7 +280,7 @@ public class LocationInMapController extends GeographyCodeMapController {
         GeographyCodeEditController controller
                 = (GeographyCodeEditController) openStage(CommonValues.GeographyCodeEditFxml);
         controller.setGeographyCode(geographyCode);
-        controller.getMyStage().toFront();
+        controller.getMyStage().requestFocus();
 
     }
 

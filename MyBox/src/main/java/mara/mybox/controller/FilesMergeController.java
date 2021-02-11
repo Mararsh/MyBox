@@ -12,7 +12,6 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -21,7 +20,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesMergeController extends FilesBatchController {
+public class FilesMergeController extends BaseBatchFileController {
 
     protected BufferedOutputStream outputStream;
 
@@ -60,7 +59,7 @@ public class FilesMergeController extends FilesBatchController {
     @Override
     public void selectTargetFileFromPath(File path) {
         try {
-            final File file = chooseSaveFile(path, null, CommonFxValues.AllExtensionFilter);
+            final File file = chooseSaveFile(path, null, targetExtensionFilter);
             if (file == null) {
                 return;
             }
@@ -101,10 +100,18 @@ public class FilesMergeController extends FilesBatchController {
         }
     }
 
+    protected void closeWriter() {
+        try {
+            outputStream.close();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     @Override
     public void donePost() {
         try {
-            outputStream.close();
+            closeWriter();
             targetFileGenerated(targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

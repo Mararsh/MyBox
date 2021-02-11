@@ -49,7 +49,7 @@ public class ColorImportController extends BaseController {
                 try {
                     ColorInputController controller = (ColorInputController) openStage(CommonValues.ColorInputFxml);
                     controller.setParentController(this);
-                    controller.getMyStage().toFront();
+                    controller.getMyStage().requestFocus();
                 } catch (Exception e) {
                     MyBoxLog.error(e.toString());
                 }

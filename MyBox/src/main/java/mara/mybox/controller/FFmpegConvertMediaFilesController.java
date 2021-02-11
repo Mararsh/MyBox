@@ -10,15 +10,11 @@ import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.DateTools;
@@ -34,7 +30,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegConvertMediaFilesController extends BaseFFmpegBatchController {
+public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController {
 
     public FFmpegConvertMediaFilesController() {
         baseTitle = AppVariables.message("FFmpegConvertMediaFiles");
@@ -244,33 +240,20 @@ public class FFmpegConvertMediaFilesController extends BaseFFmpegBatchController
         if ((ffmpegOptionsController.encoderTask != null && !ffmpegOptionsController.encoderTask.isQuit())
                 || (ffmpegOptionsController.muxerTask != null && !ffmpegOptionsController.muxerTask.isQuit())
                 || (ffmpegOptionsController.queryTask != null && !ffmpegOptionsController.queryTask.isQuit())) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVariables.message("TaskRunning"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSure) {
-                if (ffmpegOptionsController.encoderTask != null) {
-                    ffmpegOptionsController.encoderTask.cancel();
-                    ffmpegOptionsController.encoderTask = null;
-                }
-                if (ffmpegOptionsController.muxerTask != null) {
-                    ffmpegOptionsController.muxerTask.cancel();
-                    ffmpegOptionsController.muxerTask = null;
-                }
-                if (ffmpegOptionsController.queryTask != null) {
-                    ffmpegOptionsController.queryTask.cancel();
-                    ffmpegOptionsController.queryTask = null;
-                }
-            } else {
+            if (!FxmlControl.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
                 return false;
+            }
+            if (ffmpegOptionsController.encoderTask != null) {
+                ffmpegOptionsController.encoderTask.cancel();
+                ffmpegOptionsController.encoderTask = null;
+            }
+            if (ffmpegOptionsController.muxerTask != null) {
+                ffmpegOptionsController.muxerTask.cancel();
+                ffmpegOptionsController.muxerTask = null;
+            }
+            if (ffmpegOptionsController.queryTask != null) {
+                ffmpegOptionsController.queryTask.cancel();
+                ffmpegOptionsController.queryTask = null;
             }
         }
         return true;

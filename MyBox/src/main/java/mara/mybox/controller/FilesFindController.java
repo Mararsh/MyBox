@@ -26,7 +26,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesFindController extends FilesBatchController {
+public class FilesFindController extends BaseBatchFileController {
 
     protected ObservableList<FileInformation> filesList;
     protected long totalMatched;

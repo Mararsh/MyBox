@@ -21,7 +21,7 @@ import static mara.mybox.value.AppVariables.setUserConfigValue;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageConverterBatchController extends BaseImagesBatchController {
+public class ImageConverterBatchController extends BaseBatchImageController {
 
     protected ImageAttributes attributes;
 

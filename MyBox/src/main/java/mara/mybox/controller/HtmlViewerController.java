@@ -3,9 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
@@ -54,24 +51,6 @@ public class HtmlViewerController extends BaseController {
 
         sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
-    }
-
-    @Override
-    public void toFront() {
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        myStage.toFront();
-                        webView.requestFocus();
-                        timer = null;
-                    }
-                });
-            }
-        }, 1000);
     }
 
     @FXML

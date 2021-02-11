@@ -50,7 +50,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * @License Apache License Version 2.0
  */
 // http://commons.apache.org/proper/commons-compress/examples.html
-public class FilesArchiveCompressController extends FilesBatchController {
+public class FilesArchiveCompressController extends BaseBatchFileController {
 
     protected String archiver, compressor, rootName, extension;
     protected ArchiveOutputStream archiveOut;

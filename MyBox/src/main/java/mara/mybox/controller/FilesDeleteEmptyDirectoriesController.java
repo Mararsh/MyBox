@@ -13,7 +13,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-1-6
  * @License Apache License Version 2.0
  */
-public class FilesDeleteEmptyDirectoriesController extends FilesBatchController {
+public class FilesDeleteEmptyDirectoriesController extends BaseBatchFileController {
 
     protected int totalDeleted;
 

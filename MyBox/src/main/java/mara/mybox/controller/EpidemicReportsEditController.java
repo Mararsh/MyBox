@@ -344,7 +344,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                     if (saveCloseCheck.isSelected()) {
                         closeStage();
                         if (reportsController != null) {
-                            reportsController.getMyStage().toFront();
+                            reportsController.getMyStage().requestFocus();
                         }
                     } else {
                         popInformation(message("Written") + ": " + count);

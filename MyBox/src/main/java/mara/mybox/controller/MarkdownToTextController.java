@@ -23,7 +23,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2020-10-17
  * @License Apache License Version 2.0
  */
-public class MarkdownToTextController extends FilesBatchController {
+public class MarkdownToTextController extends BaseBatchFileController {
 
     protected Parser textParser, docxParser;
     protected MutableDataSet textOptions;

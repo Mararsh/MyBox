@@ -22,7 +22,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2020-10-17
  * @License Apache License Version 2.0
  */
-public class HtmlToTextController extends FilesBatchController {
+public class HtmlToTextController extends BaseBatchFileController {
 
     protected FlexmarkHtmlConverter mdConverter;
     protected MutableDataSet parserOptions;

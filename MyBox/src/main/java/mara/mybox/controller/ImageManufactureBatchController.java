@@ -23,7 +23,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchController extends BaseImagesBatchController {
+public class ImageManufactureBatchController extends BaseBatchImageController {
 
     protected String errorString, targetFormat;
 

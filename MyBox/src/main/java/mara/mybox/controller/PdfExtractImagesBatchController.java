@@ -17,7 +17,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfExtractImagesBatchController extends PdfBatchController {
+public class PdfExtractImagesBatchController extends BaseBatchPdfController {
 
     public PdfExtractImagesBatchController() {
         baseTitle = AppVariables.message("PdfExtractImagesBatch");

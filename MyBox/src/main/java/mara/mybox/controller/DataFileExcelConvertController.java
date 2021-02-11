@@ -23,12 +23,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * @CreateDate 2020-12-05
  * @License Apache License Version 2.0
  */
-public class DataConvertExcelController extends BaseDataConvertController {
+public class DataFileExcelConvertController extends BaseDataConvertController {
 
     @FXML
     protected CheckBox withNamesCheck;
 
-    public DataConvertExcelController() {
+    public DataFileExcelConvertController() {
         baseTitle = AppVariables.message("ExcelConvert");
 
         SourceFileType = VisitHistory.FileType.Excel;
@@ -82,34 +82,34 @@ public class DataConvertExcelController extends BaseDataConvertController {
     public String handleFile(File srcFile, File targetPath) {
         countHandling(srcFile);
         String result;
+        String filePrefix = FileTools.getFilePrefix(srcFile.getName());
         try ( Workbook wb = WorkbookFactory.create(srcFile)) {
+            List<String> rowData = new ArrayList<>();
             for (int s = 0; s < wb.getNumberOfSheets(); s++) {
                 Sheet sheet = wb.getSheetAt(s);
                 updateLogs(message("Reading") + " " + message("Sheet") + ":" + sheet.getSheetName());
                 convertController.names = new ArrayList<>();
-                int startRow = sheet.getFirstRowNum();
-                if (withNamesCheck.isSelected()) {
-                    Row row = sheet.getRow(startRow);
-                    for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-                        convertController.names.add(cellString(row.getCell(c)));
+                for (Row row : sheet) {
+                    if (row == null) {
+                        continue;
                     }
-                    startRow++;
-                } else {
-                    Row row = sheet.getRow(startRow);
-                    for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-                        convertController.names.add(message("col") + c);
-                    }
-                }
-                String filePrefix = FileTools.getFilePrefix(srcFile.getName()) + "_" + sheet.getSheetName();
-                convertController.openWriters(filePrefix);
-
-                for (int r = startRow; r <= sheet.getLastRowNum(); r++) {
-                    Row row = sheet.getRow(r);
-                    List<String> rowData = new ArrayList<>();
                     for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
                         rowData.add(cellString(row.getCell(c)));
                     }
+                    if (convertController.names.isEmpty()) {
+                        if (withNamesCheck.isSelected()) {
+                            convertController.names.addAll(rowData);
+                            convertController.openWriters(filePrefix + "_" + sheet.getSheetName());
+                            continue;
+                        } else {
+                            for (int c = 1; c <= rowData.size(); c++) {
+                                convertController.names.add(message("Field") + c);
+                            }
+                            convertController.openWriters(filePrefix + "_" + sheet.getSheetName());
+                        }
+                    }
                     convertController.writeRow(rowData);
+                    rowData.clear();
                 }
                 convertController.closeWriters();
             }

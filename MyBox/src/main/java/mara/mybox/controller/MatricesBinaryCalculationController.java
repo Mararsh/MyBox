@@ -178,10 +178,6 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     }
 
     @Override
-    public void itemClicked() {
-    }
-
-    @Override
     public void itemDoubleClicked() {
     }
 

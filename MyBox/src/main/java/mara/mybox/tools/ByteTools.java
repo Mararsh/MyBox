@@ -445,9 +445,9 @@ public class ByteTools {
                 unit = 1024 * 1024 * 1024L;
                 strV = strV.substring(0, strV.length() - 1);
             }
-            long v = Integer.valueOf(strV.trim());
+            double v = Double.valueOf(strV.trim());
             if (v >= 0) {
-                return v * unit;
+                return Math.round(v * unit);
             } else {
                 return -1;
             }

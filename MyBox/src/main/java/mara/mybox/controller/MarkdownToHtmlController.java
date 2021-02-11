@@ -31,7 +31,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2019-10-29
  * @License Apache License Version 2.0
  */
-public class MarkdownToHtmlController extends FilesBatchController {
+public class MarkdownToHtmlController extends BaseBatchFileController {
 
     protected Parser htmlParser;
     protected HtmlRenderer htmlRender;

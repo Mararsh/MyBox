@@ -175,7 +175,7 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="240.0" text="%File" />
                 <TableColumn fx:id="fromColumn" prefWidth="100.0" text="%FromPage" />
                 <TableColumn fx:id="toColumn" prefWidth="100.0" text="%ToPage" />
-                <TableColumn fx:id="userPasswordColumn" prefWidth="150.0" text="%UserPassword" />
+                <TableColumn fx:id="userPasswordColumn" prefWidth="150.0" text="%Password" />
                 <TableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
                 <TableColumn fx:id="numberColumn" editable="false" prefWidth="120.0" text="%FilesNumber" />
                 <TableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />

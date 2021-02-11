@@ -62,11 +62,11 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     protected Label commentsLabel;
     @FXML
-    protected CheckBox fillCheck, dottedCheck;
+    protected CheckBox fillCheck, dottedCheck, coordinatePenCheck;
     @FXML
-    protected ColorSetController strokeColorSetController;
+    protected ColorSet strokeColorSetController;
     @FXML
-    protected ColorSetController fillColorSetController;
+    protected ColorSet fillColorSetController;
 
     public enum PenType {
         Polyline, DrawLines, Erase, Rectangle, Circle, Ellipse, Polygon, Frosted, Mosaic
@@ -188,6 +188,15 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
             });
             fillCheck.setSelected(AppVariables.getUserConfigBoolean("ImagePenFill", false));
+
+            coordinatePenCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "PenCoordinate", false));
+            coordinatePenCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_toggle, Boolean new_toggle) {
+                    AppVariables.setUserConfigValue(baseName + "PenCoordinate", coordinatePenCheck.isSelected());
+                }
+            });
 
             opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -319,7 +328,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 opType = PenType.Erase;
                 imageController.initMaskPenlines(true);
                 setBox.getChildren().addAll(strokeWidthPane, withdrawButton, okPane);
-                commentsLabel.setText(message("PenLinesTips"));
+                commentsLabel.setText(message("PenLinesTips") + "\n" + message("ImageEraserComments"));
                 strokeWidthKey = "ImagePenEraserWidth";
                 defaultStrokeWidth = 50;
 
@@ -708,7 +717,11 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
-        if (imageController.isPickingColor || scopeController.isPickingColor) {
+        if (imageController.isPickingColor) {
+            Color color = FxmlControl.imagePixel(p, imageView);
+            if (color != null) {
+                strokeColorSetController.setColor(color);
+            }
             return;
         }
         switch (opType) {
@@ -773,11 +786,13 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         if (null == opType || imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (imageController.isPickingColor || scopeController.isPickingColor) {
+        if (imageController.isPickingColor) {
             return;
         }
         DoublePoint p = FxmlControl.getImageXY(event, imageView);
-        imageController.showXY(event, p);
+        if (coordinatePenCheck.isSelected()) {
+            imageController.showXY(event, p);
+        }
 
         if (event.getButton() == MouseButton.SECONDARY || p == null) {
             return;
@@ -811,11 +826,13 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         if (null == opType || imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (imageController.isPickingColor || scopeController.isPickingColor) {
+        if (imageController.isPickingColor) {
             return;
         }
         DoublePoint p = FxmlControl.getImageXY(event, imageView);
-        imageController.showXY(event, p);
+        if (coordinatePenCheck.isSelected()) {
+            imageController.showXY(event, p);
+        }
 
         if (event.getButton() == MouseButton.SECONDARY || p == null) {
             return;
@@ -848,15 +865,17 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     @Override
     public void mouseReleased(MouseEvent event) {
+        imageController.scrollPane.setPannable(true);
         if (null == opType || imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (imageController.isPickingColor || scopeController.isPickingColor) {
+        if (imageController.isPickingColor) {
             return;
         }
-        imageController.scrollPane.setPannable(true);
         DoublePoint p = FxmlControl.getImageXY(event, imageView);
-        imageController.showXY(event, p);
+        if (coordinatePenCheck.isSelected()) {
+            imageController.showXY(event, p);
+        }
 
         if (event.getButton() == MouseButton.SECONDARY || p == null) {
             return;

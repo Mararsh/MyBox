@@ -12,7 +12,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.ControlPdfWriteOptions;
-import mara.mybox.data.PdfInformation;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -30,7 +29,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -595,48 +593,6 @@ public class PdfTools {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
-        }
-    }
-
-    public static boolean setAttributes(File file, String password, PdfInformation info) {
-        try {
-            if (file == null || info == null) {
-                return false;
-            }
-
-            try ( PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
-                PDDocumentInformation docInfo = doc.getDocumentInformation();
-                docInfo.setAuthor(info.getAuthor());
-                docInfo.setTitle(info.getTitle());
-                docInfo.setSubject(info.getSubject());
-                docInfo.setCreator(info.getCreator());
-                docInfo.setProducer(info.getProducer());
-                Calendar c = Calendar.getInstance();
-                if (info.getCreateTime() > 0) {
-                    c.setTimeInMillis​(info.getCreateTime());
-                    docInfo.setCreationDate(c);
-                }
-                if (info.getModifyTime() > 0) {
-                    c.setTimeInMillis​(info.getModifyTime());
-                    docInfo.setModificationDate(c);
-                }
-                docInfo.setKeywords(info.getKeywords());
-                doc.setDocumentInformation(docInfo);
-                if (info.getVersion() > 0) {
-                    doc.setVersion(info.getVersion());
-                }
-
-                doc.setAllSecurityToBeRemoved(true);
-                StandardProtectionPolicy policy = new StandardProtectionPolicy(
-                        info.getOwnerPassword(), info.getUserPassword(), info.getAccess());
-                doc.protect(policy);
-                doc.save(file);
-                doc.close();
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return false;
         }
     }
 

@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.StringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -133,8 +133,7 @@ public class TableStringValues extends DerbyBase {
 
     public static List<String> max(String name, int max) {
         List<String> records = new ArrayList<>();
-        if (name == null || name.trim().isEmpty()
-                || max < 0) {
+        if (name == null || name.trim().isEmpty() || max < 0) {
             return records;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);

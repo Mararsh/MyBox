@@ -80,7 +80,7 @@ public class ShortcutsController extends HtmlViewerController {
             key("F8", "", message("ControlImagePane"), "");
             key("F9", "", message("CloseStage"), "");
             key("F10", "", message("RefreshStage"), "");
-            key("F11", "", message("SaveAs"), "");
+            key("F11", "", message("SaveAs"), "CTRL+b / ALT+b");
             key("DELETE", "", message("Delete"), "CTRL+d / ALT+d");
             key("PAGE_UP", "", message("Previous"), "ALT+PAGE_UP");
             key("PAGE_DOWN", "", message("Next"), "ALT+PAGE_DOWN");
@@ -94,6 +94,7 @@ public class ShortcutsController extends HtmlViewerController {
             key("CTRL", "d", message("Delete"), "DELETE / ALT+d");
             key("CTRL", "x", message("Crop"), "ALT+x");
             key("CTRL", "s", message("Save"), "F2 / ALT+s");
+            key("CTRL", "b", message("SaveAs"), "F11 / ALT+b");
             key("CTRL", "f", message("Find"), "ALT+f");
             key("CTRL", "h", message("Replace"), "ALT+h");
             key("CTRL", "r", message("Recover") + " / " + message("Clear"), "ALT+r");
@@ -104,6 +105,8 @@ public class ShortcutsController extends HtmlViewerController {
             key("CTRL", "w", message("Cancel") + " / " + message("Withdraw"), "ESCAPE");
             key("CTRL", "p", message("Pop"), "ALT+p");
             key("CTRL", "q", message("Query"), "ALT+q");
+            key("CTRL", "t", message("SelectArea"), "ALT+t");
+            key("CTRL", "k", message("PickColor"), "ALT+k");
             key("CTRL", "1", message("OriginalSize") + " / " + message("Previous"), "");
             key("CTRL", "2", message("PaneSize") + " / " + message("Next"), "");
             key("CTRL", "3", message("ZoomIn"), "");

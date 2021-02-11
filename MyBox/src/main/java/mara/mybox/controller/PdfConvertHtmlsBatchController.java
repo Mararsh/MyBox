@@ -29,7 +29,7 @@ import thridparty.PDFResourceToDirHandler;
  * @CreateDate 2019-9-1
  * @License Apache License Version 2.0
  */
-public class PdfConvertHtmlsBatchController extends PdfBatchController {
+public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
 
     protected boolean separatedHtml;
     protected SaveType fontSaveType, imageSaveType;

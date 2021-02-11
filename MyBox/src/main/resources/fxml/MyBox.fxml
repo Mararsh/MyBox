@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../img/PdfTools.png" />
+                                                <Image url="@../img/DocumentTools.png" />
                                             </image>
                                         </ImageView>
                                     </children>

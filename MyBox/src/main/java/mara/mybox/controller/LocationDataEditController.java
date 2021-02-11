@@ -620,10 +620,10 @@ public class LocationDataEditController extends BaseController {
 
             if (parentController != null) {
                 ((LocationDataController) parentController).refreshAction();
-                parentController.getMyStage().toFront();
+                parentController.getMyStage().requestFocus();
             } else {
                 LocationDataController controller = (LocationDataController) openStage(CommonValues.LocationDataFxml);
-                controller.getMyStage().toFront();
+                controller.getMyStage().requestFocus();
             }
 
             closeStage();

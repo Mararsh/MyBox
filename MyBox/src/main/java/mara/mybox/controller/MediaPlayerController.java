@@ -451,7 +451,7 @@ public class MediaPlayerController extends BaseController {
             return;
         }
         playerControlBox.setVisible(true);
-        playerControlBox.toFront();
+        playerControlBox.requestFocus();
 //        playerControlBox.setOpacity(0.5);
 
         timer = new Timer();

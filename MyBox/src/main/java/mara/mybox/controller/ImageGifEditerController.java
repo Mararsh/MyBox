@@ -11,10 +11,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -105,6 +105,23 @@ public class ImageGifEditerController extends BaseImagesListController {
 
     }
 
+    @FXML
+    @Override
+    public void viewAction() {
+        try {
+            if (sourceFile != null) {
+                final ImageGifViewerController controller
+                        = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+                controller.loadImage(sourceFile.getAbsolutePath());
+            } else {
+                viewCheck.setSelected(true);
+                saveAsAction();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public void saveFileDo(final File outFile) {
 
@@ -151,22 +168,6 @@ public class ImageGifEditerController extends BaseImagesListController {
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
-        }
-    }
-
-    @FXML
-    public void viewAction() {
-        try {
-            if (sourceFile != null) {
-                final ImageGifViewerController controller
-                        = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-                controller.loadImage(sourceFile.getAbsolutePath());
-            } else {
-                viewCheck.setSelected(true);
-                saveAsAction();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 

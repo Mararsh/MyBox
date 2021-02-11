@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,11 +15,13 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -38,6 +41,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageAttributes;
@@ -62,10 +66,10 @@ public abstract class BaseImageController extends BaseController {
     protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
-    protected boolean careFrames, isPickingColor, imageChanged, operateOriginalSize,
+    protected boolean isPickingColor, imageChanged, operateOriginalSize,
             needNotRulers, needNotCoordinates, needNotContextMenu;
-    protected int loadWidth, defaultLoadWidth, frameIndex, sizeChangeAware = 10,
-            xZoomStep = 50, yZoomStep = 50;
+    protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, sizeChangeAware = 10,
+            zoomStep, xZoomStep, yZoomStep;
     protected LoadingController loadingController;
     protected SingletonTask loadTask;
     protected double mouseX, mouseY;
@@ -83,13 +87,15 @@ public abstract class BaseImageController extends BaseController {
     @FXML
     protected Text sizeText, xyText;
     @FXML
-    protected Label imageLabel;
+    protected Label imageLabel, imageInfoLabel;
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck, rulerYCheck, coordinateCheck,
             contextMenuCheck, copyToSystemClipboardCheck;
+    @FXML
+    protected ComboBox<String> zoomStepSelector;
 
     public BaseImageController() {
         SourceFileType = VisitHistory.FileType.Image;
@@ -132,9 +138,9 @@ public abstract class BaseImageController extends BaseController {
     public void updateImage(Image image) {
         try {
             imageView.setImage(image);
-            setImageChanged(true);
-            fitSize();
+//            fitSize();
             drawMaskControls();
+            setImageChanged(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -147,11 +153,10 @@ public abstract class BaseImageController extends BaseController {
 
             isPickingColor = imageChanged = operateOriginalSize
                     = needNotRulers = needNotCoordinates = needNotContextMenu = false;
-            careFrames = true;
             loadWidth = defaultLoadWidth = -1;
-            frameIndex = 0;
+            frameIndex = framesNumber = 0;
             sizeChangeAware = 10;
-            xZoomStep = yZoomStep = 50;
+            zoomStep = xZoomStep = yZoomStep = 40;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -192,34 +197,38 @@ public abstract class BaseImageController extends BaseController {
     }
 
     @Override
-    public void keyEventsHandler(KeyEvent event) {
-        if (event.getCode() != null) {
-            if (event.isControlDown() || !FxmlControl.textInputFocus(this)) {
-                switch (event.getCode()) {
-                    case DIGIT1:
-                        if (imageSizeButton != null && !imageSizeButton.isDisabled()) {
-                            loadedSize();
-                        }
-                        return;
-                    case DIGIT2:
-                        if (paneSizeButton != null && !paneSizeButton.isDisabled()) {
-                            paneSize();
-                        }
-                        return;
-                    case DIGIT3:
-                        if (zoomInButton != null && !zoomInButton.isDisabled()) {
-                            zoomIn();
-                        }
-                        return;
-                    case DIGIT4:
-                        if (zoomOutButton != null && !zoomOutButton.isDisabled()) {
-                            zoomOut();
-                        }
-                        return;
-                }
-            }
+    public void controlAltHandler(KeyEvent event) {
+        if (event.getCode() == null) {
+            return;
         }
-        super.keyEventsHandler(event);
+        switch (event.getCode()) {
+            case DIGIT1:
+                if (imageSizeButton != null && !imageSizeButton.isDisabled()) {
+                    loadedSize();
+                }
+                return;
+            case DIGIT2:
+                if (paneSizeButton != null && !paneSizeButton.isDisabled()) {
+                    paneSize();
+                }
+                return;
+            case DIGIT3:
+                if (zoomInButton != null && !zoomInButton.isDisabled()) {
+                    zoomIn();
+                }
+                return;
+            case DIGIT4:
+                if (zoomOutButton != null && !zoomOutButton.isDisabled()) {
+                    zoomOut();
+                }
+                return;
+            case K:
+                if (pickColorCheck != null) {
+                    pickColorCheck.setSelected(!pickColorCheck.isSelected());
+                }
+                return;
+        }
+        super.controlAltHandler(event);
     }
 
     protected void initImageView() {
@@ -266,6 +275,7 @@ public abstract class BaseImageController extends BaseController {
     protected void initViewControls() {
         try {
             if (rulerXCheck != null) {
+                rulerXCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "RulerX", false));
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -273,9 +283,10 @@ public abstract class BaseImageController extends BaseController {
                         checkRulerX();
                     }
                 });
-                rulerXCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "RulerX", false));
+                checkRulerX();
             }
             if (rulerYCheck != null) {
+                rulerYCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "RulerY", false));
                 rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -283,10 +294,11 @@ public abstract class BaseImageController extends BaseController {
                         checkRulerY();
                     }
                 });
-                rulerYCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "RulerY", false));
+                checkRulerY();
             }
 
             if (coordinateCheck != null) {
+                coordinateCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -294,31 +306,79 @@ public abstract class BaseImageController extends BaseController {
                         checkCoordinate();
                     }
                 });
-                coordinateCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
+                checkCoordinate();
             }
 
             if (contextMenuCheck != null) {
+                contextMenuCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ContextMenu", true));
                 contextMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         AppVariables.setUserConfigValue(baseName + "ContextMenu", contextMenuCheck.isSelected());
                     }
                 });
-                contextMenuCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ContextMenu", true));
             }
 
             if (copyToSystemClipboardCheck != null) {
+                copyToSystemClipboardCheck.setSelected(AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
                 copyToSystemClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         AppVariables.setUserConfigValue("CopyToSystemClipboard", copyToSystemClipboardCheck.isSelected());
                     }
                 });
-                copyToSystemClipboardCheck.setSelected(AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
+            }
+
+            zoomStep = AppVariables.getUserConfigInt(baseName + "ZoomStep", 40);
+            zoomStep = zoomStep <= 0 ? 40 : zoomStep;
+            xZoomStep = zoomStep;
+            yZoomStep = zoomStep;
+            if (zoomStepSelector != null) {
+                zoomStepSelector.getItems().addAll(
+                        Arrays.asList("40", "20", "5", "1", "3", "15", "30", "50", "80", "100", "150", "200", "300", "500")
+                );
+                zoomStepSelector.setValue(zoomStep + "");
+                zoomStepSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                        try {
+                            int v = Integer.valueOf(newVal);
+                            if (v > 0) {
+                                zoomStep = v;
+                                AppVariables.setUserConfigInt(baseName + "ZoomStep", zoomStep);
+                                zoomStepSelector.getEditor().setStyle(null);
+                                xZoomStep = zoomStep;
+                                yZoomStep = zoomStep;
+                                zoomStepChanged();
+                            } else {
+                                zoomStepSelector.getEditor().setStyle(badStyle);
+                            }
+                        } catch (Exception e) {
+                            zoomStepSelector.getEditor().setStyle(badStyle);
+                        }
+                    }
+                });
+                FxmlControl.setTooltip(zoomStepSelector, new Tooltip(message("ZoomStep")));
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void zoomStepChanged() {
+    }
+
+    protected void setZoomStep(Image image) {
+        if (image == null) {
+            return;
+        }
+        zoomStep = (int) image.getWidth() / 10;
+        if (zoomStepSelector != null) {
+            zoomStepSelector.setValue(zoomStep + "");
+        } else {
+            xZoomStep = (int) image.getWidth() / 10;
+            yZoomStep = (int) image.getHeight() / 10;
         }
     }
 
@@ -356,11 +416,11 @@ public abstract class BaseImageController extends BaseController {
     }
 
     @Override
-    public void sourceFileChanged(final File file) {
+    public void sourceFileChanged(File file) {
         if (file == null) {
             return;
         }
-        careFrames = true;
+        frameIndex = 0;
         loadImage(file, loadWidth);
     }
 
@@ -535,17 +595,7 @@ public abstract class BaseImageController extends BaseController {
         }
         FxmlControl.moveCenter(scrollPane, imageView);
         scrollPane.setVvalue(scrollPane.getVmin());
-        if (borderLine != null) {
-            borderLine.setLayoutX(imageView.getLayoutX() - 1);
-            borderLine.setLayoutY(imageView.getLayoutY() - 1);
-            borderLine.setWidth(imageView.getBoundsInParent().getWidth() + 2);
-            borderLine.setHeight(imageView.getBoundsInParent().getHeight() + 2);
-        }
-        if (sizeText != null) {
-            sizeText.setX(borderLine.getLayoutX() + borderLine.getWidth() + 1);
-            sizeText.setY(borderLine.getLayoutY() + borderLine.getHeight() - 10);
-            sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
-        }
+        updateLabelsTitle();
     }
 
     public double getImageWidth() {
@@ -656,24 +706,28 @@ public abstract class BaseImageController extends BaseController {
         refinePane();
     }
 
-    public void loadImage(final File file) {
-        loadImage(file, false, loadWidth, frameIndex, careFrames);
+    public void loadImage(File file) {
+        loadImage(file, loadWidth);
     }
 
-    public void loadImage(final File file, int maxWidth) {
-        loadImage(file, false, maxWidth, frameIndex, careFrames);
+    public void loadImage(File file, int maxWidth) {
+        loadImage(file, false, maxWidth, frameIndex);
     }
 
-    public void loadImageInformation(final File file) {
+    public void loadImageInformation(File file) {
         loadImage(file, true);
     }
 
-    public void loadImage(final File file, final boolean onlyInformation) {
-        loadImage(file, onlyInformation, loadWidth, frameIndex, careFrames);
+    public void loadImage(File file, boolean onlyInformation) {
+        loadImage(file, onlyInformation, loadWidth, frameIndex);
     }
 
-    public void loadImage(File file, boolean onlyInformation,
-            int requiredWidth, int inFrameIndex, boolean inCareFrames) {
+    public void loadImage(File file, int maxWidth, int index) {
+        loadImage(file, false, maxWidth, index);
+    }
+
+    // 0-based
+    public void loadImage(File file, boolean onlyInformation, int requiredWidth, int inFrameIndex) {
         if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
@@ -682,64 +736,58 @@ public abstract class BaseImageController extends BaseController {
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
-            final String fileName = file.getPath();
             loadTask = new SingletonTask<Void>() {
-                private boolean multiplied, needSample;
+                private ImageFileInformation imageFileInformation;
+                private boolean needSample;
                 private ImageInformation imageInfo;
 
                 @Override
                 protected boolean handle() {
-                    final ImageFileInformation imageFileInformation = ImageInformation.loadImageFileInformation(file);
-                    if (imageFileInformation == null
-                            || imageFileInformation.getImagesInformation() == null
-                            || imageFileInformation.getImagesInformation().isEmpty()) {
-                        return false;
-                    }
-                    String format = FileTools.getFileSuffix(fileName).toLowerCase();
-                    if (loadTask == null || isCancelled() || "raw".equals(format)) {
-                        return false;
-                    }
-                    imageInfo = imageFileInformation.getImagesInformation().get(inFrameIndex);
-                    if (!onlyInformation) {
-                        if (imageFileInformation.getImagesInformation().size() > 1 && careFrames) {
-                            multiplied = true;
+                    try {
+                        imageFileInformation = ImageInformation.loadImageFileInformation(file);
+                        if (imageFileInformation == null
+                                || imageFileInformation.getImagesInformation() == null
+                                || imageFileInformation.getImagesInformation().isEmpty()) {
                             return false;
                         }
-                        int maxWidth = ImageInformation.countMaxWidth(imageInfo);
-                        int checkWidth = requiredWidth > 0 ? requiredWidth : imageInfo.getWidth();
-                        if (maxWidth < checkWidth) {
-                            needSample = true;
+                        String format = FileTools.getFileSuffix(file).toLowerCase();
+                        if (loadTask == null || isCancelled() || "raw".equals(format)) {
                             return false;
                         }
-                        ImageInformation.loadImage(imageInfo, checkWidth);
-                        image = imageInfo.getThumbnail();
-                    } else {
-                        image = null;
+                        int index = inFrameIndex;
+                        if (inFrameIndex < 0 || inFrameIndex >= imageFileInformation.getNumberOfImages()) {
+                            index = 0;
+                        }
+                        imageInfo = imageFileInformation.getImagesInformation().get(index);
+                        if (!onlyInformation) {
+                            int maxWidth = ImageInformation.countMaxWidth(imageInfo);
+                            int checkWidth = requiredWidth > 0 ? requiredWidth : imageInfo.getWidth();
+                            if (maxWidth < checkWidth) {
+                                needSample = true;
+                                return true;
+                            }
+                            ImageInformation.loadImage(imageInfo, checkWidth);
+                            image = imageInfo.getThumbnail();
+                        } else {
+                            image = null;
+                        }
+                        return imageInfo != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        MyBoxLog.error(error);
+                        return false;
                     }
-                    return imageInfo != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    sourceFile = file;
-                    imageInformation = imageInfo;
-
-                    frameIndex = inFrameIndex;
-                    careFrames = inCareFrames;
-                    getMyStage().setTitle(getBaseTitle() + " " + fileName);
-                    afterInfoLoaded();
-                    afterImageLoaded();
-                    refinePane();
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (multiplied) {
-                        loadMultipleFramesImage(file);
-                    } else if (needSample) {
+                    if (needSample) {
                         needSample(imageInfo);
                     } else {
-                        popError(AppVariables.message("FailOpenImage"));
+                        sourceFile = file;
+                        imageInformation = imageInfo;
+                        afterInfoLoaded();
+                        afterImageLoaded();
                     }
                 }
 
@@ -756,7 +804,7 @@ public abstract class BaseImageController extends BaseController {
         controller.setValues(this, imageInfo);
     }
 
-    public void loadImage(final String fileName) {
+    public void loadImage(String fileName) {
         try {
             if (fileName == null) {
                 return;
@@ -781,7 +829,6 @@ public abstract class BaseImageController extends BaseController {
         boolean exist = this.sourceFile != null || image != null;
         this.sourceFile = sourceFile;
         this.imageInformation = imageInformation;
-
         synchronized (this) {
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
@@ -841,10 +888,14 @@ public abstract class BaseImageController extends BaseController {
         setImageChanged(true);
     }
 
+    public void loadFrame(int index) {
+        loadImage(sourceFile, false, loadWidth, index);
+    }
+
     public void setImageChanged(boolean imageChanged) {
         try {
             this.imageChanged = imageChanged;
-            updateLabelTitle();
+            updateLabelsTitle();
             if (saveButton != null && !saveButton.disableProperty().isBound()) {
                 if (imageInformation != null
                         && imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
@@ -853,7 +904,6 @@ public abstract class BaseImageController extends BaseController {
                     saveButton.setDisable(!imageChanged);
                 }
             }
-
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -864,6 +914,17 @@ public abstract class BaseImageController extends BaseController {
     }
 
     public boolean afterImageLoaded() {
+        if (image != null) {
+            setZoomStep(image);
+        }
+        frameIndex = 0;
+        framesNumber = 1;
+        if (imageInformation != null) {
+            frameIndex = imageInformation.getIndex();
+            if (imageInformation.getImageFileInformation() != null) {
+                framesNumber = imageInformation.getImageFileInformation().getNumberOfImages();
+            }
+        }
         return true;
     }
 
@@ -884,7 +945,7 @@ public abstract class BaseImageController extends BaseController {
         }
     }
 
-    public void updateLabelTitle() {
+    public void updateLabelsTitle() {
         try {
             if (getMyStage() == null) {
                 return;
@@ -892,13 +953,11 @@ public abstract class BaseImageController extends BaseController {
             String title;
             if (sourceFile != null) {
                 title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
-                if (imageInformation != null) {
-                    if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
-                        title += " - " + message("Image") + " " + imageInformation.getIndex();
-                    }
-                    if (imageInformation.isIsScaled()) {
-                        title += " - " + message("Scaled");
-                    }
+                if (framesNumber > 1) {
+                    title += " - " + message("Frame") + " " + (frameIndex + 1);
+                }
+                if (imageInformation != null && imageInformation.isIsScaled()) {
+                    title += " - " + message("Scaled");
                 }
             } else {
                 title = getBaseTitle();
@@ -908,31 +967,55 @@ public abstract class BaseImageController extends BaseController {
             }
             getMyStage().setTitle(title);
 
-            if (bottomLabel != null) {
-                if (imageView != null && imageView.getImage() != null) {
-                    String bottom = "";
-                    if (imageInformation != null) {
-                        bottom += AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
-                        bottom += AppVariables.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
-                    }
-                    bottom += AppVariables.message("LoadedSize") + ":"
-                            + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
-                            + AppVariables.message("DisplayedSize") + ":"
-                            + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
-                    if (sourceFile != null) {
-                        bottom += "  " + AppVariables.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
-                                + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
-                    }
-                    bottomLabel.setText(bottom);
-
+            String imageInfo = "", fileInfo = "", displayInfo = "";
+            if (sourceFile != null) {
+                fileInfo = AppVariables.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
+                        + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified());
+            }
+            imageInfo = AppVariables.message("FramesNumber") + ":" + framesNumber + "\n"
+                    + AppVariables.message("CurrentFrame") + ":" + (frameIndex + 1);
+            if (imageInformation != null) {
+                imageInfo += "\n" + AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "\n"
+                        + AppVariables.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight();
+            }
+            if (imageView != null && imageView.getImage() != null) {
+                displayInfo = AppVariables.message("LoadedSize") + ":"
+                        + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "\n"
+                        + AppVariables.message("DisplayedSize") + ":"
+                        + (int) imageView.getBoundsInLocal().getWidth() + "x" + (int) imageView.getBoundsInLocal().getHeight();
+            }
+            String more = moreDisplayInfo();
+            displayInfo += (!displayInfo.isBlank() && !more.isBlank() ? "\n" : "") + more;
+            if (imageInfoLabel != null) {
+                if (bottomLabel != null) {
+                    imageInfoLabel.setText(fileInfo + "\n" + imageInfo);
+                    bottomLabel.setText(displayInfo.replaceAll("\n", "  "));
                 } else {
-                    bottomLabel.setText("");
+                    imageInfoLabel.setText(fileInfo + "\n" + imageInfo + "\n" + displayInfo);
+                }
+            } else if (bottomLabel != null) {
+                bottomLabel.setText((fileInfo + "\n" + imageInfo + "\n" + displayInfo).replaceAll("\n", "  "));
+            }
+            if (imageView != null && imageView.getImage() != null) {
+                if (borderLine != null) {
+                    borderLine.setLayoutX(imageView.getLayoutX() - 1);
+                    borderLine.setLayoutY(imageView.getLayoutY() - 1);
+                    borderLine.setWidth(imageView.getBoundsInParent().getWidth() + 2);
+                    borderLine.setHeight(imageView.getBoundsInParent().getHeight() + 2);
+                }
+                if (sizeText != null) {
+                    sizeText.setX(borderLine.getLayoutX() + borderLine.getWidth() + 1);
+                    sizeText.setY(borderLine.getLayoutY() + borderLine.getHeight() - 10);
+                    sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
                 }
             }
-
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    protected String moreDisplayInfo() {
+        return "";
     }
 
     @FXML
@@ -1058,15 +1141,8 @@ public abstract class BaseImageController extends BaseController {
 
     }
 
-    protected Color pickColor(MouseEvent event, ImageView view) {
-//        MyBoxLog.debug("pickColor");
-        DoublePoint p = FxmlControl.getImageXY(event, view);
-        return pickColor(p, imageView);
-    }
-
     protected Color pickColor(DoublePoint p, ImageView view) {
-//        MyBoxLog.debug("pickColor");
-        Color color = FxmlControl.imagePixel(p, imageView);
+        Color color = FxmlControl.imagePixel(p, view);
         if (color != null) {
             startPickingColor();
             if (paletteController != null && paletteController.getMyStage().isShowing()) {

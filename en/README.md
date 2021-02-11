@@ -3,20 +3,19 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
-## What's New        
-2021-1-27 v6.3.8                  
--  Add: Edit and convert csv file and excel file. Data clipboard. Edit and save matrix. Set html style in batch.               
--  Improve: Channels' weights can be set for image quantization. Shortcuts can omit Ctrl/Alt when focus is not in "Text Input" controls.  Stream reading when convert/export data.                       
--  Solved problems. Distance not work when replace images' color in batch. User password and owner password are messed for PDF.  
-Pagination not work in text filter interface. Table labels need translation too. BC dates are parsed incorrectly in time tree.        
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.8)             
-  
+## What's New           
+2021-2-11 v6.3.9                  
+-  Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Can clear security attributes of PDF file.          
+-  Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarcive file.  Non-english entries of zip file are messed.             
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                     
+Happy Spring Festival!  Best wishes in Year of the Ox!                
+    
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Source Codes   
-[MyBox-6.3.8-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-src.zip)   37M        
+[MyBox-6.3.9-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-src.zip)   38M        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) and 
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)                       
@@ -27,9 +26,9 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win x64 | [MyBox-6.3.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-exe.zip)  | 292MB | MyBox.exe |       
-| linux x64 | [MyBox-6.3.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux.tar.gz)  | 299MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac.dmg)  | 306MB  |  MyBox-6.3.8.app   |   
+| win x64 | [MyBox-6.3.9-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-win-exe.zip)  | 297MB | MyBox.exe |       
+| linux x64 | [MyBox-6.3.9-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-linux.tar.gz)  | 305MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.9-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-mac.dmg)  | 312MB  |  MyBox-6.3.9.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -39,16 +38,16 @@ When JRE or JDK 15 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-win-jar.zip)  | 148MB | Java 15.0.1 or higher |    
-| linux | [MyBox-6.3.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-linux-jar.zip)  | 155MB  | Java 15.0.1 or higher |    
-| mac | [MyBox-6.3.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.8/MyBox-6.3.8-mac-jar.zip)  |  152MB  | Java 15.0.1 or higher |    
+| win | [MyBox-6.3.9-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-win-jar.zip)  | 151MB | Java 15.0.1 or higher |    
+| linux | [MyBox-6.3.9-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-linux-jar.zip)  | 159MB  | Java 15.0.1 or higher |    
+| mac | [MyBox-6.3.9-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.9/MyBox-6.3.9-mac-jar.zip)  |  156MB  | Java 15.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.8.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.9.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.8.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.9.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -67,9 +66,9 @@ Configuration file is under "User Home":
         
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |        
-| win | `C:\users\UserName\mybox\MyBox_v6.3.8.ini`  |       
-| linux | `/home/UserName/mybox/MyBox_v6.3.8.ini` |       
-| mac | `/Users/UserName/mybox/MyBox_v6.3.8.ini` |           
+| win | `C:\users\UserName\mybox\MyBox_v6.3.9.ini`  |       
+| linux | `/home/UserName/mybox/MyBox_v6.3.9.ini` |       
+| mac | `/Users/UserName/mybox/MyBox_v6.3.9.ini` |           
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.         
 Function "Settings" can be used to change configuration values.       
@@ -89,8 +88,8 @@ Function "Settings" can be used to change configuration values.
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.8 | 2021-1-27 | [html](#devLog) |
-| Shortcuts | 6.3.8 | 2021-1-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs | 6.3.9 | 2021-2-11 | [html](#devLog) |
+| Shortcuts | 6.3.9 | 2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
@@ -154,10 +153,11 @@ MyBox is based on following open sources:
 | Commons IO | File IO | https://commons.apache.org/proper/commons-io/ |      
 | colorhexa | Color data | https://www.colorhexa.com/color-names |      
 | WQY | Font file | http://wenq.org/wqy2/ |      
-| ttc2ttf | Extract ttf | https://github.com/fermi1981/TTC_TTF |          
+| ttc2ttf | Extract ttf | https://github.com/fermi1981/TTC_TTF |      
+| sfds | Handwriting | http://www.sfds.cn/725B/ |            
 
 # Current Version
-Current version is 6.3.8. Its features are mentioned below in summary:   
+Current version is 6.3.9. Its features are mentioned below in summary:   
  
 * [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -395,7 +395,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 2. Channels of histograms can be selected.
 3. Statistic against selected area.
 4. Count dominant colors:        
-	- Calculate mostly different colors in image by K-Means Clustering. Maximum loop can be set.      
+	- Calculate mostly different colors in image by K-Means Clustering. 
 	- Calculate mostly occurred colors in image by Popularity Quantization.       
 	- Results can be imported in Color Palette.      
 5. Image data can be saved as html file.
@@ -1093,8 +1093,8 @@ Valid color value is like:
 ### Archive/Compress/Decompress/Unarchive<a id="archiveCompress" />  
 1. Archiving is the process to collect multiple files/directories as single file. Some archive formats like zip and 7z implement compression too. Unarchiving is the inverse process of archiving.    
 2. Compressing is the process to reduce size of single file. Generally it happens after archiving. Decompressing is the invert process of compressing.    
-3. Supported archive formats include zip, tar, 7z, ar, cpio.    
-4. Supported unarchive formats include zip, tar, 7z, ar, cpio, arj, dump.    
+3. Supported archive formats include zip, tar, 7z(Only support some algorithms), ar, cpio.    
+4. Supported unarchive formats include zip, tar, 7z(Only support some algorithms), ar, cpio, arj, dump.    
 5. Supported compress formats include gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed.    
 6. Supported decompress formats include gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, DEFLATE64,  Z.    
 7. When unarchive/decompress, the formats can be defected automatically meanwhile user can choice the formats since some formats can not be defected.    
@@ -1260,11 +1260,13 @@ Decoding does reverse conversion.
 1. Interface:
 	-  Language, font size, icon size
 	-  Control color, whether display control text, interface style     
-	-  Select hi-dpi icons(100px) or common icons(40px).                              
+	-  Select hi-dpi icons(100x100) or common icons(40x40).                              
            When screen resolution is not high than 120dpi, suggest to use common icons.  Hi-dpi icons may look blurred on low-resolution screen.                      
 	-  Whether restore last size of each scene. 
 	-  Whether open new stage to display scene. 
-	-  Show/Hide splitted panes by: mouse entering, or clicking mouse.
+	-  Whether show/Hide splitted panes when mouse passing.
+	-  Whether pop stage "Set Color" when mouse passing.
+	-  Font size, color, duration of popped messages.
 2. Base:
 	-  Maximum memory usage of JVM
 	-  Whether close dpi-aware
@@ -1329,7 +1331,13 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 4. "Error" will cause interface of MyBox Logs Viewer is popped.                 
 
 # Development Logs <a id="devLog"></a>            
-2021-1-27 v6.3.8                  
+2021-2-11 v6.3.9                  
+-  Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Can clear security attributes of PDF file.          
+-  Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarcive file.  Non-english entries of zip file are messed.             
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                     
+Happy Spring Festival!  Best wishes in Year of the Ox!                
+
+2021-1-27 v6.3.9                  
 -  Add: Edit and convert csv file and excel file. Data clipboard. Edit and save matrix. Set html style in batch.               
 -  Improve: Channels' weights can be set for image quantization. Shortcuts can omit Ctrl/Alt when focus is not in "Text Input" controls.  Stream reading when convert/export data.                       
 -  Solved problems. Distance not work when replace images' color in batch. User password and owner password are messed for PDF.  

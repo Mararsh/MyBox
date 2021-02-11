@@ -47,15 +47,6 @@
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#loadClipboard">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconRefresh.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                         <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -83,11 +74,20 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="okSelectButton" mnemonicParsing="false" onAction="#selectClip">
+                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#loadClipboard">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconOK.png" />
+                                                        <Image url="@../buttons/iconRefresh.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="useClipButton" mnemonicParsing="false" onAction="#selectClip">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconYes.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -100,6 +100,24 @@
                                     <children>
                                         <Label text="%MaxSaved" />
                                         <ComboBox fx:id="maxBox" editable="true" prefWidth="80.0" />
+                              <Button fx:id="okMaxButton" mnemonicParsing="false" onAction="#setMax">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconOK.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="openFolderClipsButton" mnemonicParsing="false" onAction="#clipsPath">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconOpen.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </HBox>
                             </children>
@@ -111,6 +129,7 @@
                         <VBox spacing="5.0">
                             <children>
                                 <CheckBox fx:id="enlargeCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%EnlargeImageWhenClipOut" />
+                        <CheckBox fx:id="clipTopCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ClipOnTop" />
                                 <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" selected="true" text="%KeepRatio" />
                                 <ComboBox fx:id="ratioBox" prefWidth="150.0" />
                                 <HBox alignment="CENTER_LEFT" spacing="5.0">

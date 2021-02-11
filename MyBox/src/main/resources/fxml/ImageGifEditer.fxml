@@ -50,11 +50,20 @@ License:    Apache License Version 2.0
                         </Button>
                         <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
                         <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
-                        <Button fx:id="viewButton" layoutX="1448.0" layoutY="13.0" mnemonicParsing="false" onAction="#viewAction" onMouseEntered="#popSaveAs">
+                        <Button fx:id="viewButton" layoutX="1448.0" layoutY="13.0" mnemonicParsing="false" onAction="#viewAction" >
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../buttons/iconView.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconEdit.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

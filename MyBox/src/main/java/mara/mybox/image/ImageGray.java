@@ -81,7 +81,8 @@ public class ImageGray extends PixelsOperation {
             BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    grayImage.setRGB(x, y, ImageColor.pixel2GrayPixel(image.getRGB(x, y)));
+                    int p = image.getRGB(x, y);
+                    grayImage.setRGB(x, y, ImageColor.pixel2GrayPixel(p));
                 }
             }
             return grayImage;

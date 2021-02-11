@@ -14,6 +14,7 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
 /**
  * @Author Mara
@@ -21,14 +22,14 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  * @Description
  * @License Apache License Version 2.0
  */
-public abstract class PdfBatchController extends BaseBatchController<PdfInformation> {
+public abstract class BaseBatchPdfController extends BaseBatchController<PdfInformation> {
 
     protected ControlPdfsTable pdfsTableController;
     protected String password, currentTargetFile;
     protected int fromPage, toPage, startPage;
     protected PDDocument doc;
 
-    public PdfBatchController() {
+    public BaseBatchPdfController() {
         SourceFileType = VisitHistory.FileType.PDF;
         SourcePathType = VisitHistory.FileType.PDF;
         TargetPathType = VisitHistory.FileType.PDF;
@@ -150,10 +151,11 @@ public abstract class PdfBatchController extends BaseBatchController<PdfInformat
                 doc.close();
             }
             currentParameters.startPage = 1;
+        } catch (InvalidPasswordException e) {
+            return message("PasswordIncorrect");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            return e.toString();
         }
-
         updateInterface("CompleteFile");
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
                 currentParameters.currentPage - currentParameters.fromPage, generated);

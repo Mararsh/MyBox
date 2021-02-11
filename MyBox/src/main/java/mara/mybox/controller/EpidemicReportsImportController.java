@@ -1,13 +1,9 @@
 package mara.mybox.controller;
 
-import java.util.Optional;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -39,18 +35,7 @@ public class EpidemicReportsImportController extends DataImportController<Epidem
         if (statisticCheck.isSelected()) {
             startStatistic();
         } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("MyBox");
-            alert.setContentText(message("EpidemicReportStatistic"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonOK = new ButtonType(AppVariables.message("OK"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonOK, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonOK) {
+            if (FxmlControl.askSure(getBaseTitle(), message("EpidemicReportStatistic"))) {
                 startStatistic();
             }
         }
@@ -65,7 +50,7 @@ public class EpidemicReportsImportController extends DataImportController<Epidem
             controller.parent = savedParent;
         }
         controller.start(EpidemicReport.COVID19JHU);
-        controller.getMyStage().toFront();
+        controller.getMyStage().requestFocus();
     }
 
 }

@@ -237,18 +237,24 @@ public class DataFileExcelController extends BaseDataFileController {
         try ( Workbook wb = WorkbookFactory.create(sourceFile)) {
             Sheet sheet = wb.getSheetAt(currentSheet - 1);
             Iterator<Row> iterator = sheet.iterator();
-            if (iterator == null || !iterator.hasNext()) {
+            if (iterator == null) {
                 return false;
             }
-            Row row = iterator.next();
-            if (row == null) {
+            Row firstRow = null;
+            while (iterator.hasNext()) {
+                firstRow = iterator.next();
+                if (firstRow != null) {
+                    break;
+                }
+            }
+            if (firstRow == null) {
                 sourceWithNames = false;
                 return true;
             }
-            for (int col = row.getFirstCellNum(); col < row.getLastCellNum(); col++) {
+            for (int col = firstRow.getFirstCellNum(); col < firstRow.getLastCellNum(); col++) {
                 String name = (message("Field") + (col + 1));
                 ColumnType type = ColumnType.String;
-                Cell cell = row.getCell(col);
+                Cell cell = firstRow.getCell(col);
                 if (cell != null) {
                     switch (cell.getCellType()) {
                         case NUMERIC:
@@ -300,7 +306,7 @@ public class DataFileExcelController extends BaseDataFileController {
             if (iterator == null || !iterator.hasNext()) {
                 return false;
             }
-            while (iterator.hasNext()) {
+            while (backgroundTask != null && !backgroundTask.isCancelled() && iterator.hasNext()) {
                 iterator.next();
                 totalSize++;
             }
@@ -331,7 +337,7 @@ public class DataFileExcelController extends BaseDataFileController {
             sheetSelector.setValue(selectedSheet + "");
             isSettingValues = false;
         }
-//        updateStatus();
+        updateStatus();
     }
 
     @Override
@@ -351,18 +357,17 @@ public class DataFileExcelController extends BaseDataFileController {
             }
             int rowIndex = 0, maxCol = 0;
             List<List<String>> rows = new ArrayList<>();
-            int startRow = (int) currentPageStart;
-            int endRow = (int) currentPageEnd;
+            int startRow = (int) currentPageStart;  // 1-based
+            int endRow = (int) currentPageEnd;    // exclude
             if (sourceWithNames) {
-                startRow++;
-                endRow++;
+                iterator.next();
             }
             while (iterator.hasNext()) {
                 Row fileRow = iterator.next();
-                ++rowIndex;
                 if (fileRow == null) {
                     continue;
                 }
+                ++rowIndex;
                 if (rowIndex < startRow) {
                     continue;
                 }
@@ -415,6 +420,7 @@ public class DataFileExcelController extends BaseDataFileController {
             return;
         }
         currentSheet = selectedSheet;
+        initCurrentPage();
         loadFile(false);
     }
 
@@ -517,8 +523,11 @@ public class DataFileExcelController extends BaseDataFileController {
                     currentSheet = 1;
                 }
                 Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                Iterator<Row> iterator = sourceSheet.iterator();
+                if (iterator == null || !iterator.hasNext()) {
+                    return null;
+                }
                 currentSheetName = sourceSheet.getSheetName();
-
                 Workbook targetBook;
                 Sheet targetSheet;
                 File tmpDataFile = null;
@@ -538,10 +547,8 @@ public class DataFileExcelController extends BaseDataFileController {
                     }
                     targetBook.removeSheetAt(currentSheet - 1);
                     targetSheet = targetBook.createSheet(currentSheetName);
-                    targetBook.setSheetOrder(targetSheet.getSheetName(), currentSheet - 1);
+                    targetBook.setSheetOrder(currentSheetName, currentSheet - 1);
                 }
-
-                int offset = withName ? 1 : 0;
                 int targetRowIndex = 0;
                 if (withName) {
                     Row targetRow = targetSheet.createRow(targetRowIndex++);
@@ -550,10 +557,18 @@ public class DataFileExcelController extends BaseDataFileController {
                         targetCell.setCellValue(colsCheck[col].getText());
                     }
                 }
-                int startRow = (int) currentPageStart + offset - 1;
-                int endRow = (int) currentPageEnd + offset - 1; // exclude
-                for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                    Row sourceRow = sourceSheet.getRow(sourceRowIndex);
+                int startRow = (int) currentPageStart;  //1-based
+                int endRow = (int) currentPageEnd; // exclude
+                if (sourceWithNames) {
+                    iterator.next();
+                }
+                int sourceRowIndex = 0;
+                while (iterator.hasNext()) {
+                    Row sourceRow = iterator.next();
+                    if (sourceRow == null) {
+                        continue;
+                    }
+                    sourceRowIndex++;
                     if (sourceRowIndex < startRow || sourceRowIndex >= endRow) {
                         Row targetRow = targetSheet.createRow(targetRowIndex++);
                         copyRow(sourceRow, targetRow);
@@ -736,7 +751,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     protected void setAllColValues(int col) {
-        if (sourceFile == null) {
+        if (sourceFile == null || pagesNumber <= 1) {
             SetPageColValues(col);
         }
         if (totalSize <= 0 || !checkBeforeNextAction()) {
@@ -757,7 +772,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
+                    File tmpTargetFile = FileTools.getTempFile();
                     File tmpDataFile = FileTools.getTempFile();
                     FileTools.copyFile(sourceFile, tmpDataFile);
                     try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
@@ -767,24 +782,29 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                        String currentSheetName = sourceSheet.getSheetName();
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         targetBook.removeSheetAt(currentSheet - 1);
-                        Sheet targetSheet = targetBook.createSheet(sourceSheet.getSheetName());
-                        targetBook.setSheetOrder(targetSheet.getSheetName(), currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
+                        Sheet targetSheet = targetBook.createSheet(currentSheetName);
+                        targetBook.setSheetOrder(currentSheetName, currentSheet - 1);
                         int targetRowIndex = 0;
                         if (sourceWithNames) {
+                            iterator.next();
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             for (int col = 0; col < colsCheck.length; col++) {
                                 Cell targetCell = targetRow.createCell(col);
                                 targetCell.setCellValue(colsCheck[col].getText());
                             }
                         }
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
                             int targetIndex = col + sourceRow.getFirstCellNum();
                             for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                                 CellType type = CellType.STRING;
@@ -800,7 +820,7 @@ public class DataFileExcelController extends BaseDataFileController {
                                 }
                             }
                         }
-                        try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                        try ( FileOutputStream fileOut = new FileOutputStream(tmpTargetFile)) {
                             targetBook.write(fileOut);
                         }
                     } catch (Exception e) {
@@ -808,7 +828,7 @@ public class DataFileExcelController extends BaseDataFileController {
                         return false;
                     }
                     FileTools.delete(tmpDataFile);
-                    return FileTools.rename(tmpFile, sourceFile);
+                    return FileTools.rename(tmpTargetFile, sourceFile);
                 }
 
                 @Override
@@ -828,7 +848,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     protected void copyAllColValues(int col) {
-        if (sourceFile == null) {
+        if (sourceFile == null || pagesNumber <= 1) {
             copyPageColValues(col);
             return;
         }
@@ -848,10 +868,16 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
+                        if (sourceWithNames) {
+                            iterator.next();
+                        }
                         s = new StringBuilder();
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
@@ -895,7 +921,7 @@ public class DataFileExcelController extends BaseDataFileController {
             popError(message("NoData"));
             return;
         }
-        if (sourceFile == null) {
+        if (sourceFile == null || pagesNumber <= 1) {
             pastePageColValues(col);
             return;
         }
@@ -914,7 +940,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
+                    File tmpTargetFile = FileTools.getTempFile();
                     File tmpDataFile = FileTools.getTempFile();
                     FileTools.copyFile(sourceFile, tmpDataFile);
                     try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
@@ -924,12 +950,16 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         targetBook.removeSheetAt(currentSheet - 1);
                         Sheet targetSheet = targetBook.createSheet(sourceSheet.getSheetName());
                         targetBook.setSheetOrder(targetSheet.getSheetName(), currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
                         int targetRowIndex = 0;
                         if (sourceWithNames) {
+                            iterator.next();
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             for (int col = 0; col < colsCheck.length; col++) {
                                 Cell targetCell = targetRow.createCell(col);
@@ -937,12 +967,12 @@ public class DataFileExcelController extends BaseDataFileController {
                             }
                         }
                         int row = 0, csize = copiedCol.size();
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
                             int targetIndex = col + sourceRow.getFirstCellNum();
                             for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                                 CellType type = CellType.STRING;
@@ -959,7 +989,7 @@ public class DataFileExcelController extends BaseDataFileController {
                             }
                             row++;
                         }
-                        try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                        try ( FileOutputStream fileOut = new FileOutputStream(tmpTargetFile)) {
                             targetBook.write(fileOut);
                         }
                     } catch (Exception e) {
@@ -967,7 +997,7 @@ public class DataFileExcelController extends BaseDataFileController {
                         return false;
                     }
                     FileTools.delete(tmpDataFile);
-                    return FileTools.rename(tmpFile, sourceFile);
+                    return FileTools.rename(tmpTargetFile, sourceFile);
                 }
 
                 @Override
@@ -987,8 +1017,11 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     protected void insertFileCol(int col, boolean left) {
-        if (sourceFile == null || totalSize <= 0
-                || !checkBeforeNextAction()) {
+        if (sourceFile == null || pagesNumber <= 1) {
+            insertPageCol(col, left);
+            return;
+        }
+        if (totalSize <= 0 || !checkBeforeNextAction()) {
             return;
         }
         synchronized (this) {
@@ -1020,24 +1053,28 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         targetBook.removeSheetAt(currentSheet - 1);
                         Sheet targetSheet = targetBook.createSheet(sourceSheet.getSheetName());
                         targetBook.setSheetOrder(targetSheet.getSheetName(), currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
                         int targetRowIndex = 0;
                         if (sourceWithNames) {
+                            iterator.next();
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             for (int col = 0; col < columns.size(); col++) {
                                 Cell targetCell = targetRow.createCell(col);
                                 targetCell.setCellValue(columns.get(col).getName());
                             }
                         }
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
                             int targetCol = 0;
                             Cell targetCell;
                             for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
@@ -1087,7 +1124,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     protected void DeleteFileCol(int col) {
-        if (sourceFile == null) {
+        if (sourceFile == null || pagesNumber <= 1) {
             deletePageCol(col);
             return;
         }
@@ -1118,24 +1155,28 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         targetBook.removeSheetAt(currentSheet - 1);
                         Sheet targetSheet = targetBook.createSheet(sourceSheet.getSheetName());
                         targetBook.setSheetOrder(targetSheet.getSheetName(), currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
                         int targetRowIndex = 0;
                         if (sourceWithNames) {
+                            iterator.next();
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             for (int col = 0; col < columns.size(); col++) {
                                 Cell targetCell = targetRow.createCell(col);
                                 targetCell.setCellValue(columns.get(col).getName());
                             }
                         }
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
                             int targetCol = 0;
                             Cell targetCell;
                             int targetIndex = col + sourceRow.getFirstCellNum();
@@ -1194,7 +1235,7 @@ public class DataFileExcelController extends BaseDataFileController {
             }
             if (!FxmlControl.askSure(baseTitle, colName(col) + " - "
                     + (asc ? message("Ascending") : message("Descending")) + "\n"
-                    + message("NoticeAllChangeUnrecover") + "\n" + message("DataFileOrderNotice"))) {
+                    + message("DataFileOrderNotice"))) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1211,11 +1252,17 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         targetBook.removeSheetAt(currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
                         List<Row> records = new ArrayList<>();
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
+                        if (sourceWithNames) {
+                            iterator.next();
+                        }
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
@@ -1275,16 +1322,28 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     protected void copyAllSelectedCols() {
-        if (sourceFile == null) {
+        int cols = 0;
+        for (CheckBox c : colsCheck) {
+            if (c.isSelected()) {
+                cols++;
+            }
+        }
+        if (cols < 1) {
+            popError(message("NoData"));
+            return;
+        }
+        if (sourceFile == null || pagesNumber <= 1) {
             copySelectedCols();
             return;
         }
+        int selectedCols = cols;
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
-                StringBuilder s;
+                private StringBuilder s;
+                private int lines;
 
                 @Override
                 protected boolean handle() {
@@ -1294,21 +1353,36 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         s = new StringBuilder();
                         String p = TextTools.delimiterText(delimiter);
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
+                        if (sourceWithNames) {
+                            iterator.next();
+                        }
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
+                            String row = null;
                             for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                                 if (colsCheck[cellIndex - sourceRow.getFirstCellNum()].isSelected()) {
                                     String d = cellString(sourceRow.getCell(cellIndex));
-                                    s.append(d == null ? "" : d).append(p);
+                                    d = d == null ? "" : d;
+                                    if (row == null) {
+                                        row = d;
+                                    } else {
+                                        row += p + d;
+                                    }
                                 }
                             }
-                            s.append("\n");
+                            if (row != null) {
+                                s.append(row).append("\n");
+                                lines++;
+                            }
                         }
                     } catch (Exception e) {
                         MyBoxLog.error(e);
@@ -1320,7 +1394,9 @@ public class DataFileExcelController extends BaseDataFileController {
                 @Override
                 protected void whenSucceeded() {
                     if (FxmlControl.copyToSystemClipboard(s.toString())) {
-                        popInformation(message("CopiedInSheet"));
+                        popInformation(message("CopiedToSystemClipboard") + "\n"
+                                + message("RowsNumber") + ":" + lines + "\n"
+                                + message("ColumnsNumber") + ":" + selectedCols);
                     } else {
                         popFailed();
                     }
@@ -1337,7 +1413,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     public void deleteSelectedCols() {
-        if (sourceFile == null) {
+        if (sourceFile == null || pagesNumber <= 1) {
             super.deleteSelectedCols();
             return;
         }
@@ -1366,24 +1442,28 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         targetBook.removeSheetAt(currentSheet - 1);
                         Sheet targetSheet = targetBook.createSheet(sourceSheet.getSheetName());
                         targetBook.setSheetOrder(targetSheet.getSheetName(), currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
                         int targetRowIndex = 0;
                         if (sourceWithNames) {
+                            iterator.next();
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             for (int col = 0; col < columns.size(); col++) {
                                 Cell targetCell = targetRow.createCell(col);
                                 targetCell.setCellValue(columns.get(col).getName());
                             }
                         }
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
                             int targetCol = 0;
                             Cell targetCell;
                             for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
@@ -1428,7 +1508,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     protected void setAllSelectedCols() {
-        if (sourceFile == null) {
+        if (sourceFile == null || pagesNumber <= 1) {
             setSelectedCols();
             return;
         }
@@ -1459,24 +1539,28 @@ public class DataFileExcelController extends BaseDataFileController {
                             currentSheet = 1;
                         }
                         Sheet sourceSheet = sourceBook.getSheetAt(currentSheet - 1);
+                        Iterator<Row> iterator = sourceSheet.iterator();
+                        if (iterator == null || !iterator.hasNext()) {
+                            return false;
+                        }
                         targetBook.removeSheetAt(currentSheet - 1);
                         Sheet targetSheet = targetBook.createSheet(sourceSheet.getSheetName());
                         targetBook.setSheetOrder(targetSheet.getSheetName(), currentSheet - 1);
-                        int offset = sourceWithNames ? 1 : 0;
                         int targetRowIndex = 0;
                         if (sourceWithNames) {
+                            iterator.next();
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
                             for (int col = 0; col < colsCheck.length; col++) {
                                 Cell targetCell = targetRow.createCell(col);
                                 targetCell.setCellValue(colsCheck[col].getText());
                             }
                         }
-                        for (int sourceRowIndex = sourceSheet.getFirstRowNum() + offset; sourceRowIndex <= sourceSheet.getLastRowNum(); sourceRowIndex++) {
-                            Row sourceRow = sourceSheet.getRow(sourceRowIndex);
-                            Row targetRow = targetSheet.createRow(targetRowIndex++);
+                        while (iterator.hasNext()) {
+                            Row sourceRow = iterator.next();
                             if (sourceRow == null) {
                                 continue;
                             }
+                            Row targetRow = targetSheet.createRow(targetRowIndex++);
                             for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                                 CellType type = CellType.STRING;
                                 Cell sourceCell = sourceRow.getCell(cellIndex);
@@ -1530,7 +1614,7 @@ public class DataFileExcelController extends BaseDataFileController {
             controller = (DataFileExcelController) FxmlStage.openStage(CommonValues.DataFileExcelFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         }
         return controller;
     }

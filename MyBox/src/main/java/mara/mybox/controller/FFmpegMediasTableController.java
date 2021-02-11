@@ -24,7 +24,7 @@ import mara.mybox.value.CommonFxValues;
  */
 public class FFmpegMediasTableController extends ControlMediaTable {
 
-    protected BaseFFmpegBatchController parent;
+    protected BaseBatchFFmpegController parent;
 
     public FFmpegMediasTableController() {
         sourceExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
@@ -48,7 +48,7 @@ public class FFmpegMediasTableController extends ControlMediaTable {
     @Override
     protected void readMediaInfo(MediaInformation info, String msg) {
         try {
-            parent = (BaseFFmpegBatchController) parentController;
+            parent = (BaseBatchFFmpegController) parentController;
 
             if (info == null || info.getAddress() == null
                     || parent == null || parent.ffmpegOptionsController.executable == null) {

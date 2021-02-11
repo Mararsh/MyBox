@@ -790,7 +790,7 @@ public class ImageSplitController extends ImageViewerController {
         }
         String prefix = null;
         if (sourceFile != null) {
-            prefix = FileTools.getFilePrefix(sourceFile.getName());
+            prefix = FileTools.getFilePrefix(sourceFile.getName()) + "-p";
         }
         final File tFile = chooseSaveFile(diagTitle, VisitHistoryTools.getSavedPath(fileType), prefix, ext);
         if (tFile == null) {
@@ -845,6 +845,7 @@ public class ImageSplitController extends ImageViewerController {
                         }
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
+                        MyBoxLog.console(x1 + " " + y1 + " " + x2 + " " + y2);
                         BufferedImage target;
                         if (sourceImage != null) {
                             target = ImageManufacture.cropOutside(sourceImage, x1, y1, x2, y2);

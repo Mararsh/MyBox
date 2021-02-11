@@ -13,13 +13,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import mara.mybox.db.data.Dataset;
 import mara.mybox.data.Era;
+import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableDataset;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonFxValues;
@@ -47,7 +47,7 @@ public class DatasetEditController extends BaseController {
     @FXML
     protected CheckBox omitADCheck;
     @FXML
-    protected ColorSetController textColorSetController, backgroundColorSetController, chartColorSetController;
+    protected ColorSet textColorSetController, backgroundColorSetController, chartColorSetController;
 
     public DatasetEditController() {
         baseTitle = message("Dataset");
@@ -282,16 +282,16 @@ public class DatasetEditController extends BaseController {
             }
 
             if (dataset.getId() > 0) {
-                popUpdateSuccessful();
+                popInformation(message("UpdateSuccessfully"));
                 idInput.setText(dataset.getId() + "");
             } else {
-                popInsertSuccessful();
+                popInformation(message("InsertSuccessfully"));
             }
             closeStage();
 
             if (parentController != null) {
                 ((BaseDataManageController) parentController).refreshAction();
-                parentController.getMyStage().toFront();
+                parentController.getMyStage().requestFocus();
             }
 
         } catch (Exception e) {

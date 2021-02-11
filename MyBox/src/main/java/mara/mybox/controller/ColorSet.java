@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -26,7 +27,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-09-04
  * @License Apache License Version 2.0
  */
-public class ColorSetController extends BaseController {
+public class ColorSet extends BaseController {
 
     protected String thisName;
     protected Object data;
@@ -37,7 +38,7 @@ public class ColorSetController extends BaseController {
     @FXML
     protected Button colorButton;
 
-    public ColorSetController() {
+    public ColorSet() {
         baseTitle = "ColorImport";
     }
 
@@ -101,7 +102,18 @@ public class ColorSetController extends BaseController {
     }
 
     @FXML
+    public void openColorPalette(ActionEvent event) {
+        showColorPalette();
+    }
+
+    @FXML
     public void popColorPalette(MouseEvent event) {
+        if (AppVariables.getUserConfigBoolean("PopColorSet", true)) {
+            showColorPalette();
+        }
+    }
+
+    public void showColorPalette() {
         synchronized (this) {
             if ((task != null && !task.isQuit())
                     || (popup != null && popup.isShowing())) {
@@ -120,7 +132,7 @@ public class ColorSetController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    load(event, colors);
+                    load(colors);
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -132,7 +144,7 @@ public class ColorSetController extends BaseController {
 
     }
 
-    public void load(MouseEvent event, List<ColorData> colors) {
+    private void load(List<ColorData> colors) {
         try {
             popup = getPopup();
 
@@ -143,7 +155,7 @@ public class ColorSetController extends BaseController {
             controller.load(this, colors);
             popup.getContent().add(pane);
 
-            popup.show(colorButton, event.getSceneX(), event.getSceneY());
+            FxmlControl.locateCenter(colorButton, popup);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

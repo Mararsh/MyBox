@@ -2,6 +2,7 @@ package mara.mybox.tools;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -283,6 +284,111 @@ public class TextTools {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
+        }
+    }
+
+    public static long checkCharsNumber(String string) {
+        try {
+            String strV = string.trim().toLowerCase();
+            long unit = 1;
+            if (strV.endsWith("k")) {
+                unit = 1024;
+                strV = strV.substring(0, strV.length() - 1);
+            } else if (strV.endsWith("m")) {
+                unit = 1024 * 1024;
+                strV = strV.substring(0, strV.length() - 1);
+            } else if (strV.endsWith("g")) {
+                unit = 1024 * 1024 * 1024L;
+                strV = strV.substring(0, strV.length() - 1);
+            }
+            double v = Double.valueOf(strV.trim());
+            if (v >= 0) {
+                return Math.round(v * unit);
+            } else {
+                return -1;
+            }
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public static List<File> convert(FileEditInformation source, FileEditInformation target, int maxLines) {
+        try {
+            if (source == null || source.getFile() == null
+                    || source.getCharset() == null
+                    || target == null || target.getFile() == null
+                    || target.getCharset() == null) {
+                return null;
+            }
+            String sourceLineBreak = TextTools.lineBreakValue(source.getLineBreak());
+            String taregtLineBreak = TextTools.lineBreakValue(target.getLineBreak());
+            if (sourceLineBreak == null || taregtLineBreak == null) {
+                return null;
+            }
+            List<File> files = new ArrayList<>();
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, source.getCharset()))) {
+                if (source.isWithBom()) {
+                    inputStream.skip(bomSize(source.getCharset().name()));
+                }
+                if (maxLines > 0) {
+                    int fileIndex = 0;
+                    while (true) {
+                        int linesNumber = 0;
+                        String line = null;
+                        File file = new File(FileTools.appendName(target.getFile().getAbsolutePath(), "-" + (++fileIndex)));
+                        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                            if (target.isWithBom()) {
+                                byte[] bytes = bomBytes(target.getCharset().name());
+                                outputStream.write(bytes);
+                            }
+                            while ((line = bufferedReader.readLine()) != null) {
+                                writer.write(line + taregtLineBreak);
+                                linesNumber++;
+                                if (linesNumber >= maxLines) {
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            MyBoxLog.error(e.toString());
+                            return null;
+                        }
+                        if (file.exists() && file.length() > 0) {
+                            files.add(file);
+                        }
+                        if (line == null) {
+                            break;
+                        }
+                    }
+                } else {
+                    File file = target.getFile();
+                    try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                             OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                        if (target.isWithBom()) {
+                            byte[] bytes = bomBytes(target.getCharset().name());
+                            outputStream.write(bytes);
+                        }
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            writer.write(line + taregtLineBreak);
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e.toString());
+                        return null;
+                    }
+                    if (file.exists() && file.length() > 0) {
+                        files.add(file);
+                    }
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e.toString());
+                return null;
+            }
+            return files;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
         }
     }
 

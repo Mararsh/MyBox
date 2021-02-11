@@ -782,7 +782,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
     private void displayProfileData() {
         if (profile == null || !profile.isIsValid()) {
-            popError(AppVariables.message("IccInvalid"), 3000);
+            popError(AppVariables.message("IccInvalid"));
             return;
         }
         synchronized (this) {

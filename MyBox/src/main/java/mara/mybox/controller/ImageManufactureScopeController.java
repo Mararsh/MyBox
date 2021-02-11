@@ -96,7 +96,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected ListView<Color> colorsList;
     @FXML
@@ -340,7 +340,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                     new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
                     new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
                     new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
-                    new Image("img/PdfTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
+                    new Image("img/DocumentTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
                     new Image("img/zz1.png")
             );
             outlinesList.getItems().addAll(prePixList);
@@ -465,10 +465,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
             if (color != null) {
                 addColor(color);
             }
-            return;
-        }
-
-        if (!scopeView.isVisible()) {
             return;
         }
         if (scope.getScopeType() == ScopeType.Matting) {
@@ -1297,12 +1293,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
                     return true;
                 }
 
-                @Override
-                protected void whenSucceeded() {
-                    popText(message("Successful"), AppVariables.getCommentsDelay(),
-                            "white", "1.5em", saveColorsButton);
-                }
-
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
@@ -1326,12 +1316,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 protected boolean handle() {
                     TableColorData.writeColors(colors, false);
                     return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popText(message("Successful"), AppVariables.getCommentsDelay(),
-                            "white", "1.5em", saveColorsButton);
                 }
 
             };

@@ -258,9 +258,6 @@ public class PixelsOperation {
             isDithering = false;
         }
         scope = ImageScope.fineImageScope(scope);
-//        skipTransparent = operationType != OperationType.ReplaceColor
-//                || colorPara1.getRGB() != 0;
-
         if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
             isDithering = false;
             return operateMatting();

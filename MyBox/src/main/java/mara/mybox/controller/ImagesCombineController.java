@@ -56,7 +56,7 @@ public class ImagesCombineController extends BaseImagesListController {
     @FXML
     protected ComboBox<String> columnsBox, intervalBox, MarginsBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected Button newWindowButton;
     @FXML
@@ -456,9 +456,8 @@ public class ImagesCombineController extends BaseImagesListController {
 
                 @Override
                 protected void whenSucceeded() {
-                    xZoomStep = (int) image.getWidth() / 10;
-                    yZoomStep = (int) image.getHeight() / 10;
                     imageView.setImage(image);
+                    setZoomStep(image);
                     fitSize();
                     imageLabel.setText(AppVariables.message("CombinedSize") + ": "
                             + (int) image.getWidth() + "x" + (int) image.getHeight());

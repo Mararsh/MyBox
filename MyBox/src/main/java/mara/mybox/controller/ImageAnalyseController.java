@@ -56,6 +56,7 @@ import static mara.mybox.image.ImageQuantization.QuantizationAlgorithm.KMeansClu
 import mara.mybox.image.ImageStatistic;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -75,6 +76,7 @@ public class ImageAnalyseController extends ImageViewerController {
     protected int colorNumber1, regionSize1, regionSize2, colorNumber2, kmeansLoop,
             weight11, weight12, weight13, weight21, weight22, weight23;
     protected List<Color> kmeansColors, popularityColors;
+    protected long nonTransparent;
 
     @FXML
     protected VBox imageBox, dataBox;
@@ -180,10 +182,29 @@ public class ImageAnalyseController extends ImageViewerController {
     }
 
     protected void loadData(boolean components, boolean dominant1, boolean dominant2) {
+        if (components) {
+            colorsView.getEngine().loadContent("");
+            colorsBarchart.getData().clear();
+            grayView.getEngine().loadContent("");
+            grayBarchart.getData().clear();
+            redView.getEngine().loadContent("");
+            redBarchart.getData().clear();
+            greenView.getEngine().loadContent("");
+            greenBarchart.getData().clear();
+            blueView.getEngine().loadContent("");
+            blueBarchart.getData().clear();
+            hueView.getEngine().loadContent("");
+            hueBarchart.getData().clear();
+            saturationView.getEngine().loadContent("");
+            saturationBarchart.getData().clear();
+            brightnessView.getEngine().loadContent("");
+            brightnessBarchart.getData().clear();
+            alphaView.getEngine().loadContent("");
+            alphaBarchart.getData().clear();
+        }
         if (dominant1) {
             dominantView1.getEngine().loadContent("");
             dominantPie1.getData().clear();
-
         }
         if (dominant2) {
             dominantView2.getEngine().loadContent("");
@@ -732,18 +753,20 @@ public class ImageAnalyseController extends ImageViewerController {
                     }
                 });
             }
-            data = ImageStatistic.create(image).analyze();
-            if (data != null) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        showComponentsTable();
+            ImageStatistic imageStatistic = ImageStatistic.create(image);
+            data = imageStatistic.analyze();
+            nonTransparent = imageStatistic.getNonTransparent();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    showComponentsTable();
+                    if (data != null) {
                         showComponentsHistogram();
                         showColorData();
                     }
-                });
-                return true;
-            }
+                }
+            });
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -752,10 +775,14 @@ public class ImageAnalyseController extends ImageViewerController {
 
     protected void showComponentsTable() {
         try {
-            if (image == null || data == null || isSettingValues) {
+            if (image == null || isSettingValues) {
                 return;
             }
             StringBuilder s = new StringBuilder();
+            long imageSize = (long) (image.getWidth() * image.getHeight());
+            s.append("<P>").append(message("Pixels")).append(":").append(imageSize).append(" ")
+                    .append(message("NonTransparent")).append(":").append(nonTransparent)
+                    .append("(").append(FloatTools.roundFloat2(nonTransparent * 100f / imageSize)).append("%)").append("</P>");
             String indent = "    ";
             s.append(indent).append(indent).append("<DIV align=\"center\" >\n");
             s.append(indent).append(indent).append(indent).append("<TABLE >\n");
@@ -793,6 +820,9 @@ public class ImageAnalyseController extends ImageViewerController {
     }
 
     protected String componentRow(ColorComponent component, String indent) {
+        if (data == null) {
+            return "";
+        }
         IntStatistic d = data.statistic(component);
         StringBuilder s = new StringBuilder();
         s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
@@ -819,7 +849,6 @@ public class ImageAnalyseController extends ImageViewerController {
     }
 
     protected void showComponentsHistogram() {
-
         if (isSettingValues || colorsBarchart.getData() == null) {
             return;
         }
@@ -867,9 +896,7 @@ public class ImageAnalyseController extends ImageViewerController {
         updateComponentsLegend();
     }
 
-    protected void showComponentsHistogram(int index,
-            final ColorComponent component) {
-
+    protected void showComponentsHistogram(int index, final ColorComponent component) {
         if (image == null || data == null) {
             return;
         }
@@ -992,8 +1019,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
     }
 
-    public void showColorData(ColorComponent component,
-            WebView view, BarChart barchart) {
+    public void showColorData(ColorComponent component, WebView view, BarChart barchart) {
         try {
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Value"), message("PixelsNumber"),

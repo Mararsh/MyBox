@@ -143,7 +143,7 @@ public class MediaListController extends BaseController {
             return;
         }
         playerController.tableController.loadMedias(selected);
-        playerController.getMyStage().toFront();
+        playerController.getMyStage().requestFocus();
 
     }
 

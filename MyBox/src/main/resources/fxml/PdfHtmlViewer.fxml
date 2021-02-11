@@ -66,8 +66,7 @@ License:    Apache License Version 2.0
                         </CheckBox>
                         <HBox fx:id="operationBox" alignment="CENTER_LEFT" spacing="5.0">
                             <children>
-                                <ComboBox fx:id="percentBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
-                                <Label text="\%" />
+                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -86,6 +85,8 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
+                                <ComboBox fx:id="percentBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
+                                <Label text="\%" />
                                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -107,6 +108,15 @@ License:    Apache License Version 2.0
                                 <Label text="%Page" />
                                 <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
                                 <Label fx:id="pageLabel" />
+                                <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconGo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

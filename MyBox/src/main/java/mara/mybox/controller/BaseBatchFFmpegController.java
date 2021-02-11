@@ -11,12 +11,12 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public abstract class BaseFFmpegBatchController extends FilesBatchController {
+public abstract class BaseBatchFFmpegController extends BaseBatchFileController {
 
     @FXML
     protected ControlFFmpegOptions ffmpegOptionsController;
 
-    public BaseFFmpegBatchController() {
+    public BaseBatchFFmpegController() {
         baseTitle = AppVariables.message("MediaInformation");
 
         SourceFileType = VisitHistory.FileType.Media;

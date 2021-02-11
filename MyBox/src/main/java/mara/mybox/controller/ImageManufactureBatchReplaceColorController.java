@@ -42,7 +42,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     @FXML
     protected CheckBox excludeCheck, ignoreTransparentCheck;
     @FXML
-    protected ColorSetController originalColorSetController, newColorSetController;
+    protected ColorSet originalColorSetController, newColorSetController;
 
     public ImageManufactureBatchReplaceColorController() {
         baseTitle = AppVariables.message("ImageManufactureBatchReplaceColor");

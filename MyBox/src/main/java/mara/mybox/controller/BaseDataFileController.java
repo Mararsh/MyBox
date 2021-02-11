@@ -192,7 +192,14 @@ public abstract class BaseDataFileController extends BaseSheetController {
             return;
         }
         sourceFile = file;
+        initCurrentPage();
         loadFile(false);
+    }
+
+    public void initCurrentPage() {
+        currentPage = 1;
+        currentPageStart = 1;
+        currentPageEnd = currentPageStart + pageSize;
     }
 
     public void loadFile() {
@@ -203,9 +210,6 @@ public abstract class BaseDataFileController extends BaseSheetController {
         dataName = null;
         columns = new ArrayList<>();
         totalSize = 0;
-        currentPage = 1;
-        currentPageStart = 1;
-        currentPageEnd = pageSize;
         pagesNumber = 1;
         currentPageSize = pageSize;
         sourceWithNames = totalRead = false;
@@ -249,32 +253,35 @@ public abstract class BaseDataFileController extends BaseSheetController {
                 protected boolean handle() {
                     dataName = sourceFile.getAbsolutePath();
                     data = null;
-                    if (!readDataDefinition(pickOptions)) {
+                    if (!readDataDefinition(pickOptions) || isCancelled()) {
                         error = loadError;
                         return false;
                     }
-                    if (!readColumns()) {
+                    if (!readColumns() || isCancelled()) {
                         error = loadError;
                         columns.clear();
                         data = new String[3][3];
                         changed = true;
                     } else {
                         data = readPageData();
+                        if (isCancelled()) {
+                            return false;
+                        }
                         if (data == null || data.length == 0) {
                             error = loadError;
-                            data = new String[3][3];
-                            columns.clear();
-                            changed = true;
                         } else {
+                            if (columns.size() < data[0].length) {
+                                for (int col = columns.size() + 1; col <= data[0].length; col++) {
+                                    ColumnDefinition column = new ColumnDefinition(message("Field") + col, ColumnDefinition.ColumnType.String);
+                                    columns.add(column);
+                                }
+                                tableDataColumn.save(dataDefinition.getDfid(), columns);
+                            }
+                            if (isCancelled()) {
+                                return false;
+                            }
                             changed = false;
                         }
-                    }
-                    if (columns.size() < data[0].length) {
-                        for (int col = columns.size() + 1; col <= data[0].length; col++) {
-                            ColumnDefinition column = new ColumnDefinition(message("Field") + col, ColumnDefinition.ColumnType.String);
-                            columns.add(column);
-                        }
-                        tableDataColumn.save(dataDefinition.getDfid(), columns);
                     }
                     return true;
                 }
@@ -284,8 +291,12 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (error != null) {
                         popError(message(error));
                     }
-                    makeSheet(data, changed);
-                    loadTotal();
+                    if (data != null && data.length > 0) {
+                        makeSheet(data, changed);
+                        loadTotal(true);
+                    } else {
+                        loadTotal(false);
+                    }
                 }
 
                 @Override
@@ -296,6 +307,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
                 @Override
                 protected void finalAction() {
+                    updateStatus();
                     afterFileLoaded();
                 }
 
@@ -308,7 +320,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
         }
     }
 
-    public void loadTotal() {
+    public void loadTotal(boolean dataLoaded) {
         if (sourceFile == null) {
             return;
         }
@@ -321,7 +333,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                 @Override
                 protected boolean handle() {
                     totalSize = 0;
-                    if (!readTotal()) {
+                    if (!readTotal() || isCancelled()) {
                         error = loadError;
                         return false;
                     }
@@ -334,10 +346,23 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     totalRead = true;
                     paginationBox.setVisible(true);
                     setPagination();
-                    updateStatus();
+                    if (!dataLoaded) {
+                        loadPage(currentPage);
+                    }
                     clearDefButton.setDisable(false);
                     recoverDefButton.setDisable(false);
                     okDefButton.setDisable(false);
+                }
+
+                @Override
+                protected void whenFailed() {
+                    super.whenFailed();
+                    sheetBox.getChildren().clear();
+                }
+
+                @Override
+                protected void finalAction() {
+                    updateStatus();
                 }
 
             };
@@ -382,6 +407,14 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     setPagination();
                     updateStatus();
                 }
+
+                @Override
+                protected void whenFailed() {
+                    super.whenFailed();
+                    sheetBox.getChildren().clear();
+                    updateStatus();
+                }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
@@ -466,6 +499,11 @@ public abstract class BaseDataFileController extends BaseSheetController {
     public void clearDefAction() {
         tableDataColumn.clear(dataType, dataName);
         loadFile();
+    }
+
+    @FXML
+    public void goPage() {
+        loadPage(currentPage);
     }
 
     @FXML

@@ -14,15 +14,10 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import static mara.mybox.db.DerbyBase.dbHome;
@@ -36,6 +31,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
@@ -411,18 +407,7 @@ public class EpidemicReportsImportBaiduController extends BaseTaskController {
         if (statisticCheck.isSelected()) {
             startStatistic();
         } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("MyBox");
-            alert.setContentText(message("EpidemicReportStatistic"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonOK = new ButtonType(AppVariables.message("OK"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonOK, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonOK) {
+            if (FxmlControl.askSure(getBaseTitle(), message("EpidemicReportStatistic"))) {
                 startStatistic();
             }
         }
@@ -437,7 +422,7 @@ public class EpidemicReportsImportBaiduController extends BaseTaskController {
             controller.parent = savedP;
         }
         controller.start(Dataset);
-        controller.getMyStage().toFront();
+        controller.getMyStage().requestFocus();
     }
 
 }

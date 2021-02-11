@@ -18,7 +18,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfExtractTextsBatchController extends PdfBatchController {
+public class PdfExtractTextsBatchController extends BaseBatchPdfController {
 
     protected String separator;
     protected FileWriter fileWriter;

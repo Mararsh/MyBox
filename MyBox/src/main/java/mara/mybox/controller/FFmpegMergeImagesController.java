@@ -36,7 +36,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegMergeImagesController extends BaseFFmpegBatchController {
+public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
 
     protected ObservableList<MediaInformation> audiosData;
 

@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.3.8</version>
+    <version>6.3.9</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>13.0.1</version>
+            <version>15.0.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>

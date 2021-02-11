@@ -520,10 +520,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
 
             if (parentController != null) {
                 ((GeographyCodeController) parentController).refreshAction();
-                parentController.getMyStage().toFront();
+                parentController.getMyStage().requestFocus();
             } else {
                 GeographyCodeController controller = (GeographyCodeController) openStage(CommonValues.GeographyCodeFxml);
-                controller.getMyStage().toFront();
+                controller.getMyStage().requestFocus();
             }
             closeStage();
         } catch (Exception e) {

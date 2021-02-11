@@ -25,17 +25,30 @@
                 <fx:include fx:id="colorSet" source="ColorSet.fxml" />
             </children>
         </HBox>
-        <CheckBox fx:id="marginsCheck" mnemonicParsing="false" selected="true" text="%CutTransparentMargins" />
+        <CheckBox fx:id="marginsCheck" mnemonicParsing="false" selected="true" text="%CutClipMargions" />
         <CheckBox fx:id="copyToSystemClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyImageToSystemClipboard" wrapText="true" VBox.vgrow="NEVER" />
         <CheckBox fx:id="clipboardCheck" mnemonicParsing="false" text="%OpenClipboardAfterCopy" />
-        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-            <graphic>
-                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../buttons/iconOK.png" />
-                    </image>
-                </ImageView>
-            </graphic>
-        </Button>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Button fx:id="scopeButton" mnemonicParsing="false" onAction="#scopeAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconTarget.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+              <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                  <graphic>
+                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                          <image>
+                              <Image url="@../buttons/iconOK.png" />
+                          </image>
+                      </ImageView>
+                  </graphic>
+              </Button>
+         </children>
+      </HBox>
     </children>
 </VBox>

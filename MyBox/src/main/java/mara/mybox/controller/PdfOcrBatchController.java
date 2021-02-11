@@ -55,7 +55,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfOcrBatchController extends PdfBatchController {
+public class PdfOcrBatchController extends BaseBatchPdfController {
 
     protected String separator;
     protected String ocrTexts;

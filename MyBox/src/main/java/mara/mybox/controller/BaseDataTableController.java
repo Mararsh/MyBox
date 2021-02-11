@@ -4,17 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -23,16 +19,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableView;
-import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
@@ -128,17 +123,12 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 if (popMenu != null && popMenu.isShowing()) {
                     popMenu.hide();
                 }
-                if (event.getClickCount() == 1) {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    popTableMenu(event);
+                } else if (event.getClickCount() == 1) {
                     itemClicked();
                 } else if (event.getClickCount() > 1) {
                     itemDoubleClicked();
-                }
-            });
-
-            tableView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                @Override
-                public void handle(ContextMenuEvent event) {
-                    popTableMenu(event);
                 }
             });
 
@@ -206,7 +196,8 @@ public abstract class BaseDataTableController<P> extends BaseController {
         editAction(null);
     }
 
-    protected void popTableMenu(ContextMenuEvent event) {
+    protected void popTableMenu(MouseEvent event) {
+        MyBoxLog.console("here");
         if (isSettingValues) {
             return;
         }
@@ -608,19 +599,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
             return;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getBaseTitle());
-            alert.setContentText(AppVariables.message("SureDelete"));
-            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != buttonSure) {
+            if (!FxmlControl.askSure(getBaseTitle(), message("SureDelete"))) {
                 return;
             }
         }
@@ -682,19 +661,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
         if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClear"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureClear"))) {
             return;
         }
         synchronized (this) {
@@ -748,6 +715,11 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     @FXML
     public void refreshAction() {
+        loadTableData();
+    }
+
+    @FXML
+    public void goPage() {
         loadTableData();
     }
 

@@ -21,12 +21,14 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -75,17 +77,17 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Label colorLabel, colorUnit, commentsLabel;
     @FXML
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
-            colorInvertButton, demoButton;
+            colorInvertButton, demoButton, scopeButton;
     @FXML
     protected CheckBox preAlphaCheck, distanceExcludeCheck;
     @FXML
     protected ImageView preAlphaTipsView, distanceTipsView;
     @FXML
-    protected ColorSetController originalColorSetController;
+    protected ColorSet originalColorSetController;
     @FXML
-    protected ColorSetController newColorSetController;
+    protected ColorSet newColorSetController;
     @FXML
-    protected ColorSetController valueColorSetController;
+    protected ColorSet valueColorSetController;
 
     @Override
     public void initPane() {
@@ -184,6 +186,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 }
                 okButton.setDisable(true);
                 commentsLabel.setText(message("DefineScopeAndManufacture"));
+                opBox.getChildren().add(scopeButton);
 
                 if (colorColorRadio.isSelected()) {
                     colorOperationType = OperationType.Color;
@@ -313,6 +316,17 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void imageClicked(MouseEvent event, DoublePoint p) {
+        if (imageController.isPickingColor) {
+            Color color = FxmlControl.imagePixel(p, imageView);
+            if (color != null) {
+                originalColorSetController.setColor(color);
+                valueColorSetController.setColor(color);
+            }
         }
     }
 

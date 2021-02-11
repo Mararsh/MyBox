@@ -51,7 +51,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
     protected Group g;
 
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected ComboBox<String> angleBox, opacityBox, marginsWidthBox, arcBox;
     @FXML
@@ -276,7 +276,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
     public void htmlLoaded() {
         webEngine.executeScript("document.body.style.backgroundColor = 'rgba(0,0,0,0)';");
-        webView.toFront();
+        webView.requestFocus();
 
     }
 

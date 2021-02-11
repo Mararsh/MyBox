@@ -1,12 +1,10 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.fxml.FXML;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -43,7 +41,7 @@ public class ImageTiffEditerController extends BaseImagesListController {
 
                 @Override
                 protected boolean handle() {
-                    error = ImageTiffFile.writeTiffImagesWithInfo(tableData, null, outFile);
+                    error = ImageTiffFile.writeWithInfo(tableData, null, outFile);
                     return error.isEmpty();
                 }
 
@@ -67,22 +65,6 @@ public class ImageTiffEditerController extends BaseImagesListController {
             thread.setDaemon(true);
             thread.start();
 
-        }
-    }
-
-    @FXML
-    public void viewAction() {
-        try {
-            if (sourceFile != null) {
-                final ImageFramesViewerController controller
-                        = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
-                controller.selectSourceFile(sourceFile);
-            } else {
-                viewCheck.setSelected(true);
-                saveAsAction();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 

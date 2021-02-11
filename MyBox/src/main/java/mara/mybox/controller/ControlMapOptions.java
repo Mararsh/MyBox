@@ -88,7 +88,7 @@ public class ControlMapOptions extends BaseController {
     protected FlowPane locationTextPane, baseTextPane, textColorPane,
             markerImagePane, dataNumberPane;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
 
     public ControlMapOptions() {
         baseTitle = AppVariables.message("MapOptions");

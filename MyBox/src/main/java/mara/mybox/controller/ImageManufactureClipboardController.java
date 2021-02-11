@@ -62,7 +62,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
     protected Image lastSystemClip;
-    protected int rotateAngle, keepRatioType;
+    protected int rotateAngle, keepRatioType, currentAngle;
     protected ObservableList<ImageClipboard> thumbnails;
     protected boolean loaded;
 
@@ -77,7 +77,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     protected Slider angleSlider;
     @FXML
-    protected CheckBox keepRatioCheck, enlargeCheck;
+    protected CheckBox keepRatioCheck, enlargeCheck, clipTopCheck;
     @FXML
     protected Label listLabel;
     @FXML
@@ -86,10 +86,43 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @Override
     public void initPane() {
         try {
-            rotateAngle = 0;
+            rotateAngle = currentAngle = 0;
 
             thumbnails = FXCollections.observableArrayList();
             thumbnailsList.setItems(thumbnails);
+
+            enlargeCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "EnlargerImageAsClip", true));
+            enlargeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    AppVariables.setUserConfigValue(baseName + "EnlargerImageAsClip", enlargeCheck.isSelected());
+                    if (imageController != null) {
+                        pasteClip(currentAngle);
+                    }
+                }
+            });
+
+            clipTopCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ClipOnTop", true));
+            clipTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    AppVariables.setUserConfigValue(baseName + "ClipOnTop", clipTopCheck.isSelected());
+                    if (imageController != null) {
+                        pasteClip(currentAngle);
+                    }
+                }
+            });
+
+            keepRatioCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "KeepClipRatio", true));
+            keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    AppVariables.setUserConfigValue(baseName + "KeepClipRatio", keepRatioCheck.isSelected());
+                    if (imageController != null) {
+                        pasteClip(currentAngle);
+                    }
+                }
+            });
 
             ratioBox.getItems().addAll(Arrays.asList(message("BaseOnWidth"), message("BaseOnHeight"),
                     message("BaseOnLarger"), message("BaseOnSmaller")));
@@ -106,13 +139,12 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             blendBox.getItems().addAll(PixelBlend.allBlendModes());
             blendBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> ov,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     String mode = blendBox.getSelectionModel().getSelectedItem();
                     blendMode = PixelBlend.getBlendModeByName(mode);
                     opacityBox.setDisable(blendMode != PixelBlend.ImagesBlendMode.NORMAL);
                     if (imageController != null) {
-                        pasteClip(0);
+                        pasteClip(rotateAngle);
                     }
                 }
             });
@@ -148,8 +180,9 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             });
 
-            angleBox.getItems().addAll(Arrays.asList("90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
+            angleBox.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
             angleBox.setVisibleRowCount(10);
+            angleBox.setValue("0");
             angleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -165,7 +198,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                 }
             });
-            angleBox.getSelectionModel().select(0);
 
             thumbnailsList.setCellFactory(new Callback<ListView<ImageClipboard>, ListCell<ImageClipboard>>() {
                 @Override
@@ -216,23 +248,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             maxBox.getItems().addAll(
                     Arrays.asList("20", "50", "100", "10", "30", "5", "80")
             );
-            maxBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                    try {
-                        int v = Integer.valueOf(newVal);
-                        if (v > 0) {
-                            FxmlControl.setEditorNormal(maxBox);
-                            AppVariables.setUserConfigInt("ImageClipboardMax", v);
-                        } else {
-                            FxmlControl.setEditorBadStyle(maxBox);
-                        }
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(maxBox);
-                    }
-                }
-            });
-            maxBox.getSelectionModel().select(ImageClipboard.max() + "");
+            maxBox.setValue(ImageClipboard.max() + "");
 
             loadClipboard();
 
@@ -410,15 +426,16 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         }
         ImageClipboard.delete(clip.getImageFile().getAbsolutePath());
         thumbnails.remove(clip);
-//        thumbnailsList.refresh();
     }
 
     @FXML
     @Override
     public void clearAction() {
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureClear"))) {
+            return;
+        }
         ImageClipboard.clear();
         thumbnails.clear();
-//        thumbnailsList.refresh();
     }
 
     @FXML
@@ -441,6 +458,28 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @FXML
+    public void clipsPath() {
+        File path = new File(AppVariables.getImageClipboardPath());
+        browseURI(path.toURI());
+    }
+
+    @FXML
+    public void setMax() {
+        try {
+            int v = Integer.valueOf(maxBox.getValue());
+            if (v > 0) {
+                FxmlControl.setEditorNormal(maxBox);
+                AppVariables.setUserConfigInt("ImageClipboardMax", v);
+                loadClipboard();
+            } else {
+                FxmlControl.setEditorBadStyle(maxBox);
+            }
+        } catch (Exception e) {
+            FxmlControl.setEditorBadStyle(maxBox);
+        }
+    }
+
+    @FXML
     public void examplesAction() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
@@ -458,7 +497,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                             new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
                             new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
                             new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
-                            new Image("img/PdfTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
+                            new Image("img/DocumentTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
                             new Image("img/Settings.png"), new Image("img/zz1.png"), new Image("img/jade.png")
                     );
                     clips = new ArrayList<>();
@@ -587,7 +626,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                                     finalClip, bgImage,
                                     (int) imageController.scope.getRectangle().getSmallX(),
                                     (int) imageController.scope.getRectangle().getSmallY(),
-                                    blendMode, opacity);
+                                    blendMode, opacity, !clipTopCheck.isSelected());
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -600,6 +639,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
                     @Override
                     protected void whenSucceeded() {
+                        currentAngle = angle;
                         if (enlarged) {
                             imageController.setImage(ImageOperation.Margins, bgImage);
                         }

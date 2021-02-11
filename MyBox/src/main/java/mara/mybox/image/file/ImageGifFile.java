@@ -140,7 +140,11 @@ public class ImageGifFile {
             final GifImage gif = GifDecoder.read(in);
 //                MyBoxLog.error(gif.getFrameCount());
             bufferedImage = gif.getFrame(index);
-            bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(bounds), xscale, yscale);
+            if (bounds == null) {
+                bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, xscale, yscale);
+            } else {
+                bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(bounds), xscale, yscale);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -157,7 +161,7 @@ public class ImageGifFile {
                 final BufferedImage img = gif.getFrame(i);
                 int width = img.getWidth() / xscale;
                 int height = img.getHeight() / yscale;
-                images.add(ImageManufacture.scaleImage(img, width, height));
+                images.add(ImageManufacture.scaleImageBySize(img, width, height));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -227,6 +231,7 @@ public class ImageGifFile {
         return bufferedImage;
     }
 
+    // 0-based
     public static List<String> extractGifImages(File source, File target, int from, int to) {
         try {
             if (source == null || target == null || from < 0 || to < 0 || from > to) {
@@ -321,26 +326,25 @@ public class ImageGifFile {
         }
     }
 
-    public static boolean getParaMeta(long interval, boolean loop,
-            GIFImageWriter gifWriter, ImageWriteParam param, GIFImageMetadata metaData) {
+    public static boolean getParaMeta(long duration, boolean loop, ImageWriteParam param, GIFImageMetadata metaData) {
         try {
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             param.setCompressionType("LZW");
             param.setCompressionQuality(1);
-            String delay;
-            if (interval > 0) {
-                delay = interval / 10 + "";
+            String durationV;
+            if (duration > 0) {
+                durationV = duration / 10 + "";
             } else {
-                delay = "100";
+                durationV = "100";
             }
             String format = metaData.getNativeMetadataFormatName();
             IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
             IIOMetadataNode graphicsControlExtensionNode = new IIOMetadataNode("GraphicControlExtension");
-            graphicsControlExtensionNode.setAttribute("delayTime", delay);
+            graphicsControlExtensionNode.setAttribute("delayTime", durationV);
             graphicsControlExtensionNode.setAttribute("disposalMethod", "restoreToBackgroundColor");
             graphicsControlExtensionNode.setAttribute("userInputFlag", "false");
             graphicsControlExtensionNode.setAttribute("transparentColorFlag", "false");
-            graphicsControlExtensionNode.setAttribute("delayTime", delay);
+            graphicsControlExtensionNode.setAttribute("delayTime", durationV);
             graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
             tree.appendChild(graphicsControlExtensionNode);
             if (loop) {
@@ -372,8 +376,7 @@ public class ImageGifFile {
             if (imagesInfo == null || imagesInfo.isEmpty() || outFile == null) {
                 return "InvalidParameters";
             }
-            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
-            GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
+            ImageWriter gifWriter = getWriter();
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
@@ -388,7 +391,7 @@ public class ImageGifFile {
                         if (!keepSize) {
                             bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
                         }
-                        getParaMeta(info.getDuration(), loop, gifWriter, param, metaData);
+                        getParaMeta(info.getDuration(), loop, param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }
                 }
@@ -403,14 +406,12 @@ public class ImageGifFile {
         }
     }
 
-    public static String writeImageFiles(List<File> srcFiles, File outFile,
-            int duration, boolean deleteSource) {
+    public static String writeImageFiles(List<File> srcFiles, File outFile, int duration, boolean deleteSource) {
         try {
             if (srcFiles == null || srcFiles.isEmpty() || outFile == null) {
                 return "InvalidParameters";
             }
-            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
-            GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
+            ImageWriter gifWriter = getWriter();
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
@@ -423,7 +424,7 @@ public class ImageGifFile {
                     BufferedImage bufferedImage = ImageFileReaders.readImage(file);
                     if (bufferedImage != null) {
 //                        bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
-                        getParaMeta(duration, true, gifWriter, param, metaData);
+                        getParaMeta(duration, true, param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }
                 }
@@ -447,26 +448,23 @@ public class ImageGifFile {
         }
     }
 
-    public static String writeImages(List<BufferedImage> images, File outFile,
-            int duration) {
+    public static String writeImages(List<BufferedImage> images, File outFile, int duration) {
         try {
             if (images == null || images.isEmpty() || outFile == null) {
                 return "InvalidParameters";
             }
-            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
-            GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
+            ImageWriter gifWriter = getWriter();
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
             File tmpFile = FileTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
-
                 gifWriter.prepareWriteSequence(null);
                 for (BufferedImage bufferedImage : images) {
                     if (bufferedImage != null) {
 //                        bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
-                        getParaMeta(duration, true, gifWriter, param, metaData);
+                        getParaMeta(duration, true, param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }
                 }
@@ -481,13 +479,11 @@ public class ImageGifFile {
         }
     }
 
-    public static void explainGifMetaData(
-            Map<String, Map<String, List<Map<String, Object>>>> metaData,
+    public static void explainGifMetaData(Map<String, Map<String, List<Map<String, Object>>>> metaData,
             ImageInformation info) {
         try {
             String format = "javax_imageio_gif_stream_1.0";
             if (metaData.containsKey(format)) {
-                MyBoxLog.debug(format);
                 Map<String, List<Map<String, Object>>> javax_imageio_gif_stream = metaData.get(format);
                 if (javax_imageio_gif_stream.containsKey("Version")) {
                     Map<String, Object> Version = javax_imageio_gif_stream.get("Version").get(0);

@@ -4,11 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
@@ -35,12 +37,13 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
 
 /**
@@ -159,6 +162,8 @@ public class FileUnarchiveController extends FilesTreeController {
     public void readEntries() {
         filesTreeView.setRoot(null);
         entries = null;
+        totalFiles = 0;
+        totalSize = 0;
         startButton.setDisable(true);
         filesTreeView.setRoot(null);
         if (sourceFile == null) {
@@ -180,9 +185,14 @@ public class FileUnarchiveController extends FilesTreeController {
                         if (archive == null) {
                             return true;
                         }
-                        archiver = (String) archive.get("archiver");
-                        entries = (List<FileInformation>) archive.get("entries");
-                        root = makeFilesTree();
+                        if (archive.containsKey("entries")) {
+                            archiver = (String) archive.get("archiver");
+                            entries = (List<FileInformation>) archive.get("entries");
+                            root = makeFilesTree();
+                        }
+                        if (archive.containsKey("error")) {
+                            error = (String) archive.get("error");
+                        }
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
@@ -192,24 +202,30 @@ public class FileUnarchiveController extends FilesTreeController {
 
                 @Override
                 protected void whenSucceeded() {
-                    try {
-                        if (entries.isEmpty()) {
-                            bottomLabel.setText("");
-                            startButton.setDisable(true);
-                            popError(AppVariables.message("InvalidFormatTryOther"));
+                    encodingHBox.setVisible(!ArchiveStreamFactory.SEVEN_Z.equals(archiver));
+                    if (entries == null || entries.isEmpty()) {
+                        bottomLabel.setText("");
+                        startButton.setDisable(true);
+                        String info;
+                        if (error != null) {
+                            info = error;
                         } else {
-                            filesTreeView.setRoot(root);
-                            startButton.setDisable(false);
-                            sourceLabel.setText(message("ArchiverFormat") + ": " + archiver + "    "
-                                    + sourceFile.getAbsolutePath() + "    "
-                                    + FileTools.showFileSize(sourceFile.length()));
-                            encodingHBox.setVisible(!ArchiveStreamFactory.SEVEN_Z.equals(archiver));
-                            bottomLabel.setText(MessageFormat.format(message("FilesValues"),
-                                    totalFiles, FileTools.showFileSize(totalSize)));
+                            info = message("InvalidFormatTryOther");
                         }
-
-                    } catch (Exception e) {
-                        error = e.toString();
+                        // https://commons.apache.org/proper/commons-compress/examples.html
+                        if (ArchiveStreamFactory.SEVEN_Z.equals(archiver)) {
+                            info += "\n" + message("7zNotFullSupported");
+                        }
+                        alertError(info);
+                        bottomLabel.setText(info);
+                    } else {
+                        filesTreeView.setRoot(root);
+                        startButton.setDisable(false);
+                        sourceLabel.setText(message("ArchiverFormat") + ": " + archiver + "    "
+                                + sourceFile.getAbsolutePath() + "    "
+                                + FileTools.showFileSize(sourceFile.length()));
+                        bottomLabel.setText(MessageFormat.format(message("FilesValues"),
+                                totalFiles, FileTools.showFileSize(totalSize)));
                     }
                 }
 
@@ -225,6 +241,11 @@ public class FileUnarchiveController extends FilesTreeController {
 
     protected TreeItem<FileInformation> makeFilesTree() {
         try {
+            totalFiles = 0;
+            totalSize = 0;
+            if (entries == null) {
+                return null;
+            }
             isSettingValues = true;
             FileInformation rootInfo = new FileInformation();
             rootInfo.setFileName("");
@@ -275,6 +296,7 @@ public class FileUnarchiveController extends FilesTreeController {
             return rootItem;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+            isSettingValues = false;
             return null;
         }
     }
@@ -315,6 +337,8 @@ public class FileUnarchiveController extends FilesTreeController {
         }
         charsetIncorrect = false;
         error = null;
+        archiveFail = 0;
+        archiveSuccess = 0;
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -327,6 +351,8 @@ public class FileUnarchiveController extends FilesTreeController {
                         // archiver should have been determinied at this moment
                         if (archiver.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
                             unarchive7z();
+                        } else if (archiver.equalsIgnoreCase(ArchiveStreamFactory.ZIP)) {
+                            unarchiveZip();
                         } else {
                             unarchive();
                         }
@@ -340,7 +366,8 @@ public class FileUnarchiveController extends FilesTreeController {
                 @Override
                 protected void whenSucceeded() {
                     bottomLabel.setText(MessageFormat.format(message("FileUnarchived"),
-                            sourceFile, archiveSuccess, archiveFail, DateTools.datetimeMsDuration(cost)));
+                            message("Selected") + ":" + selected.size(),
+                            archiveSuccess, archiveFail, DateTools.datetimeMsDuration(cost)));
                     if (archiveSuccess > 0) {
                         browseURI(targetPath.toURI());
                         recordFileOpened(targetPath);
@@ -365,9 +392,6 @@ public class FileUnarchiveController extends FilesTreeController {
 
     protected void unarchive() {
         try {
-            if (selected == null || selected.isEmpty()) {
-                return;
-            }
             ArchiveStreamFactory aFactory = new ArchiveStreamFactory();
             if (archiver == null || !aFactory.getInputStreamArchiveNames().contains(archiver)) {
                 return;
@@ -375,80 +399,112 @@ public class FileUnarchiveController extends FilesTreeController {
             try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(sourceFile));
                      ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, encodeSelector.getValue())) {
                 ArchiveEntry entry;
+                File file;
                 while ((entry = in.getNextEntry()) != null) {
                     if (!in.canReadEntryData(entry)) {
                         archiveFail++;
-//                        MyBoxLog.debug(message("CanNotReadEntryData" + ":" + entry.getName()));
+                        MyBoxLog.debug(message("CanNotReadEntryData" + ":" + entry.getName()));
                         continue;
                     }
-                    if (entry.isDirectory() || !selected.contains(entry.getName())) {
+                    if (!selected.contains(entry.getName())) {
                         continue;
                     }
-                    File file = makeTargetFile(entry.getName(), targetPath);
-                    if (file == null) {
+                    try {
+                        file = makeTargetFile(entry.getName(), targetPath);
+                        file.getParentFile().mkdirs();
+                    } catch (Exception e) {
+                        recordError(e.toString());
                         continue;
                     }
-                    File parent = file.getParentFile();
-                    if (!parent.isDirectory() || !parent.mkdirs()) {
-                        archiveFail++;
-//                        MyBoxLog.debug(message("FailOpenFile" + ":" + file));
+                    if (entry.isDirectory()) {
+                        archiveSuccess++;
                         continue;
                     }
                     try ( OutputStream o = Files.newOutputStream(file.toPath())) {
                         IOUtils.copy(in, o);
+                    } catch (Exception e) {
+                        recordError(e.toString());
+                        continue;
                     }
                     archiveSuccess++;
                 }
             }
         } catch (Exception e) {
-            archiveFail++;
-            error = e.toString();
-            if (error.contains("java.nio.charset.MalformedInputException")
-                    || error.contains("Illegal char")) {
-                charsetIncorrect = true;
-            }
+            recordError(e.toString());
         }
     }
 
     protected void unarchive7z() {
-        try {
-            if (selected == null || selected.isEmpty()) {
-                return;
-            }
-            try ( SevenZFile sevenZFile = new SevenZFile(sourceFile)) {
-                SevenZArchiveEntry entry;
-                while ((entry = sevenZFile.getNextEntry()) != null) {
-                    if (entry.isDirectory() || !selected.contains(entry.getName())) {
-                        continue;
-                    }
-                    File file = makeTargetFile(entry.getName(), targetPath);
-                    if (file == null) {
-                        continue;
-                    }
-                    File parent = file.getParentFile();
-                    if (!parent.isDirectory() || !parent.mkdirs()) {
-                        archiveFail++;
-//                        MyBoxLog.debug(message("FailOpenFile" + ":" + file));
-                        continue;
-                    }
-                    try ( FileOutputStream out = new FileOutputStream(file)) {
-                        int length;
-                        byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((length = sevenZFile.read(buf)) > 0) {
-                            out.write(buf, 0, length);
-                        }
-                    }
-                    archiveSuccess++;
+        try ( SevenZFile sevenZFile = new SevenZFile(sourceFile)) {
+            SevenZArchiveEntry entry;
+            File file;
+            while ((entry = sevenZFile.getNextEntry()) != null) {
+                if (!selected.contains(entry.getName())) {
+                    continue;
                 }
+                try {
+                    file = makeTargetFile(entry.getName(), targetPath);
+                    file.getParentFile().mkdirs();
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                if (entry.isDirectory()) {
+                    archiveSuccess++;
+                    continue;
+                }
+                try ( FileOutputStream out = new FileOutputStream(file)) {
+                    byte[] content = new byte[(int) entry.getSize()];
+                    sevenZFile.read(content, 0, content.length);
+                    out.write(content);
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                archiveSuccess++;
             }
         } catch (Exception e) {
-            archiveFail++;
-            archiveFail++;
-            error = e.toString();
-            if (error.contains("java.nio.charset.MalformedInputException")
-                    || error.contains("Illegal char")) {
-                charsetIncorrect = true;
+            recordError(e.toString());
+        }
+    }
+
+    protected void unarchiveZip() {
+        try ( ZipFile zipFile = new ZipFile(sourceFile, encodeSelector.getValue())) {
+            Enumeration<ZipArchiveEntry> zEntries = zipFile.getEntries();
+            File file;
+            while (zEntries.hasMoreElements()) {
+                ZipArchiveEntry entry = zEntries.nextElement();
+                try {
+                    file = makeTargetFile(entry.getName(), targetPath);
+                    file.getParentFile().mkdirs();
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                if (entry.isDirectory()) {
+                    archiveSuccess++;
+                    continue;
+                }
+                try ( FileOutputStream out = new FileOutputStream(file);
+                         InputStream in = zipFile.getInputStream(entry)) {
+                    IOUtils.copy(in, out);
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                archiveSuccess++;
             }
+        } catch (Exception e) {
+            recordError(e.toString());
+        }
+    }
+
+    protected void recordError(String error) {
+        archiveFail++;
+        this.error = error;
+        if (error.contains("java.nio.charset.MalformedInputException")
+                || error.contains("Illegal char")) {
+            charsetIncorrect = true;
         }
     }
 

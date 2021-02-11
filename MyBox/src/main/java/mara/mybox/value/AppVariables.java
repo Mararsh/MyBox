@@ -309,8 +309,32 @@ public class AppVariables {
         return imageClipboardPath;
     }
 
-    public static int getCommentsDelay() {
-        return getUserConfigInt("CommentsDelay", 3000);
+    public static int getPopTextDuration() {
+        return getUserConfigInt("PopTextDuration", 3000);
+    }
+
+    public static String getPopTextSize() {
+        return getUserConfigValue("PopTextSize", "1.5") + "em";
+    }
+
+    public static String getPopTextbgColor() {
+        String v = getUserConfigValue("PopTextBgColor", "black");
+        return (v != null && v.startsWith("#") ? v : "black");
+    }
+
+    public static String getPopInfoColor() {
+        String v = getUserConfigValue("PopInfoColor", "white");
+        return (v != null && v.startsWith("#") ? v : "white");
+    }
+
+    public static String getPopErrorColor() {
+        String v = getUserConfigValue("PopErrorColor", "aqua");
+        return (v != null && v.startsWith("#") ? v : "aqua");
+    }
+
+    public static String getPopWarnColor() {
+        String v = getUserConfigValue("PopWarnColor", "orange");
+        return (v != null && v.startsWith("#") ? v : "orange");
     }
 
     public static Color getAlphaColor() {

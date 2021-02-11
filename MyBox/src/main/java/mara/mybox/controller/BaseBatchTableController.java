@@ -29,7 +29,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -128,17 +128,13 @@ public abstract class BaseBatchTableController<P> extends BaseController {
                     if (popMenu != null && popMenu.isShowing()) {
                         popMenu.hide();
                     }
-                    if (event.getClickCount() == 1) {
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        popTableMenu(event);
+                    } else if (event.getClickCount() == 1) {
                         itemClicked();
                     } else if (event.getClickCount() > 1) {
                         itemDoubleClicked();
                     }
-                }
-            });
-            tableView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                @Override
-                public void handle(ContextMenuEvent event) {
-                    popTableMenu(event);
                 }
             });
 
@@ -152,7 +148,7 @@ public abstract class BaseBatchTableController<P> extends BaseController {
         }
     }
 
-    protected void popTableMenu(ContextMenuEvent event) {
+    protected void popTableMenu(MouseEvent event) {
         if (isSettingValues) {
             return;
         }

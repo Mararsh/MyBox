@@ -15,7 +15,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-10-13
  * @License Apache License Version 2.0
  */
-public class FilesMoveController extends FilesBatchController {
+public class FilesMoveController extends BaseBatchFileController {
 
     public FilesMoveController() {
         baseTitle = AppVariables.message("FilesMove");

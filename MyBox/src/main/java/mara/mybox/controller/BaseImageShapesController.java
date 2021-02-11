@@ -22,8 +22,6 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -74,60 +72,13 @@ public abstract class BaseImageShapesController extends BaseImageController {
     }
 
     @Override
-    public void updateLabelTitle() {
-        try {
-            if (getMyStage() == null) {
-                return;
-            }
-            String title;
-            if (sourceFile != null) {
-                title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
-                if (imageInformation != null) {
-                    if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
-                        title += " - " + message("Image") + " " + imageInformation.getIndex();
-                    }
-                    if (imageInformation.isIsScaled()) {
-                        title += " - " + message("Scaled");
-                    }
-                }
-            } else {
-                title = getBaseTitle();
-            }
-            if (imageChanged) {
-                title += "  " + "*";
-            }
-            getMyStage().setTitle(title);
-
-            if (bottomLabel != null) {
-                if (imageView != null && imageView.getImage() != null) {
-                    String bottom = "";
-                    if (imageInformation != null) {
-                        bottom += AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
-                        bottom += AppVariables.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
-                    }
-                    bottom += AppVariables.message("LoadedSize") + ":"
-                            + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
-                            + AppVariables.message("DisplayedSize") + ":"
-                            + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
-
-                    if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
-                        bottom += "  " + message("SelectedSize") + ": "
-                                + (int) (maskRectangleData.getWidth() / widthRatio()) + "x"
-                                + (int) (maskRectangleData.getHeight() / heightRatio());
-                    }
-                    if (sourceFile != null) {
-                        bottom += "  " + AppVariables.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
-                                + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
-                    }
-                    bottomLabel.setText(bottom);
-
-                } else {
-                    bottomLabel.setText("");
-                }
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+    protected String moreDisplayInfo() {
+        if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
+            return message("SelectedSize") + ":"
+                    + (int) (maskRectangleData.getWidth() / widthRatio()) + "x"
+                    + (int) (maskRectangleData.getHeight() / heightRatio());
+        } else {
+            return "";
         }
     }
 
@@ -443,7 +394,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
             rightCenterHandler.setLayoutX(lineX + maskRectangleLine.getWidth() - anchorHW);
             rightCenterHandler.setLayoutY(lineY + maskRectangleLine.getHeight() / 2 - anchorHW);
 
-            updateLabelTitle();
+            updateLabelsTitle();
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

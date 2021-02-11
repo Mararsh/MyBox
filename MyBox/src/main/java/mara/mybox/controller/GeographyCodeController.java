@@ -56,7 +56,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     protected TableColumn<GeographyCode, CoordinateSystem> coordinateSystemColumn;
     @FXML
-    protected ColorSetController predefinedColorSetController, inputtedColorSetController;
+    protected ColorSet predefinedColorSetController, inputtedColorSetController;
 
     public GeographyCodeController() {
         baseTitle = message("GeographyCode");
@@ -264,7 +264,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         try {
             GeographyCodeEditController controller = (GeographyCodeEditController) openStage(CommonValues.GeographyCodeEditFxml);
             controller.load(this, null);
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -280,7 +280,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         try {
             GeographyCodeEditController controller = (GeographyCodeEditController) openStage(CommonValues.GeographyCodeEditFxml);
             controller.load(this, selected);
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2019-10-13
  * @License Apache License Version 2.0
  */
-public class FilesCopyController extends FilesBatchController {
+public class FilesCopyController extends BaseBatchFileController {
 
     @FXML
     protected CheckBox copyAttrCheck;

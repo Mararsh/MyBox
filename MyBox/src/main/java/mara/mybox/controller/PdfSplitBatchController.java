@@ -36,7 +36,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfSplitBatchController extends PdfBatchController {
+public class PdfSplitBatchController extends BaseBatchPdfController {
 
     private int pagesNumber, filesNumber;
     private List<Integer> startEndList;

@@ -8,13 +8,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static mara.mybox.color.ColorBase.array;
 import static mara.mybox.color.ColorBase.arrayDouble;
 import static mara.mybox.color.ColorBase.clipRGB;
+import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.tools.DoubleTools.scale;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -178,7 +180,7 @@ public class CIEData {
 
 
     /*
-        Data
+        Static methods
      */
     public static float[] convert(CIEData d, String iccProfile) {
         try {
@@ -234,35 +236,35 @@ public class CIEData {
     /*
         Source data: CIE standard Observer functions and CIE D50 Reference Illuminant
      */
-    public File cie1931Observer2Degree1nmFile() {
+    public static File cie1931Observer2Degree1nmFile() {
         File f = FxmlControl.getInternalFile(
                 "/data/CIE/CIE1931-2-degree-1nm.txt", "CIE", "CIE1931-2-degree-1nm.txt", false);
         return f;
     }
 
-    public File cie1964Observer10Degree1nmFile() {
+    public static File cie1964Observer10Degree1nmFile() {
         File f = FxmlControl.getInternalFile(
                 "/data/CIE/CIE1964-10-degree-1nm.txt", "CIE", "CIE1964-10-degree-1nm.txt", false);
         return f;
     }
 
-    public File cie1931Observer2Degree5nmFile() {
+    public static File cie1931Observer2Degree5nmFile() {
         File f = FxmlControl.getInternalFile(
                 "/data/CIE/CIE1931-2-degree-5nm.txt", "CIE", "CIE1931-2-degree-5nm.txt", false);
         return f;
     }
 
-    public File cie1964Observer10Degree5nmFile() {
+    public static File cie1964Observer10Degree5nmFile() {
         File f = FxmlControl.getInternalFile(
                 "/data/CIE/CIE1964-10-degree-5nm.txt", "CIE", "CIE1964-10-degree-5nm.txt", false);
         return f;
     }
 
-    public List<CIEData> cie1931Observer2Degree1nmData() {
+    public static List<CIEData> cie1931Observer2Degree1nmData() {
         return read(cie1931Observer2Degree1nmFile());
     }
 
-    public List<CIEData> cie1931Observer2Degree1nmData(ColorSpace cs) {
+    public static List<CIEData> cie1931Observer2Degree1nmData(ColorSpace cs) {
         try {
             List<CIEData> data = cie1931Observer2Degree1nmData();
             for (CIEData d : data) {
@@ -276,11 +278,11 @@ public class CIEData {
         }
     }
 
-    public List<CIEData> cie1964Observer10Degree1nmData() {
+    public static List<CIEData> cie1964Observer10Degree1nmData() {
         return read(cie1964Observer10Degree1nmFile());
     }
 
-    public List<CIEData> cie1964Observer10Degree1nmData(ColorSpace cs) {
+    public static List<CIEData> cie1964Observer10Degree1nmData(ColorSpace cs) {
         try {
             List<CIEData> data = cie1964Observer10Degree1nmData();
             for (CIEData d : data) {
@@ -294,11 +296,11 @@ public class CIEData {
         }
     }
 
-    public List<CIEData> cie1931Observer2Degree5nmData() {
+    public static List<CIEData> cie1931Observer2Degree5nmData() {
         return read(cie1931Observer2Degree5nmFile());
     }
 
-    public List<CIEData> cie1931Observer2Degree5nmData(ColorSpace cs) {
+    public static List<CIEData> cie1931Observer2Degree5nmData(ColorSpace cs) {
         try {
             List<CIEData> data = cie1931Observer2Degree5nmData();
             for (CIEData d : data) {
@@ -312,11 +314,11 @@ public class CIEData {
         }
     }
 
-    public List<CIEData> cie1964Observer10Degree5nmData() {
+    public static List<CIEData> cie1964Observer10Degree5nmData() {
         return read(cie1964Observer10Degree5nmFile());
     }
 
-    public List<CIEData> cie1964Observer10Degree5nmData(ColorSpace cs) {
+    public static List<CIEData> cie1964Observer10Degree5nmData(ColorSpace cs) {
         try {
             List<CIEData> data = cie1964Observer10Degree5nmData();
             for (CIEData d : data) {
@@ -330,69 +332,6 @@ public class CIEData {
         }
     }
 
-    public String cie1931Observer2Degree1nmString(ColorSpace cs) {
-        List<CIEData> data = cie1931Observer2Degree1nmData(cs);
-        String title = message("CIE1931Observer2DegreeAndSRGB");
-        return cieString(data, cs, title);
-    }
-
-    public String cie1964Observer10Degree1nmString(ColorSpace cs) {
-        List<CIEData> data = cie1964Observer10Degree1nmData(cs);
-        String title = message("CIE1964Observer10DegreeAndSRGB");
-        return cieString(data, cs, title);
-    }
-
-    public String cie1931Observer2Degree1nmString(String iccProfile) {
-        try {
-            ICC_ColorSpace cs = new ICC_ColorSpace(ICC_Profile.getInstance(iccProfile));
-            return cie1931Observer2Degree1nmString(cs);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public String cie1931Observer2Degree1nmString(ICC_Profile iccProfile) {
-        try {
-            ICC_ColorSpace cs = new ICC_ColorSpace(iccProfile);
-            return cie1931Observer2Degree1nmString(cs);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public String cie1931Observer2Degree5nmString(ColorSpace cs) {
-        List<CIEData> data = cie1931Observer2Degree5nmData(cs);
-        String title = message("CIE1931Observer2DegreeAndSRGB");
-        return cieString(data, cs, title);
-    }
-
-    public String cie1964Observer10Degree5nmString(ColorSpace cs) {
-        List<CIEData> data = cie1964Observer10Degree5nmData(cs);
-        String title = message("CIE1964Observer10DegreeAndSRGB");
-        return cieString(data, cs, title);
-    }
-
-    public String cie1931Observer2Degree5nmString(String iccProfile) {
-        try {
-            ICC_ColorSpace cs = new ICC_ColorSpace(ICC_Profile.getInstance(iccProfile));
-            return cie1931Observer2Degree5nmString(cs);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public String cie1931Observer2Degree5nmString(ICC_Profile iccProfile) {
-        try {
-            ICC_ColorSpace cs = new ICC_ColorSpace(iccProfile);
-            return cie1931Observer2Degree5nmString(cs);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /*
-        Static methods
-     */
     public static double[][] normalize(double[][] rgb) {
         double[][] n = new double[3][3];
         n[0] = normalize(rgb[0]);
@@ -486,7 +425,7 @@ public class CIEData {
     public static List<CIEData> read(File file) {
         try {
             List<CIEData> data = new ArrayList<>();
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            try ( BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     CIEData d = readLine(line);
@@ -517,34 +456,6 @@ public class CIEData {
 
     public static String cieString(String texts) {
         return cieString(read(texts), null, null);
-    }
-
-    public static String cieString(File file) {
-        return cieString(file, file.getAbsolutePath());
-    }
-
-    public static String cieString(File file, String title) {
-        try {
-            List<CIEData> data = read(file);
-            return cieString(data, null, file.getAbsolutePath());
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static String cieString(File file, ColorSpace cs) {
-        return cieString(file, cs, file.getAbsolutePath());
-    }
-
-    public static String cieString(File file, ColorSpace cs, String title) {
-        try {
-            List<CIEData> data = read(file, cs);
-            return cieString(data, cs, file.getAbsolutePath());
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
     }
 
     public static String cieString(List<CIEData> data, ColorSpace cs, String title) {
@@ -602,6 +513,60 @@ public class CIEData {
                 s.append("\n");
             }
             return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static StringTable cieTable(List<CIEData> data, ColorSpace cs, String title) {
+        try {
+            if (data == null || data.isEmpty()) {
+                return null;
+            }
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("WaveLength"),
+                    message("TristimulusX"), message("TristimulusY"), message("TristimulusZ"),
+                    message("NormalizedX"), message("NormalizedY"), message("NormalizedZ"),
+                    message("RelativeX"), message("RelativeY"), message("RelativeZ")
+            ));
+            int num = 0;
+            if (cs != null) {
+                num = cs.getNumComponents();
+                for (int i = 0; i < num; ++i) {
+                    names.add(message(cs.getName(i)));
+                }
+                if (cs.getType() == ColorSpace.TYPE_RGB) {
+                    for (int i = 0; i < num; ++i) {
+                        names.add(message(cs.getName(i)) + "-" + message("Integer"));
+                    }
+                }
+            }
+            StringTable table = new StringTable(names, title);
+
+            double[] channels;
+            for (int i = 0; i < data.size(); ++i) {
+                CIEData d = data.get(i);
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(
+                        d.getWaveLength() + "", d.X + "", d.Y + "", d.Z + "",
+                        d.getNormalizedX() + "", d.getNormalizedX() + "", d.getNormalizedX() + "",
+                        d.getRelativeX() + "", d.getRelativeY() + "", d.getRelativeZ() + ""
+                ));
+                if (cs != null) {
+                    channels = d.getChannels();
+                    for (int j = 0; j < num; ++j) {
+                        row.add(channels[j] + "");
+                    }
+                    if (cs.getType() == ColorSpace.TYPE_RGB) {
+                        for (int j = 0; j < num; ++j) {
+                            row.add(Math.round(channels[j] * 255) + "");
+                        }
+                    }
+                }
+                table.add(row);
+            }
+            return table;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;

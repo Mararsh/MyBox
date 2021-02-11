@@ -25,7 +25,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -42,7 +41,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * @License Apache License Version 2.0
  */
 // http://commons.apache.org/proper/commons-compress/examples.html
-public class FilesDecompressUnarchiveBatchController extends FilesBatchController {
+public class FilesDecompressUnarchiveBatchController extends BaseBatchFileController {
 
     protected CompressorStreamFactory cFactory;
     protected ArchiveStreamFactory aFactory;
@@ -110,121 +109,99 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
         try {
             countHandling(srcFile);
             Date startTime = new Date();
-            fileName = srcFile.getName();
-
             if (verboseCheck == null || verboseCheck.isSelected()) {
                 updateLogs(MessageFormat.format(message("HandlingObject"), srcFile), true, true);
             }
-
-            File decompressedFile = null, archiveSource;
-            Map<String, Object> uncompress = CompressTools.decompress(srcFile, null);
-            String archiveExt = FileTools.getFileSuffix(fileName);
-            if (uncompress != null) {
-                compressor = (String) uncompress.get("compressor");
-                decompressedFile = (File) uncompress.get("decompressedFile");
-                if (verboseCheck == null || verboseCheck.isSelected()) {
+            File decompressedFile = null, archiveSource = srcFile;
+            compressor = CompressTools.detectCompressor(srcFile);
+            if (compressor != null) {
+                decompressedFile = makeTargetFile(CompressTools.decompressedName(srcFile, compressor), targetPath);
+                Map<String, Object> uncompressed = CompressTools.decompress(srcFile, compressor, decompressedFile);
+                if (uncompressed != null) {
+                    compressor = (String) uncompressed.get("compressor");
+                    decompressedFile = (File) uncompressed.get("decompressedFile");
                     updateLogs(MessageFormat.format(message("FileDecompressedSuccessfully"),
                             srcFile, DateTools.datetimeMsDuration(new Date(), startTime), true, true
                     ));
+                    archiveSource = decompressedFile;
                 }
-                archiveSource = decompressedFile;
-                String suffix = "." + CompressTools.extensionByCompressor(compressor);
-                if (fileName.toLowerCase().endsWith(suffix)) {
-                    archiveExt = fileName.substring(0, fileName.length() - suffix.length());
-                }
-            } else {
-                archiveSource = srcFile;
             }
-
-            startTime = new Date();
-            archiveFail = archiveSuccess = 0;
-            unarchive(archiveSource, archiveExt);
-            if (archiveSuccess > 0 || archiveFail > 0) {
-                if (verboseCheck == null || verboseCheck.isSelected()) {
+            archiver = CompressTools.detectArchiver(archiveSource);
+            if (archiver != null) {
+                startTime = new Date();
+                archiveFail = archiveSuccess = 0;
+                unarchive(archiveSource, archiver);
+                if (archiveSuccess > 0 || archiveFail > 0) {
                     updateLogs(MessageFormat.format(message("FileUnarchived"),
-                            srcFile, archiveSuccess, archiveFail,
+                            archiveSource, archiveSuccess, archiveFail,
                             DateTools.datetimeMsDuration(new Date(), startTime), true, true
                     ));
-                }
-                if (archiveFail > 0) {
-                    return AppVariables.message("Failed");
-                } else {
-                    if (deleteCheck.isSelected()) {
-                        FileTools.delete(srcFile);
+                    if (archiveFail > 0) {
+                        if (ArchiveStreamFactory.SEVEN_Z.equals(archiver)) {
+                            return archiveSource + " " + message("Failed") + ". " + message("7zNotFullSupported");
+                        }
+                        return message("Failed");
+                    } else {
+                        if (deleteCheck.isSelected()) {
+                            FileTools.delete(srcFile);
+                        }
+                        return message("Successful");
                     }
-                    return AppVariables.message("Successful");
                 }
             }
-
             if (decompressedFile == null) {
-                return AppVariables.message("Failed");
+                return message("Failed");
             }
-
-            targetFile = makeTargetFile(decompressedFile, targetPath);
-            if (targetFile == null) {
-                return AppVariables.message("Skip");
+            targetFileGenerated(decompressedFile);
+            if (deleteCheck.isSelected()) {
+                FileTools.delete(srcFile);
             }
-
-            if (FileTools.rename(decompressedFile, targetFile)) {
-                targetFileGenerated(targetFile);
-                if (deleteCheck.isSelected()) {
-                    FileTools.delete(srcFile);
-                }
-                return AppVariables.message("Successful");
-            } else {
-                return AppVariables.message("Failed");
-            }
-
+            return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return AppVariables.message("Failed");
+            updateLogs(e.toString());
+            return message("Failed");
         }
     }
 
     protected void unarchive(File srcFile, String archiveExt) {
-        try {
-            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
-                if (archiveExt != null && aFactory.getInputStreamArchiveNames().contains(archiveExt)) {
-                    try ( ArchiveInputStream in = aFactory.createArchiveInputStream(archiveExt, fileIn, encoding)) {
-                        if (archiveExt.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
-                            unarchive7z(srcFile);
-                        } else if (archiver.equalsIgnoreCase(ArchiveStreamFactory.ZIP)) {
-                            unarchiveZip(srcFile);
-                        } else {
-                            unarchive(in);
-                        }
-                    } catch (Exception e) {
-                        unarchive(srcFile, fileIn);
-                    }
-                } else {
-                    unarchive(srcFile, fileIn);
-                }
+        if (archiveExt != null) {
+            if (archiveExt.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
+                unarchive7z(srcFile);
+                return;
+            } else if (archiver.equalsIgnoreCase(ArchiveStreamFactory.ZIP)) {
+                unarchiveZip(srcFile);
+                return;
             }
-
+        }
+        try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
+            if (archiveExt != null && aFactory.getInputStreamArchiveNames().contains(archiveExt)) {
+                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(archiveExt, fileIn, encoding)) {
+                    unarchive(in);
+                } catch (Exception e) {
+                    unarchive(fileIn);
+                }
+            } else {
+                unarchive(fileIn);
+            }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+            updateLogs(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
-    public void unarchive(File srcFile, BufferedInputStream fileIn) {
+    public void unarchive(BufferedInputStream fileIn) {
         try {
             archiver = ArchiveStreamFactory.detect(fileIn);
             if (archiver == null) {
                 return;
             }
-            if (archiver.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
-                unarchive7z(srcFile);
-            } else if (archiver.equalsIgnoreCase(ArchiveStreamFactory.ZIP)) {
-                unarchiveZip(srcFile);
-            } else {
-                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, encoding)) {
-                    unarchive(in);
-                } catch (Exception ex) {
-//                            MyBoxLog.debug(ex.toString());
-                }
+            try ( ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, encoding)) {
+                unarchive(in);
+            } catch (Exception ex) {
+                updateLogs(ex.toString());
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+            updateLogs(e.toString());
         }
     }
 
@@ -234,6 +211,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                 return;
             }
             ArchiveEntry entry;
+            File file;
             while ((entry = archiveInputStream.getNextEntry()) != null) {
                 if (verboseCheck == null || verboseCheck.isSelected()) {
                     updateLogs(message("Handling...") + ":   " + entry.getName());
@@ -245,124 +223,113 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     }
                     continue;
                 }
-                if (!entry.isDirectory()) {
-                    File file = makeTargetFile(entry.getName(), targetPath);
-                    if (file == null) {
-                        continue;
-                    }
-                    File parent = file.getParentFile();
-                    if (!parent.isDirectory() || !parent.mkdirs()) {
-                        archiveFail++;
-                        if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(message("FailOpenFile" + ":" + file));
-                        }
-                    }
-                    try ( OutputStream o = Files.newOutputStream(file.toPath())) {
-                        IOUtils.copy(archiveInputStream, o);
-                    }
+                try {
+                    file = makeTargetFile(entry.getName(), targetPath);
+                    file.getParentFile().mkdirs();
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                if (entry.isDirectory()) {
                     archiveSuccess++;
+                    continue;
+                }
+                try ( OutputStream o = Files.newOutputStream(file.toPath())) {
+                    IOUtils.copy(archiveInputStream, o);
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                archiveSuccess++;
+                if (verboseCheck == null || verboseCheck.isSelected()) {
                     targetFileGenerated(file);
                 }
             }
         } catch (Exception e) {
-            archiveFail++;
-            String s = e.toString();
-            updateLogs(s);
-            if (s.contains("java.nio.charset.MalformedInputException")
-                    || s.contains("Illegal char")) {
-                updateLogs(message("CharsetIncorrect"));
-                charsetIncorrect = true;
-            }
+            recordError(e.toString());
         }
     }
 
     protected void unarchiveZip(File srcFile) {
-        try {
-            try ( ZipFile zipFile = new ZipFile(srcFile)) {
-                Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-                while (entries.hasMoreElements()) {
-                    ZipArchiveEntry entry = entries.nextElement();
-                    if (entry.isDirectory()) {
-                        continue;
-                    }
-                    if (verboseCheck == null || verboseCheck.isSelected()) {
-                        updateLogs(message("Handling...") + ":   " + entry.getName());
-                    }
-                    File file = makeTargetFile(entry.getName(), targetPath);
-                    if (file == null) {
-                        continue;
-                    }
-                    File parent = file.getParentFile();
-                    if (!parent.isDirectory() || !parent.mkdirs()) {
-                        archiveFail++;
-                        if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(message("FailOpenFile" + ":" + file));
-                        }
-                        continue;
-                    }
-                    try ( FileOutputStream out = new FileOutputStream(file);
-                             InputStream in = zipFile.getInputStream(entry)) {
-                        IOUtils.copy(in, out);
-                    }
+        try ( ZipFile zipFile = new ZipFile(srcFile, encoding)) {
+            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+            File file;
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(message("Handling...") + ":   " + entry.getName());
+                }
+                try {
+                    file = makeTargetFile(entry.getName(), targetPath);
+                    file.getParentFile().mkdirs();
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                if (entry.isDirectory()) {
                     archiveSuccess++;
+                    continue;
+                }
+                try ( FileOutputStream out = new FileOutputStream(file);
+                         InputStream in = zipFile.getInputStream(entry)) {
+                    IOUtils.copy(in, out);
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                archiveSuccess++;
+                if (verboseCheck == null || verboseCheck.isSelected()) {
                     targetFileGenerated(file);
                 }
             }
         } catch (Exception e) {
-            archiveFail++;
-            String s = e.toString();
-            updateLogs(s);
-            if (s.contains("java.nio.charset.MalformedInputException")
-                    || s.contains("Illegal char")) {
-                updateLogs(message("CharsetIncorrect"));
-                charsetIncorrect = true;
-            }
+            recordError(e.toString());
         }
     }
 
     protected void unarchive7z(File srcFile) {
-        try {
-            try ( SevenZFile sevenZFile = new SevenZFile(srcFile)) {
-                SevenZArchiveEntry entry;
-                while ((entry = sevenZFile.getNextEntry()) != null) {
-                    if (entry.isDirectory()) {
-                        continue;
-                    }
-                    if (verboseCheck == null || verboseCheck.isSelected()) {
-                        updateLogs(message("Handling...") + ":   " + entry.getName());
-                    }
-                    File file = makeTargetFile(entry.getName(), targetPath);
-                    if (file == null) {
-                        continue;
-                    }
-                    File parent = file.getParentFile();
-                    if (!parent.isDirectory() || !parent.mkdirs()) {
-                        archiveFail++;
-                        if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(message("FailOpenFile" + ":" + file));
-                        }
-                        continue;
-                    }
-                    try ( FileOutputStream out = new FileOutputStream(file)) {
-                        int length;
-                        byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((length = sevenZFile.read(buf)) > 0) {
-                            out.write(buf, 0, length);
-                        }
-                    }
+        try ( SevenZFile sevenZFile = new SevenZFile(srcFile)) {
+            SevenZArchiveEntry entry;
+            File file;
+            while ((entry = sevenZFile.getNextEntry()) != null) {
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(message("Handling...") + ":   " + entry.getName());
+                }
+                try {
+                    file = makeTargetFile(entry.getName(), targetPath);
+                    file.getParentFile().mkdirs();
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                if (entry.isDirectory()) {
                     archiveSuccess++;
+                    continue;
+                }
+                try ( FileOutputStream out = new FileOutputStream(file)) {
+                    byte[] content = new byte[(int) entry.getSize()];
+                    sevenZFile.read(content, 0, content.length);
+                    out.write(content);
+                } catch (Exception e) {
+                    recordError(e.toString());
+                    continue;
+                }
+                archiveSuccess++;
+                if (verboseCheck == null || verboseCheck.isSelected()) {
                     targetFileGenerated(file);
                 }
             }
         } catch (Exception e) {
-            archiveFail++;
-            String s = e.toString();
-            updateLogs(s);
-            if (s.contains("java.nio.charset.MalformedInputException")
-                    || s.contains("Illegal char")) {
-                updateLogs(message("CharsetIncorrect"));
-                charsetIncorrect = true;
-            }
+            recordError(e.toString());
+        }
+    }
+
+    protected void recordError(String error) {
+        archiveFail++;
+        updateLogs(error);
+        if (error.contains("java.nio.charset.MalformedInputException")
+                || error.contains("Illegal char")) {
+            charsetIncorrect = true;
         }
     }
 

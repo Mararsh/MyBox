@@ -55,8 +55,8 @@ public class ImageTooLargeController extends BaseController {
         thisPane.setDisable(true);
         if (parent.baseName.equals("ImageSplit")) {
             parent.loadImage(imageInfo);
-        } else {
             closeStage();
+        } else {
             ImageSplitController controller = (ImageSplitController) loadScene(CommonValues.ImageSplitFxml);
             controller.loadImage(imageInfo);
             parent.closeStage();

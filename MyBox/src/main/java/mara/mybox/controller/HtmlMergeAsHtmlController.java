@@ -25,7 +25,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2020-10-21
  * @License Apache License Version 2.0
  */
-public class HtmlMergeAsHtmlController extends FilesBatchController {
+public class HtmlMergeAsHtmlController extends BaseBatchFileController {
 
     protected FileWriter writer;
 

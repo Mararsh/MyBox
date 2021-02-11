@@ -21,7 +21,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2020-12-05
  * @License Apache License Version 2.0
  */
-public class HtmlSetStyleController extends FilesBatchController {
+public class HtmlSetStyleController extends BaseBatchFileController {
 
     protected Charset charset;
     protected String css;

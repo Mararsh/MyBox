@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -9,7 +10,7 @@ import mara.mybox.value.AppVariables;
  * @CreateDate 2020-12-05
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataConvertController extends FilesBatchController {
+public abstract class BaseDataConvertController extends BaseBatchFileController {
 
     @FXML
     protected VBox pdfOptionsVBox, convertVBox;
@@ -20,7 +21,19 @@ public abstract class BaseDataConvertController extends FilesBatchController {
 
     public BaseDataConvertController() {
         baseTitle = AppVariables.message("dataConvert");
+    }
 
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            pdfOptionsController.pixSizeRadio.setDisable(true);
+            pdfOptionsController.standardSizeRadio.fire();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override

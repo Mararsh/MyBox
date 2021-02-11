@@ -12,6 +12,15 @@
         <fx:include fx:id="options" source="ImageManufactureEffectsOptions.fxml" />
       <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1541.0" spacing="5.0">
          <children>
+            <Button fx:id="scopeButton" mnemonicParsing="false" onAction="#scopeAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconTarget.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
               <Button fx:id="okButton" onAction="#okAction">
                   <graphic>
                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

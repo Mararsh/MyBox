@@ -22,12 +22,12 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-12-14
  * @License Apache License Version 2.0
  */
-public class DataConvertCsvController extends BaseDataConvertController {
+public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @FXML
     protected ControlCsvOptions csvReadController;
 
-    public DataConvertCsvController() {
+    public DataFileCSVConvertController() {
         baseTitle = AppVariables.message("CsvConvert");
 
         SourceFileType = VisitHistory.FileType.CSV;
@@ -61,16 +61,6 @@ public class DataConvertCsvController extends BaseDataConvertController {
             return false;
         }
         return super.makeMoreParameters();
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileTools.getFileSuffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "csv".equals(suffix);
     }
 
     @Override

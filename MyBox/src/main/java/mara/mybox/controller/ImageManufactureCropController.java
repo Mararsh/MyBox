@@ -31,30 +31,40 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     @FXML
     protected RadioButton includeRadio, excludeRadio;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
-    protected CheckBox clipboardCheck, marginsCheck;
+    protected CheckBox clipboardCheck, clipMarginsCheck, imageMarginsCheck;
 
     @Override
     public void initPane() {
         try {
             colorSetController.init(this, baseName + "CropColor");
 
+            clipboardCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "CropPutClipboard", false));
             clipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     AppVariables.setUserConfigValue(baseName + "CropPutClipboard", clipboardCheck.isSelected());
                 }
             });
-            clipboardCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "CropPutClipboard", false));
 
-            marginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            imageMarginsCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "CropCutImageMargins", true));
+            imageMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue(baseName + "CropCutMargins", marginsCheck.isSelected());
+                    AppVariables.setUserConfigValue(baseName + "CropCutImageMargins", imageMarginsCheck.isSelected());
                 }
             });
-            marginsCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "CropCutMargins", true));
+
+            clipMarginsCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "CropCutClipMargins", true));
+            clipMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "CropCutClipMargins", clipMarginsCheck.isSelected());
+                }
+            });
+
+            clipMarginsCheck.disableProperty().bind(clipboardCheck.selectedProperty().not());
 
             okButton.disableProperty().bind(imageController.cropButton.disableProperty());
 
@@ -99,11 +109,11 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
 
                     if (includeRadio.isSelected()) {
                         newImage = FxmlImageManufacture.scopeExcludeImage(imageView.getImage(),
-                                scopeController.scope, bgColor, marginsCheck.isSelected());
+                                scopeController.scope, bgColor, imageMarginsCheck.isSelected());
 
                     } else if (excludeRadio.isSelected()) {
                         newImage = FxmlImageManufacture.scopeImage(imageView.getImage(),
-                                scopeController.scope, bgColor, marginsCheck.isSelected());
+                                scopeController.scope, bgColor, imageMarginsCheck.isSelected());
                     } else {
                         return false;
                     }
@@ -113,11 +123,11 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                     if (AppVariables.getUserConfigBoolean(baseName + "CropPutClipboard", false)) {
                         if (includeRadio.isSelected()) {
                             cuttedClip = FxmlImageManufacture.scopeImage(imageView.getImage(),
-                                    scopeController.scope, bgColor, marginsCheck.isSelected());
+                                    scopeController.scope, bgColor, clipMarginsCheck.isSelected());
 
                         } else if (excludeRadio.isSelected()) {
                             cuttedClip = FxmlImageManufacture.scopeExcludeImage(imageView.getImage(),
-                                    scopeController.scope, bgColor, marginsCheck.isSelected());
+                                    scopeController.scope, bgColor, clipMarginsCheck.isSelected());
                         }
                         ImageClipboard.add(cuttedClip);
                     }
@@ -127,6 +137,9 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                 @Override
                 protected void whenSucceeded() {
                     imageController.popSuccessful();
+                    if (excludeRadio.isSelected() && imageMarginsCheck.isSelected()) {
+                        scopeController.scopeAllRadio.fire();
+                    }
                     imageController.updateImage(ImageOperation.Crop, newImage, cost);
                     if (cuttedClip != null) {
                         if (operationsController.clipboardController != null) {

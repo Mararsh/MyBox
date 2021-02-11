@@ -5,14 +5,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -22,10 +19,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.tools.StringTools;
@@ -576,37 +572,24 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 || (codecsTask != null && !codecsTask.isQuit())
                 || (queryTask != null && !queryTask.isQuit())
                 || (filtersTask != null && !filtersTask.isQuit())) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVariables.message("TaskRunning"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSure) {
-                if (formatsTask != null) {
-                    formatsTask.cancel();
-                    formatsTask = null;
-                }
-                if (codecsTask != null) {
-                    codecsTask.cancel();
-                    codecsTask = null;
-                }
-                if (filtersTask != null) {
-                    filtersTask.cancel();
-                    filtersTask = null;
-                }
-                if (queryTask != null) {
-                    queryTask.cancel();
-                    queryTask = null;
-                }
-            } else {
+            if (!FxmlControl.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
                 return false;
+            }
+            if (formatsTask != null) {
+                formatsTask.cancel();
+                formatsTask = null;
+            }
+            if (codecsTask != null) {
+                codecsTask.cancel();
+                codecsTask = null;
+            }
+            if (filtersTask != null) {
+                filtersTask.cancel();
+                filtersTask = null;
+            }
+            if (queryTask != null) {
+                queryTask.cancel();
+                queryTask = null;
             }
         }
         return true;

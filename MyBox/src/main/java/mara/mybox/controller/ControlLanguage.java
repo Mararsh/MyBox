@@ -13,9 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -25,10 +23,10 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -120,27 +118,16 @@ public class ControlLanguage extends BaseController {
     }
 
     @Override
-    public void controlHandler(KeyEvent event) {
-        if (event.isControlDown() && event.getCode() != null) {
-            switch (event.getCode()) {
-                case E:
-                    copyEnglish();
-                    return;
-            }
+    public void controlAltHandler(KeyEvent event) {
+        if (event.getCode() == null) {
+            return;
         }
-        super.controlHandler(event);
-    }
-
-    @Override
-    public void altHandler(KeyEvent event) {
-        if (event.isAltDown() && event.getCode() != null) {
-            switch (event.getCode()) {
-                case E:
-                    copyEnglish();
-                    return;
-            }
+        switch (event.getCode()) {
+            case E:
+                copyEnglish();
+                return;
         }
-        super.altHandler(event);
+        super.controlAltHandler(event);
     }
 
     protected void checkListSelected() {
@@ -268,18 +255,7 @@ public class ControlLanguage extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVariables.message("SureDelete"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
+        if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureDelete"))) {
             return;
         }
         for (String name : selected) {

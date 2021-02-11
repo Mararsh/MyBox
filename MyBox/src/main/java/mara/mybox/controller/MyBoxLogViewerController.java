@@ -79,7 +79,7 @@ public class MyBoxLogViewerController extends HtmlViewerController {
     public void dataAction(ActionEvent event) {
         MyBoxLogController controller = MyBoxLogController.oneOpen();
         if (controller != null) {
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         }
     }
 
@@ -116,7 +116,7 @@ public class MyBoxLogViewerController extends HtmlViewerController {
             controller = (MyBoxLogViewerController) FxmlStage.openStage(CommonValues.MyBoxLogViewerFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
+            controller.getMyStage().requestFocus();
         }
         return controller;
     }

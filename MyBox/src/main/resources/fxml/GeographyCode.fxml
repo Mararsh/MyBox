@@ -289,6 +289,15 @@ License:    Apache License Version 2.0
                                                                 <Label minWidth="-Infinity" text="%Page" />
                                                                 <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="100.0" />
                                                                 <Label fx:id="pageLabel" minWidth="-Infinity" />
+                                                                <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconGo.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                                 <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -16,6 +16,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioMenuItem;
@@ -59,6 +60,8 @@ public class MainMenuController extends BaseController {
     @FXML
     protected Pane mainMenuPane;
     @FXML
+    protected MenuBar menuBar;
+    @FXML
     protected ToggleGroup langGroup;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
@@ -67,7 +70,8 @@ public class MainMenuController extends BaseController {
             pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem;
     @FXML
     protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
-            newWindowCheck, restoreStagesSizeCheck, popRecentCheck, controlTextCheck, hidpiIconsCheck;
+            newWindowCheck, restoreStagesSizeCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
+            controlTextCheck, hidpiIconsCheck;
     @FXML
     protected Menu settingsMenu, recentMenu, helpMenu;
     @FXML
@@ -77,6 +81,7 @@ public class MainMenuController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
+
             settingsMenu.setOnShowing((Event e) -> {
                 checkSettings();
             });
@@ -109,6 +114,8 @@ public class MainMenuController extends BaseController {
         newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
         restoreStagesSizeCheck.setSelected(AppVariables.restoreStagesSize);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
+        popColorSetCheck.setSelected(AppVariables.getUserConfigBoolean("PopColorSet", true));
+        controlPanesCheck.setSelected(AppVariables.getUserConfigBoolean("MousePassControlPanes", true));
         checkControlColor();
         checkMemroyMonitor();
         checkCpuMonitor();
@@ -599,7 +606,16 @@ public class MainMenuController extends BaseController {
             AppVariables.fileRecentNumber = 0;
         }
         AppVariables.setUserConfigInt("FileRecentNumber", AppVariables.fileRecentNumber);
+    }
 
+    @FXML
+    protected void popColorSetAction() {
+        AppVariables.setUserConfigValue("PopColorSet", popColorSetCheck.isSelected());
+    }
+
+    @FXML
+    protected void controlPanesAction() {
+        AppVariables.setUserConfigValue("MousePassControlPanes", controlPanesCheck.isSelected());
     }
 
     @FXML
@@ -1058,13 +1074,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void openTextEncodingBatch(ActionEvent event) {
-        loadScene(CommonValues.TextEncodingBatchFxml);
+    protected void openTextConvert(ActionEvent event) {
+        loadScene(CommonValues.TextFilesConvertFxml);
     }
 
     @FXML
-    protected void openTextLineBreakBatch(ActionEvent event) {
-        loadScene(CommonValues.TextLineBreakBatchFxml);
+    protected void openTextMerge(ActionEvent event) {
+        loadScene(CommonValues.TextFilesMergeFxml);
     }
 
     @FXML
@@ -1385,12 +1401,22 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void openExcelConvert(ActionEvent event) {
-        loadScene(CommonValues.DataConvertExcelFxml);
+        loadScene(CommonValues.DataFileExcelConvertFxml);
+    }
+
+    @FXML
+    protected void openExcelSplit(ActionEvent event) {
+        loadScene(CommonValues.DataFileExcelSplitFxml);
     }
 
     @FXML
     protected void openCsvConvert(ActionEvent event) {
-        loadScene(CommonValues.DataConvertCsvFxml);
+        loadScene(CommonValues.DataFileCSVConvertFxml);
+    }
+
+    @FXML
+    protected void openCsvSplit(ActionEvent event) {
+        loadScene(CommonValues.DataFileCSVSplitFxml);
     }
 
     @FXML

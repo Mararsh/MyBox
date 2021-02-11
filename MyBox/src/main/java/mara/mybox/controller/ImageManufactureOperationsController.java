@@ -229,6 +229,8 @@ public class ImageManufactureOperationsController extends BaseImageController {
             scaleController.resetOperationPane();
         } else if (colorController == currentController) {
             colorController.resetOperationPane();
+        } else if (effectController == currentController) {
+            effectController.resetOperationPane();
         } else if (enhancementController == currentController) {
             enhancementController.resetOperationPane();
         } else if (richTextController == currentController) {

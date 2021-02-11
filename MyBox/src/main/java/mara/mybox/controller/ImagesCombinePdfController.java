@@ -2,22 +2,19 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -74,19 +71,7 @@ public class ImagesCombinePdfController extends BaseImagesListController {
             return;
         }
         if (tableController.hasSampled()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVariables.message("SureSampled"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != buttonSure) {
+            if (!FxmlControl.askSure(getMyStage().getTitle(), message("SureSampled"))) {
                 return;
             }
         }

@@ -15,10 +15,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import mara.mybox.db.table.TableStringValues;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -27,7 +28,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ImageClipboard {
 
-    public final static String TableKey = "ImageClipboard";
+    public final static String ClipBoardKey = "ImageClipboard";
 
     protected File imageFile, thumbnailFile;
     protected Image image, thumbnail;
@@ -65,7 +66,20 @@ public class ImageClipboard {
     }
 
     public static List<String> read() {
-        return TableStringValues.read(TableKey);
+        List<String> names = TableStringValues.max(ClipBoardKey, max());
+        File[] files = new File(AppVariables.getImageClipboardPath()).listFiles();
+        if (files != null) {
+            for (File file : files) {
+                String filename = file.getAbsolutePath();
+                if (filename.endsWith("_thumbnail.png")) {
+                    filename = filename.substring(0, filename.length() - 14) + ".png";
+                }
+                if (!names.contains(filename)) {
+                    FileTools.delete(file);
+                }
+            }
+        }
+        return names;
     }
 
     public static List<ImageClipboard> thumbnails() {
@@ -141,7 +155,7 @@ public class ImageClipboard {
 
     public static ImageClipboard last() {
         try {
-            String name = TableStringValues.last(TableKey);
+            String name = TableStringValues.last(ClipBoardKey);
             if (name == null) {
                 return null;
             }
@@ -201,8 +215,8 @@ public class ImageClipboard {
             if (!ImageFileWriters.writeImageFile(thumbnail, "png", filename + "_thumbnail.png")) {
                 return null;
             }
-            TableStringValues.add(TableKey, filename + ".png");
-            TableStringValues.max(TableKey, max());
+            TableStringValues.add(ClipBoardKey, filename + ".png");
+            TableStringValues.max(ClipBoardKey, max());
 
             if (putSystemClipboard) {
                 Platform.runLater(new Runnable() {
@@ -224,13 +238,17 @@ public class ImageClipboard {
     }
 
     public static boolean delete(String name) {
-        return TableStringValues.delete(TableKey, name);
+        FileTools.delete(name);
+        if (name.endsWith(".png")) {
+            FileTools.delete(name.substring(0, name.length() - 4) + "_thumbnail.png");
+        }
+        return TableStringValues.delete(ClipBoardKey, name);
     }
 
     public static void clear() {
         try {
-            TableStringValues.clear(TableKey);
-
+            FileTools.clearDir(new File(AppVariables.getImageClipboardPath()));
+            TableStringValues.clear(ClipBoardKey);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

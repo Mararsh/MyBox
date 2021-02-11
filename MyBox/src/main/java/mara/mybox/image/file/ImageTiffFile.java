@@ -40,8 +40,6 @@ import org.w3c.dom.NodeList;
 /**
  * @Author Mara
  * @CreateDate 2018-6-19
- *
- * @Description
  * @License Apache License Version 2.0
  */
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/tiff_metadata.html#image
@@ -174,58 +172,7 @@ public class ImageTiffFile {
         }
     }
 
-    public static boolean writeTiffImage(BufferedImage image, ImageAttributes attributes, File file) {
-        try {
-            ImageWriter writer = getWriter();
-            File tmpFile = FileTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                writer.setOutput(out);
-                ImageWriteParam param = getPara(attributes, writer);
-                IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
-                writer.write(null, new IIOImage(image, null, metaData), param);
-                out.flush();
-            }
-            writer.dispose();
-
-            return FileTools.rename(tmpFile, file);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean writeTiffImages(List<BufferedImage> images,
-            ImageAttributes attributes, File file) {
-        try {
-            if (images == null || file == null || images.isEmpty()) {
-                return false;
-            }
-            ImageWriter writer = getWriter();
-            File tmpFile = FileTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                writer.setOutput(out);
-                ImageWriteParam param = getPara(attributes, writer);
-                writer.prepareWriteSequence(null);
-                for (BufferedImage bufferedImage : images) {
-                    bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
-                    IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
-                    writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                }
-                writer.endWriteSequence();
-                out.flush();
-            }
-            writer.dispose();
-
-            return FileTools.rename(tmpFile, file);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public static String writeTiffImagesWithInfo(List<ImageInformation> imagesInfo,
-            ImageAttributes attributes, File file) {
+    public static String writeWithInfo(List<ImageInformation> imagesInfo, ImageAttributes attributes, File file) {
         try {
             if (imagesInfo == null || imagesInfo.isEmpty() || file == null) {
                 return "InvalidParameters";
@@ -248,17 +195,14 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
-
             return FileTools.rename(tmpFile, file) ? "" : "Failed";
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return e.toString();
         }
     }
 
-    public static boolean writeTiffFiles(List<String> files,
-            ImageAttributes attributes, boolean FrameByFrame, File outFile) {
+    public static boolean writeTiffFiles(List<String> files, ImageAttributes attributes, boolean FrameByFrame, File outFile) {
         try {
             if (files == null || outFile == null || files.isEmpty()) {
                 return false;

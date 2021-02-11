@@ -36,7 +36,7 @@ import static mara.mybox.value.AppVariables.setUserConfigValue;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesRenameController extends FilesBatchController {
+public class FilesRenameController extends BaseBatchFileController {
 
     protected FilesRenameTableController filesController;
     protected List<String> targetNames;

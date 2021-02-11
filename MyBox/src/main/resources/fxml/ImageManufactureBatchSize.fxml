@@ -139,12 +139,12 @@ License:    Apache License Version 2.0
                                                                         <Label text="%BestQuality" />
                                                                         <FlowPane hgap="5.0" vgap="5.0">
                                                                             <children>
-                                                                                <RadioButton fx:id="qualityNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                                                                <RadioButton fx:id="qualityNullRadio" mnemonicParsing="false" text="%NotSetting">
                                                                                     <toggleGroup>
                                                                                         <ToggleGroup fx:id="qualityGroup" />
                                                                                     </toggleGroup>
                                                                                 </RadioButton>
-                                                                                <RadioButton fx:id="qualityOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$qualityGroup" />
+                                                                                <RadioButton fx:id="qualityOnRadio" mnemonicParsing="false" selected="true" text="%On" toggleGroup="$qualityGroup" />
                                                                                 <RadioButton fx:id="qualityOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$qualityGroup" />
                                                                             </children>
                                                                         </FlowPane>
@@ -159,8 +159,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </ScrollPane>
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
-                                                  styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

@@ -133,7 +133,8 @@ public class ImageFramesViewerController extends BaseImagesListController {
     }
 
     @FXML
-    protected void editAction() {
+    @Override
+    public void editAction() {
         try {
             String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
             if (format.contains("tif")) {

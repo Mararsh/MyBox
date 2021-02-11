@@ -1,15 +1,11 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.Optional;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -73,19 +69,7 @@ public class FileRenameController extends BaseController {
                 return;
             }
             if (theFile.exists()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(message("Rename"));
-                alert.setContentText(message("SureReplaceExistedFile"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-                Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-                alertStage.setAlwaysOnTop(true);
-                alertStage.toFront();
-
-                Optional<ButtonType> alertResult = alert.showAndWait();
-                if (alertResult.get() != buttonSure) {
+                if (!FxmlControl.askSure(getBaseTitle(), message("SureReplaceExistedFile"))) {
                     return;
                 }
             }

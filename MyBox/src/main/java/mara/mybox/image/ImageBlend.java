@@ -2,8 +2,8 @@ package mara.mybox.image;
 
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.PixelBlend.ImagesBlendMode;
 
 /**
  * @Author Mara
@@ -74,6 +74,11 @@ public class ImageBlend {
 
     public static BufferedImage blendImages(BufferedImage foreImage, BufferedImage backImage,
             int x, int y, ImagesBlendMode blendMode, float alpha) {
+        return ImageBlend.blendImages(foreImage, backImage, x, y, blendMode, alpha, false);
+    }
+
+    public static BufferedImage blendImages(BufferedImage foreImage, BufferedImage backImage,
+            int x, int y, ImagesBlendMode blendMode, float alpha, boolean orderReversed) {
         try {
             if (foreImage == null || backImage == null || blendMode == null) {
                 return null;
@@ -83,6 +88,7 @@ public class ImageBlend {
                     x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
             PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
+            colorBlend.setOrderReversed(orderReversed);
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
                     int pixelBack = backImage.getRGB(i, j);

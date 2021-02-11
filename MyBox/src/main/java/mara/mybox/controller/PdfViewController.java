@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
@@ -490,7 +489,7 @@ public class PdfViewController extends ImageViewerController {
                     } catch (InvalidPasswordException e) {
                         pop = true;
                         return false;
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         error = e.toString();
                         return false;
                     }
@@ -806,7 +805,7 @@ public class PdfViewController extends ImageViewerController {
     @Override
     public void setImageChanged(boolean imageChanged) {
         this.imageChanged = imageChanged;
-        updateLabelTitle();
+        updateLabelsTitle();
     }
 
     @Override
@@ -848,6 +847,11 @@ public class PdfViewController extends ImageViewerController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void goPage() {
+        loadPage();
     }
 
     @FXML
@@ -1123,7 +1127,7 @@ public class PdfViewController extends ImageViewerController {
                         orcPage = currentPage;
                         tabPane.getSelectionModel().select(ocrTab);
                     } else {
-                        popText(message("OCRMissComments"), 5000, "white", "1.1em", null);
+                        popWarn(message("OCRMissComments"));
                     }
                 }
             };

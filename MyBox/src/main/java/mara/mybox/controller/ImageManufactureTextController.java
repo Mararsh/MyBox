@@ -52,7 +52,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     protected CheckBox verticalCheck, outlineCheck;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ColorSet colorSetController;
     @FXML
     protected FlowPane setBox;
     @FXML

@@ -49,15 +49,7 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="openWindowButton" mnemonicParsing="false" onAction="#newWindow">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconView.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
+                              <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
                                         <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -91,6 +83,15 @@ License:    Apache License Version 2.0
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/iconPicSmall.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="openWindowButton" mnemonicParsing="false" onAction="#newWindow">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconView.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>

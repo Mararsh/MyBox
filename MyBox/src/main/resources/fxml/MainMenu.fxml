@@ -90,10 +90,10 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
-                                <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
-                                <MenuItem mnemonicParsing="false" onAction="#openTextLineBreakBatch" text="%TextLineBreakBatch" />
-                                <MenuItem mnemonicParsing="false" onAction="#openTextReplaceBatch" text="%TextReplaceBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextConvert" text="%TextConvertSplit" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextMerge" text="%TextFilesMerge" />
                                 <MenuItem mnemonicParsing="false" onAction="#openTextToHtml" text="%TextToHtml" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextReplaceBatch" text="%TextReplaceBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />
                             </items>
@@ -174,9 +174,11 @@ License:    Apache License Version 2.0
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openDataCsv" text="%EditCSV" />
                                         <MenuItem mnemonicParsing="false" onAction="#openCsvConvert" text="%CsvConvert" />
+                                        <!--<MenuItem mnemonicParsing="false" onAction="#openCsvSplit" text="%CsvSplit" />-->
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openDataExcel" text="%EditExcel" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelConvert" text="%ExcelConvert" />
+                                        <!--<MenuItem mnemonicParsing="false" onAction="#openExcelSplit" text="%ExcelSplit" />-->
                                     </items>
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#openDataClipboard" text="%DataClipboard" />
@@ -287,9 +289,11 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
-                                <CheckMenuItem fx:id="restoreStagesSizeCheck" mnemonicParsing="false" onAction="#restoreStagesSizeAction" text="%RestoreStagesSize" />
-                                <CheckMenuItem fx:id="newWindowCheck" mnemonicParsing="false" onAction="#newWindowAction" text="%OpenStageInNewWindow" />
+                                <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSet" />
+                                <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMousePassed" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
+                                <CheckMenuItem fx:id="newWindowCheck" mnemonicParsing="false" onAction="#newWindowAction" text="%OpenStageInNewWindow" />
+                                <CheckMenuItem fx:id="restoreStagesSizeCheck" mnemonicParsing="false" onAction="#restoreStagesSizeAction" text="%RestoreStagesSize" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
                                 <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
@@ -395,12 +399,12 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                             <items>
-                                <MenuItem fx:id="makeIconsItem"  mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
                                 <MenuItem mnemonicParsing="false" onAction="#Shortcuts" text="%Shortcuts" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxLogs" text="%MyBoxLogs" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#documents" text="%Documents" />
+                                <MenuItem fx:id="makeIconsItem"  mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />
                                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
