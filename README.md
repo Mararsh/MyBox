@@ -1321,7 +1321,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                   
 春节快乐！牛年大吉！         
 
-2021-1-27 版本6.3.9                  
+2021-1-27 版本6.3.8                  
 -  添加：编辑和转换csv和excel文件。数据粘贴板。编辑和保存矩阵。批量设置html的风格。          
 -  改进：颜色量化可以设置通道权重。焦点不在文本输入控件时快捷键可以省略Ctrl/Alt。数据转换/导出采用流读取。                 
 -  解决的主要问题：批量替换图片颜色的距离不生效。PDF的用户密码和所有者密码混乱。文本过滤界面分页错误。表字段也需要翻译。时间树上公元前的时间解析错误。                    

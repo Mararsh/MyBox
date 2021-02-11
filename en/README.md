@@ -1337,7 +1337,7 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                     
 Happy Spring Festival!  Best wishes in Year of the Ox!                
 
-2021-1-27 v6.3.9                  
+2021-1-27 v6.3.8                  
 -  Add: Edit and convert csv file and excel file. Data clipboard. Edit and save matrix. Set html style in batch.               
 -  Improve: Channels' weights can be set for image quantization. Shortcuts can omit Ctrl/Alt when focus is not in "Text Input" controls.  Stream reading when convert/export data.                       
 -  Solved problems. Distance not work when replace images' color in batch. User password and owner password are messed for PDF.  
