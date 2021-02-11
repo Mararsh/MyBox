@@ -5,8 +5,8 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 ## What's New           
 2021-2-11 v6.3.9                  
--  Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Can clear security attributes of PDF file.          
--  Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarcive file.  Non-english entries of zip file are messed.             
+-  Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Clear security attributes of PDF file.          
+-  Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarchive file.  Non-english entries of zip file are messed.             
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                     
 Happy Spring Festival!  Best wishes in Year of the Ox!                
     
@@ -1332,8 +1332,8 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 # Development Logs <a id="devLog"></a>            
 2021-2-11 v6.3.9                  
--  Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Can clear security attributes of PDF file.          
--  Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarcive file.  Non-english entries of zip file are messed.             
+-  Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Clear security attributes of PDF file.          
+-  Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarchive file.  Non-english entries of zip file are messed.             
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                     
 Happy Spring Festival!  Best wishes in Year of the Ox!                
 
