@@ -3,13 +3,14 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -36,11 +37,11 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     private java.awt.Color originalColor, newColor;
 
     @FXML
-    protected TextField distanceInput;
-    @FXML
     protected ToggleGroup replaceScopeGroup;
     @FXML
-    protected CheckBox excludeCheck, ignoreTransparentCheck;
+    protected ComboBox<String> distanceSelector;
+    @FXML
+    protected CheckBox excludeCheck, ignoreTransparentCheck, squareRootCheck;
     @FXML
     protected ColorSet originalColorSetController, newColorSetController;
 
@@ -58,7 +59,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(distanceInput.styleProperty().isEqualTo(badStyle))
+                    .or(distanceSelector.getEditor().styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
@@ -75,63 +76,86 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             newColorSetController.init(this, baseName + "NewColor", Color.TRANSPARENT);
 
             distance = AppVariables.getUserConfigInt(baseName + "Distance", 20);
-            distanceInput.setText(distance + "");
-            distanceInput.textProperty().addListener(new ChangeListener<String>() {
+            distance = distance <= 0 ? 20 : distance;
+            distanceSelector.setValue(distance + "");
+            distanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkDistance();
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    checkValues();
+                }
+            });
+
+            squareRootCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ColorDistanceSquare", false));
+            squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
+                    checkValues();
                 }
             });
 
             replaceScopeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkColorType();
+                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+                    checkValues();
                 }
             });
-            checkColorType();
+            checkValues();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    private void checkColorType() {
-        RadioButton selected = (RadioButton) replaceScopeGroup.getSelectedToggle();
-        isColor = message("Color").equals(selected.getText());
-        if (isColor) {
-            FxmlControl.setTooltip(distanceInput, new Tooltip("0 ~ 255"));
-        } else {
-            FxmlControl.setTooltip(distanceInput, new Tooltip("0 ~ 360"));
+    protected void checkValues() {
+        if (isSettingValues) {
+            return;
         }
-        checkDistance();
-    }
-
-    private void checkDistance() {
-        try {
-            int v = Integer.valueOf(distanceInput.getText());
-            if (v == 0
-                    && ((Color) originalColorSetController.rect.getFill()).equals(((Color) newColorSetController.rect.getFill()))) {
-                popError(message("OriginalNewSameColor"));
-                distanceInput.setStyle(badStyle);
-                return;
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                RadioButton selected = (RadioButton) replaceScopeGroup.getSelectedToggle();
+                isColor = message("Color").equals(selected.getText());
+                int max = 255, step = 10;
+                if (isColor) {
+                    squareRootCheck.setDisable(false);
+                    if (squareRootCheck.isSelected()) {
+                        max = 255 * 255;
+                        step = 100;
+                    }
+                } else {
+                    max = 360;
+                    squareRootCheck.setDisable(true);
+                }
+                FxmlControl.setTooltip(distanceSelector, new Tooltip("0 ~ " + max));
+                String value = distanceSelector.getValue();
+                List<String> vList = new ArrayList<>();
+                for (int i = 0; i <= max; i += step) {
+                    vList.add(i + "");
+                }
+                isSettingValues = true;
+                distanceSelector.getItems().clear();
+                distanceSelector.getItems().addAll(vList);
+                distanceSelector.setValue(value);
+                isSettingValues = false;
+                try {
+                    int v = Integer.valueOf(value);
+                    if (v == 0
+                            && ((Color) originalColorSetController.rect.getFill()).equals(((Color) newColorSetController.rect.getFill()))) {
+                        popError(message("OriginalNewSameColor"));
+                        return;
+                    }
+                    if (v >= 0 && v <= max) {
+                        distance = v;
+                        AppVariables.setUserConfigInt(baseName + "Distance", distance);
+                        distanceSelector.getEditor().setStyle(null);
+                    } else {
+                        distanceSelector.getEditor().setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    distanceSelector.getEditor().setStyle(badStyle);
+                }
             }
-            int max = 255;
-            if (!isColor) {
-                max = 360;
-            }
-            if (v >= 0 && v <= max) {
-                distance = v;
-                AppVariables.setUserConfigInt(baseName + "Distance", distance);
-                distanceInput.setStyle(null);
-            } else {
-                distanceInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            distanceInput.setStyle(badStyle);
-        }
+        });
     }
 
     @Override
@@ -152,7 +176,11 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         scope.setColors(colors);
         if (isColor) {
             scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-            scope.setColorDistance(distance);
+            if (squareRootCheck.isSelected()) {
+                scope.setColorDistanceSquare(distance);
+            } else {
+                scope.setColorDistance(distance);
+            }
         } else {
             scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
             scope.setHsbDistance(distance / 360.0f);

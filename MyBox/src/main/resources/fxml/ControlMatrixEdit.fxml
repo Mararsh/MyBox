@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </Button>
-                                                <Button fx:id="saveMatrixButton" mnemonicParsing="false" onAction="#saveAction">
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -162,7 +162,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="saveMatrix2Button" mnemonicParsing="false" onAction="#saveAction">
+                              <Button fx:id="save2Button" mnemonicParsing="false" onAction="#saveAction">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                        <image>

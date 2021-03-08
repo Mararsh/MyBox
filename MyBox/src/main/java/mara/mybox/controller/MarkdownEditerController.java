@@ -42,11 +42,11 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -70,7 +70,7 @@ public class MarkdownEditerController extends TextEditerController {
     @FXML
     protected Tab htmlTab, codesTab, textTab, tocTab, linksTab;
     @FXML
-    protected WebView webView, linksWebview;
+    protected WebView linksWebview;
     @FXML
     protected TextArea htmlArea, textArea, tocArea;
     @FXML
@@ -81,6 +81,8 @@ public class MarkdownEditerController extends TextEditerController {
     protected TextField titleInput;
     @FXML
     protected TitledPane conversionPane;
+    @FXML
+    protected ControlWebview webviewController;
 
     public MarkdownEditerController() {
         baseTitle = AppVariables.message("MarkdownEditer");
@@ -123,10 +125,11 @@ public class MarkdownEditerController extends TextEditerController {
 
     protected void initHtmlTab() {
         try {
-            webView.setContextMenuEnabled(true);
-            webEngine = webView.getEngine();
-
             htmlTab.disableProperty().bind(mainArea.textProperty().isEmpty());
+
+            webviewController.setValues(this, false, true);
+            webEngine = webviewController.webView.getEngine();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

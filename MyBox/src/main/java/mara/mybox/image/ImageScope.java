@@ -38,9 +38,9 @@ public class ImageScope {
     protected DoubleCircle circle;
     protected DoubleEllipse ellipse;
     protected DoublePolygon polygon;
-    protected int colorDistance, colorDistance2;
+    protected int colorDistance, colorDistanceSquare;
     protected float hsbDistance;
-    protected boolean areaExcluded, colorExcluded, eightNeighbor;
+    protected boolean areaExcluded, colorExcluded, eightNeighbor, distanceSquareRoot;
     protected Image image, clip;
     protected double opacity;
     protected Date createTime, modifyTime;
@@ -77,10 +77,10 @@ public class ImageScope {
         colors = new ArrayList<>();
         points = new ArrayList<>();
         colorDistance = 50;
-        colorDistance2 = colorDistance * colorDistance;
+        colorDistanceSquare = colorDistance * colorDistance;
         hsbDistance = 0.5f;
         opacity = 0.3;
-        areaExcluded = colorExcluded = false;
+        areaExcluded = colorExcluded = distanceSquareRoot = false;
         eightNeighbor = true;
         if (image != null) {
             rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
@@ -448,9 +448,10 @@ public class ImageScope {
             targetScope.setEllipse(sourceScope.getEllipse().cloneValues());
             targetScope.setPolygon(sourceScope.getPolygon().cloneValues());
             targetScope.setColorDistance(sourceScope.getColorDistance());
-            targetScope.setColorDistance2(sourceScope.getColorDistance2());
+            targetScope.setColorDistanceSquare(sourceScope.getColorDistanceSquare());
             targetScope.setHsbDistance(sourceScope.getHsbDistance());
             targetScope.setColorExcluded(sourceScope.isColorExcluded());
+            targetScope.setDistanceSquareRoot(sourceScope.isDistanceSquareRoot());
             targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
             targetScope.setOpacity(sourceScope.getOpacity());
             targetScope.setCreateTime(sourceScope.getCreateTime());
@@ -623,8 +624,7 @@ public class ImageScope {
         return ScopeType.valueOf(type);
     }
 
-    public static boolean inShape(DoubleShape shape, boolean areaExcluded,
-            int x, int y) {
+    public static boolean inShape(DoubleShape shape, boolean areaExcluded, int x, int y) {
         if (areaExcluded) {
             return !shape.include(x, y);
         } else {
@@ -632,18 +632,18 @@ public class ImageScope {
         }
     }
 
-    public static boolean isColorMatch2(List<Color> colors, boolean colorExcluded,
-            int colorDistance2, Color color) {
+    public static boolean isColorMatchSquare(List<Color> colors, boolean colorExcluded,
+            int colorDistanceSqure, Color color) {
         if (colorExcluded) {
             for (Color oColor : colors) {
-                if (ImageColor.isColorMatchSquare(color, oColor, colorDistance2)) {
+                if (ImageColor.isColorMatchSquare(color, oColor, colorDistanceSqure)) {
                     return false;
                 }
             }
             return true;
         } else {
             for (Color oColor : colors) {
-                if (ImageColor.isColorMatchSquare(color, oColor, colorDistance2)) {
+                if (ImageColor.isColorMatchSquare(color, oColor, colorDistanceSqure)) {
                     return true;
                 }
             }
@@ -855,10 +855,6 @@ public class ImageScope {
             return inShape(polygon, areaExcluded, x, y);
         }
 
-        @Override
-        public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
-        }
     }
 
     static class AllColor extends ImageScope {
@@ -890,12 +886,12 @@ public class ImageScope {
 
         @Override
         protected boolean inScope(int x, int y, Color color) {
-            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+            return isColorMatchSquare(colors, colorExcluded, colorDistanceSquare, color);
         }
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistanceSquare);
         }
     }
 
@@ -1032,12 +1028,12 @@ public class ImageScope {
             if (!inShape(rectangle, areaExcluded, x, y)) {
                 return false;
             }
-            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+            return isColorMatchSquare(colors, colorExcluded, colorDistanceSquare, color);
         }
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistanceSquare);
         }
     }
 
@@ -1228,12 +1224,12 @@ public class ImageScope {
             if (!inShape(circle, areaExcluded, x, y)) {
                 return false;
             }
-            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+            return isColorMatchSquare(colors, colorExcluded, colorDistanceSquare, color);
         }
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistanceSquare);
         }
     }
 
@@ -1426,12 +1422,12 @@ public class ImageScope {
             if (!inShape(ellipse, areaExcluded, x, y)) {
                 return false;
             }
-            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+            return isColorMatchSquare(colors, colorExcluded, colorDistanceSquare, color);
         }
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistanceSquare);
         }
     }
 
@@ -1632,12 +1628,12 @@ public class ImageScope {
             if (!inShape(polygon, areaExcluded, x, y)) {
                 return false;
             }
-            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+            return isColorMatchSquare(colors, colorExcluded, colorDistanceSquare, color);
         }
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistanceSquare);
         }
     }
 
@@ -1823,7 +1819,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistanceSquare);
         }
     }
 
@@ -1837,7 +1833,7 @@ public class ImageScope {
 
         @Override
         public boolean inColorMatch(Color color1, Color color2) {
-            return ImageColor.isColorMatchSquare(color1, color2, colorDistance2);
+            return ImageColor.isColorMatchSquare(color1, color2, colorDistanceSquare);
         }
     }
 
@@ -1926,6 +1922,19 @@ public class ImageScope {
     }
 
     /*
+        customized get/set
+     */
+    public void setColorDistance(int colorDistance) {
+        this.colorDistance = colorDistance;
+        this.colorDistanceSquare = colorDistance * colorDistance;
+    }
+
+    public void setColorDistanceSquare(int colorDistanceSquare) {
+        this.colorDistanceSquare = colorDistanceSquare;
+        this.colorDistance = (int) Math.sqrt(colorDistanceSquare);
+    }
+
+    /*
         get/set
      */
     public List<Color> getColors() {
@@ -1962,11 +1971,6 @@ public class ImageScope {
 
     public int getColorDistance() {
         return colorDistance;
-    }
-
-    public void setColorDistance(int colorDistance) {
-        this.colorDistance = colorDistance;
-        this.colorDistance2 = colorDistance * colorDistance;
     }
 
     public double getOpacity() {
@@ -2017,12 +2021,8 @@ public class ImageScope {
         this.points = points;
     }
 
-    public int getColorDistance2() {
-        return colorDistance2;
-    }
-
-    public void setColorDistance2(int colorDistance2) {
-        this.colorDistance2 = colorDistance2;
+    public int getColorDistanceSquare() {
+        return colorDistanceSquare;
     }
 
     public float getHsbDistance() {
@@ -2119,6 +2119,14 @@ public class ImageScope {
 
     public void setEightNeighbor(boolean eightNeighbor) {
         this.eightNeighbor = eightNeighbor;
+    }
+
+    public boolean isDistanceSquareRoot() {
+        return distanceSquareRoot;
+    }
+
+    public void setDistanceSquareRoot(boolean distanceSquareRoot) {
+        this.distanceSquareRoot = distanceSquareRoot;
     }
 
 }

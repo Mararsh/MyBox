@@ -328,7 +328,6 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
 
     public String addEntry(File file, String entryPath) {
         try {
-            countHandling(file);
             String name;
             if (archiver.equalsIgnoreCase(ArchiveStreamFactory.AR)) {
                 name = file.getName();

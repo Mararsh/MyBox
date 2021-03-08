@@ -243,7 +243,8 @@ public class ColumnDefinition extends BaseData {
 
     public static boolean valid(ColumnDefinition data) {
         return data != null
-                && data.getType() != null && data.getName() != null;
+                && data.getType() != null
+                && data.getName() != null && !data.getName().isBlank();
     }
 
     public static Object getValue(ColumnDefinition data, String column) {

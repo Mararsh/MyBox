@@ -127,7 +127,6 @@ public class FilesCompressBatchController extends BaseBatchFileController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             targetFile = makeTargetFile(srcFile.getName(), extension, targetPath);
             if (targetFile == null) {
                 return AppVariables.message("Skip");

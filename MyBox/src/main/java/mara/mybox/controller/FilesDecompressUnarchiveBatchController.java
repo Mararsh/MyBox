@@ -107,7 +107,6 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             Date startTime = new Date();
             if (verboseCheck == null || verboseCheck.isSelected()) {
                 updateLogs(MessageFormat.format(message("HandlingObject"), srcFile), true, true);

@@ -16,7 +16,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-03-28
  * @License Apache License Version 2.0
  */
-public class GeographyCodeImportExternalCSVController extends DataImportController<GeographyCode> {
+public class GeographyCodeImportExternalCSVController extends BaseImportCsvController<GeographyCode> {
 
     public GeographyCodeImportExternalCSVController() {
         baseTitle = AppVariables.message("ImportGeographyCodeExternalCSVFormat");

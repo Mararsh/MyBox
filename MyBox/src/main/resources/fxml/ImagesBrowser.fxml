@@ -273,6 +273,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="imageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
+                              <Label fx:id="filenameLabel" />
                                         <FlowPane alignment="CENTER_LEFT" columnHalignment="RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%LoadWidth" />

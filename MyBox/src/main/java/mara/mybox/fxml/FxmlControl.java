@@ -76,7 +76,6 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FileTools.getFileSuffix;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SoundTools;
@@ -546,7 +545,7 @@ public class FxmlControl {
             if (tmpFile == null) {
                 return null;
             }
-            FileTools.copyFile(tmpFile, file);
+            FileTools.rename(tmpFile, file);
             return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -558,10 +557,9 @@ public class FxmlControl {
         if (resourceFile == null) {
             return null;
         }
-        try {
-            InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);
-            File file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
-            OutputStream out = new FileOutputStream(file);
+        File file = FileTools.getTempFile();
+        try ( InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);
+                 OutputStream out = new FileOutputStream(file)) {
             int read;
             byte[] bytes = new byte[1024];
             while ((read = input.read(bytes)) > 0) {
@@ -875,8 +873,7 @@ public class FxmlControl {
         }
     }
 
-    public static void popText(String text, String color, String size,
-            Stage stage) {
+    public static void popText(String text, String color, String size, Stage stage) {
         try {
             Popup popup = new Popup();
             popup.setAutoHide(true);
@@ -948,8 +945,7 @@ public class FxmlControl {
         setPieColors(pie, palette, showLegend);
     }
 
-    public static void setPieColors(PieChart pie, List<String> palette,
-            boolean showLegend) {
+    public static void setPieColors(PieChart pie, List<String> palette, boolean showLegend) {
         if (pie == null || palette == null
                 || pie.getData() == null
                 || pie.getData().size() > palette.size()) {
@@ -981,15 +977,7 @@ public class FxmlControl {
         }
     }
 
-    // This can set more than 8 colors. javafx only supports 8 colors defined in css
-    // This should be called after data have been assigned to chart
-//    public static void setLineChartColors(LineChart chart, boolean showLegend) {
-//        List<String> palette = FxmlColor.randomColorsHex(chart.getData().size());
-//        setLineChartColors(chart, palette, showLegend);
-//    }
-//
-    public static void setLineChartColors(LineChart chart, Map<String, String> locationColors,
-            boolean showLegend) {
+    public static void setLineChartColors(LineChart chart, Map<String, String> locationColors, boolean showLegend) {
         if (chart == null || locationColors == null) {
             return;
         }
@@ -1043,8 +1031,7 @@ public class FxmlControl {
         setBarChartColors(chart, palette, showLegend);
     }
 
-    public static void setBarChartColors(BarChart chart, List<String> palette,
-            boolean showLegend) {
+    public static void setBarChartColors(BarChart chart, List<String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
@@ -1087,8 +1074,7 @@ public class FxmlControl {
         }
     }
 
-    public static void setBarChartColors(BarChart chart,
-            Map<String, String> palette, boolean showLegend) {
+    public static void setBarChartColors(BarChart chart, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
@@ -1303,6 +1289,7 @@ public class FxmlControl {
             }
             final ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
+
             String baseName = controller == null ? "" : controller.getBaseName();
             MenuItem menu;
             for (HtmlTools.HtmlStyle style : HtmlTools.HtmlStyle.values()) {
@@ -1341,7 +1328,7 @@ public class FxmlControl {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
             return popMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

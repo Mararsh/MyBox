@@ -868,12 +868,10 @@ public abstract class BaseTable<D> {
 
     public List<D> query(PreparedStatement statement) {
         List<D> dataList = new ArrayList<>();
-        try {
-            try ( ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    D data = readData(results);
-                    dataList.add(data);
-                }
+        try ( ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                D data = readData(results);
+                dataList.add(data);
             }
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -974,6 +972,15 @@ public abstract class BaseTable<D> {
         }
     }
 
+    public D insertData(D data) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return insertData(conn, data);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+            return null;
+        }
+    }
+
     public D insertData(Connection conn, D data) {
         newID = -1;
         if (conn == null || !valid(data)) {
@@ -1002,7 +1009,6 @@ public abstract class BaseTable<D> {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
                                 setValue(data, idColumn, newID);
-
                             }
                         } catch (Exception e) {
                             MyBoxLog.error(e, tableName);
@@ -1035,6 +1041,15 @@ public abstract class BaseTable<D> {
         return count;
     }
 
+    public D updateData(D data) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return updateData(conn, data);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+            return null;
+        }
+    }
+
     public D updateData(Connection conn, D data) {
         if (conn == null || !valid(data)) {
             return null;
@@ -1064,14 +1079,14 @@ public abstract class BaseTable<D> {
         return null;
     }
 
-    public boolean deleteData(D data) {
+    public int deleteData(D data) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
             setDeleteStatement(conn, statement, data);
-            return statement.executeUpdate() > 0;
+            return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
-            return false;
+            return -1;
         }
     }
 

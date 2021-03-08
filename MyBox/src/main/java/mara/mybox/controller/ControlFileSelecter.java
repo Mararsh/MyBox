@@ -18,7 +18,6 @@ import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -126,37 +125,8 @@ public class ControlFileSelecter extends BaseController {
         TargetFileType = fileType;
         sourcePathKey = VisitHistoryTools.getPathKey(fileType);
         targetPathKey = sourcePathKey;
-        if (fileType == VisitHistory.FileType.Image) {
-            sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.PDF) {
-            sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Text) {
-            sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Bytes) {
-            sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Markdown) {
-            sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Html) {
-            sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Gif) {
-            sourceExtensionFilter = CommonFxValues.GifExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Tif) {
-            sourceExtensionFilter = CommonFxValues.TiffExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Media) {
-            sourceExtensionFilter = CommonFxValues.JdkMediaExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Icc) {
-            sourceExtensionFilter = CommonFxValues.IccProfileExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.Certificate) {
-            sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.FileHistory) {
-            sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        } else if (fileType == VisitHistory.FileType.TTC) {
-            sourceExtensionFilter = CommonFxValues.TTCExtensionFilter;
-        } else {
-            sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
-        }
+        sourceExtensionFilter = VisitHistoryTools.getExtensionFilter(fileType);
         targetExtensionFilter = sourceExtensionFilter;
-
         return this;
     }
 

@@ -60,8 +60,6 @@ public class VisitHistory {
         public static int CSV = 21;
         public static int Sheet = 22;
 
-        public static int FileHistory = 50;
-
         public static int None = 100;
     }
 

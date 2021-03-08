@@ -9,9 +9,9 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -65,26 +65,33 @@ public class FilesMergeController extends BaseBatchFileController {
             }
             selectTargetFile(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+            updateLogs(e.toString(), true, true);
         }
     }
 
     @Override
     public boolean makeMoreParameters() {
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-        } catch (Exception e) {
+        if (!openWriter()) {
             return false;
         }
         return super.makeMoreParameters();
     }
 
+    protected boolean openWriter() {
+        try {
+            outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+            return true;
+        } catch (Exception e) {
+            updateLogs(e.toString(), true, true);
+            return false;
+        }
+    }
+
     @Override
     public String handleFile(File file) {
         try {
-            countHandling(file);
             if (!match(file)) {
-                return AppVariables.message("Skip");
+                return message("Skip") + ": " + file;
             }
             byte[] buf = new byte[CommonValues.IOBufferLength];
             int bufLen;
@@ -94,27 +101,26 @@ public class FilesMergeController extends BaseBatchFileController {
                     outputStream.write(buf, 0, bufLen);
                 }
             }
-            return AppVariables.message("Successful");
+            return message("Handled") + ": " + file;
         } catch (Exception e) {
-            return AppVariables.message("Failed");
+            return file + " " + e.toString();
         }
     }
 
-    protected void closeWriter() {
+    protected boolean closeWriter() {
         try {
             outputStream.close();
+            return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            updateLogs(e.toString(), true, true);
+            return false;
         }
     }
 
     @Override
     public void donePost() {
-        try {
-            closeWriter();
+        if (closeWriter()) {
             targetFileGenerated(targetFile);
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
         super.donePost();
     }

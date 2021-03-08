@@ -97,7 +97,7 @@ public class ImagesBrowserController extends ImageViewerController {
     @FXML
     protected CheckBox saveRotationCheck, loadOnMousePassCheck;
     @FXML
-    protected Label totalLabel;
+    protected Label totalLabel, filenameLabel;
     @FXML
     protected ToggleGroup popGroup;
 
@@ -731,6 +731,7 @@ public class ImagesBrowserController extends ImageViewerController {
             vbox.setOnMouseEntered((MouseEvent event) -> {
                 if (loadOnMousePassCheck.isSelected()) {
                     currentIndex = index;
+                    filenameLabel.setText(file.getAbsolutePath());
                     loadImage(file, 0, loadWidth);
                 }
             });

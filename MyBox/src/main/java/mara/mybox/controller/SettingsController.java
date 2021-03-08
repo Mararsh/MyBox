@@ -31,7 +31,7 @@ import javafx.stage.Modality;
 import mara.mybox.MyBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
-import mara.mybox.db.table.TableImageHistory;
+import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
@@ -197,7 +197,7 @@ public class SettingsController extends BaseController {
 
             splitPaneSensitiveCheck.setSelected(getUserConfigBoolean("ControlSplitPanesSensitive", false));
             mousePassControlPanesCheck.setSelected(getUserConfigBoolean("MousePassControlPanes", true));
-            popColorSetCheck.setSelected(getUserConfigBoolean("PopColorSet", true));
+            popColorSetCheck.setSelected(getUserConfigBoolean("PopColorSetWhenMousePassing", true));
 
             checkLanguage();
             checkPdfMem();
@@ -513,7 +513,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void popColorSet() {
-        AppVariables.setUserConfigValue("PopColorSet", popColorSetCheck.isSelected());
+        AppVariables.setUserConfigValue("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
     }
 
     @FXML
@@ -1094,7 +1094,7 @@ public class SettingsController extends BaseController {
         if (!FxmlControl.askSure(getBaseTitle(), message("SureClear"))) {
             return;
         }
-        new TableImageHistory().clear();
+        new TableImageEditHistory().clear();
         popSuccessful();
     }
 

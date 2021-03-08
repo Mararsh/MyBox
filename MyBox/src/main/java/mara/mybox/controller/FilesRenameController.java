@@ -245,7 +245,6 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        countHandling(srcFile);
         FileInformation d = tableController.data(currentParameters.currentIndex);
         String newName = renameFile(srcFile);
         if (newName != null) {

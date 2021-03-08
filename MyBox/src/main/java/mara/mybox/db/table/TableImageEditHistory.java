@@ -8,9 +8,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import mara.mybox.db.DerbyBase;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.data.ImageEditHistory;
+import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.image.ImageHistory;
 import mara.mybox.image.ImageScope;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -23,47 +26,51 @@ import mara.mybox.value.AppVariables;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TableImageHistory extends DerbyBase {
+public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
 
     public static final int Default_Max_Histories = 20;
 
-    public TableImageHistory() {
-        Table_Name = "image_history";
-        Keys = new ArrayList<>() {
-            {
-                add("image_location");
-                add("history_location");
-            }
-        };
-        Create_Table_Statement
-                = " CREATE TABLE image_history ( "
-                + "  image_location  VARCHAR(1024) NOT NULL, "
-                + "  operation_time TIMESTAMP NOT NULL, "
-                + "  history_location  VARCHAR(1024) NOT NULL, "
-                + "  update_type  VARCHAR(128), "
-                + "  object_type  VARCHAR(128), "
-                + "  op_type  VARCHAR(128), "
-                + "  scope_type  VARCHAR(128), "
-                + "  scope_name  VARCHAR(1024), "
-                + "  PRIMARY KEY (image_location, history_location)"
-                + " )";
+    public TableImageEditHistory() {
+        tableName = "Image_Edit_History";
+        defineColumns();
     }
 
-    public static List<ImageHistory> read(String filename) {
-        List<ImageHistory> records = new ArrayList<>();
+    public TableImageEditHistory(boolean defineColumns) {
+        tableName = "Image_Edit_History";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableImageEditHistory defineColumns() {
+        addColumn(new ColumnDefinition("iehid", ColumnType.Long, true, true).setIsID(true));
+        addColumn(new ColumnDefinition("image_location", ColumnType.String, true).setLength(4096));
+        addColumn(new ColumnDefinition("history_location", ColumnType.String, true).setLength(4096));
+        addColumn(new ColumnDefinition("operation_time", ColumnType.Datetime, true));
+        addColumn(new ColumnDefinition("update_type", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("object_type", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("op_type", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("scope_type", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("scope_name", ColumnType.String).setLength(4096));
+        return this;
+    }
+
+    public static List<ImageEditHistory> read(String filename) {
+        List<ImageEditHistory> records = new ArrayList<>();
         if (filename == null || filename.trim().isEmpty()) {
             return records;
         }
         int max = AppVariables.getUserConfigInt("MaxImageHistories", Default_Max_Histories);
         if (max <= 0) {
-            max = TableImageHistory.Default_Max_Histories;
+            max = TableImageEditHistory.Default_Max_Histories;
+            AppVariables.setUserConfigInt("MaxImageHistories", Default_Max_Histories);
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = " SELECT * FROM image_history WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
+            String sql = " SELECT * FROM Image_Edit_History WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
-                    ImageHistory his = new ImageHistory();
+                    ImageEditHistory his = new ImageEditHistory();
                     his.setImage(filename);
                     his.setHistoryLocation(results.getString("history_location"));
                     his.setUpdateType(results.getString("update_type"));
@@ -75,8 +82,7 @@ public class TableImageHistory extends DerbyBase {
                     records.add(his);
                 }
             }
-
-            List<ImageHistory> valid = new ArrayList<>();
+            List<ImageEditHistory> valid = new ArrayList<>();
             for (int i = 0; i < records.size(); ++i) {
                 String hisname = records.get(i).getHistoryLocation();
                 File hisFile = new File(hisname);
@@ -90,9 +96,10 @@ public class TableImageHistory extends DerbyBase {
                 for (int i = max; i < valid.size(); ++i) {
                     deleteRecord(conn, filename, valid.get(i).getHistoryLocation());
                 }
-                return valid.subList(0, max);
+                records = valid.subList(0, max);
+            } else {
+                records = valid;
             }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -103,14 +110,12 @@ public class TableImageHistory extends DerbyBase {
         if (conn == null || image == null || hisname == null) {
             return;
         }
-        String sql = "DELETE FROM image_history WHERE image_location='" + image
+        String sql = "DELETE FROM Image_Edit_History WHERE image_location='" + image
                 + "' AND history_location='" + hisname + "'";
         try ( Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            MyBoxLog.debug(sql);
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e, sql);
         }
         try {
             File hisFile = new File(hisname);
@@ -122,12 +127,11 @@ public class TableImageHistory extends DerbyBase {
         }
     }
 
-    public static List<ImageHistory> add(String image, String his_location,
-            ImageScope scope) {
+    public static List<ImageEditHistory> add(String image, String his_location, ImageScope scope) {
         return add(image, his_location, null, null, null, scope);
     }
 
-    public static List<ImageHistory> add(String image, String his_location,
+    public static List<ImageEditHistory> add(String image, String his_location,
             String update_type, String object_type, String op_type, ImageScope scope) {
         if (image == null || image.trim().isEmpty()
                 || his_location == null || his_location.trim().isEmpty()) {
@@ -158,7 +162,7 @@ public class TableImageHistory extends DerbyBase {
                     values += ", '" + scope.getName() + "' ";
                 }
             }
-            String sql = "INSERT INTO image_history(" + fields + ") VALUES(" + values + ")";
+            String sql = "INSERT INTO Image_Edit_History(" + fields + ") VALUES(" + values + ")";
 //            MyBoxLog.debug(sql);
             conn.createStatement().executeUpdate(sql);
             return read(image);
@@ -168,11 +172,49 @@ public class TableImageHistory extends DerbyBase {
         }
     }
 
+    public static boolean add(ImageEditHistory his) {
+        if (his == null || his.getImage() == null) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            String fields = "image_location, history_location ,operation_time ";
+            String values = " '" + his.getImage() + "', '" + his.getHistoryLocation()
+                    + "', '" + DateTools.datetimeToString(his.getOperationTime()) + "' ";
+            if (his.getUpdateType() != null) {
+                fields += ", update_type";
+                values += ", '" + his.getUpdateType() + "' ";
+            }
+            if (his.getObjectType() != null) {
+                fields += ", object_type";
+                values += ", '" + his.getObjectType() + "' ";
+            }
+            if (his.getOpType() != null) {
+                fields += ", op_type";
+                values += ", '" + his.getOpType() + "' ";
+            }
+            if (his.getScopeType() != null) {
+                fields += ", scope_type";
+                values += ", '" + his.getScopeType() + "' ";
+            }
+            if (his.getScopeName() != null) {
+                fields += ", scope_name";
+                values += ", '" + his.getScopeName() + "' ";
+            }
+            String sql = "INSERT INTO Image_Edit_History(" + fields + ") VALUES(" + values + ")";
+//            MyBoxLog.debug(sql);
+            conn.createStatement().executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     public static boolean clearImage(String image) {
         if (image == null) {
             return true;
         }
-        List<ImageHistory> records = read(image);
+        List<ImageEditHistory> records = read(image);
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             for (int i = 0; i < records.size(); ++i) {
@@ -196,11 +238,10 @@ public class TableImageHistory extends DerbyBase {
         }
     }
 
-    @Override
     public int clear() {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = " SELECT history_location FROM image_history";
+            String sql = " SELECT history_location FROM Image_Edit_History";
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     FileTools.delete(results.getString("history_location"));
@@ -216,7 +257,7 @@ public class TableImageHistory extends DerbyBase {
                     }
                 }
             }
-            sql = "DELETE FROM image_history";
+            sql = "DELETE FROM Image_Edit_History";
             return statement.executeUpdate(sql);
         } catch (Exception e) {
             MyBoxLog.error(e);

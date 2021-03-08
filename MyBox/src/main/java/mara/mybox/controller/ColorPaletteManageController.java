@@ -143,7 +143,7 @@ public class ColorPaletteManageController extends BaseController {
                     isSettingValues = true;
                     for (ColorData data : colors) {
                         try {
-                            ColorPaletteManageController.this.makeColor(data, false);
+                            makeColor(data, false);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());
                         }

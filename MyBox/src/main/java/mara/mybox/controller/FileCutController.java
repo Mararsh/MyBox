@@ -184,7 +184,6 @@ public class FileCutController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        countHandling(srcFile);
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return AppVariables.message("Skip");

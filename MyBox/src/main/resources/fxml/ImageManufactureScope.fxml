@@ -419,6 +419,7 @@ License:    Apache License Version 2.0
                                                                                 <ComboBox fx:id="scopeDistanceSelector" editable="true" prefWidth="200.0" />
                                                                             </children>
                                                                         </HBox>
+                                                      <CheckBox fx:id="squareRootCheck" layoutX="15.0" layoutY="235.0" mnemonicParsing="false" text="%SquareRoot" />
                                                                         <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%ColorExclude" />
                                                       <CheckBox fx:id="ignoreTransparentCheck" layoutX="15.0" layoutY="235.0" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
                                                                     </children>

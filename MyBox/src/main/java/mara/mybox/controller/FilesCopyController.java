@@ -7,8 +7,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -27,7 +27,6 @@ public class FilesCopyController extends BaseBatchFileController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");

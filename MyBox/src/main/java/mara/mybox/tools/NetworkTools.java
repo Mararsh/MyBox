@@ -17,6 +17,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
@@ -74,7 +76,7 @@ public class NetworkTools {
     }
 
     public static void myBoxSSL() {
-        HttpsURLConnection.setDefaultSSLSocketFactory(NetworkTools.MyBoxSSLSocketFactory());
+        HttpsURLConnection.setDefaultSSLSocketFactory(MyBoxSSLSocketFactory());
 //        HttpsURLConnection.setDefaultHostnameVerifier(NetworkTools.MyBoxHostnameVerifier());
     }
 
@@ -108,8 +110,7 @@ public class NetworkTools {
         }
 
         @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
             this.chain = chain;
             if (chain == null || chain.length == 0) {
                 return;
@@ -136,8 +137,7 @@ public class NetworkTools {
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
             this.chain = chain;
             if (chain == null || chain.length == 0) {
                 return;
@@ -532,7 +532,7 @@ public class NetworkTools {
             SSLContext context = SSLContext.getInstance(CommonValues.HttpsProtocal);
             context.init(null, new TrustManager[]{tm}, new SecureRandom());
             SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, port);
-            socket.setSoTimeout(10000);
+            socket.setSoTimeout(AppVariables.getUserConfigInt("WebConnectTimeout", 10000));
             try {
                 socket.startHandshake();
                 socket.close();
@@ -679,4 +679,18 @@ public class NetworkTools {
         }
     }
 
+    public static void installCertificates() {
+        try {
+            List<String> hosts = new ArrayList<>();
+            hosts.addAll(Arrays.asList(
+                    "www.sina.com", "www.sina.com.cn", "www.weibo.cn", "www.weibo.com", "weibo.com"
+            ));
+            hosts.addAll(Arrays.asList(
+                    "amap.com", "webapi.amap.com", "vdata.amap.com", "restapi.amap.com"
+            ));
+            installCertificate(hosts);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 }

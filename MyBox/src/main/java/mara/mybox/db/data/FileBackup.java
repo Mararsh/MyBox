@@ -1,8 +1,8 @@
-package mara.mybox.data;
+package mara.mybox.db.data;
 
-import mara.mybox.db.data.BaseData;
 import java.io.File;
 import java.util.Date;
+import mara.mybox.db.data.BaseData;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -10,48 +10,45 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2020-9-7
  * @License Apache License Version 2.0
  */
-public class FileHistory extends BaseData {
+public class FileBackup extends BaseData {
 
-    protected long fhid;
-    protected String category;
-    protected File history, file;
+    protected long fbid;
+    protected File file, backup;
     protected Date recordTime;
 
     private void init() {
-        fhid = -1;
-        category = null;
-        recordTime = null;
-        history = null;
+        fbid = -1;
         file = null;
+        backup = null;
+        recordTime = null;
     }
 
-    public FileHistory() {
+    public FileBackup() {
         init();
     }
 
+    public FileBackup(File file, File backup) {
+        fbid = -1;
+        this.file = file;
+        this.backup = backup;
+        recordTime = new Date();
+    }
+
     /*
-        customized get/set
+        Static methods
      */
-    public static boolean setValue(FileHistory data, String column, Object value) {
+    public static FileBackup create() {
+        return new FileBackup();
+    }
+
+    public static boolean setValue(FileBackup data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
         try {
             switch (column) {
-                case "fhid":
-                    data.setFhid(value == null ? -1 : (long) value);
-                    return true;
-                case "category":
-                    data.setCategory(value == null ? null : (String) value);
-                    return true;
-                case "history":
-                    data.setHistory(null);
-                    if (value != null) {
-                        File f = new File((String) value);
-                        if (f.exists()) {
-                            data.setHistory(f);
-                        }
-                    }
+                case "fbid":
+                    data.setFbid(value == null ? -1 : (long) value);
                     return true;
                 case "file":
                     data.setFile(null);
@@ -59,6 +56,15 @@ public class FileHistory extends BaseData {
                         File f = new File((String) value);
                         if (f.exists()) {
                             data.setFile(f);
+                        }
+                    }
+                    return true;
+                case "backup":
+                    data.setBackup(null);
+                    if (value != null) {
+                        File f = new File((String) value);
+                        if (f.exists()) {
+                            data.setBackup(f);
                         }
                     }
                     return true;
@@ -72,29 +78,27 @@ public class FileHistory extends BaseData {
         return false;
     }
 
-    public static Object getValue(FileHistory data, String column) {
+    public static Object getValue(FileBackup data, String column) {
         if (data == null || column == null) {
             return null;
         }
         switch (column) {
-            case "fhid":
-                return data.getFhid();
-            case "category":
-                return data.getCategory();
-            case "history":
-                return data.getHistory() != null ? data.getHistory().getAbsolutePath() : null;
+            case "fbid":
+                return data.getFbid();
             case "file":
                 return data.getFile() != null ? data.getFile().getAbsolutePath() : null;
+            case "backup":
+                return data.getBackup() != null ? data.getBackup().getAbsolutePath() : null;
             case "record_time":
                 return data.getRecordTime();
         }
         return null;
     }
 
-    public static boolean valid(FileHistory data) {
+    public static boolean valid(FileBackup data) {
         return data != null
-                && data.getHistory() != null && data.getHistory().exists()
                 && data.getFile() != null && data.getFile().exists()
+                && data.getBackup() != null && data.getBackup().exists()
                 && data.getRecordTime() != null;
     }
 
@@ -113,48 +117,36 @@ public class FileHistory extends BaseData {
     /*
         get/set
      */
-    public long getFhid() {
-        return fhid;
+    public long getFbid() {
+        return fbid;
     }
 
-    public FileHistory setFhid(long fhid) {
-        this.fhid = fhid;
-        return this;
-    }
-
-    public File getHistory() {
-        return history;
-    }
-
-    public FileHistory setHistory(File history) {
-        this.history = history;
-        return this;
+    public void setFbid(long fbid) {
+        this.fbid = fbid;
     }
 
     public File getFile() {
         return file;
     }
 
-    public FileHistory setFile(File file) {
+    public void setFile(File file) {
         this.file = file;
-        return this;
+    }
+
+    public File getBackup() {
+        return backup;
+    }
+
+    public void setBackup(File backup) {
+        this.backup = backup;
     }
 
     public Date getRecordTime() {
         return recordTime;
     }
 
-    public FileHistory setRecordTime(Date recordTime) {
+    public void setRecordTime(Date recordTime) {
         this.recordTime = recordTime;
-        return this;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
 }

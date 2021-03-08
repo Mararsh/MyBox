@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import mara.mybox.data.FileInformation;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
@@ -25,6 +23,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -38,7 +37,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-04-03
  * @License Apache License Version 2.0
  */
-public class DataImportController<D> extends BaseBatchFileController {
+public abstract class BaseImportCsvController<D> extends BaseBatchFileController {
 
     protected BaseDataManageController parent;
     protected BaseTable tableDefinition;
@@ -46,15 +45,13 @@ public class DataImportController<D> extends BaseBatchFileController {
     @FXML
     protected CheckBox replaceCheck, statisticCheck, closeWhenCompleteCheck;
     @FXML
-    protected TabPane tabPane;
-    @FXML
     protected Tab sourcesTab, commentsTab;
     @FXML
     protected Hyperlink link;
     @FXML
     protected ControlCSVEdit csvEditController;
 
-    public DataImportController() {
+    public BaseImportCsvController() {
         baseTitle = AppVariables.message("ImportEpidemicReport");
 
         SourceFileType = VisitHistory.FileType.Text;
@@ -197,7 +194,6 @@ public class DataImportController<D> extends BaseBatchFileController {
             if (srcFile == null || !srcFile.isFile()) {
                 return AppVariables.message("Skip");
             }
-            countHandling(srcFile);
             long count = importFile(srcFile);
             if (count >= 0) {
                 totalItemsHandled += count;
@@ -230,7 +226,7 @@ public class DataImportController<D> extends BaseBatchFileController {
 //            return importFileBatch(conn, file);
 //        }
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0;
-        try ( CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+        try ( CSVParser parser = CSVParser.parse(file, FileTools.charset(file),
                 CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             List<String> names = parser.getHeaderNames();
             if ((!validHeader(names))) {

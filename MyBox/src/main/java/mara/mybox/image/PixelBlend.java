@@ -183,11 +183,11 @@ public abstract class PixelBlend {
             return forePixel;
         }
         if (orderReversed) {
-            foreColor = new Color(forePixel);
-            backColor = new Color(backPixel);
-        } else {
             foreColor = new Color(backPixel);
             backColor = new Color(forePixel);
+        } else {
+            foreColor = new Color(forePixel);
+            backColor = new Color(backPixel);
         }
         makeRGB();
         Color newColor = new Color(

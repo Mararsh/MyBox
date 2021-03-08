@@ -4,6 +4,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
@@ -18,6 +19,7 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -42,6 +44,8 @@ public class ColorPalettePopupController extends BaseController {
     protected Label label;
     @FXML
     protected Button closeButton;
+    @FXML
+    protected CheckBox popColorSetCheck;
 
     public ColorPalettePopupController() {
         baseTitle = AppVariables.message("ColorPalette");
@@ -51,6 +55,22 @@ public class ColorPalettePopupController extends BaseController {
     @Override
     public void keyEventsHandler(KeyEvent event) {
         setController.keyEventsHandler(event);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+            popColorSetCheck.setSelected(getUserConfigBoolean("PopColorSetWhenMousePassing", true));
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    protected void popColorSet() {
+        AppVariables.setUserConfigValue("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
     }
 
     public void load(ColorSet parent, List<ColorData> colors) {

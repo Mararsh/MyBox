@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
+import mara.mybox.tools.FileTools;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
@@ -307,6 +308,19 @@ public class AppVariables {
             path.mkdirs();
         }
         return imageClipboardPath;
+    }
+
+    public static String getFileBackupsPath(File file) {
+        if (file == null) {
+            return null;
+        }
+        String fileBackupsPath = MyboxDataPath + File.separator + "fileBackups" + File.separator
+                + FileTools.getFilePrefix(file.getName()) + File.separator;
+        File path = new File(fileBackupsPath);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        return fileBackupsPath;
     }
 
     public static int getPopTextDuration() {

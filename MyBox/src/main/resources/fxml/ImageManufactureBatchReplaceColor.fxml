@@ -47,28 +47,39 @@ License:    Apache License Version 2.0
                                                 <fx:include fx:id="newColorSet" source="ColorSet.fxml" />
                                             </children>
                                         </FlowPane>
-                                        <FlowPane hgap="5.0" layoutX="20.0" layoutY="20.0" prefWrapLength="0.0" vgap="5.0">
-                                            <children>
-                                                <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconTips.png" />
-                                                    </image>
-                                                </ImageView>
-                                                <Label text="%Distance" />
-                                                <TextField fx:id="distanceInput" prefWidth="58.0" text="0" />
-                                                <RadioButton fx:id="colorRadio" mnemonicParsing="false" selected="true" text="%Color">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="replaceScopeGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="hueRadio" mnemonicParsing="false" text="%Hue" toggleGroup="$replaceScopeGroup" />
-                                                <Label prefWidth="20.0" text=" " />
+                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
+                                       <children>
+                                          <Label text="%Distance" />
+                                          <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconTips.png" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
+                                       <children>
+                                                      <RadioButton fx:id="colorRadio" mnemonicParsing="false" selected="true" text="%Color">
+                                                          <toggleGroup>
+                                                              <ToggleGroup fx:id="replaceScopeGroup" />
+                                                          </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton fx:id="hueRadio" mnemonicParsing="false" text="%Hue" toggleGroup="$replaceScopeGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
+                                       <children>
+                                          <ComboBox fx:id="distanceSelector" editable="true" minWidth="-Infinity" prefWidth="120.0" />
+                                          <CheckBox fx:id="squareRootCheck" layoutX="115.0" layoutY="18.0" minWidth="-Infinity" mnemonicParsing="false" text="%SquareRoot" />
+                                       </children>
+                                    </FlowPane>
                                                 <CheckBox fx:id="excludeCheck" mnemonicParsing="false" text="%Excluded" />
-                                            </children>
-                                        </FlowPane>
+                                 </children>
+                              </VBox>
                                         <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
-                                                  styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

@@ -169,6 +169,11 @@ public class MyBoxController extends BaseController {
     protected void showDocumentMenu(MouseEvent event) {
         hideMenu(event);
 
+        MenuItem Notes = new MenuItem(AppVariables.message("Notes"));
+        Notes.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.NotesFxml);
+        });
+
         Menu pdfMenu = new Menu("PDF");
 
         MenuItem pdfHtmlViewer = new MenuItem(AppVariables.message("PdfHtmlViewer"));
@@ -377,6 +382,7 @@ public class MyBoxController extends BaseController {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
+                Notes, new SeparatorMenuItem(),
                 pdfMenu, new SeparatorMenuItem(),
                 markdownMenu, new SeparatorMenuItem(),
                 htmlMenu, new SeparatorMenuItem(),
@@ -1089,12 +1095,14 @@ public class MyBoxController extends BaseController {
 
         MenuItem EditCSV = new MenuItem(AppVariables.message("EditCSV"));
         EditCSV.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DataFileCSVFxml);
+            DataFileCSVController c = (DataFileCSVController) loadScene(CommonValues.DataFileCSVFxml);
+            c.createAction();
         });
 
         MenuItem EditExcel = new MenuItem(AppVariables.message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DataFileExcelFxml);
+            DataFileExcelController c = (DataFileExcelController) loadScene(CommonValues.DataFileExcelFxml);
+            c.createAction();
         });
 
         MenuItem ExcelConvert = new MenuItem(AppVariables.message("ExcelConvert"));
@@ -1102,23 +1110,25 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.DataFileExcelConvertFxml);
         });
 
-//        MenuItem ExcelSplit = new MenuItem(AppVariables.message("ExcelSplit"));
-//        ExcelSplit.setOnAction((ActionEvent event1) -> {
-//            loadScene(CommonValues.DataFileExcelSplitFxml);
-//        });
+        MenuItem ExcelMerge = new MenuItem(AppVariables.message("ExcelMerge"));
+        ExcelMerge.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataFileExcelMergeFxml);
+        });
+
         MenuItem CsvConvert = new MenuItem(AppVariables.message("CsvConvert"));
         CsvConvert.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.DataFileCSVConvertFxml);
         });
 
-//        MenuItem CsvSplit = new MenuItem(AppVariables.message("CsvSplit"));
-//        CsvSplit.setOnAction((ActionEvent event1) -> {
-//            loadScene(CommonValues.DataFileCSVSplitFxml);
-//        });
+        MenuItem CsvMerge = new MenuItem(AppVariables.message("CsvMerge"));
+        CsvMerge.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataFileCSVMergeFxml);
+        });
+
         Menu DataFile = new Menu(AppVariables.message("DataFile"));
         DataFile.getItems().addAll(
-                EditCSV, CsvConvert, new SeparatorMenuItem(),
-                EditExcel, ExcelConvert
+                EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
+                EditExcel, ExcelConvert, ExcelMerge
         );
 
         MenuItem DataClipboard = new MenuItem(AppVariables.message("DataClipboard"));

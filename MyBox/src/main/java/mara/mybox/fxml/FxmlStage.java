@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -195,15 +193,13 @@ public class FxmlStage {
         return openStage(null, newFxml, false, Modality.NONE);
     }
 
-    public static BaseController openScene(Stage stage, String newFxml,
-            StageStyle stageStyle) {
+    public static BaseController openScene(Stage stage, String newFxml, StageStyle stageStyle) {
         try {
             Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
             newStage.initModality(Modality.NONE);
             newStage.initStyle(StageStyle.DECORATED);
             newStage.initOwner(null);
             BaseController controller = initScene(newStage, newFxml, stageStyle);
-
             if (stage != null) {
                 closeStage(stage);
             }
@@ -346,7 +342,7 @@ public class FxmlStage {
 
     public static DataFileCSVController openCsvEditor(Stage stage, File file) {
         try {
-            final DataFileCSVController controller
+            DataFileCSVController controller
                     = (DataFileCSVController) openScene(stage, CommonValues.DataFileCSVFxml);
             controller.sourceFileChanged(file);
             return controller;
@@ -372,7 +368,7 @@ public class FxmlStage {
         try {
             final HtmlEditorController controller
                     = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
-            controller.loadLink(link);
+            controller.loadAddress(link);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -596,8 +592,7 @@ public class FxmlStage {
         return openTarget(stage, filename, true);
     }
 
-    public static BaseController openTarget(Stage stage,
-            String filename, boolean mustOpen) {
+    public static BaseController openTarget(Stage stage, String filename, boolean mustOpen) {
         BaseController controller = null;
         if (filename == null) {
             return controller;
@@ -654,6 +649,7 @@ public class FxmlStage {
         if (controller != null) {
             if (controller.getMyStage() != null) {
                 controller.getMyStage().requestFocus();
+                controller.getMyStage().toFront();
             }
         }
         return controller;
@@ -693,16 +689,16 @@ public class FxmlStage {
                     desktop.browse(uri);
                     // https://stackoverflow.com/questions/23176624/javafx-freeze-on-desktop-openfile-desktop-browseuri?r=SearchResults
                     // Menus are blocked after system explorer is opened
-                    if (myStage != null) {
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                Platform.runLater(() -> {
-                                    myStage.requestFocus();
-                                });
-                            }
-                        }, 1000);
-                    }
+//                    if (myStage != null) {
+//                        new Timer().schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                Platform.runLater(() -> {
+//                                    myStage.requestFocus();
+//                                });
+//                            }
+//                        }, 1000);
+//                    }
                     return;
                 } catch (Exception e) {
                     MyBoxLog.error(e.toString());

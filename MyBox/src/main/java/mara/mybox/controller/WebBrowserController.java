@@ -152,8 +152,7 @@ public class WebBrowserController extends BaseController {
             }
 
             ControlWebBrowserBox controller = (ControlWebBrowserBox) fxmlLoader.getController();
-            controller.parent = this;
-            controller.tab = tab;
+            controller.setBrowser(this, tab);
             tabControllers.put(tab, controller);
             tab.setOnClosed(new EventHandler<Event>() {
                 @Override
@@ -163,7 +162,7 @@ public class WebBrowserController extends BaseController {
             });
 
             if (address != null) {
-                controller.loadLink(address);
+                controller.loadAddress(address);
             }
             return controller;
 
@@ -176,17 +175,6 @@ public class WebBrowserController extends BaseController {
     public void loadFile(File file) {
         ControlWebBrowserBox c = newTabAction(null, true);
         c.loadFile(file);
-    }
-
-    @FXML
-    protected void editAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        ControlWebBrowserBox controller = tabControllers.get(tab);
-        if (controller == null) {
-            return;
-        }
-        HtmlEditorController hcontroller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
-        hcontroller.loadLink(controller.url.toString());
     }
 
     @FXML
@@ -280,7 +268,8 @@ public class WebBrowserController extends BaseController {
             tabPane.getSelectionModel().select(tab);
 
             WebBrowserHistoryController controller = (WebBrowserHistoryController) fxmlLoader.getController();
-            controller.parentController = this;
+            controller.browserConroller = this;
+            controller.loadTableData();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

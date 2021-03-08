@@ -11,17 +11,15 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.FileChooser;
-import mara.mybox.db.data.VisitHistory;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistory.OperationType;
 import mara.mybox.db.data.VisitHistory.ResourceType;
-import static mara.mybox.db.DerbyBase.dbHome;
-
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.table.TableVisitHistory;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -64,8 +62,16 @@ public class VisitHistoryTools {
             return CommonFxValues.IccProfileExtensionFilter;
         } else if (fileType == FileType.Certificate) {
             return CommonFxValues.KeyStoreExtensionFilter;
-        } else if (fileType == FileType.FileHistory) {
-            return CommonFxValues.TextExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.TTC) {
+            return CommonFxValues.TTCExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.TTF) {
+            return CommonFxValues.TTFExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.Excel) {
+            return CommonFxValues.ExcelExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.CSV) {
+            return CommonFxValues.CsvExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.Sheet) {
+            return CommonFxValues.SheetExtensionFilter;
         } else {
             return CommonFxValues.AllExtensionFilter;
         }

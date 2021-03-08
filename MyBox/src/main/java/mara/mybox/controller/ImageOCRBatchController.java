@@ -17,7 +17,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ConvolutionKernel;
@@ -57,15 +56,13 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     protected File configFile;
 
     @FXML
-    protected VBox preprocessVBox;
+    protected VBox preprocessVBox, ocrOptionsVBox;
     @FXML
     protected ComboBox<String> algorithmSelector, rotateSelector, binarySelector, scaleSelector;
     @FXML
     protected CheckBox deskewCheck, invertCheck, mergeCheck;
     @FXML
     protected ControlOCROptions ocrOptionsController;
-    @FXML
-    protected Tab ocrOptionsTab;
 
     public ImageOCRBatchController() {
         baseTitle = AppVariables.message("ImageOCRBatch");
@@ -266,13 +263,12 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     public void disableControls(boolean disable) {
         super.disableControls(disable);
         preprocessVBox.setDisable(disable);
-        ocrOptionsTab.setDisable(disable);
+        ocrOptionsVBox.setDisable(disable);
     }
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
@@ -420,29 +416,36 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.pdfCheck.isSelected()) {
                 formats.add(ITesseract.RenderedFormat.PDF);
             }
-            String prefix = FileTools.getFilePrefix(targetFile.getAbsolutePath());
+            // Looks OCR engine does not support non-English file name
+            String actualPrefix = FileTools.getFilePrefix(targetFile.getAbsolutePath());
+            String tmpPrefix = FileTools.getTempFile().getAbsolutePath();
 
             OCRinstance.createDocumentsWithResults​(lastImage, null,
-                    prefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
-            File textFile = new File(prefix + ".txt");
-            if (!textFile.exists()) {
-                updateLogs(message("Failed" + ":" + textFile), true, true);
+                    tmpPrefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
+            File tmpTextFile = new File(tmpPrefix + ".txt");
+            if (!tmpTextFile.exists()) {
+                updateLogs(message("Failed" + ":" + tmpTextFile), true, true);
                 return false;
             }
+            File textFile = new File(actualPrefix + ".txt");
+            FileTools.rename(tmpTextFile, textFile);
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
             if (ocrOptionsController.htmlCheck.isSelected()) {
-                File hocrFile = new File(prefix + ".hocr");
-                File htmlFile = new File(prefix + ".html");
+                File hocrFile = new File(tmpPrefix + ".hocr");
+                File htmlFile = new File(actualPrefix + ".html");
                 if (FileTools.rename(hocrFile, htmlFile)) {
                     targetFileGenerated(htmlFile);
                 }
             }
 
             if (ocrOptionsController.pdfCheck.isSelected()) {
-                File pdfFile = new File(prefix + ".pdf");
-                targetFileGenerated(pdfFile);
+                File tmpPdfFile = new File(tmpPrefix + ".pdf");
+                File pdfFile = new File(actualPrefix + ".pdf");
+                if (FileTools.rename(tmpPdfFile, pdfFile)) {
+                    targetFileGenerated(pdfFile);
+                }
             }
 
             if (wordLevel >= 0) {
@@ -465,7 +468,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                     table.add(data);
                 }
                 String html = StringTable.tableHtml(table);
-                File wordsFile = new File(prefix + "_words.html");
+                File wordsFile = new File(actualPrefix + "_words.html");
                 if (FileTools.writeFile(wordsFile, html) != null) {
                     targetFileGenerated(wordsFile);
                 } else {
@@ -489,7 +492,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                     table.add(data);
                 }
                 String html = StringTable.tableHtml(table);
-                File regionsFile = new File(prefix + "_regions.html");
+                File regionsFile = new File(actualPrefix + "_regions.html");
                 if (FileTools.writeFile(regionsFile, html) != null) {
                     targetFileGenerated(regionsFile);
                 } else {
@@ -511,11 +514,14 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             process = null;
         }
         try {
-            String fileBase = FileTools.getFilePrefix(targetFile.getAbsolutePath());
+            // Looks OCR engine does not support non-English file name
+            String actualPrefix = FileTools.getFilePrefix(targetFile.getAbsolutePath());
+            String tmpPrefix = FileTools.getTempFile().getAbsolutePath();
+
             List<String> parameters = new ArrayList<>();
             parameters.addAll(Arrays.asList(
                     ocrOptionsController.tesseractPathController.file.getAbsolutePath(),
-                    srcFile.getAbsolutePath(), fileBase,
+                    srcFile.getAbsolutePath(), tmpPrefix,
                     "--tessdata-dir", ocrOptionsController.dataPathController.file.getAbsolutePath(),
                     tesseractVersion > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
             ));
@@ -536,25 +542,30 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             }
             process.waitFor();
 
-            File textFile = new File(fileBase + ".txt");
-            if (!textFile.exists()) {
+            File tmpTextFile = new File(tmpPrefix + ".txt");
+            if (!tmpTextFile.exists()) {
                 updateLogs(message("Failed" + ":" + outputs), true, true);
                 return false;
             }
+            File textFile = new File(actualPrefix + ".txt");
+            FileTools.rename(tmpTextFile, textFile);
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
             if (ocrOptionsController.htmlCheck.isSelected()) {
-                File hocrFile = new File(fileBase + ".hocr");
-                File htmlFile = new File(fileBase + ".html");
+                File hocrFile = new File(tmpPrefix + ".hocr");
+                File htmlFile = new File(actualPrefix + ".html");
                 if (FileTools.rename(hocrFile, htmlFile)) {
                     targetFileGenerated(htmlFile);
                 }
             }
 
             if (ocrOptionsController.pdfCheck.isSelected()) {
-                File pdfFile = new File(fileBase + ".pdf");
-                targetFileGenerated(pdfFile);
+                File tmpPdfFile = new File(tmpPrefix + ".pdf");
+                File pdfFile = new File(actualPrefix + ".pdf");
+                if (FileTools.rename(tmpPdfFile, pdfFile)) {
+                    targetFileGenerated(pdfFile);
+                }
             }
             if (process != null) {
                 process.destroy();
@@ -583,7 +594,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     public void donePost() {
         if (textFiles != null && textFiles.size() > 1 && mergeCheck.isSelected()) {
             File mFile = new File(FileTools.appendName(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
-            if (FileTools.mergeFiles(textFiles, mFile)) {
+            if (FileTools.mergeTextFiles(textFiles, mFile)) {
                 popInformation(MessageFormat.format(message("FilesGenerated"), mFile.getAbsolutePath()));
                 targetFileGenerated(mFile);
             }

@@ -296,4 +296,15 @@ public class ImageManufactureOperationsController extends BaseImageController {
         }
     }
 
+    /*
+        get/set
+     */
+    public ImageManufactureClipboardController getClipboardController() {
+        return clipboardController;
+    }
+
+    public void setClipboardController(ImageManufactureClipboardController clipboardController) {
+        this.clipboardController = clipboardController;
+    }
+
 }

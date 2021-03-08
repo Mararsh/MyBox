@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -18,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -64,7 +64,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @FXML
     protected FlowPane opBox, originalColorPane, newColorPane;
     @FXML
-    protected ToggleGroup colorGroup;
+    protected ToggleGroup colorGroup, distanceGroup;
     @FXML
     protected RadioButton colorReplaceRadio, colorColorRadio, colorRGBRadio,
             colorBrightnessRadio, colorHueRadio, colorSaturationRadio,
@@ -79,15 +79,11 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
             colorInvertButton, demoButton, scopeButton;
     @FXML
-    protected CheckBox preAlphaCheck, distanceExcludeCheck;
+    protected CheckBox preAlphaCheck, distanceExcludeCheck, squareRootCheck;
     @FXML
     protected ImageView preAlphaTipsView, distanceTipsView;
     @FXML
-    protected ColorSet originalColorSetController;
-    @FXML
-    protected ColorSet newColorSetController;
-    @FXML
-    protected ColorSet valueColorSetController;
+    protected ColorSet originalColorSetController, newColorSetController, valueColorSetController;
 
     @Override
     public void initPane() {
@@ -120,31 +116,83 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
             colorDistance = AppVariables.getUserConfigInt(baseName + "ColorDistance", 20);
             colorDistance = colorDistance <= 0 ? 20 : colorDistance;
-            distanceSelector.getItems().addAll(Arrays.asList(
-                    "20", "50", "80", "100", "10", "5", "120", "160", "127", "200", "180", "220", "230", "245"));
             distanceSelector.setValue(colorDistance + "");
             distanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            colorDistance = v;
-                            AppVariables.setUserConfigInt(baseName + "ColorDistance", colorDistance);
-                            FxmlControl.setEditorNormal(distanceSelector);
-                        } else {
-                            FxmlControl.setEditorBadStyle(distanceSelector);
-                        }
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(distanceSelector);
-                    }
+                    checkDistance();
                 }
             });
 
+            squareRootCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ColorDistanceSquare", false));
+            squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
+                    checkDistance();
+                }
+            });
+            squareRootCheck.disableProperty().bind(distanceColorRadio.selectedProperty().not());
+
+            distanceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+                    checkDistance();
+                }
+            });
+
+            checkDistance();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
 
+    }
+
+    protected void checkDistance() {
+        if (isSettingValues) {
+            return;
+        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                int max = 255, step = 10;
+                if (distanceColorRadio.isSelected()) {
+                    if (squareRootCheck.isSelected()) {
+                        max = 255 * 255;
+                        step = 100;
+                    }
+                } else {
+                    max = 360;
+                }
+                FxmlControl.setTooltip(distanceSelector, new Tooltip("0 ~ " + max));
+                String value = distanceSelector.getValue();
+                List<String> vList = new ArrayList<>();
+                for (int i = 0; i <= max; i += step) {
+                    vList.add(i + "");
+                }
+                isSettingValues = true;
+                distanceSelector.getItems().clear();
+                distanceSelector.getItems().addAll(vList);
+                distanceSelector.setValue(value);
+                isSettingValues = false;
+                try {
+                    int v = Integer.valueOf(value);
+                    if (v == 0
+                            && ((Color) originalColorSetController.rect.getFill()).equals(((Color) newColorSetController.rect.getFill()))) {
+                        popError(message("OriginalNewSameColor"));
+                        return;
+                    }
+                    if (v >= 0 && v <= max) {
+                        colorDistance = v;
+                        AppVariables.setUserConfigInt(baseName + "ColorDistance", colorDistance);
+                        distanceSelector.getEditor().setStyle(null);
+                    } else {
+                        distanceSelector.getEditor().setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    distanceSelector.getEditor().setStyle(badStyle);
+                }
+            }
+        });
     }
 
     @Override
@@ -394,7 +442,11 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         scope.setColors(colors);
                         if (distanceColorRadio.isSelected()) {
                             scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-                            scope.setColorDistance(colorDistance);
+                            if (squareRootCheck.isSelected()) {
+                                scope.setColorDistanceSquare(colorDistance);
+                            } else {
+                                scope.setColorDistance(colorDistance);
+                            }
                         } else {
                             scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
                             scope.setHsbDistance(colorDistance / 360.0f);

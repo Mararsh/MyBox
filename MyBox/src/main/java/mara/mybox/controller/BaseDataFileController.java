@@ -8,17 +8,22 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -30,11 +35,13 @@ import static mara.mybox.value.AppVariables.message;
 public abstract class BaseDataFileController extends BaseSheetController {
 
     protected long totalSize, currentPageStart, currentPageEnd;   // 1-based
-    protected int currentPage, pageSize, pagesNumber, currentPageSize;// 1-based
+    protected int currentPage, pageSize, pagesNumber, copiedLines;// 1-based
     protected boolean sourceWithNames, totalRead;
     protected List<ColumnDefinition> savedColumns;
     protected String loadError;
 
+    @FXML
+    protected TitledPane filePane, saveAsPane, backupPane;
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
@@ -45,9 +52,10 @@ public abstract class BaseDataFileController extends BaseSheetController {
     protected Button clearDefButton, recoverDefButton, okDefButton;
     @FXML
     protected VBox fileBox, fileOptionsBox;
+    @FXML
+    protected ControlFileBackup backupController;
 
     public BaseDataFileController() {
-        baseTitle = message("Field");
     }
 
     protected abstract boolean readDataDefinition(boolean pickOptions);
@@ -56,19 +64,27 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
     protected abstract boolean readTotal();
 
-    protected abstract void setAllColValues(int col);
+    protected abstract boolean saveColumns();
 
-    protected abstract void copyAllColValues(int col);
+    protected abstract File setAllColValues(int col, String value);
 
-    protected abstract void pasteAllColValues(int col);
+    protected abstract StringBuilder copyAllColValues(int col);
 
-    protected abstract void insertFileCol(int col, boolean left);
+    protected abstract File pasteAllColValues(int col);
 
-    protected abstract void DeleteFileCol(int col);
+    protected abstract File insertFileCol(int col, boolean left, int number);
 
-    protected abstract void copyAllSelectedCols();
+    protected abstract File DeleteFileCol(int col);
 
-    protected abstract void setAllSelectedCols();
+    protected abstract File deleteFileAllCols();
+
+    protected abstract File deleteFileSelectedCols();
+
+    protected abstract File orderFileCol(int col, boolean asc);
+
+    protected abstract StringBuilder copyAllSelectedCols();
+
+    protected abstract File setAllSelectedCols(String value);
 
     @Override
     public void initValues() {
@@ -87,8 +103,43 @@ public abstract class BaseDataFileController extends BaseSheetController {
     public void initControls() {
         try {
             super.initControls();
-
+            initBackupsTab();
+            initSaveAsTab();
             initPagination();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initBackupsTab() {
+        try {
+            if (backupPane == null) {
+                return;
+            }
+            backupPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "BackupPane", false));
+            backupPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "BackupPane", backupPane.isExpanded());
+                    });
+
+            backupController.setControls(this, baseName);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initSaveAsTab() {
+        try {
+            if (saveAsPane == null) {
+                return;
+            }
+            saveAsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "SaveAsPane", true));
+            saveAsPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                    });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -162,6 +213,15 @@ public abstract class BaseDataFileController extends BaseSheetController {
         createAction();
     }
 
+    @Override
+    protected boolean checkValid() {
+        if (inputs == null) {
+            saveButton.setDisable(false);
+            return true;
+        }
+        return super.checkValid();
+    }
+
     @FXML
     @Override
     public void createAction() {
@@ -199,7 +259,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
     public void initCurrentPage() {
         currentPage = 1;
         currentPageStart = 1;
-        currentPageEnd = currentPageStart + pageSize;
+        currentPageEnd = 1;
     }
 
     public void loadFile() {
@@ -211,12 +271,11 @@ public abstract class BaseDataFileController extends BaseSheetController {
         columns = new ArrayList<>();
         totalSize = 0;
         pagesNumber = 1;
-        currentPageSize = pageSize;
-        sourceWithNames = totalRead = false;
+        sourceWithNames = true;
+        totalRead = false;
         loadError = null;
         savedColumns = null;
         paginationBox.setVisible(false);
-        loadedLabel.setText("");
         if (sourceFile == null) {
             if (fileBox.getChildren().contains(fileOptionsBox)) {
                 fileBox.getChildren().remove(fileOptionsBox);
@@ -227,81 +286,85 @@ public abstract class BaseDataFileController extends BaseSheetController {
             }
         }
         defBox.getChildren().clear();
+        saveButton.setDisable(true);
         clearDefButton.setDisable(true);
         recoverDefButton.setDisable(true);
         okDefButton.setDisable(true);
         dataChanged(false);
         updateStatus();
         clearSheet();
+        if (backupController != null) {
+            backupController.loadBackups(sourceFile);
+        }
     }
 
     public void loadFile(boolean pickOptions) {
         if (sourceFile == null || !checkBeforeNextAction()) {
             return;
         }
-        initFile();
         synchronized (this) {
             if (task != null) {
                 task.cancel();
             }
+            initFile();
             task = new SingletonTask<Void>() {
 
                 private String[][] data;
-                private boolean changed;
 
                 @Override
                 protected boolean handle() {
                     dataName = sourceFile.getAbsolutePath();
                     data = null;
                     if (!readDataDefinition(pickOptions) || isCancelled()) {
-                        error = loadError;
                         return false;
                     }
                     if (!readColumns() || isCancelled()) {
-                        error = loadError;
-                        columns.clear();
-                        data = new String[3][3];
-                        changed = true;
-                    } else {
-                        data = readPageData();
-                        if (isCancelled()) {
-                            return false;
-                        }
-                        if (data == null || data.length == 0) {
-                            error = loadError;
+                        return false;
+                    }
+                    if (columns == null || columns.isEmpty()) {
+                        if (savedColumns != null) {
+                            columns = savedColumns;
                         } else {
-                            if (columns.size() < data[0].length) {
-                                for (int col = columns.size() + 1; col <= data[0].length; col++) {
-                                    ColumnDefinition column = new ColumnDefinition(message("Field") + col, ColumnDefinition.ColumnType.String);
-                                    columns.add(column);
-                                }
-                                tableDataColumn.save(dataDefinition.getDfid(), columns);
-                            }
-                            if (isCancelled()) {
-                                return false;
-                            }
-                            changed = false;
+                            columns = new ArrayList<>();
                         }
+                    }
+                    data = readPageData();
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    if (data != null) {
+                        if (columns.size() < data[0].length) {
+                            for (int col = columns.size() + 1; col <= data[0].length; col++) {
+                                ColumnDefinition column = new ColumnDefinition(message(colPrefix) + col, ColumnDefinition.ColumnType.String);
+                                columns.add(column);
+                            }
+                            tableDataColumn.save(dataDefinition.getDfid(), columns);
+                        }
+                    }
+                    if (isCancelled()) {
+                        return false;
                     }
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (error != null) {
-                        popError(message(error));
-                    }
-                    if (data != null && data.length > 0) {
-                        makeSheet(data, changed);
-                        loadTotal(true);
-                    } else {
-                        loadTotal(false);
-                    }
+                    makeSheet(data, false);
+                    loadTotal();
                 }
 
                 @Override
                 protected void whenFailed() {
-                    super.whenFailed();
+                    if (isCancelled()) {
+                        return;
+                    }
+                    if (error != null) {
+                        popError(message(error));
+                    } else if (loadError != null) {
+                        popError(message(loadError));
+                    } else {
+                        popFailed();
+                    }
                     sheetBox.getChildren().clear();
                 }
 
@@ -320,7 +383,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
         }
     }
 
-    public void loadTotal(boolean dataLoaded) {
+    public void loadTotal() {
         if (sourceFile == null) {
             return;
         }
@@ -328,13 +391,14 @@ public abstract class BaseDataFileController extends BaseSheetController {
             if (backgroundTask != null) {
                 backgroundTask.cancel();
             }
+            totalSize = 0;
+            totalRead = false;
+            paginationBox.setVisible(false);
             backgroundTask = new SingletonTask<Void>() {
 
                 @Override
                 protected boolean handle() {
-                    totalSize = 0;
                     if (!readTotal() || isCancelled()) {
-                        error = loadError;
                         return false;
                     }
                     countPagination((int) ((currentPageStart - 1) / pageSize) + 1);
@@ -346,9 +410,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     totalRead = true;
                     paginationBox.setVisible(true);
                     setPagination();
-                    if (!dataLoaded) {
-                        loadPage(currentPage);
-                    }
+                    saveButton.setDisable(false);
                     clearDefButton.setDisable(false);
                     recoverDefButton.setDisable(false);
                     okDefButton.setDisable(false);
@@ -356,8 +418,16 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
                 @Override
                 protected void whenFailed() {
-                    super.whenFailed();
-                    sheetBox.getChildren().clear();
+                    if (isCancelled()) {
+                        return;
+                    }
+                    if (error != null) {
+                        popError(message(error));
+                    } else if (loadError != null) {
+                        popError(message(loadError));
+                    } else {
+                        popFailed();
+                    }
                 }
 
                 @Override
@@ -383,8 +453,11 @@ public abstract class BaseDataFileController extends BaseSheetController {
     }
 
     public void loadPage(int pageNumber) {
-        if (sourceFile == null || columns == null || totalSize <= 0
-                || !checkBeforeNextAction()) {
+        if (sourceFile == null || columns.isEmpty() || totalSize <= 0) {
+            makeSheet(null);
+            return;
+        }
+        if (!checkBeforeNextAction()) {
             return;
         }
         synchronized (this) {
@@ -398,20 +471,31 @@ public abstract class BaseDataFileController extends BaseSheetController {
                 protected boolean handle() {
                     countPagination(pageNumber);
                     data = readPageData();
-                    return data != null;
+                    return !isCancelled() && error == null && loadError == null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     makeSheet(data, false);
                     setPagination();
-                    updateStatus();
                 }
 
                 @Override
                 protected void whenFailed() {
-                    super.whenFailed();
-                    sheetBox.getChildren().clear();
+                    if (isCancelled()) {
+                        return;
+                    }
+                    if (error != null) {
+                        popError(message(error));
+                    } else if (loadError != null) {
+                        popError(message(loadError));
+                    } else {
+                        popFailed();
+                    }
+                }
+
+                @Override
+                protected void finalAction() {
                     updateStatus();
                 }
 
@@ -432,24 +516,21 @@ public abstract class BaseDataFileController extends BaseSheetController {
         if (totalSize <= pageSize) {
             pagesNumber = 1;
         } else {
-            pagesNumber = (int) (totalSize % pageSize == 0 ? totalSize / pageSize : totalSize / pageSize + 1);
+            pagesNumber = (int) (totalSize % pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize + 1));
         }
         currentPage = pageNumber;
-        if (currentPage <= 0) {
+        if (currentPage <= 0) {   // 1-based
             currentPage = 1;
         }
         if (currentPage > pagesNumber) {
             currentPage = pagesNumber;
         }
-        currentPageStart = pageSize * (currentPage - 1) + 1;// 1-based
-        currentPageEnd = Math.min(currentPageStart + pageSize, totalSize + 1);  // 1-based, excluded
-        currentPageSize = (int) (currentPageEnd - currentPageStart);
+        currentPageStart = pageSize * (currentPage - 1) + 1; // 1-based
     }
 
     protected void setPagination() {
         try {
-            if (pageSelector == null || inputs == null
-                    || (paginationBox != null && !paginationBox.isVisible())) {
+            if (pageSelector == null || (paginationBox != null && !paginationBox.isVisible())) {
                 return;
             }
             isSettingValues = true;
@@ -494,6 +575,11 @@ public abstract class BaseDataFileController extends BaseSheetController {
         }
     }
 
+//    @Override
+//    protected void dataChanged(boolean dataChanged) {
+//        super.dataChanged(dataChanged);
+//        paginationBox.setDisable(dataChanged);
+//    }
     @FXML
     @Override
     public void clearDefAction() {
@@ -542,65 +628,69 @@ public abstract class BaseDataFileController extends BaseSheetController {
                 menu.setOnAction((ActionEvent event) -> {
                     SetPageColValues(col);
                 });
+                menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
                 items.add(menu);
 
                 menu = new MenuItem(message("CopyPageCol"));
                 menu.setOnAction((ActionEvent event) -> {
                     copyPageColValues(col);
                 });
+                menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
                 items.add(menu);
 
-                if (copiedCol != null && !copiedCol.isEmpty()) {
-                    menu = new MenuItem(message("PastePageCol"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        pastePageColValues(col);
-                    });
-                    items.add(menu);
-                }
+                menu = new MenuItem(message("PastePageCol"));
+                menu.setOnAction((ActionEvent event) -> {
+                    pastePageColValues(col);
+                });
+                menu.setDisable(copiedCol == null || copiedCol.isEmpty());
+                items.add(menu);
 
                 items.add(new SeparatorMenuItem());
 
                 menu = new MenuItem(message("SetAllColValues"));
                 menu.setOnAction((ActionEvent event) -> {
-                    setAllColValues(col);
+                    setAllColValuesTask(col);
                 });
+                menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
                 items.add(menu);
 
                 menu = new MenuItem(message("CopyAllCol"));
                 menu.setOnAction((ActionEvent event) -> {
-                    copyAllColValues(col);
+                    copyAllColValuesTask(col);
                 });
+                menu.setDisable(totalSize <= 0);
                 items.add(menu);
 
-                if (copiedCol != null && !copiedCol.isEmpty()) {
-                    menu = new MenuItem(message("PasteAllCol"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        pasteAllColValues(col);
-                    });
-                    items.add(menu);
-                }
+                menu = new MenuItem(message("PasteAllCol"));
+                menu.setOnAction((ActionEvent event) -> {
+                    pasteAllColValuesTask(col);
+                });
+                menu.setDisable(copiedCol == null || copiedCol.isEmpty()
+                        || (dataChanged && sourceFile != null && pagesNumber > 1));
+                items.add(menu);
 
                 items.add(new SeparatorMenuItem());
 
                 menu = new MenuItem(message("InsertColLeft"));
                 menu.setOnAction((ActionEvent event) -> {
-                    insertFileCol(col, true);
+                    insertFileColTask(col, true, 1);
                 });
+                menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
                 items.add(menu);
 
                 menu = new MenuItem(message("InsertColRight"));
                 menu.setOnAction((ActionEvent event) -> {
-                    insertFileCol(col, false);
+                    insertFileColTask(col, false, 1);
                 });
+                menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
                 items.add(menu);
 
-                if (inputs[0].length > 1) {
-                    menu = new MenuItem(message("DeleteCol"));
-                    menu.setOnAction((ActionEvent event) -> {
-                        DeleteFileCol(col);
-                    });
-                    items.add(menu);
-                }
+                menu = new MenuItem(message("DeleteCol"));
+                menu.setOnAction((ActionEvent event) -> {
+                    DeleteFileColTask(col);
+                });
+                menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
+                items.add(menu);
 
             }
 
@@ -610,6 +700,554 @@ public abstract class BaseDataFileController extends BaseSheetController {
         return items;
     }
 
+    protected void setAllColValuesTask(int col) {
+        if (sourceFile == null || pagesNumber <= 1) {
+            SetPageColValues(col);
+        }
+        if (!checkBeforeNextAction() || totalSize <= 0) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            String value = askValue(colName(col) + "\n" + message("NoticeAllChangeUnrecover"),
+                    message("SetAllColValues"), defaultColValue);
+            if (!dataValid(col, value)) {
+                popError(message("InvalidData"));
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    File tmpFile = setAllColValues(col, value);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChanged = false;
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void copyAllColValuesTask(int col) {
+        if (sourceFile == null || pagesNumber <= 1) {
+            copyPageColValues(col);
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    copiedCol = new ArrayList<>();
+                    s = copyAllColValues(col);
+                    return s != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (FxmlControl.copyToSystemClipboard(s.toString())) {
+                        popInformation(message("CopiedInSheet"));
+                    } else {
+                        popFailed();
+                    }
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void copyPageCol(int col) {
+        if (inputs == null) {
+            return;
+        }
+        for (TextField[] input : inputs) {
+            String v = input[col].getText();
+            copiedCol.add(v == null ? "" : v);
+        }
+    }
+
+    protected void pasteAllColValuesTask(int col) {
+        if (copiedCol == null || copiedCol.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        if (sourceFile == null || pagesNumber <= 1) {
+            pastePageColValues(col);
+            return;
+        }
+        if (!checkBeforeNextAction() || totalSize <= 0) {
+            return;
+        }
+        if (!FxmlControl.askSure(baseTitle, colName(col) + " - " + message("PasteAllCol") + "\n"
+                + message("NoticeAllChangeUnrecover"))) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    File tmpFile = pasteAllColValues(col);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChanged = false;
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void insertFileColTask(int col, boolean left, int number) {
+        if (number < 1) {
+            return;
+        }
+        if (sourceFile == null || pagesNumber <= 1) {
+            insertPageCol(col, left, number);
+            return;
+        }
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+
+            task = new SingletonTask<Void>() {
+                String[][] data;
+
+                @Override
+                protected boolean handle() {
+                    int base = col + (left ? 0 : 1);
+                    makeColumns(base, number);
+                    saveColumns();
+                    File tmpFile = insertFileCol(col, left, number);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChanged = false;
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void DeleteFileColTask(int col) {
+        if (sourceFile == null || pagesNumber <= 1) {
+            deletePageCol(col);
+            return;
+        }
+        if (columns.size() <= 1) {
+            if (!FxmlControl.askSure(message("DeleteCol"), message("SureDeleteAll"))) {
+                return;
+            }
+            deleteAllCols();
+            return;
+        }
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            if (!FxmlControl.askSure(baseTitle, colName(col) + " - " + message("DeleteCol") + "\n"
+                    + message("NoticeAllChangeUnrecover"))) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                String[][] data;
+
+                @Override
+                protected boolean handle() {
+                    columns.remove(col);
+                    saveColumns();
+                    File tmpFile = DeleteFileCol(col);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChanged = false;
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @Override
+    protected void deleteAllCols() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.deleteAllCols();
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                String[][] data;
+
+                @Override
+                protected boolean handle() {
+                    columns.clear();
+                    saveColumns();
+                    File tmpFile = deleteFileAllCols();
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChanged = false;
+                    loadPage(1);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @Override
+    protected void orderCol(int col, boolean asc) {
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.orderCol(col, asc);
+            return;
+        }
+        if (columns == null || col < 0 || col >= columns.size()
+                || !checkBeforeNextAction() || totalSize <= 0) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            if (!FxmlControl.askSure(baseTitle, colName(col) + " - "
+                    + (asc ? message("Ascending") : message("Descending")) + "\n"
+                    + message("DataFileOrderNotice"))) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    File tmpFile = orderFileCol(col, asc);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChanged = false;
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void copyAllSelectedColsTask() {
+        if (colsCheck == null) {
+            return;
+        }
+        if (sourceFile == null || pagesNumber <= 1) {
+            copySelectedCols();
+            return;
+        }
+        int cols = 0;
+        for (CheckBox c : colsCheck) {
+            if (c.isSelected()) {
+                cols++;
+            }
+        }
+        if (cols < 1) {
+            popError(message("NoData"));
+            return;
+        }
+        int selectedCols = cols;
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    copiedLines = 0;
+                    s = copyAllSelectedCols();
+                    return s != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (FxmlControl.copyToSystemClipboard(s.toString())) {
+                        popInformation(message("CopiedToSystemClipboard") + "\n"
+                                + message("RowsNumber") + ":" + copiedLines + "\n"
+                                + message("ColumnsNumber") + ":" + selectedCols);
+                    } else {
+                        popFailed();
+                    }
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected StringBuilder copyPageCols(StringBuilder s, String delimiterString) {
+        if (inputs == null) {
+            return null;
+        }
+        StringBuilder ps = s;
+        for (TextField[] rowInputs : inputs) {
+            String rowString = null;
+            for (int i = 0; i < colsCheck.length; i++) {
+                if (!colsCheck[i].isSelected()) {
+                    continue;
+                }
+                String cellString = rowInputs[i].getText();
+                cellString = cellString == null ? "" : cellString;
+                if (rowString == null) {
+                    rowString = cellString;
+                } else {
+                    rowString += delimiterString + cellString;
+                }
+            }
+            rowString = rowString == null ? "" : rowString;
+            if (ps == null) {
+                ps = new StringBuilder();
+                ps.append(rowString);
+            } else {
+                ps.append("\n").append(rowString);
+            }
+            copiedLines++;
+        }
+        return ps;
+    }
+
+    // columns have been changed before call this
+    @Override
+    protected void deleteSelectedCols() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.deleteSelectedCols();
+            return;
+        }
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            if (!FxmlControl.askSure(baseTitle, message("DeleteSelectedCols") + "\n"
+                    + message("NoticeAllChangeUnrecover"))) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    saveColumns();
+                    File tmpFile = deleteFileSelectedCols();
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChanged = false;
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void setAllSelectedColsTask() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            setSelectedCols();
+            return;
+        }
+        if (!checkBeforeNextAction() || totalSize <= 0) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            String value = askValue(message("NoticeAllChangeUnrecover"), message("SetAllSelectedColsValues"), defaultColValue);
+            if (value == null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    File tmpFile = setAllSelectedCols(value);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @Override
+    protected void addColsNumber() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.addColsNumber();
+            return;
+        }
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            String value = askValue(message("NoticeAllChangeUnrecover"), message("AddColsNumber"), "1");
+            int number;
+            try {
+                number = Integer.parseInt(value);
+            } catch (Exception e) {
+                popError(message("InvalidData"));
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    int col = colsCheck == null ? 0 : colsCheck.length;
+                    makeColumns(col, number);
+                    saveColumns();
+                    File tmpFile = insertFileCol(col, true, number);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    loadPage(currentPage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
     @Override
     public List<MenuItem> makeSheetCopyMenu() {
         List<MenuItem> items = new ArrayList<>();
@@ -617,27 +1255,36 @@ public abstract class BaseDataFileController extends BaseSheetController {
             if (pagesNumber <= 1) {
                 items.addAll(super.makeSheetCopyMenu());
             } else {
-                MenuItem menu = new MenuItem(message("CopyPageAll"));
-                menu.setOnAction((ActionEvent event) -> {
-                    copyTextAction();
-                });
-                items.add(menu);
-                items.add(new SeparatorMenuItem());
+                MenuItem menu;
 
                 rowsSelected = false;
-                for (int j = 0; j < rowsCheck.length; ++j) {
-                    if (rowsCheck[j].isSelected()) {
-                        rowsSelected = true;
-                        break;
+                if (rowsCheck != null) {
+                    for (int j = 0; j < rowsCheck.length; ++j) {
+                        if (rowsCheck[j].isSelected()) {
+                            rowsSelected = true;
+                            break;
+                        }
                     }
                 }
                 colsSelected = false;
-                for (int j = 0; j < colsCheck.length; ++j) {
-                    if (colsCheck[j].isSelected()) {
-                        colsSelected = true;
-                        break;
+                if (colsCheck != null) {
+                    for (int j = 0; j < colsCheck.length; ++j) {
+                        if (colsCheck[j].isSelected()) {
+                            colsSelected = true;
+                            break;
+                        }
                     }
                 }
+
+                menu = new MenuItem(message("CopyPageAll"));
+                menu.setOnAction((ActionEvent event) -> {
+                    copyTextAction();
+                });
+                menu.setDisable(inputs == null);
+                items.add(menu);
+
+                items.add(new SeparatorMenuItem());
+
                 menu = new MenuItem(message("CopySelectedRows"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (!rowsSelected) {
@@ -666,7 +1313,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                         popError(message("NoData"));
                         return;
                     }
-                    copyAllSelectedCols();
+                    copyAllSelectedColsTask();
                 });
                 menu.setDisable(!colsSelected);
                 items.add(menu);
@@ -690,37 +1337,39 @@ public abstract class BaseDataFileController extends BaseSheetController {
     }
 
     @Override
-    public List<MenuItem> sheetSizeMoreMenu() {
-        return null;
-    }
-
-    @Override
     public List<MenuItem> makeSheetEqualMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
             if (pagesNumber <= 1) {
                 items.addAll(super.makeSheetEqualMenu());
             } else {
-                MenuItem menu = new MenuItem(message("SetPageAll"));
-                menu.setOnAction((ActionEvent event) -> {
-                    setAllValues();
-                });
-                items.add(menu);
+                MenuItem menu;
 
                 rowsSelected = false;
-                for (int j = 0; j < rowsCheck.length; ++j) {
-                    if (rowsCheck[j].isSelected()) {
-                        rowsSelected = true;
-                        break;
+                if (rowsCheck != null) {
+                    for (int j = 0; j < rowsCheck.length; ++j) {
+                        if (rowsCheck[j].isSelected()) {
+                            rowsSelected = true;
+                            break;
+                        }
                     }
                 }
                 colsSelected = false;
-                for (int j = 0; j < colsCheck.length; ++j) {
-                    if (colsCheck[j].isSelected()) {
-                        colsSelected = true;
-                        break;
+                if (colsCheck != null) {
+                    for (int j = 0; j < colsCheck.length; ++j) {
+                        if (colsCheck[j].isSelected()) {
+                            colsSelected = true;
+                            break;
+                        }
                     }
                 }
+
+                menu = new MenuItem(message("SetPageAll"));
+                menu.setOnAction((ActionEvent event) -> {
+                    setAllValues();
+                });
+                menu.setDisable(inputs == null);
+                items.add(menu);
 
                 menu = new MenuItem(message("SetSelectedRowsValues"));
                 menu.setOnAction((ActionEvent event) -> {
@@ -750,9 +1399,10 @@ public abstract class BaseDataFileController extends BaseSheetController {
                         popError(message("NoData"));
                         return;
                     }
-                    setAllSelectedCols();
+                    setAllSelectedColsTask();
                 });
-                menu.setDisable(!colsSelected);
+                menu.setDisable(!colsSelected
+                        || (dataChanged && sourceFile != null && pagesNumber > 1));
                 items.add(menu);
 
                 menu = new MenuItem(message("SetSelectedRowsColsValues"));

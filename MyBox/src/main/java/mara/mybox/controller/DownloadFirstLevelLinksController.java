@@ -13,7 +13,6 @@ import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -959,7 +958,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     public void html() {
         try {
             HtmlEditorController controller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
-            controller.loadLink(new URI(urlBox.getValue()));
+            controller.loadAddress(urlBox.getValue());
         } catch (Exception e) {
         }
     }

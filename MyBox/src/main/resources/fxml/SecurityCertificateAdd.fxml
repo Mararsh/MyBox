@@ -53,21 +53,6 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-        <HBox>
-            <children>
-                <CheckBox fx:id="backupCheck" mnemonicParsing="false" selected="true" text="%BackKeyStoreFile" />
-                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconOK.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            </children>
-        </HBox>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false" selected="true">
@@ -84,6 +69,15 @@ License:    Apache License Version 2.0
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/iconClose.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconOK.png" />
                             </image>
                         </ImageView>
                     </graphic>

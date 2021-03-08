@@ -1,9 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -26,13 +24,11 @@ import javafx.stage.FileChooser;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.table.TableBrowserBypassSSL;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -635,19 +631,6 @@ public class ControlMapOptions extends BaseController {
         try {
             if (gaodeRadio != null && gaodeRadio.isSelected()) {
                 mapName = MapName.GaoDe;
-                try {
-                    List<String> hosts = new ArrayList<>();
-                    hosts.addAll(Arrays.asList(
-                            "amap.com", "webapi.amap.com", "vdata.amap.com", "restapi.amap.com"
-                    ));
-                    NetworkTools.installCertificate(hosts);
-                    hosts.add("is.autonavi.com");
-                    TableBrowserBypassSSL.write(hosts);
-                    NetworkTools.myBoxSSL();
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-
                 File map = FxmlControl.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", true);
                 String html = FileTools.readTexts(map);
                 html = html.replace("06b9e078a51325a843dfefd57ffd876c", AppVariables.getUserConfigValue("GaoDeMapWebKey", CommonValues.GaoDeMapWebKey));

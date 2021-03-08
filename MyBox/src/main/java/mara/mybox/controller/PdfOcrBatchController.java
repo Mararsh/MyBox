@@ -24,6 +24,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -87,6 +88,8 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     protected FlowPane imageOptionsPane;
     @FXML
     protected ControlOCROptions ocrOptionsController;
+    @FXML
+    protected VBox preprocessVBox, ocrOptionsVBox;
 
     public PdfOcrBatchController() {
         baseTitle = AppVariables.message("PdfOCRBatch");
@@ -306,6 +309,13 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             MyBoxLog.error(e.toString());
             return false;
         }
+    }
+
+    @Override
+    public void disableControls(boolean disable) {
+        super.disableControls(disable);
+        preprocessVBox.setDisable(disable);
+        ocrOptionsVBox.setDisable(disable);
     }
 
     @Override

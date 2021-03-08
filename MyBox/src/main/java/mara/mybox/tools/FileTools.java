@@ -1039,19 +1039,19 @@ public class FileTools {
         }
     }
 
-    public static boolean mergeFiles(File file1, File file2, File targetFile) {
+    public static boolean mergeBytesFiles(File file1, File file2, File targetFile) {
         try {
             List<File> files = new ArrayList();
             files.add(file1);
             files.add(file2);
-            return mergeFiles(files, targetFile);
+            return mergeBytesFiles(files, targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
     }
 
-    public static boolean mergeFiles(List<File> files, File targetFile) {
+    public static boolean mergeBytesFiles(List<File> files, File targetFile) {
         if (files == null || files.isEmpty() || targetFile == null) {
             return false;
         }
@@ -1175,6 +1175,27 @@ public class FileTools {
         try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
             outputStream.write(data);
             outputStream.flush();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean mergeTextFiles(List<File> files, File targetFile) {
+        if (files == null || files.isEmpty() || targetFile == null) {
+            return false;
+        }
+        String line;
+        try ( FileWriter writer = new FileWriter(targetFile, Charset.forName("utf-8"))) {
+            for (File file : files) {
+                try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
+                    while ((line = reader.readLine()) != null) {
+                        writer.write(line + System.lineSeparator());
+                    }
+                }
+            }
+            writer.flush();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

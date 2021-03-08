@@ -63,15 +63,16 @@ public abstract class BaseSheetController extends BaseController {
     protected TableDataColumn tableDataColumn;
     protected DataDefinition dataDefinition;
     protected DataType dataType;
-    protected String dataName;
+    protected ColumnType defaultColumnType;
+    protected String dataName, delimiter, defaultColValue, colPrefix, inputStyle;
     protected TextField[][] inputs;
     protected CheckBox[] colsCheck, rowsCheck;
-    protected String delimiter, defaultValue;
     protected List<String> copiedRow, copiedCol;
     protected SimpleBooleanProperty notify;
     protected int widthChange;
-    protected boolean rowsSelected, colsSelected, dataChanged;
+    protected boolean rowsSelected, colsSelected, dataChanged, defaultColNotNull;
     protected List<ColumnDefinition> columns;
+    protected Label noDataLabel;
 
     @FXML
     protected VBox sheetBox, defBox;
@@ -88,19 +89,25 @@ public abstract class BaseSheetController extends BaseController {
         baseTitle = message("DataEdit");
         dataType = DataType.DataFile;
         dataName = "sheet";
+        colPrefix = "Field";
+        defaultColumnType = ColumnType.String;
+        defaultColValue = "";
+        defaultColNotNull = false;
     }
 
     @Override
     public void initValues() {
         try {
             super.initValues();
-            defaultValue = "";
             widthChange = 10;
-            columns = null;
+            columns = new ArrayList<>();
             dataChanged = false;
             tableDataDefinition = new TableDataDefinition();
             tableDataColumn = new TableDataColumn();
             notify = new SimpleBooleanProperty(false);
+            noDataLabel = new Label(message("NoData"));
+            noDataLabel.setStyle("-fx-text-fill: gray;");
+            inputStyle = "-fx-border-radius: 10; -fx-background-radius: 0;";
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -150,13 +157,14 @@ public abstract class BaseSheetController extends BaseController {
         return false;
     }
 
+    protected String titleName() {
+        return sourceFile == null ? "" : sourceFile.getAbsolutePath();
+    }
+
     protected void dataChanged(boolean dataChanged) {
         this.dataChanged = dataChanged;
-        if (myStage != null) {
-            String title = baseTitle;
-            if (sourceFile != null) {
-                title += " " + sourceFile.getAbsolutePath();
-            }
+        if (getMyStage() != null) {
+            String title = baseTitle + " " + titleName();
             if (dataChanged) {
                 title += " *";
             }
@@ -173,7 +181,7 @@ public abstract class BaseSheetController extends BaseController {
 //            }
         } catch (Exception e) {
         }
-        return value == null ? defaultValue : value;
+        return value == null ? defaultColValue : value;
     }
 
     protected List<String> row(int row) {
@@ -204,32 +212,56 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     protected String colName(int col) {
-        if (columns == null) {
-            makeColumns(colsCheck.length);
+        try {
+            if (columns == null && colsCheck != null) {
+                makeColumns(colsCheck.length);
+            }
+            return columns.get(col).getName();
+        } catch (Exception e) {
+            return null;
         }
-        return columns.get(col).getName();
     }
 
     protected List<String> columnNames() {
-        if (columns == null) {
-            makeColumns(colsCheck.length);
+        try {
+            if (columns == null && colsCheck != null) {
+                makeColumns(colsCheck.length);
+            }
+            List<String> names = new ArrayList<>();
+            for (ColumnDefinition column : columns) {
+                names.add(column.getName());
+            }
+            return names;
+        } catch (Exception e) {
+            return null;
         }
-        List<String> names = new ArrayList<>();
-        for (ColumnDefinition column : columns) {
-            names.add(column.getName());
-        }
-        return names;
     }
 
     public void makeColumns(int number) {
-        if (dataName == null) {
-            return;
-        }
         columns = new ArrayList<>();
-        for (int i = 0; i < number; i++) {
-            ColumnDefinition column = new ColumnDefinition(message("Field") + (i + 1), ColumnType.String);
+        for (int i = 1; i <= number; i++) {
+            ColumnDefinition column = new ColumnDefinition(message(colPrefix) + i, defaultColumnType, defaultColNotNull);
             columns.add(column);
         }
+    }
+
+    // start: 0-based
+    public void makeColumns(int start, int number) {
+        if (columns == null) {
+            makeColumns(start);
+        }
+        List<String> columnNames = columnNames();
+        List<ColumnDefinition> newColumns = new ArrayList<>();
+        for (int i = 1; i <= number; i++) {
+            String name = message(colPrefix) + (start + i);
+            while (columnNames.contains(name)) {
+                name += "m";
+            }
+            ColumnDefinition column = new ColumnDefinition(name, defaultColumnType, defaultColNotNull);
+            newColumns.add(column);
+            columnNames.add(name);
+        }
+        columns.addAll(start, newColumns);
     }
 
     // Sheet itself can be resued and need not clear
@@ -238,8 +270,14 @@ public abstract class BaseSheetController extends BaseController {
         colsCheck = null;
         rowsCheck = null;
         rowsSelected = colsSelected = false;
+        if (sheetBox.getChildren().contains(noDataLabel)) {
+            sheetBox.getChildren().remove(noDataLabel);
+        }
         textArea.setText("");
         webView.getEngine().loadContent("");
+        if (defBox != null) {
+            defBox.getChildren().clear();
+        }
         notify.set(!notify.get());
     }
 
@@ -255,154 +293,168 @@ public abstract class BaseSheetController extends BaseController {
         Platform.runLater(() -> {
             try {
                 clearSheet();
-                if (data == null) {
-                    return;
+                int rowsSize = data == null ? 0 : data.length;
+                int colsSize = data == null || rowsSize == 0 ? 0 : data[0].length;
+                if (colsSize > 0) {
+                    if (dataType != DataType.Matrix) {
+                        if (columns == null) {
+                            columns = new ArrayList<>();
+                        }
+                        if (columns.size() < colsSize) {
+                            makeColumns(columns.size(), colsSize - columns.size());
+                        } else if (columns.size() > colsSize) {
+                            for (int col = columns.size() - 1; col > colsSize; col--) {
+                                columns.remove(col);
+                            }
+                        }
+                    }
+                } else if (columns != null) {
+                    colsSize = columns.size();
                 }
-                int rowsSize = data.length;
-                if (rowsSize == 0) {
-                    return;
-                }
-                int colsSize = data[0].length;
-                if (colsSize == 0) {
-                    return;
-                }
-                if (columns == null || dataType == DataType.Matrix) {
+                if (dataType == DataType.Matrix) {
                     makeColumns(colsSize);
-                } else if (columns.size() < colsSize) {
-                    for (int col = columns.size() + 1; col <= colsSize; col++) {
-                        ColumnDefinition column = new ColumnDefinition(message("Field") + col, ColumnType.String);
-                        columns.add(column);
-                    }
-                } else if (columns.size() > colsSize) {
-                    for (int col = columns.size() - 1; col > colsSize; col--) {
-                        columns.remove(col);
-                    }
                 }
                 double space = 0.0;
-                double rowCheckWidth = 80 + (data.length + "").length() * AppVariables.sceneFontSize;
+                double rowCheckWidth = 80 + (rowsSize + "").length() * AppVariables.sceneFontSize;
+                sheetBox.setAlignment(Pos.TOP_CENTER);
+                sheetBox.setSpacing(space);
                 HBox header;
-                Label label;
+                Label col0Label;
                 if (!sheetBox.getChildren().isEmpty()) {
                     header = (HBox) (sheetBox.getChildren().get(0));
-                    label = (Label) (header.getChildren().get(0));
+                    col0Label = (Label) (header.getChildren().get(0));
                 } else {
                     header = new HBox();
-                    sheetBox.setSpacing(space);
                     header.setAlignment(Pos.CENTER);
                     header.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     header.setSpacing(space);
-                    label = new Label(message("Col") + "0");
-                    label.setPrefWidth(rowCheckWidth);
-                    label.setPrefHeight(header.getHeight());
-                    label.setAlignment(Pos.CENTER);
-                    label.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    col0Label = new Label(message("Col") + "0");
+                    col0Label.setPrefHeight(header.getHeight());
+                    col0Label.setAlignment(Pos.CENTER);
+                    col0Label.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                         if (newValue) {
-                            label.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
-                            popRowLabelMenu(label);
+                            col0Label.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
+                            popRowLabelMenu(col0Label);
                         } else {
-                            label.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                            col0Label.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
                         }
                     });
-                    header.getChildren().add(label);
+                    header.getChildren().add(col0Label);
                     sheetBox.getChildren().add(header);
                 }
-                label.setPrefWidth(rowCheckWidth);
+                col0Label.setPrefWidth(rowCheckWidth);
                 int currentRowsSize = sheetBox.getChildren().size() - 1;
                 int currentColsSize = header.getChildren().size() - 1;
-                if (currentColsSize > 0) {
-                    if (currentColsSize > colsSize) {
-                        header.getChildren().remove(colsSize + 1, currentColsSize + 1);
-                    }
-                }
-                colsCheck = new CheckBox[colsSize];
-                for (int col = 0; col < colsSize; ++col) {
-                    CheckBox colCheck;
-                    if (col < currentColsSize) {
-                        colCheck = (CheckBox) (header.getChildren().get(col + 1));
-                    } else {
-                        colCheck = new CheckBox();
-                        colCheck.setAlignment(Pos.CENTER);
-                        colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
-                        int colf = col;
-                        colCheck.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
-                                popColMenu(colCheck, colf);
-                            } else {
-                                colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
-                            }
-                        });
-                        header.getChildren().add(colCheck);
-                    }
-                    colCheck.setPrefWidth(columns.get(col).getWidth());
-                    colCheck.setText(colName(col));
-                    colCheck.setSelected(false);
-                    colsCheck[col] = colCheck;
-                }
-                inputs = new TextField[rowsSize][colsSize];
-                rowsCheck = new CheckBox[rowsSize];
-                for (int row = 0; row < rowsSize; ++row) {
-                    HBox line;
-                    CheckBox rowCheck;
-                    int rowf = row;
-                    if (row < currentRowsSize) {
-                        line = (HBox) (sheetBox.getChildren().get(row + 1));
-                        rowCheck = (CheckBox) (line.getChildren().get(0));
-                        if (currentColsSize > colsSize) {
-                            line.getChildren().remove(colsSize + 1, currentColsSize + 1);
-                        }
-                    } else {
-                        line = new HBox();
-                        line.setAlignment(Pos.CENTER);
-                        line.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                        line.setSpacing(space);
-                        VBox.setVgrow(line, Priority.NEVER);
-                        HBox.setHgrow(line, Priority.NEVER);
-                        rowCheck = new CheckBox();
-                        rowCheck.setAlignment(Pos.CENTER_LEFT);
-                        rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
-                        rowCheck.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
-                                popRowMenu(rowCheck, rowf);
-                            } else {
-                                rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
-                            }
-                        });
-                        line.getChildren().add(rowCheck);
-                        sheetBox.getChildren().add(line);
-                    }
-                    rowCheck.setText(rowName(row));
-                    rowCheck.setPrefWidth(rowCheckWidth);
-                    rowCheck.setSelected(false);
-                    rowsCheck[row] = rowCheck;
-                    for (int col = 0; col < colsSize; ++col) {
-                        TextField valueInput;
-                        if (row < currentRowsSize && col < currentColsSize) {
-                            valueInput = (TextField) (line.getChildren().get(col + 1));
-                        } else {
-                            valueInput = new TextField();
-                            int colf = col;
-                            valueInput.textProperty().addListener(new ChangeListener<String>() {
-                                @Override
-                                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                                    valueInputted(rowf, colf);
-                                }
-                            });
-                            line.getChildren().add(valueInput);
-                        }
-                        String v = data[row][col];
-                        v = v == null ? defaultValue : v;
-                        isSettingValues = true;
-                        valueInput.setText(v);
-                        isSettingValues = false;
-                        valueInput.setStyle("-fx-border-radius: 10; -fx-background-radius: 0;" + (dataValid(col, v) ? "" : badStyle));
-                        valueInput.setPrefWidth(columns.get(col).getWidth());
-                        inputs[row][col] = valueInput;
-                    }
+                if (currentColsSize > colsSize) {
+                    header.getChildren().remove(colsSize + 1, currentColsSize + 1);
                 }
                 if (currentRowsSize > rowsSize) {
                     sheetBox.getChildren().remove(rowsSize + 1, currentRowsSize + 1);
+                }
+                if (colsSize <= 0) {
+                    colsCheck = null;
+                    rowsCheck = null;
+                    inputs = null;
+                } else {
+                    colsCheck = new CheckBox[colsSize];
+                    for (int col = 0; col < colsSize; ++col) {
+                        CheckBox colCheck;
+                        if (col < currentColsSize) {
+                            colCheck = (CheckBox) (header.getChildren().get(col + 1));
+                        } else {
+                            colCheck = new CheckBox();
+                            colCheck.setAlignment(Pos.CENTER);
+                            colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                            int colf = col;
+                            colCheck.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                                if (newValue) {
+                                    colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
+                                    popColMenu(colCheck, colf);
+                                } else {
+                                    colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                                }
+                            });
+                            header.getChildren().add(colCheck);
+                        }
+                        colCheck.setPrefWidth(columns.get(col).getWidth());
+                        colCheck.setText(colName(col));
+                        colCheck.setSelected(false);
+                        colsCheck[col] = colCheck;
+                    }
+                    if (rowsSize <= 0) {
+                        rowsCheck = null;
+                        inputs = null;
+                    } else {
+                        inputs = new TextField[rowsSize][colsSize];
+                        rowsCheck = new CheckBox[rowsSize];
+                        for (int row = 0; row < rowsSize; ++row) {
+                            HBox line;
+                            CheckBox rowCheck;
+                            int rowf = row;
+                            if (row < currentRowsSize) {
+                                line = (HBox) (sheetBox.getChildren().get(row + 1));
+                                rowCheck = (CheckBox) (line.getChildren().get(0));
+                                if (currentColsSize > colsSize) {
+                                    line.getChildren().remove(colsSize + 1, currentColsSize + 1);
+                                }
+                            } else {
+                                line = new HBox();
+                                line.setAlignment(Pos.CENTER);
+                                line.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                                line.setSpacing(space);
+                                VBox.setVgrow(line, Priority.NEVER);
+                                HBox.setHgrow(line, Priority.NEVER);
+                                rowCheck = new CheckBox();
+                                rowCheck.setAlignment(Pos.CENTER_LEFT);
+                                rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                                rowCheck.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                                    if (newValue) {
+                                        rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
+                                        popRowMenu(rowCheck, rowf);
+                                    } else {
+                                        rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                                    }
+                                });
+                                line.getChildren().add(rowCheck);
+                                sheetBox.getChildren().add(line);
+                            }
+                            rowCheck.setText(rowName(row));
+                            rowCheck.setPrefWidth(rowCheckWidth);
+                            rowCheck.setSelected(false);
+                            rowsCheck[row] = rowCheck;
+                            for (int col = 0; col < colsSize; ++col) {
+                                TextField valueInput;
+                                if (row < currentRowsSize && col < currentColsSize) {
+                                    valueInput = (TextField) (line.getChildren().get(col + 1));
+                                } else {
+                                    valueInput = new TextField();
+                                    int colf = col;
+                                    valueInput.textProperty().addListener(new ChangeListener<String>() {
+                                        @Override
+                                        public void changed(ObservableValue ov, String oldValue, String newValue) {
+                                            valueInputted(rowf, colf);
+                                        }
+                                    });
+                                    line.getChildren().add(valueInput);
+                                }
+                                String v = data[row][col];
+                                v = v == null ? defaultColValue : v;
+                                isSettingValues = true;
+                                valueInput.setText(v);
+                                isSettingValues = false;
+                                valueInput.setStyle(inputStyle + (dataValid(col, v) ? "" : badStyle));
+                                valueInput.setPrefWidth(columns.get(col).getWidth());
+                                inputs[row][col] = valueInput;
+                            }
+                        }
+
+                    }
+                }
+                if (inputs == null) {
+                    noDataLabel.setPrefWidth(rowCheckWidth);
+                    noDataLabel.setPrefHeight(header.getHeight());
+                    noDataLabel.setAlignment(Pos.CENTER);
+                    sheetBox.getChildren().add(noDataLabel);
                 }
                 makeDataDefintion();
                 FxmlControl.refreshStyle(sheetBox);
@@ -423,6 +475,9 @@ public abstract class BaseSheetController extends BaseController {
             return;
         }
         defBox.getChildren().clear();
+        if (columns == null) {
+            return;
+        }
         int index = 1;
         for (ColumnDefinition column : columns) {
             HBox line = new HBox();
@@ -465,9 +520,32 @@ public abstract class BaseSheetController extends BaseController {
         if (isSettingValues) {
             return;
         }
-        updatePanes();
+        if (checkValid()) {
+            updatePanes();
+        }
         notify.set(!notify.get());
         dataChanged(true);
+    }
+
+    protected boolean checkValid() {
+        boolean valid = true;
+        if (inputs != null) {
+            for (int i = 0; i < inputs.length; i++) {
+                for (int j = 0; j < inputs[0].length; j++) {
+                    if (inputs[i][j].getStyle().contains(badStyle)) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (!valid) {
+                    break;
+                }
+            }
+        } else {
+            valid = false;
+        }
+        saveButton.setDisable(!valid);
+        return valid;
     }
 
     public void updatePanes() {
@@ -478,9 +556,11 @@ public abstract class BaseSheetController extends BaseController {
         webView.getEngine().loadContent(html());
     }
 
+    // Notice: this does not concern columns names
     public void resizeSheet(int rowsNumber, int colsNumber) {
         if (rowsNumber <= 0 || colsNumber <= 0) {
             makeSheet(null);
+            return;
         }
         String[][] values = new String[rowsNumber][colsNumber];
         if (inputs != null && inputs.length > 0) {
@@ -502,10 +582,11 @@ public abstract class BaseSheetController extends BaseController {
             }
             TextField input = inputs[row][col];
             if (dataValid(col, value(row, col))) {
-                input.setStyle(null);
+                input.setStyle(inputStyle);
                 sheetChanged();
             } else {
-                input.setStyle(badStyle);
+                input.setStyle(inputStyle + badStyle);
+                saveButton.setDisable(true);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -537,7 +618,7 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public String html() {
-        if (inputs == null) {
+        if (inputs == null || htmlColumnCheck == null) {
             return null;
         }
         try {
@@ -679,10 +760,6 @@ public abstract class BaseSheetController extends BaseController {
         if (value == null) {
             return null;
         }
-//        if (!dataValid(value)) {
-//            popError(message("InvalidData"));
-//            return null;
-//        }
         return value;
     }
 
@@ -708,20 +785,19 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            if (label.getWidth() > widthChange * 1.5) {
-                menu = new MenuItem(message("ReduceColWidth"));
-                menu.setOnAction((ActionEvent event) -> {
-                    double width = label.getWidth() - widthChange;
-                    label.setPrefWidth(width);
-                    if (rowsCheck == null) {
-                        return;
-                    }
-                    for (int j = 0; j < rowsCheck.length; ++j) {
-                        rowsCheck[j].setPrefWidth(width);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
+            menu = new MenuItem(message("ReduceColWidth"));
+            menu.setOnAction((ActionEvent event) -> {
+                double width = label.getWidth() - widthChange;
+                label.setPrefWidth(width);
+                if (rowsCheck == null) {
+                    return;
+                }
+                for (int j = 0; j < rowsCheck.length; ++j) {
+                    rowsCheck[j].setPrefWidth(width);
+                }
+            });
+            menu.setDisable(label.getWidth() <= widthChange * 1.5);
+            popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SetColWidth"));
             menu.setOnAction((ActionEvent event) -> {
@@ -745,12 +821,14 @@ public abstract class BaseSheetController extends BaseController {
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("SelectAllCols"));
             menu.setOnAction((ActionEvent event) -> {
                 for (int i = 0; i < colsCheck.length; ++i) {
                     colsCheck[i].setSelected(true);
                 }
             });
+            menu.setDisable(colsCheck == null || colsCheck.length == 0);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SelectNoCol"));
@@ -759,6 +837,7 @@ public abstract class BaseSheetController extends BaseController {
                     colsCheck[i].setSelected(false);
                 }
             });
+            menu.setDisable(colsCheck == null || colsCheck.length == 0);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SelectAllRows"));
@@ -767,6 +846,7 @@ public abstract class BaseSheetController extends BaseController {
                     rowsCheck[j].setSelected(true);
                 }
             });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("SelectNoRow"));
@@ -774,6 +854,33 @@ public abstract class BaseSheetController extends BaseController {
                 for (int j = 0; j < rowsCheck.length; ++j) {
                     rowsCheck[j].setSelected(false);
                 }
+            });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("AddRowsNumber"));
+            menu.setOnAction((ActionEvent event) -> {
+                addRowsNumber();
+            });
+            menu.setDisable(colsCheck == null || colsCheck.length < 1);
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("AddColsNumber"));
+            menu.setOnAction((ActionEvent event) -> {
+                addColsNumber();
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("DeleteAllCols"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (!FxmlControl.askSure(message("DeleteAllCols"), message("SureDeleteAll"))) {
+                    return;
+                }
+                deleteAllCols();
             });
             popMenu.getItems().add(menu);
 
@@ -789,7 +896,7 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow(label, popMenu);
+            FxmlControl.locateCenter(label, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -797,7 +904,7 @@ public abstract class BaseSheetController extends BaseController {
 
     // col: 0-based
     public void popColMenu(CheckBox label, int col) {
-        if (inputs == null) {
+        if (label == null || colsCheck == null || colsCheck.length <= col) {
             return;
         }
         try {
@@ -825,13 +932,16 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow(label, popMenu);
+            FxmlControl.locateCenter(label, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     public List<MenuItem> makeColMenu(int col) {
+        if (colsCheck == null || colsCheck.length <= col) {
+            return null;
+        }
         List<MenuItem> items = new ArrayList<>();
         try {
             MenuItem menu = new MenuItem(message("Column") + (col + 1) + ": " + colsCheck[col].getText());
@@ -857,25 +967,28 @@ public abstract class BaseSheetController extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 double width = colsCheck[col].getWidth() + widthChange;
                 colsCheck[col].setPrefWidth(width);
-                for (int j = 0; j < inputs.length; ++j) {
-                    inputs[j][col].setPrefWidth(width);
+                if (inputs != null) {
+                    for (int j = 0; j < inputs.length; ++j) {
+                        inputs[j][col].setPrefWidth(width);
+                    }
                 }
                 makeDataDefintion();
             });
             items.add(menu);
 
-            if (colsCheck[col].getWidth() > widthChange * 1.5) {
-                menu = new MenuItem(message("ReduceColWidth"));
-                menu.setOnAction((ActionEvent event) -> {
-                    double width = colsCheck[col].getWidth() - widthChange;
-                    colsCheck[col].setPrefWidth(width);
+            menu = new MenuItem(message("ReduceColWidth"));
+            menu.setOnAction((ActionEvent event) -> {
+                double width = colsCheck[col].getWidth() - widthChange;
+                colsCheck[col].setPrefWidth(width);
+                if (inputs != null) {
                     for (int j = 0; j < inputs.length; ++j) {
                         inputs[j][col].setPrefWidth(width);
                     }
-                    makeDataDefintion();
-                });
-                items.add(menu);
-            }
+                }
+                makeDataDefintion();
+            });
+            menu.setDisable(colsCheck[col].getWidth() <= widthChange * 1.5);
+            items.add(menu);
 
             menu = new MenuItem(message("SetColWidth"));
             menu.setOnAction((ActionEvent event) -> {
@@ -886,8 +999,10 @@ public abstract class BaseSheetController extends BaseController {
                 try {
                     double width = Double.parseDouble(value);
                     colsCheck[col].setPrefWidth(width);
-                    for (int j = 0; j < inputs.length; ++j) {
-                        inputs[j][col].setPrefWidth(width);
+                    if (inputs != null) {
+                        for (int j = 0; j < inputs.length; ++j) {
+                            inputs[j][col].setPrefWidth(width);
+                        }
                     }
                     makeDataDefintion();
                 } catch (Exception e) {
@@ -922,12 +1037,14 @@ public abstract class BaseSheetController extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 orderCol(col, true);
             });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             items.add(menu);
 
             menu = new MenuItem(message("Descending"));
             menu.setOnAction((ActionEvent event) -> {
                 orderCol(col, false);
             });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             items.add(menu);
 
             List<MenuItem> moreItems = colMoreMenu(col);
@@ -949,6 +1066,7 @@ public abstract class BaseSheetController extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 SetPageColValues(col);
             });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
@@ -957,38 +1075,35 @@ public abstract class BaseSheetController extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 copyPageColValues(col);
             });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             items.add(menu);
 
-            if (copiedCol != null && !copiedCol.isEmpty()) {
-                menu = new MenuItem(message("Paste"));
-                menu.setOnAction((ActionEvent event) -> {
-                    pastePageColValues(col);
-                });
-                items.add(menu);
-            }
+            menu = new MenuItem(message("Paste"));
+            menu.setOnAction((ActionEvent event) -> {
+                pastePageColValues(col);
+            });
+            menu.setDisable(copiedCol == null || copiedCol.isEmpty());
+            items.add(menu);
 
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("InsertColLeft"));
             menu.setOnAction((ActionEvent event) -> {
-                insertPageCol(col, true);
+                insertPageCol(col, true, 1);
             });
             items.add(menu);
 
             menu = new MenuItem(message("InsertColRight"));
             menu.setOnAction((ActionEvent event) -> {
-                insertPageCol(col, false);
+                insertPageCol(col, false, 1);
             });
             items.add(menu);
 
-            if (inputs[0].length > 1) {
-                menu = new MenuItem(message("DeleteCol"));
-                menu.setOnAction((ActionEvent event) -> {
-                    deletePageCol(col);
-                });
-                items.add(menu);
-
-            }
+            menu = new MenuItem(message("DeleteCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                deletePageCol(col);
+            });
+            items.add(menu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -996,52 +1111,77 @@ public abstract class BaseSheetController extends BaseController {
         return items;
     }
 
-    protected void insertPageCol(int col, boolean left) {
-        int offset = left ? 0 : 1;
-        if (dataType != DataType.Matrix) {
-            String name = message("Field") + (col + offset + 1);
-            name = FxmlControl.askValue(baseTitle, message("InsertColLeft"), message("Name"), name);
-            if (name == null) {
-                return;
-            }
-            ColumnDefinition column = new ColumnDefinition(name, ColumnType.String);
-            columns.add(col, column);
+    protected void insertPageCol(int col, boolean left, int number) {
+        if (number < 1) {
+            return;
         }
+        if (columns == null) {
+            columns = new ArrayList<>();
+        }
+        int base = col + (left ? 0 : 1);
+        makeColumns(base, number);
         String[][] current = data();
-        int rowsNumber = current.length;
-        int colsNumber = current[0].length;
-        String[][] values = new String[rowsNumber][++colsNumber];
-        for (int j = 0; j < rowsNumber; ++j) {
-            for (int i = 0; i < col + offset; ++i) {
-                values[j][i] = current[j][i];
+        if (current == null) {
+            makeSheet(null);
+        } else {
+            int rowsNumber = current.length;
+            int colsNumber = current[0].length + number;
+            String[][] values = new String[rowsNumber][colsNumber];
+            for (int j = 0; j < rowsNumber; ++j) {
+                for (int i = 0; i < base; ++i) {
+                    values[j][i] = current[j][i];
+                }
+                for (int i = base + number; i < colsNumber; ++i) {
+                    values[j][i] = current[j][i - 1];
+                }
+                for (int i = base; i < base + number; ++i) {
+                    values[j][i] = defaultColValue;
+                }
             }
-            values[j][col + offset] = defaultValue;
-            for (int i = col + 1 + offset; i < colsNumber; ++i) {
-                values[j][i] = current[j][i - 1];
-            }
+            makeSheet(values);
         }
-        makeSheet(values);
     }
 
     protected void deletePageCol(int col) {
+        if (columns.size() <= 1) {
+            if (!FxmlControl.askSure(message("DeleteSelectedCols"), message("SureDeleteAll"))) {
+                return;
+            }
+            deleteAllCols();
+            return;
+        }
         columns.remove(col);
         String[][] current = data();
-        int rowsNumber = current.length;
-        int colsNumber = current[0].length;
-        String[][] values = new String[rowsNumber][colsNumber - 1];
-        for (int j = 0; j < rowsNumber; ++j) {
-            int index = 0;
-            for (int i = 0; i < colsNumber; ++i) {
-                if (i == col) {
-                    continue;
+        if (current == null) {
+            makeSheet(null);
+        } else {
+            int rowsNumber = current.length;
+            int colsNumber = current[0].length;
+            String[][] values = new String[rowsNumber][colsNumber - 1];
+            for (int j = 0; j < rowsNumber; ++j) {
+                int index = 0;
+                for (int i = 0; i < colsNumber; ++i) {
+                    if (i == col) {
+                        continue;
+                    }
+                    values[j][index++] = current[j][i];
                 }
-                values[j][index++] = current[j][i];
             }
+            makeSheet(values);
         }
-        makeSheet(values);
+    }
+
+    protected void deleteAllCols() {
+        if (columns != null) {
+            columns.clear();
+        }
+        makeSheet(null);
     }
 
     protected void orderCol(int col, boolean asc) {
+        if (inputs == null || columns == null || col < 0 || col >= columns.size()) {
+            return;
+        }
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
         List<Integer> rows = new ArrayList<>();
@@ -1067,6 +1207,9 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void SetPageColValues(int col) {
+        if (colsCheck == null || inputs == null) {
+            return;
+        }
         String value = askValue(colsCheck[col].getText(), message("SetPageColValues"), "");
         if (value == null) {
             return;
@@ -1080,6 +1223,9 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void copyPageColValues(int col) {
+        if (inputs == null) {
+            return;
+        }
         String s = "";
         int rowsNumber = inputs.length;
         copiedCol = new ArrayList<>();
@@ -1094,7 +1240,7 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void pastePageColValues(int col) {
-        if (copiedCol == null || copiedCol.isEmpty()) {
+        if (inputs == null || copiedCol == null || copiedCol.isEmpty()) {
             return;
         }
         isSettingValues = true;
@@ -1111,7 +1257,7 @@ public abstract class BaseSheetController extends BaseController {
 
     // row: 0-based
     public void popRowMenu(CheckBox label, int row) {
-        if (inputs == null) {
+        if (label == null || rowsCheck == null || rowsCheck.length <= row) {
             return;
         }
         try {
@@ -1139,13 +1285,16 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow(label, popMenu);
+            FxmlControl.locateCenter(label, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     public List<MenuItem> makeRowMenu(int row) {
+        if (rowsCheck == null || rowsCheck.length <= row) {
+            return null;
+        }
         List<MenuItem> items = new ArrayList<>();
         try {
             MenuItem menu = new MenuItem(rowsCheck[row].getText());
@@ -1171,9 +1320,8 @@ public abstract class BaseSheetController extends BaseController {
             menu.setOnAction((ActionEvent event) -> {
                 String s = "";
                 String p = TextTools.delimiterText(delimiter);
-                int colsNumber = inputs[0].length;
                 copiedRow = new ArrayList<>();
-                for (int i = 0; i < colsNumber; ++i) {
+                for (int i = 0; i < colsCheck.length; ++i) {
                     String v = value(row, i);
                     s += v + p;
                     copiedRow.add(v);
@@ -1184,18 +1332,17 @@ public abstract class BaseSheetController extends BaseController {
             });
             items.add(menu);
 
-            if (copiedRow != null && !copiedRow.isEmpty()) {
-                menu = new MenuItem(message("Paste"));
-                menu.setOnAction((ActionEvent event) -> {
-                    isSettingValues = true;
-                    for (int i = 0; i < Math.min(inputs[0].length, copiedRow.size()); ++i) {
-                        inputs[row][i].setText(copiedRow.get(i));
-                    }
-                    isSettingValues = false;
-                    sheetChanged();
-                });
-                items.add(menu);
-            }
+            menu = new MenuItem(message("Paste"));
+            menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
+                for (int i = 0; i < Math.min(colsCheck.length, copiedRow.size()); ++i) {
+                    inputs[row][i].setText(copiedRow.get(i));
+                }
+                isSettingValues = false;
+                sheetChanged();
+            });
+            menu.setDisable(copiedRow == null || copiedRow.isEmpty());
+            items.add(menu);
 
             items.add(new SeparatorMenuItem());
 
@@ -1211,7 +1358,7 @@ public abstract class BaseSheetController extends BaseController {
                     }
                 }
                 for (int i = 0; i < colsNumber; ++i) {
-                    values[row][i] = defaultValue;
+                    values[row][i] = defaultColValue;
                 }
                 for (int j = row + 1; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
@@ -1234,7 +1381,7 @@ public abstract class BaseSheetController extends BaseController {
                     }
                 }
                 for (int i = 0; i < colsNumber; ++i) {
-                    values[row + 1][i] = defaultValue;
+                    values[row + 1][i] = defaultColValue;
                 }
                 for (int j = row + 2; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
@@ -1245,27 +1392,32 @@ public abstract class BaseSheetController extends BaseController {
             });
             items.add(menu);
 
-            if (inputs.length > 1) {
-                menu = new MenuItem(message("DeleteRow"));
-                menu.setOnAction((ActionEvent event) -> {
-                    String[][] current = data();
-                    int rowsNumber = current.length;
-                    int colsNumber = current[0].length;
-                    String[][] values = new String[rowsNumber - 1][colsNumber];
-                    int index = 0;
-                    for (int j = 0; j < rowsNumber; ++j) {
-                        if (j == row) {
-                            continue;
-                        }
-                        for (int i = 0; i < colsNumber; ++i) {
-                            values[index][i] = current[j][i];
-                        }
-                        index++;
+            menu = new MenuItem(message("DeleteRow"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (inputs.length <= 1) {
+                    if (!FxmlControl.askSure(message("DeleteRow"), message("SureDeleteAll"))) {
+                        return;
                     }
-                    makeSheet(values);
-                });
-                items.add(menu);
-            }
+                    deletePageAllRows();
+                    return;
+                }
+                String[][] current = data();
+                int rowsNumber = current.length;
+                int colsNumber = current[0].length;
+                String[][] values = new String[rowsNumber - 1][colsNumber];
+                int index = 0;
+                for (int j = 0; j < rowsNumber; ++j) {
+                    if (j == row) {
+                        continue;
+                    }
+                    for (int i = 0; i < colsNumber; ++i) {
+                        values[index][i] = current[j][i];
+                    }
+                    index++;
+                }
+                makeSheet(values);
+            });
+            items.add(menu);
 
             items.add(new SeparatorMenuItem());
 
@@ -1276,7 +1428,7 @@ public abstract class BaseSheetController extends BaseController {
                     return;
                 }
                 isSettingValues = true;
-                for (int i = 0; i < inputs[0].length; ++i) {
+                for (int i = 0; i < colsCheck.length; ++i) {
                     inputs[row][i].setText(value);
                 }
                 isSettingValues = false;
@@ -1302,9 +1454,6 @@ public abstract class BaseSheetController extends BaseController {
 
     @FXML
     public void sheetCopyMenu(MouseEvent mouseEvent) {
-        if (inputs == null) {
-            return;
-        }
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -1329,7 +1478,7 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1338,27 +1487,35 @@ public abstract class BaseSheetController extends BaseController {
     public List<MenuItem> makeSheetCopyMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(message("CopyAll"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyTextAction();
-            });
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
+            MenuItem menu;
 
             rowsSelected = false;
-            for (int j = 0; j < rowsCheck.length; ++j) {
-                if (rowsCheck[j].isSelected()) {
-                    rowsSelected = true;
-                    break;
+            if (rowsCheck != null) {
+                for (int j = 0; j < rowsCheck.length; ++j) {
+                    if (rowsCheck[j].isSelected()) {
+                        rowsSelected = true;
+                        break;
+                    }
                 }
             }
             colsSelected = false;
-            for (int j = 0; j < colsCheck.length; ++j) {
-                if (colsCheck[j].isSelected()) {
-                    colsSelected = true;
-                    break;
+            if (colsCheck != null) {
+                for (int j = 0; j < colsCheck.length; ++j) {
+                    if (colsCheck[j].isSelected()) {
+                        colsSelected = true;
+                        break;
+                    }
                 }
             }
+
+            menu = new MenuItem(message("CopyAll"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyTextAction();
+            });
+            menu.setDisable(inputs == null);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("CopySelectedRows"));
             menu.setOnAction((ActionEvent event) -> {
@@ -1400,7 +1557,10 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void copySelectedRows() {
-        String s = "";
+        if (inputs == null || rowsCheck == null) {
+            return;
+        }
+        String s = null;
         String p = TextTools.delimiterText(delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
@@ -1417,9 +1577,14 @@ public abstract class BaseSheetController extends BaseController {
                     row += p + value(j, i);
                 }
             }
-            s += row + "\n";
+            if (s == null) {
+                s = row;
+            } else {
+                s += "\n" + row;
+            }
+            lines++;
         }
-        if (s.isBlank()) {
+        if (s == null) {
             popError(message("NoData"));
         } else if (FxmlControl.copyToSystemClipboard(s)) {
             popInformation(message("CopiedToSystemClipboard") + "\n"
@@ -1429,6 +1594,9 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void copySelectedCols() {
+        if (inputs == null || colsCheck == null) {
+            return;
+        }
         int lines = 0, cols = 0;
         for (CheckBox c : colsCheck) {
             if (c.isSelected()) {
@@ -1439,7 +1607,7 @@ public abstract class BaseSheetController extends BaseController {
             popError(message("NoData"));
             return;
         }
-        String s = "";
+        String s = null;
         String p = TextTools.delimiterText(delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
@@ -1458,10 +1626,14 @@ public abstract class BaseSheetController extends BaseController {
             if (row == null) {
                 break;
             }
-            s += row + "\n";
+            if (s == null) {
+                s = row;
+            } else {
+                s += "\n" + row;
+            }
             lines++;
         }
-        if (s.isBlank()) {
+        if (s == null) {
             popError(message("NoData"));
         } else if (FxmlControl.copyToSystemClipboard(s)) {
             popInformation(message("CopiedToSystemClipboard") + "\n"
@@ -1471,6 +1643,9 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void copySelectedRowsCols() {
+        if (inputs == null || colsCheck == null) {
+            return;
+        }
         int lines = 0, cols = 0;
         for (CheckBox c : colsCheck) {
             if (c.isSelected()) {
@@ -1481,7 +1656,7 @@ public abstract class BaseSheetController extends BaseController {
             popError(message("NoData"));
             return;
         }
-        String s = "";
+        String s = null;
         String p = TextTools.delimiterText(delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
@@ -1503,10 +1678,14 @@ public abstract class BaseSheetController extends BaseController {
             if (row == null) {
                 break;
             }
-            s += row + "\n";
+            if (s == null) {
+                s = row;
+            } else {
+                s += "\n" + row;
+            }
             lines++;
         }
-        if (s.isBlank()) {
+        if (s == null) {
             popError(message("NoData"));
         } else if (FxmlControl.copyToSystemClipboard(s)) {
             popInformation(message("CopiedToSystemClipboard") + "\n"
@@ -1517,9 +1696,6 @@ public abstract class BaseSheetController extends BaseController {
 
     @FXML
     public void sheetDeleteMenu(MouseEvent mouseEvent) {
-        if (inputs == null) {
-            return;
-        }
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -1544,7 +1720,7 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1556,55 +1732,65 @@ public abstract class BaseSheetController extends BaseController {
             MenuItem menu;
 
             rowsSelected = false;
-            for (int j = 0; j < rowsCheck.length; ++j) {
-                if (rowsCheck[j].isSelected()) {
-                    rowsSelected = true;
-                    break;
+            if (rowsCheck != null) {
+                for (int j = 0; j < rowsCheck.length; ++j) {
+                    if (rowsCheck[j].isSelected()) {
+                        rowsSelected = true;
+                        break;
+                    }
                 }
             }
             colsSelected = false;
-            for (int j = 0; j < colsCheck.length; ++j) {
-                if (colsCheck[j].isSelected()) {
-                    colsSelected = true;
-                    break;
+            if (colsCheck != null) {
+                for (int j = 0; j < colsCheck.length; ++j) {
+                    if (colsCheck[j].isSelected()) {
+                        colsSelected = true;
+                        break;
+                    }
                 }
             }
 
             menu = new MenuItem(message("DeleteSelectedRows"));
             menu.setOnAction((ActionEvent event) -> {
-                int number = 0;
+                int newNumber = 0;
                 int rowsNumber = inputs.length;
                 for (int j = 0; j < rowsNumber; ++j) {
                     if (rowsCheck[j].isSelected()) {
                         continue;
                     }
-                    number++;
+                    newNumber++;
                 }
-                if (rowsNumber == number || number == 0) {
-                    popError(message("NoData"));
+                if (rowsNumber == newNumber) {
                     return;
                 }
                 String[][] current = data();
                 int colsNumber = current[0].length;
-                String[][] values = new String[number][colsNumber];
-                number = 0;
-                for (int j = 0; j < rowsNumber; ++j) {
-                    if (rowsCheck[j].isSelected()) {
-                        continue;
+                if (newNumber == 0) {
+                    if (!FxmlControl.askSure(message("DeleteSelectedRows"), message("SureDeleteAll"))) {
+                        return;
                     }
-                    for (int i = 0; i < colsNumber; ++i) {
-                        values[number][i] = current[j][i];
+                    deletePageAllRows();
+                } else {
+                    String[][] values = new String[newNumber][colsNumber];
+                    newNumber = 0;
+                    for (int j = 0; j < rowsNumber; ++j) {
+                        if (rowsCheck[j].isSelected()) {
+                            continue;
+                        }
+                        for (int i = 0; i < colsNumber; ++i) {
+                            values[newNumber][i] = current[j][i];
+                        }
+                        newNumber++;
                     }
-                    number++;
+                    makeSheet(values);
                 }
-                makeSheet(values);
             });
             menu.setDisable(!rowsSelected);
             items.add(menu);
 
             menu = new MenuItem(message("DeleteSelectedCols"));
             menu.setOnAction((ActionEvent event) -> {
-                int colsNumber = inputs[0].length;
+                int colsNumber = colsCheck.length;
                 List<ColumnDefinition> newColumns = new ArrayList<>();
                 for (int i = 0; i < colsNumber; ++i) {
                     if (!colsCheck[i].isSelected()) {
@@ -1612,12 +1798,18 @@ public abstract class BaseSheetController extends BaseController {
                     }
                 }
                 int newNumber = newColumns.size();
-                if (colsNumber == newColumns.size() || newNumber == 0) {
-                    popError(message("NoData"));
+                if (colsNumber == newColumns.size()) {
                     return;
                 }
-                columns = newColumns;
-                deleteSelectedCols();
+                if (newNumber == 0) {
+                    if (!FxmlControl.askSure(message("DeleteSelectedCols"), message("SureDeleteAll"))) {
+                        return;
+                    }
+                    deleteAllCols();
+                } else {
+                    columns = newColumns;
+                    deleteSelectedCols();
+                }
             });
             menu.setDisable(!colsSelected);
             items.add(menu);
@@ -1628,26 +1820,36 @@ public abstract class BaseSheetController extends BaseController {
         return items;
     }
 
-    public void deleteSelectedCols() {
+    protected void deletePageAllRows() {
+        makeSheet(null);
+    }
+
+    // columns have been changed before call this
+    protected void deleteSelectedCols() {
+        if (columns == null || columns.isEmpty()) {
+            deleteAllCols();
+            return;
+        }
         String[][] current = data();
-        int rowsNumber = current.length;
-        String[][] values = new String[rowsNumber][columns.size()];
-        for (int j = 0; j < rowsNumber; ++j) {
-            int index = 0;
-            for (int i = 0; i < colsCheck.length; ++i) {
-                if (!colsCheck[i].isSelected()) {
-                    values[j][index++] = current[j][i];
+        if (current == null) {
+            makeSheet(null);
+        } else {
+            int rowsNumber = current.length;
+            String[][] values = new String[rowsNumber][columns.size()];
+            for (int j = 0; j < rowsNumber; ++j) {
+                int index = 0;
+                for (int i = 0; i < colsCheck.length; ++i) {
+                    if (!colsCheck[i].isSelected()) {
+                        values[j][index++] = current[j][i];
+                    }
                 }
             }
+            makeSheet(values);
         }
-        makeSheet(values);
     }
 
     @FXML
     public void sheetEqualMenu(MouseEvent mouseEvent) {
-        if (inputs == null) {
-            return;
-        }
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -1672,7 +1874,7 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1681,26 +1883,33 @@ public abstract class BaseSheetController extends BaseController {
     public List<MenuItem> makeSheetEqualMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(message("SetAllValues"));
-            menu.setOnAction((ActionEvent event) -> {
-                setAllValues();
-            });
-            items.add(menu);
+            MenuItem menu;
 
             rowsSelected = false;
-            for (int j = 0; j < rowsCheck.length; ++j) {
-                if (rowsCheck[j].isSelected()) {
-                    rowsSelected = true;
-                    break;
+            if (rowsCheck != null) {
+                for (int j = 0; j < rowsCheck.length; ++j) {
+                    if (rowsCheck[j].isSelected()) {
+                        rowsSelected = true;
+                        break;
+                    }
                 }
             }
             colsSelected = false;
-            for (int j = 0; j < colsCheck.length; ++j) {
-                if (colsCheck[j].isSelected()) {
-                    colsSelected = true;
-                    break;
+            if (colsCheck != null) {
+                for (int j = 0; j < colsCheck.length; ++j) {
+                    if (colsCheck[j].isSelected()) {
+                        colsSelected = true;
+                        break;
+                    }
                 }
             }
+
+            menu = new MenuItem(message("SetAllValues"));
+            menu.setOnAction((ActionEvent event) -> {
+                setAllValues();
+            });
+            menu.setDisable(inputs == null);
+            items.add(menu);
 
             menu = new MenuItem(message("SetSelectedRowsValues"));
             menu.setOnAction((ActionEvent event) -> {
@@ -1747,23 +1956,32 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void setAllValues() {
+        if (inputs == null) {
+            return;
+        }
         String value = askValue(message("All"), message("SetValue"), "");
         if (value == null) {
             return;
         }
+        isSettingValues = true;
         for (int j = 0; j < inputs.length; ++j) {
             for (int i = 0; i < inputs[0].length; ++i) {
                 inputs[j][i].setText(value);
             }
         }
+        isSettingValues = false;
         sheetChanged();
     }
 
     public void setSelectedRows() {
+        if (inputs == null || rowsCheck == null) {
+            return;
+        }
         String value = askValue(message("SelectedRows"), message("SetValue"), "");
         if (value == null) {
             return;
         }
+        isSettingValues = true;
         for (int j = 0; j < inputs.length; ++j) {
             if (rowsCheck[j].isSelected()) {
                 for (int i = 0; i < inputs[0].length; ++i) {
@@ -1771,15 +1989,20 @@ public abstract class BaseSheetController extends BaseController {
                 }
             }
         }
+        isSettingValues = false;
         sheetChanged();
 
     }
 
     public void setSelectedCols() {
+        if (inputs == null || colsCheck == null) {
+            return;
+        }
         String value = askValue(message("SelectedCols"), message("SetValue"), "");
         if (value == null) {
             return;
         }
+        isSettingValues = true;
         for (int i = 0; i < inputs[0].length; ++i) {
             if (colsCheck[i].isSelected()) {
                 for (int j = 0; j < inputs.length; ++j) {
@@ -1787,14 +2010,19 @@ public abstract class BaseSheetController extends BaseController {
                 }
             }
         }
+        isSettingValues = false;
         sheetChanged();
     }
 
     public void setSelectedRowsCols() {
+        if (inputs == null || rowsCheck == null || colsCheck == null) {
+            return;
+        }
         String value = askValue(message("SetSelectedRowsColsValues"), message("SetValue"), "");
         if (value == null) {
             return;
         }
+        isSettingValues = true;
         for (int j = 0; j < inputs.length; ++j) {
             if (rowsCheck[j].isSelected()) {
                 for (int i = 0; i < inputs[0].length; ++i) {
@@ -1804,6 +2032,8 @@ public abstract class BaseSheetController extends BaseController {
                 }
             }
         }
+        isSettingValues = false;
+        sheetChanged();
     }
 
     public List<MenuItem> equalMoreMenu() {
@@ -1812,9 +2042,6 @@ public abstract class BaseSheetController extends BaseController {
 
     @FXML
     public void sheetSizeMenu(MouseEvent mouseEvent) {
-        if (inputs == null) {
-            return;
-        }
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -1839,7 +2066,7 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1850,31 +2077,37 @@ public abstract class BaseSheetController extends BaseController {
         try {
             MenuItem menu = new MenuItem(message("EnlargerAllColsWidth"));
             menu.setOnAction((ActionEvent event) -> {
-                for (int i = 0; i < inputs[0].length; ++i) {
+                for (int i = 0; i < colsCheck.length; ++i) {
                     double width = colsCheck[i].getWidth() + widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    for (int j = 0; j < inputs.length; ++j) {
-                        inputs[j][i].setPrefWidth(width);
+                    if (inputs != null) {
+                        for (int j = 0; j < inputs.length; ++j) {
+                            inputs[j][i].setPrefWidth(width);
+                        }
                     }
                     makeDataDefintion();
                 }
             });
+            menu.setDisable(colsCheck == null || colsCheck.length == 0);
             items.add(menu);
 
             menu = new MenuItem(message("ReduceAllColsWidth"));
             menu.setOnAction((ActionEvent event) -> {
-                for (int i = 0; i < inputs[0].length; ++i) {
+                for (int i = 0; i < colsCheck.length; ++i) {
                     if (colsCheck[i].getWidth() < widthChange * 1.5) {
                         continue;
                     }
                     double width = colsCheck[i].getWidth() - widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    for (int j = 0; j < inputs.length; ++j) {
-                        inputs[j][i].setPrefWidth(width);
+                    if (inputs != null) {
+                        for (int j = 0; j < inputs.length; ++j) {
+                            inputs[j][i].setPrefWidth(width);
+                        }
                     }
                     makeDataDefintion();
                 }
             });
+            menu.setDisable(colsCheck == null || colsCheck.length == 0);
             items.add(menu);
 
             menu = new MenuItem(message("SetAllColsWidth"));
@@ -1885,10 +2118,12 @@ public abstract class BaseSheetController extends BaseController {
                 }
                 try {
                     double width = Double.parseDouble(value);
-                    for (int i = 0; i < inputs[0].length; ++i) {
+                    for (int i = 0; i < colsCheck.length; ++i) {
                         colsCheck[i].setPrefWidth(width);
-                        for (int j = 0; j < inputs.length; ++j) {
-                            inputs[j][i].setPrefWidth(width);
+                        if (inputs != null) {
+                            for (int j = 0; j < inputs.length; ++j) {
+                                inputs[j][i].setPrefWidth(width);
+                            }
                         }
                     }
                     makeDataDefintion();
@@ -1896,13 +2131,16 @@ public abstract class BaseSheetController extends BaseController {
                     popError(message("InvalidData"));
                 }
             });
+            menu.setDisable(colsCheck == null || colsCheck.length == 0);
             items.add(menu);
 
             colsSelected = false;
-            for (int j = 0; j < colsCheck.length; ++j) {
-                if (colsCheck[j].isSelected()) {
-                    colsSelected = true;
-                    break;
+            if (colsCheck != null) {
+                for (int j = 0; j < colsCheck.length; ++j) {
+                    if (colsCheck[j].isSelected()) {
+                        colsSelected = true;
+                        break;
+                    }
                 }
             }
 
@@ -1910,14 +2148,16 @@ public abstract class BaseSheetController extends BaseController {
 
             menu = new MenuItem(message("EnlargerSelectedColsWidth"));
             menu.setOnAction((ActionEvent event) -> {
-                for (int i = 0; i < inputs[0].length; ++i) {
+                for (int i = 0; i < colsCheck.length; ++i) {
                     if (!colsCheck[i].isSelected()) {
                         continue;
                     }
                     double width = colsCheck[i].getWidth() + widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    for (int j = 0; j < inputs.length; ++j) {
-                        inputs[j][i].setPrefWidth(width);
+                    if (inputs != null) {
+                        for (int j = 0; j < inputs.length; ++j) {
+                            inputs[j][i].setPrefWidth(width);
+                        }
                     }
                 }
                 makeDataDefintion();
@@ -1927,7 +2167,7 @@ public abstract class BaseSheetController extends BaseController {
 
             menu = new MenuItem(message("ReduceSelectedColsWidth"));
             menu.setOnAction((ActionEvent event) -> {
-                for (int i = 0; i < inputs[0].length; ++i) {
+                for (int i = 0; i < colsCheck.length; ++i) {
                     if (!colsCheck[i].isSelected()) {
                         continue;
                     }
@@ -1936,8 +2176,10 @@ public abstract class BaseSheetController extends BaseController {
                     }
                     double width = colsCheck[i].getWidth() - widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    for (int j = 0; j < inputs.length; ++j) {
-                        inputs[j][i].setPrefWidth(width);
+                    if (inputs != null) {
+                        for (int j = 0; j < inputs.length; ++j) {
+                            inputs[j][i].setPrefWidth(width);
+                        }
                     }
                     makeDataDefintion();
                 }
@@ -1953,13 +2195,15 @@ public abstract class BaseSheetController extends BaseController {
                 }
                 try {
                     double width = Double.parseDouble(value);
-                    for (int i = 0; i < inputs[0].length; ++i) {
+                    for (int i = 0; i < colsCheck.length; ++i) {
                         if (!colsCheck[i].isSelected()) {
                             continue;
                         }
                         colsCheck[i].setPrefWidth(width);
-                        for (int j = 0; j < inputs.length; ++j) {
-                            inputs[j][i].setPrefWidth(width);
+                        if (inputs != null) {
+                            for (int j = 0; j < inputs.length; ++j) {
+                                inputs[j][i].setPrefWidth(width);
+                            }
                         }
                     }
                     makeDataDefintion();
@@ -1974,16 +2218,14 @@ public abstract class BaseSheetController extends BaseController {
 
             menu = new MenuItem(message("AddRowsNumber"));
             menu.setOnAction((ActionEvent event) -> {
-                String value = askValue("", message("AddRowsNumber"), "1");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    int number = Integer.parseInt(value);
-                    resizeSheet(inputs.length + number, inputs[0].length);
-                } catch (Exception e) {
-                    popError(message("InvalidData"));
-                }
+                addRowsNumber();
+            });
+            menu.setDisable(colsCheck == null || colsCheck.length < 1);
+            items.add(menu);
+
+            menu = new MenuItem(message("AddColsNumber"));
+            menu.setOnAction((ActionEvent event) -> {
+                addColsNumber();
             });
             items.add(menu);
 
@@ -1998,69 +2240,45 @@ public abstract class BaseSheetController extends BaseController {
         return items;
     }
 
-    public List<MenuItem> sheetSizeMoreMenu() {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(message("AddColsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                String value = askValue("", message("AddColsNumber"), "1");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    int number = Integer.parseInt(value);
-                    if (dataType != DataType.Matrix) {
-                        for (int i = 0; i < number; i++) {
-                            ColumnDefinition column = new ColumnDefinition(message("Field") + (columns.size() + i), ColumnType.String);
-                            columns.add(column);
-                        }
-                    }
-                    resizeSheet(inputs.length, inputs[0].length + number);
-                } catch (Exception e) {
-                    popError(message("InvalidData"));
-                }
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SetRowsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                String value = askValue("", message("SetRowsNumber"), inputs.length + "");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    int number = Integer.parseInt(value);
-                    resizeSheet(number, inputs[0].length);
-                } catch (Exception e) {
-                    popError(message("InvalidData"));
-                }
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SetColumnsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                String value = askValue("", message("SetColumnsNumber"), inputs[0].length + "");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    int number = Integer.parseInt(value);
-                    if (dataType != DataType.Matrix) {
-                        for (int i = columns.size(); i < number; i++) {
-                            ColumnDefinition column = new ColumnDefinition(message("Field") + (i + 1), ColumnType.String);
-                            columns.add(column);
-                        }
-                    }
-                    resizeSheet(inputs.length, number);
-                } catch (Exception e) {
-                    popError(message("InvalidData"));
-                }
-            });
-            items.add(menu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    protected void addRowsNumber() {
+        if (colsCheck == null || colsCheck.length == 0) {
+            return;
         }
-        return items;
+        String value = askValue("", message("AddRowsNumber"), "1");
+        if (value == null) {
+            return;
+        }
+        try {
+            int number = Integer.parseInt(value);
+            if (inputs == null || inputs.length == 0) {
+                resizeSheet(number, colsCheck.length);
+            } else {
+                resizeSheet(inputs.length + number, colsCheck.length);
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+        }
+    }
+
+    protected void addColsNumber() {
+        String value = askValue("", message("AddColsNumber"), "1");
+        if (value == null) {
+            return;
+        }
+        try {
+            int number = Integer.parseInt(value);
+            if (colsCheck == null || colsCheck.length == 0) {
+                insertPageCol(0, true, number);
+            } else {
+                insertPageCol(colsCheck.length - 1, false, number);
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+        }
+    }
+
+    public List<MenuItem> sheetSizeMoreMenu() {
+        return null;
     }
 
     @FXML
@@ -2111,7 +2329,7 @@ public abstract class BaseSheetController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -14,6 +14,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.file.ImageFileReaders;
@@ -218,23 +219,25 @@ public class ImageClipboard {
             TableStringValues.add(ClipBoardKey, filename + ".png");
             TableStringValues.max(ClipBoardKey, max());
 
-            if (putSystemClipboard) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (putSystemClipboard) {
                         ClipboardContent cc = new ClipboardContent();
                         cc.putImage(SwingFXUtils.toFXImage(image, null));
                         Clipboard.getSystemClipboard().setContent(cc);
                     }
-                });
-            }
+
+                    ImageManufactureController.refreshClipboards();
+
+                }
+            });
 
             return filename + ".png";
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
-
     }
 
     public static boolean delete(String name) {

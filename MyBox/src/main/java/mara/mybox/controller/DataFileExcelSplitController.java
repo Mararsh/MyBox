@@ -15,11 +15,11 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.ExcelTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -132,24 +132,8 @@ public class DataFileExcelSplitController extends BaseBatchFileController {
         return "xlsx".equals(suffix) || "xls".equals(suffix);
     }
 
-    public String cellString(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case NUMERIC:
-                return cell.getNumericCellValue() + "";
-            case BOOLEAN:
-                return cell.getBooleanCellValue() + "";
-        }
-        return null;
-    }
-
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        countHandling(srcFile);
         filePrefix = FileTools.getFilePrefix(srcFile.getName());
         String result = null;
         try ( Workbook wb = WorkbookFactory.create(srcFile)) {
@@ -167,7 +151,7 @@ public class DataFileExcelSplitController extends BaseBatchFileController {
                         continue;
                     }
                     for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-                        rowData.add(cellString(row.getCell(c)));
+                        rowData.add(ExcelTools.cellString(row.getCell(c)));
                     }
                     if (headers == null) {
                         headers = new ArrayList<>();

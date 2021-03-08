@@ -23,7 +23,6 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.bomBytes;
@@ -148,7 +147,7 @@ public class TextFilesMergeController extends FilesMergeController {
     }
 
     @Override
-    public boolean makeMoreParameters() {
+    protected boolean openWriter() {
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
             writer = new OutputStreamWriter(outputStream, targetCharset);
@@ -157,21 +156,20 @@ public class TextFilesMergeController extends FilesMergeController {
                 outputStream.write(bytes);
             }
             taregtLineBreakValue = TextTools.lineBreakValue(targetLineBreak);
+            return true;
         } catch (Exception e) {
             return false;
         }
-        return super.makeMoreParameters();
     }
 
     @Override
     public String handleFile(File file) {
         try {
-            countHandling(file);
             TextEditInformation sourceInfo = new TextEditInformation(file);
             if (sourceEncodingAutoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInfo);
                 if (!ok) {
-                    return AppVariables.message("Failed");
+                    return message("Failed") + ": " + file;
                 }
             } else {
                 sourceInfo.setCharset(sourceCharset);
@@ -188,20 +186,22 @@ public class TextFilesMergeController extends FilesMergeController {
             } catch (Exception e) {
                 return e.toString();
             }
-            return AppVariables.message("Successful");
+            return message("Handled") + ": " + file;
         } catch (Exception e) {
-            return AppVariables.message("Failed");
+            return file + " " + e.toString();
         }
     }
 
     @Override
-    protected void closeWriter() {
+    protected boolean closeWriter() {
         try {
             writer.flush();
             writer.close();
             outputStream.close();
+            return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            updateLogs(e.toString(), true, true);
+            return false;
         }
     }
 

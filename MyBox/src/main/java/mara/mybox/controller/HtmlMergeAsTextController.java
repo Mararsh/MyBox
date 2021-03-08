@@ -82,7 +82,6 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             String html = FileTools.readTexts(srcFile);
             String md = mdConverter.convert(html);
             Node document = textParser.parse(md);

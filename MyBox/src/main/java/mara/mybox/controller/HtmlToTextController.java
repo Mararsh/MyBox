@@ -11,10 +11,10 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.tools.FileTools;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -79,7 +79,6 @@ public class HtmlToTextController extends BaseBatchFileController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");

@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.9";
-    public static final String AppVersionDate = "2021-2-11";
+    public static final String AppVersion = "6.4.1";
+    public static final String AppVersionDate = "2021-3-8";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -27,6 +27,8 @@ public class CommonValues {
     public static final String MyBoxLogsFxml = "/fxml/MyBoxLogs.fxml";
     public static final String MyBoxLogViewerFxml = "/fxml/MyBoxLogViewer.fxml";
     public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
+    public static final String NotesFxml = "/fxml/Notes.fxml";
+    public static final String NotesImportFxml = "/fxml/NotesImport.fxml";
     public static final String PdfHtmlViewerFxml = "/fxml/PdfHtmlViewer.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
@@ -219,10 +221,10 @@ public class CommonValues {
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
-    public static final String DataFileCSVSplitFxml = "/fxml/DataFileCSVSplit.fxml";
+    public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
     public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
-    public static final String DataFileExcelSplitFxml = "/fxml/DataFileExcelSplit.fxml";
+    public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
     public static final String SheetPasteFxml = "/fxml/SheetPaste.fxml";
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
@@ -292,7 +294,7 @@ public class CommonValues {
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
     public static final String DataIgnoreChars
-            = "[\\$\\(\\)\\*\\?\\/\\^\\{\\}\\|\\[\\]\\-\"`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
+            = "[\\$\\(\\)\\*\\?\\/\\^\\{\\}\\|\\[\\]\"`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
     public static final String FileNameSpecialChars
             = "[\\*\\?\n\":<>]|&nbsp;|&lt;|&gt;|&amp;|&quot;";
 

@@ -76,7 +76,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label minWidth="-Infinity" text="%Algorithm" />
                                                                 <ComboBox fx:id="algorithmSelector" prefWidth="500.0" HBox.hgrow="ALWAYS" />
-                                                                <Button fx:id="clearAlgorithmButton" mnemonicParsing="false" onAction="#clearAlgorithm" >
+                                                                <Button fx:id="clearAlgorithmButton" mnemonicParsing="false" onAction="#clearAlgorithm">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -91,7 +91,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label minWidth="-Infinity" text="%BinaryThreshold" />
                                                                 <ComboBox fx:id="binarySelector" editable="true" prefWidth="100.0" />
-                                                                <Button fx:id="clearThreadholdButton1" mnemonicParsing="false" onAction="#clearThreadhold" >
+                                                                <Button fx:id="clearThreadholdButton1" mnemonicParsing="false" onAction="#clearThreadhold">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -106,7 +106,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label minWidth="-Infinity" text="%Rotate" />
                                                                 <ComboBox fx:id="rotateSelector" editable="true" prefWidth="100.0" />
-                                                                <Button fx:id="clearRotateButton" mnemonicParsing="false" onAction="#clearRotate" >
+                                                                <Button fx:id="clearRotateButton" mnemonicParsing="false" onAction="#clearRotate">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -154,12 +154,15 @@ License:    Apache License Version 2.0
                                             </graphic>
                                         </Button>
                                     </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </Tab>
                         <Tab fx:id="ocrOptionsTab" text="%OCROptions">
                             <content>
-                                <VBox fx:id="ocrOptionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                <VBox fx:id="ocrOptionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </padding>

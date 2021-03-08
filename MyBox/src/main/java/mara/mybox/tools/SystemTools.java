@@ -64,16 +64,25 @@ public class SystemTools {
         return os().contains("win");
     }
 
+    public static File myboxCacerts() {
+        return new File(AppVariables.MyboxDataPath + File.separator + "security"
+                + File.separator + "cacerts_mybox");
+    }
+
+    public static void resetKeystore() {
+        FileTools.delete(myboxCacerts());
+        keystore();
+    }
+
     public static String keystore() {
         String jvm_cacerts = System.getProperty("java.home") + File.separator + "lib"
                 + File.separator + "security" + File.separator + "cacerts";
         try {
-            File path = new File(AppVariables.MyboxDataPath + File.separator + "security");
-            File file = new File(AppVariables.MyboxDataPath + File.separator + "security"
-                    + File.separator + "cacerts_mybox");
+            File file = myboxCacerts();
             if (!file.exists()) {
-                path.mkdirs();
+                file.getParentFile().mkdirs();
                 FileTools.copyFile(new File(jvm_cacerts), file);
+                NetworkTools.installCertificates();
             }
             if (file.exists()) {
                 return file.getAbsolutePath();

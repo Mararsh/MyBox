@@ -13,7 +13,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-04-15
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsImportController extends DataImportController<EpidemicReport> {
+public class EpidemicReportsImportController extends BaseImportCsvController<EpidemicReport> {
 
     public EpidemicReportsImportController() {
         baseTitle = AppVariables.message("ImportEpidemicReportJHUTimes");

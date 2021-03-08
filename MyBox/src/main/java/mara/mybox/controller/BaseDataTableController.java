@@ -197,7 +197,6 @@ public abstract class BaseDataTableController<P> extends BaseController {
     }
 
     protected void popTableMenu(MouseEvent event) {
-        MyBoxLog.console("here");
         if (isSettingValues) {
             return;
         }
@@ -277,7 +276,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
             }
 
             if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
-                menu = new MenuItem(message("Next"));
+                menu = new MenuItem(message("NextPage"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     pageNextAction();
                 });
@@ -285,7 +284,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
             }
 
             if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
-                menu = new MenuItem(message("Previous"));
+                menu = new MenuItem(message("PreviousPage"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     pagePreviousAction();
                 });
@@ -461,7 +460,6 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 return;
             }
             isSettingValues = true;
-
             if (paginate) {
                 pageSelector.setDisable(false);
                 List<String> pages = new ArrayList<>();
@@ -499,6 +497,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 pageNextButton.setDisable(true);
                 pageLastButton.setDisable(true);
             }
+            pageSelector.getEditor().setStyle(null);
             isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

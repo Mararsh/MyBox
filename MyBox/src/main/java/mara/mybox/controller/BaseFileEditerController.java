@@ -94,7 +94,7 @@ public abstract class BaseFileEditerController extends BaseController {
     protected VBox editBox, pairBox, filtersTypeBox, findOptionsBox;
     @FXML
     protected TitledPane filePane, savePane, saveAsPane, bytesPane, findPane, filterPane,
-            locatePane, encodePane, breakLinePane, paginatePane;
+            locatePane, encodePane, breakLinePane, paginatePane, backupPane;
     @FXML
     protected TextArea mainArea, lineArea, pairArea;
     @FXML
@@ -120,6 +120,8 @@ public abstract class BaseFileEditerController extends BaseController {
     protected HBox pageBox, findBox, filterBox;
     @FXML
     protected ControlFindReplace findReplaceController;
+    @FXML
+    protected ControlFileBackup backupController;
 
     public BaseFileEditerController() {
         baseTitle = AppVariables.message("FileEditer");
@@ -204,6 +206,8 @@ public abstract class BaseFileEditerController extends BaseController {
 
             initFileTab();
             initSaveTab();
+            initBackupsTab();
+            initSaveAsTab();
             initLineBreakTab();
             initLocateTab();
             initDisplayTab();
@@ -280,6 +284,10 @@ public abstract class BaseFileEditerController extends BaseController {
             sourceInformation.setPageSize(AppVariables.getUserConfigInt(baseName + "PageSize", defaultPageSize));
             sourceInformation.setCurrentPage(pageNumber);
             targetInformation = FileEditInformation.newEditInformation(editType);
+
+            if (backupController != null) {
+                backupController.loadBackups(sourceFile);
+            }
 
             mainArea.clear();
             lineArea.clear();
@@ -416,6 +424,24 @@ public abstract class BaseFileEditerController extends BaseController {
                     }
                 });
             }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initBackupsTab() {
+        try {
+            if (backupPane == null) {
+                return;
+            }
+            backupPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "BackupPane", false));
+            backupPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "BackupPane", backupPane.isExpanded());
+                    });
+
+            backupController.setControls(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1342,7 +1368,6 @@ public abstract class BaseFileEditerController extends BaseController {
                     }
                     isSettingValues = false;
                     loadPage();
-
                 }
 
                 @Override
@@ -1738,7 +1763,7 @@ public abstract class BaseFileEditerController extends BaseController {
                 @Override
                 protected boolean handle() {
                     ok = targetInformation.writeObject(mainArea.getText());
-                    return true;
+                    return ok;
                 }
 
                 @Override
@@ -1792,7 +1817,10 @@ public abstract class BaseFileEditerController extends BaseController {
                 @Override
                 protected boolean handle() {
                     ok = targetInformation.writePage(sourceInformation, mainArea.getText());
-                    return true;
+                    if (ok && backupController != null && backupController.backupCheck.isSelected()) {
+                        backupController.addBackup(sourceFile);
+                    }
+                    return ok;
                 }
 
                 @Override

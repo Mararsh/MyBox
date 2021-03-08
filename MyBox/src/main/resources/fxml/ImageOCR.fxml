@@ -45,8 +45,8 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                  <CheckBox fx:id="startCheck" mnemonicParsing="false" text="%StartWhenImageLoad" />
-                                                  <CheckBox fx:id="LoadCheck" mnemonicParsing="false" text="%LoadAfterSaveAs" />
+                                                  <CheckBox fx:id="startCheck" minHeight="-Infinity" mnemonicParsing="false" text="%StartWhenImageLoad" wrapText="true" />
+                                                  <CheckBox fx:id="LoadCheck" minHeight="-Infinity" mnemonicParsing="false" text="%LoadAfterSaveAs" wrapText="true" />
                                                 <VBox fx:id="imageOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
                                           <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="68.0" spacing="5.0">
@@ -413,7 +413,7 @@ License:    Apache License Version 2.0
                                             <tabs>
                                                 <Tab fx:id="ocrOptionsTab" closable="false" text="%OCROptions">
                                                     <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                     <content>
@@ -421,12 +421,15 @@ License:    Apache License Version 2.0
                                                                     </content>
                                                                 </ScrollPane>
                                                             </children>
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
                                                         </VBox>
                                                     </content>
                                                 </Tab>
                                                 <Tab fx:id="txtTab" closable="false" text="%Text">
                                                     <content>
-                                                        <VBox>
+                                                        <VBox spacing="5.0">
                                                             <children>
                                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                     <children>
@@ -444,6 +447,9 @@ License:    Apache License Version 2.0
                                                                 </HBox>
                                                                 <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                                             </children>
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
                                                         </VBox>
                                                     </content>
                                                 </Tab>

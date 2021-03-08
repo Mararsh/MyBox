@@ -80,7 +80,6 @@ public class HtmlMergeAsPDFController extends HtmlToPdfController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             String html = FileTools.readTexts(srcFile);
             String body = HtmlTools.body(html);
             mergedHtml.append(body);

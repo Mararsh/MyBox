@@ -149,20 +149,24 @@ License:    Apache License Version 2.0
                 </FlowPane>
             </children>
         </VBox>
-          <Label minHeight="-Infinity" text="%MaxMainMemPDF" wrapText="true" />
-      <FlowPane hgap="5.0" vgap="5.0">
-         <children>
-                <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="pdfMemGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
-                <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
-                <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
-         </children>
-      </FlowPane>
-        <Label minHeight="-Infinity" text="%PdfMemComments" wrapText="true" />
+        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+            <children>
+                <Label minHeight="-Infinity" text="%MaxMainMemPDF" wrapText="true" />
+                <FlowPane hgap="5.0" vgap="5.0">
+                    <children>
+                        <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="pdfMemGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
+                        <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
+                        <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
+                    </children>
+                </FlowPane>
+                <Label minHeight="-Infinity" text="%PdfMemComments" wrapText="true" />
+            </children>
+        </VBox>
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

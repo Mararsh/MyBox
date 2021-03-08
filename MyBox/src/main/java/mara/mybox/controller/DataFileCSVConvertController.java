@@ -65,7 +65,6 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        countHandling(srcFile);
         if (csvReadController.withNamesCheck.isSelected()) {
             return withHeader(srcFile, targetPath);
         } else {

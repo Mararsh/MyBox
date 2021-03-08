@@ -360,7 +360,6 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
             String filePassword = rowInfo.getUserPassword();
             File tmpFile = FileTools.getTempFile();

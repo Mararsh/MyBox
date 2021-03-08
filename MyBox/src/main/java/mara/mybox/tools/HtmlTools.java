@@ -152,20 +152,27 @@ public class HtmlTools {
         if (url == null) {
             return null;
         }
-        String urlPath = url.getPath();
-        int pos = urlPath.lastIndexOf("/");
-        if (pos >= 0) {
-            return pos < urlPath.length() - 1 ? urlPath.substring(pos + 1) : null;
-        } else {
-            return urlPath;
+        try {
+            String urlPath = url.getPath();
+            int pos = urlPath.lastIndexOf("/");
+            if (pos >= 0) {
+                return pos < urlPath.length() - 1 ? urlPath.substring(pos + 1) : null;
+            } else {
+                return urlPath;
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
     public static String filePrefix(URL url) {
         if (url == null) {
-            return null;
+            return "";
         }
         String file = file(url);
+        if (file == null) {
+            return "";
+        }
         int pos = file.lastIndexOf(".");
         file = pos < 0 ? file : file.substring(0, pos);
         return file;
@@ -176,6 +183,9 @@ public class HtmlTools {
             return "";
         }
         String name = file(url);
+        if (name == null) {
+            return "";
+        }
         int pos = name.lastIndexOf(".");
         name = pos < 0 ? "" : name.substring(pos);
         return name;
@@ -421,6 +431,10 @@ public class HtmlTools {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String emptyHmtl() {
+        return htmlWithStyleValue(null, null, "<BODY>\n\n\n</BODY>\n");
     }
 
     public static File writeHtml(String html) {
@@ -826,7 +840,10 @@ public class HtmlTools {
                     }
                     //                    MyBoxLog.debug("nameString: " + nameString + " name: " + name);
                 }
-                Link alink = Link.create().setAddress(address.trim()).setAddressOriginal(addressOriginal).setName(FileTools.filenameFilter(name.trim())).setTitle(title == null ? null : FileTools.filenameFilter(title.trim()));
+                Link alink = Link.create().setAddress(address.trim())
+                        .setAddressOriginal(addressOriginal)
+                        .setName(FileTools.filenameFilter(name.trim()))
+                        .setTitle(title == null ? null : FileTools.filenameFilter(title.trim()));
 //                MyBoxLog.debug("address: " + address + " title: " + title + " name: " + name);
                 links.add(alink);
                 if (pos < 0) {
@@ -990,7 +1007,6 @@ public class HtmlTools {
             if (addressLink == null || path == null) {
                 return null;
             }
-
             List<Link> validLinks = new ArrayList<>();
             URL url = addressLink.getUrl();
             Link coverLink = Link.create().setUrl(url).setAddress(url.toString())
@@ -1000,11 +1016,13 @@ public class HtmlTools {
 
             String linkRoot = url.getProtocol() + "://" + url.getHost();
             String linkPath = fullPath(url);
+
             String html = FileTools.readTexts(new File(addressLink.getFile()));
             String md = mdConverter.convert(html);
             Node document = htmlParser.parse(md);
             List<Link> links = new ArrayList<>();
             MarkdownTools.links(document, links);
+
             for (Link link : links) {
                 String linkAddress = link.getAddress();
                 URL linkURL;
@@ -1027,9 +1045,14 @@ public class HtmlTools {
                 }
                 link.setUrl(linkURL);
                 link.setAddress(linkURL.toString());
+
                 String filename = link.filename(path, nameType);
+                if (filename == null) {
+                    continue;
+                }
                 link.setFile(new File(filename).getAbsolutePath());
                 link.setIndex(validLinks.size());
+
                 validLinks.add(link);
             }
             return validLinks;

@@ -268,4 +268,19 @@ public class StringTools {
         }
     }
 
+    public static String discardBlankLines(String text) {
+        if (text == null) {
+            return null;
+        }
+        String[] lines = text.split("\n");
+        StringBuilder s = new StringBuilder();
+        for (String line : lines) {
+            if (line.isBlank()) {
+                continue;
+            }
+            s.append(line).append("\n");
+        }
+        return s.toString();
+    }
+
 }

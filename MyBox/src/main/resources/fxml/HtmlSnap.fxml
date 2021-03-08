@@ -27,39 +27,6 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                    <children>
-                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconOpen.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Label minWidth="-Infinity" text="%WebAddress" />
-                        <ComboBox fx:id="urlBox" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="goButton" defaultButton="true" mnemonicParsing="false" onAction="#goAction">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconGo.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconFunction.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </HBox>
                 <HBox fx:id="snapBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="15.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -78,7 +45,7 @@ License:    Apache License Version 2.0
                         </RadioButton>
                         <RadioButton mnemonicParsing="false" text="PDF" toggleGroup="$snapGroup" />
                         <CheckBox fx:id="windowSizeCheck" disable="true" mnemonicParsing="false" selected="true" text="%WindowSize" />
-                        <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snap">
+                        <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -89,7 +56,11 @@ License:    Apache License Version 2.0
                         </Button>
                     </children>
                 </HBox>
-                <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="482.0" prefViewportWidth="1634.0" VBox.vgrow="ALWAYS">
+                    <content>
+                        <fx:include fx:id="webview" source="ControlWebBrowserBox.fxml" />
+                    </content>
+                </ScrollPane>
             </children>
         </VBox>
     </center>

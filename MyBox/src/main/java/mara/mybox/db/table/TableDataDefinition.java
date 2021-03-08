@@ -47,6 +47,9 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
     public static final String Query_unique
             = "SELECT * FROM Data_Definition WHERE data_type=? AND data_name=?";
 
+    public static final String DeleteID
+            = "DELETE FROM Data_Definition WHERE dfid=?";
+
     /*
         local methods
      */
@@ -74,6 +77,50 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public boolean clear(DataType dataType, String dataName) {
+        if (dataType == null || dataName == null) {
+            return true;
+        }
+        boolean ret;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            ret = clear(conn, dataType, dataName);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            ret = false;
+        }
+        return ret;
+    }
+
+    public boolean clear(Connection conn, DataType dataType, String dataName) {
+        if (conn == null || dataType == null || dataName == null) {
+            return false;
+        }
+        boolean ret = true;
+        try {
+            DataDefinition d = read(conn, dataType, dataName);
+            if (d != null) {
+                try ( PreparedStatement statement = conn.prepareStatement(TableDataColumn.ClearData)) {
+                    statement.setLong(1, d.getDfid());
+                    statement.executeUpdate();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    ret = false;
+                }
+                try ( PreparedStatement statement = conn.prepareStatement(TableDataDefinition.DeleteID)) {
+                    statement.setLong(1, d.getDfid());
+                    statement.executeUpdate();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    ret = false;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            ret = false;
+        }
+        return ret;
     }
 
 }

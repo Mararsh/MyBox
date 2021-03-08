@@ -108,7 +108,6 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
         int generated = 0;
         doc = null;
         try {
-            countHandling(srcFile);
             currentParameters.currentSourceFile = srcFile;
             if (!isPreview) {
                 PdfInformation info = tableData.get(currentParameters.currentIndex);

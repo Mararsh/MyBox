@@ -141,7 +141,6 @@ public class DataFileCSVSplitController extends BaseBatchFileController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        countHandling(srcFile);
         if (sourceCSVController.autoDetermine) {
             sourceCharset = FileTools.charset(srcFile);
         }

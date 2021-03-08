@@ -14,7 +14,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -43,6 +42,7 @@ import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
@@ -65,6 +65,7 @@ public class HtmlSnapController extends BaseHtmlController {
     protected int snapFileWidth, snapFileHeight, snapsTotal,
             snapImageWidth, snapImageHeight, snapTotalHeight, snapHeight, snapStep;
     protected double snapScale;
+    protected LoadingController loadingController;
 
     @FXML
     protected Button snapshotButton;
@@ -87,16 +88,18 @@ public class HtmlSnapController extends BaseHtmlController {
         try {
             super.initValues();
             lastCodesLen = lastHtmlLen = 0;
+            needSnap = false;
+            needEdit = true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
+
             initSnap();
 
         } catch (Exception e) {
@@ -144,24 +147,51 @@ public class HtmlSnapController extends BaseHtmlController {
 
     }
 
+    protected void checkOneImage() {
+        RadioButton selected = (RadioButton) snapGroup.getSelectedToggle();
+        if (AppVariables.message("OneImage").equals(selected.getText())) {
+            isOneImage = true;
+            windowSizeCheck.setDisable(true);
+
+            TargetPathType = VisitHistory.FileType.Image;
+            TargetFileType = VisitHistory.FileType.Image;
+            targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
+            targetExtensionFilter = CommonFxValues.ImageExtensionFilter;
+
+        } else {
+            isOneImage = false;
+            windowSizeCheck.setDisable(false);
+
+            TargetPathType = VisitHistory.FileType.PDF;
+            TargetFileType = VisitHistory.FileType.PDF;
+            targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
+            targetExtensionFilter = CommonFxValues.PdfExtensionFilter;
+        }
+    }
+
     @Override
     protected void updateTitle(boolean changed) {
         String t = getBaseTitle();
-        if (sourceFile != null) {
+        if (webviewController.address != null) {
+            t += "  " + webviewController.address;
+        } else if (sourceFile != null) {
             t += "  " + sourceFile.getAbsolutePath();
         }
         getMyStage().setTitle(t);
     }
 
     @FXML
-    public void snap(ActionEvent event) {
+    @Override
+    public void saveAsAction() {
         File file;
+        String name = "Snap" + (webviewController.sourceFile != null ? "_" + FileTools.filenameFilter(webviewController.sourceFile.getName()) : "")
+                + "_" + DateTools.nowFileString();
         if (isOneImage) {
             file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                    null, CommonFxValues.ImageExtensionFilter);
+                    name + ".png", CommonFxValues.ImageExtensionFilter);
         } else {
             file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF)),
-                    null, CommonFxValues.PdfExtensionFilter);
+                    name + ".pdf", CommonFxValues.PdfExtensionFilter);
         }
         if (file == null) {
             return;
@@ -173,17 +203,6 @@ public class HtmlSnapController extends BaseHtmlController {
         }
         targetFile = file;
         loadWholePage();
-    }
-
-    protected void checkOneImage() {
-        RadioButton selected = (RadioButton) snapGroup.getSelectedToggle();
-        if (AppVariables.message("OneImage").equals(selected.getText())) {
-            isOneImage = true;
-            windowSizeCheck.setDisable(true);
-        } else {
-            isOneImage = false;
-            windowSizeCheck.setDisable(false);
-        }
     }
 
     protected void loadWholePage() {
@@ -217,22 +236,12 @@ public class HtmlSnapController extends BaseHtmlController {
                 public void run() {
                     boolean quit = false;
                     if (new Date().getTime() - startTime > maxDelay) {
-//                        MyBoxLog.debug(" TimeOver:" + newHeight);
                         quit = true;
                     }
                     if (newHeight == lastHeight) {
-//                        MyBoxLog.debug(" Complete:" + newHeight);
                         quit = true;
                     }
                     if (quit) {
-//                        Platform.runLater(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (snapingStage != null) {
-//                                    snapingStage.close();
-//                                }
-//                            }
-//                        });
                         this.cancel();
                         return;
                     }
@@ -342,6 +351,9 @@ public class HtmlSnapController extends BaseHtmlController {
                     @Override
                     public void run() {
                         Platform.runLater(() -> {
+                            if (loadingController == null) {
+                                return;
+                            }
                             snap();
                         });
                     }

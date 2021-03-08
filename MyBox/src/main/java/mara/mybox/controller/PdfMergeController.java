@@ -70,7 +70,6 @@ public class PdfMergeController extends BaseBatchPdfController {
         int generated = 0;
         doc = null;
         try {
-            countHandling(srcFile);
             currentParameters.currentSourceFile = srcFile;
             PdfInformation info = tableData.get(currentParameters.currentIndex);
             actualParameters.fromPage = info.getFromPage();

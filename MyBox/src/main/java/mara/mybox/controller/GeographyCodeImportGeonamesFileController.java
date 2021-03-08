@@ -24,7 +24,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-03-28
  * @License Apache License Version 2.0
  */
-public class GeographyCodeImportGeonamesFileController extends DataImportController {
+public class GeographyCodeImportGeonamesFileController extends BaseImportCsvController {
 
     public GeographyCodeImportGeonamesFileController() {
         baseTitle = AppVariables.message("ImportGeographyCodeGeonamesFormat");

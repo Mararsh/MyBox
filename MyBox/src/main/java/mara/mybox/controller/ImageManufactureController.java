@@ -41,10 +41,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.table.TableImageHistory;
+import mara.mybox.db.data.ImageEditHistory;
+import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -52,7 +54,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageFileInformation;
-import mara.mybox.image.ImageHistory;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.file.ImageFileReaders;
@@ -85,7 +86,7 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    protected TitledPane createPane, historiesPane;
+    protected TitledPane createPane, historiesPane, backupPane;
     @FXML
     protected VBox mainBox, historiesBox, historiesListBox;
     @FXML
@@ -103,13 +104,15 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected Button clearHistoriesButton, deleteHistoriesButton, useHistoryButton, okHistoriesSizeButton;
     @FXML
-    protected ListView<ImageHistory> historiesList;
+    protected ListView<ImageEditHistory> historiesList;
     @FXML
     protected ColorSet colorSetController;
     @FXML
     protected Label scopeLabel;
     @FXML
     protected CheckBox recordHistoriesCheck;
+    @FXML
+    protected ControlFileBackup backupController;
 
     public ImageManufactureController() {
         baseTitle = AppVariables.message("ImageManufacture");
@@ -140,6 +143,7 @@ public class ImageManufactureController extends ImageViewerController {
 
             initCreatePane();
             initHistoriesTab();
+            initBackupsTab();
             initEditBar();
             initMainSplitPane();
 
@@ -158,11 +162,11 @@ public class ImageManufactureController extends ImageViewerController {
 
     protected void initCreatePane() {
         try {
+            createPane.setExpanded(AppVariables.getUserConfigBoolean("ImageManufactureNewPane", true));
             createPane.expandedProperty().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         AppVariables.setUserConfigValue("ImageManufactureNewPane", createPane.isExpanded());
                     });
-            createPane.setExpanded(AppVariables.getUserConfigBoolean("ImageManufactureNewPane", true));
 
             newWidthInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -211,6 +215,12 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             historiesPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
+            historiesPane.setExpanded(AppVariables.getUserConfigBoolean("ImageManufactureHistoriesPane", false));
+            historiesPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue("ImageManufactureHistoriesPane", historiesPane.isExpanded());
+                    });
+
             recordHistoriesCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "RecordHistories", true));
             checkRecordHistoriesStatus();
             recordHistoriesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -220,9 +230,9 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            maxEditHistories = AppVariables.getUserConfigInt("MaxImageHistories", TableImageHistory.Default_Max_Histories);
+            maxEditHistories = AppVariables.getUserConfigInt("MaxImageHistories", TableImageEditHistory.Default_Max_Histories);
             if (maxEditHistories <= 0) {
-                maxEditHistories = TableImageHistory.Default_Max_Histories;
+                maxEditHistories = TableImageEditHistory.Default_Max_Histories;
             }
             maxHistoriesInput.setText(maxEditHistories + "");
             maxHistoriesInput.textProperty().addListener(new ChangeListener<String>() {
@@ -246,11 +256,11 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            historiesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            historiesList.setCellFactory(new Callback<ListView<ImageHistory>, ListCell<ImageHistory>>() {
+            historiesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            historiesList.setCellFactory(new Callback<ListView<ImageEditHistory>, ListCell<ImageEditHistory>>() {
                 @Override
-                public ListCell<ImageHistory> call(ListView<ImageHistory> param) {
-                    ListCell<ImageHistory> cell = new ListCell<ImageHistory>() {
+                public ListCell<ImageEditHistory> call(ListView<ImageEditHistory> param) {
+                    ListCell<ImageEditHistory> cell = new ListCell<ImageEditHistory>() {
                         private final ImageView view;
 
                         {
@@ -260,7 +270,7 @@ public class ImageManufactureController extends ImageViewerController {
                         }
 
                         @Override
-                        protected void updateItem(ImageHistory item, boolean empty) {
+                        protected void updateItem(ImageEditHistory item, boolean empty) {
                             super.updateItem(item, empty);
                             if (empty || item == null) {
                                 setText(null);
@@ -293,6 +303,22 @@ public class ImageManufactureController extends ImageViewerController {
             useHistoryButton.disableProperty().bind(deleteHistoriesButton.disableProperty());
 
             setHistoryIndex(-1);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initBackupsTab() {
+        try {
+            backupPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            backupPane.setExpanded(AppVariables.getUserConfigBoolean("ImageManufactureBackupPane", false));
+            backupPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue("ImageManufactureBackupPane", backupPane.isExpanded());
+                    });
+
+            backupController.setControls(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -390,6 +416,8 @@ public class ImageManufactureController extends ImageViewerController {
             updateBottom(message("Loaded"));
 
             autoSize();
+
+            backupController.loadBackups(sourceFile);
 
             return true;
         } catch (Exception e) {
@@ -664,7 +692,7 @@ public class ImageManufactureController extends ImageViewerController {
                 loadTask.cancel();
             }
             loadTask = new SingletonTask<Void>() {
-                private List<ImageHistory> list;
+                private List<ImageEditHistory> list;
                 private File currentFile;
 
                 @Override
@@ -675,9 +703,9 @@ public class ImageManufactureController extends ImageViewerController {
                         if (framesNumber > 1) {
                             key += "-frame" + frameIndex;
                         }
-                        list = TableImageHistory.read(key);
+                        list = TableImageEditHistory.read(key);
                         if (list != null) {
-                            for (ImageHistory his : list) {
+                            for (ImageEditHistory his : list) {
                                 if (loadTask == null || loadTask.isCancelled() || !currentFile.equals(sourceFile)) {
                                     return false;
                                 }
@@ -731,7 +759,7 @@ public class ImageManufactureController extends ImageViewerController {
                     private File currentFile;
                     private String finalname;
                     private BufferedImage thumbnail;
-                    private List<ImageHistory> list;
+                    private List<ImageEditHistory> list;
 
                     @Override
                     protected boolean handle() {
@@ -761,11 +789,11 @@ public class ImageManufactureController extends ImageViewerController {
                             if (framesNumber > 1) {
                                 key += "-frame" + frameIndex;
                             }
-                            TableImageHistory.add(key, finalname, operation.name(),
+                            TableImageEditHistory.add(key, finalname, operation.name(),
                                     objectType, opType, scopeController.scope);
-                            list = TableImageHistory.read(key);
+                            list = TableImageEditHistory.read(key);
                             if (list != null) {
-                                for (ImageHistory his : list) {
+                                for (ImageEditHistory his : list) {
                                     if (task == null || task.isCancelled() || !currentFile.equals(sourceFile)) {
                                         return false;
                                     }
@@ -819,7 +847,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    protected void loadThumbnail(ImageHistory his) {
+    protected void loadThumbnail(ImageEditHistory his) {
         try {
             if (his == null) {
                 return;
@@ -854,14 +882,15 @@ public class ImageManufactureController extends ImageViewerController {
             loadTask = new SingletonTask<Void>() {
                 private Image hisImage;
                 private String hisDesc;
+                private ImageEditHistory newHis;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        ImageHistory his = historiesList.getItems().get(index);
+                        ImageEditHistory his = historiesList.getItems().get(index);
                         File file = new File(his.getHistoryLocation());
                         if (!file.exists()) {
-                            TableImageHistory.deleteHistory(his.getImage(), his.getHistoryLocation());
+                            TableImageEditHistory.deleteHistory(his.getImage(), his.getHistoryLocation());
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -875,7 +904,8 @@ public class ImageManufactureController extends ImageViewerController {
                             hisImage = SwingFXUtils.toFXImage(bufferedImage, null);
                         }
                         hisDesc = DateTools.datetimeToString(his.getOperationTime()) + " " + message(his.getUpdateType());
-                        return true;
+                        newHis = (ImageEditHistory) (his.clone());
+                        return TableImageEditHistory.add(newHis);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -887,7 +917,8 @@ public class ImageManufactureController extends ImageViewerController {
                     String info = MessageFormat.format(message("CurrentImageSetAs"), hisDesc);
                     popInformation(info);
                     updateImage(hisImage, message("History"));
-                    setHistoryIndex(index);
+                    historiesList.getItems().add(0, newHis);
+                    setHistoryIndex(index + 1);
                 }
 
             };
@@ -898,7 +929,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    protected String historyDescription(ImageHistory his) {
+    protected String historyDescription(ImageEditHistory his) {
         String s = DateTools.datetimeToString(his.getOperationTime())
                 + " " + message(his.getUpdateType());
         if (his.getObjectType() != null && !his.getObjectType().isEmpty()) {
@@ -935,16 +966,16 @@ public class ImageManufactureController extends ImageViewerController {
         if (framesNumber > 1) {
             key += "-frame" + frameIndex;
         }
-        TableImageHistory.clearImage(key);
+        TableImageEditHistory.clearImage(key);
     }
 
     @FXML
     public void deleteHistories() {
-        ImageHistory selected = historiesList.getSelectionModel().getSelectedItem();
+        ImageEditHistory selected = historiesList.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
-        TableImageHistory.deleteHistory(selected.getImage(), selected.getHistoryLocation());
+        TableImageEditHistory.deleteHistory(selected.getImage(), selected.getHistoryLocation());
         historiesList.getItems().remove(selected);
     }
 
@@ -1052,13 +1083,20 @@ public class ImageManufactureController extends ImageViewerController {
                     if (bufferedImage == null || task == null || isCancelled()) {
                         return false;
                     }
+                    File tmpFile = FileTools.getTempFile(format);
                     if (framesNumber > 1) {
-                        error = ImageFileWriters.writeFrame(sourceFile, frameIndex, bufferedImage);
+                        error = ImageFileWriters.writeFrame(tmpFile, frameIndex, bufferedImage);
                         ok = error == null;
                     } else {
-                        ok = ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
+                        ok = ImageFileWriters.writeImageFile(bufferedImage, format, tmpFile.getAbsolutePath());
                     }
                     if (!ok || task == null || isCancelled()) {
+                        return false;
+                    }
+                    if (backupController.backupCheck.isSelected()) {
+                        backupController.addBackup(sourceFile);
+                    }
+                    if (!FileTools.rename(tmpFile, sourceFile)) {
                         return false;
                     }
                     ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(sourceFile.getAbsolutePath());
@@ -1430,6 +1468,39 @@ public class ImageManufactureController extends ImageViewerController {
         imageLabel.setText(message("ImagePaneTitle"));
         scopeLabel.setText(message("ScopePaneTitle"));
 
+    }
+
+    /*
+        static methods
+     */
+    public static void refreshClipboards() {
+        for (Window window : Window.getWindows()) {
+            if (!(window instanceof Stage)) {
+                continue;
+            }
+            try {
+                Stage stage = (Stage) window;
+                if (stage.getTitle().startsWith(message("ImageManufacture"))) {
+                    ImageManufactureController c = (ImageManufactureController) stage.getUserData();
+                    ImageManufactureClipboardController clipController = c.getOperationsController().getClipboardController();
+                    if (clipController != null) {
+                        clipController.loadClipboard();
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    /*
+        get/set
+     */
+    public ImageManufactureOperationsController getOperationsController() {
+        return operationsController;
+    }
+
+    public void setOperationsController(ImageManufactureOperationsController operationsController) {
+        this.operationsController = operationsController;
     }
 
 }

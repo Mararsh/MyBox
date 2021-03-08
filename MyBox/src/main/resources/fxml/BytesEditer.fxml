@@ -96,6 +96,15 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
+                                        <TitledPane fx:id="backupPane" expanded="false" layoutX="10.0" layoutY="742.0" maxWidth="1.7976931348623157E308" text="%Backup">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <fx:include fx:id="backup" source="ControlFileBackup.fxml" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
                                         <TitledPane fx:id="saveAsPane" expanded="false" text="%SaveAs">
                                             <content>
                                                 <VBox spacing="5.0">

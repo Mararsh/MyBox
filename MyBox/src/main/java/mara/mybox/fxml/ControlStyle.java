@@ -625,6 +625,10 @@ public class ControlStyle {
                     return new ControlStyle(id, message("AddDirectory"), "", "iconFolderAdd.png");
                 case "rowAddButton":
                     return new ControlStyle(id, message("Add"), "", "iconRowAdd.png");
+                case "addImageButton":
+                    return new ControlStyle(id, message("Image"), "", "iconPicSmall.png");
+                case "addTableButton":
+                    return new ControlStyle(id, message("Table"), "", "iconSplit.png");
                 default:
                     return new ControlStyle(id, message("Add"), "", "iconAdd.png");
             }
@@ -795,7 +799,7 @@ public class ControlStyle {
         }
 
         if (id.startsWith("color")) {
-            return new ControlStyle(id, message("Color"), "", "iconColor.png");
+            return new ControlStyle(id, message("ColorPalette"), "", "iconColor.png");
         }
 
         if (id.startsWith("openFolder")) {
@@ -993,6 +997,30 @@ public class ControlStyle {
             return new ControlStyle(id, message("TurnOver"), "", "iconTurnOver.png");
         }
 
+        if (id.startsWith("rename")) {
+            return new ControlStyle(id, message("Rename"), "", "iconRename.png");
+        }
+
+        if (id.startsWith("header")) {
+            return new ControlStyle(id, "", "", "iconHeader.png");
+        }
+
+        if (id.startsWith("list")) {
+            return new ControlStyle(id, message("List"), "", "iconList.png");
+        }
+
+        if (id.startsWith("codes")) {
+            return new ControlStyle(id, "", "", "iconMeta.png");
+        }
+
+        if (id.startsWith("fold")) {
+            return new ControlStyle(id, message("Fold"), "", "iconMinus.png");
+        }
+
+        if (id.startsWith("unford")) {
+            return new ControlStyle(id, message("Unfold"), "", "iconTree.png");
+        }
+
         switch (id) {
 
             case "selectButton":
@@ -1007,20 +1035,20 @@ public class ControlStyle {
             case "unselectAllFilesButton":
                 return new ControlStyle("unselectAllFilesButton", message("UnselectAll"), "", "iconSelectNone.png");
 
-            case "listButton":
-                return new ControlStyle(id, message("List"), "", "iconList.png");
-
             case "cancelButton":
                 return new ControlStyle("cancelButton", message("Cancel"), "ESC", "iconCancel.png");
 
             case "cropButton":
                 return new ControlStyle("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
 
-            case "renameButton":
-                return new ControlStyle("renameButton", message("Rename"), "", "iconRename.png");
-
             case "metaButton":
                 return new ControlStyle("metaButton", message("MetaData"), "", "iconMeta.png");
+
+            case "pButton":
+                return new ControlStyle(id, message("Paragraph"), "", "iconP.png");
+
+            case "brButton":
+                return new ControlStyle(id, message("Newline"), "", "iconBr.png");
 
             case "statisticButton":
                 return new ControlStyle("statisticButton", message("Statistic"), "", "iconStatistic.png");

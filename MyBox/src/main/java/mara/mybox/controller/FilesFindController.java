@@ -12,12 +12,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -114,8 +114,9 @@ public class FilesFindController extends BaseBatchFileController {
         batchTabPane.getSelectionModel().select(targetTab);
     }
 
+    @Override
     public void countHandling(File file) {
-        if (file == null) {
+        if (file == null || !file.isFile()) {
             return;
         }
         totalFilesHandled++;
@@ -127,7 +128,6 @@ public class FilesFindController extends BaseBatchFileController {
     @Override
     public String handleFile(File file) {
         try {
-            countHandling(file);
             if (!match(file)) {
                 return done;
             }

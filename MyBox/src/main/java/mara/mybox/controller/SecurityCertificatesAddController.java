@@ -4,18 +4,17 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Optional;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.NetworkTools;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -32,8 +31,6 @@ public class SecurityCertificatesAddController extends BaseController {
     protected TextField addressInput;
     @FXML
     protected RadioButton addressRadio, fileRadio;
-    @FXML
-    protected CheckBox backupCheck;
 
     public SecurityCertificatesAddController() {
         baseTitle = AppVariables.message("SecurityCertificates");
@@ -55,7 +52,12 @@ public class SecurityCertificatesAddController extends BaseController {
         if (certController == null) {
             return;
         }
-        String name = "";
+        File ksFile = certController.cacertsFile;
+        if (!ksFile.exists() || !ksFile.isFile()) {
+            popError(message("NotExist"));
+            return;
+        }
+        String name;
         if (addressRadio.isSelected()) {
             if (addressInput.getText().isEmpty()) {
                 popError(message("NotExist"));
@@ -69,12 +71,6 @@ public class SecurityCertificatesAddController extends BaseController {
                 return;
             }
             name = sourceFile.getName();
-        }
-
-        File ksFile = new File(certController.sourceFileInput.getText());
-        if (!ksFile.exists() || !ksFile.isFile()) {
-            popError(message("NotExist"));
-            return;
         }
         String password = certController.getPasswordInput().getText();
 
@@ -92,12 +88,9 @@ public class SecurityCertificatesAddController extends BaseController {
             return;
         }
         final String alias = result.get().trim();
-        if (!certController.backupKeyStore()) {
-            return;
-        }
         try {
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -105,7 +98,7 @@ public class SecurityCertificatesAddController extends BaseController {
                     @Override
                     protected boolean handle() {
                         error = null;
-
+                        certController.backupController.addBackup(certController.cacertsFile);
                         if (addressRadio.isSelected()) {
                             try {
                                 error = NetworkTools.installCertificateByHost(
@@ -140,7 +133,8 @@ public class SecurityCertificatesAddController extends BaseController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -159,7 +153,7 @@ public class SecurityCertificatesAddController extends BaseController {
         }
         try {
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -192,7 +186,8 @@ public class SecurityCertificatesAddController extends BaseController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

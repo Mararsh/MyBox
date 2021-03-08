@@ -18,7 +18,6 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +26,7 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -69,7 +69,7 @@ import mara.mybox.value.CommonValues;
  */
 public class HtmlEditorController extends BaseHtmlController {
 
-    protected boolean isFrameSet;
+    protected boolean isFrameSet, pageLoaded;
     protected Parser htmlParser, textParser;
     protected HtmlRenderer htmlRender;
     protected MutableDataSet htmlOptions, textOptions;
@@ -83,13 +83,17 @@ public class HtmlEditorController extends BaseHtmlController {
     @FXML
     protected WebView linksWebview;
     @FXML
-    protected TextArea codesArea, tocArea, markdownArea, textArea;
+    protected TextArea tocArea, markdownArea, textArea;
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab editorTab, codesTab, tocTab, markdownTab, textTab, linksTab;
+    protected Tab editorTab, codesTab, tocTab, markdownTab, textTab, linksTab, backupTab;
     @FXML
-    protected Label editorLabel, codesLabel, mdLabel;
+    protected Label editorLabel, mdLabel;
+    @FXML
+    protected ControlFileBackup backupController;
+    @FXML
+    protected ControlHtmlCodes codesController;
 
     public HtmlEditorController() {
         baseTitle = AppVariables.message("HtmlEditor");
@@ -100,6 +104,8 @@ public class HtmlEditorController extends BaseHtmlController {
         try {
             super.initValues();
             isFrameSet = false;
+            needSnap = true;
+            needEdit = false;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -116,6 +122,32 @@ public class HtmlEditorController extends BaseHtmlController {
             initTocTab();
             initMarkdownTab();
             initLinksTab();
+            initBackupsTab();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    protected void initWebView() {
+        try {
+            super.initWebView();
+            webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+                @Override
+                public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
+                    switch (newState) {
+                        case RUNNING:
+                            pageIsLoading();
+                            break;
+                        case SUCCEEDED:
+                        case CANCELLED:
+                        case FAILED:
+                            afterPageLoaded();
+                            break;
+                    }
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -147,6 +179,9 @@ public class HtmlEditorController extends BaseHtmlController {
 
     private void checkEditorChanged() {
         try {
+            if (!htmlEditor.isDisable()) {
+                return;
+            }
             String c = htmlEditor.getHtmlText();
             int len = 0;
             if (c != null && !c.isEmpty()) {
@@ -179,6 +214,9 @@ public class HtmlEditorController extends BaseHtmlController {
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowText", true)) {
                 tabPane.getTabs().remove(textTab);
             }
+            if (!AppVariables.getUserConfigBoolean(baseName + "ShowBackup", true)) {
+                tabPane.getTabs().remove(backupTab);
+            }
 
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
@@ -195,11 +233,13 @@ public class HtmlEditorController extends BaseHtmlController {
 
     protected void initCodesTab() {
         try {
-            codesArea.textProperty().addListener(new ChangeListener<String>() {
+            codesController.setValues(this);
+            codesController.codesArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    int len = codesArea.getText().length();
-                    codesLabel.setText(AppVariables.message("Total") + ": " + len);
+                    if (!codesController.codesArea.isEditable()) {
+                        return;
+                    }
                     updateTitle(true);
                 }
             });
@@ -275,6 +315,15 @@ public class HtmlEditorController extends BaseHtmlController {
         }
     }
 
+    protected void initBackupsTab() {
+        try {
+            backupController.setControls(this, baseName);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @Override
     public void afterSceneLoaded() {
         try {
@@ -288,20 +337,7 @@ public class HtmlEditorController extends BaseHtmlController {
         }
     }
 
-    @Override
-    public void loadContents(String text) {
-        if (text == null || text.isBlank()) {
-            return;
-        }
-        loadEditor(text);
-        webEngine.loadContent(text);
-        codesArea.setText(text);
-        html2markdown(text);
-        sourceFile = null;
-        updateTitle(true);
-    }
-
-    public void loadEditor(String html) {
+    private void loadEditor(String html) {
         isFrameSet = StringTools.include(html, "<FRAMESET>", true);
         if (isFrameSet) {
             htmlEditor.setHtmlText("<p>" + message("NotSupportFrameSet") + "</p>");
@@ -310,70 +346,35 @@ public class HtmlEditorController extends BaseHtmlController {
         }
     }
 
-    @Override
-    public void loadLink(URI uri) {
-        try {
-            if (webEngine == null || uri == null) {
-                popError(message("InvalidData"));
-                return;
-            }
-            this.uri = uri;
-            urlBox.setValue(uri.toString());
-            isFrameSet = false;
-            webEngine.getLoadWorker().cancel();
-            webEngine.loadContent("");
-            codesArea.setText(uri + "\n" + message("Loading..."));
-            tocArea.setText(uri + "\n" + message("Loading..."));
-            textArea.setText(uri + "\n" + message("Loading..."));
-            linksWebview.getEngine().getLoadWorker().cancel();
-            linksWebview.getEngine().loadContent("");
-            markdownArea.setText(uri + "\n" + message("Loading..."));
-            htmlEditor.setHtmlText(uri + "<br>" + message("Loading..."));
-            editorLabel.setText(uri + "  " + message("Loading..."));
-            webLabel.setText(uri + "  " + message("Loading..."));
-            codesLabel.setText(uri + "  " + message("Loading..."));
-            mdLabel.setText(uri + "  " + message("Loading..."));
-            htmlEditor.setDisable(true);
-//            saveButton.setDisable(true);
-//            saveAsButton.setDisable(true);
-//            synchronizeMainButton.setDisable(true);
-            synchronizePairButton.setDisable(true);
-            markdownTab.setDisable(true);
-            codesTab.setDisable(true);
-            tocTab.setDisable(true);
-            textTab.setDisable(true);
-            linksTab.setDisable(true);
-            webLabel.setText(uri + "  " + message("Loading..."));
-            webEngine.load(uri.toString());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    private void pageIsLoading() {
+        pageLoaded = false;
+        saveButton.setDisable(true);
+        saveAsButton.setDisable(true);
+        synchronizePairButton.setDisable(true);
+        htmlEditor.setDisable(true);
+        markdownArea.setEditable(false);
+        codesController.codesArea.setEditable(false);
+        isFrameSet = false;
+        String info = webviewController.address + "\n" + message("Loading...");
+        codesController.load(info);
+        tocArea.setText(info);
+        textArea.setText(info);
+        linksWebview.getEngine().getLoadWorker().cancel();
+        linksWebview.getEngine().loadContent(info);
+        markdownArea.setText(info);
+        htmlEditor.setHtmlText(info);
+        editorLabel.setText(info);
+        mdLabel.setText(info);
     }
 
-    @Override
-    protected void reset() {
-        super.reset();
-        htmlEditor.setDisable(false);
-//        saveButton.setDisable(false);
-//        saveAsButton.setDisable(false);
-//        synchronizeMainButton.setDisable(false);
-        synchronizePairButton.setDisable(false);
-        markdownTab.setDisable(false);
-        codesTab.setDisable(false);
-        textTab.setDisable(false);
-        tocTab.setDisable(false);
-        linksTab.setDisable(false);
-        editorLabel.setText("");
-        webLabel.setText("");
-        codesLabel.setText("");
-        mdLabel.setText("");
-    }
-
-    @Override
-    protected void afterPageLoaded() {
-        super.afterPageLoaded();
+    private void afterPageLoaded() {
+        pageLoaded = true;
+        updateTitle(false);
         synchronizeMain();
+        backupController.loadBackups(sourceFile);
+        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
+        synchronizePairButton.setDisable(false);
     }
 
     @FXML
@@ -390,12 +391,20 @@ public class HtmlEditorController extends BaseHtmlController {
             String html = FxmlControl.getHtml(webEngine);
             if (tabPane.getTabs().contains(editorTab)) {
                 Platform.runLater(() -> {
+                    htmlEditor.setDisable(true);
                     loadEditor(html);
+                    if (pageLoaded) {
+                        htmlEditor.setDisable(false);
+                    }
                 });
             }
             if (tabPane.getTabs().contains(codesTab)) {
                 Platform.runLater(() -> {
-                    codesArea.setText(html);
+                    codesController.codesArea.setEditable(false);
+                    codesController.load(html);
+                    if (pageLoaded) {
+                        codesController.codesArea.setEditable(true);
+                    }
                 });
             }
             if (tabPane.getTabs().contains(markdownTab)
@@ -403,7 +412,11 @@ public class HtmlEditorController extends BaseHtmlController {
                     || tabPane.getTabs().contains(tocTab)
                     || tabPane.getTabs().contains(linksTab)) {
                 Platform.runLater(() -> {
+                    markdownArea.setEditable(false);
                     html2markdown(html);
+                    if (pageLoaded) {
+                        markdownArea.setEditable(true);
+                    }
                 });
             }
         } catch (Exception e) {
@@ -416,6 +429,10 @@ public class HtmlEditorController extends BaseHtmlController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == editorTab) {
+                if (htmlEditor.isDisable()) {
+                    popError(message("Loading..."));
+                    return;
+                }
                 if (isFrameSet) {
                     popError(message("NotSupportFrameSet"));
                     return;
@@ -429,22 +446,12 @@ public class HtmlEditorController extends BaseHtmlController {
                     webEngine.loadContent(text);
                 });
 
-                if (tabPane.getTabs().contains(codesTab)) {
-                    Platform.runLater(() -> {
-                        codesArea.setText(text);
-                    });
-                }
-                if (tabPane.getTabs().contains(markdownTab)
-                        || tabPane.getTabs().contains(textTab)
-                        || tabPane.getTabs().contains(tocTab)
-                        || tabPane.getTabs().contains(linksTab)) {
-                    Platform.runLater(() -> {
-                        html2markdown(text);
-                    });
-                }
-
             } else if (tab == codesTab) {
-                String text = codesArea.getText();
+                if (!codesController.codesArea.isEditable()) {
+                    popError(message("Loading..."));
+                    return;
+                }
+                String text = codesController.codes();
                 if (text.isBlank()) {
                     popError(message("NoData"));
                     return;
@@ -453,21 +460,11 @@ public class HtmlEditorController extends BaseHtmlController {
                     webEngine.loadContent(text);
                 });
 
-                if (tabPane.getTabs().contains(editorTab)) {
-                    Platform.runLater(() -> {
-                        loadEditor(text);
-                    });
-                }
-                if (tabPane.getTabs().contains(markdownTab)
-                        || tabPane.getTabs().contains(textTab)
-                        || tabPane.getTabs().contains(tocTab)
-                        || tabPane.getTabs().contains(linksTab)) {
-                    Platform.runLater(() -> {
-                        html2markdown(text);
-                    });
-                }
-
             } else if (tab == markdownTab) {
+                if (!markdownArea.isEditable()) {
+                    popError(message("NotReady"));
+                    return;
+                }
                 markdown2all();
             }
 
@@ -480,100 +477,123 @@ public class HtmlEditorController extends BaseHtmlController {
     @Override
     public void saveAction() {
         try {
+            Charset charset = Charset.forName("utf-8");
             if (sourceFile == null) {
                 final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                        null, targetExtensionFilter);
+                        "myWeb", targetExtensionFilter);
                 if (file == null) {
                     return;
                 }
-                recordFileWritten(file);
                 sourceFile = file;
-            }
-            isSettingValues = true;
-            String contents;
-            if (tabPane.getSelectionModel().getSelectedItem().equals(codesTab)) {
-                contents = codesArea.getText();
             } else {
-                contents = htmlEditor.getHtmlText();
+                charset = FileTools.charset(sourceFile);
             }
-            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
-                out.write(contents);
-                out.flush();
-            }
-
-            updateTitle(false);
+            saveFile(sourceFile, charset);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        isSettingValues = false;
     }
 
     @FXML
     @Override
     public void saveAsAction() {
-        try {
-            String name = null;
-            if (sourceFile != null) {
-                name = FileTools.getFilePrefix(sourceFile.getName());
-            }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, targetExtensionFilter);
-            if (file == null) {
+        String name = "myWeb";
+        Charset charset = Charset.forName("utf-8");
+        if (sourceFile != null) {
+            name = FileTools.appendName(sourceFile.getName(), "m");
+            charset = FileTools.charset(sourceFile);
+        }
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                name, targetExtensionFilter);
+        if (file == null) {
+            return;
+        }
+        saveFile(file, charset);
+    }
+
+    public void saveFile(File file, Charset charset) {
+        if (file == null || charset == null) {
+            return;
+        }
+        boolean editor = AppVariables.message("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText());
+        if (editor) {
+            if (!htmlEditor.isDisable()) {
+                popError(message("Loading..."));
                 return;
             }
-            recordFileWritten(file);
-            sourceFile = file;
-
-            isSettingValues = true;
-            String contents;
-            if (AppVariables.message("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText())) {
-                contents = htmlEditor.getHtmlText();
-            } else {
-                contents = codesArea.getText();
+        } else {
+            if (! !codesController.codesArea.isEditable()) {
+                popError(message("Loading..."));
+                return;
             }
-            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
-                out.write(contents);
-                out.flush();
-            }
-            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
-        isSettingValues = false;
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    String contents;
+                    if (editor) {
+                        contents = htmlEditor.getHtmlText();
+                    } else {
+                        contents = codesController.codes();
+                    }
+                    if (contents == null) {
+                        return false;
+                    }
+                    File tmpFile = FileTools.getTempFile();
+                    try ( BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+                        out.write(contents);
+                        out.flush();
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    if (FileTools.rename(tmpFile, file)) {
+                        recordFileWritten(file);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    if (sourceFile != null && file.getAbsolutePath().equals(sourceFile.getAbsolutePath())) {
+                        loadFile(sourceFile);
+                    }
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
     @Override
     public void createAction() {
         try {
-            isSettingValues = true;
             sourceFile = null;
-            uri = null;
-            webEngine.getLoadWorker().cancel();
-            webEngine.loadContent("");
-            htmlEditor.setHtmlText("");
-            codesArea.setText("");
-            markdownArea.setText("");
-            editorLabel.setText("");
-            webLabel.setText("");
-            codesLabel.setText("");
-            mdLabel.setText("");
+            webviewController.loadContents(HtmlTools.emptyHmtl());
             isFrameSet = false;
             getMyStage().setTitle(getBaseTitle());
-            htmlEditor.setDisable(false);
+            updateTitle(false);
             saveButton.setDisable(false);
             saveAsButton.setDisable(false);
-            synchronizeMainButton.setDisable(false);
             synchronizePairButton.setDisable(false);
-            codesArea.setEditable(true);
-            markdownArea.setEditable(true);
-            updateTitle(false);
+            backupController.loadBackups(null);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        isSettingValues = false;
     }
 
     @FXML
@@ -628,7 +648,7 @@ public class HtmlEditorController extends BaseHtmlController {
                     tabPane.getTabs().add(codesTab);
                     Platform.runLater(() -> {
                         String html = FxmlControl.getHtml(webEngine);
-                        codesArea.setText(html);
+                        codesController.load(html);
                     });
                 }
                 AppVariables.setUserConfigValue(baseName + "ShowCodes",
@@ -686,6 +706,19 @@ public class HtmlEditorController extends BaseHtmlController {
                         tabPane.getTabs().contains(linksTab));
             });
             checkMenu.setSelected(tabPane.getTabs().contains(linksTab));
+            popMenu.getItems().add(checkMenu);
+
+            checkMenu = new CheckMenuItem(message("Backup"));
+            checkMenu.setOnAction((ActionEvent event) -> {
+                if (tabPane.getTabs().contains(backupTab)) {
+                    tabPane.getTabs().remove(backupTab);
+                } else {
+                    tabPane.getTabs().add(backupTab);
+                }
+                AppVariables.setUserConfigValue(baseName + "ShowBackup",
+                        tabPane.getTabs().contains(backupTab));
+            });
+            checkMenu.setSelected(tabPane.getTabs().contains(backupTab));
             popMenu.getItems().add(checkMenu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
@@ -752,7 +785,6 @@ public class HtmlEditorController extends BaseHtmlController {
                         return md != null;
                     } catch (Exception e) {
                         error = e.toString();
-                        MyBoxLog.debug(error);
                         return false;
                     }
                 }
@@ -818,10 +850,10 @@ public class HtmlEditorController extends BaseHtmlController {
                             links = new ArrayList<>();
                             MarkdownTools.links(document, links);
                         }
-                        if (tabPane.getTabs().contains(textTab)) {
-                            document = textParser.parse(md);
-                            text = textCollectingVisitor.collectAndGetText(document);
-                        }
+//                        if (tabPane.getTabs().contains(textTab)) {
+//                            document = textParser.parse(md);
+//                            text = textCollectingVisitor.collectAndGetText(document);
+//                        }
                         return html != null;
                     } catch (Exception e) {
                         error = e.toString();
@@ -845,11 +877,11 @@ public class HtmlEditorController extends BaseHtmlController {
                             displayLinks(links);
                         });
                     }
-                    if (tabPane.getTabs().contains(textTab)) {
-                        Platform.runLater(() -> {
-                            textArea.setText(text);
-                        });
-                    }
+//                    if (tabPane.getTabs().contains(textTab)) {
+//                        Platform.runLater(() -> {
+//                            textArea.setText(text);
+//                        });
+//                    }
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);

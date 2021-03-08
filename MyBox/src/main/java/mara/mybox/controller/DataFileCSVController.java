@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,7 +23,6 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -87,6 +85,7 @@ public class DataFileCSVController extends BaseDataFileController {
     @Override
     protected boolean readDataDefinition(boolean pickOptions) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            dataName = sourceFile.getAbsolutePath();
             dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
             if (pickOptions || dataDefinition == null) {
                 sourceDelimiter = csvReadController.delimiter;
@@ -121,59 +120,48 @@ public class DataFileCSVController extends BaseDataFileController {
             loadError = e.toString();
             return false;
         }
-        return dataDefinition.getDfid() >= 0;
+        return dataDefinition != null && dataDefinition.getDfid() >= 0;
     }
 
     @Override
     protected boolean readColumns() {
+        columns = new ArrayList<>();
+        if (!sourceWithNames) {
+            return true;
+        }
         sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
                 .withDelimiter(sourceDelimiter);
-        if (sourceWithNames) {
-            sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
-        }
+        sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            if (sourceWithNames) {
-                for (String name : parser.getHeaderNames()) {
-                    boolean found = false;
-                    if (savedColumns != null) {
-                        for (ColumnDefinition def : savedColumns) {
-                            if (def.getName().equals(name)) {
-                                columns.add(def);
-                                found = true;
-                                break;
-                            }
+            List<String> names = parser.getHeaderNames();
+            if (names == null) {
+                sourceWithNames = false;
+                return true;
+            }
+            for (String name : names) {
+                boolean found = false;
+                if (savedColumns != null) {
+                    for (ColumnDefinition def : savedColumns) {
+                        if (def.getName().equals(name)) {
+                            columns.add(def);
+                            found = true;
+                            break;
                         }
                     }
-                    if (found) {
-                        continue;
-                    }
+                }
+                if (!found) {
                     ColumnDefinition column = new ColumnDefinition(name, ColumnType.String);
-                    columns.add(column);
-                }
-            } else {
-                Iterator<CSVRecord> iterator = parser.iterator();
-                if (iterator == null || !iterator.hasNext()) {
-                    return false;
-                }
-                CSVRecord record = iterator.next();
-                if (savedColumns != null) {
-                    columns = savedColumns;
-                } else {
-                    columns = new ArrayList<>();
-                }
-                for (int i = columns.size() + 1; i <= record.size(); i++) {
-                    ColumnDefinition column = new ColumnDefinition(message("Field") + i, ColumnType.String);
                     columns.add(column);
                 }
             }
             if (ColumnDefinition.valid(this, columns)) {
                 tableDataColumn.save(dataDefinition.getDfid(), columns);
             }
-            return true;
         } catch (Exception e) {
             loadError = e.toString();
             return false;
         }
+        return true;
     }
 
     @Override
@@ -185,12 +173,14 @@ public class DataFileCSVController extends BaseDataFileController {
         }
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
             Iterator<CSVRecord> iterator = parser.iterator();
-            if (iterator == null || !iterator.hasNext()) {
-                return false;
-            }
-            while (backgroundTask != null && !backgroundTask.isCancelled() && iterator.hasNext()) {
-                iterator.next();
-                totalSize++;
+            if (iterator != null) {
+                while (backgroundTask != null && !backgroundTask.isCancelled() && iterator.hasNext()) {
+                    iterator.next();
+                    totalSize++;
+                }
+                if (backgroundTask == null || backgroundTask.isCancelled()) {
+                    totalSize = 0;
+                }
             }
         } catch (Exception e) {
             loadError = e.toString();
@@ -204,9 +194,7 @@ public class DataFileCSVController extends BaseDataFileController {
         if (currentPageStart < 1) {
             currentPageStart = 1;
         }
-        if (currentPageEnd < currentPageStart) {
-            currentPageEnd = currentPageStart + pageSize;
-        }
+        long end = currentPageStart + pageSize;
         String[][] data = null;
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
             int rowIndex = 0, maxCol = 0;
@@ -215,7 +203,7 @@ public class DataFileCSVController extends BaseDataFileController {
                 if (++rowIndex < currentPageStart) {
                     continue;
                 }
-                if (rowIndex >= currentPageEnd) {
+                if (rowIndex >= end) {
                     break;
                 }
                 List<String> row = new ArrayList<>();
@@ -238,6 +226,12 @@ public class DataFileCSVController extends BaseDataFileController {
             }
         } catch (Exception e) {
             loadError = e.toString();
+            MyBoxLog.console(loadError);
+        }
+        if (data == null) {
+            currentPageEnd = currentPageStart;
+        } else {
+            currentPageEnd = currentPageStart + data.length;
         }
         return data;
     }
@@ -261,14 +255,8 @@ public class DataFileCSVController extends BaseDataFileController {
     @FXML
     @Override
     public void saveAction() {
-        if (!totalRead) {
-            return;
-        }
         if (sourceFile == null) {
             saveAsAction();
-            return;
-        }
-        if (!ColumnDefinition.valid(this, columns)) {
             return;
         }
         synchronized (this) {
@@ -281,6 +269,9 @@ public class DataFileCSVController extends BaseDataFileController {
                 @Override
                 protected boolean handle() {
                     error = save(sourceFile, sourceCharset, sourceCsvFormat, sourceWithNames);
+                    if (error == null && backupController.backupCheck.isSelected()) {
+                        backupController.addBackup(sourceFile);
+                    }
                     return error == null;
                 }
 
@@ -303,9 +294,6 @@ public class DataFileCSVController extends BaseDataFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        if (!ColumnDefinition.valid(this, columns)) {
-            return;
-        }
         String name = null;
         if (sourceFile != null) {
             name = FileTools.getFilePrefix(sourceFile.getName());
@@ -380,7 +368,7 @@ public class DataFileCSVController extends BaseDataFileController {
                 for (CSVRecord record : parser) {
                     if (++index < currentPageStart || index >= currentPageEnd) {    // 1-based, excluded
                         csvPrinter.printRecord(record);
-                    } else if (index == currentPageStart) {
+                    } else if (index == currentPageStart && inputs != null) {
                         for (int j = 0; j < inputs.length; j++) {
                             csvPrinter.printRecord(row(j));
                         }
@@ -395,8 +383,10 @@ public class DataFileCSVController extends BaseDataFileController {
                 if (withName) {
                     csvPrinter.printRecord(columnNames());
                 }
-                for (int j = 0; j < inputs.length; j++) {
-                    csvPrinter.printRecord(row(j));
+                if (inputs != null) {
+                    for (int j = 0; j < inputs.length; j++) {
+                        csvPrinter.printRecord(row(j));
+                    }
                 }
             } catch (Exception e) {
                 MyBoxLog.console(e);
@@ -406,18 +396,15 @@ public class DataFileCSVController extends BaseDataFileController {
         if (FileTools.rename(tmpFile, file)) {
             try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
                 String dname = file.getAbsolutePath();
-                DataDefinition def = tableDataDefinition.read(conn, dataType, dname);
-                if (def == null) {
-                    def = DataDefinition.create().setDataName(dname).setDataType(dataType)
-                            .setCharset(charset.name()).setHasHeader(withName)
-                            .setDelimiter(csvFormat.getDelimiter() + "");
-                    tableDataDefinition.insertData(conn, def);
-                } else {
-                    def.setCharset(charset.name()).setHasHeader(withName)
-                            .setDelimiter(csvFormat.getDelimiter() + "");
-                    tableDataDefinition.updateData(conn, def);
+                tableDataDefinition.clear(conn, dataType, dname);
+                DataDefinition def = DataDefinition.create().setDataName(dname).setDataType(dataType)
+                        .setCharset(charset.name()).setHasHeader(withName)
+                        .setDelimiter(csvFormat.getDelimiter() + "");
+                tableDataDefinition.insertData(conn, def);
+                if (ColumnDefinition.valid(this, columns)) {
+                    tableDataColumn.save(conn, def.getDfid(), columns);
+                    conn.commit();
                 }
-                tableDataColumn.save(conn, def.getDfid(), columns);
             } catch (Exception e) {
                 return e.toString();
             }
@@ -425,6 +412,29 @@ public class DataFileCSVController extends BaseDataFileController {
         } else {
             return "Failed";
         }
+    }
+
+    @Override
+    protected boolean saveColumns() {
+        if (sourceFile == null) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            String dname = sourceFile.getAbsolutePath();
+            tableDataDefinition.clear(conn, dataType, dname);
+            DataDefinition def = DataDefinition.create().setDataName(dname).setDataType(dataType)
+                    .setCharset(sourceCharset.name()).setHasHeader(sourceWithNames)
+                    .setDelimiter(sourceCsvFormat.getDelimiter() + "");
+            tableDataDefinition.insertData(conn, def);
+            if (ColumnDefinition.valid(this, columns)) {
+                tableDataColumn.save(conn, def.getDfid(), columns);
+                conn.commit();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
     }
 
     @FXML
@@ -438,581 +448,313 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected void setAllColValues(int col) {
-        if (sourceFile == null || pagesNumber <= 1) {
-            SetPageColValues(col);
+    protected File setAllColValues(int col, String value) {
+        if (sourceFile == null || col < 0 || value == null) {
+            return null;
         }
-        if (totalSize <= 0 || !checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
             }
-            String value = askValue(colName(col) + " - " + message("SetAllColValues") + "\n" + message("NoticeAllChangeUnrecover"),
-                    "", "");
-            if (!dataValid(col, value)) {
-                popError(message("InvalidData"));
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
-                             CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
-                        if (sourceWithNames) {
-                            csvPrinter.printRecord(columnNames());
-                        }
-                        List<String> values = new ArrayList<>();
-                        for (CSVRecord record : parser) {
-                            for (int i = 0; i < record.size(); i++) {
-                                if (i == col) {
-                                    values.add(value);
-                                } else {
-                                    values.add(record.get(i));
-                                }
-                            }
-                            csvPrinter.printRecord(values);
-                            values.clear();
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChanged = false;
-                    loadPage(currentPage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @Override
-    protected void copyAllColValues(int col) {
-        if (sourceFile == null || pagesNumber <= 1) {
-            copyPageColValues(col);
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                StringBuilder s;
-
-                @Override
-                protected boolean handle() {
-                    copiedCol = new ArrayList<>();
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-                        s = new StringBuilder();
-                        for (CSVRecord record : parser) {
-                            String v = record.get(col);
-                            s.append(v == null ? "" : v).append("\n");
-                            copiedCol.add(v);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return !copiedCol.isEmpty();
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (FxmlControl.copyToSystemClipboard(s.toString())) {
-                        popInformation(message("CopiedInSheet"));
+            List<String> values = new ArrayList<>();
+            for (CSVRecord record : parser) {
+                for (int i = 0; i < record.size(); i++) {
+                    if (i == col) {
+                        values.add(value);
                     } else {
-                        popFailed();
+                        values.add(record.get(i));
                     }
                 }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+                csvPrinter.printRecord(values);
+                values.clear();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
+        return tmpFile;
     }
 
     @Override
-    protected void pasteAllColValues(int col) {
-        if (copiedCol == null || copiedCol.isEmpty() || totalSize <= 0) {
-            popError(message("NoData"));
-            return;
+    protected StringBuilder copyAllColValues(int col) {
+        if (sourceFile == null || col < 0) {
+            return null;
         }
-        if (sourceFile == null || pagesNumber <= 1) {
-            pastePageColValues(col);
-            return;
-        }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        if (!FxmlControl.askSure(baseTitle, colName(col) + " - " + message("PasteAllCol") + "\n"
-                + message("NoticeAllChangeUnrecover"))) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        StringBuilder s = null;
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
+            int index = 0;
+            for (CSVRecord record : parser) {
+                if (++index < currentPageStart || index >= currentPageEnd) {
+                    copiedCol.add(record.get(col));
+                } else if (index == currentPageStart) {
+                    copyPageCol(col);
+                }
             }
-            task = new SingletonTask<Void>() {
+            for (String v : copiedCol) {
+                if (s == null) {
+                    s = new StringBuilder();
+                    s.append(v);
+                } else {
+                    s.append("\n").append(v);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return s;
+    }
 
-                @Override
-                protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
-                             CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
-                        if (sourceWithNames) {
-                            csvPrinter.printRecord(columnNames());
+    @Override
+    protected File pasteAllColValues(int col) {
+        if (sourceFile == null || col < 0) {
+            return null;
+        }
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
+            }
+            List<String> values = new ArrayList<>();
+            int row = 0, csize = copiedCol.size();
+            for (CSVRecord record : parser) {
+                if (row < csize) {
+                    for (int i = 0; i < record.size(); i++) {
+                        if (i == col) {
+                            values.add(copiedCol.get(row));
+                        } else {
+                            values.add(record.get(i));
                         }
-                        List<String> values = new ArrayList<>();
-                        int row = 0, csize = copiedCol.size();
-                        for (CSVRecord record : parser) {
-                            if (row < csize) {
-                                for (int i = 0; i < record.size(); i++) {
-                                    if (i == col) {
-                                        values.add(copiedCol.get(row));
-                                    } else {
-                                        values.add(record.get(i));
-                                    }
-                                }
-                                csvPrinter.printRecord(values);
-                                values.clear();
-                                row++;
+                    }
+                    csvPrinter.printRecord(values);
+                    values.clear();
+                    row++;
+                } else {
+                    csvPrinter.printRecord(record);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return tmpFile;
+    }
+
+    @Override
+    protected File insertFileCol(int col, boolean left, int number) {
+        if (sourceFile == null || col < 0 || number < 1) {
+            return null;
+        }
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
+            }
+            List<String> values = new ArrayList<>();
+            List<String> newValues = new ArrayList<>();
+            for (int i = 1; i < number; i++) {
+                newValues.add(defaultColValue);
+            }
+            for (CSVRecord record : parser) {
+                for (int i = 0; i < record.size(); i++) {
+                    values.add(record.get(i));
+                }
+                values.addAll(col + (left ? 0 : 1), newValues);
+                csvPrinter.printRecord(values);
+                values.clear();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return tmpFile;
+    }
+
+    @Override
+    protected File DeleteFileCol(int col) {
+        if (sourceFile == null || col < 0) {
+            return null;
+        }
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
+            }
+            List<String> values = new ArrayList<>();
+            for (CSVRecord record : parser) {
+                for (int i = 0; i < record.size(); i++) {
+                    values.add(record.get(i));
+                }
+                values.remove(col);
+                csvPrinter.printRecord(values);
+                values.clear();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return tmpFile;
+    }
+
+    @Override
+    protected File deleteFileAllCols() {
+        if (sourceFile == null) {
+            return null;
+        }
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return tmpFile;
+    }
+
+    @Override
+    protected File orderFileCol(int col, boolean asc) {
+        if (sourceFile == null || col < 0) {
+            return null;
+        }
+        List<CSVRecord> records;
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
+            records = parser.getRecords();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        if (records == null || records.isEmpty()) {
+            return null;
+        }
+        Collections.sort(records, new Comparator<CSVRecord>() {
+            @Override
+            public int compare(CSVRecord row1, CSVRecord row2) {
+                ColumnDefinition column = columns.get(col);
+                int v = column.compare(row1.get(col), row2.get(col));
+                return asc ? v : -v;
+            }
+        });
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
+            }
+            for (CSVRecord record : records) {
+                csvPrinter.printRecord(record);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return tmpFile;
+    }
+
+    @Override
+    protected StringBuilder copyAllSelectedCols() {
+        if (sourceFile == null) {
+            return null;
+        }
+        StringBuilder s = null;
+        copiedLines = 0;
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
+            String delimiterString = TextTools.delimiterText(delimiter);
+            int index = 0;
+            for (CSVRecord record : parser) {
+                if (index < currentPageStart || index >= currentPageEnd) {
+                    String rowString = null;
+                    for (int i = 0; i < colsCheck.length; ++i) {
+                        if (colsCheck[i].isSelected()) {
+                            String d = record.get(i);
+                            d = d == null ? "" : d;
+                            if (rowString == null) {
+                                rowString = d;
                             } else {
-                                csvPrinter.printRecord(record);
+                                rowString += delimiterString + d;
                             }
                         }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
                     }
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChanged = false;
-                    loadPage(currentPage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @Override
-    protected void insertFileCol(int col, boolean left) {
-        if (sourceFile == null || pagesNumber <= 1) {
-            insertPageCol(col, left);
-            return;
-        }
-        if (totalSize <= 0 || !checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            String notice = colName(col) + " - " + (left ? message("InsertColLeft") : message("InsertColRight"))
-                    + "\n" + message("NoticeAllChangeUnrecover");
-            int offset = left ? 0 : 1;
-            String name = message("Field") + (col + offset + 1);
-            name = FxmlControl.askValue(baseTitle, notice, message("Name"), name);
-            if (name == null) {
-                return;
-            }
-            ColumnDefinition column = new ColumnDefinition(name, ColumnDefinition.ColumnType.String);
-            columns.add(left ? col : col + 1, column);
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
-                             CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
-                        if (sourceWithNames) {
-                            csvPrinter.printRecord(columnNames());
-                        }
-                        List<String> values = new ArrayList<>();
-                        for (CSVRecord record : parser) {
-                            for (int i = 0; i < record.size(); i++) {
-                                values.add(record.get(i));
-                            }
-                            values.add(col + offset, "");
-                            csvPrinter.printRecord(values);
-                            values.clear();
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChanged = false;
-                    loadPage(currentPage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @Override
-    protected void DeleteFileCol(int col) {
-        if (sourceFile == null || pagesNumber <= 1) {
-            deletePageCol(col);
-            return;
-        }
-        if (totalSize <= 0 || !checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (!FxmlControl.askSure(baseTitle, colName(col) + " - " + message("DeleteCol") + "\n"
-                    + message("NoticeAllChangeUnrecover"))) {
-                return;
-            }
-            columns.remove(col);
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
-                             CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
-                        if (sourceWithNames) {
-                            csvPrinter.printRecord(columnNames());
-                        }
-                        List<String> values = new ArrayList<>();
-                        for (CSVRecord record : parser) {
-                            for (int i = 0; i < record.size(); i++) {
-                                values.add(record.get(i));
-                            }
-                            values.remove(col);
-                            csvPrinter.printRecord(values);
-                            values.clear();
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChanged = false;
-                    loadPage(currentPage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @Override
-    protected void orderCol(int col, boolean asc) {
-        if (sourceFile == null || pagesNumber <= 1) {
-            super.orderCol(col, asc);
-            return;
-        }
-        if (totalSize <= 0 || !checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (!FxmlControl.askSure(baseTitle, colName(col) + " - "
-                    + (asc ? message("Ascending") : message("Descending")) + "\n"
-                    + message("DataFileOrderNotice"))) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    List<CSVRecord> records;
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-                        records = parser.getRecords();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    if (records == null || records.isEmpty()) {
-                        return false;
-                    }
-                    Collections.sort(records, new Comparator<CSVRecord>() {
-                        @Override
-                        public int compare(CSVRecord row1, CSVRecord row2) {
-                            ColumnDefinition column = columns.get(col);
-                            int v = column.compare(row1.get(col), row2.get(col));
-                            return asc ? v : -v;
-                        }
-                    });
-                    File tmpFile = FileTools.getTempFile();
-                    try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
-                        if (sourceWithNames) {
-                            csvPrinter.printRecord(columnNames());
-                        }
-                        for (CSVRecord record : records) {
-                            csvPrinter.printRecord(record);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChanged = false;
-                    loadPage(currentPage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @Override
-    protected void copyAllSelectedCols() {
-        int cols = 0;
-        for (CheckBox c : colsCheck) {
-            if (c.isSelected()) {
-                cols++;
-            }
-        }
-        if (cols < 1) {
-            popError(message("NoData"));
-            return;
-        }
-        if (sourceFile == null || pagesNumber <= 1) {
-            copySelectedCols();
-            return;
-        }
-        int selectedCols = cols;
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private StringBuilder s;
-                private int lines;
-
-                @Override
-                protected boolean handle() {
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
+                    rowString = rowString == null ? "" : rowString;
+                    if (s == null) {
                         s = new StringBuilder();
-                        String p = TextTools.delimiterText(delimiter);
-                        lines = 0;
-                        for (CSVRecord record : parser) {
-                            String row = null;
-                            for (int i = 0; i < colsCheck.length; ++i) {
-                                if (colsCheck[i].isSelected()) {
-                                    String d = record.get(i);
-                                    d = d == null ? "" : d;
-                                    if (row == null) {
-                                        row = d;
-                                    } else {
-                                        row += p + d;
-                                    }
-                                }
-                            }
-                            if (row != null) {
-                                s.append(row).append("\n");
-                                lines++;
-                            }
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (FxmlControl.copyToSystemClipboard(s.toString())) {
-                        popInformation(message("CopiedToSystemClipboard") + "\n"
-                                + message("RowsNumber") + ":" + lines + "\n"
-                                + message("ColumnsNumber") + ":" + selectedCols);
+                        s.append(rowString);
                     } else {
-                        popFailed();
+                        s.append("\n").append(rowString);
                     }
+                    copiedLines++;
+                } else if (index == currentPageStart) {
+                    s = copyPageCols(s, delimiterString);
                 }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
+        return s;
     }
 
     @Override
-    public void deleteSelectedCols() {
-        if (sourceFile == null || pagesNumber <= 1) {
-            super.deleteSelectedCols();
-            return;
+    protected File deleteFileSelectedCols() {
+        if (sourceFile == null) {
+            return null;
         }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
             }
-            if (!FxmlControl.askSure(baseTitle, message("DeleteSelectedCols") + "\n"
-                    + message("NoticeAllChangeUnrecover"))) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
-                             CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
-                        if (sourceWithNames) {
-                            csvPrinter.printRecord(columnNames());
-                        }
-                        List<String> values = new ArrayList<>();
-                        for (CSVRecord record : parser) {
-                            for (int i = 0; i < colsCheck.length; ++i) {
-                                if (!colsCheck[i].isSelected()) {
-                                    values.add(record.get(i));
-                                }
-                            }
-                            csvPrinter.printRecord(values);
-                            values.clear();
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
+            List<String> values = new ArrayList<>();
+            for (CSVRecord record : parser) {
+                for (int i = 0; i < colsCheck.length; ++i) {
+                    if (!colsCheck[i].isSelected()) {
+                        values.add(record.get(i));
                     }
-                    return FileTools.rename(tmpFile, sourceFile);
                 }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChanged = false;
-                    loadPage(currentPage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+                csvPrinter.printRecord(values);
+                values.clear();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
+        return tmpFile;
     }
 
     @Override
-    protected void setAllSelectedCols() {
-        if (sourceFile == null || pagesNumber <= 1) {
-            setSelectedCols();
-            return;
+    protected File setAllSelectedCols(String value) {
+        if (sourceFile == null) {
+            return null;
         }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        File tmpFile = FileTools.getTempFile();
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
+            if (sourceWithNames) {
+                csvPrinter.printRecord(columnNames());
             }
-            String value = FxmlControl.askValue(baseTitle, message("NoticeAllChangeUnrecover"),
-                    message("SetAllSelectedColsValues"), "");
-            if (value == null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = FileTools.getTempFile();
-                    try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
-                             CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, sourceCharset), sourceCsvFormat)) {
-                        if (sourceWithNames) {
-                            csvPrinter.printRecord(columnNames());
-                        }
-                        List<String> values = new ArrayList<>();
-                        for (CSVRecord record : parser) {
-                            for (int i = 0; i < colsCheck.length; ++i) {
-                                if (colsCheck[i].isSelected()) {
-                                    values.add(value);
-                                } else {
-                                    values.add(record.get(i));
-                                }
-                            }
-                            csvPrinter.printRecord(values);
-                            values.clear();
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
+            List<String> values = new ArrayList<>();
+            for (CSVRecord record : parser) {
+                for (int i = 0; i < colsCheck.length; ++i) {
+                    if (colsCheck[i].isSelected()) {
+                        values.add(value);
+                    } else {
+                        values.add(record.get(i));
                     }
-                    return FileTools.rename(tmpFile, sourceFile);
                 }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChanged = false;
-                    loadPage(currentPage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+                csvPrinter.printRecord(values);
+                values.clear();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
+        return tmpFile;
     }
 
     public static DataFileCSVController oneOpen() {

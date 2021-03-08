@@ -204,87 +204,62 @@ public class ImageViewerController extends BaseImageShapesController {
             MenuItem menu;
 
             List<MenuItem> subItems = new ArrayList<>();
-            if (popButton != null && popButton.isVisible() && !popButton.isDisabled()) {
-                menu = new MenuItem(message("Pop") + "  CTRL+p");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    popAction();
-                });
-                subItems.add(menu);
-            }
+            menu = new MenuItem(message("Pop")
+                    + (popButton != null && popButton.isVisible() && !popButton.isDisabled() ? "  CTRL+p" : ""));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                popAction();
+            });
+            subItems.add(menu);
 
             if (pickColorCheck != null && pickColorCheck.isVisible() && !pickColorCheck.isDisabled()) {
                 CheckMenuItem checkMenu = new CheckMenuItem(message("PickColor"));
-                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    checkMenu.setSelected(!pickColorCheck.isSelected());
-                    pickColorCheck.setSelected(!pickColorCheck.isSelected());
-                });
-                isSettingValues = true;
                 checkMenu.setSelected(pickColorCheck.isSelected());
-                isSettingValues = false;
+                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
+                    pickColorCheck.setSelected(checkMenu.isSelected());
+                });
                 subItems.add(checkMenu);
             }
 
             if (!needNotCoordinates) {
                 CheckMenuItem checkMenu = new CheckMenuItem(message("Coordinate"));
+                checkMenu.setSelected(coordinateCheck != null ? coordinateCheck.isSelected()
+                        : AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
                 checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    checkMenu.setSelected(!AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
                     if (coordinateCheck != null) {
-                        coordinateCheck.setSelected(!coordinateCheck.isSelected());
+                        coordinateCheck.setSelected(checkMenu.isSelected());
                     } else {
                         AppVariables.setUserConfigValue(baseName + "PopCooridnate", checkMenu.isSelected());
                         checkCoordinate();
                     }
                 });
-                isSettingValues = true;
-                checkMenu.setSelected(coordinateCheck != null ? coordinateCheck.isSelected()
-                        : AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
-                isSettingValues = false;
                 subItems.add(checkMenu);
             }
 
             if (!needNotRulers) {
                 CheckMenuItem checkMenuX = new CheckMenuItem(message("RulerX"));
+                checkMenuX.setSelected(rulerXCheck != null ? rulerXCheck.isSelected()
+                        : AppVariables.getUserConfigBoolean(baseName + "RulerX", false));
                 checkMenuX.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    checkMenuX.setSelected(!AppVariables.getUserConfigBoolean(baseName + "RulerX", false));
                     if (rulerXCheck != null) {
-                        rulerXCheck.setSelected(!rulerXCheck.isSelected());
+                        rulerXCheck.setSelected(checkMenuX.isSelected());
                     } else {
                         AppVariables.setUserConfigValue(baseName + "RulerX", checkMenuX.isSelected());
                         checkRulerX();
                     }
                 });
-                isSettingValues = true;
-                checkMenuX.setSelected(rulerXCheck != null ? rulerXCheck.isSelected()
-                        : AppVariables.getUserConfigBoolean(baseName + "RulerX", false));
-                isSettingValues = false;
                 subItems.add(checkMenuX);
 
                 CheckMenuItem checkMenuY = new CheckMenuItem(message("RulerY"));
+                checkMenuY.setSelected(rulerYCheck != null ? rulerYCheck.isSelected()
+                        : AppVariables.getUserConfigBoolean(baseName + "RulerY", false));
                 checkMenuY.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    checkMenuY.setSelected(!AppVariables.getUserConfigBoolean(baseName + "RulerY", false));
                     if (rulerYCheck != null) {
-                        rulerYCheck.setSelected(!rulerYCheck.isSelected());
+                        rulerYCheck.setSelected(checkMenuY.isSelected());
                     } else {
                         AppVariables.setUserConfigValue(baseName + "RulerY", checkMenuY.isSelected());
                         checkRulerY();
                     }
                 });
-                isSettingValues = true;
-                checkMenuY.setSelected(rulerYCheck != null ? rulerYCheck.isSelected()
-                        : AppVariables.getUserConfigBoolean(baseName + "RulerY", false));
-                isSettingValues = false;
                 subItems.add(checkMenuY);
             }
 

@@ -97,7 +97,16 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="savePane" layoutX="10.0" layoutY="604.0" text="%SaveAs">
+                                        <TitledPane fx:id="backupPane" expanded="false" layoutX="10.0" layoutY="742.0" maxWidth="1.7976931348623157E308" text="%Backup">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <fx:include fx:id="backup" source="ControlFileBackup.fxml" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="saveAsPane" layoutX="10.0" layoutY="604.0" text="%SaveAs">
                                             <content>
                                                 <VBox minHeight="-Infinity" spacing="5.0">
                                                     <children>
@@ -372,7 +381,7 @@ License:    Apache License Version 2.0
                         <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="100.0" />
                         <Label fx:id="pageLabel" minWidth="-Infinity" />
                         <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
-                            <graphic> 
+                            <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../buttons/iconGo.png" />

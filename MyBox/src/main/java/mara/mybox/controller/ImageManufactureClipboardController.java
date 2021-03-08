@@ -311,6 +311,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                     loaded = true;
                     refreshButton.requestFocus();
+                    thumbnailsList.getSelectionModel().selectFirst();
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);

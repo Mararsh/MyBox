@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -16,7 +13,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,15 +22,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableTimeCell;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -47,7 +41,7 @@ import mara.mybox.value.CommonValues;
 public class SecurityCertificatesController extends BaseController {
 
     protected ObservableList<CertificateEntry> tableData;
-    protected File lastBackup;
+    protected File cacertsFile;
 
     @FXML
     protected TextField passwordInput;
@@ -60,7 +54,7 @@ public class SecurityCertificatesController extends BaseController {
     @FXML
     protected Button htmlButton;
     @FXML
-    protected CheckBox backupCheck;
+    protected ControlFileBackup backupController;
 
     public SecurityCertificatesController() {
         baseTitle = AppVariables.message("SecurityCertificates");
@@ -100,6 +94,9 @@ public class SecurityCertificatesController extends BaseController {
             passwordInput.setText(SystemTools.keystorePassword());
             htmlButton.setDisable(true);
             addButton.setDisable(true);
+            recoverButton.setDisable(true);
+
+            backupController.setControls(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -128,17 +125,22 @@ public class SecurityCertificatesController extends BaseController {
 
     @FXML
     public void loadAll(String selectAlias) {
-        lastBackup = null;
         tableView.getItems().clear();
         certArea.setText("");
         htmlButton.setDisable(true);
         addButton.setDisable(true);
-        if (sourceFileInput.getText().isEmpty() || passwordInput.getText().isEmpty()) {
+        recoverButton.setDisable(true);
+        backupController.loadBackups(null);
+        cacertsFile = null;
+        File file = new File(sourceFileInput.getText());
+        if (!file.exists()) {
             return;
         }
+        cacertsFile = file;
+        recoverButton.setVisible(cacertsFile.getAbsolutePath().equals(SystemTools.myboxCacerts().getAbsolutePath()));
         try {
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -155,9 +157,7 @@ public class SecurityCertificatesController extends BaseController {
                             // https://docs.oracle.com/javase/10/docs/api/java/security/KeyStore.html
                             try {
                                 char[] passphrase = passwordInput.getText().toCharArray();
-                                File keyStoreFile = new File(sourceFileInput.getText());
-                                KeyStore keyStore = KeyStore.getInstance(keyStoreFile, passphrase);
-
+                                KeyStore keyStore = KeyStore.getInstance(cacertsFile, passphrase);
                                 Enumeration<String> storeAliases = keyStore.aliases();
                                 while (storeAliases.hasMoreElements()) {
                                     String alias = storeAliases.nextElement();
@@ -187,6 +187,8 @@ public class SecurityCertificatesController extends BaseController {
                                 }
                                 if (selectCert == null) {
                                     StringBuilder s = new StringBuilder();
+                                    s.append(cacertsFile).append("\n\n");
+
                                     s.append("## ").append(message("Type")).append(": ").append(keyStore.getType()).append("   ").
                                             append(message("Size")).append(": ").append(keyStore.size()).
                                             append("\n\n");
@@ -194,8 +196,7 @@ public class SecurityCertificatesController extends BaseController {
                                         s.append("#### ").append(message("Alias")).append(": ").append(entry.getAlias()).append("\n");
                                         s.append("----------------------------\n");
                                         if (entry.getCertificateChain() != null) {
-                                            for (Certificate cert
-                                                    : entry.getCertificateChain()) {
+                                            for (Certificate cert : entry.getCertificateChain()) {
                                                 s.append(cert).append("\n\n");
                                             }
                                         }
@@ -208,35 +209,34 @@ public class SecurityCertificatesController extends BaseController {
                         } catch (Exception e) {
                             error = e.toString();
                         }
-                        return true;
+                        return !entires.isEmpty();
                     }
 
                     @Override
                     protected void whenSucceeded() {
-                        if (!entires.isEmpty()) {
-                            isSettingValues = true;
-                            tableView.getItems().addAll(entires);
-                            // https://stackoverflow.com/questions/36240142/sort-tableview-by-certain-column-javafx?r=SearchResults
-                            tableView.getSortOrder().add(timeColumn);
-                            timeColumn.setSortType(TableColumn.SortType.DESCENDING);
-                            tableView.sort();
-                            isSettingValues = false;
-                            if (selectCert != null) {
-                                tableView.scrollTo(selectCert);
-                                tableView.getSelectionModel().select(selectCert);
-                            } else {
-                                certArea.setText(texts);
-                            }
-                            htmlButton.setDisable(false);
-                            addButton.setDisable(false);
-                            bottomLabel.setText(message("Total") + ": " + tableData.size());
+                        isSettingValues = true;
+                        tableView.getItems().addAll(entires);
+                        // https://stackoverflow.com/questions/36240142/sort-tableview-by-certain-column-javafx?r=SearchResults
+                        tableView.getSortOrder().add(timeColumn);
+                        timeColumn.setSortType(TableColumn.SortType.DESCENDING);
+                        tableView.sort();
+                        isSettingValues = false;
+                        if (selectCert != null) {
+                            tableView.scrollTo(selectCert);
+                            tableView.getSelectionModel().select(selectCert);
                         } else {
-                            popError(error);
+                            certArea.setText(texts);
                         }
+                        htmlButton.setDisable(false);
+                        addButton.setDisable(false);
+                        recoverButton.setDisable(false);
+                        bottomLabel.setText(message("Total") + ": " + tableData.size());
+                        backupController.loadBackups(cacertsFile);
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -249,12 +249,12 @@ public class SecurityCertificatesController extends BaseController {
 
     @FXML
     public void htmlAction() {
-        if (sourceFileInput.getText().isEmpty() || passwordInput.getText().isEmpty()) {
+        if (cacertsFile == null) {
             return;
         }
         try {
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -265,11 +265,10 @@ public class SecurityCertificatesController extends BaseController {
                         try {
                             result = error = null;
                             try {
-                                File keyStoreFile = new File(sourceFileInput.getText());
                                 char[] passphrase = passwordInput.getText().toCharArray();
-                                KeyStore keyStore = KeyStore.getInstance(keyStoreFile, passphrase);
+                                KeyStore keyStore = KeyStore.getInstance(cacertsFile, passphrase);
                                 StringBuilder s = new StringBuilder();
-                                s.append("<h1  class=\"center\">").append(keyStoreFile.getAbsolutePath()).append("</h1>\n");
+                                s.append("<h1  class=\"center\">").append(cacertsFile.getAbsolutePath()).append("</h1>\n");
                                 s.append("<h2  class=\"center\">").
                                         append(message("Type")).append(": ").append(keyStore.getType()).append(" ").
                                         append(message("Size")).append(": ").append(keyStore.size()).
@@ -314,7 +313,8 @@ public class SecurityCertificatesController extends BaseController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -328,6 +328,9 @@ public class SecurityCertificatesController extends BaseController {
     @FXML
     @Override
     public void addAction(ActionEvent event) {
+        if (cacertsFile == null) {
+            return;
+        }
         try {
             SecurityCertificatesAddController controller
                     = (SecurityCertificatesAddController) openStage(CommonValues.SecurityCertificateAddFxml);
@@ -337,82 +340,95 @@ public class SecurityCertificatesController extends BaseController {
         }
     }
 
-    public boolean backupKeyStore() {
-        if (!backupCheck.isSelected()) {
-            return true;
+    @FXML
+    @Override
+    public void deleteAction() {
+        if (cacertsFile == null) {
+            return;
         }
-        sourceFile = new File(sourceFileInput.getText());
-        if (!sourceFile.exists() || !sourceFile.isFile()) {
-            popError(message("NotExist"));
-            return false;
+        List<CertificateEntry> selected = tableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            return;
         }
-        try {
-            File newKsFile = new File(sourceFile.getParentFile().getAbsolutePath() + File.separator
-                    + FileTools.appendName(sourceFile.getName(), DateTools.nowString4()));
-            Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(newKsFile.getAbsolutePath()),
-                    StandardCopyOption.COPY_ATTRIBUTES);
-            lastBackup = newKsFile;
-            bottomLabel.setText(message("Total") + ": " + tableData.size() + "   "
-                    + message("KeyStoreBacked") + ": " + lastBackup
-            );
-            return true;
-        } catch (Exception e) {
-            popError(e.toString());
-            return false;
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    error = null;
+                    try {
+                        backupController.addBackup(cacertsFile);
+                        List<String> aliases = new ArrayList();
+                        for (CertificateEntry cert : selected) {
+                            aliases.add(cert.getAlias());
+                        }
+                        error = NetworkTools.uninstallCertificate(
+                                cacertsFile.getAbsolutePath(), passwordInput.getText(),
+                                aliases);
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (error == null) {
+                        startAction();
+                        popSuccessful();
+                    } else {
+                        popError(error);
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
+    @FXML
+    public void recover() {
+        if (cacertsFile == null
+                || !cacertsFile.getAbsolutePath().equals(SystemTools.myboxCacerts().getAbsolutePath())) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    SystemTools.resetKeystore();
+                    NetworkTools.installCertificates();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    alertInformation(message("TakeEffectWhenReboot"));
+                    startAction();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
     @FXML
-    @Override
-    public void deleteAction() {
-        List<CertificateEntry> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty() || !backupKeyStore()) {
-            return;
-        }
-        List<String> aliases = new ArrayList();
-        for (CertificateEntry cert : selected) {
-            aliases.add(cert.getAlias());
-        }
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit() ) {
-                    return;
-                }
-                task = new SingletonTask<Void>() {
-
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        try {
-                            error = NetworkTools.uninstallCertificate(
-                                    sourceFileInput.getText(), passwordInput.getText(),
-                                    aliases);
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error == null) {
-                            startAction();
-                            popSuccessful();
-                        } else {
-                            popError(error);
-                        }
-                    }
-                };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
-                thread.setDaemon(true);
-                thread.start();
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
+    public void refreshAction() {
+        startAction();
     }
 
 

@@ -8,11 +8,11 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.ExcelTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -63,24 +63,8 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
         return "xlsx".equals(suffix) || "xls".equals(suffix);
     }
 
-    public String cellString(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case NUMERIC:
-                return cell.getNumericCellValue() + "";
-            case BOOLEAN:
-                return cell.getBooleanCellValue() + "";
-        }
-        return null;
-    }
-
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        countHandling(srcFile);
         String result;
         String filePrefix = FileTools.getFilePrefix(srcFile.getName());
         try ( Workbook wb = WorkbookFactory.create(srcFile)) {
@@ -94,7 +78,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                         continue;
                     }
                     for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-                        rowData.add(cellString(row.getCell(c)));
+                        rowData.add(ExcelTools.cellString(row.getCell(c)));
                     }
                     if (convertController.names.isEmpty()) {
                         if (withNamesCheck.isSelected()) {

@@ -1,6 +1,5 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,8 +7,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.BrowserHistory;
-import mara.mybox.tools.DateTools;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 
 /**
  * @Author Mara
@@ -178,8 +178,8 @@ public class TableBrowserHistory extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             for (BrowserHistory h : his) {
-                String sql = "DELETE FROM Browser_History WHERE address='" + h.getAddress() + "'　"
-                        + " AND　visit_time='" + DateTools.datetimeToString(h.getVisitTime()) + "' ";
+                String sql = "DELETE FROM Browser_History WHERE address='" + DerbyBase.stringValue(h.getAddress()) + "' "
+                        + " AND visit_time='" + DateTools.datetimeToString(h.getVisitTime()) + "' ";
                 count += conn.createStatement().executeUpdate(sql);
             }
             conn.commit();

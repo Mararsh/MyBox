@@ -22,7 +22,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-07-26
  * @License Apache License Version 2.0
  */
-public class LocationDataImportCSVController extends DataImportController<Location> {
+public class LocationDataImportCSVController extends BaseImportCsvController<Location> {
 
     protected Map<String, Dataset> datasets;
     protected TableLocationData tableLocationData;

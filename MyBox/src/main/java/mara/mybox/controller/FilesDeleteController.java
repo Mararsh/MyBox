@@ -57,7 +57,6 @@ public class FilesDeleteController extends BaseBatchFileController {
             if (srcFile == null || !srcFile.isFile()) {
                 return AppVariables.message("Skip");
             }
-            countHandling(srcFile);
             boolean ok;
             String msg;
             if (deleteRadio.isSelected()) {

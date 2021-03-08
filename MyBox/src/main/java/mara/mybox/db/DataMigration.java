@@ -11,12 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.application.Platform;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.dropTables;
-import static mara.mybox.db.DerbyBase.initTables;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.ColorData;
@@ -26,6 +23,7 @@ import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.table.TableColorData;
 import static mara.mybox.db.table.TableColorData.read;
@@ -33,11 +31,11 @@ import static mara.mybox.db.table.TableColorData.write;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -82,6 +80,9 @@ public class DataMigration {
                 if (lastVersion < 6003008) {
                     updateIn638(conn);
                 }
+                if (lastVersion < 6004001) {
+                    updateIn641(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", CommonValues.AppVersion);
             conn.setAutoCommit(true);
@@ -89,6 +90,41 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn641(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.4.1...");
+            String sql = "SELECT * FROM image_history";
+            TableImageEditHistory tableImageEditHistory = new TableImageEditHistory();
+            try ( Statement statement = conn.createStatement();
+                     ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    ImageEditHistory his = new ImageEditHistory();
+                    his.setImage(results.getString("image_location"));
+                    his.setHistoryLocation(results.getString("history_location"));
+                    his.setUpdateType(results.getString("update_type"));
+                    his.setObjectType(results.getString("object_type"));
+                    his.setOpType(results.getString("op_type"));
+                    his.setScopeType(results.getString("scope_type"));
+                    his.setScopeName(results.getString("scope_name"));
+                    his.setOperationTime(results.getTimestamp("operation_time"));
+                    tableImageEditHistory.insertData(conn, his);
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.commit();
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("DROP TABLE image_history");
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            TableStringValues.add(conn, "InstalledVersions", "6.4.1");
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn638(Connection conn) {
@@ -814,17 +850,6 @@ public class DataMigration {
 //            MyBoxLog.error(e);
             return false;
         }
-    }
-
-    private static void resetDB() {
-        Platform.runLater(() -> {
-            if (!FxmlControl.askSure("MyBox", message("SureClear"))) {
-                return;
-            }
-            dropTables();
-            initTables();
-            TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
-        });
     }
 
 }

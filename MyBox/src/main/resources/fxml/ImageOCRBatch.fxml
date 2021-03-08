@@ -126,8 +126,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </ScrollPane>
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
-                                                          styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -137,12 +136,15 @@ License:    Apache License Version 2.0
                                                     </graphic>
                                                 </Button>
                                             </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
                                         </VBox>
                                     </content>
                                 </Tab>
                                 <Tab fx:id="ocrOptionsTab" text="%OCROptions">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                        <VBox fx:id="ocrOptionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                     <content>
@@ -150,6 +152,9 @@ License:    Apache License Version 2.0
                                                     </content>
                                                 </ScrollPane>
                                             </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
                                         </VBox>
                                     </content>
                                 </Tab>

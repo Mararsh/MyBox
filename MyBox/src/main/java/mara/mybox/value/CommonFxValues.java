@@ -22,8 +22,8 @@ public class CommonFxValues {
 
     public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.csv", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
             add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             add(new FileChooser.ExtensionFilter("xml", "*.xml"));
@@ -217,9 +217,9 @@ public class CommonFxValues {
 
     public static List<FileChooser.ExtensionFilter> SheetExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
             add(new FileChooser.ExtensionFilter("csv", "*.csv"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
 

@@ -21,9 +21,10 @@ import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
-import mara.mybox.db.table.TableImageHistory;
+import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMatrix;
@@ -31,10 +32,13 @@ import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
+import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
+import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -464,9 +468,6 @@ public class DerbyBase {
             if (!tables.contains("Alarm_Clock".toUpperCase())) {
                 new TableAlarmClock().init(conn);
             }
-            if (!tables.contains("image_history".toUpperCase())) {
-                new TableImageHistory().init(conn);
-            }
             if (!tables.contains("Convolution_Kernel".toUpperCase())) {
                 new TableConvolutionKernel().init(conn);
             }
@@ -509,9 +510,6 @@ public class DerbyBase {
             if (!tables.contains("String_Value".toUpperCase())) {
                 new TableStringValue().init(conn);
             }
-//            if (!tables.contains("File_History".toUpperCase())) {
-//                new TableFileHistory().createTable(conn);
-//            }
             if (!tables.contains("MyBox_Log".toUpperCase())) {
                 new TableMyBoxLog().createTable(conn);
             }
@@ -527,7 +525,24 @@ public class DerbyBase {
             if (!tables.contains("Data_Column".toUpperCase())) {
                 new TableDataColumn().createTable(conn);
             }
-
+            if (!tables.contains("Image_Edit_History".toUpperCase())) {
+                new TableImageEditHistory().createTable(conn);
+            }
+            if (!tables.contains("File_Backup".toUpperCase())) {
+                new TableFileBackup().createTable(conn);
+            }
+            if (!tables.contains("Notebook".toUpperCase())) {
+                new TableNotebook().createTable(conn);
+            }
+            if (!tables.contains("Note".toUpperCase())) {
+                new TableNote().createTable(conn);
+            }
+            if (!tables.contains("Tag".toUpperCase())) {
+                new TableTag().createTable(conn);
+            }
+//            if (!tables.contains("Note_Tag".toUpperCase())) {
+//                new TableNoteTag().createTable(conn);
+//            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -588,13 +603,6 @@ public class DerbyBase {
 //                    MyBoxLog.error(e);
                 }
             }
-//            if (!indexes.contains("File_History_unique_index".toUpperCase())) {
-//                try ( Statement statement = conn.createStatement()) {
-//                    statement.executeUpdate(TableMyBoxLog.Create_Index_unique);
-//                } catch (Exception e) {
-////                    MyBoxLog.error(e);
-//                }
-//            }
             if (!indexes.contains("MyBox_Log_index".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
@@ -602,20 +610,6 @@ public class DerbyBase {
 //                    MyBoxLog.error(e);
                 }
             }
-//            if (!indexes.contains("Download_History_url_index".toUpperCase())) {
-//                try ( Statement statement = conn.createStatement()) {
-//                    statement.executeUpdate(TableDownloadHistory.Create_Index_url);
-//                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-//                }
-//            }
-//            if (!indexes.contains("Download_History_filename_index".toUpperCase())) {
-//                try ( Statement statement = conn.createStatement()) {
-//                    statement.executeUpdate(TableDownloadHistory.Create_Index_filename);
-//                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-//                }
-//            }
             if (!indexes.contains("Data_Definition_unique_index".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableDataDefinition.Create_Index_unique);
@@ -630,6 +624,27 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
+            if (!indexes.contains("File_Backup_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableFileBackup.Create_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Note_time_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableNote.Create_Time_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+//            if (!indexes.contains("Note_Tag_unique_index".toUpperCase())) {
+//                try ( Statement statement = conn.createStatement()) {
+//                    statement.executeUpdate(TableNoteTag.Create_Unique_Index);
+//                } catch (Exception e) {
+//                    MyBoxLog.error(e);
+//                }
+//            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -677,82 +692,6 @@ public class DerbyBase {
             if (TableGeographyCode.China(conn) == null) {
                 GeographyCodeTools.importPredefined(conn);
             }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            return false;
-        }
-    }
-
-    public static boolean dropTables() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            new TableSystemConf().drop(conn);
-            new TableUserConf().drop(conn);
-            new TableAlarmClock().drop(conn);
-            new TableImageHistory().drop(conn);
-            new TableConvolutionKernel().drop(conn);
-            new TableFloatMatrix().drop(conn);
-            new TableVisitHistory().drop(conn);
-            new TableImageScope().drop(conn);
-            new TableStringValues().drop(conn);
-            new TableMediaList().drop(conn);
-            new TableMedia().drop(conn);
-            new TableBrowserHistory().drop(conn);
-            new TableBrowserBypassSSL().drop(conn);
-            new TableColorData().drop(conn);
-            try {
-                conn.createStatement().executeUpdate("DROP VIEW Epidemic_Report_Statistic_View");
-            } catch (Exception e) {
-            }
-            new TableEpidemicReport().dropTable(conn);
-            new TableGeographyCode().dropTable(conn);
-            new TableQueryCondition().drop(conn);
-            new TableStringValue().drop(conn);
-            new TableDataset().dropTable(conn);
-            try {
-                conn.createStatement().executeUpdate("DROP VIEW Location_Data_View");
-            } catch (Exception e) {
-            }
-            new TableLocationData().dropTable(conn);
-            new TableMyBoxLog().dropTable(conn);
-            new TableMatrix().dropTable(conn);
-            new TableMatrixCell().dropTable(conn);
-            new TableDataDefinition().dropTable(conn);
-            new TableDataColumn().dropTable(conn);
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            return false;
-        }
-    }
-
-    public static boolean clearData() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            new TableUserConf().clear(conn);
-            new TableAlarmClock().clear(conn);
-            new TableImageHistory().clear(conn);
-            new TableConvolutionKernel().clear(conn);
-            new TableFloatMatrix().clear(conn);
-            new TableVisitHistory().clear(conn);
-            new TableImageScope().clear(conn);
-            new TableStringValues().clear(conn);
-            new TableMediaList().clear(conn);
-            new TableMedia().clear(conn);
-            new TableBrowserHistory().clear(conn);
-            new TableBrowserBypassSSL().clear(conn);
-            new TableColorData().clear(conn);
-            new TableEpidemicReport().clearData(conn);
-            new TableGeographyCode().clearData(conn);
-            new TableQueryCondition().clear(conn);
-            new TableStringValue().clear(conn);
-            new TableDataset().clearData(conn);
-            new TableLocationData().clearData(conn);
-            new TableMyBoxLog().clearData(conn);
-            new TableMatrix().clearData(conn);
-            new TableMatrixCell().clearData(conn);
-            new TableDataDefinition().clearData(conn);
-            new TableDataColumn().clearData(conn);
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);

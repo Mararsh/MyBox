@@ -10,6 +10,7 @@ import java.util.Random;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
@@ -27,7 +28,7 @@ import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.data.Matrix;
 import mara.mybox.db.data.MatrixCell;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -61,20 +62,16 @@ public class BaseMatrixController extends BaseSheetController {
     protected TextArea commentsArea;
     @FXML
     protected CheckBox autoNameCheck;
+    @FXML
+    protected Button save2Button;
 
     public BaseMatrixController() {
         baseTitle = message("MatrixEdit");
         dataType = DataType.Matrix;
-    }
-
-    @Override
-    public void makeColumns(int number) {
-        columns = new ArrayList<>();
-        for (int i = 0; i < number; i++) {
-            ColumnDefinition column
-                    = new ColumnDefinition(message("Column") + (i + 1), ColumnDefinition.ColumnType.Double, true);
-            columns.add(column);
-        }
+        colPrefix = "Column";
+        defaultColumnType = ColumnType.Double;
+        defaultColValue = "0";
+        defaultColNotNull = true;
     }
 
     public void setManager(ControlMatricesList manager) {
@@ -88,7 +85,6 @@ public class BaseMatrixController extends BaseSheetController {
     public void setControls(String baseName) {
         try {
             super.setControls(baseName);
-            defaultValue = "0";
             colsNumber = AppVariables.getUserConfigInt(baseName + "ColsNumber", 3);
             rowsNumber = AppVariables.getUserConfigInt(baseName + "RowsNumber", 3);
             scale = (short) AppVariables.getUserConfigInt(baseName + "Scale", 2);
@@ -216,6 +212,8 @@ public class BaseMatrixController extends BaseSheetController {
                         }
                     });
 
+            save2Button.disableProperty().bind(saveButton.disableProperty());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -295,7 +293,7 @@ public class BaseMatrixController extends BaseSheetController {
                     try {
                         values[row][col] = DoubleTools.scale(matrix[row][col], scale) + "";
                     } catch (Exception e) {
-                        values[row][col] = defaultValue;
+                        values[row][col] = defaultColValue;
                     }
                 }
             }
@@ -340,7 +338,7 @@ public class BaseMatrixController extends BaseSheetController {
                     if (d != CommonValues.InvalidDouble) {
                         values[j][i] = d + "";
                     } else {
-                        values[j][i] = defaultValue;
+                        values[j][i] = defaultColValue;
                     }
                 }
             }
@@ -483,30 +481,39 @@ public class BaseMatrixController extends BaseSheetController {
         try {
             MenuItem menu = new MenuItem(message("SetColZero"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     inputs[j][col].setText(0d + "");
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("SetColOne"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     inputs[j][col].setText(1d + "");
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("SetColRandom"));
             menu.setOnAction((ActionEvent event) -> {
                 Random r = new Random();
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     inputs[j][col].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -520,30 +527,39 @@ public class BaseMatrixController extends BaseSheetController {
         try {
             MenuItem menu = new MenuItem(message("SetRowZero"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int i = 0; i < colsNumber; ++i) {
                     inputs[row][i].setText(0d + "");
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("SetRowOne"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int i = 0; i < colsNumber; ++i) {
                     inputs[row][i].setText(1d + "");
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("SetRowRandom"));
             menu.setOnAction((ActionEvent event) -> {
                 Random r = new Random();
+                isSettingValues = true;
                 for (int i = 0; i < colsNumber; ++i) {
                     inputs[row][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
         } catch (Exception e) {
@@ -558,45 +574,54 @@ public class BaseMatrixController extends BaseSheetController {
         try {
             MenuItem menu = new MenuItem(message("SetAllZero"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         inputs[j][i].setText(0d + "");
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " 0");
                 }
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("SetAllOne"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         inputs[j][i].setText(1d + "");
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " 1");
                 }
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("SetAllRandom"));
             menu.setOnAction((ActionEvent event) -> {
                 Random r = new Random();
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " " + message("Random"));
                 }
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("Normalization"));
@@ -616,37 +641,43 @@ public class BaseMatrixController extends BaseSheetController {
                 if (sum == 0) {
                     return;
                 }
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         double d = dvalue(j, i);
                         inputs[j][i].setText(DoubleTools.scale(d / sum, scale) + "");
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " " + message("Normalization"));
                 }
                 sheetChanged();
             });
+            menu.setDisable(inputs == null);
             items.add(menu);
 
             menu = new MenuItem(message("GaussianDistribution"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 float[][] m = ConvolutionKernel.makeGaussMatrix(rowsNumber / 2);
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         inputs[j][i].setText(DoubleTools.scale(m[j][i], scale) + "");
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " " + message("GaussianDistribution"));
                 }
                 sheetChanged();
             });
-            menu.setDisable(colsNumber != rowsNumber || colsNumber < 3);
+            menu.setDisable(inputs == null || colsNumber != rowsNumber || colsNumber < 3);
             items.add(menu);
 
             menu = new MenuItem(message("SetAsIdentifyMatrix"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         if (i == j) {
@@ -656,16 +687,18 @@ public class BaseMatrixController extends BaseSheetController {
                         }
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " " + message("IdentifyMatrix"));
                 }
                 sheetChanged();
             });
-            menu.setDisable(colsNumber != rowsNumber);
+            menu.setDisable(inputs == null || colsNumber != rowsNumber);
             items.add(menu);
 
             menu = new MenuItem(message("SetAsUpperTriangleMatrix"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         if (i < j) {
@@ -673,16 +706,18 @@ public class BaseMatrixController extends BaseSheetController {
                         }
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " " + message("UpperTriangle"));
                 }
                 sheetChanged();
             });
-            menu.setDisable(colsNumber != rowsNumber);
+            menu.setDisable(inputs == null || colsNumber != rowsNumber);
             items.add(menu);
 
             menu = new MenuItem(message("SetAsLowerTriangleMatrix"));
             menu.setOnAction((ActionEvent event) -> {
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         if (i > j) {
@@ -690,26 +725,31 @@ public class BaseMatrixController extends BaseSheetController {
                         }
                     }
                 }
+                isSettingValues = false;
                 if (autoNameCheck.isSelected()) {
                     nameInput.setText(rowsNumber + "x" + colsNumber + " " + message("LowerTriangle"));
                 }
                 sheetChanged();
             });
-            menu.setDisable(colsNumber != rowsNumber);
+            menu.setDisable(inputs == null || colsNumber != rowsNumber);
             items.add(menu);
 
             rowsSelected = false;
-            for (int j = 0; j < rowsCheck.length; ++j) {
-                if (rowsCheck[j].isSelected()) {
-                    rowsSelected = true;
-                    break;
+            if (rowsCheck != null) {
+                for (int j = 0; j < rowsCheck.length; ++j) {
+                    if (rowsCheck[j].isSelected()) {
+                        rowsSelected = true;
+                        break;
+                    }
                 }
             }
             colsSelected = false;
-            for (int j = 0; j < colsCheck.length; ++j) {
-                if (colsCheck[j].isSelected()) {
-                    colsSelected = true;
-                    break;
+            if (colsCheck != null) {
+                for (int j = 0; j < colsCheck.length; ++j) {
+                    if (colsCheck[j].isSelected()) {
+                        colsSelected = true;
+                        break;
+                    }
                 }
             }
 
@@ -721,6 +761,7 @@ public class BaseMatrixController extends BaseSheetController {
                     popError(message("NoData"));
                     return;
                 }
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     if (!rowsCheck[j].isSelected()) {
                         continue;
@@ -729,6 +770,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(0d + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!rowsSelected);
@@ -740,6 +782,7 @@ public class BaseMatrixController extends BaseSheetController {
                     popError(message("NoData"));
                     return;
                 }
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     if (!rowsCheck[j].isSelected()) {
                         continue;
@@ -748,6 +791,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(1d + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!rowsSelected);
@@ -760,6 +804,7 @@ public class BaseMatrixController extends BaseSheetController {
                     return;
                 }
                 Random r = new Random();
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     if (!rowsCheck[j].isSelected()) {
                         continue;
@@ -768,6 +813,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!rowsSelected);
@@ -781,6 +827,7 @@ public class BaseMatrixController extends BaseSheetController {
                     popError(message("NoData"));
                     return;
                 }
+                isSettingValues = true;
                 for (int i = 0; i < colsNumber; ++i) {
                     if (!colsCheck[i].isSelected()) {
                         continue;
@@ -789,6 +836,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(0d + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!colsSelected);
@@ -800,6 +848,7 @@ public class BaseMatrixController extends BaseSheetController {
                     popError(message("NoData"));
                     return;
                 }
+                isSettingValues = true;
                 for (int i = 0; i < colsNumber; ++i) {
                     if (!colsCheck[i].isSelected()) {
                         continue;
@@ -808,6 +857,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(1d + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!colsSelected);
@@ -820,6 +870,7 @@ public class BaseMatrixController extends BaseSheetController {
                     return;
                 }
                 Random r = new Random();
+                isSettingValues = true;
                 for (int i = 0; i < colsNumber; ++i) {
                     if (!colsCheck[i].isSelected()) {
                         continue;
@@ -828,6 +879,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!colsSelected);
@@ -841,6 +893,7 @@ public class BaseMatrixController extends BaseSheetController {
                     popError(message("NoData"));
                     return;
                 }
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     if (!rowsCheck[j].isSelected()) {
                         continue;
@@ -852,6 +905,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(0d + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!colsSelected || !rowsSelected);
@@ -863,6 +917,7 @@ public class BaseMatrixController extends BaseSheetController {
                     popError(message("NoData"));
                     return;
                 }
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     if (!rowsCheck[j].isSelected()) {
                         continue;
@@ -874,6 +929,7 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(1d + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!colsSelected || !rowsSelected);
@@ -886,6 +942,7 @@ public class BaseMatrixController extends BaseSheetController {
                     return;
                 }
                 Random r = new Random();
+                isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     if (!rowsCheck[j].isSelected()) {
                         continue;
@@ -897,11 +954,57 @@ public class BaseMatrixController extends BaseSheetController {
                         inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
                     }
                 }
+                isSettingValues = false;
                 sheetChanged();
             });
             menu.setDisable(!colsSelected || !rowsSelected);
             items.add(menu);
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    @Override
+    public List<MenuItem> sheetSizeMoreMenu() {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            MenuItem menu = new MenuItem(message("SetRowsNumber"));
+            menu.setOnAction((ActionEvent event) -> {
+                String value = askValue("", message("SetRowsNumber"), inputs == null ? "1" : inputs.length + "");
+                if (value == null) {
+                    return;
+                }
+                try {
+                    int number = Integer.parseInt(value);
+                    resizeSheet(number, colsCheck.length);
+                } catch (Exception e) {
+                    popError(message("InvalidData"));
+                }
+            });
+            menu.setDisable(colsCheck == null || colsCheck.length < 1);
+            items.add(menu);
+
+            menu = new MenuItem(message("SetColumnsNumber"));
+            menu.setOnAction((ActionEvent event) -> {
+                String value = askValue("", message("SetColumnsNumber"), colsCheck == null ? "1" : colsCheck.length + "");
+                if (value == null) {
+                    return;
+                }
+                try {
+                    int number = Integer.parseInt(value);
+                    if (inputs == null) {
+                        makeColumns(number);
+                        makeSheet(null);
+                    } else {
+                        resizeSheet(inputs.length, number);
+                    }
+                } catch (Exception e) {
+                    popError(message("InvalidData"));
+                }
+            });
+            items.add(menu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

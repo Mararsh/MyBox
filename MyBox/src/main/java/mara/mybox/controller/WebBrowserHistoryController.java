@@ -47,12 +47,6 @@ public class WebBrowserHistoryController extends BaseDataTableController<Browser
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        loadTableData();
-    }
-
-    @Override
     public void loadTableData() {
         tableData.clear();
         tableData.addAll(TableBrowserHistory.read());
@@ -94,7 +88,7 @@ public class WebBrowserHistoryController extends BaseDataTableController<Browser
     @FXML
     protected void openAction() {
         BrowserHistory selected = tableView.getSelectionModel().getSelectedItem();
-        if (parentController == null || selected == null) {
+        if (browserConroller == null || selected == null) {
             return;
         }
         browserConroller.newTabAction(selected.getAddress(), true);

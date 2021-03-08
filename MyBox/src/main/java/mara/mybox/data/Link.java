@@ -71,6 +71,7 @@ public class Link {
             suffix = (suffix == null || suffix.isBlank()) ? ".html" : suffix;
             return path + File.separator + pageName + suffix;
         } catch (Exception e) {
+//            MyBoxLog.console(e.toString());
             return null;
         }
     }

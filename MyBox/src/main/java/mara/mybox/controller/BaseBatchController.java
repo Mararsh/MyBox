@@ -102,7 +102,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     // "targetFiles" and "finalTargetName" should be written by this method
     public String handleFile(File srcFile, File targetPath) {
-        countHandling(srcFile);
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return AppVariables.message("Skip");
@@ -683,6 +682,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             tableController.markFileHandling(currentParameters.currentIndex);
             currentParameters.currentSourceFile = getCurrentFile();
             String result;
+            countHandling(currentParameters.currentSourceFile);
             if (!currentParameters.currentSourceFile.exists()) {
                 result = AppVariables.message("NotFound");
             } else if (currentParameters.currentSourceFile.isFile()) {
@@ -703,8 +703,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public String handleFile(File file) {
         try {
-            if (!match(file)) {
-                return AppVariables.message("Skip");
+            if (task == null || task.isCancelled()) {
+                return AppVariables.message("Canceled");
+            }
+            if (file == null || !file.isFile() || !match(file)) {
+                return AppVariables.message("Skip" + ": " + file);
             }
             if (currentParameters.targetPath != null) {
                 return handleFile(file, new File(currentParameters.targetPath));
@@ -712,7 +715,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 return handleFile(file, null);
             }
         } catch (Exception e) {
-            return AppVariables.message("Failed");
+            return file + " " + e.toString();
         }
     }
 
@@ -962,13 +965,16 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (name == null) {
             return;
         }
-        totalFilesHandled++;
+        try {
+            if (new File(name).isFile()) {
+                totalFilesHandled++;
+            }
+        } catch (Exception e) {
+        }
         fileStartTime = new Date();
         String msg = MessageFormat.format(message("HandlingObject"), name);
         updateStatusLabel(msg + "    " + message("StartTime") + ": " + DateTools.datetimeToString(fileStartTime));
-        if (verboseCheck == null || verboseCheck.isSelected()) {
-            updateLogs(msg, true, true);
-        }
+        updateLogs(msg, true, true);
     }
 
     public void showStatus(String info) {

@@ -224,6 +224,7 @@ public abstract class BaseController implements Initializable {
                 thisPane.setOnKeyReleased((KeyEvent event) -> {
                     keyEventsHandler(event);
                 });
+
             }
 
             if (mainMenuController != null) {
@@ -447,6 +448,7 @@ public abstract class BaseController implements Initializable {
                     }
                 });
                 leftPaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
+                leftPane.setHvalue(0);
             }
 
             if (splitPane != null && rightPane != null && rightPaneControl != null) {
@@ -463,6 +465,7 @@ public abstract class BaseController implements Initializable {
                     }
                 });
                 rightPaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
+                rightPane.setHvalue(0);
             }
 
         } catch (Exception e) {
@@ -573,16 +576,7 @@ public abstract class BaseController implements Initializable {
             refreshStyle();
             initSplitPanes();
 
-            if (mainMenuController != null) {
-                FxmlControl.mouseCenter(myStage);
-            }
             toFront();
-
-            if (selectFileButton != null) {
-                selectFileButton.requestFocus();
-            } else if (tipsView != null) {
-                tipsView.requestFocus();
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -608,24 +602,28 @@ public abstract class BaseController implements Initializable {
 
     public void toFront() {
         try {
-            getMyStage().setIconified(false);
-            myStage.requestFocus();
-            if (topCheck == null || !topCheck.isVisible() || topCheck.isDisabled()) {
-                return;
-            }
-            topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
-            if (!topCheck.isSelected()) {
-                return;
-            }
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
+                        getMyStage().setIconified(false);
+                        myStage.requestFocus();
+                        myStage.toFront();
+                        if (selectFileButton != null) {
+                            selectFileButton.requestFocus();
+                        } else if (tipsView != null) {
+                            tipsView.requestFocus();
+                        } else {
+                            thisPane.requestFocus();
+                        }
+                        if (mainMenuController != null) {
+                            FxmlControl.mouseCenter(myStage);
+                        }
                         checkAlwaysTop();
                     });
                 }
-            }, 1000);
+            }, 500);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -636,6 +634,7 @@ public abstract class BaseController implements Initializable {
                 || getMyStage() == null) {
             return;
         }
+        topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
         myStage.setAlwaysOnTop(topCheck.isSelected());
         if (topCheck.isSelected()) {
             popWarn(message("AlwaysTopWarning"), 6000);
@@ -996,8 +995,7 @@ public abstract class BaseController implements Initializable {
 
     // Shortcuts like PageDown/PageUp/Home/End/Ctrl-c/v/x/z/y/a may work for text editing
     public void keyEventsHandler(KeyEvent event) {
-//        MyBoxLog.debug(this.getClass().getName() + " " + event.isControlDown() + " text:" + event.getText()
-//                + " code:" + event.getCode());
+//        MyBoxLog.debug(this.getClass().getName() + " text:" + event.getText() + " code:" + event.getCode());
         currentKeyEvent = event;
 //        MyBoxLog.debug(currentKeyEvent.getSource().getClass());
         keyEventsHandlerDo(event);
@@ -1455,7 +1453,6 @@ public abstract class BaseController implements Initializable {
 
     public void sourceFileChanged(final File file) {
         sourceFile = file;
-
     }
 
     public void recordFileOpened(String file) {
@@ -2411,6 +2408,14 @@ public abstract class BaseController implements Initializable {
         FxmlStage.openTarget(null, file);
     }
 
+    public void browse(String url) {
+        try {
+            browseURI(new URI(url));
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void browseURI(URI uri) {
         FxmlStage.browseURI(getMyStage(), uri);
     }
@@ -2655,6 +2660,10 @@ public abstract class BaseController implements Initializable {
         popInformation(text, duration, getPopTextSize());
     }
 
+    public void popInformation(String text, Region attach) {
+        popText(text, getPopTextDuration(), getPopTextbgColor(), getPopInfoColor(), getPopTextSize(), attach);
+    }
+
     public void popInformation(String text) {
         popInformation(text, getPopTextDuration(), getPopTextSize());
     }
@@ -2858,8 +2867,7 @@ public abstract class BaseController implements Initializable {
         if (!FxmlControl.askSure(getBaseTitle(), message("SureRestoreCheckingSSL"))) {
             return;
         }
-
-        NetworkTools.myBoxSSL();
+        NetworkTools.defaultSSL();
         popSuccessful();
     }
 
@@ -2882,7 +2890,7 @@ public abstract class BaseController implements Initializable {
         protected void whenFailed() {
             if (error != null) {
                 popError(AppVariables.message(error));
-//                MyBoxLog.console(AppVariables.message(error));
+                MyBoxLog.console(error);
             } else {
                 popFailed();
             }

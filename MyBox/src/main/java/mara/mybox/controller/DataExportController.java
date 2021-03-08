@@ -110,6 +110,8 @@ public class DataExportController extends BaseTaskController {
             queryController.setControls(dataController, initCondition, tableDefinition, prefixEditable, supportTop);
 
             convertController.setControls(this, pdfOptionsController);
+            pdfOptionsController.pixSizeRadio.setDisable(true);
+            pdfOptionsController.standardSizeRadio.fire();
 
             fieldsPane.getChildren().clear();
             List<ColumnDefinition> tableColumns = table.getColumns();

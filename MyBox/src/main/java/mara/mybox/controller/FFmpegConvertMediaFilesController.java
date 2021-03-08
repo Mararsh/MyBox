@@ -56,7 +56,6 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            countHandling(srcFile);
             String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
                 ext = FileTools.getFileSuffix(srcFile.getName());

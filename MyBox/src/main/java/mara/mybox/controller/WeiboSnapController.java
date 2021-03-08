@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +18,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.data.WeiboSnapParameters;
-import mara.mybox.db.table.TableBrowserBypassSSL;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -1076,19 +1074,6 @@ public class WeiboSnapController extends BaseController {
 
             if (AppVariables.getUserConfigBoolean("SSLBypassAll", false)) {
                 NetworkTools.trustAll();
-            } else {
-                // SSL handshake still fails even when certficates imported! This is workaround
-                try {
-                    List<String> hosts = new ArrayList<>();
-                    hosts.addAll(Arrays.asList(
-                            "www.sina.com", "www.sina.com.cn", "www.weibo.cn", "www.weibo.com", "weibo.com"
-                    ));
-                    NetworkTools.installCertificate(hosts);
-                    TableBrowserBypassSSL.write(hosts);
-                    NetworkTools.myBoxSSL();
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
             }
 
             if (postsCheck.isSelected()) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -103,7 +104,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
     protected ListView<String> pointsList;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
-            ignoreTransparentCheck;
+            ignoreTransparentCheck, squareRootCheck;
     @FXML
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
@@ -302,10 +303,12 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             });
 
+            int colorDistance = AppVariables.getUserConfigInt(baseName + "ColorDistance", 20);
+            colorDistance = colorDistance <= 0 ? 20 : colorDistance;
+            scopeDistanceSelector.setValue(colorDistance + "");
             scopeDistanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -326,6 +329,18 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             });
             FxmlControl.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
+
+            squareRootCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ColorDistanceSquare", false));
+            squareRootCheck.disableProperty().bind(colorRGBRadio.selectedProperty().not());
+            squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues || !colorRGBRadio.isSelected()) {
+                        return;
+                    }
+                    checkMatchType();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -582,54 +597,63 @@ public class ImageManufactureScopeController extends ImageViewerController {
         if (isSettingValues || scope == null || matchGroup.getSelectedToggle() == null) {
             return;
         }
-        try {
-            int max = 255;
-            RadioButton selected = (RadioButton) matchGroup.getSelectedToggle();
-            if (selected.equals(colorRGBRadio)) {
-                scope.setColorScopeType(ColorScopeType.Color);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int max = 255, step = 10;
+                    RadioButton selected = (RadioButton) matchGroup.getSelectedToggle();
+                    if (selected.equals(colorRGBRadio)) {
+                        scope.setColorScopeType(ColorScopeType.Color);
+                        if (squareRootCheck.isSelected()) {
+                            max = 255 * 255;
+                            step = 100;
+                        }
 
-            } else if (selected.equals(colorRedRadio)) {
-                scope.setColorScopeType(ColorScopeType.Red);
+                    } else if (selected.equals(colorRedRadio)) {
+                        scope.setColorScopeType(ColorScopeType.Red);
 
-            } else if (selected.equals(colorGreenRadio)) {
-                scope.setColorScopeType(ColorScopeType.Green);
+                    } else if (selected.equals(colorGreenRadio)) {
+                        scope.setColorScopeType(ColorScopeType.Green);
 
-            } else if (selected.equals(colorBlueRadio)) {
-                scope.setColorScopeType(ColorScopeType.Blue);
+                    } else if (selected.equals(colorBlueRadio)) {
+                        scope.setColorScopeType(ColorScopeType.Blue);
 
-            } else if (selected.equals(colorSaturationRadio)) {
-                scope.setColorScopeType(ColorScopeType.Saturation);
-                max = 100;
+                    } else if (selected.equals(colorSaturationRadio)) {
+                        scope.setColorScopeType(ColorScopeType.Saturation);
+                        max = 100;
 
-            } else if (selected.equals(colorHueRadio)) {
-                scope.setColorScopeType(ColorScopeType.Hue);
-                max = 360;
+                    } else if (selected.equals(colorHueRadio)) {
+                        scope.setColorScopeType(ColorScopeType.Hue);
+                        max = 360;
 
-            } else if (selected.equals(colorBrightnessRadio)) {
-                scope.setColorScopeType(ColorScopeType.Brightness);
-                max = 100;
+                    } else if (selected.equals(colorBrightnessRadio)) {
+                        scope.setColorScopeType(ColorScopeType.Brightness);
+                        max = 100;
 
+                    }
+
+                    FxmlControl.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
+                    String value = scopeDistanceSelector.getValue();
+                    List<String> vList = new ArrayList<>();
+                    for (int i = 0; i <= max; i += step) {
+                        vList.add(i + "");
+                    }
+                    isSettingValues = true;
+                    scopeDistanceSelector.getItems().clear();
+                    scopeDistanceSelector.getItems().addAll(vList);
+                    scopeDistanceSelector.getSelectionModel().select(value);
+                    isSettingValues = false;
+
+                    if (checkDistanceValue()) {
+                        indicateScope();
+                    }
+
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                }
             }
-
-            FxmlControl.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
-
-            List<String> vList = new ArrayList<>();
-            for (int i = 0; i <= max; i += 10) {
-                vList.add(i + "");
-            }
-            isSettingValues = true;
-            scopeDistanceSelector.getItems().clear();
-            scopeDistanceSelector.getItems().addAll(vList);
-            scopeDistanceSelector.getSelectionModel().select("20");
-            isSettingValues = false;
-
-            if (checkDistanceValue()) {
-                indicateScope();
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        });
     }
 
     protected boolean checkDistanceValue() {
@@ -639,40 +663,46 @@ public class ImageManufactureScopeController extends ImageViewerController {
         }
         boolean valid = true;
         try {
-            int distance = Integer.valueOf(scopeDistanceSelector.getSelectionModel().getSelectedItem());
+            int distance = Integer.valueOf(scopeDistanceSelector.getValue());
             switch (scope.getColorScopeType()) {
                 case Hue:
                     if (distance >= 0 && distance <= 360) {
-                        FxmlControl.setEditorNormal(scopeDistanceSelector);
                         scope.setHsbDistance(distance / 360.0f);
                     } else {
-                        FxmlControl.setEditorBadStyle(scopeDistanceSelector);
                         valid = false;
                     }
                     break;
                 case Brightness:
                 case Saturation:
                     if (distance >= 0 && distance <= 100) {
-                        FxmlControl.setEditorNormal(scopeDistanceSelector);
                         scope.setHsbDistance(distance / 100.0f);
                     } else {
-                        FxmlControl.setEditorBadStyle(scopeDistanceSelector);
                         valid = false;
                     }
                     break;
                 default:
-                    if (distance >= 0 && distance <= 255) {
-                        FxmlControl.setEditorNormal(scopeDistanceSelector);
-                        scope.setColorDistance(distance);
+                    if (squareRootCheck.isSelected() && colorRGBRadio.isSelected()) {
+                        if (distance >= 0 && distance <= 255 * 255) {
+                            scope.setColorDistanceSquare(distance);
+                        } else {
+                            valid = false;
+                        }
                     } else {
-                        FxmlControl.setEditorBadStyle(scopeDistanceSelector);
-                        valid = false;
+                        if (distance >= 0 && distance <= 255) {
+                            scope.setColorDistance(distance);
+                        } else {
+                            valid = false;
+                        }
                     }
             }
         } catch (Exception e) {
-            FxmlControl.setEditorBadStyle(scopeDistanceSelector);
             MyBoxLog.debug(e.toString());
             valid = false;
+        }
+        if (valid) {
+            FxmlControl.setEditorNormal(scopeDistanceSelector);
+        } else {
+            FxmlControl.setEditorBadStyle(scopeDistanceSelector);
         }
         return valid;
     }
@@ -693,9 +723,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 case Matting:
                     scopeTips.setText(message("ScopeMattingTips"));
                     scopeSetBox.getChildren().addAll(scopePointsBox, eightNeighborCheck, colorMatchBox);
-                    if (opacity == 0) {
-                        opacitySelector.getSelectionModel().select(0);
-                    }
                     break;
 
                 case Rectangle:
@@ -723,26 +750,17 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 case Color:
                     scopeTips.setText(message("ScopeColorTips"));
                     scopeSetBox.getChildren().addAll(scopeColorsBox, colorMatchBox);
-                    if (opacity == 0) {
-                        opacitySelector.getSelectionModel().select(0);
-                    }
                     break;
 
                 case RectangleColor:
                     scopeTips.setText(message("ScopeRectangleColorsTips"));
                     scopeSetBox.getChildren().addAll(rectangleBox, areaExcludedCheck, scopeColorsBox, colorMatchBox);
                     rectangleLabel.setText(message("Rectangle"));
-                    if (opacity == 0) {
-                        opacitySelector.getSelectionModel().select(0);
-                    }
                     break;
 
                 case CircleColor:
                     scopeTips.setText(message("ScopeCircleColorsTips"));
                     scopeSetBox.getChildren().addAll(circleBox, areaExcludedCheck, scopeColorsBox, colorMatchBox);
-                    if (opacity == 0) {
-                        opacitySelector.getSelectionModel().select(0);
-                    }
                     break;
 
                 case EllipseColor:
@@ -754,9 +772,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 case PolygonColor:
                     scopeTips.setText(message("ScopePolygonColorsTips"));
                     scopeSetBox.getChildren().addAll(scopePointsBox, areaExcludedCheck, scopeColorsBox, colorMatchBox);
-                    if (opacity == 0) {
-                        opacitySelector.getSelectionModel().select(0);
-                    }
                     break;
 
                 case Outline:

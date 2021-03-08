@@ -87,16 +87,20 @@ License:    Apache License Version 2.0
                                                                 </FlowPane>
                                                             </children>
                                                         </VBox>
-                                                        <!--                                          <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                           <children>
-                                                              <CheckBox fx:id="autoBackupCheck" layoutX="32.0" layoutY="74.0" mnemonicParsing="false" selected="true" text="%AutoBackup" />
-                                                           </children>
-                                                        </VBox>-->
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="saveAsPane" text="%SaveAs">
+                                        <TitledPane fx:id="backupPane" expanded="false" layoutX="10.0" layoutY="742.0" maxWidth="1.7976931348623157E308" text="%Backup">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <fx:include fx:id="backup" source="ControlFileBackup.fxml" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="saveAsPane" expanded="false"  text="%SaveAs">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
@@ -281,7 +285,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </CheckBox>
-                                                <Button mnemonicParsing="false"  onMouseEntered="#popInput">
+                                                <Button  fx:id="headerButton" mnemonicParsing="false"  onMouseEntered="#popInput">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -371,25 +375,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                        <HBox fx:id="htmlBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
-                                                                            <children>
-                                                                                <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editHtml">
-                                                                                    <graphic>
-                                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                            <image>
-                                                                                                <Image url="@../buttons/iconEdit.png" />
-                                                                                            </image>
-                                                                                        </ImageView>
-                                                                                    </graphic>
-                                                                                </Button>
-                                                                            </children>
-                                                                        </HBox>
-                                                                    </children>
-                                                                </HBox>
-                                                                <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                                                <fx:include fx:id="webview" source="ControlWebview.fxml" />
                                                             </children>
                                                         </VBox>
                                                     </content>

@@ -88,7 +88,6 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     @Override

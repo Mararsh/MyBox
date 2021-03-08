@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import com.sun.management.OperatingSystemMXBean;
 import java.awt.Toolkit;
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import mara.mybox.data.BaseTask;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FloatTools;
@@ -82,6 +84,11 @@ public class MainMenuController extends BaseController {
         try {
             super.initControls();
 
+//            menuBar.setOnMouseEntered((Event e) -> {
+//                getMyStage().setIconified(false);
+//                getMyStage().requestFocus();
+//                menuBar.requestFocus();
+//            });
             settingsMenu.setOnShowing((Event e) -> {
                 checkSettings();
             });
@@ -114,7 +121,7 @@ public class MainMenuController extends BaseController {
         newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
         restoreStagesSizeCheck.setSelected(AppVariables.restoreStagesSize);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
-        popColorSetCheck.setSelected(AppVariables.getUserConfigBoolean("PopColorSet", true));
+        popColorSetCheck.setSelected(AppVariables.getUserConfigBoolean("PopColorSetWhenMousePassing", true));
         controlPanesCheck.setSelected(AppVariables.getUserConfigBoolean("MousePassControlPanes", true));
         checkControlColor();
         checkMemroyMonitor();
@@ -610,7 +617,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void popColorSetAction() {
-        AppVariables.setUserConfigValue("PopColorSet", popColorSetCheck.isSelected());
+        AppVariables.setUserConfigValue("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
     }
 
     @FXML
@@ -736,6 +743,11 @@ public class MainMenuController extends BaseController {
     @Override
     public BaseController openStage(String newFxml) {
         return parentController.openStage(newFxml);
+    }
+
+    @FXML
+    protected void openNotes(ActionEvent event) {
+        loadScene(CommonValues.NotesFxml);
     }
 
     @FXML
@@ -1391,12 +1403,14 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void openDataCsv(ActionEvent event) {
-        loadScene(CommonValues.DataFileCSVFxml);
+        DataFileCSVController c = (DataFileCSVController) loadScene(CommonValues.DataFileCSVFxml);
+        c.createAction();
     }
 
     @FXML
     protected void openDataExcel(ActionEvent event) {
-        loadScene(CommonValues.DataFileExcelFxml);
+        DataFileExcelController c = (DataFileExcelController) loadScene(CommonValues.DataFileExcelFxml);
+        c.createAction();
     }
 
     @FXML
@@ -1405,8 +1419,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void openExcelSplit(ActionEvent event) {
-        loadScene(CommonValues.DataFileExcelSplitFxml);
+    protected void openExcelMerge(ActionEvent event) {
+        loadScene(CommonValues.DataFileExcelMergeFxml);
     }
 
     @FXML
@@ -1415,8 +1429,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void openCsvSplit(ActionEvent event) {
-        loadScene(CommonValues.DataFileCSVSplitFxml);
+    protected void openCsvMerge(ActionEvent event) {
+        loadScene(CommonValues.DataFileCSVMergeFxml);
     }
 
     @FXML
@@ -1449,6 +1463,14 @@ public class MainMenuController extends BaseController {
     @FXML
     public void documents(ActionEvent event) {
         openStage(CommonValues.DocumentsFxml);
+    }
+
+    @FXML
+    public void readme(ActionEvent event) {
+        MarkdownEditerController c = (MarkdownEditerController) openStage(CommonValues.MarkdownEditorFxml);
+        String lang = AppVariables.isChinese() ? "zh" : "en";
+        File file = FxmlControl.getInternalFile("/doc/" + lang + "/README.md", "doc", "README-" + lang + ".md", false);
+        c.sourceFileChanged(file);
     }
 
     // This is for developement to generate Icons automatically in different color style

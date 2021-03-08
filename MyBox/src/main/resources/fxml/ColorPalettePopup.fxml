@@ -24,7 +24,8 @@ License:    Apache License Version 2.0
         </ScrollPane>
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="label" layoutX="10.0" layoutY="19.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <Label fx:id="label" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="popColorSetCheck" minHeight="-Infinity" mnemonicParsing="false" onAction="#popColorSet" selected="true" text="%PopColorSetWhenMousePassing" wrapText="true" />
             <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.DownloadHistory;
-import mara.mybox.data.FileHistory;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.ColumnDefinition;
@@ -14,12 +13,15 @@ import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableDownloadHistory;
 import mara.mybox.db.table.TableEpidemicReport;
-import mara.mybox.db.table.TableFileHistory;
+import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMatrix;
 import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.db.table.TableMyBoxLog;
+import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.message;
@@ -48,9 +50,6 @@ public class BaseDataTools {
         } else if (data instanceof EpidemicReport) {
             return new TableEpidemicReport();
 
-        } else if (data instanceof FileHistory) {
-            return new TableFileHistory();
-
         } else if (data instanceof Location) {
             return new TableLocationData();
 
@@ -68,6 +67,18 @@ public class BaseDataTools {
 
         } else if (data instanceof ColumnDefinition) {
             return new TableDataColumn();
+
+        } else if (data instanceof ImageEditHistory) {
+            return new TableImageEditHistory();
+
+        } else if (data instanceof FileBackup) {
+            return new TableFileBackup();
+
+        } else if (data instanceof Note) {
+            return new TableNote();
+
+        } else if (data instanceof Notebook) {
+            return new TableNotebook();
 
         }
         return null;
@@ -89,9 +100,6 @@ public class BaseDataTools {
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.valid((EpidemicReport) data);
 
-        } else if (data instanceof FileHistory) {
-            return FileHistory.valid((FileHistory) data);
-
         } else if (data instanceof Location) {
             return Location.valid((Location) data);
 
@@ -110,7 +118,20 @@ public class BaseDataTools {
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.valid((ColumnDefinition) data);
 
+        } else if (data instanceof ImageEditHistory) {
+            return ImageEditHistory.valid((ImageEditHistory) data);
+
+        } else if (data instanceof FileBackup) {
+            return FileBackup.valid((FileBackup) data);
+
+        } else if (data instanceof Note) {
+            return Note.valid((Note) data);
+
+        } else if (data instanceof Notebook) {
+            return Notebook.valid((Notebook) data);
+
         }
+
         return false;
     }
 
@@ -130,9 +151,6 @@ public class BaseDataTools {
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.getValue((EpidemicReport) data, name);
 
-        } else if (data instanceof FileHistory) {
-            return FileHistory.getValue((FileHistory) data, name);
-
         } else if (data instanceof Location) {
             return Location.getValue((Location) data, name);
 
@@ -151,7 +169,20 @@ public class BaseDataTools {
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.getValue((ColumnDefinition) data, name);
 
+        } else if (data instanceof ImageEditHistory) {
+            return ImageEditHistory.getValue((ImageEditHistory) data, name);
+
+        } else if (data instanceof FileBackup) {
+            return FileBackup.getValue((FileBackup) data, name);
+
+        } else if (data instanceof Note) {
+            return Note.getValue((Note) data, name);
+
+        } else if (data instanceof Notebook) {
+            return Notebook.getValue((Notebook) data, name);
+
         }
+
         return null;
     }
 
@@ -171,9 +202,6 @@ public class BaseDataTools {
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.setValue((EpidemicReport) data, name, value);
 
-        } else if (data instanceof FileHistory) {
-            return FileHistory.setValue((FileHistory) data, name, value);
-
         } else if (data instanceof Location) {
             return Location.setValue((Location) data, name, value);
 
@@ -191,6 +219,18 @@ public class BaseDataTools {
 
         } else if (data instanceof ColumnDefinition) {
             return ColumnDefinition.setValue((ColumnDefinition) data, name, value);
+
+        } else if (data instanceof ImageEditHistory) {
+            return ImageEditHistory.setValue((ImageEditHistory) data, name, value);
+
+        } else if (data instanceof FileBackup) {
+            return FileBackup.setValue((FileBackup) data, name, value);
+
+        } else if (data instanceof Note) {
+            return Note.setValue((Note) data, name, value);
+
+        } else if (data instanceof Notebook) {
+            return Notebook.setValue((Notebook) data, name, value);
 
         }
         return false;

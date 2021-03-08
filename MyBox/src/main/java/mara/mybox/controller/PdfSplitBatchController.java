@@ -204,7 +204,6 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
         doc = null;
         targetFiles = new ArrayList<>();
         try {
-            countHandling(srcFile);
             currentParameters.currentSourceFile = srcFile;
             PdfInformation info = (PdfInformation) tableData.get(currentParameters.currentIndex);
             currentParameters.fromPage = info.getFromPage();

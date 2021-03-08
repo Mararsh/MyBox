@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ByteTools;
@@ -27,7 +28,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -89,7 +89,6 @@ public class FilesRedundancyController extends BaseBatchFileController {
     @Override
     public String handleFile(File file) {
         try {
-            countHandling(file);
             if (!match(file)) {
                 return done;
             }
@@ -108,7 +107,6 @@ public class FilesRedundancyController extends BaseBatchFileController {
             if (directory == null || !directory.isDirectory()) {
                 return done;
             }
-            countHandling(directory);
             File[] files = directory.listFiles();
             if (files == null) {
                 return done;
