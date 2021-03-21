@@ -6,11 +6,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -24,19 +22,11 @@ public class TextToHtmlController extends BaseBatchFileController {
 
     public TextToHtmlController() {
         baseTitle = AppVariables.message("TextToHtml");
+    }
 
-        SourceFileType = VisitHistory.FileType.Text;
-        SourcePathType = VisitHistory.FileType.Text;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        AddFileType = VisitHistory.FileType.Text;
-        AddPathType = VisitHistory.FileType.Text;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text, VisitHistory.FileType.Html);
     }
 
     @Override
@@ -70,7 +60,7 @@ public class TextToHtmlController extends BaseBatchFileController {
             String text = FileTools.readTexts(srcFile);
             String body = "" + FindReplaceString.replaceAll(text, "\n", "</br>");
             String filePrefix = FileTools.getFilePrefix(target);
-            String html = "<html>\n"
+            String html = "<!DOCTYPE html><html>\n"
                     + headArea.getText().replace("####title####", filePrefix) + "\n"
                     + "    <body class=\"article\">\n"
                     + body

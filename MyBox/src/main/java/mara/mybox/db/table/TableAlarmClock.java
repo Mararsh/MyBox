@@ -98,7 +98,7 @@ public class TableAlarmClock extends DerbyBase {
     public static List<AlarmClock> read() {
 
         List<AlarmClock> alarms = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             final String sql = " SELECT * FROM Alarm_Clock";
             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
@@ -131,7 +131,7 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             final String querySql = " SELECT alarm_type FROM Alarm_Clock WHERE key_value=?";
             final String updateSql = "UPDATE Alarm_Clock "
@@ -199,7 +199,7 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             try ( PreparedStatement statement = conn.prepareStatement(
                     "DELETE FROM Alarm_Clock WHERE key_value=?")) {

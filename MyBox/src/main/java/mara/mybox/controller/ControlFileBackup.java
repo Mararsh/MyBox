@@ -295,13 +295,18 @@ public class ControlFileBackup extends BaseController {
         if (selected == null) {
             return;
         }
-        if (!FxmlControl.askSure(getBaseTitle(), message("SureOverrideCurrentFile")
-                + "\n\n" + message("CurrentFile") + ":\n   " + sourceFile
-                + "\n\n" + message("OverrideBy") + ":\n   " + selected.getBackup())) {
+        File backup = selected.getBackup();
+        if (backup == null || !backup.exists()) {
+            backupsList.getItems().remove(selected);
+            return;
+        }
+        if (!FxmlControl.askSure(getBaseTitle(), message("SureOverrideCurrentFile"),
+                message("CurrentFile") + ":\n   " + sourceFile + "\n" + FileTools.showFileSize(sourceFile.length())
+                + "\n\n" + message("OverrideBy") + ":\n   " + backup + "\n" + FileTools.showFileSize(backup.length()))) {
             return;
         }
         addBackup();
-        FileTools.copyFile(selected.getBackup(), sourceFile, true, true);
+        FileTools.copyFile(backup, sourceFile, true, true);
         parentController.sourceFileChanged(sourceFile);
     }
 

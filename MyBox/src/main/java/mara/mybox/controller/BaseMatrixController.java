@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,9 +19,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.data.Matrix;
@@ -248,7 +245,7 @@ public class BaseMatrixController extends BaseSheetController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         values = new double[rowsNumber][colsNumber];
                         if (tableMatrixCell == null) {
                             tableMatrixCell = new TableMatrixCell();
@@ -396,7 +393,7 @@ public class BaseMatrixController extends BaseSheetController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         matrix = new Matrix();
                         matrix.setColsNumber(colsNumber);
                         matrix.setRowsNumber(rowsNumber);

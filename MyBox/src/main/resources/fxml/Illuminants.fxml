@@ -152,7 +152,7 @@ License:    Apache License Version 2.0
                                                         <ToolBar VBox.vgrow="NEVER">
                                                             <items>
                                                                 <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                                <Button fx:id="exportillumButton" mnemonicParsing="false" onAction="#exportAction" onMouseEntered="#popExportPath">
+                                                                <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportAction" onMouseEntered="#popExportPath">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

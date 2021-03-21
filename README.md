@@ -4,19 +4,18 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。                 
   
 ## 新内容         
-2021-3-8 版本6.4.1
-- 笔记是html格式的信息片段，笔记本是一组笔记和笔记本的集合，笔记本形成一棵树。提供示例。                 
-- 网页：处理链接的菜单；编辑网页的按钮。            
-- 数据文件：合并csv/excel文件；处理空的csv/excel文件；添加/删除/重命名excel表单。            
-- 改进：所有编辑器都支持自动备份；图像处理支持颜色距离的方根、自动刷新剪贴板；清除自包含包中不必要的文件。            
-- 解决的主要问题：下载第一级链接对一些网址出错；源文件名包含非英文时批量OCR失败；网页浏览器删除历史记录时出错。            
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.1)                             
+2021-3-21 版本6.4.2
+- 笔记。设置笔记的标签、按标签查询笔记。笔记本可移动。富文本编辑笔记。设置显示风格。导出格式增加：单个网页、网页框架、xml，可以设置导出文件的字符集和样式。                 
+- 图像处理：“文字”和“画笔”可以设置混合模式。            
+- 新增数据表格粘贴板。对于数据文本/表格粘贴板，可以修改数据文本的分隔符。                     
+- 解决的主要问题：网页编辑器无法保存。处理frameset的链接。下载第一级链接无法处理包含特殊字符的链接。文件名避免包含空格。            
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2)                         
 
  ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。                
  
 ### 源码   
-[MyBox-6.4.1-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-src.zip)   39M            
+[MyBox-6.4.2-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-src.zip)   39M（大约值）             
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) 和 
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)             
@@ -25,11 +24,11 @@
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
   
-| 平台 | 链接 | 大小 | 启动文件 |    
+| 平台 | 链接 | 大小（大约值） | 启动文件 |    
 | --- | --- | --- |  --- |                                                                               
-| win x64 | [MyBox-6.4.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-win-exe.zip)  | 217MB | MyBox.exe |       
-| linux x64 | [MyBox-6.4.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-linux.tar.gz)  | 227MB  | bin/MyBox  |     
-| mac | [MyBox-6.4.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-mac.dmg)  | 232MB  |  MyBox-6.4.1.app   |   
+| win x64 | [MyBox-6.4.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-win-exe.zip)  | 217MB | MyBox.exe |       
+| linux x64 | [MyBox-6.4.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-linux.tar.gz)  | 227MB  | bin/MyBox  |     
+| mac | [MyBox-6.4.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-mac.dmg)  | 232MB  |  MyBox-6.4.2.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -37,16 +36,16 @@
 ### Jar包   
 在已安装JRE或者JDK 15或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
  
-| 平台 | 链接 | 大小 | 运行需要 |    
+| 平台 | 链接 | 大小（大约值） | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.4.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-win-jar.zip)  | 151MB | Java 15.0.1或更高版本 |    
-| linux | [MyBox-6.4.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-linux-jar.zip)  | 159MB  | Java 15.0.1或更高版本 |    
-| mac | [MyBox-6.4.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-mac-jar.zip)  |  156MB  | Java 15.0.1或更高版本 |    
+| win | [MyBox-6.4.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-win-jar.zip)  | 151MB | Java 15.0.1或更高版本 |    
+| linux | [MyBox-6.4.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-linux-jar.zip)  | 159MB  | Java 15.0.1或更高版本 |    
+| mac | [MyBox-6.4.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-mac-jar.zip)  |  156MB  | Java 15.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.4.1.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.4.2.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.4.1.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.4.2.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -65,9 +64,9 @@
 配置文件在"用户目录"下:                 
 | 平台 | MyBox配置文件的目录 |        
 | --- | --- |        
-| win | `C:\用户\用户名\mybox\MyBox_v6.4.1.ini`  |         
-| linux | `/home/用户名/mybox/MyBox_v6.4.1.ini` |        
-| mac | `/Users/用户名/mybox/MyBox_v6.4.1.ini` |         
+| win | `C:\用户\用户名\mybox\MyBox_v6.4.2.ini`  |         
+| linux | `/home/用户名/mybox/MyBox_v6.4.2.ini` |        
+| mac | `/Users/用户名/mybox/MyBox_v6.4.2.ini` |         
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。
 利用“设置”功能也可以修改配置参数。
@@ -86,7 +85,7 @@
 # 文档         
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
-| 开发日志 | 6.4.1 |  2021-3-9 | [html](#devLog) |
+| 开发日志 | 6.4.2 |  2021-3-9 | [html](#devLog) |
 | 快捷键 | 6.3.9 |  2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -155,10 +154,11 @@ MyBox基于以下开源资源：
 | 中国出土壁画全集 | 素材 | https://book.douban.com/subject/10465940/ |      
 | sfds | 书法 | http://www.sfds.cn/725B/ |      
 | PaginatedPdfTable | PDF | https://github.com/eduardohl/Paginated-PDFBox-Table-Sample |      
+| jsoup | DOM | https://jsoup.org/ |      
 
 
 # 当前版本
-当前是版本6.4.1，已实现的特点概述如下:
+当前是版本6.4.2，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [本机](#localhost)
@@ -189,7 +189,8 @@ MyBox基于以下开源资源：
     - [大图片的处理](#bigImage)
 * [数据工具](#dataTools)
     - [数据文件](#dataFiles)
-    - [数据粘贴板](#dataClipboard)
+    - [数据文本粘贴板](#dataTextClipboard)
+    - [数据表格粘贴板](#dataSheetClipboard)
     - [矩阵](#matrix)
     - [数据管理](#dataManage)
     - [地图数据](#mapData)
@@ -257,7 +258,15 @@ MyBox v5.3以前的版本均基于Java 8。
 1. 笔记是html格式的信息片段。
 2. 笔记本是一组笔记和笔记本的集合，笔记本形成一棵树。    
 3. 在任意笔记本结点上执行：导出、添加、删除、重命名。
-4. 导入笔记本文件、或导入示例。
+4. 导入笔记：文本文件、或导入示例。           
+5. 导出笔记：           
+	-  格式：文本（用于导入）、单个网页、网页框架、xml。           
+	-  可选择文件字符集。           
+	-  可设置网页风格。           
+6. 编辑笔记：
+	-  可直接写html代码或利用富文本编辑器 。
+	-  可对笔记设置多个标签。 
+7. 可利用标签查询笔记。       
 
 ![截屏-notes](https://mararsh.github.io/MyBox/snap-notes.jpg)       
 
@@ -431,14 +440,14 @@ MyBox v5.3以前的版本均基于Java 8。
 7. 增强：对比度、平滑、锐化、卷积。可选算法和参数。
 8. 富文本：以网页形式编辑文本，在图片上拖放调整文本的大小和位置。可设置背景的颜色、不透明度、边沿宽度、圆角大小，可设置文字的旋转角度。   
     由于是利用截屏实现，结果比较模糊，还没有好的解决办法。（此版本暂时不支持）
-9. 文字：设置字体、风格、大小、色彩、不透明度、阴影、角度，可选是否轮廓、是否垂直，点击图片定位文字。
+9. 文字：设置字体、风格、大小、色彩、混合模式、阴影、角度，可选是否轮廓、是否垂直，点击图片定位文字。
 10. 画笔：
-	-  折线：多笔一线。可选画笔的宽度、颜色、是否虚线、不透明度。
-	-  线条：一笔一线。可选画笔的宽度、颜色、是否虚线、不透明度。
+	-  折线：多笔一线。可选画笔的宽度、颜色、是否虚线、混合模式。
+	-  线条：一笔一线。可选画笔的宽度、颜色、是否虚线、混合模式。
 	-  橡皮檫：一笔一线。总是透明色，可选画笔的宽度。
 	-  磨砂玻璃：一点一画。可选画笔的宽度、模糊强度、形状（圆形还是方形）。
 	-  马赛克：一点一画。可选画笔的宽度、模糊强度、形状（圆形还是方形）。
-	-  形状：矩形、圆形、椭圆、多边形。可选画笔的宽度、颜色、是否虚线、不透明度、是否填充、填充色。
+	-  形状：矩形、圆形、椭圆、多边形。可选画笔的宽度、颜色、是否虚线、混合模式、是否填充、填充色。
 11. 变形：斜拉、镜像、旋转，可设置参数。
 12. 圆角：把图像四角改为圆角，可设置背景色、圆角大小。
 13. 阴影：可设置背景色、阴影大小、是否预乘透明。
@@ -643,14 +652,21 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 同步显示数据的文本格式和网页格式：
  		- 可选择文本格式的分隔符。
  		- 可利用数据粘贴板来修改复制数据。
-2. 批量转换数据文件：
+2. 批量转换/分割数据文件：
 	- 源文件格式：csv、excel。可以设置源文件的选项。
 	- 目标文件格式：csv、excel、xml、json、html、pdf。可以设置目标文件的选项。      
+	- 可按最大行数分割转换后的文件。      
 3. 合并csv/excel文件。
 
-### 数据粘贴板<a id="dataClipboard" />       
+### 数据文本粘贴板<a id="dataTextClipboard" />       
 1. 粘贴或输入文本，工具逐行按指定的分隔符解析数据。
 2. 同步显示数据的文本格式和网页格式。    
+3. 可以设置解析后的文本格式的分隔符。    
+
+### 数据表格粘贴板<a id="dataSheetClipboard" />       
+1. 编辑表格数据。
+2. 同步显示数据的文本格式和网页格式。    
+3. 可以设置数据文本的分隔符。  
 
 
 ### 矩阵<a id="matrix" />
@@ -1332,14 +1348,21 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 3. “调用者”是调用链，每行是一个节点：文件名、类名、方法名、行号。调用链只记录MyBox自身的方法。
 4. “错误”会导致查看日志的界面被弹出。
 
-# 开发日志<a id="devLog" />          
+# 开发日志<a id="devLog" />           
+2021-3-21 版本6.4.2
+- 笔记。设置笔记的标签、按标签查询笔记。笔记本可移动。富文本编辑笔记。设置显示风格。导出格式增加：单个网页、网页框架、xml，可以设置导出文件的字符集和样式。                 
+- 图像处理：“文字”和“画笔”可以设置混合模式。            
+- 新增数据表格粘贴板。对于数据文本/表格粘贴板，可以修改数据文本的分隔符。                     
+- 解决的主要问题：网页编辑器无法保存。处理frameset的链接。下载第一级链接无法处理包含特殊字符的链接。文件名避免包含空格。            
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2)                 
+
 2021-3-8 版本6.4.1
 - 笔记是html格式的信息片段，笔记本是一组笔记和笔记本的集合，笔记本形成一棵树。提供示例。                 
 - 网页：处理链接的菜单；编辑网页的按钮。            
 - 数据文件：合并csv/excel文件；处理空的csv/excel文件；添加/删除/重命名excel表单。            
 - 改进：所有编辑器都支持自动备份；图像处理支持颜色距离的方根、自动刷新剪贴板；清除自包含包中不必要的文件。            
 - 解决的主要问题：下载第一级链接对一些网址出错；源文件名包含非英文时批量OCR失败；网页浏览器删除历史记录时出错。            
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.1)                             
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2)                             
 
 2021-2-11 版本6.3.9                  
 -  改进：查看/编辑多帧图像时可选择帧。读取CSV/Excel时总是使用iterator。修改PDF属性时可选清除安全属性。

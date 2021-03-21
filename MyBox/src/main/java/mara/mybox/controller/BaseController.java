@@ -5,7 +5,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,9 +58,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mara.mybox.data.BaseTask;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
@@ -87,7 +84,6 @@ import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -99,7 +95,7 @@ import mara.mybox.value.CommonValues;
 public abstract class BaseController implements Initializable {
 
     protected String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPath;
-    protected int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
+    protected int SourceFileType = -1, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
     protected String myFxml, parentFxml, currentStatus, baseTitle, baseName, loadFxml;
@@ -168,22 +164,6 @@ public abstract class BaseController implements Initializable {
 
     public BaseController() {
         baseTitle = AppVariables.message("AppTitle");
-
-        SourceFileType = FileType.All;
-        SourcePathType = FileType.All;
-        TargetPathType = FileType.All;
-        TargetFileType = FileType.All;
-        AddFileType = FileType.All;
-        AddPathType = FileType.All;
-        operationType = FileType.All;
-
-        LastPathKey = "LastPathKey";
-        targetPathKey = "targetPath";
-        sourcePathKey = "sourcePath";
-        defaultPath = null;
-
-        sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -202,6 +182,8 @@ public abstract class BaseController implements Initializable {
 
     public void initValues() {
         try {
+            setFileType();
+
             myFxml = "/fxml/" + baseName + ".fxml";
             myController = this;
             if (mainMenuController != null) {
@@ -213,6 +195,42 @@ public abstract class BaseController implements Initializable {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void setFileType() {
+        setFileType(FileType.All);
+    }
+
+    public void setFileType(int fileType) {
+        SourceFileType = fileType;
+        SourcePathType = fileType;
+        AddFileType = fileType;
+        AddPathType = fileType;
+        LastPathKey = VisitHistoryTools.getPathKey(fileType);
+        sourcePathKey = LastPathKey;
+        sourceExtensionFilter = VisitHistoryTools.getExtensionFilter(fileType);
+
+        TargetPathType = fileType;
+        TargetFileType = fileType;
+        targetPathKey = LastPathKey;
+        defaultPath = null;
+        targetExtensionFilter = sourceExtensionFilter;
+    }
+
+    public void setFileType(int sourceType, int targetType) {
+        SourceFileType = sourceType;
+        SourcePathType = sourceType;
+        AddFileType = sourceType;
+        AddPathType = sourceType;
+        LastPathKey = VisitHistoryTools.getPathKey(sourceType);
+        sourcePathKey = LastPathKey;
+        sourceExtensionFilter = VisitHistoryTools.getExtensionFilter(sourceType);
+
+        TargetPathType = targetType;
+        TargetFileType = targetType;
+        targetPathKey = VisitHistoryTools.getPathKey(targetType);
+        defaultPath = null;
+        targetExtensionFilter = VisitHistoryTools.getExtensionFilter(targetType);
     }
 
     public void initBaseControls() {
@@ -228,11 +246,11 @@ public abstract class BaseController implements Initializable {
             }
 
             if (mainMenuController != null) {
+                mainMenuController.SourceFileType = getSourceFileType();
                 mainMenuController.sourceExtensionFilter = sourceExtensionFilter;
                 mainMenuController.targetExtensionFilter = targetExtensionFilter;
                 mainMenuController.sourcePathKey = sourcePathKey;
                 mainMenuController.sourcePathKey = sourcePathKey;
-                mainMenuController.SourceFileType = SourceFileType;
                 mainMenuController.SourcePathType = SourcePathType;
                 mainMenuController.TargetPathType = TargetPathType;
                 mainMenuController.TargetFileType = TargetFileType;
@@ -620,6 +638,9 @@ public abstract class BaseController implements Initializable {
                         if (mainMenuController != null) {
                             FxmlControl.mouseCenter(myStage);
                         }
+                        if (leftPane != null) {
+                            leftPane.setHvalue(0);
+                        }
                         checkAlwaysTop();
                     });
                 }
@@ -653,7 +674,6 @@ public abstract class BaseController implements Initializable {
             if (splitPane == null || splitPane.getDividers().isEmpty()) {
                 return;
             }
-
             if (closeRightPaneCheck != null) {
                 closeRightPaneCheck.selectedProperty().addListener(
                         (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
@@ -1027,30 +1047,30 @@ public abstract class BaseController implements Initializable {
         }
         switch (event.getCode()) {
             case HOME:
-                if (firstButton != null && !firstButton.isDisabled()) {
+                if (firstButton != null && !firstButton.isDisabled() && firstButton.isVisible()) {
                     firstAction();
-                } else if (pageFirstButton != null && !pageFirstButton.isDisabled()) {
+                } else if (pageFirstButton != null && !pageFirstButton.isDisabled() && pageFirstButton.isVisible()) {
                     pageFirstAction();
                 }
                 return;
             case END:
-                if (lastButton != null && !lastButton.isDisabled()) {
+                if (lastButton != null && !lastButton.isDisabled() && lastButton.isVisible()) {
                     lastAction();
-                } else if (pageLastButton != null && !pageLastButton.isDisabled()) {
+                } else if (pageLastButton != null && !pageLastButton.isDisabled() && pageLastButton.isVisible()) {
                     pageLastAction();
                 }
                 return;
             case PAGE_UP:
-                if (previousButton != null && !previousButton.isDisabled()) {
+                if (previousButton != null && !previousButton.isDisabled() && previousButton.isVisible()) {
                     previousAction();
-                } else if (pagePreviousButton != null && !pagePreviousButton.isDisabled()) {
+                } else if (pagePreviousButton != null && !pagePreviousButton.isDisabled() && pagePreviousButton.isVisible()) {
                     pagePreviousAction();
                 }
                 return;
             case PAGE_DOWN:
-                if (nextButton != null && !nextButton.isDisabled()) {
+                if (nextButton != null && !nextButton.isDisabled() && nextButton.isVisible()) {
                     nextAction();
-                } else if (pageNextButton != null && !pageNextButton.isDisabled()) {
+                } else if (pageNextButton != null && !pageNextButton.isDisabled() && pageNextButton.isVisible()) {
                     pageNextAction();
                 }
                 return;
@@ -1064,16 +1084,16 @@ public abstract class BaseController implements Initializable {
         }
         switch (event.getCode()) {
             case E:
-                if (startButton != null && !startButton.isDisabled()) {
+                if (startButton != null && !startButton.isDisabled() && startButton.isVisible()) {
                     startAction();
-                } else if (okButton != null && !okButton.isDisabled()) {
+                } else if (okButton != null && !okButton.isDisabled() && okButton.isVisible()) {
                     okAction();
                 }
                 return;
             case N:
-                if (createButton != null && !createButton.isDisabled()) {
+                if (createButton != null && !createButton.isDisabled() && createButton.isVisible()) {
                     createAction();
-                } else if (addButton != null && !addButton.isDisabled()) {
+                } else if (addButton != null && !addButton.isDisabled() && addButton.isVisible()) {
                     addAction(null);
                 }
                 return;
@@ -1081,7 +1101,7 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (copyButton != null && !copyButton.isDisabled()) {
+                if (copyButton != null && !copyButton.isDisabled() && copyButton.isVisible()) {
                     copyAction();
                 }
                 return;
@@ -1089,27 +1109,30 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (pasteButton != null && !pasteButton.isDisabled()) {
+                if (pasteButton != null && !pasteButton.isDisabled() && pasteButton.isVisible()) {
                     pasteAction();
                 }
                 return;
             case S:
-                if (saveButton != null && !saveButton.isDisabled()) {
+                if (saveButton != null && !saveButton.isDisabled() && saveButton.isVisible()) {
                     saveAction();
                 }
                 return;
             case B:
-                if (saveAsButton != null && !saveAsButton.isDisabled()) {
+                if (saveAsButton != null && !saveAsButton.isDisabled() && saveAsButton.isVisible()) {
                     saveAsAction();
                 }
                 return;
             case I:
-                if (infoButton != null && !infoButton.isDisabled()) {
+                if (infoButton != null && !infoButton.isDisabled() && infoButton.isVisible()) {
                     infoAction();
                 }
                 return;
             case D:
-                if (deleteButton != null && !deleteButton.isDisabled()) {
+                if (FxmlControl.textInputFocus(this)) {
+                    return;
+                }
+                if (deleteButton != null && !deleteButton.isDisabled() && deleteButton.isVisible()) {
                     deleteAction();
                 }
                 return;
@@ -1117,14 +1140,14 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (allButton != null && !allButton.isDisabled()) {
+                if (allButton != null && !allButton.isDisabled() && allButton.isVisible()) {
                     allAction();
-                } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
+                } else if (selectAllButton != null && !selectAllButton.isDisabled() && selectAllButton.isVisible()) {
                     selectAllAction();
                 }
                 return;
             case O:
-                if (selectNoneButton != null && !selectNoneButton.isDisabled()) {
+                if (selectNoneButton != null && !selectNoneButton.isDisabled() && selectNoneButton.isVisible()) {
                     selectNoneAction();
                 }
                 return;
@@ -1132,17 +1155,17 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (cropButton != null && !cropButton.isDisabled()) {
+                if (cropButton != null && !cropButton.isDisabled() && cropButton.isVisible()) {
                     cropAction();
                 }
                 return;
             case G:
-                if (clearButton != null && !clearButton.isDisabled()) {
+                if (clearButton != null && !clearButton.isDisabled() && clearButton.isVisible()) {
                     clearAction();
                 }
                 return;
             case R:
-                if (recoverButton != null && !recoverButton.isDisabled()) {
+                if (recoverButton != null && !recoverButton.isDisabled() && recoverButton.isVisible()) {
                     recoverAction();
                 }
                 return;
@@ -1150,7 +1173,7 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (undoButton != null && !undoButton.isDisabled()) {
+                if (undoButton != null && !undoButton.isDisabled() && undoButton.isVisible()) {
                     undoAction();
                 }
                 return;
@@ -1158,17 +1181,17 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (redoButton != null && !redoButton.isDisabled()) {
+                if (redoButton != null && !redoButton.isDisabled() && redoButton.isVisible()) {
                     redoAction();
                 }
                 return;
             case P:
-                if (popButton != null && !popButton.isDisabled()) {
+                if (popButton != null && !popButton.isDisabled() && popButton.isVisible()) {
                     popAction();
                 }
                 return;
             case W:
-                if (cancelButton != null && !cancelButton.isDisabled()) {
+                if (cancelButton != null && !cancelButton.isDisabled() && cancelButton.isVisible()) {
                     cancelAction();
                 } else if (withdrawButton != null && !withdrawButton.isDisabled()) {
                     withdrawAction();
@@ -1193,7 +1216,7 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (deleteButton != null && !deleteButton.isDisabled()) {
+                if (deleteButton != null && !deleteButton.isDisabled() && deleteButton.isVisible()) {
                     deleteAction();
                 }
                 return;
@@ -1201,9 +1224,9 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (firstButton != null && !firstButton.isDisabled()) {
+                if (firstButton != null && !firstButton.isDisabled() && firstButton.isVisible()) {
                     firstAction();
-                } else if (pageFirstButton != null && !pageFirstButton.isDisabled()) {
+                } else if (pageFirstButton != null && !pageFirstButton.isDisabled() && pageFirstButton.isVisible()) {
                     pageFirstAction();
                 }
                 return;
@@ -1211,9 +1234,9 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (lastButton != null && !lastButton.isDisabled()) {
+                if (lastButton != null && !lastButton.isDisabled() && lastButton.isVisible()) {
                     lastAction();
-                } else if (pageLastButton != null && !pageLastButton.isDisabled()) {
+                } else if (pageLastButton != null && !pageLastButton.isDisabled() && pageLastButton.isVisible()) {
                     pageLastAction();
                 }
                 return;
@@ -1221,9 +1244,9 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (previousButton != null && !previousButton.isDisabled()) {
+                if (previousButton != null && !previousButton.isDisabled() && previousButton.isVisible()) {
                     previousAction();
-                } else if (pagePreviousButton != null && !pagePreviousButton.isDisabled()) {
+                } else if (pagePreviousButton != null && !pagePreviousButton.isDisabled() && pagePreviousButton.isVisible()) {
                     pagePreviousAction();
                 }
                 return;
@@ -1231,32 +1254,32 @@ public abstract class BaseController implements Initializable {
                 if (FxmlControl.textInputFocus(this)) {
                     return;
                 }
-                if (nextButton != null && !nextButton.isDisabled()) {
+                if (nextButton != null && !nextButton.isDisabled() && nextButton.isVisible()) {
                     nextAction();
-                } else if (pageNextButton != null && !pageNextButton.isDisabled()) {
+                } else if (pageNextButton != null && !pageNextButton.isDisabled() && pageNextButton.isVisible()) {
                     pageNextAction();
                 }
                 return;
             case F1:
-                if (startButton != null && !startButton.isDisabled()) {
+                if (startButton != null && !startButton.isDisabled() && startButton.isVisible()) {
                     startAction();
-                } else if (okButton != null && !okButton.isDisabled()) {
+                } else if (okButton != null && !okButton.isDisabled() && okButton.isVisible()) {
                     okAction();
-                } else if (setButton != null && !setButton.isDisabled()) {
+                } else if (setButton != null && !setButton.isDisabled() && setButton.isVisible()) {
                     setAction();
-                } else if (playButton != null && !playButton.isDisabled()) {
+                } else if (playButton != null && !playButton.isDisabled() && playButton.isVisible()) {
                     playAction();
-                } else if (goButton != null && !goButton.isDisabled()) {
+                } else if (goButton != null && !goButton.isDisabled() && goButton.isVisible()) {
                     goAction();
                 }
                 return;
             case F2:
-                if (saveButton != null && !saveButton.isDisabled()) {
+                if (saveButton != null && !saveButton.isDisabled() && saveButton.isVisible()) {
                     saveAction();
                 }
                 return;
             case F3:
-                if (recoverButton != null && !recoverButton.isDisabled()) {
+                if (recoverButton != null && !recoverButton.isDisabled() && recoverButton.isVisible()) {
                     recoverAction();
                 }
                 return;
@@ -1280,14 +1303,14 @@ public abstract class BaseController implements Initializable {
                 refresh();
                 return;
             case F11:
-                if (saveAsButton != null && !saveAsButton.isDisabled()) {
+                if (saveAsButton != null && !saveAsButton.isDisabled() && saveAsButton.isVisible()) {
                     saveAsAction();
                 }
                 return;
             case ESCAPE:
-                if (cancelButton != null && !cancelButton.isDisabled()) {
+                if (cancelButton != null && !cancelButton.isDisabled() && cancelButton.isVisible()) {
                     cancelAction();
-                } else if (withdrawButton != null && !withdrawButton.isDisabled()) {
+                } else if (withdrawButton != null && !withdrawButton.isDisabled() && withdrawButton.isVisible()) {
                     withdrawAction();
                 }
 //                else if (stopButton != null && !stopButton.isDisabled()) {
@@ -1414,17 +1437,10 @@ public abstract class BaseController implements Initializable {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
-            File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null || !file.exists()) {
+            File file = FxmlControl.selectFile(this);
+            if (file == null) {
                 return;
             }
-
             selectSourceFileDo(file);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
@@ -1439,11 +1455,11 @@ public abstract class BaseController implements Initializable {
         if (!checkBeforeNextAction()) {
             return;
         }
+        recordFileOpened(file);
         selectSourceFileDo(file);
     }
 
     public void selectSourceFileDo(File file) {
-        recordFileOpened(file);
         if (sourceFileInput != null) {
             sourceFileInput.setText(file.getAbsolutePath());
         } else {
@@ -1460,7 +1476,7 @@ public abstract class BaseController implements Initializable {
     }
 
     public void recordFileOpened(final File file) {
-        recordFileOpened(file, sourcePathKey, SourcePathType, SourceFileType);
+        recordFileOpened(file, getSourcePathKey(), SourcePathType, SourceFileType);
     }
 
     public void recordFileOpened(final File file, int fileType) {
@@ -1471,7 +1487,7 @@ public abstract class BaseController implements Initializable {
         if (file == null) {
             return;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (file.isDirectory()) {
                 String path = file.getPath();
                 AppVariables.setUserConfigValue(conn, LastPathKey, path);
@@ -1505,7 +1521,7 @@ public abstract class BaseController implements Initializable {
         if (file == null) {
             return;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (file.isDirectory()) {
                 String path = file.getPath();
                 AppVariables.setUserConfigValue(conn, targetPathKey, path);
@@ -1532,7 +1548,7 @@ public abstract class BaseController implements Initializable {
         if (file == null) {
             return;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (file.isDirectory()) {
                 String path = file.getPath();
                 AppVariables.setUserConfigValue(conn, sourcePathKey, path);
@@ -1555,7 +1571,7 @@ public abstract class BaseController implements Initializable {
         if (files == null || files.isEmpty()) {
             return;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             for (File file : files) {
                 if (file.isDirectory()) {
                     String path = file.getPath();
@@ -1720,7 +1736,14 @@ public abstract class BaseController implements Initializable {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
-        new RecentVisitMenu(this, event) {
+        RecentVisitMenu menu = makeSourceFileRecentVisitMenu(event);
+        if (menu != null) {
+            menu.pop();
+        }
+    }
+
+    public RecentVisitMenu makeSourceFileRecentVisitMenu(MouseEvent event) {
+        RecentVisitMenu menu = new RecentVisitMenu(this, event) {
 
             @Override
             public void handleSelect() {
@@ -1737,7 +1760,8 @@ public abstract class BaseController implements Initializable {
                 selectSourceFile(file);
             }
 
-        }.pop();
+        };
+        return menu;
     }
 
     @FXML
@@ -2926,6 +2950,9 @@ public abstract class BaseController implements Initializable {
     }
 
     public String getSourcePathKey() {
+        if (sourcePathKey == null) {
+            setFileType();
+        }
         return sourcePathKey;
     }
 
@@ -2934,6 +2961,9 @@ public abstract class BaseController implements Initializable {
     }
 
     public int getSourceFileType() {
+        if (SourceFileType < 0) {
+            setFileType();
+        }
         return SourceFileType;
     }
 
@@ -2955,6 +2985,17 @@ public abstract class BaseController implements Initializable {
 
     public int getAddPathType() {
         return AddPathType;
+    }
+
+    public List<FileChooser.ExtensionFilter> getSourceExtensionFilter() {
+        if (sourceExtensionFilter == null) {
+            setFileType();
+        }
+        return sourceExtensionFilter;
+    }
+
+    public void setSourceExtensionFilter(List<FileChooser.ExtensionFilter> sourceExtensionFilter) {
+        this.sourceExtensionFilter = sourceExtensionFilter;
     }
 
     public void setLoadFxml(String loadFxml) {

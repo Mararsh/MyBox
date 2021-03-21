@@ -41,7 +41,6 @@ import javafx.stage.Modality;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
@@ -61,7 +60,6 @@ import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -111,18 +109,11 @@ public class ImageAnalyseController extends ImageViewerController {
 
     public ImageAnalyseController() {
         baseTitle = message("ImageAnalyse");
+    }
 
-        SourceFileType = VisitHistory.FileType.Image;
-        SourcePathType = VisitHistory.FileType.Image;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-
-        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image, VisitHistory.FileType.Html);
     }
 
     @Override

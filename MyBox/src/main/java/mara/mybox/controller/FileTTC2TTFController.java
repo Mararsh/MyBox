@@ -8,12 +8,10 @@ import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import thridparty.TTC;
 
 /**
@@ -30,19 +28,11 @@ public class FileTTC2TTFController extends HtmlViewerController {
 
     public FileTTC2TTFController() {
         baseTitle = AppVariables.message("TTC2TTF");
+    }
 
-        SourceFileType = VisitHistory.FileType.TTC;
-        SourcePathType = VisitHistory.FileType.TTC;
-        TargetPathType = VisitHistory.FileType.TTF;
-        TargetFileType = VisitHistory.FileType.TTF;
-        AddFileType = VisitHistory.FileType.TTC;
-        AddPathType = VisitHistory.FileType.TTC;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.TTC);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.TTF);
-
-        sourceExtensionFilter = CommonFxValues.TTCExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.TTC, VisitHistory.FileType.TTF);
     }
 
     @Override

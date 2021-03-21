@@ -118,7 +118,7 @@ public class TableVisitHistory extends DerbyBase {
 
     public static List<VisitHistory> find(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(AllQuery)) {
             if (count > 0) {
                 statement.setMaxRows(count);
@@ -137,7 +137,7 @@ public class TableVisitHistory extends DerbyBase {
         }
         final String sql = " SELECT  * FROM visit_history "
                 + "  WHERE resource_type=? ORDER BY last_visit_time  DESC  ";
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
             if (count > 0) {
                 statement.setMaxRows(count);
@@ -162,7 +162,7 @@ public class TableVisitHistory extends DerbyBase {
         if (types != null) {
             return find(resourceType, types, count);
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (resourceType <= 0) {
                 final String sql = " SELECT   * FROM visit_history "
                         + "  WHERE file_type=?  ORDER BY last_visit_time  DESC  ";
@@ -198,7 +198,7 @@ public class TableVisitHistory extends DerbyBase {
         if (fileTypes == null || fileTypes.length == 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT   * FROM visit_history  WHERE ( file_type=" + fileTypes[0];
             for (int i = 1; i < fileTypes.length; ++i) {
@@ -230,7 +230,7 @@ public class TableVisitHistory extends DerbyBase {
             return find(resourceType, fileType, count);
         }
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (resourceType <= 0) {
                 if (fileType <= 0) {
                     final String sql = " SELECT   * FROM visit_history "
@@ -298,7 +298,7 @@ public class TableVisitHistory extends DerbyBase {
         if (fileTypes == null || fileTypes.length == 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM visit_history WHERE"
                     + " operation_type=" + operationType
@@ -327,7 +327,7 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return find(conn, resourceType, fileType, operationType, value);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -383,7 +383,7 @@ public class TableVisitHistory extends DerbyBase {
 
     public static List<VisitHistory> findAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             final String sql = " SELECT   * FROM visit_history "
                     + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.png',  '.tif', 'tiff') "
@@ -404,7 +404,7 @@ public class TableVisitHistory extends DerbyBase {
 
     public static List<VisitHistory> findNoAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             final String sql = " SELECT   * FROM visit_history "
                     + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.jpg', '.bmp', '.gif', '.pnm', 'wbmp') "
@@ -435,7 +435,7 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return update(conn, resourceType, fileType, operationType, value, more);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -535,7 +535,7 @@ public class TableVisitHistory extends DerbyBase {
         if (fileType < 0 || operationType < 0 || name == null || fxml == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             VisitHistory exist = null;
             String query = " SELECT * FROM visit_history "
                     + " WHERE resource_type=? AND file_type=? AND operation_type=?"
@@ -611,7 +611,7 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return delete(conn, resourceType, resourceType, operationType, value);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -630,7 +630,7 @@ public class TableVisitHistory extends DerbyBase {
     public static boolean clearType(int resourceType, int fileType, int operationType) {
         final String sql = "DELETE FROM visit_history "
                 + " WHERE resource_type=? AND file_type=? AND operation_type=?";
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, resourceType);
             statement.setInt(2, fileType);
@@ -645,7 +645,7 @@ public class TableVisitHistory extends DerbyBase {
     @Override
     public int clear() {
         final String sql = "DELETE FROM visit_history";
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
             return statement.executeUpdate();
         } catch (Exception e) {

@@ -63,6 +63,7 @@ import javafx.scene.text.Font;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
 import javafx.stage.Screen;
@@ -73,6 +74,7 @@ import javax.sound.sampled.FloatControl;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -83,6 +85,7 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
+import org.w3c.dom.Document;
 
 /**
  * @Author Mara
@@ -1417,6 +1420,53 @@ public class FxmlControl {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return "";
+        }
+    }
+
+    public static Document getFrameDocument(WebEngine engine, String frameName) {
+        try {
+            if (engine == null) {
+                return null;
+            }
+            Object c = engine.executeScript("window.frames." + frameName + ".document");
+            if (c == null) {
+                return null;
+            }
+            return (Document) c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static File selectFile(BaseController controller) {
+        return selectFile(controller,
+                AppVariables.getUserConfigPath(controller.getSourcePathKey()),
+                controller.getSourceExtensionFilter());
+    }
+
+    public static File selectFile(BaseController controller, int fileType) {
+        return selectFile(controller,
+                AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(fileType)),
+                VisitHistoryTools.getExtensionFilter(fileType));
+    }
+
+    public static File selectFile(BaseController controller, File path,
+            List<FileChooser.ExtensionFilter> filter) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
+            fileChooser.getExtensionFilters().addAll(filter);
+            File file = fileChooser.showOpenDialog(controller.getMyStage());
+            if (file == null || !file.exists()) {
+                return null;
+            }
+            controller.recordFileOpened(file);
+            return file;
+        } catch (Exception e) {
+            return null;
         }
     }
 

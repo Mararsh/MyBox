@@ -16,7 +16,7 @@ public class ImageBlend {
 
     protected ImagesRelativeLocation relativeLocation;
     protected ImagesBlendMode blendMode;
-    protected float alpha;
+    protected float opacity;
     protected boolean intersectOnly;
     protected int x, y;
     protected BufferedImage foreImage, backImage;
@@ -32,12 +32,12 @@ public class ImageBlend {
 
     public ImageBlend(BufferedImage foreImage, BufferedImage backImage,
             ImagesRelativeLocation relativeLocation, ImagesBlendMode blendMode,
-            float alpha, boolean intersectOnly, int x, int y) {
+            float opacity, boolean intersectOnly, int x, int y) {
         this.foreImage = foreImage;
         this.backImage = backImage;
         this.relativeLocation = relativeLocation;
         this.blendMode = blendMode;
-        this.alpha = alpha;
+        this.opacity = opacity;
         this.intersectOnly = intersectOnly;
         this.x = x;
         this.y = y;
@@ -52,15 +52,15 @@ public class ImageBlend {
             switch (relativeLocation) {
                 case Foreground_In_Background:
                     if (intersectOnly) {
-                        return blendImagesFinBIntrsectOnly(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesFinBIntrsectOnly(foreImage, backImage, x, y, blendMode, opacity);
                     } else {
-                        return blendImagesFinB(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesFinB(foreImage, backImage, x, y, blendMode, opacity);
                     }
                 case Background_In_Foreground:
                     if (intersectOnly) {
-                        return blendImagesBinFIntrsectOnly(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesBinFIntrsectOnly(foreImage, backImage, x, y, blendMode, opacity);
                     } else {
-                        return blendImagesBinF(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesBinF(foreImage, backImage, x, y, blendMode, opacity);
                     }
                 default:
                     return foreImage;
@@ -73,12 +73,12 @@ public class ImageBlend {
     }
 
     public static BufferedImage blendImages(BufferedImage foreImage, BufferedImage backImage,
-            int x, int y, ImagesBlendMode blendMode, float alpha) {
-        return ImageBlend.blendImages(foreImage, backImage, x, y, blendMode, alpha, false);
+            int x, int y, ImagesBlendMode blendMode, float opacity) {
+        return ImageBlend.blendImages(foreImage, backImage, x, y, blendMode, opacity, false);
     }
 
     public static BufferedImage blendImages(BufferedImage foreImage, BufferedImage backImage,
-            int x, int y, ImagesBlendMode blendMode, float alpha, boolean orderReversed) {
+            int x, int y, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
             if (foreImage == null || backImage == null || blendMode == null) {
                 return null;
@@ -87,20 +87,16 @@ public class ImageBlend {
             DoubleRectangle rect = new DoubleRectangle(x, y,
                     x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
-            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
-            colorBlend.setOrderReversed(orderReversed);
+            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode)
+                    .setBlendMode(blendMode).setOrderReversed(orderReversed).setOpacity(opacity);
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
-                    int pixelBack = backImage.getRGB(i, j);
+                    int backPixel = backImage.getRGB(i, j);
                     if (rect.include(i, j)) {
-                        int pixelFore = foreImage.getRGB(i - x, j - y);
-                        if (pixelFore == 0) {                       // Pass transparency
-                            target.setRGB(i, j, pixelBack);
-                        } else {
-                            target.setRGB(i, j, colorBlend.blend(pixelFore, pixelBack));
-                        }
+                        int forePixel = foreImage.getRGB(i - x, j - y);
+                        target.setRGB(i, j, colorBlend.blend(forePixel, backPixel));
                     } else {
-                        target.setRGB(i, j, pixelBack);
+                        target.setRGB(i, j, backPixel);
                     }
                 }
             }
@@ -113,7 +109,7 @@ public class ImageBlend {
 
     public static BufferedImage blendImages(BufferedImage foreImage, BufferedImage backImage,
             ImagesRelativeLocation location, int x, int y,
-            boolean intersectOnly, ImagesBlendMode blendMode, float alpha) {
+            boolean intersectOnly, ImagesBlendMode blendMode, float opacity) {
         try {
             if (foreImage == null || backImage == null || blendMode == null) {
                 return null;
@@ -121,15 +117,15 @@ public class ImageBlend {
             switch (location) {
                 case Foreground_In_Background:
                     if (intersectOnly) {
-                        return blendImagesFinBIntrsectOnly(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesFinBIntrsectOnly(foreImage, backImage, x, y, blendMode, opacity);
                     } else {
-                        return blendImagesFinB(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesFinB(foreImage, backImage, x, y, blendMode, opacity);
                     }
                 case Background_In_Foreground:
                     if (intersectOnly) {
-                        return blendImagesBinFIntrsectOnly(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesBinFIntrsectOnly(foreImage, backImage, x, y, blendMode, opacity);
                     } else {
-                        return blendImagesBinF(foreImage, backImage, x, y, blendMode, alpha);
+                        return blendImagesBinF(foreImage, backImage, x, y, blendMode, opacity);
                     }
                 default:
                     return foreImage;
@@ -142,7 +138,7 @@ public class ImageBlend {
     }
 
     public static BufferedImage blendImagesFinB(BufferedImage foreImage, BufferedImage backImage,
-            int x, int y, ImagesBlendMode blendMode, float alpha) {
+            int x, int y, ImagesBlendMode blendMode, float opacity) {
         try {
             if (foreImage == null || backImage == null || blendMode == null) {
                 return null;
@@ -156,7 +152,8 @@ public class ImageBlend {
             }
             int areaWidth = Math.min(backImage.getWidth() - x, foreImage.getWidth());
             int areaHeight = Math.min(backImage.getHeight() - y, foreImage.getHeight());
-            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
+            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode)
+                    .setBlendMode(blendMode).setOpacity(opacity);
             for (int j = 0; j < areaHeight; ++j) {
                 for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i, j);
@@ -172,7 +169,7 @@ public class ImageBlend {
     }
 
     public static BufferedImage blendImagesFinBIntrsectOnly(BufferedImage foreImage, BufferedImage backImage,
-            int x, int y, ImagesBlendMode blendMode, float alpha) {
+            int x, int y, ImagesBlendMode blendMode, float opacity) {
         try {
             if (foreImage == null || backImage == null || blendMode == null) {
                 return null;
@@ -181,7 +178,8 @@ public class ImageBlend {
             int areaWidth = Math.min(backImage.getWidth() - x, foreImage.getWidth());
             int areaHeight = Math.min(backImage.getHeight() - y, foreImage.getHeight());
             BufferedImage target = new BufferedImage(areaWidth, areaHeight, imageType);
-            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
+            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode)
+                    .setBlendMode(blendMode).setOpacity(opacity);
             for (int j = 0; j < areaHeight; ++j) {
                 for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i, j);
@@ -197,7 +195,7 @@ public class ImageBlend {
     }
 
     public static BufferedImage blendImagesBinF(BufferedImage foreImage, BufferedImage backImage,
-            int x, int y, ImagesBlendMode blendMode, float alpha) {
+            int x, int y, ImagesBlendMode blendMode, float opacity) {
         try {
             if (foreImage == null || backImage == null || blendMode == null) {
                 return null;
@@ -211,7 +209,8 @@ public class ImageBlend {
             }
             int areaWidth = Math.min(foreImage.getWidth() - x, backImage.getWidth());
             int areaHeight = Math.min(foreImage.getHeight() - y, backImage.getHeight());
-            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
+            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode)
+                    .setBlendMode(blendMode).setOpacity(opacity);
             for (int j = 0; j < areaHeight; ++j) {
                 for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i + x, j + y);
@@ -227,7 +226,7 @@ public class ImageBlend {
     }
 
     public static BufferedImage blendImagesBinFIntrsectOnly(BufferedImage foreImage, BufferedImage backImage,
-            int x, int y, ImagesBlendMode blendMode, float alpha) {
+            int x, int y, ImagesBlendMode blendMode, float opacity) {
         try {
             if (foreImage == null || backImage == null || blendMode == null) {
                 return null;
@@ -236,7 +235,8 @@ public class ImageBlend {
             int areaWidth = Math.min(foreImage.getWidth() - x, backImage.getWidth());
             int areaHeight = Math.min(foreImage.getHeight() - y, backImage.getHeight());
             BufferedImage target = new BufferedImage(areaWidth, areaHeight, imageType);
-            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
+            PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode)
+                    .setBlendMode(blendMode).setOpacity(opacity);
             for (int j = 0; j < areaHeight; ++j) {
                 for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i + x, j + y);
@@ -267,12 +267,12 @@ public class ImageBlend {
         this.blendMode = blendMode;
     }
 
-    public float getAlpha() {
-        return alpha;
+    public float getOpacity() {
+        return opacity;
     }
 
-    public void setAlpha(float alpha) {
-        this.alpha = alpha;
+    public void setOpacity(float opacity) {
+        this.opacity = opacity;
     }
 
     public boolean isIntersectOnly() {

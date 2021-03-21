@@ -117,16 +117,7 @@ public class ControlFileSelecter extends BaseController {
     }
 
     protected ControlFileSelecter type(int fileType) {
-        SourceFileType = fileType;
-        SourcePathType = fileType;
-        AddFileType = fileType;
-        AddPathType = fileType;
-        TargetPathType = fileType;
-        TargetFileType = fileType;
-        sourcePathKey = VisitHistoryTools.getPathKey(fileType);
-        targetPathKey = sourcePathKey;
-        sourceExtensionFilter = VisitHistoryTools.getExtensionFilter(fileType);
-        targetExtensionFilter = sourceExtensionFilter;
+        setFileType(fileType);
         return this;
     }
 
@@ -243,7 +234,7 @@ public class ControlFileSelecter extends BaseController {
                     return null;
                 } else {
                     int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-                    return VisitHistoryTools.getRecentReadWrite(SourceFileType, fileNumber);
+                    return VisitHistoryTools.getRecentReadWrite(getSourceFileType(), fileNumber);
                 }
             }
 

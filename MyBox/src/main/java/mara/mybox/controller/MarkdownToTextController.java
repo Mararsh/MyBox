@@ -11,12 +11,10 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -31,19 +29,11 @@ public class MarkdownToTextController extends BaseBatchFileController {
 
     public MarkdownToTextController() {
         baseTitle = AppVariables.message("MarkdownToText");
+    }
 
-        SourceFileType = VisitHistory.FileType.Markdown;
-        SourcePathType = VisitHistory.FileType.Markdown;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Markdown;
-        AddPathType = VisitHistory.FileType.Markdown;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-
-        sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
-        targetExtensionFilter = CommonFxValues.TextExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Markdown, VisitHistory.FileType.Text);
     }
 
     @Override

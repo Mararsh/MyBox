@@ -40,7 +40,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
         if (host == null || host.trim().isBlank()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             String sql = "SELECT host FROM Browser_Bypass_SSL WHERE host=?";
             try ( PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -62,7 +62,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
 
     public static List<CertificateBypass> read() {
         List<CertificateBypass> bypass = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             String sql = "SELECT * FROM Browser_Bypass_SSL ORDER BY create_time DESC";
             try ( Statement statement = conn.createStatement();
@@ -84,7 +84,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
         if (host == null || host.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, host);
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
         if (host == null || host.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             CertificateBypass exist = read(conn, host);
             if (exist != null) {
                 return false;
@@ -141,7 +141,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
         if (hosts == null || hosts.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return write(conn, hosts);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -175,7 +175,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
             return false;
         }
         final String sql = "DELETE FROM Browser_Bypass_SSL WHERE host=?";
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, host.trim());
             return statement.executeUpdate() > 0;
@@ -204,7 +204,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
             return 0;
         }
         int count = 0;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             final String sql = "DELETE FROM Browser_Bypass_SSL WHERE host=?";
             try ( PreparedStatement statement = conn.prepareStatement(sql)) {

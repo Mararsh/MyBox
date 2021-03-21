@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -12,15 +11,11 @@ import mara.mybox.value.CommonFxValues;
 public class ControlFFmpegAudiosTable extends FFmpegMediasTableController {
 
     public ControlFFmpegAudiosTable() {
-        SourceFileType = VisitHistory.FileType.Audio;
-        SourcePathType = VisitHistory.FileType.Audio;
-        TargetPathType = VisitHistory.FileType.Audio;
-        TargetFileType = VisitHistory.FileType.Audio;
-        AddFileType = VisitHistory.FileType.Audio;
-        AddPathType = VisitHistory.FileType.Audio;
+    }
 
-        sourceExtensionFilter = CommonFxValues.SoundExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Audio);
     }
 
 }

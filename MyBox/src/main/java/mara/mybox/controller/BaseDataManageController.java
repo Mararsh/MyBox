@@ -360,11 +360,11 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             if (setButton != null) {
                 FxmlControl.removeTooltip(setButton);
             }
-            if (dataImportButton != null) {
-                FxmlControl.removeTooltip(dataImportButton);
+            if (importButton != null) {
+                FxmlControl.removeTooltip(importButton);
             }
-            if (dataExportButton != null) {
-                FxmlControl.removeTooltip(dataExportButton);
+            if (exportButton != null) {
+                FxmlControl.removeTooltip(exportButton);
             }
             if (queryButton != null) {
                 FxmlControl.removeTooltip(queryButton);

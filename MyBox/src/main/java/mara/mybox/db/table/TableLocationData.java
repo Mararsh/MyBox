@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.Dataset;
@@ -131,7 +131,7 @@ public class TableLocationData extends BaseTable<Location> {
     }
 
     public Dataset dataset(String datasetName) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return dataset(conn, datasetName);
         } catch (Exception e) {
@@ -148,7 +148,7 @@ public class TableLocationData extends BaseTable<Location> {
         if (datasetName == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return queryAndCreateDataset(conn, datasetName);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -178,7 +178,7 @@ public class TableLocationData extends BaseTable<Location> {
     }
 
     public boolean delete(String dataset, boolean deleteDataset) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return delete(conn, dataset, deleteDataset);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -213,7 +213,7 @@ public class TableLocationData extends BaseTable<Location> {
         static methods
      */
     public static List<Date> times() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return times(conn);
         } catch (Exception e) {

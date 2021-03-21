@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import static mara.mybox.db.DerbyBase.stringValue;
@@ -165,7 +165,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
             = "DELETE FROM Epidemic_Report WHERE data_set=? AND source<>1 ";
 
     public static void moveEPid() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             long max = 0;
             String sql = "SELECT max(epid) FROM Epidemic_Report";
@@ -183,7 +183,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
 
     public static List<EpidemicReport> dataQuery(String sql, boolean decodeAncestors) {
         List<EpidemicReport> reports = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             try ( ResultSet results = statement.executeQuery(sql)) {
@@ -203,7 +203,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         if (dataset == null) {
             return reports;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             try ( PreparedStatement statement = conn.prepareStatement(DatasetQuery)) {
                 statement.setMaxRows(max);
@@ -237,7 +237,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
     }
 
     public static EpidemicReport read(String dataset, Date time, long location, boolean decodeAncestors) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, dataset, time, location, decodeAncestors);
         } catch (Exception e) {
@@ -367,7 +367,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         if (!validReport(report)) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return write(conn, report);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -420,7 +420,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         if (reports == null || reports.isEmpty()) {
             return -1;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             return write(conn, reports, replace);
         } catch (Exception e) {
@@ -648,7 +648,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         if (reports == null || reports.isEmpty()) {
             return 0;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement update = conn.prepareStatement(UpdateAsEPid)) {
             conn.setAutoCommit(false);
             int count = 0;
@@ -669,7 +669,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
     }
 
     public static List<String> datasets() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return datasets(conn);
         } catch (Exception e) {
@@ -699,7 +699,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
     }
 
     public static List<Date> times() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return times(conn);
         } catch (Exception e) {
@@ -768,7 +768,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
     }
 
     public static boolean delete(long epid) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(DeleteEPid)) {
             statement.setLong(1, epid);
             statement.executeUpdate();
@@ -797,7 +797,7 @@ public class TableEpidemicReport extends BaseTable<EpidemicReport> {
         if (dataset == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(DeleteDataset)) {
             statement.setString(1, dataset);
             statement.executeUpdate();

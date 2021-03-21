@@ -5,7 +5,6 @@ import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -18,16 +17,13 @@ public class ImageTiffEditerController extends BaseImagesListController {
 
     public ImageTiffEditerController() {
         baseTitle = AppVariables.message("ImageTiffEditer");
+    }
 
-        SourceFileType = VisitHistory.FileType.Tif;
-        SourcePathType = VisitHistory.FileType.Tif;
-        TargetFileType = VisitHistory.FileType.Tif;
-        TargetPathType = VisitHistory.FileType.Tif;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Tif);
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
-
-        sourceExtensionFilter = CommonFxValues.TiffExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override

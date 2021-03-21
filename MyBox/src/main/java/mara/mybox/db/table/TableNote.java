@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.Note;
@@ -96,7 +96,7 @@ public class TableNote extends BaseTable<Note> {
         if (notebook < 1) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return notes(conn, notebook);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -128,7 +128,7 @@ public class TableNote extends BaseTable<Note> {
     }
 
     public int clearBook(long notebook) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return clearBook(conn, notebook);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -150,7 +150,7 @@ public class TableNote extends BaseTable<Note> {
     }
 
     public static int bookSize(long notebook) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return bookSize(conn, notebook);
         } catch (Exception e) {
             MyBoxLog.error(e);

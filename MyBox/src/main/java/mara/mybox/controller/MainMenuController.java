@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import mara.mybox.MyBox;
 import mara.mybox.data.BaseTask;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
@@ -244,6 +245,11 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void fullScreen(ActionEvent event) {
         parentController.getMyStage().setFullScreen(true);
+    }
+
+    @FXML
+    protected void restart(ActionEvent event) {
+        MyBox.restart();
     }
 
     @FXML
@@ -1397,8 +1403,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void openDataClipboard(ActionEvent event) {
-        loadScene(CommonValues.DataClipboardFxml);
+    protected void openDataTextClipboard(ActionEvent event) {
+        loadScene(CommonValues.DataTextClipboardFxml);
+    }
+
+    @FXML
+    protected void openDataSheetClipboard(ActionEvent event) {
+        loadScene(CommonValues.DataSheetClipboardFxml);
     }
 
     @FXML

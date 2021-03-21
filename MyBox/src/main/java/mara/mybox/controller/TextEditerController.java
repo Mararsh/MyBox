@@ -11,11 +11,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import mara.mybox.data.FileEditInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -28,7 +28,10 @@ public class TextEditerController extends BaseFileEditerController {
     public TextEditerController() {
         baseTitle = AppVariables.message("TextEditer");
         TipsLabelKey = "TextEditerTips";
+    }
 
+    @Override
+    public void setFileType() {
         setTextType();
     }
 
@@ -40,7 +43,6 @@ public class TextEditerController extends BaseFileEditerController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     protected void initCharsetTab() {

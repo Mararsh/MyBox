@@ -18,13 +18,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -47,19 +45,11 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
 
     public MarkdownToHtmlController() {
         baseTitle = AppVariables.message("MarkdownToHtml");
+    }
 
-        SourceFileType = VisitHistory.FileType.Markdown;
-        SourcePathType = VisitHistory.FileType.Markdown;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        AddFileType = VisitHistory.FileType.Markdown;
-        AddPathType = VisitHistory.FileType.Markdown;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Markdown, VisitHistory.FileType.Html);
     }
 
     @Override

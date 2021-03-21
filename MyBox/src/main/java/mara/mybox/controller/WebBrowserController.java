@@ -19,14 +19,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebEngine;
+import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.NetworkTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -45,6 +45,7 @@ public class WebBrowserController extends BaseController {
     protected boolean loadSynchronously, isFrameSet;
     protected int cols, rows;
     protected Map<Tab, ControlWebBrowserBox> tabControllers;
+    protected Tab hisTab;
 
     @FXML
     protected Button loadButton;
@@ -57,20 +58,11 @@ public class WebBrowserController extends BaseController {
 
     public WebBrowserController() {
         baseTitle = AppVariables.message("WebBrowser");
+    }
 
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
-
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
     @Override
@@ -86,6 +78,7 @@ public class WebBrowserController extends BaseController {
             newTabAction(null, false);
 
             initOptions();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -106,12 +99,12 @@ public class WebBrowserController extends BaseController {
                     }
                 }
             });
-            bypassCheck.setSelected(AppVariables.getUserConfigBoolean("SSLBypassAll", false));
-            if (bypassCheck.isSelected()) {
-                NetworkTools.trustAll();
-            } else {
-                NetworkTools.myBoxSSL();
-            }
+//            bypassCheck.setSelected(AppVariables.getUserConfigBoolean("SSLBypassAll", false));
+//            if (bypassCheck.isSelected()) {
+//                NetworkTools.trustAll();
+//            } else {
+//                NetworkTools.myBoxSSL();
+//            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -128,6 +121,17 @@ public class WebBrowserController extends BaseController {
             return c.webEngine;
         }
         return null;
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+
+            hideRightPane();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     @FXML
@@ -229,7 +233,8 @@ public class WebBrowserController extends BaseController {
 
     @FXML
     protected void manageCertificates() {
-        openStage(CommonValues.SecurityCertificatesFxml);
+        SecurityCertificatesController controller = (SecurityCertificatesController) openStage(CommonValues.SecurityCertificatesFxml);
+        controller.sourceFileChanged(new File(SystemTools.keystore()));
     }
 
     @FXML
@@ -255,17 +260,21 @@ public class WebBrowserController extends BaseController {
     @FXML
     protected void manageHistories() {
         try {
+            if (hisTab != null && tabPane.getTabs().contains(hisTab)) {
+                tabPane.getSelectionModel().select(hisTab);
+                return;
+            }
             FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(
                     CommonValues.WebBrowserHistoryFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
-            Tab tab = new Tab(message("ManageHistories"));
+            hisTab = new Tab(message("ManageHistories"));
             ImageView tabImage = new ImageView("img/MyBox.png");
             tabImage.setFitWidth(20);
             tabImage.setFitHeight(20);
-            tab.setGraphic(tabImage);
-            tab.setContent(pane);
-            tabPane.getTabs().add(tab);
-            tabPane.getSelectionModel().select(tab);
+            hisTab.setGraphic(tabImage);
+            hisTab.setContent(pane);
+            tabPane.getTabs().add(hisTab);
+            tabPane.getSelectionModel().select(hisTab);
 
             WebBrowserHistoryController controller = (WebBrowserHistoryController) fxmlLoader.getController();
             controller.browserConroller = this;
@@ -281,6 +290,48 @@ public class WebBrowserController extends BaseController {
         tabControllers.clear();
         tabControllers = null;
         return super.leavingScene();
+    }
+
+    public static WebBrowserController oneOpen() {
+        WebBrowserController controller = null;
+        Stage stage = FxmlStage.findStage(message("WebBrowser"));
+        if (stage != null && stage.getUserData() != null) {
+            try {
+                controller = (WebBrowserController) stage.getUserData();
+            } catch (Exception e) {
+            }
+        }
+        if (controller == null) {
+            controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
+        }
+        if (controller != null) {
+            controller.getMyStage().requestFocus();
+        }
+        return controller;
+    }
+
+    public static WebBrowserController oneOpen(File file) {
+        WebBrowserController controller = oneOpen();
+        if (controller != null && file != null) {
+            controller.loadFile(file);
+        }
+        return controller;
+    }
+
+    public static WebBrowserController oneOpen(String address) {
+        WebBrowserController controller = oneOpen();
+        if (controller != null && address != null) {
+            controller.newTabAction(address, true);
+        }
+        return controller;
+    }
+
+    public static WebBrowserController oneOpen(boolean his) {
+        WebBrowserController controller = oneOpen();
+        if (controller != null && his) {
+            controller.manageHistories();
+        }
+        return controller;
     }
 
 }

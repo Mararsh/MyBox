@@ -315,7 +315,7 @@ public class AppVariables {
             return null;
         }
         String fileBackupsPath = MyboxDataPath + File.separator + "fileBackups" + File.separator
-                + FileTools.getFilePrefix(file.getName()) + File.separator;
+                + FileTools.getFilePrefix(file.getName()) + FileTools.getFileSuffix(file.getName()) + File.separator;
         File path = new File(fileBackupsPath);
         if (!path.exists()) {
             path.mkdirs();

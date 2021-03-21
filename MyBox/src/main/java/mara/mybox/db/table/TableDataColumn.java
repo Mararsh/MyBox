@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.DataDefinition;
@@ -110,7 +110,7 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
         if (dataid < 0) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return read(conn, dataid);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -151,7 +151,7 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
         if (type == null || dataName == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return clear(conn, type, dataName);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -188,7 +188,7 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
         if (dataid < 0 || columns.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             save(conn, dataid, columns);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -224,7 +224,7 @@ public class TableDataColumn extends BaseTable<ColumnDefinition> {
         if (type == null || dataName == null || columns == null || columns.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return save(conn, type, dataName, columns);
         } catch (Exception e) {
             MyBoxLog.error(e);

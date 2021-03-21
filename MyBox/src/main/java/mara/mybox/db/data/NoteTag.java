@@ -9,11 +9,13 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class NoteTag extends BaseData {
 
-    protected long ngid;
-    protected String tag;
+    protected long ngid, noteid, tagid;
+    protected Note note;
+    protected Tag tag;
 
     private void init() {
-        ngid = -1;
+        ngid = noteid = tagid = -1;
+        note = null;
         tag = null;
     }
 
@@ -21,9 +23,18 @@ public class NoteTag extends BaseData {
         init();
     }
 
-    public NoteTag(String tag) {
+    public NoteTag(long noteid, long tagid) {
         init();
+        this.noteid = noteid;
+        this.tagid = tagid;
+    }
+
+    public NoteTag(Note note, Tag tag) {
+        init();
+        this.note = note;
         this.tag = tag;
+        this.noteid = note == null ? -1 : note.getNtid();
+        this.tagid = tag == null ? -1 : tag.getTgid();
     }
 
     /*
@@ -42,8 +53,11 @@ public class NoteTag extends BaseData {
                 case "ngid":
                     data.setNgid(value == null ? -1 : (long) value);
                     return true;
-                case "tag":
-                    data.setTag(value == null ? null : (String) value);
+                case "noteid":
+                    data.setNoteid(value == null ? -1 : (long) value);
+                    return true;
+                case "tagid":
+                    data.setTagid(value == null ? -1 : (long) value);
                     return true;
             }
         } catch (Exception e) {
@@ -59,15 +73,17 @@ public class NoteTag extends BaseData {
         switch (column) {
             case "ngid":
                 return data.getNgid();
-            case "tag":
-                return data.getTag();
+            case "noteid":
+                return data.getNoteid();
+            case "tagid":
+                return data.getTagid();
         }
         return null;
     }
 
     public static boolean valid(NoteTag data) {
         return data != null
-                && data.getTag() != null && !data.getTag().isBlank();
+                && data.getNoteid() > 0 && data.getTagid() > 0;
     }
 
     /*
@@ -81,11 +97,35 @@ public class NoteTag extends BaseData {
         this.ngid = ngid;
     }
 
-    public String getTag() {
+    public long getNoteid() {
+        return noteid;
+    }
+
+    public void setNoteid(long noteid) {
+        this.noteid = noteid;
+    }
+
+    public long getTagid() {
+        return tagid;
+    }
+
+    public void setTagid(long tagid) {
+        this.tagid = tagid;
+    }
+
+    public Note getNote() {
+        return note;
+    }
+
+    public void setNote(Note note) {
+        this.note = note;
+    }
+
+    public Tag getTag() {
         return tag;
     }
 
-    public void setTag(String tag) {
+    public void setTag(Tag tag) {
         this.tag = tag;
     }
 

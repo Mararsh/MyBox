@@ -6,10 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -28,20 +26,6 @@ public abstract class BaseHtmlController extends BaseController {
 
     public BaseHtmlController() {
         baseTitle = AppVariables.message("Html");
-        needEdit = needSnap = false;
-
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -52,6 +36,11 @@ public abstract class BaseHtmlController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
     @Override
@@ -86,9 +75,6 @@ public abstract class BaseHtmlController extends BaseController {
             t += "  " + webviewController.address;
         } else if (sourceFile != null) {
             t += "  " + sourceFile.getAbsolutePath();
-        }
-        if (changed) {
-            t += "*";
         }
         getMyStage().setTitle(t);
     }

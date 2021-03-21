@@ -45,7 +45,6 @@ import javafx.stage.Stage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -57,7 +56,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
@@ -112,18 +110,7 @@ public class PdfViewController extends ImageViewerController {
 
     public PdfViewController() {
         baseTitle = AppVariables.message("PdfView");
-
-        SourceFileType = VisitHistory.FileType.PDF;
-        SourcePathType = VisitHistory.FileType.PDF;
-        TargetFileType = VisitHistory.FileType.Image;
-        TargetPathType = VisitHistory.FileType.Image;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
         TipsLabelKey = "PdfViewTips";
-
-        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
-        targetExtensionFilter = CommonFxValues.ImageExtensionFilter;
     }
 
     @Override
@@ -131,10 +118,14 @@ public class PdfViewController extends ImageViewerController {
         try {
             super.initValues();
             infoLoaded = new SimpleBooleanProperty(false);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
     }
 
     @Override
@@ -189,28 +180,7 @@ public class PdfViewController extends ImageViewerController {
                 pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        if (newValue == null) {
-                            currentPage = -1;
-                            pageSelector.getEditor().setStyle(null);
-                            return;
-                        }
-                        try {
-                            int v = Integer.valueOf(newValue) - 1;
-                            if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
-                                if (currentPage != v) {
-                                    currentPage = v;
-                                    loadPage();
-                                }
-                                pageSelector.getEditor().setStyle(null);
-                            } else {
-                                pageSelector.getEditor().setStyle(badStyle);
-                            }
-                        } catch (Exception e) {
-                            pageSelector.getEditor().setStyle(badStyle);
-                        }
+                        checkCurrentPage();
                     }
                 });
             }
@@ -289,6 +259,28 @@ public class PdfViewController extends ImageViewerController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected boolean checkCurrentPage() {
+        if (isSettingValues || pageSelector == null) {
+            return false;
+        }
+        String value = pageSelector.getEditor().getText();
+        try {
+            int v = Integer.valueOf(value) - 1;
+            if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
+                currentPage = v;
+                loadPage();
+                pageSelector.getEditor().setStyle(null);
+                return true;
+            } else {
+                pageSelector.getEditor().setStyle(badStyle);
+                return false;
+            }
+        } catch (Exception e) {
+            pageSelector.getEditor().setStyle(badStyle);
+            return false;
         }
     }
 
@@ -426,7 +418,7 @@ public class PdfViewController extends ImageViewerController {
         if (file == null) {
             return;
         }
-        loadFile(file, null, 0);
+        loadFile(file, null, 1);
     }
 
     public void loadFile(File file, PdfInformation pdfInfo, int page) {
@@ -437,11 +429,13 @@ public class PdfViewController extends ImageViewerController {
             currentPage = page;
             orcPage = -1;
             infoLoaded.set(pdfInfo != null);
-            pageSelector.setValue(null);
             pageLabel.setText("");
             percent = 0;
+            isSettingValues = true;
+            pageSelector.setValue(null);
             thumbBox.getChildren().clear();
             outlineTree.setRoot(null);
+            isSettingValues = false;
             if (file == null) {
                 return;
             }
@@ -449,7 +443,7 @@ public class PdfViewController extends ImageViewerController {
             getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
             if (pdfInfo != null) {
                 pdfInformation = pdfInfo;
-                loadPage();
+                checkCurrentPage();
             } else {
                 pdfInformation = new PdfInformation(sourceFile);
                 loadInformation(null);
@@ -509,7 +503,7 @@ public class PdfViewController extends ImageViewerController {
                     pageSelector.setValue("1");
                     pageLabel.setText("/" + size);
                     isSettingValues = false;
-                    loadPage();
+                    checkCurrentPage();
                     checkOutline();
                     checkThumbs();
                 }
@@ -851,7 +845,7 @@ public class PdfViewController extends ImageViewerController {
 
     @FXML
     public void goPage() {
-        loadPage();
+        checkCurrentPage();
     }
 
     @FXML

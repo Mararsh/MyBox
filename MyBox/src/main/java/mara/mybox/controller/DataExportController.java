@@ -18,7 +18,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.BaseData;
@@ -27,7 +27,6 @@ import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.TableEpidemicReport;
@@ -37,7 +36,6 @@ import mara.mybox.fxml.ControlStyle;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -69,19 +67,11 @@ public class DataExportController extends BaseTaskController {
 
     public DataExportController() {
         baseTitle = message("Export");
+    }
 
-        SourceFileType = VisitHistory.FileType.Text;
-        SourcePathType = VisitHistory.FileType.Text;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Text;
-        AddPathType = VisitHistory.FileType.Text;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-
-        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     public void setValues(BaseDataManageController dataController,
@@ -261,7 +251,7 @@ public class DataExportController extends BaseTaskController {
 
                 private boolean writeFiles(String filePrefix) {
                     updateLogs(currentSQL);
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setReadOnly(true);
                         int count = 0;
                         if (!convertController.openWriters(filePrefix)) {
@@ -321,7 +311,7 @@ public class DataExportController extends BaseTaskController {
                 }
 
                 private boolean handleEpidemicReportTop() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setReadOnly(true);
                         String where = queryController.savedCondition.getWhere();
                         String order = queryController.savedCondition.getOrder();

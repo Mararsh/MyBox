@@ -14,6 +14,8 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.TextCollectingVisitor;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +89,10 @@ public class MarkdownEditerController extends TextEditerController {
     public MarkdownEditerController() {
         baseTitle = AppVariables.message("MarkdownEditer");
         TipsLabelKey = "MarkdownEditerTips";
+    }
 
+    @Override
+    public void setFileType() {
         setMarkdownType();
     }
 
@@ -99,8 +104,6 @@ public class MarkdownEditerController extends TextEditerController {
 
             initConversionOptions();
             initHtmlTab();
-            initTextTab();
-            initLinksTab();
 
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowHtml", true)) {
                 tabPane.getTabs().remove(htmlTab);
@@ -125,8 +128,6 @@ public class MarkdownEditerController extends TextEditerController {
 
     protected void initHtmlTab() {
         try {
-            htmlTab.disableProperty().bind(mainArea.textProperty().isEmpty());
-
             webviewController.setValues(this, false, true);
             webEngine = webviewController.webView.getEngine();
 
@@ -134,39 +135,6 @@ public class MarkdownEditerController extends TextEditerController {
             MyBoxLog.error(e.toString());
         }
 
-    }
-
-    protected void initTextTab() {
-        try {
-            textTab.disableProperty().bind(mainArea.textProperty().isEmpty());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void initTocTab() {
-        try {
-            tocTab.disableProperty().bind(mainArea.textProperty().isEmpty());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void initLinksTab() {
-        try {
-            linksTab.disableProperty().bind(mainArea.textProperty().isEmpty());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    protected void initCodesTab() {
-        try {
-            codesTab.disableProperty().bind(mainArea.textProperty().isEmpty());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     protected void initConversionOptions() {
@@ -919,7 +887,7 @@ public class MarkdownEditerController extends TextEditerController {
         Input formats
      */
     @FXML
-    public void popInput(MouseEvent mouseEvent) {
+    public void popListMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -927,71 +895,10 @@ public class MarkdownEditerController extends TextEditerController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            MenuItem menuItem;
-            menuItem = new MenuItem("#");
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextInFrontOfCurrentLine("# ");
-            });
-            popMenu.getItems().add(menuItem);
+            MenuItem menu;
 
-            menuItem = new MenuItem("##");
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextInFrontOfCurrentLine("## ");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem("###");
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextInFrontOfCurrentLine("### ");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem("####");
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextInFrontOfCurrentLine("#### ");
-            });
-            popMenu.getItems().add(menuItem);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menuItem = new MenuItem(message("Bold"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextAround("**");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("Italic"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextAround("*");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("BoldItalic"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextAround("***");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("Quote"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                insertText("\n\n>");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("Code"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextAround("`");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("CodesBlock"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                addTextAround("\n```\n", "\n```\n");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("NumberedList"));
-            menuItem.setOnAction((ActionEvent event) -> {
+            menu = new MenuItem(message("NumberedList"));
+            menu.setOnAction((ActionEvent event) -> {
                 IndexRange range = mainArea.getSelection();
                 int start = range.getStart();
                 int end = range.getEnd();
@@ -1020,48 +927,16 @@ public class MarkdownEditerController extends TextEditerController {
                 }
                 mainArea.requestFocus();
             });
-            popMenu.getItems().add(menuItem);
+            popMenu.getItems().add(menu);
 
-            menuItem = new MenuItem(message("BulletedList"));
-            menuItem.setOnAction((ActionEvent event) -> {
+            menu = new MenuItem(message("BulletedList"));
+            menu.setOnAction((ActionEvent event) -> {
                 addTextInFrontOfEachLine("- ");
             });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("SeparatorLine"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                insertText("\n---\n");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("Newline"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                insertText("  \n");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("Image"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                insertText("![" + message("Name") + "](http://" + message("Address") + ")");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("Link"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                insertText("[" + message("Name") + "](http://" + message("Address") + ")");
-            });
-            popMenu.getItems().add(menuItem);
-
-            menuItem = new MenuItem(message("Table"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                insertText("\n\n| h1 | h2 | h3 |  \n"
-                        + "| --- | --- | --- |  \n"
-                        + "| d1 | d2 | d3 |  \n");
-            });
-            popMenu.getItems().add(menuItem);
+            popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1072,102 +947,188 @@ public class MarkdownEditerController extends TextEditerController {
             popMenu.getItems().add(menu);
 
             FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
-    protected void bold() {
-        addTextAround("**");
-    }
-
-    @FXML
-    protected void italic() {
-        addTextAround("*");
-    }
-
-    @FXML
-    protected void boldItalic() {
-        addTextAround("***");
-    }
-
-    @FXML
-    protected void code() {
-        addTextAround("`");
-    }
-
-    @FXML
-    protected void codesBlock() {
-        addTextAround("\n```\n", "\n```\n");
-    }
-
-    @FXML
-    protected void numberedList() {
-        IndexRange range = mainArea.getSelection();
-        int start = range.getStart();
-        int end = range.getEnd();
-        addTextInFrontOfCurrentLine("1. ");
-        if (start == end) {
-            return;
-        }
-        start += 3;
-        end += 3;
-        int pos;
-        int count = 1;
-        while (true) {
-            pos = mainArea.getText(start, end).indexOf('\n');
-            if (pos < 0) {
-                break;
+    public void popHeaderMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
             }
-            count++;
-            mainArea.insertText(start + pos + 1, count + ". ");
-            int nlen = 2 + (count + "").length();
-            start += pos + 1 + nlen;
-            end += nlen;
-            int len = mainArea.getLength();
-            if (start >= end || start >= len || end >= len) {
-                break;
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+            for (int i = 1; i <= 6; i++) {
+                String name = message("Headings") + " " + i;
+                String value = "";
+                for (int h = 0; h < i; h++) {
+                    value += "#";
+                }
+                String h = value + " ";
+                menu = new MenuItem(name);
+                menu.setOnAction((ActionEvent event) -> {
+                    addTextInFrontOfCurrentLine(h);
+                });
+                popMenu.getItems().add(menu);
             }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
-        mainArea.requestFocus();
     }
 
     @FXML
-    protected void bulletedList() {
-        addTextInFrontOfEachLine("- ");
+    public void popCodesMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("Bold"));
+            menu.setOnAction((ActionEvent event) -> {
+                addTextAround("**");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Italic"));
+            menu.setOnAction((ActionEvent event) -> {
+                addTextAround("*");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("BoldItalic"));
+            menu.setOnAction((ActionEvent event) -> {
+                addTextAround("***");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Quote"));
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("\n\n>");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Codes"));
+            menu.setOnAction((ActionEvent event) -> {
+                addTextAround("`");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CodesBlock"));
+            menu.setOnAction((ActionEvent event) -> {
+                addTextAround("\n```\n", "\n```\n");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ReferLocalFile"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxmlControl.selectFile(this);
+                if (file == null) {
+                    return;
+                }
+                insertText(URLDecoder.decode(file.toURI().toString()));
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SeparatorLine"));
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("\n---\n");
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML
-    protected void quote() {
-        insertText("\n\n>");
-    }
-
-    @FXML
-    protected void separatorLine() {
-        insertText("\n---\n");
-    }
-
-    @FXML
-    protected void image() {
+    public void addImage() {
         insertText("![" + message("Name") + "](http://" + message("Address") + ")");
     }
 
     @FXML
-    protected void makeLink() {
+    public void addlink() {
         insertText("[" + message("Name") + "](http://" + message("Address") + ")");
     }
 
     @FXML
-    protected void table() {
-        insertText("\n\n| h1 | h2 | h3 |  \n"
-                + "| --- | --- | --- |  \n"
-                + "| d1 | d2 | d3 |  \n");
+    public void addTable() {
+        TableSizeController controller = (TableSizeController) openStage(CommonValues.TableSizeFxml, true);
+        controller.setValues(this);
+        controller.notify.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                addTable(controller.rowsNumber, controller.colsNumber);
+                controller.closeStage();
+            }
+        });
+    }
+
+    public void addTable(int rowsNumber, int colsNumber) {
+        String s = "\n|";
+        for (int j = 1; j <= colsNumber; j++) {
+            s += " col" + j + " |";
+        }
+        s += "    \n";
+        for (int i = 1; i <= rowsNumber; i++) {
+            s += "|";
+            for (int j = 1; j <= colsNumber; j++) {
+                s += " v" + i + "-" + j + " |";
+            }
+            s += "    \n";
+        }
+        insertText(s);
     }
 
     @FXML
-    protected void newline() {
-        insertText("  \n");
+    public void addP() {
+        insertText("    \n" + message("Paragraph") + "    \n");
+    }
+
+    @FXML
+    public void addBr() {
+        insertText("    \n");
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        mainArea.clear();
     }
 
     /*

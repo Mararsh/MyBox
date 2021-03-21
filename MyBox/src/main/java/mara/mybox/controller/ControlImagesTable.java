@@ -14,7 +14,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableImageCell;
@@ -25,7 +24,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -50,17 +48,6 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     protected CheckBox tableThumbCheck;
 
     public ControlImagesTable() {
-        SourceFileType = VisitHistory.FileType.Image;
-        SourcePathType = VisitHistory.FileType.Image;
-        TargetPathType = VisitHistory.FileType.Image;
-        TargetFileType = VisitHistory.FileType.Image;
-        AddFileType = VisitHistory.FileType.Image;
-        AddPathType = VisitHistory.FileType.Image;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
 
     }
 
@@ -71,6 +58,11 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             hasSampled = new SimpleBooleanProperty(false);
         } catch (Exception e) {
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     @Override

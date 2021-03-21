@@ -6,13 +6,11 @@ import javafx.fxml.FXML;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
@@ -30,21 +28,8 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
     protected PDDocument doc;
 
     public BaseBatchPdfController() {
-        SourceFileType = VisitHistory.FileType.PDF;
-        SourcePathType = VisitHistory.FileType.PDF;
-        TargetPathType = VisitHistory.FileType.PDF;
-        TargetFileType = VisitHistory.FileType.PDF;
-        AddFileType = VisitHistory.FileType.PDF;
-        AddPathType = VisitHistory.FileType.PDF;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-
         targetSubdirKey = "PdfCreatSubdir";
         previewKey = "PdfPreview";
-
-        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -55,6 +40,11 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF);
     }
 
     @FXML

@@ -77,20 +77,16 @@ License:    Apache License Version 2.0
                                                                     </graphic>
                                                                 </Button>
                                                                 <Separator prefWidth="200.0" />
-                                                                <VBox minHeight="-Infinity" spacing="5.0">
-                                                                    <children>
-                                                                        <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
-                                                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconRefresh.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </VBox>
+                                                                  <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
+                                                                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                                      <graphic>
+                                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                              <image>
+                                                                                  <Image url="@../buttons/iconRefresh.png" />
+                                                                              </image>
+                                                                          </ImageView>
+                                                                      </graphic>
+                                                                  </Button>
                                                             </children>
                                                         </VBox>
                                                     </children>
@@ -297,15 +293,6 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
-                                                                        <Button fx:id="delimiterButton" layoutX="414.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#textDelimiterMenu">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconDelimiter.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
                                                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                         <Button fx:id="copyTextButton" mnemonicParsing="false" onAction="#copyTextAction">
                                                                             <graphic>
@@ -327,7 +314,7 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </HBox>
-                                                                <TextArea fx:id="textArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+                                                                <fx:include fx:id="text" source="ControlDataText.fxml" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

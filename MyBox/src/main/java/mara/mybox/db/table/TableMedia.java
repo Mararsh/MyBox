@@ -46,7 +46,7 @@ public class TableMedia extends DerbyBase {
         if (address == null || address.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             statement.setMaxRows(1);
@@ -77,7 +77,7 @@ public class TableMedia extends DerbyBase {
         if (addresses == null || addresses.isEmpty()) {
             return medias;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             medias = read(conn, addresses);
         } catch (Exception e) {
@@ -124,7 +124,7 @@ public class TableMedia extends DerbyBase {
         if (media == null || media.getAddress() == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + stringValue(media.getAddress()) + "'";
             statement.executeUpdate(sql);
@@ -146,7 +146,7 @@ public class TableMedia extends DerbyBase {
         if (medias == null || medias.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return write(conn, medias);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -184,7 +184,7 @@ public class TableMedia extends DerbyBase {
         if (addresses == null || addresses.isEmpty()) {
             return true;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return delete(conn, addresses);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -214,7 +214,7 @@ public class TableMedia extends DerbyBase {
     }
 
     public static boolean delete(String address) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + stringValue(address) + "'";
             statement.executeUpdate(sql);

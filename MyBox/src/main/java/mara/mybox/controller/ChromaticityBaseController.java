@@ -47,16 +47,11 @@ public class ChromaticityBaseController extends BaseController {
     public ChromaticityBaseController() {
         baseTitle = AppVariables.message("Chromaticity");
         exportName = "ChromaticityData";
+    }
 
-        SourceFileType = VisitHistory.FileType.Text;
-        SourcePathType = VisitHistory.FileType.Text;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Text;
-        AddPathType = VisitHistory.FileType.Text;
-
-        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

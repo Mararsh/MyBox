@@ -10,19 +10,17 @@ import java.util.List;
 import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ExcelTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -46,17 +44,11 @@ public class DataFileExcelMergeController extends FilesMergeController {
 
     public DataFileExcelMergeController() {
         baseTitle = AppVariables.message("ExcelMerge");
+    }
 
-        SourceFileType = VisitHistory.FileType.Excel;
-        SourcePathType = VisitHistory.FileType.Excel;
-        AddFileType = VisitHistory.FileType.Excel;
-        AddPathType = VisitHistory.FileType.Excel;
-        TargetPathType = VisitHistory.FileType.Excel;
-        TargetFileType = VisitHistory.FileType.Excel;
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Excel);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Excel);
-        sourceExtensionFilter = CommonFxValues.ExcelExtensionFilter;
-        targetExtensionFilter = CommonFxValues.ExcelExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Excel);
     }
 
     @Override
@@ -141,7 +133,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
                 targetBook.write(fileOut);
             }
             targetBook.close();
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            try ( Connection conn = DerbyBase.getConnection()) {
                 TableDataDefinition tableDataDefinition = new TableDataDefinition();
                 tableDataDefinition.clear(conn, DataDefinition.DataType.DataFile, targetFile.getAbsolutePath());
                 conn.commit();

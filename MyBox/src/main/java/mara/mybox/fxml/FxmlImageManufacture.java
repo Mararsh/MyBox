@@ -187,11 +187,11 @@ public class FxmlImageManufacture {
 
     public static Image addText(Image image, String textString,
             java.awt.Font font, Color color, int x, int y,
-            float transparent, int shadow, int angle,
-            boolean isOutline, boolean isVertical) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed,
+            int shadow, int angle, boolean isOutline, boolean isVertical) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.addText(source, textString,
-                font, toAwtColor(color), x, y, transparent,
+                font, toAwtColor(color), x, y, blendMode, opacity, orderReversed,
                 shadow, angle, isOutline, isVertical);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
@@ -521,14 +521,14 @@ public class FxmlImageManufacture {
     public static Image drawRectangle(Image image,
             DoubleRectangle rect, Color strokeColor, int strokeWidth,
             int arcWidth, boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (rect == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawRectangle(source, rect,
                 toAwtColor(strokeColor), strokeWidth, arcWidth, dotted,
-                isFill, toAwtColor(fillColor), opacity);
+                isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -536,14 +536,14 @@ public class FxmlImageManufacture {
     public static Image drawCircle(Image image,
             DoubleCircle circle, Color strokeColor, int strokeWidth,
             boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (circle == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawCircle(source, circle,
                 toAwtColor(strokeColor), strokeWidth, dotted,
-                isFill, toAwtColor(fillColor), opacity);
+                isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -551,14 +551,14 @@ public class FxmlImageManufacture {
     public static Image drawEllipse(Image image,
             DoubleEllipse ellipse, Color strokeColor, int strokeWidth,
             boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (ellipse == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawEllipse(source, ellipse,
                 toAwtColor(strokeColor), strokeWidth, dotted,
-                isFill, toAwtColor(fillColor), opacity);
+                isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -566,52 +566,53 @@ public class FxmlImageManufacture {
     public static Image drawPolygon(Image image,
             DoublePolygon polygon, Color strokeColor, int strokeWidth,
             boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (polygon == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawPolygon(source, polygon,
                 toAwtColor(strokeColor), strokeWidth, dotted,
-                isFill, toAwtColor(fillColor), opacity);
+                isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawPolyline(Image image,
             DoublePolyline polyline, Color strokeColor, int strokeWidth,
-            boolean dotted, float opacity) {
+            boolean dotted, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (polyline == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawPolyline(source, polyline,
-                toAwtColor(strokeColor), strokeWidth, dotted, opacity);
+                toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
-    public static Image drawLines(Image image, DoublePolyline polyline, Color strokeColor, int strokeWidth,
-            boolean dotted, float opacity) {
+    public static Image drawLines(Image image,
+            DoublePolyline polyline, Color strokeColor, int strokeWidth,
+            boolean dotted, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (polyline == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawLines(source, polyline,
-                toAwtColor(strokeColor), strokeWidth, dotted, opacity);
+                toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawLines(Image image,
             DoubleLines penData, Color strokeColor, int strokeWidth,
-            boolean dotted, float opacity) {
+            boolean dotted, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         if (penData == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawLines(source, penData,
-                toAwtColor(strokeColor), strokeWidth, dotted, opacity);
+                toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

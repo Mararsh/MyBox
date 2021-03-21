@@ -16,6 +16,7 @@ import java.util.Map;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import thridparty.EncodingDetect;
 
@@ -177,6 +178,10 @@ public class TextTools {
                     (byte) 0x00};
         }
         return null;
+    }
+
+    public static String readText(File file) {
+        return readText(new TextEditInformation(file));
     }
 
     public static String readText(FileEditInformation info) {
@@ -488,7 +493,7 @@ public class TextTools {
             return null;
         }
         String text;
-        switch (delimiter) {
+        switch (delimiter.toLowerCase()) {
             case "tab":
                 text = "\t";
                 break;

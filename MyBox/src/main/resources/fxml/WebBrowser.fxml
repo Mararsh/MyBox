@@ -37,12 +37,21 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconPlus.png" />
+                                                        <Image url="@../buttons/iconAdd.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
                                         </Button>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="historyButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#manageHistories">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconHistory.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                         <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconDoubleRight.png" />
@@ -63,23 +72,33 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <TitledPane fx:id="HistoriesPane" animated="false" text="%Histories">
-                                            <content>
-                                                <VBox>
-                                                    <children>
-                                                        <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0" VBox.vgrow="NEVER" />
-                                                        <Button mnemonicParsing="false" onAction="#manageHistories" text="%ManageHistories" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
                                         <TitledPane fx:id="favoritesPane1" animated="false" layoutX="10.0" layoutY="150.0" text="%SSLCertificates">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
-                                                        <Button mnemonicParsing="false" onAction="#manageCertificates" text="%ManageSSLCertificates" />
-                                                        <Button mnemonicParsing="false" onAction="#manageBypass" text="%ManageBypasscSSLList" />
-                                                        <CheckBox fx:id="bypassCheck" mnemonicParsing="false" text="%SSLBypassAll" />
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                             <children>
+                                                <Button fx:id="ignoreButton" layoutX="32.0" layoutY="90.0" mnemonicParsing="false" onAction="#manageBypass">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/iconIgnore.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="sslButton" mnemonicParsing="false" onAction="#manageCertificates">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/iconSSL.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                                        <CheckBox fx:id="bypassCheck" mnemonicParsing="false" text="%SSLBypassAll" visible="false" />
                                                     </children>
                                                 </VBox>
                                             </content>

@@ -16,13 +16,11 @@ import javafx.scene.paint.Paint;
 import mara.mybox.data.Era;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -51,14 +49,11 @@ public class DatasetEditController extends BaseController {
 
     public DatasetEditController() {
         baseTitle = message("Dataset");
+    }
 
-        SourceFileType = VisitHistory.FileType.Image;
-        SourcePathType = VisitHistory.FileType.Image;
-        AddFileType = VisitHistory.FileType.Image;
-        AddPathType = VisitHistory.FileType.Image;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     @Override

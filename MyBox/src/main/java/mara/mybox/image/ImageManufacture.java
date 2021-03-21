@@ -12,7 +12,6 @@ import java.awt.Shape;
 import java.awt.Transparency;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -39,6 +38,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageCombine.CombineSizeType;
 import mara.mybox.image.ImageMosaic.MosaicType;
+import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.CommonFxValues;
@@ -374,37 +374,45 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage addText(BufferedImage source, String text,
+    public static BufferedImage addText(BufferedImage backImage, String text,
             Font font, Color color, int x, int y,
-            float opacity, int shadow, int angle,
-            boolean isOutline, boolean isVertical) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed,
+            int shadow, int angle, boolean isOutline, boolean isVertical) {
         try {
             if (opacity > 1.0f || opacity < 0) {
                 opacity = 1.0f;
             }
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            boolean noBlend = color.equals(CommonFxValues.TRANSPARENT);
+            if (noBlend) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+            } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
+            }
+            float textOpacity = noBlend ? opacity : 1.0f;
             if (isVertical) {
                 int ay = y;
                 for (int i = 0; i < text.length(); ++i) {
                     String c = String.valueOf(text.charAt(i));
-                    addText(g, c, font, color, x, ay, opacity, shadow, angle, isOutline);
+                    addText(g, c, font, color, x, ay, textOpacity, shadow, angle, isOutline);
                     ay += g.getFontMetrics().getStringBounds(c, g).getHeight();
                 }
             } else {
-                addText(g, text, font, color, x, y, opacity, shadow, angle, isOutline);
+                addText(g, text, font, color, x, y, textOpacity, shadow, angle, isOutline);
             }
-
             g.dispose();
-            return target;
+            if (noBlend) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -413,35 +421,27 @@ public class ImageManufacture {
 
     public static void addText(Graphics2D g, String text,
             Font font, Color color, int x, int y,
-            float opacity, int shadow, int angle,
-            boolean isOutline) {
+            float opacity, int shadow, int angle, boolean isOutline) {
         try {
-            AffineTransform saveAT = g.getTransform();
-            AffineTransform affineTransform = new AffineTransform();
-            affineTransform.rotate(Math.toRadians(angle), 0, 0);
-            Font rotatedFont = font.deriveFont(affineTransform);
-            if (shadow > 0) {  // Not blurred. Can improve
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-                g.setColor(Color.GRAY);
-                g.setFont(rotatedFont);
-                g.drawString(text, x + shadow, y + shadow);
-            }
-
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-            g.setColor(color);
-            g.setFont(rotatedFont);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.setFont(font);
+            g.rotate(Math.toRadians(angle), x, y);
+            g.setColor(color.equals(CommonFxValues.TRANSPARENT) ? null : color);
             if (isOutline) {
                 FontRenderContext frc = g.getFontRenderContext();
-                TextLayout textTl = new TextLayout(text, rotatedFont, frc);
+                TextLayout textTl = new TextLayout(text, font, frc);
                 Shape outline = textTl.getOutline(null);
-                AffineTransform transform = g.getTransform();
-                transform.translate(x, y);
-                g.transform(transform);
+                g.translate(x, y);
                 g.draw(outline);
+                g.translate(-x, -y);
             } else {
                 g.drawString(text, x, y);
             }
-            g.setTransform(saveAT);
+            if (shadow > 0) {  // Not blurred. Can improve
+                g.setColor(Color.GRAY);
+                g.drawString(text, x + shadow, y + shadow);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1453,29 +1453,35 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage drawRectangle(BufferedImage source,
+    public static BufferedImage drawRectangle(BufferedImage backImage,
             DoubleRectangle rect, Color strokeColor, int strokeWidth,
             int arcWidth, boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
             if (rect == null || strokeColor == null || !rect.isValid()) {
-                return source;
+                return backImage;
             }
-            int width = source.getWidth();
-            int height = source.getHeight();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
             int x1 = (int) Math.round(rect.getSmallX());
             int y1 = (int) Math.round(rect.getSmallY());
             int x2 = (int) Math.round(rect.getBigX());
             int y2 = (int) Math.round(rect.getBigY());
-            int imageType = source.getType();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            g.setComposite(ac);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            boolean noBlend = (!isFill && strokeColor.equals(CommonFxValues.TRANSPARENT))
+                    || (isFill && fillColor.equals(CommonFxValues.TRANSPARENT));
+            if (noBlend) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setComposite(ac);
+            } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
+            }
             if (strokeWidth > 0) {
                 if (strokeColor.getRGB() == 0) {
                     g.setColor(null);
@@ -1511,35 +1517,45 @@ public class ImageManufacture {
                 }
             }
             g.dispose();
-            return target;
+            if (noBlend) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return source;
+            return backImage;
         }
     }
 
-    public static BufferedImage drawCircle(BufferedImage source,
+    public static BufferedImage drawCircle(BufferedImage backImage,
             DoubleCircle circle, Color strokeColor, int strokeWidth,
             boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
             if (circle == null || strokeColor == null || !circle.isValid()) {
-                return source;
+                return backImage;
             }
-            int width = source.getWidth();
-            int height = source.getHeight();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
             int x = (int) Math.round(circle.getCenterX());
             int y = (int) Math.round(circle.getCenterY());
             int r = (int) Math.round(circle.getRadius());
-            int imageType = source.getType();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            g.setComposite(ac);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            boolean noBlend = (!isFill && strokeColor.equals(CommonFxValues.TRANSPARENT))
+                    || (isFill && fillColor.equals(CommonFxValues.TRANSPARENT));
+            if (noBlend) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setComposite(ac);
+            } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
+            }
             if (strokeWidth > 0) {
                 if (strokeColor.getRGB() == 0) {
                     g.setColor(null);
@@ -1566,36 +1582,46 @@ public class ImageManufacture {
                 g.fillOval(x - r, y - r, 2 * r, 2 * r);
             }
             g.dispose();
-            return target;
+            if (noBlend) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return source;
+            return backImage;
         }
     }
 
-    public static BufferedImage drawEllipse(BufferedImage source,
+    public static BufferedImage drawEllipse(BufferedImage backImage,
             DoubleEllipse ellipse, Color strokeColor, int strokeWidth,
             boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
             if (ellipse == null || strokeColor == null || !ellipse.isValid()) {
-                return source;
+                return backImage;
             }
-            int width = source.getWidth();
-            int height = source.getHeight();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
             int x = (int) Math.round(ellipse.getCenterX());
             int y = (int) Math.round(ellipse.getCenterY());
             int rx = (int) Math.round(ellipse.getRadiusX());
             int ry = (int) Math.round(ellipse.getRadiusY());
-            int imageType = source.getType();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            g.setComposite(ac);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            boolean noBlend = (!isFill && strokeColor.equals(CommonFxValues.TRANSPARENT))
+                    || (isFill && fillColor.equals(CommonFxValues.TRANSPARENT));
+            if (noBlend) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setComposite(ac);
+            } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
+            }
             if (strokeWidth > 0) {
                 if (strokeColor.getRGB() == 0) {
                     g.setColor(null);
@@ -1622,33 +1648,43 @@ public class ImageManufacture {
                 g.fillOval(x - rx, y - ry, 2 * rx, 2 * ry);
             }
             g.dispose();
-            return target;
+            if (noBlend) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return source;
+            return backImage;
         }
     }
 
-    public static BufferedImage drawPolygon(BufferedImage source,
+    public static BufferedImage drawPolygon(BufferedImage backImage,
             DoublePolygon polygonData, Color strokeColor, int strokeWidth,
             boolean dotted, boolean isFill, Color fillColor,
-            float opacity) {
+            ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
-            if (polygonData == null || strokeColor == null || polygonData.getSize() < 3) {
-                return source;
+            if (polygonData == null || strokeColor == null || polygonData.getSize() <= 2) {
+                return backImage;
             }
             Map<String, int[]> xy = polygonData.getIntXY();
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            g.setComposite(ac);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            boolean noBlend = (!isFill && strokeColor.equals(CommonFxValues.TRANSPARENT))
+                    || (isFill && fillColor.equals(CommonFxValues.TRANSPARENT));
+            if (noBlend) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setComposite(ac);
+            } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
+            }
             if (strokeWidth > 0) {
                 if (strokeColor.getRGB() == 0) {
                     g.setColor(null);
@@ -1674,33 +1710,41 @@ public class ImageManufacture {
                 g.fillPolygon(xy.get("x"), xy.get("y"), polygonData.getSize());
             }
             g.dispose();
-            return target;
+            if (noBlend) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return source;
+            return backImage;
         }
     }
 
-    public static BufferedImage drawPolyline(BufferedImage source,
+    public static BufferedImage drawPolyline(BufferedImage backImage,
             DoublePolyline polylineData, Color strokeColor, int strokeWidth,
-            boolean dotted, float opacity) {
+            boolean dotted, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
             if (polylineData == null || strokeColor == null
                     || polylineData.getSize() < 2 || strokeWidth < 1) {
-                return source;
+                return backImage;
             }
             Map<String, int[]> xy = polylineData.getIntXY();
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            g.setComposite(ac);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setComposite(ac);
+            } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
+            }
             if (strokeColor.getRGB() == 0) {
                 g.setColor(null);
             } else {
@@ -1717,32 +1761,53 @@ public class ImageManufacture {
             g.drawPolyline(xy.get("x"), xy.get("y"), polylineData.getSize());
 
             g.dispose();
-            return target;
+            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return source;
+            return backImage;
         }
     }
 
-    public static BufferedImage drawLines(BufferedImage source,
+    public static BufferedImage blendImages(BufferedImage foreImage, BufferedImage backImage,
+            int x, int y, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
+        if (foreImage == null || backImage == null || blendMode == null) {
+            return null;
+        }
+        BufferedImage target = ImageBlend.blendImages(foreImage, backImage,
+                x, y, blendMode, opacity, orderReversed);
+        if (target == null) {
+            target = foreImage;
+        }
+        return target;
+    }
+
+    public static BufferedImage drawLines(BufferedImage backImage,
             DoublePolyline polylineData, Color strokeColor, int strokeWidth,
-            boolean dotted, float opacity) {
+            boolean dotted, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
             if (polylineData == null || strokeColor == null
                     || polylineData.getSize() < 2 || strokeWidth < 1) {
-                return source;
+                return backImage;
             }
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            g.setComposite(ac);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setComposite(ac);
+            } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
+            }
 
             if (strokeColor.getRGB() == 0) {
                 g.setColor(null);
@@ -1768,40 +1833,45 @@ public class ImageManufacture {
                 lasty = thisy;
             }
             g.dispose();
-            return target;
+            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return source;
+            return backImage;
         }
     }
 
-    public static BufferedImage drawLines(BufferedImage source,
+    public static BufferedImage drawLines(BufferedImage backImage,
             DoubleLines penData, Color strokeColor, int strokeWidth,
-            boolean dotted, float opacity) {
+            boolean dotted, ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         try {
             if (penData == null || strokeColor == null
                     || penData.getPointsSize() == 0 || strokeWidth < 1) {
-                return source;
+                return backImage;
             }
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = backImage.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.setBackground(CommonFxValues.TRANSPARENT);
-            AlphaComposite ac;
-            if (strokeColor.getRGB() == 0) {
-                ac = AlphaComposite.getInstance(AlphaComposite.SRC_OUT, opacity);
+            BufferedImage foreImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = foreImage.createGraphics();
+            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+                g.drawImage(backImage, 0, 0, width, height, null);
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setComposite(ac);
             } else {
-                ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                g.setBackground(CommonFxValues.TRANSPARENT);
             }
-            g.setColor(strokeColor);
-            g.setComposite(ac);
-            g.drawImage(source, 0, 0, width, height, null);
-
+            if (strokeColor.getRGB() == 0) {
+                g.setColor(null);
+            } else {
+                g.setColor(strokeColor);
+            }
             BasicStroke stroke;
             if (dotted) {
                 stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1824,10 +1894,14 @@ public class ImageManufacture {
                 }
             }
             g.dispose();
-            return target;
+            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+                return foreImage;
+            } else {
+                return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return source;
+            return backImage;
         }
     }
 

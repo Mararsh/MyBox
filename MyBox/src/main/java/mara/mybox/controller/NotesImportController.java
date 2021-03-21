@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +13,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Notebook;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
@@ -27,7 +24,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -47,19 +43,11 @@ public class NotesImportController extends BaseBatchFileController {
 
     public NotesImportController() {
         baseTitle = AppVariables.message("ImportNotesFile");
+    }
 
-        SourceFileType = VisitHistory.FileType.Text;
-        SourcePathType = VisitHistory.FileType.Text;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Text;
-        AddPathType = VisitHistory.FileType.Text;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-
-        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override
@@ -127,7 +115,7 @@ public class NotesImportController extends BaseBatchFileController {
             return -1;
         }
         long count = 0;
-        try ( Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login);
+        try ( Connection conn = DerbyBase.getConnection();
                  BufferedReader reader = new BufferedReader(new FileReader(file, FileTools.charset(file)))) {
             conn.setAutoCommit(false);
             String line, title, html;

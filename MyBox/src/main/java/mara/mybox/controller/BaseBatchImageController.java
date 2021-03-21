@@ -6,8 +6,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -20,30 +18,21 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
     protected ImageInformation imageInformation;
 
     public BaseBatchImageController() {
-        SourceFileType = VisitHistory.FileType.Image;
-        SourcePathType = VisitHistory.FileType.Image;
-        TargetPathType = VisitHistory.FileType.Image;
-        TargetFileType = VisitHistory.FileType.Image;
-        AddFileType = VisitHistory.FileType.Image;
-        AddPathType = VisitHistory.FileType.Image;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
         targetSubdirKey = "ImageCreatSubdir";
         previewKey = "ImagePreview";
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-
         browseTargets = true;
+    }
 
-        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
-
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     public void loadImageInformation(final File file) {
         sourceFile = file;
         imageInformation = null;
         synchronized (this) {
-            if (task != null && !task.isQuit() ) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -69,7 +58,8 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);Thread thread = new Thread(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

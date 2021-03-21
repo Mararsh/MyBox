@@ -10,13 +10,11 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -34,16 +32,11 @@ public class SecurityCertificatesAddController extends BaseController {
 
     public SecurityCertificatesAddController() {
         baseTitle = AppVariables.message("SecurityCertificates");
+    }
 
-        SourceFileType = VisitHistory.FileType.Certificate;
-        SourcePathType = VisitHistory.FileType.Certificate;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Certificate);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Certificate, VisitHistory.FileType.Html);
     }
 
     @FXML
@@ -52,7 +45,7 @@ public class SecurityCertificatesAddController extends BaseController {
         if (certController == null) {
             return;
         }
-        File ksFile = certController.cacertsFile;
+        File ksFile = certController.sourceFile;
         if (!ksFile.exists() || !ksFile.isFile()) {
             popError(message("NotExist"));
             return;
@@ -98,7 +91,9 @@ public class SecurityCertificatesAddController extends BaseController {
                     @Override
                     protected boolean handle() {
                         error = null;
-                        certController.backupController.addBackup(certController.cacertsFile);
+                        if (certController.backupController.backupCheck.isSelected()) {
+                            certController.backupController.addBackup(certController.sourceFile);
+                        }
                         if (addressRadio.isSelected()) {
                             try {
                                 error = NetworkTools.installCertificateByHost(

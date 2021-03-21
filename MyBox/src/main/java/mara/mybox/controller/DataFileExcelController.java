@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,12 +17,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
@@ -35,7 +31,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -67,18 +62,11 @@ public class DataFileExcelController extends BaseDataFileController {
     public DataFileExcelController() {
         baseTitle = message("EditExcel");
         TipsLabelKey = "DataFileExcelTips";
+    }
 
-        SourceFileType = VisitHistory.FileType.Excel;
-        SourcePathType = VisitHistory.FileType.Excel;
-        TargetPathType = VisitHistory.FileType.Excel;
-        TargetFileType = VisitHistory.FileType.Excel;
-        AddFileType = VisitHistory.FileType.Excel;
-        AddPathType = VisitHistory.FileType.Excel;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Excel);
-
-        sourceExtensionFilter = CommonFxValues.ExcelExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Excel);
     }
 
     @Override
@@ -140,7 +128,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
     @Override
     protected boolean readDataDefinition(boolean pickOptions) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Workbook wb = WorkbookFactory.create(sourceFile)) {
             int sheetsNumber = wb.getNumberOfSheets();
             sheetNames = new ArrayList<>();
@@ -427,10 +415,10 @@ public class DataFileExcelController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    error = save(sourceFile, sourceWithNames);
-                    if (error == null && backupController.backupCheck.isSelected()) {
+                    if (backupController.backupCheck.isSelected()) {
                         backupController.addBackup(sourceFile);
                     }
+                    error = save(sourceFile, sourceWithNames);
                     return error == null;
                 }
 
@@ -638,7 +626,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     protected void saveColumns(File file, String currentSheetName, List<String> otherSheetNames, boolean withName) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (currentSheetName != null) {
                 String dname = file.getAbsolutePath() + "-" + currentSheetName;
                 tableDataDefinition.clear(conn, dataType, dname);
@@ -683,7 +671,7 @@ public class DataFileExcelController extends BaseDataFileController {
         if (sourceFile == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String dname = sourceFile.getAbsolutePath() + "-" + currentSheetName;
             tableDataDefinition.clear(conn, dataType, dname);
             DataDefinition def = DataDefinition.create().setDataType(dataType).setDataName(dname)
@@ -1290,7 +1278,7 @@ public class DataFileExcelController extends BaseDataFileController {
                 sourceSheet = sourceBook.getSheetAt(0);
                 currentSheetName = sourceSheet.getSheetName();
             }
-            String delimiterString = TextTools.delimiterText(delimiter);
+            String delimiterString = TextTools.delimiterText(textController.delimiter);
             Iterator<Row> iterator = sourceSheet.iterator();
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {

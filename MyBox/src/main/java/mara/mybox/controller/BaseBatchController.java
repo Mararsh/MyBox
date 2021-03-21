@@ -209,19 +209,20 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 tableController.parentController = this;
                 tableController.parentFxml = myFxml;
 
-                tableController.sourceExtensionFilter = sourceExtensionFilter;
-                tableController.targetExtensionFilter = targetExtensionFilter;
-                tableController.SourceFileType = SourceFileType;
+                tableController.SourceFileType = getSourceFileType();
                 tableController.SourcePathType = SourcePathType;
-                tableController.TargetPathType = TargetPathType;
-                tableController.TargetFileType = TargetFileType;
                 tableController.AddFileType = AddFileType;
                 tableController.AddPathType = AddPathType;
                 tableController.sourcePathKey = sourcePathKey;
+                tableController.sourceExtensionFilter = sourceExtensionFilter;
+
+                tableController.TargetPathType = TargetPathType;
+                tableController.TargetFileType = TargetFileType;
                 tableController.targetPathKey = targetPathKey;
                 tableController.LastPathKey = LastPathKey;
-                tableController.operationType = operationType;
+                tableController.targetExtensionFilter = targetExtensionFilter;
 
+                tableController.operationType = operationType;
                 tableData = tableController.tableData;
                 tableView = tableController.tableView;
             }

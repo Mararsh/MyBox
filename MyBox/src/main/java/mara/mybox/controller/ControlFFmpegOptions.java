@@ -20,7 +20,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -136,12 +135,10 @@ public class ControlFFmpegOptions extends BaseController {
     @FXML
     public void selectExecutable() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null || !file.exists()) {
+            File file = FxmlControl.selectFile(this);
+            if (file == null) {
                 return;
             }
-            recordFileOpened(file);
             executableInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());

@@ -93,18 +93,12 @@ public class ChromaticityDiagramController extends BaseImageController {
 
     public ChromaticityDiagramController() {
         baseTitle = AppVariables.message("DrawChromaticityDiagram");
-
         TipsLabelKey = "ChromaticityDiagramTips";
+    }
 
-        SourceFileType = VisitHistory.FileType.Text;
-        SourcePathType = VisitHistory.FileType.Text;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Text;
-        AddPathType = VisitHistory.FileType.Text;
-
-        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

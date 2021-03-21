@@ -6,10 +6,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -24,17 +22,11 @@ public class ControlTTFSelecter extends BaseController {
     protected ComboBox<String> ttfSelector;
 
     public ControlTTFSelecter() {
-        SourceFileType = VisitHistory.FileType.TTF;
-        SourceFileType = VisitHistory.FileType.TTF;
-        SourcePathType = VisitHistory.FileType.TTF;
-        AddFileType = VisitHistory.FileType.TTF;
-        AddPathType = VisitHistory.FileType.TTF;
-        TargetPathType = VisitHistory.FileType.TTF;
-        TargetFileType = VisitHistory.FileType.TTF;
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.TTF);
-        targetPathKey = sourcePathKey;
-        sourceExtensionFilter = CommonFxValues.TTFExtensionFilter;
-        targetExtensionFilter = CommonFxValues.TTFExtensionFilter;
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.TTF);
     }
 
     public static ControlTTFSelecter create() {

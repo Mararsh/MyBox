@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Map;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.dev.MyBoxLog;
@@ -98,7 +98,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static String readString(String keyName, String defaultValue) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return readString(conn, keyName, defaultValue);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -141,7 +141,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static int readInt(String keyName, int defaultValue) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             int exist = readInt(conn, keyName);
             if (exist != CommonValues.InvalidInteger) {
                 return exist;
@@ -184,7 +184,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static int writeString(String keyName, String stringValue) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return writeString(conn, keyName, stringValue);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -225,7 +225,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static int writeInt(String keyName, int intValue) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             int exist = readInt(conn, keyName);
             if (exist != CommonValues.InvalidInteger) {
                 if (intValue != exist) {
@@ -258,7 +258,7 @@ public class TableUserConf extends DerbyBase {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return delete(conn, keyName);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -283,7 +283,7 @@ public class TableUserConf extends DerbyBase {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return deletePrefix(conn, keyName);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);

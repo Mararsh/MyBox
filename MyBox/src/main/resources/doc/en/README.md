@@ -4,22 +4,20 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
 ## What's New           
-2021-3-8 v6.4.1
-- Notes are information pieces in html format. Notebook is collection of notes and notebooks. Notebooks are organized as a tree. Examples are provided.                 
-- Web page. Menu of handling links. Buttons to edit html codes.                    
-- Data files. Merge csv/excel files.  Handle empty csv/excel file. Add/remove/rename excel sheets.            
-- Improve. All editors support backing up automatically when save file. Image Manufacture supports square root of color distance and refresh clipboard automatically.
-Remove unnecessary files in self-contain packages.                    
-- Solved problems. Download First Level Links fails for some addresses. OCR in batch fails when file name includes non-English. Deleting history fails in Web Browser.                
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.1)                          
-            
-    
+2021-3-21 v6.4.2
+- Notes. Set tags of note and query notes by tags. NoteBook can be moved. Edit note in Rich Text. Set note's style. 
+Export notes in single page, html frameset, and xml and charset and style can be set for exported files.                       
+- Image Manufacture. "Text" and "Pen" support blend modes.                            
+- Add Data Sheet Clipboard. Delimiter can be set for data in Data Text/Sheet clipboard.                        
+- Solved problems.  Html Editor fails to save. Links in frameset should be handled. Download First Level Links can not handle links with special characters. File name should avoid blanks.                        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2)                          
+                                   
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Source Codes   
-[MyBox-6.4.1-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-src.zip)   38M        
+[MyBox-6.4.2-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-src.zip)   39M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) and 
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)                       
@@ -28,11 +26,11 @@ About structure, editing, and building of source codes, please refer to [Develop
 ### Self-contain packages 
 Self-contain packages include all files and need not java env nor installation.   (Please unpack it under path in pure-English name.)   
 
-| Platform | Link | Size | Launcher |    
+| Platform | Link | Size(approximation)  | Launcher |    
 | --- | --- | ---  | ---  |    
-| win x64 | [MyBox-6.4.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-win-exe.zip)  | 217MB | MyBox.exe |       
-| linux x64 | [MyBox-6.4.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-linux.tar.gz)  | 233MB  | bin/MyBox  |     
-| mac | [MyBox-6.4.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-mac.dmg)  | 237MB  |  MyBox-6.4.1.app   |   
+| win x64 | [MyBox-6.4.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-win-exe.zip)  | 217MB | MyBox.exe |       
+| linux x64 | [MyBox-6.4.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-linux.tar.gz)  | 227MB  | bin/MyBox  |     
+| mac | [MyBox-6.4.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-mac.dmg)  | 232MB  |  MyBox-6.4.2.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -40,18 +38,18 @@ User can double click the launcher to start MyBox or run it by command line. The
 ### Jar 
 When JRE or JDK 15 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
   
-| Platform | Link | Size | Requirements |   
+| Platform | Link | Size(approximation)  | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.4.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-win-jar.zip)  | 159MB | Java 15.0.1 or higher |    
-| linux | [MyBox-6.4.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-linux-jar.zip)  | 172MB  | Java 15.0.1 or higher |    
-| mac | [MyBox-6.4.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.1/MyBox-6.4.1-mac-jar.zip)  |  168MB  | Java 15.0.1 or higher |    
+| win | [MyBox-6.4.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-win-jar.zip)  | 151MB | Java 15.0.1 or higher |    
+| linux | [MyBox-6.4.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-linux-jar.zip)  | 159MB  | Java 15.0.1 or higher |    
+| mac | [MyBox-6.4.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.2/MyBox-6.4.2-mac-jar.zip)  |  156MB  | Java 15.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.4.1.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.4.2.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.4.1.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.4.2.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -72,9 +70,9 @@ Configuration file is under "User Home":
         
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |        
-| win | `C:\users\UserName\mybox\MyBox_v6.4.1.ini`  |       
-| linux | `/home/UserName/mybox/MyBox_v6.4.1.ini` |       
-| mac | `/Users/UserName/mybox/MyBox_v6.4.1.ini` |           
+| win | `C:\users\UserName\mybox\MyBox_v6.4.2.ini`  |       
+| linux | `/home/UserName/mybox/MyBox_v6.4.2.ini` |       
+| mac | `/Users/UserName/mybox/MyBox_v6.4.2.ini` |           
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.         
 Function "Settings" can be used to change configuration values.       
@@ -94,7 +92,7 @@ Function "Settings" can be used to change configuration values.
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.4.1 | 2021-3-9 | [html](#devLog) |
+| Development Logs | 6.4.2 | 2021-3-9 | [html](#devLog) |
 | Shortcuts | 6.3.9 | 2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -163,9 +161,10 @@ MyBox is based on following open sources:
 | sfds | Handwriting | http://www.sfds.cn/725B/ |            
 | Book | Materials | https://book.douban.com/subject/10465940/ |      
 | PaginatedPdfTable | PDF | https://github.com/eduardohl/Paginated-PDFBox-Table-Sample |      
+| jsoup | DOM | https://jsoup.org/ |          
 
 # Current Version
-Current version is 6.4.1. Its features are mentioned below in summary:   
+Current version is 6.4.2. Its features are mentioned below in summary:   
  
 * [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -197,7 +196,8 @@ Current version is 6.4.1. Its features are mentioned below in summary:
     - [Big Image](#bigImage)
 * [Data Tools](#dataTools)
     - [Data File](#dataFiles)
-    - [Data Clipboard](#dataClipboard)
+    - [Data Text Clipboard](#dataTextClipboard)
+    - [Data Sheet Clipboard](#dataSheetClipboard)
     - [Matrix](#matrix)
     - [Common Data Management](#dataManage)
     - [Map Data](#mapData)
@@ -271,6 +271,14 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 2. Notebook is collection of notes and notebooks. Notebooks are organized as a tree.     
 3. Execute following on any notebook in tree: Export, Add, Delete, Rename.      
 4. Import notes file or examlpes.      
+5. Export notes:
+	-  Formats: Text(for import), single html, html frameset, xml.
+	-  Charset can be set.
+	-  Html style can be set.
+6. Edit note:
+	-  Write html codes directly or use Rich Text Editor.
+	-  Set tags for note.
+7. Query notes by tags.      
 
 ![Snap-notes](https://mararsh.github.io/MyBox/snap-notes-en.jpg)       
 
@@ -450,14 +458,14 @@ Example,  the new language is named as “aa”, and its resource files are Mess
     Algorithms and parameters can be set. Convolution can be defined and referred to make more effects.
 8. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.                       
     Due to implementation of snapshots, results look blur. I have not found solution. (Not support in current version)
-9. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
+9. Text. Options like font family, style, size, color, blend modes, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
 10. Pen:
-	-  Polyline: One line by multiple drawing. Options: stroke width, color, whether dotted, opacity.
-	-  Lines: One line by one drawing. Options: stroke width, color, whether dotted, opacity.
+	-  Polyline: One line by multiple drawing. Options: stroke width, color, whether dotted, blend modes.
+	-  Lines: One line by one drawing. Options: stroke width, color, whether dotted, blend modes.
 	-  Eraser: One line by one drawing. Always transparent. Option: stroke width.
 	-  Frosted Class: One dot by one drawing. Options: stroke width, intensity, shape(Rectangle or circle).
 	-  Mosaic: One dot by one drwaing. Options: stroke width, intensity, shape(Rectangle or circle).
-	-  Shape: Rectangle, Circle, Ellipse, Polygon. Options: stroke width, color, whether dotted, opacity, whether fill-in, color of fill-in.
+	-  Shape: Rectangle, Circle, Ellipse, Polygon. Options: stroke width, color, whether dotted, blend modes, whether fill-in, color of fill-in.
 11. Transform. Shear, mirror, and rotate.
 12. Round corner. Arc and background color can be set.
 13. Shadow. Options: background color, shadow size, whether apply Premultiplied Alpha.
@@ -662,15 +670,22 @@ Valid color value is like:
 	- Text format and html are displayed synchronously:
  		- Delimiter can be choiced for text format.
  		- Input/modify data by data clipboard.
-2. Convert data files in batch:
+2. Convert/Split data files in batch:
 	- Source files' formats can be csv and excel. Options of source files can be set.     
 	- Target files' formats include csv, excel, xml, json, html, pdf. Options of target files can be set.     
+	- Split files as maximum lines.     
 3. Merge csv/excel files.       
 
-### Data Clipboard<a id="dataClipboard" />       
+### Data Text Clipboard<a id="dataTextClipboard" />       
 1. Paste or input text, and tool parses the data as defined delimiter line by line.           
 2. Text format and html are displayed synchronously.           
+3. Delimiter can be set for parsed text data.       
 
+
+### Data Sheet Clipboard<a id="dataSheetClipboard" />       
+1. Edit data in sheet.           
+2. Text format and html are displayed synchronously.           
+3. Delimiter can be set for data text.       
 
 
 ### Matrix<a id="matrix"></a>     
@@ -1351,6 +1366,14 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 4. "Error" will cause interface of MyBox Logs Viewer is popped.                 
 
 # Development Logs <a id="devLog"></a>            
+2021-3-21 v6.4.2
+- Notes. Set tags of note and query notes by tags. NoteBook can be moved. Edit note in Rich Text. Set note's style. 
+Export notes in single page, html frameset, and xml and charset and style can be set for exported files.                       
+- Image Manufacture. "Text" and "Pen" support blend modes.                            
+- Add Data Sheet Clipboard. Delimiter can be set for data in Data Text/Sheet clipboard.                        
+- Solved problems.  Html Editor fails to save. Links in frameset should be handled. Download First Level Links can not handle links with special characters. File name should avoid blanks.                        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2)            
+
 2021-3-8 v6.4.1
 - Notes are information pieces in html format. Notebook is collection of notes and notebooks. Notebooks are organized as a tree. Examples are provided.                 
 - Web page. Menu of handling links. Buttons to edit html codes.                    
@@ -1358,9 +1381,9 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 - Improve. All editors support backing up automatically when save file. Image Manufacture supports square root of color distance and refresh clipboard automatically.
 Remove unnecessary files in self-contain packages.                    
 - Solved problems. Download First Level Links fails for some addresses. OCR in batch fails when file name includes non-English. Deleting history fails in Web Browser.                
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.1)                          
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.2)                          
             
-2021-2-11 v6.4.1                  
+2021-2-11 v6.4.2                  
 -  Improve: Frame can be selected when view/manufacture image. Always use iterator when read CSV/Excel file. Clear security attributes of PDF file.          
 -  Solved problems.  Always go back to page 1 after CSV/Excel file is saved. Fail to unarchive file.  Non-english entries of zip file are messed.             
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                     

@@ -69,7 +69,7 @@ import mara.mybox.value.CommonValues;
  */
 public class HtmlEditorController extends BaseHtmlController {
 
-    protected boolean isFrameSet, pageLoaded;
+    protected boolean pageLoaded, codesChanged, heChanged, mdChanged, fileChanged;
     protected Parser htmlParser, textParser;
     protected HtmlRenderer htmlRender;
     protected MutableDataSet htmlOptions, textOptions;
@@ -89,7 +89,7 @@ public class HtmlEditorController extends BaseHtmlController {
     @FXML
     protected Tab editorTab, codesTab, tocTab, markdownTab, textTab, linksTab, backupTab;
     @FXML
-    protected Label editorLabel, mdLabel;
+    protected Label editorLabel, mdLabel, codesLabel;
     @FXML
     protected ControlFileBackup backupController;
     @FXML
@@ -103,7 +103,6 @@ public class HtmlEditorController extends BaseHtmlController {
     public void initValues() {
         try {
             super.initValues();
-            isFrameSet = false;
             needSnap = true;
             needEdit = false;
         } catch (Exception e) {
@@ -154,46 +153,6 @@ public class HtmlEditorController extends BaseHtmlController {
         }
     }
 
-    protected void initEdtior() {
-        try {
-            // As my testing, only DragEvent.DRAG_EXITED, KeyEvent.KEY_TYPED, KeyEvent.KEY_RELEASED working for HtmlEdior
-            htmlEditor.addEventHandler(DragEvent.DRAG_EXITED, new EventHandler<InputEvent>() { // work
-                @Override
-                public void handle(InputEvent event) {
-                    checkEditorChanged();
-                }
-            });
-            htmlEditor.setOnKeyReleased(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-//                    MyBoxLog.debug("setOnKeyReleased");
-                    checkEditorChanged();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    private void checkEditorChanged() {
-        try {
-            if (!htmlEditor.isDisable()) {
-                return;
-            }
-            String c = htmlEditor.getHtmlText();
-            int len = 0;
-            if (c != null && !c.isEmpty()) {
-                len = htmlEditor.getHtmlText().length();
-            }
-            editorLabel.setText(AppVariables.message("Total") + ": " + len);
-            updateTitle(true);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     protected void initTabPane() {
         try {
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowEditor", true)) {
@@ -223,9 +182,51 @@ public class HtmlEditorController extends BaseHtmlController {
                 public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
                     synchronizePairButton.setVisible(
                             newValue == editorTab || newValue == codesTab || newValue == markdownTab);
+                    synchronizeTab(oldValue);
                 }
             });
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initEdtior() {
+        try {
+            // As my testing, only DragEvent.DRAG_EXITED, KeyEvent.KEY_TYPED, KeyEvent.KEY_RELEASED working for HtmlEdior
+            htmlEditor.addEventHandler(DragEvent.DRAG_EXITED, new EventHandler<InputEvent>() { // work
+                @Override
+                public void handle(InputEvent event) {
+                    checkEditorChanged();
+                }
+            });
+            htmlEditor.setOnKeyReleased(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+//                    MyBoxLog.debug("setOnKeyReleased");
+                    checkEditorChanged();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
+    }
+
+    private void checkEditorChanged() {
+        try {
+            if (htmlEditor.isDisabled()) {
+                return;
+            }
+            String c = htmlEditor.getHtmlText();
+            int len = 0;
+            if (c != null && !c.isEmpty()) {
+                len = htmlEditor.getHtmlText().length();
+            }
+            editorLabel.setText(AppVariables.message("Total") + ": " + len);
+            heChanged = true;
+            updateTitle(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -240,6 +241,8 @@ public class HtmlEditorController extends BaseHtmlController {
                     if (!codesController.codesArea.isEditable()) {
                         return;
                     }
+                    codesLabel.setText(AppVariables.message("Total") + ": " + codesController.codesArea.getLength());
+                    codesChanged = true;
                     updateTitle(true);
                 }
             });
@@ -285,8 +288,11 @@ public class HtmlEditorController extends BaseHtmlController {
             markdownArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    int len = markdownArea.getText().length();
-                    mdLabel.setText(AppVariables.message("Total") + ": " + len);
+                    if (!markdownArea.isEditable()) {
+                        return;
+                    }
+                    mdLabel.setText(AppVariables.message("Total") + ": " + markdownArea.getLength());
+                    mdChanged = true;
                     updateTitle(true);
                 }
             });
@@ -338,8 +344,7 @@ public class HtmlEditorController extends BaseHtmlController {
     }
 
     private void loadEditor(String html) {
-        isFrameSet = StringTools.include(html, "<FRAMESET>", true);
-        if (isFrameSet) {
+        if (StringTools.include(html, "<FRAMESET>", true)) {
             htmlEditor.setHtmlText("<p>" + message("NotSupportFrameSet") + "</p>");
         } else {
             htmlEditor.setHtmlText(html);
@@ -348,13 +353,13 @@ public class HtmlEditorController extends BaseHtmlController {
 
     private void pageIsLoading() {
         pageLoaded = false;
+        codesChanged = heChanged = mdChanged = false;
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
         synchronizePairButton.setDisable(true);
         htmlEditor.setDisable(true);
         markdownArea.setEditable(false);
         codesController.codesArea.setEditable(false);
-        isFrameSet = false;
         String info = webviewController.address + "\n" + message("Loading...");
         codesController.load(info);
         tocArea.setText(info);
@@ -363,18 +368,30 @@ public class HtmlEditorController extends BaseHtmlController {
         linksWebview.getEngine().loadContent(info);
         markdownArea.setText(info);
         htmlEditor.setHtmlText(info);
-        editorLabel.setText(info);
-        mdLabel.setText(info);
     }
 
     private void afterPageLoaded() {
         pageLoaded = true;
-        updateTitle(false);
         synchronizeMain();
-        backupController.loadBackups(sourceFile);
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
         synchronizePairButton.setDisable(false);
+        backupController.loadBackups(sourceFile);
+    }
+
+    @Override
+    protected void updateTitle(boolean changed) {
+        String t = getBaseTitle();
+        if (webviewController.address != null) {
+            t += "  " + webviewController.address;
+        } else if (sourceFile != null) {
+            t += "  " + sourceFile.getAbsolutePath();
+        }
+        if (changed) {
+            t += "*";
+        }
+        getMyStage().setTitle(t);
+        fileChanged = changed;
     }
 
     @FXML
@@ -396,6 +413,7 @@ public class HtmlEditorController extends BaseHtmlController {
                     if (pageLoaded) {
                         htmlEditor.setDisable(false);
                     }
+                    heChanged = false;
                 });
             }
             if (tabPane.getTabs().contains(codesTab)) {
@@ -405,6 +423,7 @@ public class HtmlEditorController extends BaseHtmlController {
                     if (pageLoaded) {
                         codesController.codesArea.setEditable(true);
                     }
+                    codesChanged = false;
                 });
             }
             if (tabPane.getTabs().contains(markdownTab)
@@ -414,9 +433,7 @@ public class HtmlEditorController extends BaseHtmlController {
                 Platform.runLater(() -> {
                     markdownArea.setEditable(false);
                     html2markdown(html);
-                    if (pageLoaded) {
-                        markdownArea.setEditable(true);
-                    }
+
                 });
             }
         } catch (Exception e) {
@@ -425,49 +442,41 @@ public class HtmlEditorController extends BaseHtmlController {
     }
 
     @FXML
+    public void refreshPair() {
+        synchronizeMain();
+    }
+
+    @FXML
     public void synchronizePair() {
+        synchronizeTab(tabPane.getSelectionModel().getSelectedItem());
+    }
+
+    public void synchronizeTab(Tab tab) {
         try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == editorTab) {
-                if (htmlEditor.isDisable()) {
-                    popError(message("Loading..."));
-                    return;
-                }
-                if (isFrameSet) {
-                    popError(message("NotSupportFrameSet"));
-                    return;
-                }
-                String text = htmlEditor.getHtmlText();
-                if (text.isBlank()) {
-                    popError(message("NoData"));
-                    return;
-                }
-                Platform.runLater(() -> {
-                    webEngine.loadContent(text);
-                });
+            if (tab == null) {
+                return;
+            }
+            String html = null;
+            if (tab == codesTab && codesChanged) {
+                html = codesController.codes();
 
-            } else if (tab == codesTab) {
-                if (!codesController.codesArea.isEditable()) {
-                    popError(message("Loading..."));
+            } else if (tab == editorTab && heChanged) {
+                html = htmlEditor.getHtmlText();
+                if (StringTools.include(html, "<FRAMESET>", true)) {
                     return;
                 }
-                String text = codesController.codes();
-                if (text.isBlank()) {
-                    popError(message("NoData"));
-                    return;
-                }
-                Platform.runLater(() -> {
-                    webEngine.loadContent(text);
-                });
 
-            } else if (tab == markdownTab) {
-                if (!markdownArea.isEditable()) {
-                    popError(message("NotReady"));
-                    return;
-                }
-                markdown2all();
+            } else if (tab == markdownTab && mdChanged) {
+                Node document = htmlParser.parse(markdownArea.getText());
+                html = htmlRender.render(document);
             }
 
+            if (html != null) {
+                String web = html;
+                Platform.runLater(() -> {
+                    webEngine.loadContent(web);
+                });
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -477,7 +486,6 @@ public class HtmlEditorController extends BaseHtmlController {
     @Override
     public void saveAction() {
         try {
-            Charset charset = Charset.forName("utf-8");
             if (sourceFile == null) {
                 final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                         "myWeb", targetExtensionFilter);
@@ -485,10 +493,8 @@ public class HtmlEditorController extends BaseHtmlController {
                     return;
                 }
                 sourceFile = file;
-            } else {
-                charset = FileTools.charset(sourceFile);
             }
-            saveFile(sourceFile, charset);
+            saveFile(sourceFile);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -499,64 +505,69 @@ public class HtmlEditorController extends BaseHtmlController {
     @Override
     public void saveAsAction() {
         String name = "myWeb";
-        Charset charset = Charset.forName("utf-8");
         if (sourceFile != null) {
             name = FileTools.appendName(sourceFile.getName(), "m");
-            charset = FileTools.charset(sourceFile);
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                 name, targetExtensionFilter);
         if (file == null) {
             return;
         }
-        saveFile(file, charset);
+        saveFile(file);
     }
 
-    public void saveFile(File file, Charset charset) {
-        if (file == null || charset == null) {
+    public void saveFile(File file) {
+        if (file == null) {
             return;
-        }
-        boolean editor = AppVariables.message("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText());
-        if (editor) {
-            if (!htmlEditor.isDisable()) {
-                popError(message("Loading..."));
-                return;
-            }
-        } else {
-            if (! !codesController.codesArea.isEditable()) {
-                popError(message("Loading..."));
-                return;
-            }
         }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
+            String html, fhtml;
+            if (codesChanged) {
+                html = codesController.codes();
+            } else if (heChanged) {
+                html = htmlEditor.getHtmlText();
+                if (StringTools.include(html, "<FRAMESET>", true)) {
+                    html = FxmlControl.getHtml(webEngine);
+                }
+            } else if (mdChanged) {
+                Node document = htmlParser.parse(markdownArea.getText());
+                html = htmlRender.render(document);
+            } else {
+                html = FxmlControl.getHtml(webEngine);
+            }
+            if (html == null) {
+                return;
+            }
+            fhtml = html;
             task = new SingletonTask<Void>() {
-
                 @Override
                 protected boolean handle() {
-                    String contents;
-                    if (editor) {
-                        contents = htmlEditor.getHtmlText();
-                    } else {
-                        contents = codesController.codes();
-                    }
-                    if (contents == null) {
-                        return false;
-                    }
-                    File tmpFile = FileTools.getTempFile();
-                    try ( BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
-                        out.write(contents);
-                        out.flush();
+                    try {
+                        Charset charset = HtmlTools.htmlCharset(fhtml);
+                        File tmpFile = FileTools.getTempFile();
+                        try ( BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
+                            out.write(fhtml);
+                            out.flush();
+                        } catch (Exception e) {
+                            error = e.toString();
+                            return false;
+                        }
+                        if (sourceFile != null && file.getAbsolutePath().equals(sourceFile.getAbsolutePath())) {
+                            if (backupController.backupCheck.isSelected()) {
+                                backupController.addBackup(sourceFile);
+                            }
+                        }
+                        if (FileTools.rename(tmpFile, file)) {
+                            recordFileWritten(file);
+                            return true;
+                        } else {
+                            return false;
+                        }
                     } catch (Exception e) {
                         error = e.toString();
-                        return false;
-                    }
-                    if (FileTools.rename(tmpFile, file)) {
-                        recordFileWritten(file);
-                        return true;
-                    } else {
                         return false;
                     }
                 }
@@ -566,6 +577,8 @@ public class HtmlEditorController extends BaseHtmlController {
                     popSuccessful();
                     if (sourceFile != null && file.getAbsolutePath().equals(sourceFile.getAbsolutePath())) {
                         loadFile(sourceFile);
+                    } else {
+                        webEngine.loadContent(fhtml);
                     }
                 }
 
@@ -584,8 +597,8 @@ public class HtmlEditorController extends BaseHtmlController {
         try {
             sourceFile = null;
             webviewController.loadContents(HtmlTools.emptyHmtl());
-            isFrameSet = false;
             getMyStage().setTitle(getBaseTitle());
+            fileChanged = codesChanged = heChanged = mdChanged = false;
             updateTitle(false);
             saveButton.setDisable(false);
             saveAsButton.setDisable(false);
@@ -753,6 +766,10 @@ public class HtmlEditorController extends BaseHtmlController {
             tocArea.setText("");
             textArea.setText("");
             linksWebview.getEngine().loadContent("");
+            if (pageLoaded) {
+                markdownArea.setEditable(true);
+            }
+            mdChanged = false;
             return;
         }
         synchronized (this) {
@@ -794,6 +811,10 @@ public class HtmlEditorController extends BaseHtmlController {
                     if (tabPane.getTabs().contains(markdownTab)) {
                         Platform.runLater(() -> {
                             markdownArea.setText(md);
+                            if (pageLoaded) {
+                                markdownArea.setEditable(true);
+                            }
+                            mdChanged = false;
                         });
                     }
                     if (tabPane.getTabs().contains(tocTab)) {
@@ -813,76 +834,6 @@ public class HtmlEditorController extends BaseHtmlController {
                     }
                 }
 
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    protected void markdown2all() {
-        String md = markdownArea.getText();
-        if (md == null || md.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private String html, toc, text;
-                private List<Link> links;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        Node document = htmlParser.parse(md);
-                        html = htmlRender.render(document);
-
-                        if (tabPane.getTabs().contains(tocTab)) {
-                            toc = MarkdownTools.toc(document, 8);
-                        }
-                        if (tabPane.getTabs().contains(linksTab)) {
-                            links = new ArrayList<>();
-                            MarkdownTools.links(document, links);
-                        }
-//                        if (tabPane.getTabs().contains(textTab)) {
-//                            document = textParser.parse(md);
-//                            text = textCollectingVisitor.collectAndGetText(document);
-//                        }
-                        return html != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(error);
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    Platform.runLater(() -> {
-                        webEngine.loadContent(html);
-                    });
-                    if (tabPane.getTabs().contains(tocTab)) {
-                        Platform.runLater(() -> {
-                            tocArea.setText(toc);
-                        });
-                    }
-                    if (tabPane.getTabs().contains(linksTab)) {
-                        Platform.runLater(() -> {
-                            displayLinks(links);
-                        });
-                    }
-//                    if (tabPane.getTabs().contains(textTab)) {
-//                        Platform.runLater(() -> {
-//                            textArea.setText(text);
-//                        });
-//                    }
-                }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);

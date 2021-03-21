@@ -9,7 +9,8 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class Notebook extends BaseData {
 
-    public static String NotebooksSeparater = " > ";
+    public static final int RootID = 1;
+    public static final String NotebooksSeparater = " > ";
     protected long nbid, owner;
     protected String name, description;
 
@@ -28,6 +29,10 @@ public class Notebook extends BaseData {
         init();
         this.owner = owner;
         this.name = name;
+    }
+
+    public boolean isRoot() {
+        return nbid == RootID;
     }
 
     /*

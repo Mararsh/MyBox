@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +10,8 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -37,21 +40,23 @@ import javafx.stage.Modality;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageBlend;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.image.PixelBlend;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -98,19 +103,28 @@ public abstract class BaseImageController extends BaseController {
     protected ComboBox<String> zoomStepSelector;
 
     public BaseImageController() {
-        SourceFileType = VisitHistory.FileType.Image;
-        SourcePathType = VisitHistory.FileType.Image;
-        TargetPathType = VisitHistory.FileType.Image;
-        TargetFileType = VisitHistory.FileType.Image;
-        AddFileType = VisitHistory.FileType.Image;
-        AddPathType = VisitHistory.FileType.Image;
+    }
 
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
 
-        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+            isPickingColor = imageChanged = operateOriginalSize
+                    = needNotRulers = needNotCoordinates = needNotContextMenu = false;
+            loadWidth = defaultLoadWidth = -1;
+            frameIndex = framesNumber = 0;
+            sizeChangeAware = 10;
+            zoomStep = xZoomStep = yZoomStep = 40;
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     public void initController(ImageViewerController parent) {
@@ -143,23 +157,6 @@ public abstract class BaseImageController extends BaseController {
             setImageChanged(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-        }
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            isPickingColor = imageChanged = operateOriginalSize
-                    = needNotRulers = needNotCoordinates = needNotContextMenu = false;
-            loadWidth = defaultLoadWidth = -1;
-            frameIndex = framesNumber = 0;
-            sizeChangeAware = 10;
-            zoomStep = xZoomStep = yZoomStep = 40;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 
@@ -1291,6 +1288,91 @@ public abstract class BaseImageController extends BaseController {
             paletteController = null;
         }
         return true;
+    }
+
+    /*
+        static methods
+     */
+    public static void blendDemo(BaseImageController imageController, Button demoButton,
+            Image foreImage, Image backImage, int x, int y, float opacity, boolean orderReversed) {
+        if (imageController == null || imageController.imageView == null
+                || imageController.imageView.getImage() == null
+                || foreImage == null || backImage == null) {
+            return;
+        }
+        imageController.popInformation(message("WaitAndHandling"), 6000);
+        if (demoButton != null) {
+            demoButton.setVisible(false);
+        }
+        Task demoTask = new Task<Void>() {
+            private List<File> files;
+
+            @Override
+            protected Void call() {
+                try {
+                    files = new ArrayList<>();
+                    BufferedImage foreBI = SwingFXUtils.fromFXImage(foreImage, null);
+                    BufferedImage backBI = SwingFXUtils.fromFXImage(backImage, null);
+                    for (String name : PixelBlend.allBlendModes()) {
+                        PixelBlend.ImagesBlendMode mode = PixelBlend.getBlendModeByName(name);
+                        if (mode == PixelBlend.ImagesBlendMode.NORMAL) {
+                            BufferedImage blended = ImageBlend.blendImages(foreBI, backBI, x, y, mode, 1f, orderReversed);
+                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
+                                    + message("Opacity") + "-1.0f.png");
+                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                                files.add(tmpFile);
+                            }
+                            if (opacity < 1f) {
+                                blended = ImageBlend.blendImages(foreBI, backBI, x, y, mode, opacity, orderReversed);
+                                tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
+                                        + message("Opacity") + "-" + opacity + "f.png");
+                                if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                                    files.add(tmpFile);
+                                }
+                            }
+                        } else {
+                            BufferedImage blended = ImageBlend.blendImages(foreBI, backBI, x, y, mode, opacity, orderReversed);
+                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
+                                    + message("Opacity") + "-" + opacity + "f.png");
+                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                                files.add(tmpFile);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.debug(e.toString());
+                }
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (demoButton != null) {
+                    demoButton.setVisible(true);
+                }
+                if (files.isEmpty()) {
+                    return;
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ImagesBrowserController controller
+                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
+                            controller.loadImages(files);
+                        } catch (Exception e) {
+                            MyBoxLog.error(e.toString());
+                        }
+                    }
+                });
+            }
+
+        };
+        Thread thread = new Thread(demoTask);
+        thread.setDaemon(true);
+        thread.start();
+
     }
 
 }

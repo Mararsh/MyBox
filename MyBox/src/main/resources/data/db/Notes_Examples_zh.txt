@@ -65,12 +65,6 @@
 笔记本 > 我的数据
 我的视力
 <p>基弧：84</p>
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> 时间 </th><th> 左眼 </th><th> 右眼 </th></tr>
     <tr><td> 2020.8 </td><td> 300 </td><td> 350 </td></tr>
@@ -81,12 +75,6 @@ tr { height: 1.2em;  }
 
 笔记本 > 我的数据
 我的体重
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> 时间 </th><th> 体重（公斤） </th></tr>
     <tr><td> 2020.7 </td><td> 53.7 </td></tr>
@@ -97,12 +85,6 @@ tr { height: 1.2em;  }
 
 笔记本 > 我的数据
 我的身高
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> 时间 </th><th> 身高（厘米） </th></tr>
     <tr><td> 2020.7 </td><td> 164 </td></tr>
@@ -113,16 +95,11 @@ tr { height: 1.2em;  }
 
 笔记本 > 我的数据
 我的月经
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
 </style>
             <table>
                 <tbody><tr><td>年/月</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
-                <tr><td>2021</td><td>2,30</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-                <tr><td>2020</td><td>28</td><td>27</td><td>23</td><td>21</td><td>19</td><td>0</td><td>7,26</td><td>19</td><td>15</td><td>12</td><td>8</td><td>9</td></tr>
+                <tr><td>2021</td><td>2,30</td><td> </td><td>2</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+                <tr><td>2020</td><td>28</td><td>27</td><td>23</td><td>21</td><td>19</td><td> </td><td>7,26</td><td>19</td><td>15</td><td>12</td><td>8</td><td>9</td></tr>
                 <tr><td>2019</td><td>10</td><td>7</td><td>7</td><td>2,30</td><td>26</td><td>25</td><td>23</td><td>17</td><td>14</td><td>12</td><td>19</td><td>26</td></tr>
             </tbody>
 </table>
@@ -130,12 +107,6 @@ tr { height: 1.2em;  }
 
 笔记本 > 我的数据
 我的存款
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> 时间 </th><th> 总计 </th><th> 中国银行 </th><th> 招商银行 </th><th> 工商银行 </th></tr>
     <tr><td> 2020.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
@@ -146,12 +117,6 @@ tr { height: 1.2em;  }
 
 笔记本 > 常识
 上衣的尺寸
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
             <table>
                 <tr><td>尺码</td><td>衣长</td><td>肩宽</td><td>袖长</td><td>胸围</td><td>腰围</td></tr>
                 <tr><td>160/76A(0)</td><td>69</td><td>37</td><td>80</td><td>88</td><td>86</td></tr>
@@ -168,12 +133,6 @@ tr { height: 1.2em;  }
 
 笔记本 > 通讯录
 亲友
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> 关系 </th><th> 手机 </th><th> 邮箱 </th><th> 地址 </th><th> 生日 </th><th> 备注 </th></tr>
     <tr><td> 妈妈 </td><td> 123456789 </td><td> 123@aa.com </td><td> 美丽岛 </td><td> 1960.1.1 </td><td> </td></tr>
@@ -184,12 +143,6 @@ tr { height: 1.2em;  }
 
 笔记本 > 通讯录
 工作
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> 关系 </th><th> 姓名 </th><th> 手机 </th><th> 邮箱 </th><th> 地址 </th><th> 备注 </th></tr>
     <tr><td> 经理 </td><td> A </td><td> 123456789 </td><td> 123@aa.com </td><td> 飘渺峰 </td><td> </td></tr>
@@ -202,11 +155,12 @@ tr { height: 1.2em;  }
 编程的网址
 <a href="https://sourceforge.net">sourceforge</a><br>
 <a href="https://stackoverflow.com">stackoverflow</a><br><br>
-<a href="https://icons8.com/">icons8</a><br><br>
 <a href="https://docs.oracle.com/en/java/javase/15/docs/api/index.html">Java API</a><br>
 <a href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
 <a href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
-<a href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br>
+<a href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br>
+<a href="https://icons8.com/">icons8</a><br>
+<a href="https://mvnrepository.com/">mvnrepository</a><br>
 
 
 笔记本 > 编程 > javafx
@@ -344,12 +298,6 @@ MyBox打包步骤-mac
 
 笔记本 > 编程 > MyBox
 MyBox图标的颜色
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
             <table>
                 <tbody><tr><th>name</th><th>rgba</th><th>rgb</th></tr>
                 <tr><td>浅蓝图标-深色</td><td>0X4788C7FF</td><td>#4788C7</td></tr>

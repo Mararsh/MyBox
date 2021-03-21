@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +25,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -64,7 +62,7 @@ public abstract class BaseSheetController extends BaseController {
     protected DataDefinition dataDefinition;
     protected DataType dataType;
     protected ColumnType defaultColumnType;
-    protected String dataName, delimiter, defaultColValue, colPrefix, inputStyle;
+    protected String dataName, defaultColValue, colPrefix, inputStyle;
     protected TextField[][] inputs;
     protected CheckBox[] colsCheck, rowsCheck;
     protected List<String> copiedRow, copiedCol;
@@ -77,13 +75,13 @@ public abstract class BaseSheetController extends BaseController {
     @FXML
     protected VBox sheetBox, defBox;
     @FXML
-    protected TextArea textArea;
-    @FXML
-    protected WebView webView;
-    @FXML
     protected Button sizeSheetButton, deleteSheetButton, copySheetButton, equalSheetButton;
     @FXML
     protected CheckBox htmlColumnCheck, htmlRowCheck;
+    @FXML
+    protected ControlDataText textController;
+    @FXML
+    protected WebView webView;
 
     public BaseSheetController() {
         baseTitle = message("DataEdit");
@@ -117,18 +115,23 @@ public abstract class BaseSheetController extends BaseController {
     public void setControls(String baseName) {
         try {
             this.baseName = baseName;
-            delimiter = AppVariables.getUserConfigValue(baseName + "Delimiter", ",");
-
-            htmlColumnCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "HtmlColumn", true));
-            htmlColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                webView.getEngine().loadContent(html());
-                AppVariables.setUserConfigValue(baseName + "HtmlColumn", newValue);
-            });
-            htmlRowCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "HtmlRow", true));
-            htmlRowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                webView.getEngine().loadContent(html());
-                AppVariables.setUserConfigValue(baseName + "HtmlRow", newValue);
-            });
+            if (textController != null) {
+                textController.setControls(baseName);
+            }
+            if (htmlColumnCheck != null) {
+                htmlColumnCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "HtmlColumn", true));
+                htmlColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    webView.getEngine().loadContent(html());
+                    AppVariables.setUserConfigValue(baseName + "HtmlColumn", newValue);
+                });
+            }
+            if (htmlColumnCheck != null) {
+                htmlRowCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "HtmlRow", true));
+                htmlRowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    webView.getEngine().loadContent(html());
+                    AppVariables.setUserConfigValue(baseName + "HtmlRow", newValue);
+                });
+            }
 
             timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -273,7 +276,7 @@ public abstract class BaseSheetController extends BaseController {
         if (sheetBox.getChildren().contains(noDataLabel)) {
             sheetBox.getChildren().remove(noDataLabel);
         }
-        textArea.setText("");
+        textController.update(null);;
         webView.getEngine().loadContent("");
         if (defBox != null) {
             defBox.getChildren().clear();
@@ -282,6 +285,32 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public void makeSheet(String[][] data) {
+        makeSheet(data, true);
+    }
+
+    public void makeSheetWithName(String[][] data) {
+        if (data != null && data.length > 0) {
+            columns = new ArrayList<>();
+            for (String name : data[0]) {
+                ColumnDefinition column = new ColumnDefinition(name, defaultColumnType, defaultColNotNull);
+                columns.add(column);
+            }
+            if (data.length > 1) {
+                String[][] vdata = new String[data.length - 1][columns.size()];
+                for (int i = 0; i < data.length - 1; i++) {
+                    vdata[i] = data[i + 1];
+                }
+                makeSheet(vdata, columns);
+            } else {
+                makeSheet(null, columns);
+            }
+        } else {
+            makeSheet(data, null);
+        }
+    }
+
+    public void makeSheet(String[][] data, List<ColumnDefinition> columns) {
+        this.columns = columns;
         makeSheet(data, true);
     }
 
@@ -544,7 +573,9 @@ public abstract class BaseSheetController extends BaseController {
         } else {
             valid = false;
         }
-        saveButton.setDisable(!valid);
+        if (saveButton != null) {
+            saveButton.setDisable(!valid);
+        }
         return valid;
     }
 
@@ -552,8 +583,12 @@ public abstract class BaseSheetController extends BaseController {
         if (isSettingValues) {
             return;
         }
-        textArea.setText(TextTools.dataText(data(), delimiter));
-        webView.getEngine().loadContent(html());
+        if (textController != null) {
+            textController.update(data());
+        }
+        if (webView != null) {
+            webView.getEngine().loadContent(html());
+        }
     }
 
     // Notice: this does not concern columns names
@@ -599,6 +634,9 @@ public abstract class BaseSheetController extends BaseController {
         }
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
+        if (rowsNumber == 0 || colsNumber == 0) {
+            return null;
+        }
         String[][] data = new String[inputs.length][inputs[0].length];
         for (int j = 0; j < rowsNumber; j++) {
             for (int i = 0; i < colsNumber; i++) {
@@ -618,14 +656,14 @@ public abstract class BaseSheetController extends BaseController {
     }
 
     public String html() {
-        if (inputs == null || htmlColumnCheck == null) {
+        if (inputs == null) {
             return null;
         }
         try {
             int rowsNumber = inputs.length;
             int colsNumber = inputs[0].length;
             List<String> names;
-            if (htmlColumnCheck.isSelected()) {
+            if (htmlColumnCheck != null && htmlColumnCheck.isSelected()) {
                 names = new ArrayList<>();
                 if (htmlRowCheck.isSelected()) {
                     names.add("");
@@ -639,7 +677,7 @@ public abstract class BaseSheetController extends BaseController {
             StringTable table = new StringTable(names, baseTitle + (sourceFile == null ? "" : sourceFile.getAbsolutePath()));
             for (int i = 0; i < rowsNumber; i++) {
                 List<String> row = new ArrayList<>();
-                if (htmlRowCheck.isSelected()) {
+                if (htmlRowCheck != null && htmlRowCheck.isSelected()) {
                     row.add(rowName(i));
                 }
                 for (int j = 0; j < colsNumber; j++) {
@@ -656,7 +694,7 @@ public abstract class BaseSheetController extends BaseController {
 
     @FXML
     public void copyTextAction() {
-        if (FxmlControl.copyToSystemClipboard(textArea.getText())) {
+        if (FxmlControl.copyToSystemClipboard(textController.textArea.getText())) {
             popInformation(message("CopiedToSystemClipboard"));
         }
     }
@@ -664,14 +702,15 @@ public abstract class BaseSheetController extends BaseController {
     @FXML
     @Override
     public void pasteAction() {
-        editTextAction();
+        DataTextClipboardController controller = (DataTextClipboardController) FxmlStage.openStage(CommonValues.DataTextClipboardFxml);
+        controller.setSheet(this);
+        controller.toFront();
     }
 
     @FXML
     public void editTextAction() {
-        SheetPasteController controller = (SheetPasteController) FxmlStage.openStage(CommonValues.SheetPasteFxml);
-        controller.setSheet(this);
-        controller.toFront();
+        TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml);
+        controller.loadContexts(textController.textArea.getText());
     }
 
     @FXML
@@ -1319,7 +1358,7 @@ public abstract class BaseSheetController extends BaseController {
             menu = new MenuItem(message("CopyRow"));
             menu.setOnAction((ActionEvent event) -> {
                 String s = "";
-                String p = TextTools.delimiterText(delimiter);
+                String p = TextTools.delimiterText(textController.delimiter);
                 copiedRow = new ArrayList<>();
                 for (int i = 0; i < colsCheck.length; ++i) {
                     String v = value(row, i);
@@ -1561,7 +1600,7 @@ public abstract class BaseSheetController extends BaseController {
             return;
         }
         String s = null;
-        String p = TextTools.delimiterText(delimiter);
+        String p = TextTools.delimiterText(textController.delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
         int lines = 0;
@@ -1608,7 +1647,7 @@ public abstract class BaseSheetController extends BaseController {
             return;
         }
         String s = null;
-        String p = TextTools.delimiterText(delimiter);
+        String p = TextTools.delimiterText(textController.delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
         for (int j = 0; j < rowsNumber; ++j) {
@@ -1657,7 +1696,7 @@ public abstract class BaseSheetController extends BaseController {
             return;
         }
         String s = null;
-        String p = TextTools.delimiterText(delimiter);
+        String p = TextTools.delimiterText(textController.delimiter);
         int rowsNumber = inputs.length;
         int colsNumber = inputs[0].length;
         for (int j = 0; j < rowsNumber; ++j) {
@@ -2279,60 +2318,6 @@ public abstract class BaseSheetController extends BaseController {
 
     public List<MenuItem> sheetSizeMoreMenu() {
         return null;
-    }
-
-    @FXML
-    public void textDelimiterMenu(MouseEvent mouseEvent) {
-        if (inputs == null) {
-            return;
-        }
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            List<String> dlist = Arrays.asList(
-                    message("Blank"), message("Tab"), ",", message("Blank4"), message("Blank8"),
-                    "|", "#", ";", "@"
-            );
-            MenuItem menu;
-            for (String d : dlist) {
-                menu = new MenuItem(d);
-                menu.setOnAction((ActionEvent event) -> {
-                    if (d.equals(message("Blank"))) {
-                        delimiter = "blank";
-                    } else if (d.equals(message("Blank4"))) {
-                        delimiter = "blank4";
-                    } else if (d.equals(message("Blank8"))) {
-                        delimiter = "blank8";
-                    } else if (message("Tab").equals(d)) {
-                        delimiter = "tab";
-                    } else {
-                        delimiter = d;
-                    }
-                    AppVariables.setUserConfigValue(baseName + "Delimiter", delimiter);
-                    textArea.setText(TextTools.dataText(data(), delimiter));
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @Override

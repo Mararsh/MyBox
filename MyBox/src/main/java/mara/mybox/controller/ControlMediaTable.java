@@ -38,7 +38,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -60,16 +59,11 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     protected Button linkButton;
 
     public ControlMediaTable() {
+    }
 
-        SourceFileType = VisitHistory.FileType.Media;
-        SourcePathType = VisitHistory.FileType.Media;
-        TargetPathType = VisitHistory.FileType.Media;
-        TargetFileType = VisitHistory.FileType.Media;
-        AddFileType = VisitHistory.FileType.Media;
-        AddPathType = VisitHistory.FileType.Media;
-
-        sourceExtensionFilter = CommonFxValues.JdkMediaExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Media);
     }
 
     @Override
@@ -533,6 +527,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                 return recent;
             }
 
+            @Override
             public List<String> paths() {
                 return null;
             }

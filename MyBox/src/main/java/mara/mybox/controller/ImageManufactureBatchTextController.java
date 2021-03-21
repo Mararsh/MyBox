@@ -25,6 +25,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.PixelBlend;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -37,14 +38,15 @@ import static mara.mybox.value.AppVariables.message;
 public class ImageManufactureBatchTextController extends ImageManufactureBatchController {
 
     private int fontSize, angle, shadow, waterX, waterY, positionType, textWidth, textHeight, margin;
-    private float opacity;
+    protected PixelBlend.ImagesBlendMode blendMode;
+    protected float opacity;
     private java.awt.Font font;
     private java.awt.Color color;
 
     @FXML
     protected ChoiceBox<String> waterFamilyBox, waterStyleBox;
     @FXML
-    protected ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacityBox;
+    protected ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacitySelector, blendSelector;
     @FXML
     protected ColorSet colorSetController;
     @FXML
@@ -52,7 +54,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     @FXML
     protected TextField waterInput, waterXInput, waterYInput, marginInput;
     @FXML
-    protected CheckBox outlineCheck, verticalCheck;
+    protected CheckBox outlineCheck, verticalCheck, blendTopCheck;
 
     private class PositionType {
 
@@ -139,23 +141,47 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             } catch (Exception e) {
                 opacity = 1.0f;
             }
-            opacityBox.getItems().addAll(Arrays.asList("1.0", "0.5", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacityBox.setValue(opacity + "");
-            opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            String mode = AppVariables.getUserConfigValue(baseName + "TextBlendMode", message("NormalMode"));
+            blendMode = PixelBlend.getBlendModeByName(mode);
+            blendSelector.getItems().addAll(PixelBlend.allBlendModes());
+            blendSelector.setValue(mode);
+            blendSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
+                    String mode = blendSelector.getSelectionModel().getSelectedItem();
+                    blendMode = PixelBlend.getBlendModeByName(mode);
+                    AppVariables.setUserConfigValue(baseName + "TextBlendMode", mode);
+                }
+            });
+
+            opacity = AppVariables.getUserConfigInt(baseName + "TextOpacity", 100) / 100f;
+            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
+            opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            opacitySelector.setValue(opacity + "");
+            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         float f = Float.valueOf(newValue);
-                        if (f >= 0.0f && f <= 1.0f) {
+                        if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
-                            AppVariables.setUserConfigValue(baseName + "Opacity", opacity + "");
-                            FxmlControl.setEditorNormal(opacityBox);
+                            AppVariables.setUserConfigInt(baseName + "TextOpacity", (int) (f * 100));
+                            FxmlControl.setEditorNormal(opacitySelector);
                         } else {
-                            FxmlControl.setEditorBadStyle(opacityBox);
+                            FxmlControl.setEditorBadStyle(opacitySelector);
                         }
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(opacityBox);
+                        FxmlControl.setEditorBadStyle(opacitySelector);
                     }
+                }
+            });
+
+            blendTopCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "TextBlendTop", true));
+            blendTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_toggle, Boolean new_toggle) {
+                    AppVariables.setUserConfigValue(baseName + "TextBlendTop", blendTopCheck.isSelected());
                 }
             });
 
@@ -395,7 +421,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
             BufferedImage target = ImageManufacture.addText(source,
                     waterInput.getText().trim(), font, color,
-                    x, y, opacity, shadow, angle,
+                    x, y, blendMode, opacity, !blendTopCheck.isSelected(), shadow, angle,
                     outlineCheck.isSelected(), verticalCheck.isSelected());
 
             return target;

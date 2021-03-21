@@ -35,6 +35,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                 </graphic>
                             </Button>
+                  <Label text="%SelectCopy" />
                       <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>

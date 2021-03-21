@@ -73,7 +73,7 @@ public class TableImageScope extends DerbyBase {
         if (imageLocation == null || imageLocation.trim().isEmpty()) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation + "' ORDER BY modify_time DESC";
@@ -102,7 +102,7 @@ public class TableImageScope extends DerbyBase {
         if (imageLocation == null || name == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation
                     + "' AND name='" + stringValue(name) + "'";
@@ -284,7 +284,7 @@ public class TableImageScope extends DerbyBase {
         if (scope == null || scope.getFile() == null || scope.getName() == null) {
             return new ArrayList<>();
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String areaData = encodeAreaData(scope);
             String colorData = encodeColorData(scope);
@@ -456,7 +456,7 @@ public class TableImageScope extends DerbyBase {
     }
 
     public static boolean clearScopes(String imageLocation) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM image_scope WHERE image_location='" + imageLocation + "'";
             statement.executeUpdate(sql);
@@ -468,7 +468,7 @@ public class TableImageScope extends DerbyBase {
     }
 
     public static boolean delete(ImageScope scope) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(Delete)) {
             statement.setString(1, scope.getFile());
             statement.setString(2, scope.getName());
@@ -484,7 +484,7 @@ public class TableImageScope extends DerbyBase {
         if (scopes == null || scopes.isEmpty()) {
             return true;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
                 for (ImageScope scope : scopes) {

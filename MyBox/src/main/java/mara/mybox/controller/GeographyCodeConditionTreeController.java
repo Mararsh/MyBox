@@ -13,7 +13,7 @@ import javafx.stage.Modality;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.table.TableGeographyCode;
@@ -62,7 +62,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         earch = TableGeographyCode.earth(conn);
                         if (earch == null) {
                             GeographyCodeTools.importPredefined(conn, loading);
@@ -255,7 +255,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setReadOnly(true);
                         GeographyCodeLevel level = code.getLevelCode();
                         int codeLevel = level.getLevel();

@@ -136,16 +136,37 @@
                         <ComboBox fx:id="arcBox" editable="true" prefWidth="90.0" />
                     </children>
                 </FlowPane>
-                <FlowPane fx:id="opacityPane" hgap="5.0" layoutX="10.0" layoutY="161.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                <VBox fx:id="blendBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                     <children>
-                        <Label text="%Opacity">
-                            <FlowPane.margin>
-                                <Insets />
-                            </FlowPane.margin>
-                        </Label>
-                        <ComboBox fx:id="opacityBox" editable="true" prefWidth="100.0" />
+                        <FlowPane fx:id="modePane" hgap="5.0" layoutX="10.0" layoutY="389.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                            <children>
+                                <Label fx:id="blendLabel" text="%BlendMode" />
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                  <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/iconDemo.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                            </children>
+                        </FlowPane>
+                          <ComboBox fx:id="blendSelector" prefWidth="140.0" />
+                        <FlowPane fx:id="opacityPane" hgap="5.0" layoutX="10.0" layoutY="161.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                            <children>
+                                <Label text="%Opacity">
+                                    <FlowPane.margin>
+                                        <Insets />
+                                    </FlowPane.margin>
+                                </Label>
+                                <ComboBox fx:id="opacitySelector" editable="true" prefWidth="100.0" />
+                            </children>
+                        </FlowPane>
+                        <CheckBox fx:id="blendTopCheck" mnemonicParsing="false" selected="true" text="%OnTop" />
+                        <Label fx:id="blendCommentsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%TakeEffectWhenOK" />
                     </children>
-                </FlowPane>
+                </VBox>
                 <FlowPane fx:id="intensityPane" hgap="5.0" layoutX="10.0" layoutY="161.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                     <children>
                         <Label fx:id="arcLabel1" text="%Intensity" />
@@ -178,6 +199,19 @@
                         </RadioButton>
                     </children>
                 </FlowPane>
+            </children>
+        </VBox>
+        <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -187,42 +221,33 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <FlowPane fx:id="okPane" alignment="CENTER_LEFT" hgap="5.0" prefWidth="200.0" vgap="5.0">
-                    <children>
-                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconOK.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <VBox.margin>
-                                <Insets top="10.0" />
-                            </VBox.margin>
-                        </Button>
-                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconClear.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                  <CheckBox fx:id="coordinatePenCheck" mnemonicParsing="false">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconLocation.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </CheckBox>
-                    </children>
-                </FlowPane>
             </children>
-        </VBox>
+        </FlowPane>
+        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWidth="200.0" vgap="5.0">
+            <children>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Button>
+                <CheckBox fx:id="coordinatePenCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconLocation.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+            </children>
+        </FlowPane>
         <Label fx:id="commentsLabel" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
     </children>
 </VBox>

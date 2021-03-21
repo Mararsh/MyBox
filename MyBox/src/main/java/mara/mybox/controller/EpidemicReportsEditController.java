@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.util.converter.LongStringConverter;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.EpidemicReport;
@@ -226,7 +226,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
     }
 
     protected List<EpidemicReport> loadChineseProvinces() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String sql = "SELECT * FROM Geography_Code WHERE "
                     + " level=4  AND country=100 ORDER BY gcid ";
             List<GeographyCode> provinces = TableGeographyCode.queryCodes(conn, sql, true);
@@ -251,7 +251,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
     }
 
     protected List<EpidemicReport> loadCountries() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String sql = "SELECT * FROM Geography_Code WHERE level=3 ORDER BY gcid ";
             List<GeographyCode> countries = TableGeographyCode.queryCodes(conn, sql, true);
             if (countries == null || countries.isEmpty()) {

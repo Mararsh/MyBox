@@ -6,13 +6,11 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ExcelTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -30,17 +28,11 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
 
     public DataFileExcelConvertController() {
         baseTitle = AppVariables.message("ExcelConvert");
+    }
 
-        SourceFileType = VisitHistory.FileType.Excel;
-        SourcePathType = VisitHistory.FileType.Excel;
-        AddFileType = VisitHistory.FileType.Excel;
-        AddPathType = VisitHistory.FileType.Excel;
-        TargetPathType = VisitHistory.FileType.All;
-        TargetFileType = VisitHistory.FileType.All;
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Excel);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.All);
-        sourceExtensionFilter = CommonFxValues.ExcelExtensionFilter;
-        targetExtensionFilter = CommonFxValues.AllExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Excel, VisitHistory.FileType.All);
     }
 
     @Override

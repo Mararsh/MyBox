@@ -64,7 +64,7 @@ public class HtmlMergeAsPDFController extends HtmlToPdfController {
 
             mergedHtml = new StringBuilder();
             String head
-                    = "<html>\n"
+                    = "<!DOCTYPE html><html>\n"
                     + "    <head>\n"
                     + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
                     + "    </head>\n"

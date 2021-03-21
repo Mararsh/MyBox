@@ -32,7 +32,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.BaseDataTools;
@@ -322,7 +322,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                 protected boolean handle() {
                     int count = 1;
                     while (count++ < 5) {
-                        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                        try ( Connection conn = DerbyBase.getConnection()) {
                             conn.setReadOnly(true);
                             datasets = TableEpidemicReport.datasets(conn);
                             times = TableEpidemicReport.times(conn);
@@ -532,7 +532,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             return false;
         }
         dataQueryString = dataQuerySQL + "</br>" + message("NumberTopDataDaily") + ": " + topNumber;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             if (loading != null) {
                 loading.setInfo(message("LoadingChartData") + "\n" + dataQuerySQL);

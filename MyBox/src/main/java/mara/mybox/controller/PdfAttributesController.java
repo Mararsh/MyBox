@@ -18,7 +18,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -27,7 +26,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -64,20 +62,11 @@ public class PdfAttributesController extends BaseController {
 
     public PdfAttributesController() {
         baseTitle = AppVariables.message("PDFAttributes");
+    }
 
-        SourceFileType = VisitHistory.FileType.PDF;
-        SourcePathType = VisitHistory.FileType.PDF;
-        TargetPathType = VisitHistory.FileType.PDF;
-        TargetFileType = VisitHistory.FileType.PDF;
-        AddFileType = VisitHistory.FileType.PDF;
-        AddPathType = VisitHistory.FileType.PDF;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-
-        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
-
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF);
     }
 
     @Override

@@ -57,7 +57,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.Path;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -861,14 +860,9 @@ public class GameEliminationController extends BaseController {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath("MusicPath");
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(CommonFxValues.Mp3WavExtensionFilter);
-            File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null || !file.exists()) {
+            File file = FxmlControl.selectFile(this, AppVariables.getUserConfigPath("MusicPath"),
+                    CommonFxValues.Mp3WavExtensionFilter);
+            if (file == null) {
                 return;
             }
             selectSoundFile(file);

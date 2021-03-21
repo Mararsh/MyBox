@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.FileChooser;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.VisitHistory.FileType;
@@ -56,8 +56,12 @@ public class VisitHistoryTools {
             return CommonFxValues.GifExtensionFilter;
         } else if (fileType == FileType.Tif) {
             return CommonFxValues.TiffExtensionFilter;
+        } else if (fileType == FileType.MultipleFrames) {
+            return CommonFxValues.MultipleFramesImageExtensionFilter;
         } else if (fileType == FileType.Media) {
             return CommonFxValues.JdkMediaExtensionFilter;
+        } else if (fileType == FileType.Audio) {
+            return CommonFxValues.SoundExtensionFilter;
         } else if (fileType == FileType.Icc) {
             return CommonFxValues.IccProfileExtensionFilter;
         } else if (fileType == FileType.Certificate) {
@@ -114,7 +118,7 @@ public class VisitHistoryTools {
         Files
      */
     public static boolean readFile(int fileType, String value) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return readFile(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -127,7 +131,7 @@ public class VisitHistoryTools {
     }
 
     public static boolean writeFile(int fileType, String value) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return writeFile(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -260,7 +264,7 @@ public class VisitHistoryTools {
         Paths
      */
     public static boolean readPath(int fileType, String value) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return readPath(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -273,7 +277,7 @@ public class VisitHistoryTools {
     }
 
     public static boolean writePath(int fileType, String value) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return writePath(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);

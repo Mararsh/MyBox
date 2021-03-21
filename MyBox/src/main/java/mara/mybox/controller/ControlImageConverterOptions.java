@@ -19,7 +19,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
@@ -582,13 +581,8 @@ public class ControlImageConverterOptions extends BaseController {
 
     public void selectIccFile(File path) {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            if (path != null && path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(CommonFxValues.IccProfileExtensionFilter);
-            File file = fileChooser.showOpenDialog(myStage);
-            if (file == null || !file.exists()) {
+            File file = FxmlControl.selectFile(this, path, CommonFxValues.IccProfileExtensionFilter);
+            if (file == null) {
                 return;
             }
             iccFileSelected(file);

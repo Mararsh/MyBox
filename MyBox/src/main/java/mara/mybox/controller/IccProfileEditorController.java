@@ -51,7 +51,6 @@ import mara.mybox.tools.ByteTools;
 import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -88,7 +87,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             transparentcyCheck, matteCheck, negativeCheck, bwCheck, paperCheck, texturedCheck,
             isotropicCheck, selfLuminousCheck, idAutoCheck, lutNormalizeCheck, openExportCheck;
     @FXML
-    protected Label cmmTypeMarkLabel, deviceClassMarkLabel, colorSpaceMarkLabel, PCSTypeMarkLabel,
+    protected Label infoLabel, cmmTypeMarkLabel, deviceClassMarkLabel, colorSpaceMarkLabel, PCSTypeMarkLabel,
             platformMarkLabel, manufacturerMarkLabel, intentMarkLabel, creatorMarkLabel,
             profileVersionMarkLabel, createTimeMarkLabel, profileFileMarkLabel, deviceModelMarkLabel,
             xMarkLabel, yMarkLabel, zMarkLabel, embedMarkLabel, independentMarkLabel, subsetMarkLabel,
@@ -110,6 +109,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     protected Tab tagDataTab;
     @FXML
     protected Button refreshHeaderButton, refreshXmlButton, exportXmlButton;
+    @FXML
+    protected ControlFileBackup backupController;
 
     protected enum SourceType {
         Embed, Internal_File, External_File, External_Data
@@ -117,20 +118,12 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
     public IccProfileEditorController() {
         baseTitle = AppVariables.message("IccProfileEditor");
-
         TipsLabelKey = "IccProfileTips";
+    }
 
-        SourceFileType = VisitHistory.FileType.Icc;
-        SourcePathType = VisitHistory.FileType.Icc;
-        TargetPathType = VisitHistory.FileType.Icc;
-        TargetFileType = VisitHistory.FileType.Icc;
-        AddFileType = VisitHistory.FileType.Icc;
-        AddPathType = VisitHistory.FileType.Icc;
-
-        defaultPath = SystemTools.IccProfilePath();
-
-        sourceExtensionFilter = CommonFxValues.IccProfileExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Icc);
     }
 
     @Override
@@ -144,6 +137,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             initHeaderControls();
             initTagsTable();
             initOptions();
+
+            backupController.setControls(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -352,13 +347,13 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             manufacturerBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     if (!manufacturerBox.getItems().contains(newValue)) {
                         FxmlControl.setEditorWarnStyle(manufacturerBox);
                     } else {
                         FxmlControl.setEditorNormal(manufacturerBox);
-                    }
-                    if (isSettingValues) {
-                        return;
                     }
                     manufacturerMarkLabel.setText("*");
                     profileChanged();
@@ -652,6 +647,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         recordFileOpened(file);
         sourceType = SourceType.External_File;
         openProfile(file.getAbsolutePath());
+
     }
 
     private void iccChanged() {
@@ -712,7 +708,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
                 task = new SingletonTask<Void>() {
 
-                    private String error;
                     private File file;
                     private IccProfile p;
 
@@ -754,6 +749,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         }
                         profile = p;
                         displayProfileData();
+                        backupController.loadBackups(sourceFile);
                     }
 
                     @Override
@@ -790,8 +786,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 return;
             }
             profile.setNormalizeLut(lutNormalizeCheck.isSelected());
-            bottomLabel.setStyle(null);
-            bottomLabel.setText(getCurrentName());
+            infoLabel.setText(getCurrentName());
             if (myStage != null) {
                 myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
             }
@@ -848,7 +843,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 s += "   " + message("TagsNumber") + ": " + tagsList.size();
             }
             String name = getCurrentName();
-            bottomLabel.setText(name + "   " + s);
+            infoLabel.setText(name + "\n" + message("ProfileSize") + ": " + header.value("ProfileSize")
+                    + ((tagsList != null) ? "\n" + message("TagsNumber") + ": " + tagsList.size() : ""));
 
             s = name + "\n" + s + "\n\n";
             for (String key : fields.keySet()) {
@@ -930,7 +926,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             embedCheck.setSelected((boolean) header.value("ProfileFlagEmbedded"));
             independentCheck.setSelected((boolean) header.value("ProfileFlagIndependently"));
             subsetCheck.setSelected((boolean) header.value("ProfileFlagMCSSubset"));
-            manufacturerBox.getSelectionModel().select((String) header.value("DeviceManufacturer"));
+            manufacturerBox.setValue((String) header.value("DeviceManufacturer"));
             deviceModelInput.setText((String) header.value("DeviceModel"));
             transparentcyCheck.setSelected((boolean) header.value("DeviceAttributeTransparency"));
             matteCheck.setSelected((boolean) header.value("DeviceAttributeMatte"));
@@ -940,7 +936,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             texturedCheck.setSelected((boolean) header.value("DeviceAttributeTextured"));
             isotropicCheck.setSelected((boolean) header.value("DeviceAttributeIsotropic"));
             selfLuminousCheck.setSelected((boolean) header.value("DeviceAttributeSelfLuminous"));
-            intentBox.getSelectionModel().select((String) header.value("RenderingIntent"));
+            intentBox.setValue((String) header.value("RenderingIntent"));
             xInput.setText(header.value("PCCIlluminantX") + "");
             yInput.setText(header.value("PCCIlluminantY") + "");
             zInput.setText(header.value("PCCIlluminantZ") + "");
@@ -955,7 +951,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-
         }
     }
 
@@ -2000,6 +1995,9 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
                 @Override
                 protected boolean handle() {
+                    if (backupController.backupCheck.isSelected()) {
+                        backupController.addBackup(file);
+                    }
                     return profile.write(file, newHeaderData);
                 }
 
@@ -2009,6 +2007,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     sourceType = SourceType.External_File;
                     openProfile(file.getAbsolutePath());
                     popSuccessful();
+
                 }
 
             };

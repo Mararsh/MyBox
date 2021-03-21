@@ -51,7 +51,6 @@ import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -61,7 +60,6 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -150,48 +148,19 @@ public abstract class BaseFileEditerController extends BaseController {
     public final void setTextType() {
         editType = Edit_Type.Text;
 
-        SourceFileType = VisitHistory.FileType.Text;
-        SourcePathType = VisitHistory.FileType.Text;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Text;
-        AddPathType = VisitHistory.FileType.Text;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-
-        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+        setFileType(VisitHistory.FileType.Text);
     }
 
     public final void setBytesType() {
         editType = Edit_Type.Bytes;
 
-        SourceFileType = VisitHistory.FileType.Bytes;
-        SourcePathType = VisitHistory.FileType.Bytes;
-        TargetPathType = VisitHistory.FileType.Bytes;
-        TargetFileType = VisitHistory.FileType.Bytes;
-        AddFileType = VisitHistory.FileType.Bytes;
-        AddPathType = VisitHistory.FileType.Bytes;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Bytes);
-        sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+        setFileType(VisitHistory.FileType.Bytes);
     }
 
     public final void setMarkdownType() {
         editType = Edit_Type.Markdown;
 
-        SourceFileType = VisitHistory.FileType.Markdown;
-        SourcePathType = VisitHistory.FileType.Markdown;
-        TargetPathType = VisitHistory.FileType.Markdown;
-        TargetFileType = VisitHistory.FileType.Markdown;
-        AddFileType = VisitHistory.FileType.Markdown;
-        AddPathType = VisitHistory.FileType.Markdown;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
-
-        sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+        setFileType(VisitHistory.FileType.Markdown);
     }
 
     @Override
@@ -918,35 +887,41 @@ public abstract class BaseFileEditerController extends BaseController {
             pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (isSettingValues || !checkBeforeNextAction()) {
-                        return;
-                    }
-                    if (pageBox.isDisabled() || !pageBox.isVisible() || pageSelector.getValue() == null) {
-                        pageSelector.getSelectionModel().select(null);
-                        pageSelector.getEditor().setStyle(null);
-                        return;
-                    }
-                    try {
-                        int v = Integer.valueOf(pageSelector.getValue());
-                        if (v > 0 && v <= sourceInformation.getPagesNumber()) {
-                            if (sourceInformation.getCurrentPage() != v) {
-                                sourceInformation.setCurrentPage(v);
-                                if (findReplaceController != null) {
-                                    findReplaceController.lastFileRange = null;
-                                }
-                                loadPage();
-                            }
-                            pageSelector.getEditor().setStyle(null);
-                        } else {
-                            pageSelector.getEditor().setStyle(badStyle);
-                        }
-                    } catch (Exception e) {
-                        pageSelector.getEditor().setStyle(badStyle);
-                    }
+                    checkCurrentPage();
                 }
             });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected boolean checkCurrentPage() {
+        if (isSettingValues || pageSelector == null || !checkBeforeNextAction()) {
+            return false;
+        }
+        if (pageBox.isDisabled() || !pageBox.isVisible()) {
+            pageSelector.getSelectionModel().select(null);
+            pageSelector.getEditor().setStyle(null);
+            return false;
+        }
+        String value = pageSelector.getEditor().getText();
+        try {
+            int v = Integer.valueOf(value);
+            if (v > 0 && v <= sourceInformation.getPagesNumber()) {
+                sourceInformation.setCurrentPage(v);
+                if (findReplaceController != null) {
+                    findReplaceController.lastFileRange = null;
+                }
+                pageSelector.getEditor().setStyle(null);
+                loadPage();
+                return true;
+            } else {
+                pageSelector.getEditor().setStyle(badStyle);
+                return false;
+            }
+        } catch (Exception e) {
+            pageSelector.getEditor().setStyle(badStyle);
+            return false;
         }
     }
 
@@ -1119,10 +1094,7 @@ public abstract class BaseFileEditerController extends BaseController {
 
     @FXML
     public void goPage() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        loadPage();
+        checkCurrentPage();
     }
 
     @FXML
@@ -1816,11 +1788,10 @@ public abstract class BaseFileEditerController extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    ok = targetInformation.writePage(sourceInformation, mainArea.getText());
-                    if (ok && backupController != null && backupController.backupCheck.isSelected()) {
+                    if (backupController != null && backupController.backupCheck.isSelected()) {
                         backupController.addBackup(sourceFile);
                     }
-                    return ok;
+                    return targetInformation.writePage(sourceInformation, mainArea.getText());
                 }
 
                 @Override
@@ -1916,16 +1887,17 @@ public abstract class BaseFileEditerController extends BaseController {
     @FXML
     @Override
     public void createAction() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            initPage(null);
-            updateInterface(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (!checkBeforeNextAction()) {
+            return;
         }
+        initPage(null);
+        updateInterface(false);
+    }
 
+    public void loadContexts(String contents) {
+        createAction();
+        mainArea.setText(contents);
+        updateInterface(true);
     }
 
     @FXML

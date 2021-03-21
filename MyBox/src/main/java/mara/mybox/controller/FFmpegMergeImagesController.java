@@ -18,7 +18,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
@@ -27,7 +27,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -53,18 +52,11 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
 
     public FFmpegMergeImagesController() {
         baseTitle = AppVariables.message("FFmpegMergeImagesInformation");
+    }
 
-        SourceFileType = VisitHistory.FileType.Image;
-        SourcePathType = VisitHistory.FileType.Image;
-        TargetPathType = VisitHistory.FileType.Media;
-        TargetFileType = VisitHistory.FileType.Media;
-        AddFileType = VisitHistory.FileType.Image;
-        AddPathType = VisitHistory.FileType.Image;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-
-        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image, VisitHistory.FileType.Media);
         targetExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
     }
 

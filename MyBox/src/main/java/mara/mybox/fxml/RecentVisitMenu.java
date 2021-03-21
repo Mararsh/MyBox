@@ -34,16 +34,19 @@ public abstract class RecentVisitMenu {
     public RecentVisitMenu(BaseController controller, MouseEvent event) {
         this.controller = controller;
         this.event = event;
-        LastPathKey = controller.getLastPathKey();
-        defaultPath = controller.getDefaultPath();
-        sourcePathKey = controller.getSourcePathKey();
-        targetPathKey = controller.getTargetPathKey();
         SourceFileType = controller.getSourceFileType();
         SourcePathType = controller.getSourcePathType();
-        TargetFileType = controller.getTargetFileType();
-        TargetPathType = controller.getTargetPathType();
         AddFileType = controller.getAddFileType();
         AddPathType = controller.getAddPathType();
+        sourcePathKey = controller.getSourcePathKey();
+
+        LastPathKey = controller.getLastPathKey();
+        defaultPath = controller.getDefaultPath();
+
+        TargetFileType = controller.getTargetFileType();
+        TargetPathType = controller.getTargetPathType();
+        targetPathKey = controller.getTargetPathKey();
+
         if (AddFileType <= 0) {
             AddFileType = SourceFileType;
         }

@@ -11,12 +11,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -35,19 +33,6 @@ public class HtmlMergeAsMarkdownController extends BaseBatchFileController {
 
     public HtmlMergeAsMarkdownController() {
         baseTitle = AppVariables.message("HtmlMergeAsMarkdown");
-
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Markdown;
-        TargetFileType = VisitHistory.FileType.Markdown;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
     }
 
     @Override
@@ -67,6 +52,11 @@ public class HtmlMergeAsMarkdownController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.Markdown);
     }
 
     @Override

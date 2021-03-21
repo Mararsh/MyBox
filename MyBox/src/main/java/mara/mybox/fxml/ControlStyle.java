@@ -291,12 +291,6 @@ public class ControlStyle {
             case "scopeOutlineFileButton":
                 return new ControlStyle("scopeOutlineFileButton", message("Open"), "", "iconOpen.png");
 
-            case "scopeSetCheck":
-                return new ControlStyle("scopeSetCheck", message("SetScope"), "", "iconTarget.png");
-
-            case "scopeManageCheck":
-                return new ControlStyle("scopeManageCheck", message("ManageScope"), "", "iconDataImport.png");
-
             case "scopeOutlineKeepRatioCheck":
                 return new ControlStyle("scopeOutlineKeepRatioCheck", message("KeepRatio"), "", "iconAspectRatio.png");
 
@@ -465,6 +459,11 @@ public class ControlStyle {
 
             case "ditherCheck":
                 return new ControlStyle(id, message("DitherComments"), "", "");
+
+            case "withNamesCheck":
+            case "sourceWithNamesCheck":
+            case "targetWithNamesCheck":
+                return new ControlStyle(id, "", message("FirstLineAsNamesComments"), "", "");
 
             default:
                 return null;
@@ -820,11 +819,11 @@ public class ControlStyle {
         }
 
         if (id.startsWith("dataImport") || id.startsWith("import")) {
-            return new ControlStyle(id, message("Import"), "", "iconDataImport.png");
+            return new ControlStyle(id, message("Import"), "", "iconImport.png");
         }
 
         if (id.startsWith("dataExport") || id.startsWith("export")) {
-            return new ControlStyle(id, message("Export"), "", "iconDataExport.png");
+            return new ControlStyle(id, message("Export"), "", "iconExport.png");
         }
         if (id.startsWith("data")) {
             return new ControlStyle(id, message("Data"), "", "iconData.png");
@@ -1019,6 +1018,30 @@ public class ControlStyle {
 
         if (id.startsWith("unford")) {
             return new ControlStyle(id, message("Unfold"), "", "iconTree.png");
+        }
+
+        if (id.startsWith("moveData")) {
+            return new ControlStyle(id, message("Move"), "", "iconRef.png");
+        }
+
+        if (id.startsWith("csv")) {
+            return new ControlStyle(id, "CSV", "", "iconCSV.png");
+        }
+
+        if (id.startsWith("excel")) {
+            return new ControlStyle(id, "Excel", "", "iconExcel.png");
+        }
+
+        if (id.startsWith("history")) {
+            return new ControlStyle(id, message("History"), "", "iconHistory.png");
+        }
+
+        if (id.startsWith("ssl")) {
+            return new ControlStyle(id, "SSL", "", "iconSSL.png");
+        }
+
+        if (id.startsWith("ignore")) {
+            return new ControlStyle(id, message("Ignore"), "", "iconIgnore.png");
         }
 
         switch (id) {
@@ -1263,9 +1286,6 @@ public class ControlStyle {
             case "displayDataButton":
                 return new ControlStyle("displayDataButton", message("Display"), "", "iconGraph.png");
 
-            case "fileExportButton":
-                return new ControlStyle("fileExportButton", message("Export"), "", "iconExport.png");
-
             case "valueOkButton":
                 return new ControlStyle("valueOkButton", message("OK"), "", "iconOK.png");
 
@@ -1286,9 +1306,6 @@ public class ControlStyle {
 
             case "iccSelectButton":
                 return new ControlStyle("iccSelectButton", message("Select"), "", "iconOpen.png");
-
-            case "csvButton":
-                return new ControlStyle(id, "CSV", "", "iconCSV.png");
 
             case "ocrPathButton":
                 return new ControlStyle("ocrPathButton", message("Select"), "", "iconOpen.png");

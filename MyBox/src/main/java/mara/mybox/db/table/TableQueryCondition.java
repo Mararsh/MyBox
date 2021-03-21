@@ -70,7 +70,7 @@ public class TableQueryCondition extends DerbyBase {
 
     public static List<QueryCondition> readList(String dataName,
             DataOperation dataOperation, int max) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, dataName, dataOperation, max);
         } catch (Exception e) {
@@ -133,7 +133,7 @@ public class TableQueryCondition extends DerbyBase {
         if (qcid <= 0) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, qcid);
         } catch (Exception e) {
@@ -176,7 +176,7 @@ public class TableQueryCondition extends DerbyBase {
         if (queryCondition == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, queryCondition);
         } catch (Exception e) {
@@ -214,7 +214,7 @@ public class TableQueryCondition extends DerbyBase {
         if (condition == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return write(conn, condition, checkEqual);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -253,7 +253,7 @@ public class TableQueryCondition extends DerbyBase {
             return false;
 
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement idQuery = conn.prepareStatement(QCidQeury);
                  PreparedStatement insert = conn.prepareStatement(Insert);
                  PreparedStatement update = conn.prepareStatement(Update)) {
@@ -286,7 +286,7 @@ public class TableQueryCondition extends DerbyBase {
         if (condition == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return insert(conn, condition);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -331,7 +331,7 @@ public class TableQueryCondition extends DerbyBase {
         if (condition == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return update(conn, condition);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -386,7 +386,7 @@ public class TableQueryCondition extends DerbyBase {
         if (qcid <= 0) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return delete(conn, qcid);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -413,7 +413,7 @@ public class TableQueryCondition extends DerbyBase {
         if (conditions == null || conditions.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
                 for (QueryCondition condition : conditions) {

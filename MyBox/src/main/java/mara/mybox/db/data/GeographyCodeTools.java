@@ -10,7 +10,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -24,9 +23,6 @@ import mara.mybox.controller.LoadingController;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.data.CoordinateSystem.Value.GCJ_02;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -560,7 +556,7 @@ public class GeographyCodeTools {
         if (code == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
             return encode(conn, geoInsert, code, true);
         } catch (Exception e) {
@@ -1207,7 +1203,7 @@ public class GeographyCodeTools {
 
     public static void importPredefined(Connection conn, LoadingController loading) {
         if (conn == null) {
-            try (final Connection conn1 = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login)) {
+            try (final Connection conn1 = DerbyBase.getConnection()) {
                 importPredefined(conn1, loading);
             } catch (Exception e) {
                 MyBoxLog.debug(e.toString());
@@ -1248,7 +1244,7 @@ public class GeographyCodeTools {
     // gcid,levelid,longitude,latitude,chinese_name,english_name,code1,code2,code3,code4,code5,alias1,alias2,alias3,alias4,alias5,
     // area,population,continentid,countryid,provinceid,cityid,countyid,townid,villageid,buildingid,comments
     public static void importInternalCSV(LoadingController loading, File file, boolean predefined) {
-        try (final Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login)) {
+        try (final Connection conn = DerbyBase.getConnection()) {
             importInternalCSV(conn, loading, file, predefined);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

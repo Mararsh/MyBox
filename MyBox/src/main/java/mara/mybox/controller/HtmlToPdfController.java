@@ -11,11 +11,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -33,19 +31,11 @@ public class HtmlToPdfController extends BaseBatchFileController {
 
     public HtmlToPdfController() {
         baseTitle = AppVariables.message("HtmlToPdf");
+    }
 
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.PDF;
-        TargetFileType = VisitHistory.FileType.PDF;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = CommonFxValues.PdfExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.PDF);
     }
 
     @Override

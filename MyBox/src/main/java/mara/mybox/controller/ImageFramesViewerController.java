@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -35,21 +34,13 @@ public class ImageFramesViewerController extends BaseImagesListController {
 
     public ImageFramesViewerController() {
         baseTitle = AppVariables.message("ImageFramesViewer");
-        SourceFileType = VisitHistory.FileType.MultipleFrames;
-        SourcePathType = VisitHistory.FileType.MultipleFrames;
-        TargetFileType = VisitHistory.FileType.MultipleFrames;
-        TargetPathType = VisitHistory.FileType.MultipleFrames;
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.MultipleFrames);
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
-
-        sourceExtensionFilter = new ArrayList<>() {
-            {
-                add(new FileChooser.ExtensionFilter("tif/tiff/gif", "*.tif", "*.tiff", "*.gif"));
-                add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-                add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-            }
-        };
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override

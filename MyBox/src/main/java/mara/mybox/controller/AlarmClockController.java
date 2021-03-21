@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
@@ -21,12 +22,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
 import mara.mybox.db.data.AlarmClock;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MediaTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -310,25 +311,19 @@ public class AlarmClockController extends BaseController {
     @FXML
     protected void selectSys() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            String defaultPath = AppVariables.MyboxDataPath;
+            String dPath = AppVariables.MyboxDataPath;
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                defaultPath = "C:\\Windows\\media";
+                dPath = "C:\\Windows\\media";
             }
-            File path = AppVariables.getUserConfigPath(SystemMediaPathKey, defaultPath);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("wav", "*.wav"));
-            final File file = fileChooser.showOpenDialog(getMyStage());
+            File path = AppVariables.getUserConfigPath(SystemMediaPathKey, dPath);
+            List<FileChooser.ExtensionFilter> wavExtensionFilter = new ArrayList<>();
+            wavExtensionFilter.add(new FileChooser.ExtensionFilter("wav", "*.wav"));
+            File file = FxmlControl.selectFile(this, path, wavExtensionFilter);
             if (file == null) {
                 return;
             }
-            recordFileOpened(file);
             AppVariables.setUserConfigValue(SystemMediaPathKey, file.getParent());
-
             sysInput.setText(file.getAbsolutePath());
-
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }
@@ -338,21 +333,13 @@ public class AlarmClockController extends BaseController {
     @FXML
     protected void selectLocal(ActionEvent event) {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(MusicPathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(CommonFxValues.SoundExtensionFilter);
-            final File file = fileChooser.showOpenDialog(getMyStage());
+            File file = FxmlControl.selectFile(this,
+                    AppVariables.getUserConfigPath(MusicPathKey), CommonFxValues.SoundExtensionFilter);
             if (file == null) {
                 return;
             }
-            recordFileOpened(file);
             AppVariables.setUserConfigValue(MusicPathKey, file.getParent());
-
             localInput.setText(file.getAbsolutePath());
-
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }

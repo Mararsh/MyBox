@@ -37,7 +37,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.DoubleCircle;
@@ -1844,17 +1843,12 @@ public class ImageManufactureScopeController extends ImageViewerController {
     @FXML
     public void selectOutlineFile() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(CommonFxValues.AlphaImageExtensionFilter);
-            final File file = fileChooser.showOpenDialog(getMyStage());
+            File file = FxmlControl.selectFile(this,
+                    AppVariables.getUserConfigPath(this.getSourcePathKey()),
+                    CommonFxValues.AlphaImageExtensionFilter);
             if (file == null) {
                 return;
             }
-            recordFileOpened(file);
             loadOutlineSource(file);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

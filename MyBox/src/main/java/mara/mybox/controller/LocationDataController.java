@@ -24,7 +24,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Era;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.BaseDataTools;
@@ -516,7 +516,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 protected boolean handle() {
                     File image = FxmlControl.getInternalFile("/img/jade.png", "image", "jade.png", false);
                     datasetName = message("ChineseHistoricalCapitals");
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setAutoCommit(true);
                         tableLocationData.delete(conn, datasetName, true);
                         Dataset dataset = Dataset.create()
@@ -596,7 +596,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 protected boolean handle() {
                     File image = FxmlControl.getInternalFile("/img/Gadwalls.png", "image", "Gadwalls.png", false);
                     datasetName = message("AutumnMovementPatternsOfEuropeanGadwalls");
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setAutoCommit(true);
                         tableLocationData.delete(conn, datasetName, true);
                         Dataset dataset = Dataset.create()
@@ -672,7 +672,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                 protected boolean handle() {
                     File image = FxmlControl.getInternalFile("/img/SpermWhale.png", "image", "SpermWhale.png", false);
                     datasetName = message("SpermWhalesGulfOfMexico");
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                    try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setAutoCommit(true);
                         tableLocationData.delete(conn, datasetName, true);
                         Dataset dataset = Dataset.create()

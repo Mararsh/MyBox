@@ -23,7 +23,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -281,13 +280,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     public void selectForegroundImage() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
-            final File file = fileChooser.showOpenDialog(getMyStage());
+            File file = FxmlControl.selectFile(this);
             if (file == null) {
                 return;
             }
@@ -419,13 +412,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     public void selectBackgroundImage() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
-            final File file = fileChooser.showOpenDialog(getMyStage());
+            File file = FxmlControl.selectFile(this);
             if (file == null) {
                 return;
             }

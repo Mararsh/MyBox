@@ -605,7 +605,12 @@ public class SettingsController extends BaseController {
             @Override
             public void run() {
                 try {
-                    ConfigTools.writeConfigValue("JVMmemory", "-Xms" + newJVM + "m");
+                    long defaultJVM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+                    if (newJVM == defaultJVM) {
+                        ConfigTools.writeConfigValue("JVMmemory", null);
+                    } else {
+                        ConfigTools.writeConfigValue("JVMmemory", "-Xms" + newJVM + "m");
+                    }
                     MyBox.restart();
                 } catch (Exception e) {
                     MyBoxLog.debug(e.toString());
@@ -615,19 +620,9 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void recoverJVM() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ConfigTools.writeConfigValue("JVMmemory", null);
-                    popInformation(message("EffectNextStart"));
-//                    MyBox.restart();
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                }
-            }
-        });
+    protected void defaultJVM() {
+        long defaultJVM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        jvmInput.setText(defaultJVM + "");
     }
 
     @FXML

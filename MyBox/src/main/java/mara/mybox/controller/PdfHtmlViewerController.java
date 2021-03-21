@@ -20,14 +20,12 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
 import org.fit.pdfdom.PDFDomTreeConfig;
@@ -58,17 +56,6 @@ public class PdfHtmlViewerController extends PdfViewController {
     public PdfHtmlViewerController() {
         baseTitle = AppVariables.message("PdfHtmlViewer");
 
-        SourceFileType = VisitHistory.FileType.PDF;
-        SourcePathType = VisitHistory.FileType.PDF;
-        TargetFileType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-
         checkBottomScript
                 = " function checkBottom() { "
                 + "     var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;  "
@@ -89,6 +76,11 @@ public class PdfHtmlViewerController extends PdfViewController {
                 + "     };"
                 + " }; "
                 + "checkTop(); ";
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Html);
     }
 
     @Override

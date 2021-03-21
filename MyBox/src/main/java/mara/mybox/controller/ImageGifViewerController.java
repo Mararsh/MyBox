@@ -61,19 +61,15 @@ public class ImageGifViewerController extends ImageViewerController {
 
     public ImageGifViewerController() {
         baseTitle = AppVariables.message("ImageGifViewer");
-
-        SourceFileType = VisitHistory.FileType.Gif;
-        SourcePathType = VisitHistory.FileType.Gif;
-        TargetFileType = VisitHistory.FileType.Gif;
-        TargetPathType = VisitHistory.FileType.Gif;
-        AddFileType = VisitHistory.FileType.Image;
-        AddPathType = VisitHistory.FileType.Image;
-
         needNotRulers = true;
         needNotCoordinates = true;
+    }
 
-        sourceExtensionFilter = CommonFxValues.GifExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Gif);
+        AddFileType = VisitHistory.FileType.Image;
+        AddPathType = VisitHistory.FileType.Image;
     }
 
     @Override

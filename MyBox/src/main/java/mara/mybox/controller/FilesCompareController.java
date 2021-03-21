@@ -18,16 +18,16 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -151,14 +151,8 @@ public class FilesCompareController extends BaseController {
     @FXML
     public void selectFile1() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
-            File file = fileChooser.showOpenDialog(myStage);
-            if (file == null || !file.exists()) {
+            File file = FxmlControl.selectFile(this);
+            if (file == null) {
                 return;
             }
             file1Input.setText(file.getAbsolutePath());
@@ -170,14 +164,8 @@ public class FilesCompareController extends BaseController {
     @FXML
     public void selectFile2() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
-            File file = fileChooser.showOpenDialog(myStage);
-            if (file == null || !file.exists()) {
+            File file = FxmlControl.selectFile(this);
+            if (file == null) {
                 return;
             }
             file2Input.setText(file.getAbsolutePath());
@@ -304,7 +292,7 @@ public class FilesCompareController extends BaseController {
         }
         try {
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -342,7 +330,8 @@ public class FilesCompareController extends BaseController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

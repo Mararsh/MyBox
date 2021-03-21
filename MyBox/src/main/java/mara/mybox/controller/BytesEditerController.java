@@ -48,6 +48,10 @@ public class BytesEditerController extends BaseFileEditerController {
         baseTitle = AppVariables.message("BytesEditer");
         TipsLabelKey = "BytesEditerTips";
 
+    }
+
+    @Override
+    public void setFileType() {
         setBytesType();
     }
 

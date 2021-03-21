@@ -21,7 +21,9 @@ import mara.mybox.db.table.TableMatrix;
 import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
+import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.message;
@@ -80,6 +82,12 @@ public class BaseDataTools {
         } else if (data instanceof Notebook) {
             return new TableNotebook();
 
+        } else if (data instanceof Tag) {
+            return new TableTag();
+
+        } else if (data instanceof NoteTag) {
+            return new TableNoteTag();
+
         }
         return null;
     }
@@ -129,6 +137,12 @@ public class BaseDataTools {
 
         } else if (data instanceof Notebook) {
             return Notebook.valid((Notebook) data);
+
+        } else if (data instanceof Tag) {
+            return Tag.valid((Tag) data);
+
+        } else if (data instanceof NoteTag) {
+            return NoteTag.valid((NoteTag) data);
 
         }
 
@@ -181,6 +195,12 @@ public class BaseDataTools {
         } else if (data instanceof Notebook) {
             return Notebook.getValue((Notebook) data, name);
 
+        } else if (data instanceof Tag) {
+            return Tag.getValue((Tag) data, name);
+
+        } else if (data instanceof NoteTag) {
+            return NoteTag.getValue((NoteTag) data, name);
+
         }
 
         return null;
@@ -231,6 +251,12 @@ public class BaseDataTools {
 
         } else if (data instanceof Notebook) {
             return Notebook.setValue((Notebook) data, name, value);
+
+        } else if (data instanceof Tag) {
+            return Tag.setValue((Tag) data, name, value);
+
+        } else if (data instanceof NoteTag) {
+            return NoteTag.setValue((NoteTag) data, name, value);
 
         }
         return false;

@@ -153,20 +153,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             }
             pageSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues || newValue == null) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v < 0) {
-                                pageSelector.getEditor().setStyle(badStyle);
-                            } else {
-                                pageSelector.getEditor().setStyle(null);
-                                loadPage(v);
-                            }
-                        } catch (Exception e) {
-                            pageSelector.getEditor().setStyle(badStyle);
-                        }
+                        checkCurrentPage();
                     });
 
             pageSize = AppVariables.getUserConfigInt(baseName + "PageSize", 50);
@@ -201,6 +188,27 @@ public abstract class BaseDataFileController extends BaseSheetController {
         }
     }
 
+    protected boolean checkCurrentPage() {
+        if (isSettingValues || pageSelector == null) {
+            return false;
+        }
+        String value = pageSelector.getEditor().getText();
+        try {
+            int v = Integer.parseInt(value);
+            if (v < 0) {
+                pageSelector.getEditor().setStyle(badStyle);
+                return false;
+            } else {
+                pageSelector.getEditor().setStyle(null);
+                loadPage(v);
+                return true;
+            }
+        } catch (Exception e) {
+            pageSelector.getEditor().setStyle(badStyle);
+            return false;
+        }
+    }
+
     @Override
     public void checkRightPaneHide() {
     }
@@ -210,7 +218,6 @@ public abstract class BaseDataFileController extends BaseSheetController {
         super.afterSceneLoaded();
 
         setControls(baseName);
-        createAction();
     }
 
     @Override
@@ -575,11 +582,6 @@ public abstract class BaseDataFileController extends BaseSheetController {
         }
     }
 
-//    @Override
-//    protected void dataChanged(boolean dataChanged) {
-//        super.dataChanged(dataChanged);
-//        paginationBox.setDisable(dataChanged);
-//    }
     @FXML
     @Override
     public void clearDefAction() {
@@ -589,7 +591,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
     @FXML
     public void goPage() {
-        loadPage(currentPage);
+        checkCurrentPage();
     }
 
     @FXML

@@ -2,7 +2,6 @@ package mara.mybox.db.table;
 
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -13,10 +12,8 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.data.Era;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
@@ -469,7 +466,7 @@ public abstract class BaseTable<D> {
     }
 
     public int clearData() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return clearData(conn);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -563,7 +560,7 @@ public abstract class BaseTable<D> {
     }
 
     public int size() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return size(conn);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -793,7 +790,7 @@ public abstract class BaseTable<D> {
         if (data == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readData(conn, data);
         } catch (Exception e) {
@@ -885,7 +882,7 @@ public abstract class BaseTable<D> {
 
     public List<D> query(String sql, int max) {
         List<D> dataList = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             dataList = query(conn, sql, max);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -938,12 +935,16 @@ public abstract class BaseTable<D> {
         return query(sql, max);
     }
 
+    public List<D> readAll() {
+        return readData("SELECT * FROM " + tableName);
+    }
+
     public D writeData(D data) {
         newID = -1;
         if (!valid(data)) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return writeData(conn, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -973,7 +974,7 @@ public abstract class BaseTable<D> {
     }
 
     public D insertData(D data) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return insertData(conn, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1042,7 +1043,7 @@ public abstract class BaseTable<D> {
     }
 
     public D updateData(D data) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return updateData(conn, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1070,7 +1071,8 @@ public abstract class BaseTable<D> {
             if (!setUpdateStatement(conn, statement, data)) {
                 return null;
             }
-            if (statement.executeUpdate() > 0) {
+            int ret = statement.executeUpdate();
+            if (ret > 0) {
                 return data;
             }
         } catch (Exception e) {
@@ -1080,7 +1082,7 @@ public abstract class BaseTable<D> {
     }
 
     public int deleteData(D data) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
             setDeleteStatement(conn, statement, data);
             return statement.executeUpdate();
@@ -1095,7 +1097,7 @@ public abstract class BaseTable<D> {
             return 0;
         }
         int count = 0;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             try ( PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
                 for (int i = 0; i < dataList.size(); ++i) {
@@ -1168,7 +1170,7 @@ public abstract class BaseTable<D> {
     }
 
     public BaseTable readDefinitionFromDB(String tableName) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return readDefinitionFromDB(conn, tableName);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);

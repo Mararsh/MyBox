@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
@@ -15,15 +16,12 @@ import javafx.scene.layout.HBox;
 import javax.imageio.ImageIO;
 import mara.mybox.data.BrowserHistory;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableBrowserHistory;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
-import mara.mybox.value.CommonFxValues;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -48,20 +46,11 @@ public class ControlWebBrowserBox extends ControlWebview {
     public ControlWebBrowserBox() {
         baseTitle = AppVariables.message("WebBrowser");
         fetchIcon = false;
+    }
 
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
-
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
     @Override
@@ -105,7 +94,7 @@ public class ControlWebBrowserBox extends ControlWebview {
     @Override
     public void setAddress(String value) {
         super.setAddress(value);
-        urlBox.setValue(address);
+        urlBox.getEditor().setText(address);
     }
 
     public void setFile(File file) {
@@ -113,14 +102,17 @@ public class ControlWebBrowserBox extends ControlWebview {
             return;
         }
         sourceFile = file;
-        setAddress(file.toURI().toString());
+        setAddress(URLDecoder.decode(file.toURI().toString()));
     }
 
     @FXML
     @Override
     public void goAction() {
         try {
-            address = urlBox.getValue();
+            address = urlBox.getEditor().getText();
+            if (parentController != null && parentController instanceof BaseHtmlController) {
+                ((BaseHtmlController) parentController).updateTitle(false);
+            }
             if (address == null || address.isBlank()) {
                 return;
             }
@@ -133,6 +125,7 @@ public class ControlWebBrowserBox extends ControlWebview {
                 return;
             }
             setAddress(address);
+
             webEngine.getLoadWorker().cancel();
             bottomLabel.setText(AppVariables.message("Loading..."));
             webEngine.load(address);
@@ -235,8 +228,7 @@ public class ControlWebBrowserBox extends ControlWebview {
 
     @FXML
     public void setting() {
-        WebBrowserController controller = (WebBrowserController) openStage(CommonValues.WebBrowserFxml);
-        controller.manageHistories();
+        WebBrowserController.oneOpen(true);
     }
 
 }

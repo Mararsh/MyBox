@@ -65,12 +65,6 @@ Articles/Data in Chinese
 Notebook > My Data
 My eyes
 <p>Radian: 84</p>
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> Time </th><th> Left eye </th><th> RIght eye </th></tr>
     <tr><td> 2020.8 </td><td> 300 </td><td> 350 </td></tr>
@@ -81,12 +75,6 @@ tr { height: 1.2em;  }
 
 Notebook > My Data
 My weight
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> Time </th><th> Weight(kg) </th></tr>
     <tr><td> 2020.7 </td><td> 53.7 </td></tr>
@@ -97,12 +85,6 @@ tr { height: 1.2em;  }
 
 Notebook > My Data
 My height
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> Time </th><th> Height(cm) </th></tr>
     <tr><td> 2020.7 </td><td> 164 </td></tr>
@@ -113,16 +95,10 @@ tr { height: 1.2em;  }
 
 Notebook > My Data
 My menstruation
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
             <table>
                 <tbody><tr><td>Year/Month</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
-                <tr><td>2021</td><td>2,30</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-                <tr><td>2020</td><td>28</td><td>27</td><td>23</td><td>21</td><td>19</td><td>0</td><td>7,26</td><td>19</td><td>15</td><td>12</td><td>8</td><td>9</td></tr>
+                <tr><td>2021</td><td>2,30</td><td> </td><td>2</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+                <tr><td>2020</td><td>28</td><td>27</td><td>23</td><td>21</td><td>19</td><td> </td><td>7,26</td><td>19</td><td>15</td><td>12</td><td>8</td><td>9</td></tr>
                 <tr><td>2019</td><td>10</td><td>7</td><td>7</td><td>2,30</td><td>26</td><td>25</td><td>23</td><td>17</td><td>14</td><td>12</td><td>19</td><td>26</td></tr>
             </tbody>
 </table>
@@ -130,12 +106,6 @@ tr { height: 1.2em;  }
 
 Notebook > My Data
 My money
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> Time </th><th> Total </th><th> Bank A </th><th> Bank B </th><th> Bank C </th></tr>
     <tr><td> 2020.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
@@ -146,12 +116,6 @@ tr { height: 1.2em;  }
 
 Notebook > Common knowledge
 Size of coat
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
             <table>
                 <tr><td>Size</td><td>Coat Length</td><td>Shoulder</td><td>Sleeve</td><td>Chest</td><td>Waist</td></tr>
                 <tr><td>160/76A(0)</td><td>69</td><td>37</td><td>80</td><td>88</td><td>86</td></tr>
@@ -168,12 +132,6 @@ tr { height: 1.2em;  }
 
 Notebook > Contacts
 Relative
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> Relationship </th><th> Phone </th><th> Email </th><th> Address </th><th> Birthday </th><th> Comments </th></tr>
     <tr><td> papa </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1960.1.1 </td><td> </td></tr>
@@ -184,12 +142,6 @@ tr { height: 1.2em;  }
 
 Notebook > Contacts
 Work
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
 <table>
     <tr><th> Relationship </th><th> Name </th><th> Phone </th><th> Email </th><th> Address </th><th> Comments </th></tr>
     <tr><td> manager </td><td> A </td><td> 123456789 </td><td> 123@aa.com </td><td> Hidden Peak </td><td> </td></tr>
@@ -202,11 +154,12 @@ Notebook > Coding
 Coding Address
 <a href="https://sourceforge.net">sourceforge</a><br>
 <a href="https://stackoverflow.com">stackoverflow</a><br><br>
-<a href="https://icons8.com/">icons8</a><br><br>
 <a href="https://docs.oracle.com/en/java/javase/15/docs/api/index.html">Java API</a><br>
 <a href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
 <a href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
-<a href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br>
+<a href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br>
+<a href="https://icons8.com/">icons8</a><br>
+<a href="https://mvnrepository.com/">mvnrepository</a><br>
 
 
 Notebook > Coding > javafx
@@ -340,12 +293,6 @@ Packing Steps of MyBox on mac
 
 Notebook > Coding > MyBox
 Colors of MyBox icons
-<style type="text/css">
-table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
-th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
-th { font-weight:bold;  text-align:center;}
-tr { height: 1.2em;  }
-</style>
             <table>
                 <tbody><tr style="font-weight:bold; "><th>name</th><th>rgba</th><th>rgb</th></tr>
                 <tr><td>Light Blue Icon-dark</td><td>0X4788C7FF</td><td>#4788C7</td></tr>

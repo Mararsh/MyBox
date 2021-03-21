@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -26,19 +24,6 @@ public class HtmlFramesetController extends BaseBatchFileController {
 
     public HtmlFramesetController() {
         baseTitle = AppVariables.message("HtmlFrameset");
-
-        SourceFileType = VisitHistory.FileType.All;
-        SourcePathType = VisitHistory.FileType.All;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        AddFileType = VisitHistory.FileType.All;
-        AddPathType = VisitHistory.FileType.All;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.All);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
     }
 
     @Override
@@ -46,10 +31,14 @@ public class HtmlFramesetController extends BaseBatchFileController {
         try {
             super.initValues();
             targetFileInput = targetFileController.fileInput;
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.All, VisitHistory.FileType.Html);
     }
 
     @Override

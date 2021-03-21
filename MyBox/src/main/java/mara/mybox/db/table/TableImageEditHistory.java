@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.ImageEditHistory;
@@ -65,7 +65,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             max = TableImageEditHistory.Default_Max_Histories;
             AppVariables.setUserConfigInt("MaxImageHistories", Default_Max_Histories);
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM Image_Edit_History WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
             try ( ResultSet results = statement.executeQuery(sql)) {
@@ -137,7 +137,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                 || his_location == null || his_location.trim().isEmpty()) {
             return read(image);
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String fields = "image_location, history_location ,operation_time ";
             String values = " '" + image + "', '" + his_location + "', '" + DateTools.datetimeToString(new Date()) + "' ";
             if (update_type != null) {
@@ -176,7 +176,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         if (his == null || his.getImage() == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String fields = "image_location, history_location ,operation_time ";
             String values = " '" + his.getImage() + "', '" + his.getHistoryLocation()
                     + "', '" + DateTools.datetimeToString(his.getOperationTime()) + "' ";
@@ -215,7 +215,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             return true;
         }
         List<ImageEditHistory> records = read(image);
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (int i = 0; i < records.size(); ++i) {
                 deleteRecord(conn, image, records.get(i).getHistoryLocation());
@@ -229,7 +229,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     }
 
     public static boolean deleteHistory(String image, String hisname) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             deleteRecord(conn, image, hisname);
             return true;
         } catch (Exception e) {
@@ -239,7 +239,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     }
 
     public int clear() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT history_location FROM Image_Edit_History";
             try ( ResultSet results = statement.executeQuery(sql)) {

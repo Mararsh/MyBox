@@ -5,13 +5,11 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
 import mara.mybox.db.table.TableColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -58,7 +56,7 @@ public class ColorDataTools {
     }
 
     public static void exportCSV(File file) {
-        try ( Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login);
+        try ( Connection conn = DerbyBase.getConnection();
                  CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
             conn.setReadOnly(true);
             String sql = " SELECT * FROM Color_Data";

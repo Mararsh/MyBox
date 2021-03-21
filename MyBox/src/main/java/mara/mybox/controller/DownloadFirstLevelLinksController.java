@@ -503,7 +503,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     @FXML
     @Override
     public void goAction() {
-        String address = urlBox.getValue();
+        String address = urlBox.getEditor().getText();
         if (address == null) {
             popError(message("InvalidParameters"));
             return;
@@ -1505,7 +1505,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
             StringBuilder htmlBuilder = new StringBuilder();
             String head
-                    = "<html>\n"
+                    = "<!DOCTYPE html><html>\n"
                     + "    <head>\n"
                     + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
                     + "    </head>\n"

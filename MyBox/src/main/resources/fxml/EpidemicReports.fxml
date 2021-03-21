@@ -70,11 +70,11 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="dataExportButton" mnemonicParsing="false" onAction="#exportData" onMouseEntered="#popExportMenu">
+                                                <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportData" onMouseEntered="#popExportMenu">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconDataExport.png" />
+                                                                <Image url="@../buttons/iconExport.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -214,11 +214,11 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="dataImportButton" mnemonicParsing="false" onMouseEntered="#popImportMenu">
+                                        <Button fx:id="importButton" mnemonicParsing="false" onMouseEntered="#popImportMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconDataImport.png" />
+                                                        <Image url="@../buttons/iconImport.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>

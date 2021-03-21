@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.DataDefinition;
@@ -57,7 +57,7 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
         if (dataType == null || dataName == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return read(conn, dataType, dataName);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -84,7 +84,7 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
             return true;
         }
         boolean ret;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             ret = clear(conn, dataType, dataName);
         } catch (Exception e) {
             MyBoxLog.error(e);

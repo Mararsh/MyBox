@@ -12,13 +12,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data.FileInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -40,19 +38,6 @@ public class HtmlMergeAsHtmlController extends BaseBatchFileController {
 
     public HtmlMergeAsHtmlController() {
         baseTitle = AppVariables.message("HtmlMergeAsHtml");
-
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
     }
 
     @Override
@@ -68,6 +53,11 @@ public class HtmlMergeAsHtmlController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
     @Override
@@ -111,7 +101,7 @@ public class HtmlMergeAsHtmlController extends BaseBatchFileController {
                 return false;
             }
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
-            writer.write("<html>\n"
+            writer.write("<!DOCTYPE html><html>\n"
                     + headArea.getText().replace("####title####", titleInput.getText()) + "\n"
                     + "    <body>\n");
         } catch (Exception e) {

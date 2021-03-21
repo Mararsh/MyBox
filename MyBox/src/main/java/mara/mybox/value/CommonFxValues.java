@@ -104,6 +104,13 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("tif/tiff", "*.tif", "*.tiff"));
         }
     };
+    public static List<FileChooser.ExtensionFilter> MultipleFramesImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("tif/tiff/gif", "*.tif", "*.tiff", "*.gif"));
+            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
+            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
+        }
+    };
     public static List<FileChooser.ExtensionFilter> SoundExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3", "*.m4a", "*.*"));
@@ -131,7 +138,6 @@ public class CommonFxValues {
 
     public static List<FileChooser.ExtensionFilter> JdkMediaExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("media", "*.mp4", "*.m4a", "*.m4v", "*.mp3",
                     "*.wav", "*.aif", "*.aiff", "*.m3u8", "*.*"));
             add(new FileChooser.ExtensionFilter("video", "*.mp4", "*.m4v", "*.aif", "*.aiff", "*.m3u8", "*.*"));
@@ -142,6 +148,7 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("aiff", "*.aif", "*.aiff"));
             add(new FileChooser.ExtensionFilter("hls", "*.m3u8", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
 
@@ -153,7 +160,6 @@ public class CommonFxValues {
 
     public static List<FileChooser.ExtensionFilter> FFmpegMediaExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("media", "*.mp4", "*.m4a", "*.m4v", "*.mp3", "*.flv", "*.mov",
                     "*.wav", "*.aif", "*.aiff", "*.m3u8", "*.*"));
             add(new FileChooser.ExtensionFilter("video", "*.mp4", "*.m4v", "*.aif", "*.aiff", "*.flv", "*.mov", "*.m3u8", "*.*"));
@@ -164,6 +170,7 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("aiff", "*.aif", "*.aiff"));
             add(new FileChooser.ExtensionFilter("hls", "*.m3u8", "*.*"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
 
@@ -217,9 +224,9 @@ public class CommonFxValues {
 
     public static List<FileChooser.ExtensionFilter> SheetExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
             add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
 

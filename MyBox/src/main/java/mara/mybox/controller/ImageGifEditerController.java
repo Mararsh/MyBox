@@ -16,7 +16,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -39,16 +38,13 @@ public class ImageGifEditerController extends BaseImagesListController {
 
     public ImageGifEditerController() {
         baseTitle = AppVariables.message("ImageGifEditer");
+    }
 
-        SourceFileType = VisitHistory.FileType.Gif;
-        SourcePathType = VisitHistory.FileType.Gif;
-        TargetFileType = VisitHistory.FileType.Gif;
-        TargetPathType = VisitHistory.FileType.Gif;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Gif);
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
-
-        sourceExtensionFilter = CommonFxValues.GifExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override

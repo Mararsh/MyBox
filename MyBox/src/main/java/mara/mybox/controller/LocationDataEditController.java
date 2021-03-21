@@ -19,10 +19,9 @@ import javafx.util.Callback;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -32,7 +31,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -65,19 +63,11 @@ public class LocationDataEditController extends BaseController {
 
     public LocationDataEditController() {
         baseTitle = AppVariables.message("LocationData");
+    }
 
-        SourceFileType = VisitHistory.FileType.Image;
-        SourcePathType = VisitHistory.FileType.Image;
-        TargetPathType = VisitHistory.FileType.Image;
-        TargetFileType = VisitHistory.FileType.Image;
-        AddFileType = VisitHistory.FileType.Image;
-        AddPathType = VisitHistory.FileType.Image;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-
-        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     @Override

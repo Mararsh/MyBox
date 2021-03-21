@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.4.1";
-    public static final String AppVersionDate = "2021-3-8";
+    public static final String AppVersion = "6.4.2";
+    public static final String AppVersionDate = "2021-3-21";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -29,6 +29,8 @@ public class CommonValues {
     public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
     public static final String NotesFxml = "/fxml/Notes.fxml";
     public static final String NotesImportFxml = "/fxml/NotesImport.fxml";
+    public static final String NotesExportFxml = "/fxml/NotesExport.fxml";
+    public static final String NotesMoveNotebookFxml = "/fxml/NotesMoveNotebook.fxml";
     public static final String PdfHtmlViewerFxml = "/fxml/PdfHtmlViewer.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
@@ -218,14 +220,14 @@ public class CommonValues {
     public static final String EpidemicReportsImportJHUTimeSeriesFxml = "/fxml/EpidemicReportsImportJHUTimeSeries.fxml";
     public static final String EpidemicReportsImportJHUDailyFxml = "/fxml/EpidemicReportsImportJHUDaily.fxml";
     public static final String EpidemicReportsStatisticFxml = "/fxml/EpidemicReportsStatistic.fxml";
-    public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
+    public static final String DataTextClipboardFxml = "/fxml/DataTextClipboard.fxml";
+    public static final String DataSheetClipboardFxml = "/fxml/DataSheetClipboard.fxml";
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
     public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
-    public static final String SheetPasteFxml = "/fxml/SheetPaste.fxml";
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
     public static final String DatasetFxml = "/fxml/Dataset.fxml";
@@ -234,6 +236,7 @@ public class CommonValues {
     public static final String LocationDataImportMovebankFxml = "/fxml/LocationDataImportMovebank.fxml";
     public static final String LocationToolsFxml = "/fxml/LocationTools.fxml";
     public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
+    public static final String TableSizeFxml = "/fxml/TableSize.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEn = new Locale("en");
@@ -296,7 +299,7 @@ public class CommonValues {
     public static final String DataIgnoreChars
             = "[\\$\\(\\)\\*\\?\\/\\^\\{\\}\\|\\[\\]\"`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
     public static final String FileNameSpecialChars
-            = "[\\*\\?\n\":<>]|&nbsp;|&lt;|&gt;|&amp;|&quot;";
+            = "[\\*\\?\\\\n\\s+\":<>/]|&nbsp;|&lt;|&gt;|&amp;|&quot;";
 
     public static final String MyBoxStyle = "/styles/MyBox.css";
     public static final String DefaultStyle = "/styles/modena/modena.css";

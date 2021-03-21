@@ -9,19 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -44,17 +42,11 @@ public class DataFileCSVMergeController extends FilesMergeController {
 
     public DataFileCSVMergeController() {
         baseTitle = AppVariables.message("CsvMerge");
+    }
 
-        SourceFileType = VisitHistory.FileType.CSV;
-        SourcePathType = VisitHistory.FileType.CSV;
-        AddFileType = VisitHistory.FileType.CSV;
-        AddPathType = VisitHistory.FileType.CSV;
-        TargetPathType = VisitHistory.FileType.CSV;
-        TargetFileType = VisitHistory.FileType.CSV;
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.CSV);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.CSV);
-        sourceExtensionFilter = CommonFxValues.CsvExtensionFilter;
-        targetExtensionFilter = CommonFxValues.CsvExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.CSV);
     }
 
     @Override
@@ -157,7 +149,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
         try {
             csvPrinter.flush();
             csvPrinter.close();
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            try ( Connection conn = DerbyBase.getConnection()) {
                 TableDataDefinition tableDataDefinition = new TableDataDefinition();
                 tableDataDefinition.clear(conn, DataDefinition.DataType.DataFile, targetFile.getAbsolutePath());
                 conn.commit();

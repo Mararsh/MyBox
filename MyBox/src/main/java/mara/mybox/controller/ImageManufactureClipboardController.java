@@ -1,17 +1,13 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -38,13 +34,11 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.image.ImageBlend;
 import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelBlend;
 import mara.mybox.image.PixelBlend.ImagesBlendMode;
-import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -136,19 +130,21 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             });
             ratioBox.getSelectionModel().select(0);
 
+            String mode = AppVariables.getUserConfigValue("ImageClipBlendMode", message("NormalMode"));
+            blendMode = PixelBlend.getBlendModeByName(mode);
             blendBox.getItems().addAll(PixelBlend.allBlendModes());
+            blendBox.setValue(mode);
             blendBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     String mode = blendBox.getSelectionModel().getSelectedItem();
                     blendMode = PixelBlend.getBlendModeByName(mode);
-                    opacityBox.setDisable(blendMode != PixelBlend.ImagesBlendMode.NORMAL);
+                    AppVariables.setUserConfigValue("ImageClipBlendMode", mode);
                     if (imageController != null) {
                         pasteClip(rotateAngle);
                     }
                 }
             });
-            blendBox.getSelectionModel().selectFirst();
 
             opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -702,78 +698,10 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     @FXML
     protected void demo() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        imageController.popInformation(message("WaitAndHandling"));
-        demoButton.setVisible(false);
-        Task demoTask = new Task<Void>() {
-            private List<File> files;
-
-            @Override
-            protected Void call() {
-                try {
-                    files = new ArrayList<>();
-                    BufferedImage foreImage = SwingFXUtils.fromFXImage(finalClip, null);
-                    BufferedImage backImage = SwingFXUtils.fromFXImage(bgImage, null);
-                    int x = (int) imageController.scope.getRectangle().getSmallX();
-                    int y = (int) imageController.scope.getRectangle().getSmallY();
-                    for (String name : blendBox.getItems()) {
-                        ImagesBlendMode mode = PixelBlend.getBlendModeByName(name);
-                        if (mode == ImagesBlendMode.NORMAL) {
-                            BufferedImage blended = ImageBlend.blendImages(foreImage, backImage, x, y, mode, 1f);
-                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
-                                    + message("Opacity") + "-1.0f.png");
-                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                                files.add(tmpFile);
-                            }
-                            blended = ImageBlend.blendImages(foreImage, backImage, x, y, mode, 0.5f);
-                            tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
-                                    + message("Opacity") + "-0.5f.png");
-                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                                files.add(tmpFile);
-                            }
-                        } else {
-                            BufferedImage blended = ImageBlend.blendImages(foreImage, backImage, x, y, mode, 0.5f);
-                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + ".png");
-                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                                files.add(tmpFile);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                }
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                demoButton.setVisible(true);
-                refreshButton.requestFocus();
-                if (files.isEmpty()) {
-                    return;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ImagesBrowserController controller
-                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
-                            controller.loadImages(files);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
-                        }
-                    }
-                });
-            }
-
-        };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(true);
-        thread.start();
-
+        BaseImageController.blendDemo(imageController, demoButton, finalClip, bgImage,
+                (int) imageController.scope.getRectangle().getSmallX(),
+                (int) imageController.scope.getRectangle().getSmallY(),
+                opacity, !clipTopCheck.isSelected());
     }
 
     @Override

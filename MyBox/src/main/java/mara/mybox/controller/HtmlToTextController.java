@@ -11,11 +11,9 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -32,19 +30,11 @@ public class HtmlToTextController extends BaseBatchFileController {
 
     public HtmlToTextController() {
         baseTitle = AppVariables.message("HtmlToText");
+    }
 
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = CommonFxValues.TextExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.Text);
     }
 
     @Override

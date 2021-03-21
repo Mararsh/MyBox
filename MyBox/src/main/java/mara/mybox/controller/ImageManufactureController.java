@@ -1396,8 +1396,8 @@ public class ImageManufactureController extends ImageViewerController {
         if (!isPickingColor && isUsingScope()) {
             scopeController.imageClicked(event, p);
         }
-        operationsController.imageClicked(event, p);
         super.imageClicked(event, p);
+        operationsController.imageClicked(event, p);
     }
 
     @FXML

@@ -58,11 +58,11 @@ public abstract class PixelBlend {
     }
 
     protected ImagesBlendMode blendMode;
-    protected float alpha;
+    protected float opacity;
     protected boolean orderReversed = false;
 
     protected Color foreColor, backColor;
-    protected int red, green, blue;
+    protected int red, green, blue, alpha;
 
     public PixelBlend() {
     }
@@ -71,19 +71,19 @@ public abstract class PixelBlend {
         this.blendMode = blendMode;
     }
 
-    public PixelBlend(ImagesBlendMode blendMode, float alpha) {
+    public PixelBlend(ImagesBlendMode blendMode, float opacity) {
         this.blendMode = blendMode;
-        this.alpha = alpha;
+        this.opacity = opacity;
     }
 
-    public PixelBlend(ImagesBlendMode blendMode, float alpha, boolean orderReversed) {
+    public PixelBlend(ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
         this.blendMode = blendMode;
-        this.alpha = alpha;
+        this.opacity = opacity;
         this.orderReversed = orderReversed;
     }
 
     public PixelBlend(float alpha) {
-        this.alpha = alpha;
+        this.opacity = alpha;
     }
 
     public static List<String> allBlendModes() {
@@ -189,28 +189,30 @@ public abstract class PixelBlend {
             foreColor = new Color(forePixel);
             backColor = new Color(backPixel);
         }
+        alpha = (int) (opacity * 255);
         makeRGB();
         Color newColor = new Color(
                 Math.min(Math.max(red, 0), 255),
                 Math.min(Math.max(green, 0), 255),
                 Math.min(Math.max(blue, 0), 255),
-                Math.min(foreColor.getAlpha() + backColor.getAlpha(), 255));
+                Math.min(Math.max(alpha, 0), 255));
         return newColor.getRGB();
     }
 
     protected void makeRGB() {
-        red = (int) (foreColor.getRed() * alpha + backColor.getRed() * (1.0f - alpha));
-        green = (int) (foreColor.getGreen() * alpha + backColor.getGreen() * (1.0f - alpha));
-        blue = (int) (foreColor.getBlue() * alpha + backColor.getBlue() * (1.0f - alpha));
+        red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
+        green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
+        blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
+        alpha = 255;
     }
 
     /*
         static methods
      */
-    public static PixelBlend newColorBlend(ImagesBlendMode blendMode, float alpha) {
+    public static PixelBlend newColorBlend(ImagesBlendMode blendMode) {
         switch (blendMode) {
             case NORMAL:
-                return new NormalBlend(alpha);
+                return new NormalBlend();
             case DISSOLVE:
                 return new DissolveBlend();
             case MULTIPLY:
@@ -256,16 +258,15 @@ public abstract class PixelBlend {
             case COLOR:
                 return new ColorBlend();
             default:
-                return new NormalBlend(alpha);
+                return new NormalBlend();
 
         }
     }
 
     public static class NormalBlend extends PixelBlend {
 
-        public NormalBlend(float alpha) {
+        public NormalBlend() {
             this.blendMode = ImagesBlendMode.NORMAL;
-            this.alpha = alpha;
         }
 
     }
@@ -279,12 +280,10 @@ public abstract class PixelBlend {
 
         @Override
         protected void makeRGB() {
-
-            float opacity = new Random().nextInt(101) / 100.0f;
-            red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
-            green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
-            blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
-
+            float random = new Random().nextInt(101) / 100.0f;
+            red = (int) (foreColor.getRed() * random + backColor.getRed() * (1.0f - random));
+            green = (int) (foreColor.getGreen() * random + backColor.getGreen() * (1.0f - random));
+            blue = (int) (foreColor.getBlue() * random + backColor.getBlue() * (1.0f - random));
         }
     }
 
@@ -297,11 +296,9 @@ public abstract class PixelBlend {
 
         @Override
         protected void makeRGB() {
-
             red = foreColor.getRed() * backColor.getRed() / 255;
             green = foreColor.getGreen() * backColor.getGreen() / 255;
             blue = foreColor.getBlue() * backColor.getBlue() / 255;
-
         }
     }
 
@@ -465,7 +462,6 @@ public abstract class PixelBlend {
             red = foreColor.getRed() == 0 ? 255 : ((backColor.getRed() * 255) / foreColor.getRed());
             green = foreColor.getGreen() == 0 ? 255 : ((backColor.getGreen() * 255) / foreColor.getGreen());
             blue = foreColor.getBlue() == 0 ? 255 : ((backColor.getBlue() * 255) / foreColor.getBlue());
-
         }
     }
 
@@ -741,24 +737,27 @@ public abstract class PixelBlend {
         return blendMode;
     }
 
-    public void setBlendMode(ImagesBlendMode blendMode) {
+    public PixelBlend setBlendMode(ImagesBlendMode blendMode) {
         this.blendMode = blendMode;
+        return this;
     }
 
-    public float getAlpha() {
-        return alpha;
+    public float getOpacity() {
+        return opacity;
     }
 
-    public void setAlpha(float alpha) {
-        this.alpha = alpha;
+    public PixelBlend setOpacity(float opacity) {
+        this.opacity = opacity;
+        return this;
     }
 
     public boolean isOrderReversed() {
         return orderReversed;
     }
 
-    public void setOrderReversed(boolean orderReversed) {
+    public PixelBlend setOrderReversed(boolean orderReversed) {
         this.orderReversed = orderReversed;
+        return this;
     }
 
     public Color getForeColor() {

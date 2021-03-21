@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,12 +13,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
@@ -29,7 +25,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -55,18 +50,11 @@ public class DataFileCSVController extends BaseDataFileController {
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
         TipsLabelKey = "DataFileCSVTips";
+    }
 
-        SourceFileType = VisitHistory.FileType.CSV;
-        SourcePathType = VisitHistory.FileType.CSV;
-        TargetPathType = VisitHistory.FileType.CSV;
-        TargetFileType = VisitHistory.FileType.CSV;
-        AddFileType = VisitHistory.FileType.CSV;
-        AddPathType = VisitHistory.FileType.CSV;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.CSV);
-
-        sourceExtensionFilter = CommonFxValues.CsvExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.CSV);
     }
 
     @Override
@@ -84,7 +72,7 @@ public class DataFileCSVController extends BaseDataFileController {
 
     @Override
     protected boolean readDataDefinition(boolean pickOptions) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             dataName = sourceFile.getAbsolutePath();
             dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
             if (pickOptions || dataDefinition == null) {
@@ -268,10 +256,10 @@ public class DataFileCSVController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    error = save(sourceFile, sourceCharset, sourceCsvFormat, sourceWithNames);
-                    if (error == null && backupController.backupCheck.isSelected()) {
+                    if (backupController.backupCheck.isSelected()) {
                         backupController.addBackup(sourceFile);
                     }
+                    error = save(sourceFile, sourceCharset, sourceCsvFormat, sourceWithNames);
                     return error == null;
                 }
 
@@ -394,7 +382,7 @@ public class DataFileCSVController extends BaseDataFileController {
             }
         }
         if (FileTools.rename(tmpFile, file)) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            try ( Connection conn = DerbyBase.getConnection();) {
                 String dname = file.getAbsolutePath();
                 tableDataDefinition.clear(conn, dataType, dname);
                 DataDefinition def = DataDefinition.create().setDataName(dname).setDataType(dataType)
@@ -419,7 +407,7 @@ public class DataFileCSVController extends BaseDataFileController {
         if (sourceFile == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String dname = sourceFile.getAbsolutePath();
             tableDataDefinition.clear(conn, dataType, dname);
             DataDefinition def = DataDefinition.create().setDataName(dname).setDataType(dataType)
@@ -664,7 +652,7 @@ public class DataFileCSVController extends BaseDataFileController {
         StringBuilder s = null;
         copiedLines = 0;
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            String delimiterString = TextTools.delimiterText(delimiter);
+            String delimiterString = TextTools.delimiterText(textController.delimiter);
             int index = 0;
             for (CSVRecord record : parser) {
                 if (index < currentPageStart || index >= currentPageEnd) {

@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.data.FileBackup;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
@@ -62,7 +62,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (file == null || file.trim().isBlank()) {
             return dataList;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return read(conn, file);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -121,7 +121,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (filename == null) {
             return;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             clearBackups(conn, filename);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -155,7 +155,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (record == null) {
             return;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             deleteBackup(conn, record);
         } catch (Exception e) {
             MyBoxLog.error(e);

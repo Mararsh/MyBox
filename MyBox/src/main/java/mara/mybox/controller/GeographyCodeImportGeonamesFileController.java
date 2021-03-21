@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.table.BaseTable;
@@ -53,7 +53,7 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
             GeographyCode code, countryCode = null, provinceCode = null, cityCode = null, countyCode = null;
             String lastCountry = null, lastProvince = null, lastCity = null, lastCounty = null;
             String sql;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+            try ( Connection conn = DerbyBase.getConnection();
                      PreparedStatement insert = conn.prepareStatement(TableGeographyCode.Insert);
                      PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
                 conn.setAutoCommit(false);

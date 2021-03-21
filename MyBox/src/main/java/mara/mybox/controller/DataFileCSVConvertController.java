@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -29,17 +27,11 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     public DataFileCSVConvertController() {
         baseTitle = AppVariables.message("CsvConvert");
+    }
 
-        SourceFileType = VisitHistory.FileType.CSV;
-        SourcePathType = VisitHistory.FileType.CSV;
-        AddFileType = VisitHistory.FileType.CSV;
-        AddPathType = VisitHistory.FileType.CSV;
-        TargetPathType = VisitHistory.FileType.All;
-        TargetFileType = VisitHistory.FileType.All;
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.CSV);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.All);
-        sourceExtensionFilter = CommonFxValues.CsvExtensionFilter;
-        targetExtensionFilter = CommonFxValues.AllExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.CSV, VisitHistory.FileType.All);
     }
 
     @Override

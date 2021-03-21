@@ -66,7 +66,7 @@ public class TableColorData extends DerbyBase {
 
     public static int size() {
         int v = 0;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             try ( ResultSet results = statement.executeQuery(" SELECT count(rgba) FROM Color_Data")) {
@@ -99,7 +99,7 @@ public class TableColorData extends DerbyBase {
         if (sql == null) {
             return palette;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             try ( Statement statement = conn.createStatement();
                      ResultSet results = statement.executeQuery(sql)) {
@@ -120,7 +120,7 @@ public class TableColorData extends DerbyBase {
         if (rgba == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, rgba);
         } catch (Exception e) {
@@ -193,7 +193,7 @@ public class TableColorData extends DerbyBase {
     }
 
     public static ColorData write(String rgba, boolean replace) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return write(conn, rgba, null, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -245,7 +245,7 @@ public class TableColorData extends DerbyBase {
         if (data == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return write(conn, data, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -282,7 +282,7 @@ public class TableColorData extends DerbyBase {
         if (colors == null || colors.isEmpty()) {
             return -1;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             int count = 0;
             conn.setAutoCommit(false);
             for (Color color : colors) {
@@ -303,7 +303,7 @@ public class TableColorData extends DerbyBase {
         if (dataList == null) {
             return -1;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             int count = 0;
             conn.setAutoCommit(false);
             for (ColorData data : dataList) {
@@ -397,7 +397,7 @@ public class TableColorData extends DerbyBase {
         if (name == null || rgba == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             ColorData exist = read(conn, rgba);
             if (exist != null) {
@@ -421,7 +421,7 @@ public class TableColorData extends DerbyBase {
         if (rgba == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             return delete(conn, rgba);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -450,7 +450,7 @@ public class TableColorData extends DerbyBase {
             return 0;
         }
         int count = 0;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement delete = conn.prepareStatement(Delete)) {
             conn.setAutoCommit(false);
             for (ColorData data : dataList) {
@@ -473,7 +473,7 @@ public class TableColorData extends DerbyBase {
         if (rbgaList == null || rbgaList.isEmpty()) {
             return count;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement delete = conn.prepareStatement(Delete)) {
             conn.setAutoCommit(false);
             for (String rgba : rbgaList) {
@@ -495,7 +495,7 @@ public class TableColorData extends DerbyBase {
     public static List<ColorData> readPalette() {
         List<ColorData> palette = new ArrayList<>();
         String sql = " SELECT * FROM Color_Data WHERE palette_index > -1 ORDER BY palette_index ASC";
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement();
                  ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
@@ -608,7 +608,7 @@ public class TableColorData extends DerbyBase {
         if (rgba == null || rgba.isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return endPalette(conn, rgba);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -635,7 +635,7 @@ public class TableColorData extends DerbyBase {
         if (rgba == null || rgba.isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return frontPalette(conn, rgba);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -712,7 +712,7 @@ public class TableColorData extends DerbyBase {
         if (data == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return endPalette(conn, data, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -732,7 +732,7 @@ public class TableColorData extends DerbyBase {
         if (data == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return frontPalette(conn, data, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -744,7 +744,7 @@ public class TableColorData extends DerbyBase {
         if (rgbaList == null || rgbaList.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             double maxp = maxPaletteIndex(conn);
             for (String rgba : rgbaList) {
@@ -763,7 +763,7 @@ public class TableColorData extends DerbyBase {
         if (colors == null || colors.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             addColorsInPalette(conn, colors);
             return true;
         } catch (Exception e) {
@@ -795,7 +795,7 @@ public class TableColorData extends DerbyBase {
         if (dataList == null || dataList.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return addDataInPalette(conn, dataList, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -823,7 +823,7 @@ public class TableColorData extends DerbyBase {
     }
 
     public static boolean removeFromPalette(String rgba) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(RemoveFromPalette)) {
             statement.setString(1, rgba.toUpperCase());
             return statement.executeUpdate() > 0;
@@ -844,7 +844,7 @@ public class TableColorData extends DerbyBase {
         if (dataList == null || dataList.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(RemoveFromPalette)) {
             conn.setAutoCommit(false);
             for (ColorData data : dataList) {
@@ -861,7 +861,7 @@ public class TableColorData extends DerbyBase {
     }
 
     public static boolean clearPalette() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             String sql = "UPDATE Color_Data SET palette_index=-1";
             conn.createStatement().executeUpdate(sql);
             return true;
@@ -872,7 +872,7 @@ public class TableColorData extends DerbyBase {
     }
 
     public static boolean setPalette(List<String> rgbaList) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             String sql = "UPDATE Color_Data SET palette_index=-1";
             conn.createStatement().executeUpdate(sql);
             conn.commit();
@@ -905,7 +905,7 @@ public class TableColorData extends DerbyBase {
     }
 
     public static boolean setPaletteColors(List<ColorData> colors, boolean replace) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             String sql = "UPDATE Color_Data SET palette_index=-1";
             conn.createStatement().executeUpdate(sql);
             conn.commit();
@@ -926,7 +926,7 @@ public class TableColorData extends DerbyBase {
     }
 
     public static boolean trimPalette() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             conn.setAutoCommit(false);
             trimPalette(conn);
             conn.commit();

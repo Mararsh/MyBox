@@ -22,14 +22,12 @@ import javafx.scene.control.Tooltip;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -53,18 +51,11 @@ public class TextFilesMergeController extends FilesMergeController {
 
     public TextFilesMergeController() {
         baseTitle = AppVariables.message("TextFilesMerge");
+    }
 
-        SourceFileType = VisitHistory.FileType.Text;
-        SourcePathType = VisitHistory.FileType.Text;
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        AddFileType = VisitHistory.FileType.Text;
-        AddPathType = VisitHistory.FileType.Text;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
-
-        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

@@ -176,6 +176,15 @@ License:    Apache License Version 2.0
                                                         <Label text="%JvmXmx" />
                                                         <TextField fx:id="jvmInput" prefWidth="100.0" />
                                                         <Label text="MB" />
+                                                        <Button fx:id="defaultJVMButton" mnemonicParsing="false" onAction="#defaultJVM">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconDefault.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                         <Button fx:id="settingsJVMButton" mnemonicParsing="false" onAction="#setJVM">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -192,15 +201,6 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label text="%JvmXmx" visible="false" />
                                                         <Label fx:id="currentJvmLabel" text="Label" />
-                                                        <Button fx:id="recoverJVMButton" mnemonicParsing="false" onAction="#recoverJVM">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconRecover.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
                                                     </children>
                                                 </HBox>
                                             </children>

@@ -192,10 +192,10 @@ public class MyBoxLog extends BaseData {
 
     private static MyBoxLog log(LogType type, Object log, String comments) {
         try {
-            if (type == null || log == null) {
+            if (type == null) {
                 return null;
             }
-            String logString = log.toString();
+            String logString = log == null ? "null" : log.toString();
             if (logString.contains("java.sql.SQLException: No suitable driver found")
                     || logString.contains("java.sql.SQLNonTransientConnectionException")) {
                 if (AppVariables.ignoreDbUnavailable) {
@@ -269,13 +269,16 @@ public class MyBoxLog extends BaseData {
     }
 
     public static String print(MyBoxLog log, String separator, boolean printCallers) {
+        if (log == null) {
+            return "";
+        }
         String s = DateTools.datetimeToString(log.getTime())
                 + (log.getLogType() != null && log.getLogType() != LogType.Console ? separator + log.getLogType() : "")
                 + (log.getFileName() != null ? separator + log.getFileName() : "")
                 + (log.getClassName() != null ? separator + log.getClassName() : "")
                 + (log.getMethodName() != null ? separator + log.getMethodName() : "")
                 + (log.getLine() >= 0 ? separator + log.getLine() : "")
-                + (log.getLog() != null ? separator + log.getLog() : "")
+                + (log.getLog() != null ? separator + log.getLog() : "null")
                 + (log.getComments() != null ? separator + log.getComments() : "");
         if (printCallers && log.getCallers() != null && !log.getCallers().isBlank()) {
             String[] array = log.getCallers().split("\n");

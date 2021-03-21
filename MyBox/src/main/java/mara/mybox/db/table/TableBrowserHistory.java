@@ -47,7 +47,7 @@ public class TableBrowserHistory extends DerbyBase {
 
     public static List<String> recentBrowse() {
         List<String> recent = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             String sql = "select address from Browser_History  group by address  order by max(visit_time) desc";
             try ( PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -70,7 +70,7 @@ public class TableBrowserHistory extends DerbyBase {
 
     public static List<BrowserHistory> read(int max) {
         List<BrowserHistory> his = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             String sql = "SELECT * FROM Browser_History ORDER BY visit_time DESC";
             try ( PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -96,7 +96,7 @@ public class TableBrowserHistory extends DerbyBase {
         if (his == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             boolean exist = false;
             try ( PreparedStatement query = conn.prepareStatement("select * from Browser_History WHERE address=? AND visit_time=?")) {
                 query.setString(1, his.getAddress());
@@ -152,7 +152,7 @@ public class TableBrowserHistory extends DerbyBase {
         if (address == null || address.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String sql = "DELETE FROM Browser_History WHERE address='" + address.trim() + "'　"
                     + " AND　visit_time='" + DateTools.datetimeToString(time) + "' ";
             conn.createStatement().executeUpdate(sql);
@@ -175,7 +175,7 @@ public class TableBrowserHistory extends DerbyBase {
             return 0;
         }
         int count = 0;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (BrowserHistory h : his) {
                 String sql = "DELETE FROM Browser_History WHERE address='" + DerbyBase.stringValue(h.getAddress()) + "' "

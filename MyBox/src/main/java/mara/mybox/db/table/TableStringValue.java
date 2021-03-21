@@ -52,7 +52,7 @@ public class TableStringValue extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, name);
         } catch (Exception e) {
@@ -86,7 +86,7 @@ public class TableStringValue extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return write(conn, name, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -135,7 +135,7 @@ public class TableStringValue extends DerbyBase {
         if (nameValues == null || nameValues.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (String name : nameValues.keySet()) {
                 String value = nameValues.get(name);
@@ -158,7 +158,7 @@ public class TableStringValue extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement statement = conn.prepareStatement(Delete)) {
             statement.setString(1, name);
             return statement.executeUpdate() > 0;
@@ -170,7 +170,7 @@ public class TableStringValue extends DerbyBase {
     }
 
     public static Map<String, String> readWithPrefix(String prefix) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readWithPrefix(conn, prefix);
         } catch (Exception e) {
@@ -203,7 +203,7 @@ public class TableStringValue extends DerbyBase {
         if (prefix == null || prefix.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Value WHERE  key_name like '"
                     + stringValue(prefix) + "%' ";

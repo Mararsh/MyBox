@@ -10,11 +10,9 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.util.Arrays;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -29,19 +27,11 @@ public class MarkdownToPdfController extends HtmlToPdfController {
 
     public MarkdownToPdfController() {
         baseTitle = AppVariables.message("MarkdownToPdf");
+    }
 
-        SourceFileType = VisitHistory.FileType.Markdown;
-        SourcePathType = VisitHistory.FileType.Markdown;
-        TargetPathType = VisitHistory.FileType.PDF;
-        TargetFileType = VisitHistory.FileType.PDF;
-        AddFileType = VisitHistory.FileType.Markdown;
-        AddPathType = VisitHistory.FileType.Markdown;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
-
-        sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
-        targetExtensionFilter = CommonFxValues.PdfExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Markdown, VisitHistory.FileType.PDF);
     }
 
     @Override

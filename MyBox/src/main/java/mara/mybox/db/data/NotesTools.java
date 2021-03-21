@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.data.Notebook.NotebooksSeparater;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
@@ -29,7 +27,7 @@ public class NotesTools {
             return false;
         }
         File tmpFile = FileTools.getTempFile();
-        try ( Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login);
+        try ( Connection conn = DerbyBase.getConnection();
                  FileWriter writer = new FileWriter(tmpFile, Charset.forName("utf-8"))) {
             exportNotes(conn, writer, tableNotebook, tableNote, book, baseName, includeTime);
         } catch (Exception e) {

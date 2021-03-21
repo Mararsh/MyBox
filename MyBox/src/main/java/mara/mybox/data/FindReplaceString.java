@@ -125,28 +125,37 @@ public class FindReplaceString {
             if (replaceString != null && !replaceString.isBlank()) {
                 replaceString = Matcher.quoteReplacement(replaceString);
             }
-//            MyBoxLog.debug("\n---inputString---\n" + inputString + "\n-----");
+            OUTER:
             while (matcher.find()) {
-//                MyBoxLog.debug(matcher.regionStart() + " " + matcher.regionEnd());
                 count++;
                 lastMatch = matcher.group();
                 lastStart = matcher.start();
                 lastEnd = matcher.end();
-//                MyBoxLog.debug(count + " " + matcher.start() + " " + matcher.end() + " " + lastMatch);
-//                MyBoxLog.debug(orignialString.substring(0, matcher.start()) + "\n----------------");
-                if (operation == Operation.FindNext) {
-                    break;
-                } else if (operation == Operation.ReplaceFirst) {
-                    matcher.appendReplacement(s, replaceString);
-                    break;
-                } else if (operation == Operation.ReplaceAll) {
-                    matcher.appendReplacement(s, replaceString);
-//                    MyBoxLog.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
-                } else {
+                if (null == operation) {
                     if (matcher.start() >= end) {
-                        break;
+                        break OUTER;
                     }
                     matcher.region(lastStart + unit, end);
+                } else {
+//                MyBoxLog.debug(count + " " + matcher.start() + " " + matcher.end() + " " + lastMatch);
+//                MyBoxLog.debug(orignialString.substring(0, matcher.start()) + "\n----------------");
+                    switch (operation) {
+                        case FindNext:
+                            break OUTER;
+                        case ReplaceFirst:
+                            matcher.appendReplacement(s, replaceString);
+                            break OUTER;
+                        case ReplaceAll:
+                            matcher.appendReplacement(s, replaceString);
+//                    MyBoxLog.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
+                            break;
+                        default:
+                            if (matcher.start() >= end) {
+                                break;
+                            }
+                            matcher.region(lastStart + unit, end);
+                            break;
+                    }
                 }
             }
 //            MyBoxLog.debug("count:" + count);

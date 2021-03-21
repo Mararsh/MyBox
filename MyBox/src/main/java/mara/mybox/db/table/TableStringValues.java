@@ -42,7 +42,7 @@ public class TableStringValues extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, name);
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class TableStringValues extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return values(conn, name);
         } catch (Exception e) {
@@ -113,7 +113,7 @@ public class TableStringValues extends DerbyBase {
             return null;
         }
         String value = null;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             statement.setMaxRows(1);
@@ -136,7 +136,7 @@ public class TableStringValues extends DerbyBase {
         if (name == null || name.trim().isEmpty() || max < 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='"
                     + stringValue(name) + "' ORDER BY create_time DESC";
@@ -173,7 +173,7 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return add(conn, name, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -212,7 +212,7 @@ public class TableStringValues extends DerbyBase {
         if (values == null || values.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (int i = 0; i < values.size(); i++) {
                 add(conn, name, values.get(i));
@@ -230,7 +230,7 @@ public class TableStringValues extends DerbyBase {
         if (nameValues == null || nameValues.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (String name : nameValues.keySet()) {
                 String value = nameValues.get(name);
@@ -250,7 +250,7 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name)
                     + "' AND string_value='" + stringValue(value) + "'";
@@ -264,7 +264,7 @@ public class TableStringValues extends DerbyBase {
     }
 
     public static boolean clear(String name) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name) + "'";
             statement.executeUpdate(sql);

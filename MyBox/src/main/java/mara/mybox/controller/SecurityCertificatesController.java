@@ -19,18 +19,18 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -41,7 +41,6 @@ import mara.mybox.value.CommonValues;
 public class SecurityCertificatesController extends BaseController {
 
     protected ObservableList<CertificateEntry> tableData;
-    protected File cacertsFile;
 
     @FXML
     protected TextField passwordInput;
@@ -58,16 +57,11 @@ public class SecurityCertificatesController extends BaseController {
 
     public SecurityCertificatesController() {
         baseTitle = AppVariables.message("SecurityCertificates");
+    }
 
-        SourceFileType = VisitHistory.FileType.Certificate;
-        SourcePathType = VisitHistory.FileType.Certificate;
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Certificate);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
-        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Certificate, VisitHistory.FileType.Html);
     }
 
     @Override
@@ -90,7 +84,6 @@ public class SecurityCertificatesController extends BaseController {
             checkSelected();
             tableView.setItems(tableData);
 
-            sourceFileInput.setText(SystemTools.keystore());
             passwordInput.setText(SystemTools.keystorePassword());
             htmlButton.setDisable(true);
             addButton.setDisable(true);
@@ -117,10 +110,18 @@ public class SecurityCertificatesController extends BaseController {
         }
     }
 
-    @FXML
     @Override
-    public void startAction() {
+    public void sourceFileChanged(final File file) {
+        sourceFile = file;
         loadAll(null);
+    }
+
+    @Override
+    public RecentVisitMenu makeSourceFileRecentVisitMenu(MouseEvent event) {
+        RecentVisitMenu menu = super.makeSourceFileRecentVisitMenu(event);
+        List<String> examples = new ArrayList<>();
+        examples.add(SystemTools.keystore());
+        return menu.setExamples(examples);
     }
 
     @FXML
@@ -131,13 +132,10 @@ public class SecurityCertificatesController extends BaseController {
         addButton.setDisable(true);
         recoverButton.setDisable(true);
         backupController.loadBackups(null);
-        cacertsFile = null;
-        File file = new File(sourceFileInput.getText());
-        if (!file.exists()) {
+        if (sourceFile == null) {
             return;
         }
-        cacertsFile = file;
-        recoverButton.setVisible(cacertsFile.getAbsolutePath().equals(SystemTools.myboxCacerts().getAbsolutePath()));
+        recoverButton.setVisible(sourceFile.getAbsolutePath().equals(SystemTools.myboxCacerts().getAbsolutePath()));
         try {
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
@@ -157,7 +155,7 @@ public class SecurityCertificatesController extends BaseController {
                             // https://docs.oracle.com/javase/10/docs/api/java/security/KeyStore.html
                             try {
                                 char[] passphrase = passwordInput.getText().toCharArray();
-                                KeyStore keyStore = KeyStore.getInstance(cacertsFile, passphrase);
+                                KeyStore keyStore = KeyStore.getInstance(sourceFile, passphrase);
                                 Enumeration<String> storeAliases = keyStore.aliases();
                                 while (storeAliases.hasMoreElements()) {
                                     String alias = storeAliases.nextElement();
@@ -187,7 +185,7 @@ public class SecurityCertificatesController extends BaseController {
                                 }
                                 if (selectCert == null) {
                                     StringBuilder s = new StringBuilder();
-                                    s.append(cacertsFile).append("\n\n");
+                                    s.append(sourceFile).append("\n\n");
 
                                     s.append("## ").append(message("Type")).append(": ").append(keyStore.getType()).append("   ").
                                             append(message("Size")).append(": ").append(keyStore.size()).
@@ -231,7 +229,7 @@ public class SecurityCertificatesController extends BaseController {
                         addButton.setDisable(false);
                         recoverButton.setDisable(false);
                         bottomLabel.setText(message("Total") + ": " + tableData.size());
-                        backupController.loadBackups(cacertsFile);
+                        backupController.loadBackups(sourceFile);
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -249,7 +247,7 @@ public class SecurityCertificatesController extends BaseController {
 
     @FXML
     public void htmlAction() {
-        if (cacertsFile == null) {
+        if (sourceFile == null) {
             return;
         }
         try {
@@ -266,9 +264,9 @@ public class SecurityCertificatesController extends BaseController {
                             result = error = null;
                             try {
                                 char[] passphrase = passwordInput.getText().toCharArray();
-                                KeyStore keyStore = KeyStore.getInstance(cacertsFile, passphrase);
+                                KeyStore keyStore = KeyStore.getInstance(sourceFile, passphrase);
                                 StringBuilder s = new StringBuilder();
-                                s.append("<h1  class=\"center\">").append(cacertsFile.getAbsolutePath()).append("</h1>\n");
+                                s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
                                 s.append("<h2  class=\"center\">").
                                         append(message("Type")).append(": ").append(keyStore.getType()).append(" ").
                                         append(message("Size")).append(": ").append(keyStore.size()).
@@ -328,7 +326,7 @@ public class SecurityCertificatesController extends BaseController {
     @FXML
     @Override
     public void addAction(ActionEvent event) {
-        if (cacertsFile == null) {
+        if (sourceFile == null) {
             return;
         }
         try {
@@ -343,7 +341,7 @@ public class SecurityCertificatesController extends BaseController {
     @FXML
     @Override
     public void deleteAction() {
-        if (cacertsFile == null) {
+        if (sourceFile == null) {
             return;
         }
         List<CertificateEntry> selected = tableView.getSelectionModel().getSelectedItems();
@@ -360,13 +358,15 @@ public class SecurityCertificatesController extends BaseController {
                 protected boolean handle() {
                     error = null;
                     try {
-                        backupController.addBackup(cacertsFile);
+                        if (backupController.backupCheck.isSelected()) {
+                            backupController.addBackup(sourceFile);
+                        }
                         List<String> aliases = new ArrayList();
                         for (CertificateEntry cert : selected) {
                             aliases.add(cert.getAlias());
                         }
                         error = NetworkTools.uninstallCertificate(
-                                cacertsFile.getAbsolutePath(), passwordInput.getText(),
+                                sourceFile.getAbsolutePath(), passwordInput.getText(),
                                 aliases);
                     } catch (Exception e) {
                         error = e.toString();
@@ -395,8 +395,8 @@ public class SecurityCertificatesController extends BaseController {
 
     @FXML
     public void recover() {
-        if (cacertsFile == null
-                || !cacertsFile.getAbsolutePath().equals(SystemTools.myboxCacerts().getAbsolutePath())) {
+        if (sourceFile == null
+                || !sourceFile.getAbsolutePath().equals(SystemTools.myboxCacerts().getAbsolutePath())) {
             return;
         }
         synchronized (this) {
@@ -428,7 +428,7 @@ public class SecurityCertificatesController extends BaseController {
 
     @FXML
     public void refreshAction() {
-        startAction();
+        loadAll(null);
     }
 
 

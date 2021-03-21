@@ -44,11 +44,12 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="synchronizeMainButton" layoutX="193.0" layoutY="10.0" mnemonicParsing="false" onAction="#synchronizeMain">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconSave.png" />
+                                                                <Image url="@../buttons/iconSynchronize.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -62,12 +63,11 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="synchronizeMainButton" layoutX="193.0" layoutY="10.0" mnemonicParsing="false" onAction="#synchronizeMain">
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconSynchronize.png" />
+                                                                <Image url="@../buttons/iconSave.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -81,7 +81,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="573.0" prefViewportWidth="809.0" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <fx:include fx:id="webview" source="ControlWebBrowserBox.fxml" /> 
+                                                <fx:include fx:id="webview" source="ControlWebBrowserBox.fxml" />
                                             </content>
                                         </ScrollPane>
                                     </children>
@@ -99,6 +99,15 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/iconDoubleLeft.png" />
                                                     </image>
                                                 </ImageView>
+                                                <Button fx:id="refreshPairButton" mnemonicParsing="false" onAction="#refreshPair">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconRefresh.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="synchronizePairButton" mnemonicParsing="false" onAction="#synchronizePair">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -120,13 +129,14 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <tabs>
                                                 <Tab fx:id="codesTab" text="%HtmlCodes">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
                                                                 <fx:include fx:id="codes" source="ControlHtmlCodes.fxml" />
+                                                                <Label fx:id="codesLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -138,7 +148,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                <HTMLEditor fx:id="htmlEditor" htmlText="" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                                                 <Label fx:id="editorLabel" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="NEVER" />
                                                             </children>
                                                         </VBox>

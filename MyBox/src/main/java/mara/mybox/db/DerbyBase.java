@@ -33,6 +33,7 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
@@ -79,7 +80,7 @@ public class DerbyBase {
     protected List<String> Keys;
 
     public boolean init() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement Statement = conn.createStatement()) {
             Statement.executeUpdate(Create_Table_Statement);
             return true;
@@ -118,7 +119,7 @@ public class DerbyBase {
 
     public boolean drop() {
         String sql = "DROP TABLE " + Table_Name;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement Statement = conn.createStatement()) {
             Statement.executeUpdate(sql);
             return true;
@@ -143,7 +144,7 @@ public class DerbyBase {
 
     public int clear() {
         String sql = "DELETE FROM " + Table_Name;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement Statement = conn.createStatement()) {
             return Statement.executeUpdate(sql);
         } catch (Exception e) {
@@ -156,6 +157,16 @@ public class DerbyBase {
     /*
         Static methods
      */
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(protocol + dbHome() + login);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+
+    }
+
     public static String dbHome() {
         return AppVariables.MyBoxDerbyPath.getAbsolutePath();
     }
@@ -208,6 +219,13 @@ public class DerbyBase {
             status = DerbyStatus.EmbeddedFailed;
             MyBoxLog.error(e);
             return e.toString();
+        }
+    }
+
+    public static void shutdownEmbeddedDerby() {
+        try {
+            DriverManager.getConnection("jdbc:derby:;shutdown=true");
+        } catch (Exception e) {
         }
     }
 
@@ -395,7 +413,7 @@ public class DerbyBase {
     }
 
     public static String tableDefinition(String tablename) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             String s = "";
             for (String column : columns(conn, tablename)) {
                 s += column + "\n";
@@ -540,9 +558,9 @@ public class DerbyBase {
             if (!tables.contains("Tag".toUpperCase())) {
                 new TableTag().createTable(conn);
             }
-//            if (!tables.contains("Note_Tag".toUpperCase())) {
-//                new TableNoteTag().createTable(conn);
-//            }
+            if (!tables.contains("Note_Tag".toUpperCase())) {
+                new TableNoteTag().createTable(conn);
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -638,13 +656,20 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
-//            if (!indexes.contains("Note_Tag_unique_index".toUpperCase())) {
-//                try ( Statement statement = conn.createStatement()) {
-//                    statement.executeUpdate(TableNoteTag.Create_Unique_Index);
-//                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-//                }
-//            }
+            if (!indexes.contains("Tag_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTag.Create_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Note_Tag_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableNoteTag.Create_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -661,7 +686,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!views.contains("Location_Data_View".toUpperCase())) {
@@ -669,7 +693,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableLocationData.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             if (!views.contains("Data_Column_View".toUpperCase())) {
@@ -677,7 +700,6 @@ public class DerbyBase {
                     statement.executeUpdate(TableDataColumn.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
                 }
             }
             return true;
@@ -700,7 +722,7 @@ public class DerbyBase {
     }
 
     public static int size(String sql) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return size(conn, sql);
         } catch (Exception e) {
@@ -723,7 +745,7 @@ public class DerbyBase {
     }
 
     public static ResultSet query(String sql) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return query(conn, sql);
         } catch (Exception e) {
@@ -742,7 +764,7 @@ public class DerbyBase {
     }
 
     public static int update(String sql) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return update(conn, sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -773,7 +795,7 @@ public class DerbyBase {
         }
         File f = new File(file);
         FileTools.delete(f);
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE (?,?,?,?,?,?)");
             ps.setString(1, null);
             ps.setString(2, table.toUpperCase());
@@ -797,7 +819,7 @@ public class DerbyBase {
         if (!f.exists()) {
             return;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (?,?,?,?,?,?,?)");
             ps.setString(1, null);
             ps.setString(2, table.toUpperCase());

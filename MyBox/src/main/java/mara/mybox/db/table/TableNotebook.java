@@ -1,12 +1,10 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Notebook;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
@@ -49,13 +47,25 @@ public class TableNotebook extends BaseTable<Notebook> {
             = "SELECT * FROM Notebook WHERE name=?";
 
     public static final String QueryChildren
-            = "SELECT * FROM Notebook WHERE owner=? AND nbid > 1";
+            = "SELECT * FROM Notebook WHERE owner=? AND nbid > " + Notebook.RootID;
 
     public static final String QueryChild
             = "SELECT * FROM Notebook WHERE owner=? AND name=?";
 
     public static final String DeleteBook
             = "DELETE FROM Notebook WHERE nbid=?";
+
+    public Notebook find(long id) {
+        if (id < Notebook.RootID) {
+            return null;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return find(conn, id);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 
     public Notebook find(Connection conn, long id) {
         if (conn == null) {
@@ -71,10 +81,10 @@ public class TableNotebook extends BaseTable<Notebook> {
     }
 
     public List<Notebook> children(long id) {
-        if (id < 1) {
+        if (id < Notebook.RootID) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return children(conn, id);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -83,7 +93,7 @@ public class TableNotebook extends BaseTable<Notebook> {
     }
 
     public List<Notebook> children(Connection conn, long id) {
-        if (conn == null || id < 1) {
+        if (conn == null || id < Notebook.RootID) {
             return null;
         }
         try ( PreparedStatement statement = conn.prepareStatement(QueryChildren)) {
@@ -95,11 +105,44 @@ public class TableNotebook extends BaseTable<Notebook> {
         }
     }
 
+    public List<Notebook> ancestor(long id) {
+        if (id <= Notebook.RootID) {
+            return null;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return ancestor(conn, id);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public List<Notebook> ancestor(Connection conn, long id) {
+        if (conn == null || id <= Notebook.RootID) {
+            return null;
+        }
+        List<Notebook> ancestor = null;
+        Notebook book = find(conn, id);
+        if (book == null) {
+            return ancestor;
+        }
+        long parentid = book.getOwner();
+        Notebook parent = find(conn, parentid);
+        if (parent != null) {
+            ancestor = ancestor(conn, parentid);
+            if (ancestor == null) {
+                ancestor = new ArrayList<>();
+            }
+            ancestor.add(parent);
+        }
+        return ancestor;
+    }
+
     public Notebook find(long owner, String name) {
         if (name == null || name.isBlank()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return find(conn, owner, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -125,7 +168,7 @@ public class TableNotebook extends BaseTable<Notebook> {
         if (name == null || name.isBlank()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return findAndCreate(conn, owner, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -157,7 +200,7 @@ public class TableNotebook extends BaseTable<Notebook> {
         }
         try {
             String[] nodes = ownerChain.split(Notebook.NotebooksSeparater);
-            long ownerid = 1;
+            long ownerid = Notebook.RootID;
             Notebook owner = null;
             for (String node : nodes) {
                 owner = findAndCreate(conn, ownerid, node);
@@ -174,7 +217,7 @@ public class TableNotebook extends BaseTable<Notebook> {
     }
 
     public Notebook checkRoot() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return checkRoot(conn);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -189,10 +232,11 @@ public class TableNotebook extends BaseTable<Notebook> {
         Notebook root = find(conn, 1);
         if (root == null) {
             try {
-                String sql = "INSERT INTO Notebook(nbid, name,owner) VALUES(1, '" + message("Notebook") + "', 1)";
+                String sql = "INSERT INTO Notebook(nbid, name,owner) VALUES("
+                        + Notebook.RootID + ", '" + message("Notebook") + "', " + Notebook.RootID + ")";
                 update(conn, sql);
                 conn.commit();
-                sql = "ALTER TABLE Notebook ALTER COLUMN nbid RESTART WITH 2";
+                sql = "ALTER TABLE Notebook ALTER COLUMN nbid RESTART WITH " + (Notebook.RootID + 1);
                 update(conn, sql);
                 return find(conn, 1);
             } catch (Exception e) {
@@ -205,11 +249,20 @@ public class TableNotebook extends BaseTable<Notebook> {
     }
 
     public Notebook clear() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return clear(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public Notebook clear(Connection conn) {
+        try {
             conn.setAutoCommit(true);
-//            String sql = "DROP TABLE Note_Tag";
-//            update(conn, sql);
-            String sql = "DROP TABLE Note";
+            String sql = "DROP TABLE Note_Tag";
+            update(conn, sql);
+            sql = "DROP TABLE Note";
             update(conn, sql);
             sql = "DROP TABLE Notebook";
             update(conn, sql);

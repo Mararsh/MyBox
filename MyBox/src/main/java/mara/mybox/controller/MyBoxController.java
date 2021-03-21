@@ -1131,9 +1131,14 @@ public class MyBoxController extends BaseController {
                 EditExcel, ExcelConvert, ExcelMerge
         );
 
-        MenuItem DataClipboard = new MenuItem(AppVariables.message("DataClipboard"));
-        DataClipboard.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DataClipboardFxml);
+        MenuItem DataTextClipboard = new MenuItem(AppVariables.message("DataTextClipboard"));
+        DataTextClipboard.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataTextClipboardFxml);
+        });
+
+        MenuItem DataSheetClipboard = new MenuItem(AppVariables.message("DataSheetClipboard"));
+        DataSheetClipboard.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataSheetClipboardFxml);
         });
 
         MenuItem Dataset = new MenuItem(AppVariables.message("Dataset"));
@@ -1209,7 +1214,7 @@ public class MyBoxController extends BaseController {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                DataFile, DataClipboard, new SeparatorMenuItem(),
+                DataFile, DataTextClipboard, DataSheetClipboard, new SeparatorMenuItem(),
                 MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationData, LocationTools, new SeparatorMenuItem(),
                 EpidemicReport, new SeparatorMenuItem(),

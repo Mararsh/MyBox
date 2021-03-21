@@ -27,6 +27,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.PixelBlend;
+import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -37,9 +39,9 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ImageManufactureTextController extends ImageManufactureOperationController {
 
-    protected float opacity;
     protected int x, y, fontSize, shadow, angle;
-    protected float fontOpacity = 0.5f;
+    protected ImagesBlendMode blendMode;
+    protected float opacity;
     protected Font font;
     protected String fontFamily, fontName;
     protected FontPosture fontPosture;
@@ -48,9 +50,9 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     protected TextField textInput, xInput, yInput;
     @FXML
-    protected ComboBox<String> sizeBox, opacityBox, styleBox, familyBox, angleBox, shadowBox;
+    protected ComboBox<String> sizeBox, opacitySelector, blendSelector, styleBox, familyBox, angleBox, shadowBox;
     @FXML
-    protected CheckBox verticalCheck, outlineCheck;
+    protected CheckBox verticalCheck, outlineCheck, blendTopCheck;
     @FXML
     protected ColorSet colorSetController;
     @FXML
@@ -69,7 +71,6 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             fontWeight = FontWeight.NORMAL;
             fontPosture = FontPosture.REGULAR;
             fontSize = 24;
-            fontOpacity = 1.0f;
             shadow = 0;
             angle = 0;
 
@@ -143,26 +144,52 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             });
             sizeBox.getSelectionModel().select(AppVariables.getUserConfigInt(baseName + "TextFontSize", 72) + "");
 
-            opacityBox.getItems().addAll(Arrays.asList("1.0", "0.5", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacityBox.valueProperty().addListener(new ChangeListener<String>() {
+            String mode = AppVariables.getUserConfigValue(baseName + "TextBlendMode", message("NormalMode"));
+            blendMode = PixelBlend.getBlendModeByName(mode);
+            blendSelector.getItems().addAll(PixelBlend.allBlendModes());
+            blendSelector.setValue(mode);
+            blendSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
+                    String mode = blendSelector.getSelectionModel().getSelectedItem();
+                    blendMode = PixelBlend.getBlendModeByName(mode);
+                    AppVariables.setUserConfigValue(baseName + "TextBlendMode", mode);
+                    write(true);
+                }
+            });
+
+            opacity = AppVariables.getUserConfigInt(baseName + "TextOpacity", 100) / 100f;
+            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
+            opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            opacitySelector.setValue(opacity + "");
+            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         float f = Float.valueOf(newValue);
-                        if (f >= 0.0f && f <= 1.0f) {
-                            fontOpacity = f;
-                            AppVariables.setUserConfigValue(baseName + "TextFontOpacity", f + "");
-                            FxmlControl.setEditorNormal(opacityBox);
+                        if (opacity >= 0.0f && opacity <= 1.0f) {
+                            opacity = f;
+                            AppVariables.setUserConfigInt(baseName + "TextOpacity", (int) (f * 100));
+                            FxmlControl.setEditorNormal(opacitySelector);
                             write(true);
                         } else {
-                            FxmlControl.setEditorBadStyle(opacityBox);
+                            FxmlControl.setEditorBadStyle(opacitySelector);
                         }
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(opacityBox);
+                        FxmlControl.setEditorBadStyle(opacitySelector);
                     }
                 }
             });
-            opacityBox.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "TextFontOpacity", "1.0"));
+
+            blendTopCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "TextBlendTop", true));
+            blendTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_toggle, Boolean new_toggle) {
+                    AppVariables.setUserConfigValue(baseName + "TextBlendTop", blendTopCheck.isSelected());
+                    write(true);
+                }
+            });
 
             shadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
             shadowBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -295,7 +322,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                     newImage = FxmlImageManufacture.addText(imageView.getImage(), textInput.getText().trim(),
                             font, (Color) colorSetController.rect.getFill(), x, y,
-                            fontOpacity, shadow, angle,
+                            blendMode, opacity, !blendTopCheck.isSelected(), shadow, angle,
                             outlineCheck.isSelected(), verticalCheck.isSelected());
                     return newImage != null;
                 }

@@ -44,7 +44,6 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -52,7 +51,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -101,20 +99,11 @@ public class MediaPlayerController extends BaseController {
 
     public MediaPlayerController() {
         baseTitle = AppVariables.message("MediaPlayer");
+    }
 
-        SourceFileType = VisitHistory.FileType.Media;
-        SourcePathType = VisitHistory.FileType.Media;
-        TargetPathType = VisitHistory.FileType.Media;
-        TargetFileType = VisitHistory.FileType.Media;
-        AddFileType = VisitHistory.FileType.Media;
-        AddPathType = VisitHistory.FileType.Media;
-
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
-
-        sourceExtensionFilter = CommonFxValues.JdkMediaExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
-
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Media);
     }
 
     @Override

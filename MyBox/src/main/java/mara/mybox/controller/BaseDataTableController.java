@@ -22,7 +22,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.BaseTable;
@@ -52,7 +51,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
     protected TableView<P> tableView;
     @FXML
     protected Button editButton, examplesButton, refreshButton, resetButton,
-            dataImportButton, dataExportButton, chartsButton, queryButton;
+            importButton, exportButton, chartsButton, queryButton;
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
@@ -324,21 +323,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
             currentPage = 1;
             pageSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues || newValue == null) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v < 0) {
-                                pageSelector.getEditor().setStyle(badStyle);
-                            } else {
-                                currentPage = v;
-                                pageSelector.getEditor().setStyle(null);
-                                loadTableData();
-                            }
-                        } catch (Exception e) {
-                            pageSelector.getEditor().setStyle(badStyle);
-                        }
+                        checkCurrentPage();
                     });
 
             pageSize = 50;
@@ -372,6 +357,28 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected boolean checkCurrentPage() {
+        if (isSettingValues || pageSelector == null) {
+            return false;
+        }
+        String value = pageSelector.getEditor().getText();
+        try {
+            int v = Integer.parseInt(value);
+            if (v < 0) {
+                pageSelector.getEditor().setStyle(badStyle);
+                return false;
+            } else {
+                currentPage = v;
+                pageSelector.getEditor().setStyle(null);
+                loadTableData();
+                return true;
+            }
+        } catch (Exception e) {
+            pageSelector.getEditor().setStyle(badStyle);
+            return false;
         }
     }
 
@@ -719,7 +726,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     @FXML
     public void goPage() {
-        loadTableData();
+        checkCurrentPage();
     }
 
     @FXML
@@ -752,17 +759,10 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     @FXML
     protected void importAction() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVariables.getUserConfigPath(sourcePathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(CommonFxValues.AllExtensionFilter);
-        File file = fileChooser.showOpenDialog(getMyStage());
-        if (file == null || !file.exists()) {
+        File file = FxmlControl.selectFile(this);
+        if (file == null) {
             return;
         }
-        recordFileOpened(file);
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

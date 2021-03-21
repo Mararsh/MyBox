@@ -41,7 +41,7 @@ public class TableMediaList extends DerbyBase {
     }
 
     public static List<MediaList> read() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             List<String> names = new ArrayList();
@@ -76,7 +76,7 @@ public class TableMediaList extends DerbyBase {
     }
 
     public static List<String> names() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             List<String> names = new ArrayList();
@@ -100,7 +100,7 @@ public class TableMediaList extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             String sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "' ORDER BY address_index";
@@ -128,7 +128,7 @@ public class TableMediaList extends DerbyBase {
         if (medias == null || medias.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
 //            TableMedia.write(statement, medias);
             String sql = "DELETE FROM media_list WHERE list_name='" + stringValue(name) + "'";
@@ -155,7 +155,7 @@ public class TableMediaList extends DerbyBase {
     }
 
     public static boolean delete(String name) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             List<String> addresses = new ArrayList();
             String sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "'";

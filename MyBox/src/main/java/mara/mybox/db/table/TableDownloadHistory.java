@@ -1,11 +1,9 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import mara.mybox.data.DownloadHistory;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlTools;
@@ -66,7 +64,7 @@ public class TableDownloadHistory extends BaseTable<DownloadHistory> {
             return 0;
         }
         String addressPath = HtmlTools.fullPath(address);
-        try ( Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement delete = conn.prepareStatement(DeleteUrlLike)) {
             delete.setString(1, "%" + addressPath);
             return delete.executeUpdate();

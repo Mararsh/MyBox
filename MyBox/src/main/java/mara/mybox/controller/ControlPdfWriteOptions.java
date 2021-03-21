@@ -14,14 +14,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -54,17 +52,11 @@ public class ControlPdfWriteOptions extends BaseController {
     protected HBox dpiBox;
 
     public ControlPdfWriteOptions() {
-        SourceFileType = VisitHistory.FileType.TTF;
-        SourceFileType = VisitHistory.FileType.TTF;
-        SourcePathType = VisitHistory.FileType.TTF;
-        AddFileType = VisitHistory.FileType.TTF;
-        AddPathType = VisitHistory.FileType.TTF;
-        TargetPathType = VisitHistory.FileType.TTF;
-        TargetFileType = VisitHistory.FileType.TTF;
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.TTF);
-        targetPathKey = sourcePathKey;
-        sourceExtensionFilter = CommonFxValues.TTFExtensionFilter;
-        targetExtensionFilter = CommonFxValues.TTFExtensionFilter;
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.TTF);
     }
 
     public static ControlPdfWriteOptions create() {

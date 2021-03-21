@@ -19,7 +19,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.EpidemicReport;
@@ -101,7 +101,7 @@ public class EpidemicReportsStatisticController extends BaseTaskController {
     protected boolean doTask() {
         int count = 1;
         while (count++ < 5) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            try ( Connection conn = DerbyBase.getConnection()) {
                 return doTask(conn);
             } catch (Exception e) {
                 MyBoxLog.debug(count + "  " + e.toString());

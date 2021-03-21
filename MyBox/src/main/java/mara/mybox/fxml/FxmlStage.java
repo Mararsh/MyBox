@@ -40,6 +40,8 @@ import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.controller.WebBrowserController;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageInformation;
@@ -260,10 +262,11 @@ public class FxmlStage {
             }
 
             if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
-
-//                MyBoxLog.debug("Shut down Derby server...");
-//                DerbyBase.shutdownDerbyServer();
                 MyBoxLog.info("Exit now. Bye!");
+                if (DerbyBase.status == DerbyStatus.Embedded) {
+                    MyBoxLog.debug("Shut down Derby...");
+                    DerbyBase.shutdownEmbeddedDerby();
+                }
                 Platform.exit(); // Some thread may still be alive after this
                 System.exit(0);  // Go
             }
@@ -285,7 +288,7 @@ public class FxmlStage {
                     continue;
                 }
                 Stage stage = (Stage) window;
-                if (title.equals(stage.getTitle())) {
+                if (stage.getTitle().startsWith(title)) {
                     stages.add(stage);
                 }
             }
@@ -298,13 +301,19 @@ public class FxmlStage {
 
     public static Stage findStage(String title) {
         try {
-            List<Stage> stages = findStages(title);
-            if (stages != null && !stages.isEmpty()) {
-                Stage stage = stages.get(0);
-                return stage;
+            if (title == null) {
+                return null;
+            }
+            for (Window window : Window.getWindows()) {
+                if (!(window instanceof Stage)) {
+                    continue;
+                }
+                Stage stage = (Stage) window;
+                if (stage.getTitle().startsWith(title)) {
+                    return stage;
+                }
             }
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
         }
         return null;
     }
@@ -317,11 +326,9 @@ public class FxmlStage {
                     return stage;
                 }
             }
-            return null;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
         }
+        return null;
     }
 
     public static BaseController openMyBox(Stage stage) {
@@ -402,8 +409,7 @@ public class FxmlStage {
 
     public static WebBrowserController openWebBrowser(Stage stage, File file) {
         try {
-            final WebBrowserController controller
-                    = (WebBrowserController) openScene(stage, CommonValues.WebBrowserFxml);
+            WebBrowserController controller = WebBrowserController.oneOpen(false);
             controller.loadFile(file);
             return controller;
         } catch (Exception e) {

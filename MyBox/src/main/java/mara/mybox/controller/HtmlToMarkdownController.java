@@ -5,11 +5,9 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -22,19 +20,11 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
 
     public HtmlToMarkdownController() {
         baseTitle = AppVariables.message("HtmlToMarkdown");
+    }
 
-        SourceFileType = VisitHistory.FileType.Html;
-        SourcePathType = VisitHistory.FileType.Html;
-        TargetPathType = VisitHistory.FileType.Markdown;
-        TargetFileType = VisitHistory.FileType.Markdown;
-        AddFileType = VisitHistory.FileType.Html;
-        AddPathType = VisitHistory.FileType.Html;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
-        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
-
-        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
-        targetExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.Markdown);
     }
 
     @Override

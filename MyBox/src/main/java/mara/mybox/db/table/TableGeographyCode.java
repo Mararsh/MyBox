@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import static mara.mybox.db.DerbyBase.stringValue;
@@ -321,7 +321,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static GeographyCode earth() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return earth(conn);
         } catch (Exception e) {
@@ -336,7 +336,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static GeographyCode China() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return China(conn);
         } catch (Exception e) {
@@ -351,7 +351,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
     }
 
     public static GeographyCode queryCode(String sql, boolean decodeAncestors) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return queryCode(conn, sql, decodeAncestors);
         } catch (Exception e) {
@@ -392,7 +392,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (coordinateSystem == null || !validCoordinate(longitude, latitude)) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readCode(conn, coordinateSystem, longitude, latitude, decodeAncestors);
         } catch (Exception e) {
@@ -426,7 +426,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (gcid <= 0) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readCode(conn, gcid, decodeAncestors);
         } catch (Exception e) {
@@ -456,7 +456,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (level <= 0 || name == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readCode(conn, level, name, decodeAncestors);
         } catch (Exception e) {
@@ -487,7 +487,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (code == null || !GeographyCode.valid(code)) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readCode(conn, code, decodeAncestors);
         } catch (Exception e) {
@@ -680,7 +680,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (code == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             decodeAncestors(conn, code);
         } catch (Exception e) {
@@ -852,7 +852,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
 
     public static List<GeographyCode> queryCodes(String sql, boolean decodeAncestors) {
         List<GeographyCode> codes = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             codes = queryCodes(conn, sql, decodeAncestors);
         } catch (Exception e) {
@@ -863,7 +863,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
 
     public static List<GeographyCode> queryCodes(String sql, int max, boolean decodeAncestors) {
         List<GeographyCode> codes = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             codes = queryCodes(conn, sql, max, decodeAncestors);
         } catch (Exception e) {
@@ -903,7 +903,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
 
     public static List<GeographyCode> readMax(int max, boolean decodeAncestors) {
         List<GeographyCode> codes = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             try ( PreparedStatement statement = conn.prepareStatement(AllQeury)) {
                 if (max > 0) {
@@ -922,7 +922,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (offset < 0 || number <= 0) {
             return codes;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             try ( PreparedStatement statement = conn.prepareStatement(PageQeury)) {
                 statement.setLong(1, offset);
@@ -976,7 +976,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (code == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return write(conn, code);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1007,7 +1007,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (codes == null || codes.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return write(conn, codes);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1043,7 +1043,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (code == null || !GeographyCode.valid(code)) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return insert(conn, code);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1486,7 +1486,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
         if (code == null || !GeographyCode.valid(code) || GeographyCode.isPredefined(code)) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
                 return delete(conn, statement, code);
             }
@@ -1520,7 +1520,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
             return 0;
         }
         int count = 0;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
                 for (int i = 0; i < codes.size(); ++i) {

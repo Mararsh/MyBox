@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.data.Era;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.Dataset;
@@ -72,7 +72,7 @@ public class TableDataset extends BaseTable<Dataset> {
     }
 
     public Dataset read(String category, String dataset) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, category, dataset);
         } catch (Exception e) {
@@ -100,7 +100,7 @@ public class TableDataset extends BaseTable<Dataset> {
         if (category == null || category.trim().isBlank()) {
             return dataList;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return datasets(conn, category);
         } catch (Exception e) {
@@ -133,7 +133,7 @@ public class TableDataset extends BaseTable<Dataset> {
         if (category == null || category.trim().isBlank()) {
             return dataList;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             return datasetNames(conn, category);
         } catch (Exception e) {
             MyBoxLog.error(e);

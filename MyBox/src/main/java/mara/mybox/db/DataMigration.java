@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.ColorData;
@@ -51,7 +51,7 @@ public class DataMigration {
 
     public static boolean checkUpdates() {
         AppVariables.setSystemConfigValue("CurrentVersion", CommonValues.AppVersion);
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(CommonValues.AppVersion);
             if (lastVersion == currentVersion) {
@@ -720,7 +720,7 @@ public class DataMigration {
 
     public static boolean migrateGeographyCode615() {
         MyBoxLog.info("migrate GeographyCode 6.1.5...");
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             int size = DerbyBase.size("select count(level) from Geography_Code");
             if (size <= 0) {
@@ -738,7 +738,7 @@ public class DataMigration {
 
     public static boolean migrateGeographyCode621() {
         MyBoxLog.info("migrate GeographyCode 6.2.1...");
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM Geography_Code "
                     + " WHERE country='" + message("Macao")
@@ -753,7 +753,7 @@ public class DataMigration {
 
     public static boolean migrateEpidemicReport615() {
         MyBoxLog.info("migrate Epidemic_Report 6.1.5...");
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             String sql = "ALTER TABLE Epidemic_Report  add  column  level VARCHAR(1024)";
             statement.executeUpdate(sql);
@@ -802,7 +802,7 @@ public class DataMigration {
 
     public static boolean migrateEpidemicReport621() {
         MyBoxLog.info("migrate Epidemic_Report 6.2.1...");
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {
             int size = DerbyBase.size("select count(confirmed) from Epidemic_Report");
             if (size <= 0) {
@@ -827,7 +827,7 @@ public class DataMigration {
     }
 
     public static boolean migrate61() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        try ( Connection conn = DerbyBase.getConnection();) {
             String sql = " SELECT * FROM SRGB WHERE palette_index >= 0";
             ResultSet olddata = conn.createStatement().executeQuery(sql);
             List<ColorData> oldData = new ArrayList<>();

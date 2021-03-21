@@ -175,17 +175,6 @@ public class ImageItem {
         return this;
     }
 
-//    Callback<ImageCheckboxItem, ObservableValue<Boolean>> ItemToBoolean
-//            = (ImageCheckboxItem item) -> new SimpleBooleanProperty(item.selected);
-//
-//    public class ItemToBooleanCallBack
-//            implements Callback<ImageCheckboxItem, ObservableValue<Boolean>> {
-//
-//        @Override
-//        public ObservableValue<Boolean> call(ImageCheckboxItem item) {
-//            return new SimpleBooleanProperty(item.selected);
-//        }
-//    }
     public int getIndex() {
         return index;
     }

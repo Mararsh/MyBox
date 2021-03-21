@@ -12,7 +12,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
@@ -115,18 +114,11 @@ public class ColorImportController extends BaseController {
     }
 
     protected void importCSV() {
-        FileChooser fileChooser = new FileChooser();
-        File path = AppVariables.getUserConfigPath(sourcePathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(CommonFxValues.TextExtensionFilter);
-        final File file = fileChooser.showOpenDialog(getMyStage());
+        sourceExtensionFilter = CommonFxValues.CsvExtensionFilter;
+        File file = FxmlControl.selectFile(this);
         if (file == null) {
             return;
         }
-        recordFileOpened(file);
-
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

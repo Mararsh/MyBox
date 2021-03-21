@@ -299,7 +299,7 @@ public class ControlDataConvert extends BaseController {
                     updateLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
                     htmlWriter = new FileWriter(htmlFile, csvWriteController.charset);
                     StringBuilder s = new StringBuilder();
-                    s.append("<HTML>\n").
+                    s.append("<!DOCTYPE html><HTML>\n").
                             append(indent).append("<HEAD>\n").
                             append(indent).append(indent).
                             append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=").append(csvWriteController.charset.name())

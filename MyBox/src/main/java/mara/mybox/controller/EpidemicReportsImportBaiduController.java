@@ -20,7 +20,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import static mara.mybox.db.DerbyBase.dbHome;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.EpidemicReport;
@@ -171,7 +171,7 @@ public class EpidemicReportsImportBaiduController extends BaseTaskController {
             reportTime = DateTools.stringToDatetime(dateString, CommonValues.DatetimeFormat6);
             updateLogs(dateString);
 
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            try ( Connection conn = DerbyBase.getConnection()) {
                 while (true) {
                     if (task == null || task.isCancelled()) {
                         return;

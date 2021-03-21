@@ -441,6 +441,23 @@ public class ColumnDefinition extends BaseData {
         return true;
     }
 
+    public static boolean valid(String[] columns) {
+        if (columns == null || columns.length < 1) {
+            return false;
+        }
+        List<String> valid = new ArrayList<>();
+        for (String column : columns) {
+            if (column == null || column.isBlank()) {
+                return false;
+            }
+            if (valid.contains(column)) {
+                return false;
+            }
+            valid.add(column);
+        }
+        return true;
+    }
+
     /*
         customized get/set
      */

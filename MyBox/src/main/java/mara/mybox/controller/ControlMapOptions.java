@@ -20,7 +20,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.web.WebEngine;
-import javafx.stage.FileChooser;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -926,14 +925,8 @@ public class ControlMapOptions extends BaseController {
     @FXML
     public void selectMarkerImage() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image));
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(CommonFxValues.ImageExtensionFilter);
-            File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null || !file.exists()) {
+            File file = FxmlControl.selectFile(this, VisitHistory.FileType.Image);
+            if (file == null) {
                 return;
             }
             markerImageInput.setText(file.getAbsolutePath());

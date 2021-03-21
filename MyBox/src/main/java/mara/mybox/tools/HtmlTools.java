@@ -20,7 +20,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +41,6 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.dbHome;
 import mara.mybox.db.table.TableDownloadHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
@@ -423,6 +421,9 @@ public class HtmlTools {
 
     public static Charset charset(String head) {
         try {
+            if (head == null) {
+                return null;
+            }
             String name = charsetName(head);
             if (name == null) {
                 return null;
@@ -474,13 +475,13 @@ public class HtmlTools {
 
     public static String htmlPrefix(String title, String styleValue) {
         StringBuilder s = new StringBuilder();
-        s.append("<HTML>\n").
+        s.append("<!DOCTYPE html><HTML>\n").
                 append(Indent).append("<HEAD>\n").
                 append(Indent).append(Indent).append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
         if (title != null && !title.trim().isEmpty()) {
             s.append(Indent).append(Indent).append("<TITLE>").append(title).append("</TITLE>\n");
         }
-        if (styleValue != null && !styleValue.trim().isEmpty()) {
+        if (styleValue != null && !styleValue.isBlank()) {
             s.append(Indent).append(Indent).append("<style type=\"text/css\">\n");
             s.append(Indent).append(Indent).append(Indent).append(styleValue).append("\n");
             s.append(Indent).append(Indent).append("</style>\n");
@@ -916,57 +917,6 @@ public class HtmlTools {
 
     // Parser of flexmark-Java can do this better.
     // Just leave these codes here cause they cost lot of my time~
-    public static List<Link> linksInAddress(String address, File httpFile,
-            File path, Link.FilenameType nameType) {
-        try {
-            if (address == null || httpFile == null || path == null) {
-                return null;
-            }
-            List<Link> validLinks = new ArrayList<>();
-            URL url = new URL(address);
-            Link httplink = Link.create().setUrl(url).setAddress(url.toString())
-                    .setName(path.getName()).setTitle(path.getName());
-            httplink.setFile(httplink.filename(path, nameType));
-            validLinks.add(httplink);
-
-            String linkRoot = url.getProtocol() + "://" + url.getHost();
-            String linkPath;
-            String urlString = url.toString();
-            int pos = urlString.lastIndexOf("/");
-            if (pos < 0) {
-                linkPath = "/";
-            } else {
-                linkPath = url.toString().substring(0, pos);
-            }
-            List<Link> links = linksInFile(httpFile);
-            for (Link link : links) {
-                String linkAddress = link.getAddress();
-                if (!linkAddress.toLowerCase().startsWith("http")) {
-                    if (linkAddress.startsWith("/")) {
-                        linkAddress = linkRoot + linkAddress;
-                    } else {
-                        linkAddress = linkPath + "/" + linkAddress;
-                    }
-                    //                    MyBoxLog.debug(link.getAddress() + "  --> " + linkAddress);
-                }
-                try {
-                    URL linkURL = new URL(linkAddress);
-                    link.setUrl(linkURL);
-                    link.setAddress(linkURL.toString());
-                    String filename = link.filename(path, nameType);
-                    link.setFile(new File(filename).getAbsolutePath());
-                    //                    MyBoxLog.debug(link.getAddress() + "  --> " + link.getFilename());
-                    validLinks.add(link);
-                } catch (Exception e) {
-                }
-            }
-            return validLinks;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
     public static List<Link> linksInFile(File file) {
         try {
             if (file == null || !file.exists()) {
@@ -1066,7 +1016,7 @@ public class HtmlTools {
         if (file == null || !file.exists()) {
             return false;
         }
-        try (final Connection conn = DriverManager.getConnection(DerbyBase.protocol + dbHome() + DerbyBase.login);
+        try (final Connection conn = DerbyBase.getConnection();
                 final PreparedStatement filenameQeury = conn.prepareStatement(TableDownloadHistory.FilenameQeury);
                 final PreparedStatement urlQuery = conn.prepareStatement(TableDownloadHistory.UrlQeury)) {
             return relinkPage(conn, filenameQeury, urlQuery, file, null);
@@ -1296,13 +1246,14 @@ public class HtmlTools {
             }
             String body = nav.toString();
             FileTools.writeFile(navFile, HtmlTools.html(message("PathIndex"), body));
-            String frameset = " <FRAMESET border=0 cols=400,*>\n"
-                    + "<FRAME frameBorder=no marginHeight=15 marginWidth=5  name=nav src=\"" + namePrefix + "_Nav.html\">\n";
+            String frameset = " <FRAMESET border=2 cols=400,*>\n"
+                    + "<FRAME name=nav src=\"" + namePrefix + "_Nav.html\" />\n";
             if (first.getParent().equals(targetFile.getParent())) {
-                frameset += "<FRAME frameBorder=no marginHeight=15 marginWidth=10  name=main src=\"" + first.getName() + "\">\n";
+                frameset += "<FRAME name=main src=\"" + first.getName() + "\" />\n";
             } else {
-                frameset += "<FRAME frameBorder=no marginHeight=15 marginWidth=10  name=main src=\"" + first.toURI() + "\">\n";
+                frameset += "<FRAME name=main src=\"" + first.toURI() + "\" />\n";
             }
+            frameset += "</FRAMESET>";
             File frameFile = new File(targetFile.getParent() + File.separator + namePrefix + ".html");
             FileTools.writeFile(frameFile, frameset);
             return frameFile.exists();
@@ -1390,22 +1341,53 @@ public class HtmlTools {
     }
 
     public static boolean isUTF8(File htmlFile) {
-        Charset fileCharset = FileTools.charset(htmlFile);
-        if (!fileCharset.equals(Charset.forName("utf-8"))) {
-            return false;
-        }
-        String html = FileTools.readTexts(htmlFile, fileCharset);
-        String head = head(html);
-        if (head == null) {
-            return true;
-        } else {
-            Charset charset = charset(head);
-            return charset == null || charset.equals(Charset.forName("utf-8"));
-        }
+        Charset charset = htmlCharset(htmlFile);
+        return charset == null || charset.equals(Charset.forName("utf-8"));
     }
 
     public static String toUTF8(File htmlFile, boolean must) {
         return setCharset(htmlFile, Charset.forName("utf-8"), must);
+    }
+
+    public static Charset htmlCharset(File htmlFile) {
+        try {
+            if (htmlFile == null) {
+                return null;
+            }
+            Charset fileCharset = FileTools.charset(htmlFile);
+            String html = FileTools.readTexts(htmlFile, fileCharset);
+            String head = headWithoutTag(html);
+            if (head == null) {
+                return fileCharset;
+            } else {
+                Charset charset = charset(head);
+                if (charset == null) {
+                    return fileCharset;
+                } else {
+                    return charset;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Charset htmlCharset(String html) {
+        try {
+            if (html == null) {
+                return null;
+            }
+            Charset charset = charset(headWithoutTag(html));
+            if (charset == null) {
+                return Charset.forName("UTF-8");
+            } else {
+                return charset;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     public static String setCharset(File htmlFile, Charset charset, boolean must) {

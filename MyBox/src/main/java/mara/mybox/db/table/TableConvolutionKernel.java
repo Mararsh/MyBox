@@ -46,7 +46,7 @@ public class TableConvolutionKernel extends DerbyBase {
 
     public static List<ConvolutionKernel> read() {
         List<ConvolutionKernel> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement query = conn.prepareStatement("SELECT * FROM Convolution_Kernel ORDER BY name")) {
             conn.setReadOnly(true);
             try ( ResultSet kResult = query.executeQuery()) {
@@ -67,7 +67,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (name == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+        try ( Connection conn = DerbyBase.getConnection();
                  PreparedStatement kernelQuery = conn.prepareStatement(" SELECT * FROM Convolution_Kernel WHERE name=?");) {
             conn.setReadOnly(true);
             kernelQuery.setString(1, name);
@@ -134,7 +134,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (name == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return exist(conn, name);
         } catch (Exception e) {
@@ -211,7 +211,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 || record.getHeight() < 3 || record.getHeight() % 2 == 0) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             if (exist(conn, record.getName())) {
                 return update(conn, record);
             } else {
@@ -231,7 +231,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (records == null || records.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             for (ConvolutionKernel k : records) {
                 if (exist(conn, k.getName())) {
                     update(conn, k);
@@ -250,7 +250,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (records == null || records.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             try ( PreparedStatement statement = conn.prepareStatement(
                     "DELETE FROM Convolution_Kernel WHERE name=?")) {
@@ -271,7 +271,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (names == null || names.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             try ( PreparedStatement statement = conn.prepareStatement(
                     "DELETE FROM Convolution_Kernel WHERE name=?")) {
