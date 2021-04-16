@@ -1072,6 +1072,7 @@ public class FileTools {
         return true;
     }
 
+    // Can not handle file larger than 2g
     public static byte[] readBytes(File file) {
         byte[] data = null;
         try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
@@ -1132,8 +1133,13 @@ public class FileTools {
         StringBuilder s = new StringBuilder();
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
+            boolean moreLine = false;
             while ((line = reader.readLine()) != null) {
-                s.append(line).append(System.lineSeparator());
+                if (moreLine) {
+                    s.append(System.lineSeparator());
+                }
+                s.append(line);
+                moreLine = true;
             }
         } catch (Exception e) {
             return null;

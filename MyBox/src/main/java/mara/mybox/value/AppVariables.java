@@ -4,6 +4,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -13,12 +14,10 @@ import java.util.TimeZone;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import javafx.scene.paint.Color;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.data.UserLanguage;
 import mara.mybox.data.UserTableLanguage;
+import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
@@ -40,8 +39,8 @@ public class AppVariables {
     public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath, MyBoxDownloadsPath;
     public static List<File> MyBoxReservePaths;
     public static ResourceBundle currentBundle, currentTableBundle;
-    public static Map<String, String> userConfigValues;
-    public static Map<String, String> systemConfigValues;
+    public static Map<String, String> userConfigValues = new HashMap<>();
+    public static Map<String, String> systemConfigValues = new HashMap<>();
     public static ScheduledExecutorService executorService;
     public static Map<Long, ScheduledFuture<?>> scheduledTasks;
     public static AlarmClockController alarmClockController;
@@ -50,16 +49,14 @@ public class AppVariables {
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
             disableHiDPI, devMode, hidpiIcons, ignoreDbUnavailable, popErrorLogs;
     public static ControlStyle.ColorStyle ControlColor;
-    public static SSLSocketFactory defaultSSLSocketFactory;
-    public static HostnameVerifier defaultHostnameVerifier;
 
     public AppVariables() {
     }
 
     public static void initAppVaribles() {
         try {
-            userConfigValues = new HashMap<>();
-            systemConfigValues = new HashMap<>();
+            userConfigValues.clear();
+            systemConfigValues.clear();
             getBundle();
             getTableBundle();
             getPdfMem();
@@ -76,10 +73,6 @@ public class AppVariables {
             devMode = getUserConfigBoolean("DevMode", false);
             disableHiDPI = ignoreDbUnavailable = false;
             popErrorLogs = true;
-            if (defaultSSLSocketFactory == null) {
-                defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-                defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -314,8 +307,14 @@ public class AppVariables {
         if (file == null) {
             return null;
         }
-        String fileBackupsPath = MyboxDataPath + File.separator + "fileBackups" + File.separator
-                + FileTools.getFilePrefix(file.getName()) + FileTools.getFileSuffix(file.getName()) + File.separator;
+        String key = "BackupPath-" + file;
+        String fileBackupsPath = TableStringValue.read(key);
+        if (fileBackupsPath == null) {
+            fileBackupsPath = MyboxDataPath + File.separator + "fileBackups" + File.separator
+                    + FileTools.getFilePrefix(file.getName()) + FileTools.getFileSuffix(file.getName())
+                    + (new Date()).getTime() + File.separator;
+            TableStringValue.write(key, fileBackupsPath);
+        }
         File path = new File(fileBackupsPath);
         if (!path.exists()) {
             path.mkdirs();
@@ -378,6 +377,7 @@ public class AppVariables {
                 int v = Integer.valueOf(userConfigValues.get(key));
                 return v;
             } catch (Exception e) {
+//                MyBoxLog.console(e.toString());
             }
         }
         try {

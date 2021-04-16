@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,14 +26,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITessAPI;
@@ -515,11 +513,7 @@ public class ControlOCROptions extends BaseController {
 
     @FXML
     public void download() {
-        try {
-            browseURI(new URI("https://tesseract-ocr.github.io/tessdoc/Home.html"));
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        openLink("https://tesseract-ocr.github.io/tessdoc/Home.html");
     }
 
     @FXML
@@ -541,7 +535,7 @@ public class ControlOCROptions extends BaseController {
             table.newLinkRow("ImproveQuality", "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html");
 
             File htmFile = HtmlTools.writeHtml(table.html());
-            FxmlStage.browseURI(getMyStage(), htmFile.toURI());
+            openLink(htmFile.toURI().toString());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -705,17 +705,4 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     }
 
-    @FXML
-    public void addAction() {
-        tableView.getSelectionModel().clearSelection();
-
-        mediaListName = null;
-        tableLabel.setText("");
-        if (parentController != null) {
-            if (parentController instanceof MediaListController) {
-                ((MediaListController) parentController).clearSelection();
-            }
-        }
-    }
-
 }

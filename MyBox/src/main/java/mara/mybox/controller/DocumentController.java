@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.net.URI;
 import java.text.MessageFormat;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -89,10 +88,7 @@ public class DocumentController extends BaseController {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        try {
-                            browseURI(new URI(address));
-                        } catch (Exception e) {
-                        }
+                        browse(address);
                     }
                 });
             }

@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label minWidth="-Infinity" text="%WeiboAddress" />
                                                 <ComboBox fx:id="addressBox" editable="true" maxWidth="1.7976931348623157E308" visibleRowCount="15" HBox.hgrow="ALWAYS" />
@@ -42,6 +42,15 @@ License:    Apache License Version 2.0
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/iconDemo.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="sslButton" mnemonicParsing="false" onAction="#initWebview">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSSL.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -329,11 +338,6 @@ License:    Apache License Version 2.0
                                                 <Label text="%MinAccessIntervalComments" />
                                             </children>
                                         </HBox>
-                                        <CheckBox fx:id="bypassSSLCheck" mnemonicParsing="false" text="%WeiboBypassSSL" VBox.vgrow="NEVER">
-                                            <VBox.margin>
-                                                <Insets top="10.0" />
-                                            </VBox.margin>
-                                        </CheckBox>
                                     </children>
                                 </VBox>
                             </content>

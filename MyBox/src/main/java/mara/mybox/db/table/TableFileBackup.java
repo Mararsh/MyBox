@@ -2,15 +2,12 @@ package mara.mybox.db.table;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
@@ -92,12 +89,12 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             for (int i = 0; i < records.size(); ++i) {
                 FileBackup record = records.get(i);
                 File file = record.getFile();
-                if (!file.exists()) {
+                if (file == null || !file.exists()) {
                     clearBackups(conn, filename);
                     continue;
                 }
                 File backup = record.getBackup();
-                if (!backup.exists()) {
+                if (backup == null || !backup.exists()) {
                     deleteBackup(conn, record);
                     continue;
                 }

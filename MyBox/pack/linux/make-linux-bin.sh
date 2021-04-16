@@ -1,6 +1,6 @@
 # Unzip source package. Edit this script to change directories as your env.
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
-version=6.4.2
+version=6.4.3
 jpackagePath=/home/mara/jdk-14/bin
 jdkPath=/usr/java/jdk-15.0.1
 

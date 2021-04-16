@@ -71,7 +71,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.getPopErrorColor;
@@ -98,7 +97,7 @@ public abstract class BaseController implements Initializable {
     protected int SourceFileType = -1, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
-    protected String myFxml, parentFxml, currentStatus, baseTitle, baseName, loadFxml;
+    protected String myFxml, parentFxml, currentStatus, baseTitle, baseName;
     protected Stage myStage;
     protected Scene myScene;
     protected Alert loadingAlert;
@@ -169,7 +168,8 @@ public abstract class BaseController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            baseName = FxmlControl.getFxmlName(url.getPath());
+            baseName = FxmlControl.getFxmlName(url);
+            myFxml = "/fxml/" + baseName + ".fxml";
 
             initValues();
             initBaseControls();
@@ -184,7 +184,6 @@ public abstract class BaseController implements Initializable {
         try {
             setFileType();
 
-            myFxml = "/fxml/" + baseName + ".fxml";
             myController = this;
             if (mainMenuController != null) {
                 mainMenuController.parentFxml = myFxml;
@@ -377,13 +376,17 @@ public abstract class BaseController implements Initializable {
             }
 
             if (topCheck != null) {
+                topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
                 topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (!isSettingValues) {
+                            AppVariables.setUserConfigValue(baseName + "Top", newValue);
+                        }
                         checkAlwaysTop();
-                        AppVariables.setUserConfigValue(baseName + "Top", newValue);
                     }
                 });
+
             }
 
             if (saveCloseCheck != null) {
@@ -498,14 +501,10 @@ public abstract class BaseController implements Initializable {
     // This is called automatically after window is opened
     public void afterStageShown() {
         getMyStage();
-    }
-
-    public boolean recordStageSizeChange(int minSize) {
-        return !isSettingValues
-                && !myStage.isMaximized()
-                && !myStage.isFullScreen()
-                && !myStage.isIconified()
-                && (myStage.getWidth() > minSize);
+        if (myStage != null) {
+            myStage.sizeToScene();
+            myStage.centerOnScreen();
+        }
     }
 
     // This is called automatically after TOP scene is loaded.
@@ -515,11 +514,12 @@ public abstract class BaseController implements Initializable {
             getMyScene();
             getMyStage();
 
-            final String prefix = "Interface_" + baseName;
-
+            String prefix = interfaceKeysPrefix();
             int minSize = 200;
             myStage.setMinWidth(minSize);
             myStage.setMinHeight(minSize);
+            myStage.sizeToScene();
+            myStage.centerOnScreen();
 
             if (AppVariables.restoreStagesSize) {
                 if (AppVariables.getUserConfigBoolean(prefix + "FullScreen", false)) {
@@ -529,17 +529,7 @@ public abstract class BaseController implements Initializable {
                     FxmlControl.setMaximized(myStage, true);
 
                 } else {
-
-                    int w = AppVariables.getUserConfigInt(prefix + "StageWidth", (int) thisPane.getPrefWidth());
-                    int h = AppVariables.getUserConfigInt(prefix + "StageHeight", (int) thisPane.getPrefHeight());
-                    int x = AppVariables.getUserConfigInt(prefix + "StageX", (int) myStage.getX());
-                    int y = AppVariables.getUserConfigInt(prefix + "StageY", (int) myStage.getY());
-                    if (w >= minSize && h >= minSize) {
-                        myStage.setWidth(w);
-                        myStage.setHeight(h);
-                    }
-                    myStage.setX(x);
-                    myStage.setY(y);
+                    restoreStageStatus(prefix, minSize);
                 }
 
                 fullscreenListener = new FullscreenListener(prefix);
@@ -547,34 +537,6 @@ public abstract class BaseController implements Initializable {
                 maximizedListener = new MaximizedListener(prefix);
                 myStage.maximizedProperty().addListener(maximizedListener);
 
-                myScene.xProperty().addListener(
-                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (recordStageSizeChange(minSize)) {
-                                AppVariables.setUserConfigInt(prefix + "StageX", (int) myStage.getX());
-                            }
-                        });
-                myScene.yProperty().addListener(
-                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (recordStageSizeChange(minSize)) {
-                                AppVariables.setUserConfigInt(prefix + "StageY", (int) myStage.getY());
-                            }
-                        });
-                myScene.widthProperty().addListener(
-                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (recordStageSizeChange(minSize)) {
-                                AppVariables.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
-                            }
-                        });
-                myScene.heightProperty().addListener(
-                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (recordStageSizeChange(minSize)) {
-                                AppVariables.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
-                            }
-                        });
-
-            } else {
-                myStage.sizeToScene();
-                myStage.centerOnScreen();
             }
 
             Rectangle2D screen = FxmlControl.getScreen();
@@ -598,6 +560,25 @@ public abstract class BaseController implements Initializable {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public String interfaceKeysPrefix() {
+        return "Interface_" + baseName;
+    }
+
+    public void restoreStageStatus(String prefix, int minSize) {
+        int w = AppVariables.getUserConfigInt(prefix + "StageWidth", -1);
+        int h = AppVariables.getUserConfigInt(prefix + "StageHeight", -1);
+        int x = AppVariables.getUserConfigInt(prefix + "StageX", 0);
+        int y = AppVariables.getUserConfigInt(prefix + "StageY", 0);
+        if (w > minSize && h > minSize) {
+            myStage.setWidth(w);
+            myStage.setHeight(h);
+        }
+        if (x > 0 && y > 0) {
+            myStage.setX(x);
+            myStage.setY(y);
         }
     }
 
@@ -655,14 +636,13 @@ public abstract class BaseController implements Initializable {
                 || getMyStage() == null) {
             return;
         }
-        topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
         myStage.setAlwaysOnTop(topCheck.isSelected());
         if (topCheck.isSelected()) {
-            popWarn(message("AlwaysTopWarning"), 6000);
-            FadeTransition fade = new FadeTransition(Duration.millis(500));
+            popWarn(message("AlwaysTopWarning"));
+            FadeTransition fade = new FadeTransition(Duration.millis(300));
             fade.setFromValue(1.0);
             fade.setToValue(0f);
-            fade.setCycleCount(6);
+            fade.setCycleCount(4);
             fade.setAutoReverse(true);
             fade.setNode(topCheck);
             fade.play();
@@ -1313,6 +1293,7 @@ public abstract class BaseController implements Initializable {
                 } else if (withdrawButton != null && !withdrawButton.isDisabled() && withdrawButton.isVisible()) {
                     withdrawAction();
                 }
+                closePopup(event);
 //                else if (stopButton != null && !stopButton.isDisabled()) {
 //                    stopAction();
 //                }
@@ -2027,7 +2008,6 @@ public abstract class BaseController implements Initializable {
 
             @Override
             public void handleFile(String fname) {
-
             }
 
             @Override
@@ -2144,20 +2124,24 @@ public abstract class BaseController implements Initializable {
     public void link(ActionEvent event) {
         try {
             Hyperlink link = (Hyperlink) event.getSource();
-            link(link.getText());
+            openLink(link.getText());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void link(String urlString) {
-        try {
-            URL url = new URL(urlString);
-            URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
-            browseURI(uri);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void openLink(String address) {
+        if (address == null || address.isBlank()) {
+            return;
         }
+        WebBrowserController.oneOpen(address);
+    }
+
+    public void openLink(File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        WebBrowserController.oneOpen(file);
     }
 
     @FXML
@@ -2171,7 +2155,7 @@ public abstract class BaseController implements Initializable {
                 default:
                     link = "https://en.wikipedia.org/wiki/Regular_expression";
             }
-            browseURI(new URI(link));
+            openLink(link);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -2179,11 +2163,7 @@ public abstract class BaseController implements Initializable {
 
     @FXML
     public void derbyHelp() {
-        try {
-            browseURI(new URI("http://db.apache.org/derby/docs/10.15/ref/index.html"));
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        openLink("http://db.apache.org/derby/docs/10.15/ref/index.html");
     }
 
     @FXML
@@ -2370,7 +2350,6 @@ public abstract class BaseController implements Initializable {
         if (!FxmlControl.askSure(getBaseTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
         }
-
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -2482,6 +2461,17 @@ public abstract class BaseController implements Initializable {
         }
     }
 
+    public void recordStageStatus() {
+        if (getMyStage() == null) {
+            return;
+        }
+        final String prefix = interfaceKeysPrefix();
+        AppVariables.setUserConfigInt(prefix + "StageX", (int) myStage.getX());
+        AppVariables.setUserConfigInt(prefix + "StageY", (int) myStage.getY());
+        AppVariables.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
+        AppVariables.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
+    }
+
     public boolean leavingScene() {
         try {
             if (!checkBeforeNextAction()) {
@@ -2491,14 +2481,19 @@ public abstract class BaseController implements Initializable {
             if (mainMenuController != null) {
                 mainMenuController.stopMemoryMonitorTimer();
                 mainMenuController.stopCpuMonitorTimer();
+                mainMenuController = null;
             }
 
             if (maximizedListener != null) {
                 getMyStage().maximizedProperty().removeListener(maximizedListener);
+                maximizedListener = null;
             }
             if (fullscreenListener != null) {
                 getMyStage().fullScreenProperty().removeListener(fullscreenListener);
+                fullscreenListener = null;
             }
+
+            recordStageStatus();
 
             hidePopup();
             if (timer != null) {
@@ -2520,6 +2515,18 @@ public abstract class BaseController implements Initializable {
                 backgroundTask = null;
             }
 
+            parentController = null;
+            myController = null;
+            popupTimer = null;
+            timer = null;
+            popup = null;
+            popMenu = null;
+            leftDividerListener = null;
+            rightDividerListener = null;
+            currentKeyEvent = null;
+            myScene = null;
+            myStage = null;
+
             System.gc();
             return true;
         } catch (Exception e) {
@@ -2531,6 +2538,11 @@ public abstract class BaseController implements Initializable {
 
     public boolean checkBeforeNextAction() {
         return true;
+    }
+
+    public File chooseSaveFile(int type, String defaultName) {
+        return chooseSaveFile(VisitHistoryTools.getSavedPath(type), defaultName,
+                VisitHistoryTools.getExtensionFilter(type));
     }
 
     public File chooseSaveFile(File defaultPath, String defaultName,
@@ -2567,7 +2579,7 @@ public abstract class BaseController implements Initializable {
                 }
             }
             if (name != null) {
-                name = name.replaceAll("\\\"|\n|:", "");
+                name = FileTools.filenameFilter(name);
                 fileChooser.setInitialFileName(name);
             }
 
@@ -2575,6 +2587,7 @@ public abstract class BaseController implements Initializable {
             if (file == null) {
                 return null;
             }
+
             // https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
             // This is a pretty annoying thing in JavaFX - they will automatically append the extension on Windows, but not on Linux or Mac.
             if (FileTools.getFileSuffix(file.getName()).isEmpty()) {
@@ -2737,7 +2750,9 @@ public abstract class BaseController implements Initializable {
                 myScene = thisPane.getScene();
                 if (myScene != null) {
                     myStage = (Stage) myScene.getWindow();
-                    myStage.setUserData(this);
+                    if (myStage.getUserData() == null) {
+                        myStage.setUserData(this);
+                    }
                 }
             }
         }
@@ -2887,17 +2902,9 @@ public abstract class BaseController implements Initializable {
     public void setGeographyCode(GeographyCode code) {
     }
 
-    public void restoreCheckingSSL() {
-        if (!FxmlControl.askSure(getBaseTitle(), message("SureRestoreCheckingSSL"))) {
-            return;
-        }
-        NetworkTools.defaultSSL();
-        popSuccessful();
-    }
-
     @FXML
     public void myboxInternetDataPath() {
-        link(CommonValues.MyBoxInternetDataPath);
+        browseURI(new File(CommonValues.MyBoxInternetDataPath).toURI());
     }
 
     /*
@@ -2913,8 +2920,8 @@ public abstract class BaseController implements Initializable {
         @Override
         protected void whenFailed() {
             if (error != null) {
-                popError(AppVariables.message(error));
-                MyBoxLog.console(error);
+                popError(error);
+                MyBoxLog.debug(error);
             } else {
                 popFailed();
             }
@@ -2939,6 +2946,10 @@ public abstract class BaseController implements Initializable {
 
     public String getBaseName() {
         return baseName;
+    }
+
+    public String getMyFxml() {
+        return myFxml;
     }
 
     public String getLastPathKey() {
@@ -2996,10 +3007,6 @@ public abstract class BaseController implements Initializable {
 
     public void setSourceExtensionFilter(List<FileChooser.ExtensionFilter> sourceExtensionFilter) {
         this.sourceExtensionFilter = sourceExtensionFilter;
-    }
-
-    public void setLoadFxml(String loadFxml) {
-        this.loadFxml = loadFxml;
     }
 
     public void setParentFxml(String parentFxml) {

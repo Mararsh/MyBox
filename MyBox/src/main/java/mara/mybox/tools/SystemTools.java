@@ -82,7 +82,6 @@ public class SystemTools {
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 FileTools.copyFile(new File(jvm_cacerts), file);
-                NetworkTools.installCertificates();
             }
             if (file.exists()) {
                 return file.getAbsolutePath();
@@ -295,16 +294,6 @@ public class SystemTools {
             return digest;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            return null;
-        }
-
-    }
-
-    public static SSLServerSocket defaultSSLServerSocket() {
-        try {
-            SSLServerSocketFactory ssl = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-            return (SSLServerSocket) ssl.createServerSocket();
-        } catch (Exception e) {
             return null;
         }
 

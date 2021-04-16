@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +24,6 @@ import javafx.stage.Stage;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
@@ -144,6 +141,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
+
             mapController.initMap(this);
 
             FxmlControl.setTooltip(datesetButton, message("Dataset"));

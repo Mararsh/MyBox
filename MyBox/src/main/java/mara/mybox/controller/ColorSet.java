@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -12,9 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Modality;
-import mara.mybox.db.data.ColorData;
-import mara.mybox.db.table.TableColorData;
+import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
@@ -29,6 +26,7 @@ import mara.mybox.value.CommonValues;
  */
 public class ColorSet extends BaseController {
 
+    protected TableColor tableColor;
     protected String thisName;
     protected Object data;
     protected Color defaultColor;
@@ -40,6 +38,17 @@ public class ColorSet extends BaseController {
 
     public ColorSet() {
         baseTitle = "ColorImport";
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            tableColor = new TableColor();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void init(BaseController parent, String name) {
@@ -98,7 +107,7 @@ public class ColorSet extends BaseController {
     public void resetRect() {
         Color color = Color.web(AppVariables.getUserConfigValue(thisName, FxmlColor.color2rgba(defaultColor)));
         rect.setFill(color);
-        FxmlControl.setTooltip(rect, FxmlColor.colorNameDisplay(color));
+        FxmlControl.setTooltip(rect, FxmlColor.colorNameDisplay(tableColor, color));
     }
 
     @FXML
@@ -114,47 +123,15 @@ public class ColorSet extends BaseController {
     }
 
     public void showColorPalette() {
-        synchronized (this) {
-            if ((task != null && !task.isQuit())
-                    || (popup != null && popup.isShowing())) {
-                return;
-            }
-
-            task = new SingletonTask<Void>() {
-
-                protected List<ColorData> colors;
-
-                @Override
-                protected boolean handle() {
-                    colors = TableColorData.readPalette();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    load(colors);
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-
-    }
-
-    private void load(List<ColorData> colors) {
         try {
-            popup = getPopup();
-
             FXMLLoader fxmlLoader = new FXMLLoader(
                     FxmlStage.class.getResource(CommonValues.ColorPalettePopupFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
-            controller.load(this, colors);
-            popup.getContent().add(pane);
+            controller.load(this);
 
+            popup = getPopup();
+            popup.getContent().add(pane);
             FxmlControl.locateCenter(colorButton, popup);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

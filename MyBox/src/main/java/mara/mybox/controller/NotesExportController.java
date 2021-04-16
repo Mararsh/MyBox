@@ -147,14 +147,12 @@ public class NotesExportController extends BaseTaskController {
         }
     }
 
-    public void setSource(NotesController notesController) {
+    public void setValues(NotesController notesController) {
         this.notesController = notesController;
         this.tableNotebook = notesController.tableNotebook;
         this.tableNote = notesController.tableNote;
 
-        notebooksController.setValues(this, tableNotebook);
-
-        ControlNotebookSelector.cloneTree(notesController.notebooksController.treeView, treeView);
+        notebooksController.setValues(notesController);
         if (treeView.getSelectionModel().getSelectedItem() == null) {
             treeView.getSelectionModel().select(treeView.getRoot());
         }
@@ -559,15 +557,4 @@ public class NotesExportController extends BaseTaskController {
         popInformation(message("Count") + ": " + count);
     }
 
-    @FXML
-    public void refreshAction() {
-        if (tableNotebook == null) {
-            tableNotebook = new TableNotebook();
-            notebooksController.setValues(this, tableNotebook);
-        }
-        if (tableNote == null) {
-            tableNote = new TableNote();
-        }
-        notebooksController.loadTree();
-    }
 }

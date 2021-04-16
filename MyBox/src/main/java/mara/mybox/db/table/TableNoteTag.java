@@ -87,20 +87,18 @@ public class TableNoteTag extends BaseTable<NoteTag> {
         return true;
     }
 
-    public List<Note> readNotes(List<Tag> tags) {
-        String sql = "SELECT ntid, notebook,title, update_time, html FROM Note WHERE "
-                + "ntid IN ( SELECT noteid FROM Note_Tag WHERE tagid IN ( " + tags.get(0).getTgid();
-        for (int i = 1; i < tags.size(); ++i) {
-            sql += ", " + tags.get(i).getTgid();
+    public List<Long> readTags(long noteid) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return readTags(conn, noteid);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        sql += " ) )";
-        return getTableNote().readData(sql);
     }
 
-    public List<Long> readTags(long noteid) {
+    public List<Long> readTags(Connection conn, long noteid) {
         List<Long> tags = new ArrayList();
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(QueryNoteTags)) {
+        try ( PreparedStatement statement = conn.prepareStatement(QueryNoteTags)) {
             statement.setLong(1, noteid);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
@@ -130,7 +128,6 @@ public class TableNoteTag extends BaseTable<NoteTag> {
         }
         return tags;
     }
-
 
     /*
         get/set

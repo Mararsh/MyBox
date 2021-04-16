@@ -1,15 +1,11 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Map;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.CommonValues;
@@ -17,8 +13,6 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-10-15 9:31:28
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class TableUserConf extends DerbyBase {
@@ -131,7 +125,7 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
         }
         return defaultValue;
     }
@@ -146,17 +140,16 @@ public class TableUserConf extends DerbyBase {
             if (exist != CommonValues.InvalidInteger) {
                 return exist;
             } else {
-                try ( PreparedStatement statement = conn.prepareStatement(UpdateInt)) {
-                    statement.setInt(1, defaultValue);
-                    statement.setString(2, keyName);
+                try ( PreparedStatement statement = conn.prepareStatement(InsertInt)) {
+                    statement.setString(1, keyName);
+                    statement.setInt(2, defaultValue);
                     statement.executeUpdate();
                 }
             }
-            return defaultValue;
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
-            return defaultValue;
+            MyBoxLog.debug(e);
         }
+        return defaultValue;
     }
 
     public static int readInt(Connection conn, String keyName) {
@@ -173,7 +166,7 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
         }
         return value;
     }
@@ -245,7 +238,7 @@ public class TableUserConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
             return -1;
         }
     }
@@ -261,7 +254,7 @@ public class TableUserConf extends DerbyBase {
         try ( Connection conn = DerbyBase.getConnection()) {
             return delete(conn, keyName);
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -274,7 +267,7 @@ public class TableUserConf extends DerbyBase {
             statement.setString(1, keyName);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -286,7 +279,7 @@ public class TableUserConf extends DerbyBase {
         try ( Connection conn = DerbyBase.getConnection()) {
             return deletePrefix(conn, keyName);
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -299,7 +292,7 @@ public class TableUserConf extends DerbyBase {
             statement.setString(1, keyName + "%");
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
             return false;
         }
     }

@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.4.2";
-    public static final String AppVersionDate = "2021-3-21";
+    public static final String AppVersion = "6.4.3";
+    public static final String AppVersionDate = "2021-4-16";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -31,6 +31,9 @@ public class CommonValues {
     public static final String NotesImportFxml = "/fxml/NotesImport.fxml";
     public static final String NotesExportFxml = "/fxml/NotesExport.fxml";
     public static final String NotesMoveNotebookFxml = "/fxml/NotesMoveNotebook.fxml";
+    public static final String NotesCopyNotebookFxml = "/fxml/NotesCopyNotebook.fxml";
+    public static final String NotesCopyNotesFxml = "/fxml/NotesCopyNotes.fxml";
+    public static final String NotesMoveNotesFxml = "/fxml/NotesMoveNotes.fxml";
     public static final String PdfHtmlViewerFxml = "/fxml/PdfHtmlViewer.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
@@ -104,11 +107,11 @@ public class CommonValues {
     public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
-    public static final String ManageColorsFxml = "/fxml/ColorsManage.fxml";
-    public static final String ColorPaletteManageFxml = "/fxml/ColorPaletteManage.fxml";
+    public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
     public static final String ColorSetFxml = "/fxml/ColorSet.fxml";
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
+    public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
     public static final String ChromaticAdaptationMatrixFxml = "/fxml/ChromaticAdaptationMatrix.fxml";
@@ -168,6 +171,7 @@ public class CommonValues {
     public static final String HtmlMergeAsTextFxml = "/fxml/HtmlMergeAsText.fxml";
     public static final String HtmlFramesetFxml = "/fxml/HtmlFrameset.fxml";
     public static final String MessageDigestFxml = "/fxml/MessageDigest.fxml";
+    public static final String Base64Fxml = "/fxml/Base64.fxml";
     public static final String FilesCompareFxml = "/fxml/FilesCompare.fxml";
     public static final String FilesRedundancyFxml = "/fxml/FilesRedundancy.fxml";
     public static final String FilesRedundancyResultsFxml = "/fxml/FilesRedundancyResults.fxml";
@@ -181,7 +185,9 @@ public class CommonValues {
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
     public static final String ControlWebBrowserBoxFxml = "/fxml/ControlWebBrowserBox.fxml";
     public static final String WebBrowserHistoryFxml = "/fxml/WebBrowserHistory.fxml";
-    public static final String HtmlConvertUrlFxml = "/fxml/HtmlConvertUrl.fxml";
+    public static final String NetworkConvertUrlFxml = "/fxml/NetworkConvertUrl.fxml";
+    public static final String NetworkQueryAddressFxml = "/fxml/NetworkQueryAddress.fxml";
+    public static final String NetworkQueryDNSBatchFxml = "/fxml/NetworkQueryDNSBatch.fxml";
     public static final String MediaPlayerFxml = "/fxml/MediaPlayer.fxml";
     public static final String MediaListFxml = "/fxml/MediaList.fxml";
     public static final String FFmpegInformationFxml = "/fxml/FFmpegInformation.fxml";
@@ -193,8 +199,6 @@ public class CommonValues {
     public static final String FFmpegScreenRecorderFxml = "/fxml/FFmpegScreenRecorder.fxml";
     public static final String SecurityCertificatesFxml = "/fxml/SecurityCertificates.fxml";
     public static final String SecurityCertificateAddFxml = "/fxml/SecurityCertificateAdd.fxml";
-    public static final String SecurityCertificatesBypassFxml = "/fxml/SecurityCertificatesBypass.fxml";
-    public static final String DownloadManageFxml = "/fxml/DownloadManage.fxml";
     public static final String DownloadFirstLevelLinksFxml = "/fxml/DownloadFirstLevelLinks.fxml";
     public static final String DownloadFirstLevelLinksSetFxml = "/fxml/DownloadFirstLevelLinksSet.fxml";
     public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
@@ -212,16 +216,13 @@ public class CommonValues {
     public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
     public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";
     public static final String EpidemicReportsEditFxml = "/fxml/EpidemicReportsEdit.fxml";
-    public static final String EpidemicReportsImportBaiduFxml = "/fxml/EpidemicReportsImportBaidu.fxml";
-    public static final String EpidemicReportsImportTecentFxml = "/fxml/EpidemicReportsImportTecent.fxml";
     public static final String EpidemicReportsImportInternalCSVFxml = "/fxml/EpidemicReportsImportInternalCSV.fxml";
     public static final String EpidemicReportsImportExternalCSVFxml = "/fxml/EpidemicReportsImportExternalCSV.fxml";
     public static final String EpidemicReportsImport621ExternalFxml = "/fxml/EpidemicReportsImport621External.fxml";
     public static final String EpidemicReportsImportJHUTimeSeriesFxml = "/fxml/EpidemicReportsImportJHUTimeSeries.fxml";
     public static final String EpidemicReportsImportJHUDailyFxml = "/fxml/EpidemicReportsImportJHUDaily.fxml";
     public static final String EpidemicReportsStatisticFxml = "/fxml/EpidemicReportsStatistic.fxml";
-    public static final String DataTextClipboardFxml = "/fxml/DataTextClipboard.fxml";
-    public static final String DataSheetClipboardFxml = "/fxml/DataSheetClipboard.fxml";
+    public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
@@ -237,6 +238,7 @@ public class CommonValues {
     public static final String LocationToolsFxml = "/fxml/LocationTools.fxml";
     public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
+    public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEn = new Locale("en");
@@ -297,9 +299,10 @@ public class CommonValues {
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
     public static final String DataIgnoreChars
-            = "[\\$\\(\\)\\*\\?\\/\\^\\{\\}\\|\\[\\]\"`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
+            = "\\$|\\(|\\)|\\*|\\?|\\/|\\^|\\{|\\}|\\||\\[|\\]|\"|"
+            + "[`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
     public static final String FileNameSpecialChars
-            = "[\\*\\?\\\\n\\s+\":<>/]|&nbsp;|&lt;|&gt;|&amp;|&quot;";
+            = "[:<>/&]|\\*|\\?|\\\\|\n|\"|\\s+|\\||&nbsp;|&lt;|&gt;|&amp;|&quot;";
 
     public static final String MyBoxStyle = "/styles/MyBox.css";
     public static final String DefaultStyle = "/styles/modena/modena.css";

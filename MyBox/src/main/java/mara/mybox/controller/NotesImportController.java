@@ -194,7 +194,13 @@ public class NotesImportController extends BaseBatchFileController {
     @Override
     public void donePost() {
         if (notesController != null) {
-            notesController.refreshBooks();
+            // Tree is not displayed when import for first time. Do not know why~
+            if (AppVariables.getUserConfigBoolean(baseName + "ImportFirstTime", true)) {
+                AppVariables.setUserConfigValue(baseName + "ImportFirstTime", false);
+                notesController.refresh();
+            } else {
+                notesController.refreshBooks();
+            }
             notesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
             closeStage();
             return;

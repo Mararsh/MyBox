@@ -4,6 +4,7 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Optional;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -29,6 +30,8 @@ public class SecurityCertificatesAddController extends BaseController {
     protected TextField addressInput;
     @FXML
     protected RadioButton addressRadio, fileRadio;
+    @FXML
+    protected CheckBox chainCheck;
 
     public SecurityCertificatesAddController() {
         baseTitle = AppVariables.message("SecurityCertificates");
@@ -91,14 +94,14 @@ public class SecurityCertificatesAddController extends BaseController {
                     @Override
                     protected boolean handle() {
                         error = null;
-                        if (certController.backupController.backupCheck.isSelected()) {
+                        if (certController.backupController.isBack()) {
                             certController.backupController.addBackup(certController.sourceFile);
                         }
                         if (addressRadio.isSelected()) {
                             try {
                                 error = NetworkTools.installCertificateByHost(
                                         ksFile.getAbsolutePath(), password,
-                                        addressInput.getText(), alias);
+                                        addressInput.getText(), alias, chainCheck.isSelected());
                             } catch (Exception e) {
                                 error = e.toString();
                             }
@@ -106,7 +109,7 @@ public class SecurityCertificatesAddController extends BaseController {
                             try {
                                 error = NetworkTools.installCertificateByFile(
                                         ksFile.getAbsolutePath(), password,
-                                        sourceFile, alias);
+                                        sourceFile, alias, chainCheck.isSelected());
                             } catch (Exception e) {
                                 error = e.toString();
                             }
@@ -117,6 +120,9 @@ public class SecurityCertificatesAddController extends BaseController {
                     @Override
                     protected void whenSucceeded() {
                         if (error == null) {
+                            if (certController == null || !certController.getMyStage().isShowing()) {
+                                certController = SecurityCertificatesController.oneOpen(ksFile);
+                            }
                             certController.loadAll(alias);
                             if (saveCloseCheck.isSelected()) {
                                 closeStage();
@@ -158,16 +164,17 @@ public class SecurityCertificatesAddController extends BaseController {
                     protected boolean handle() {
                         result = error = null;
                         try {
-                            Certificate cert = NetworkTools.getCertificateByFile(sourceFile);
+                            Certificate[] certs = NetworkTools.getCertificatesByFile(sourceFile);
                             StringBuilder s = new StringBuilder();
                             s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
-                            s.append("<hr>\n");
-                            s.append("<pre>").append(cert).append("</pre>\n");
+                            for (Certificate cert : certs) {
+                                s.append("<hr>\n");
+                                s.append("<pre>").append(cert).append("</pre>\n\n");
+                            }
                             result = s.toString();
                         } catch (Exception e) {
                             error = e.toString();
                         }
-
                         return error == null;
                     }
 
@@ -191,6 +198,12 @@ public class SecurityCertificatesAddController extends BaseController {
             MyBoxLog.error(e.toString());
         }
 
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        closeStage();
     }
 
     /*

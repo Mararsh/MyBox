@@ -14,7 +14,6 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class NotesMoveNotebookController extends ControlNotebookSelector {
 
-    protected NotesController notesController;
     protected Notebook sourceBook;
 
     @FXML
@@ -24,14 +23,15 @@ public class NotesMoveNotebookController extends ControlNotebookSelector {
         baseTitle = message("Notebook");
     }
 
-    public void setSource(NotesController notesController, Notebook sourceBook, String name) {
-        super.setValues(notesController, notesController.tableNotebook);
-        this.notesController = notesController;
+    public void setValues(NotesController notesController, Notebook sourceBook, String name) {
         this.sourceBook = sourceBook;
-        ignoreBook = sourceBook;
-        loadTree();
-        okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
         sourceLabel.setText(message("NotebookMoved") + ":\n" + name);
+        setValues(notesController);
+    }
+
+    @Override
+    public Notebook getIgnoreBook() {
+        return sourceBook;
     }
 
     @FXML
@@ -64,9 +64,14 @@ public class NotesMoveNotebookController extends ControlNotebookSelector {
 
                 @Override
                 protected void whenSucceeded() {
-                    notesController.refreshBooks();
-                    notesController.makeLoadedNamePanes();
-                    notesController.makeEditingBookLabel();
+                    if (notesController == null || !notesController.getMyStage().isShowing()) {
+                        notesController = NotesController.oneOpen();
+                    } else {
+                        notesController.refreshBooks();
+                        notesController.bookChanged(sourceBook);
+                        notesController.bookChanged(targetBook);
+                    }
+                    notesController.popSuccessful();
                     closeStage();
                 }
             };
@@ -76,12 +81,6 @@ public class NotesMoveNotebookController extends ControlNotebookSelector {
             thread.setDaemon(true);
             thread.start();
         }
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        closeStage();
     }
 
 }

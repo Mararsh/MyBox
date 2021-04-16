@@ -1808,7 +1808,6 @@ public class ImageManufacture {
             } else {
                 g.setBackground(CommonFxValues.TRANSPARENT);
             }
-
             if (strokeColor.getRGB() == 0) {
                 g.setColor(null);
             } else {
@@ -1860,16 +1859,13 @@ public class ImageManufacture {
             }
             BufferedImage foreImage = new BufferedImage(width, height, imageType);
             Graphics2D g = foreImage.createGraphics();
-            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+            if (strokeColor.getRGB() == 0) {
                 g.drawImage(backImage, 0, 0, width, height, null);
                 AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
                 g.setComposite(ac);
-            } else {
-                g.setBackground(CommonFxValues.TRANSPARENT);
-            }
-            if (strokeColor.getRGB() == 0) {
                 g.setColor(null);
             } else {
+                g.setBackground(CommonFxValues.TRANSPARENT);
                 g.setColor(strokeColor);
             }
             BasicStroke stroke;
@@ -1894,7 +1890,8 @@ public class ImageManufacture {
                 }
             }
             g.dispose();
-            if (strokeColor.equals(CommonFxValues.TRANSPARENT)) {
+            if (strokeColor.getRGB() == 0) {
+                MyBoxLog.console(strokeColor.getRGB());
                 return foreImage;
             } else {
                 return blendImages(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed);
@@ -1902,6 +1899,46 @@ public class ImageManufacture {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return backImage;
+        }
+    }
+
+    public static BufferedImage drawErase(BufferedImage srcImage, DoubleLines penData, int strokeWidth) {
+        try {
+            if (penData == null || penData.getPointsSize() == 0 || strokeWidth < 1) {
+                return srcImage;
+            }
+            int width = srcImage.getWidth();
+            int height = srcImage.getHeight();
+            int imageType = srcImage.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage newImage = new BufferedImage(width, height, imageType);
+            Graphics2D g = newImage.createGraphics();
+            g.drawImage(srcImage, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(null);
+            BasicStroke stroke = new BasicStroke(strokeWidth);
+            g.setStroke(stroke);
+            int lastx, lasty = -1, thisx, thisy;
+            for (List<DoublePoint> lineData : penData.getLines()) {
+                lastx = -1;
+                for (DoublePoint p : lineData) {
+                    thisx = (int) Math.round(p.getX());
+                    thisy = (int) Math.round(p.getY());
+                    if (lastx >= 0) {
+                        g.drawLine(lastx, lasty, thisx, thisy);
+                    }
+                    lastx = thisx;
+                    lasty = thisy;
+                }
+            }
+            g.dispose();
+            return newImage;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return srcImage;
         }
     }
 

@@ -2,6 +2,7 @@ package mara.mybox.db.table;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
@@ -40,6 +41,9 @@ public class TableNotebook extends BaseTable<Notebook> {
         return this;
     }
 
+    public static final String Create_Owner_Index
+            = "CREATE INDEX Notebook_owner_index on Notebook (  owner )";
+
     public static final String QueryID
             = "SELECT * FROM Notebook WHERE nbid=?";
 
@@ -47,7 +51,7 @@ public class TableNotebook extends BaseTable<Notebook> {
             = "SELECT * FROM Notebook WHERE name=?";
 
     public static final String QueryChildren
-            = "SELECT * FROM Notebook WHERE owner=? AND nbid > " + Notebook.RootID;
+            = "SELECT * FROM Notebook WHERE owner=? AND nbid>" + Notebook.RootID;
 
     public static final String QueryChild
             = "SELECT * FROM Notebook WHERE owner=? AND name=?";
@@ -238,6 +242,7 @@ public class TableNotebook extends BaseTable<Notebook> {
                 conn.commit();
                 sql = "ALTER TABLE Notebook ALTER COLUMN nbid RESTART WITH " + (Notebook.RootID + 1);
                 update(conn, sql);
+                conn.commit();
                 return find(conn, 1);
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -258,7 +263,7 @@ public class TableNotebook extends BaseTable<Notebook> {
     }
 
     public Notebook clear(Connection conn) {
-        try {
+        try ( Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "DROP TABLE Note_Tag";
             update(conn, sql);
@@ -269,6 +274,10 @@ public class TableNotebook extends BaseTable<Notebook> {
 
             createTable(conn);
             new TableNote().createTable(conn);
+            new TableNoteTag().createTable(conn);
+
+            statement.executeUpdate(TableNote.Create_Time_Index);
+            statement.executeUpdate(TableNoteTag.Create_Unique_Index);
 
             return checkRoot(conn);
         } catch (Exception e) {

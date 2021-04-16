@@ -183,14 +183,14 @@ public abstract class PixelBlend {
             return forePixel;
         }
         if (orderReversed) {
-            foreColor = new Color(backPixel);
-            backColor = new Color(forePixel);
+            foreColor = new Color(backPixel, true);
+            backColor = new Color(forePixel, true);
         } else {
-            foreColor = new Color(forePixel);
-            backColor = new Color(backPixel);
+            foreColor = new Color(forePixel, true);
+            backColor = new Color(backPixel, true);
         }
-        alpha = (int) (opacity * 255);
         makeRGB();
+        alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
         Color newColor = new Color(
                 Math.min(Math.max(red, 0), 255),
                 Math.min(Math.max(green, 0), 255),
@@ -203,7 +203,6 @@ public abstract class PixelBlend {
         red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
         green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
         blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
-        alpha = 255;
     }
 
     /*

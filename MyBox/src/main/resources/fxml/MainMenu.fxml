@@ -22,9 +22,6 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
-                                <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#refresh" text="%RefreshWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#resetWindows" text="%ResetWindows" />
                                 <MenuItem mnemonicParsing="false" onAction="#fullScreen" text="%FullScreen" />
@@ -152,7 +149,6 @@ License:    Apache License Version 2.0
                                 <MenuItem fx:id="imageOcrBatchMenu" mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
-                                <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPaletteManage" />
                                 <Menu mnemonicParsing="false" text="%ColorSpace">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openChromaticityDiagram" text="%DrawChromaticityDiagram" />
@@ -185,8 +181,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelMerge" text="%ExcelMerge" />
                                     </items>
                                 </Menu>
-                                <MenuItem mnemonicParsing="false" onAction="#openDataTextClipboard" text="%DataTextClipboard" />
-                                <MenuItem mnemonicParsing="false" onAction="#openDataSheetClipboard" text="%DataSheetClipboard" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDataClipboard" text="%DataClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatricesManage" text="%MatricesManage" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMatrixUnaryCalculation" text="%MatrixUnaryCalculation" />
@@ -203,10 +198,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openBarcodeDecoder" text="%BarcodeDecoder" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMessageDigest" text="%MessageDigest" />
-                                <!--                                <Menu mnemonicParsing="false" text="%Miscellaneous">
-                                    <items>
-                                    </items>
-                                </Menu>-->
+                                <MenuItem mnemonicParsing="false" onAction="#Base64Conversion" text="%Base64Conversion" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%File">
@@ -242,8 +234,6 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openFilesCompressBatch" text="%FilesCompressBatch" />
                                     </items>
                                 </Menu>
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openTTC2TTF" text="%TTC2TTF" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%Media">
@@ -280,13 +270,13 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#downloadFirstLevelLinks" text="%DownloadFirstLevelLinks" />
                                 <MenuItem mnemonicParsing="false" onAction="#openWeiboSnap" text="%WeiboSnap" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openConvertUrl" text="%HtmlConvertUrl" />
                                 <MenuItem mnemonicParsing="false" onAction="#openWebBrowser" text="%WebBrowser" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#queryNetworkAddress" text="%QueryNetworkAddress" />
+                                <MenuItem mnemonicParsing="false" onAction="#queryDNSBatch" text="%QueryDNSBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openConvertUrl" text="%ConvertUrl" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openSecurityCertificates" text="%SecurityCertificates" />
-                                <MenuItem mnemonicParsing="false" onAction="#restoreCheckingSSLCertifications" text="%RestoreCheckingSSLCertifications" />
-                                <!--                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#downloadManage" text="%DownloadManage" />-->
                             </items>
                         </Menu>
                         <Menu fx:id="settingsMenu" mnemonicParsing="false" text="%Settings">
@@ -402,17 +392,30 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                             </items>
                         </Menu>
-                        <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
+                        <Menu fx:id="devMenu" mnemonicParsing="false" text="%Development">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#Shortcuts" text="%Shortcuts" />
+                                <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
+                                <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
+                                <CheckMenuItem fx:id="devCheck" mnemonicParsing="false" onAction="#devMode" text="%DevelopmentMode" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxLogs" text="%MyBoxLogs" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#runSystemCommand" text="%RunSystemCommand" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTTC2TTF" text="%TTC2TTF" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="makeIconsItem"  mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />
+                            </items>
+                        </Menu>
+                        <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#Shortcuts" text="%Shortcuts" />
                                 <MenuItem mnemonicParsing="false" onAction="#readme" text="ReadMe" />
                                 <MenuItem mnemonicParsing="false" onAction="#documents" text="%Documents" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem fx:id="makeIconsItem"  mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
-                                <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />
                                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
                             </items>
                         </Menu>

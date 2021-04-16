@@ -205,19 +205,19 @@ public class ImageConvert {
                 ImageReader reader = ImageIO.getImageReaders(in).next();
                 reader.setInput(in, false);
                 writer.setOutput(out);
-                int num;
                 if (supportMultiFrames) {
-                    num = reader.getNumImages(true);
                     writer.prepareWriteSequence(null);
-                } else {
-                    num = 1;
                 }
                 BufferedImage bufferedImage;
-                for (int i = 0; i < num; ++i) {
+                int index = 0;
+                while (true) {
                     try {
-                        bufferedImage = reader.read(i);
+                        bufferedImage = reader.read(index);
                     } catch (Exception e) {
-                        bufferedImage = readBrokenImage(e, srcFile, i, null, 1, 1);
+                        if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
+                            break;
+                        }
+                        bufferedImage = readBrokenImage(e, srcFile, index, null, 1, 1);
                     }
                     if (bufferedImage == null) {
                         continue;
@@ -233,6 +233,7 @@ public class ImageConvert {
                     } else {
                         writer.write(metaData, new IIOImage(bufferedImage, null, metaData), param);
                     }
+                    index++;
                 }
                 if (supportMultiFrames) {
                     writer.endWriteSequence();
@@ -258,17 +259,23 @@ public class ImageConvert {
             try ( ImageInputStream in = ImageIO.createImageInputStream(srcFile)) {
                 ImageReader reader = ImageIO.getImageReaders(in).next();
                 reader.setInput(in, false);
-                int num = reader.getNumImages(true);
                 BufferedImage bufferedImage;
-                for (int i = 0; i < num; ++i) {
+                int index = 0;
+                while (true) {
                     try {
-                        bufferedImage = reader.read(i);
+                        bufferedImage = reader.read(index);
                     } catch (Exception e) {
-                        bufferedImage = readBrokenImage(e, srcFile, i, null, 1, 1);
+                        if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
+                            break;
+                        }
+                        bufferedImage = readBrokenImage(e, srcFile, index, null, 1, 1);
                     }
                     if (bufferedImage != null) {
                         bufferedImage = convertToIcon(bufferedImage, attributes);
                         images.add(bufferedImage);
+                        index++;
+                    } else {
+                        break;
                     }
                 }
                 reader.dispose();

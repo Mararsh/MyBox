@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,6 +27,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -236,10 +238,29 @@ public abstract class BaseDataFileController extends BaseSheetController {
             if (!checkBeforeNextAction()) {
                 return;
             }
+            TableSizeController controller = (TableSizeController) openStage(CommonValues.TableSizeFxml, true);
+            controller.setValues(this);
+            controller.notify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    newSheet(controller.rowsNumber, controller.colsNumber);
+                    controller.closeStage();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void newSheet(int rows, int cols) {
+        try {
             sourceFile = null;
             initFile();
             sheetBox.getChildren().clear();
-            makeSheet(new String[3][3], false);
+
+            makeSheet(new String[rows][cols], false);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -261,6 +282,12 @@ public abstract class BaseDataFileController extends BaseSheetController {
         sourceFile = file;
         initCurrentPage();
         loadFile(false);
+    }
+
+    public void backup() {
+        if (backupController != null && backupController.isBack()) {
+            backupController.addBackup(sourceFile);
+        }
     }
 
     public void initCurrentPage() {
@@ -727,6 +754,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -821,6 +849,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -868,6 +897,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -921,6 +951,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -961,6 +992,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -1007,6 +1039,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -1137,6 +1170,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -1181,6 +1215,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 
@@ -1232,6 +1267,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    backup();
                     return FileTools.rename(tmpFile, sourceFile);
                 }
 

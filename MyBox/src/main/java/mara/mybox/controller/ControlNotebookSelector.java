@@ -14,6 +14,7 @@ import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Notebook;
 import static mara.mybox.db.data.Notebook.NotebooksSeparater;
+import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVariables.message;
@@ -25,8 +26,12 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ControlNotebookSelector extends BaseController {
 
+    protected static final int AutoExpandThreshold = 100;
+
+    protected NotesController notesController;
     protected TableNotebook tableNotebook;
-    protected Notebook rootBook, ignoreBook;
+    protected TableNote tableNote;
+    protected Notebook rootBook = null, ignoreBook = null;
     protected SimpleBooleanProperty selected;
     protected boolean expandAll;
 
@@ -37,12 +42,15 @@ public class ControlNotebookSelector extends BaseController {
         baseTitle = message("Notebook");
     }
 
-    public void setValues(BaseController parent, TableNotebook tableNotebook) {
-        parentController = parent;
-        this.tableNotebook = tableNotebook;
-        this.baseName = parent.baseName;
+    public void setValues(NotesController notesController) {
+        this.notesController = notesController;
+        this.tableNotebook = notesController.tableNotebook;
+        this.tableNote = notesController.tableNote;
+        this.baseName = notesController.baseName;
+        this.ignoreBook = getIgnoreBook();
 
         rootBook = tableNotebook.checkRoot();
+        treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         treeView.setCellFactory(p -> new TreeCell<Notebook>() {
             @Override
             public void updateItem(Notebook item, boolean empty) {
@@ -58,37 +66,108 @@ public class ControlNotebookSelector extends BaseController {
                 }
             }
         });
+
+        ControlNotebookSelector.cloneTree(notesController.notebooksController.treeView, treeView, ignoreBook);
+        if (okButton != null) {
+            okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
+        }
+    }
+
+    public Notebook getIgnoreBook() {
+        return ignoreBook;
     }
 
     public void loadTree() {
-        loadTree(tableNotebook.size() <= 20);
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private boolean expand;
+                private List<Notebook> books;
+                TreeItem<Notebook> rootNode;
+
+                @Override
+
+                protected boolean handle() {
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        if (tableNotebook == null) {
+                            tableNotebook = new TableNotebook();
+                        }
+                        if (rootBook == null) {
+                            rootBook = tableNotebook.checkRoot(conn);
+                        }
+                        rootBook.setName(message("Notebook"));
+                        rootNode = new TreeItem(rootBook);
+                        ignoreBook = getIgnoreBook();
+                        int size = tableNotebook.size();
+                        if (size < 2) {
+                            return true;
+                        }
+                        expand = tableNotebook.size(conn) <= AutoExpandThreshold;
+                        if (expand) {
+                            expandChildren(conn, rootNode);
+                        } else {
+                            books = tableNotebook.children(conn, rootBook.getNbid());
+                            loadChildren(rootNode, books);
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    treeView.setRoot(rootNode);
+                    rootNode.setExpanded(true);
+                }
+            };
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            } else {
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
-    public void loadTree(boolean expand) {
-        treeView.setRoot(null);
-        if (tableNotebook == null) {
-            setValues(null, new TableNotebook());
-        }
-        if (rootBook == null) {
+    protected void expandChildren(final Connection conn, final TreeItem<Notebook> node) {
+        if (conn == null || node == null) {
             return;
         }
-        rootBook.setName(message("Notebook"));
-        TreeItem<Notebook> rootNode = new TreeItem(rootBook);
-        rootNode.setExpanded(true);
-        treeView.setRoot(rootNode);
-        treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        if (expand) {
-            expandChildren(rootNode);
-        } else {
-            loadChildren(rootNode);
+        node.getChildren().clear();
+        Notebook nodeBook = node.getValue();
+        if (nodeBook == null) {
+            return;
         }
+        List<Notebook> childrenBooks = tableNotebook.children(conn, nodeBook.getNbid());
+        if (childrenBooks != null) {
+            for (Notebook childBook : childrenBooks) {
+                if (ignoreBook != null && childBook.getNbid() == ignoreBook.getNbid()) {
+                    continue;
+                }
+                TreeItem<Notebook> childNode = new TreeItem(childBook);
+                expandChildren(conn, childNode);
+                childNode.setExpanded(true);
+                node.getChildren().add(childNode);
+            }
+        }
+        node.setExpanded(true);
     }
 
     protected void expandChildren(TreeItem<Notebook> node) {
         if (node == null) {
             return;
         }
-        node.getChildren().clear();
+        Notebook nodeBook = node.getValue();
+        if (nodeBook == null) {
+            return;
+        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -109,9 +188,7 @@ public class ControlNotebookSelector extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     treeView.refresh();
-//                    treeView.getSelectionModel().select(treeView.getRoot());
                 }
-
             };
             if (parentController != null) {
                 parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -122,26 +199,6 @@ public class ControlNotebookSelector extends BaseController {
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
-        }
-    }
-
-    protected void expandChildren(Connection conn, TreeItem<Notebook> node) {
-        if (conn == null || node == null) {
-            return;
-        }
-        Notebook nodeBook = node.getValue();
-        if (nodeBook == null) {
-            return;
-        }
-        List<Notebook> childrenBooks = tableNotebook.children(nodeBook.getNbid());
-        for (Notebook childBook : childrenBooks) {
-            if (ignoreBook != null && childBook.getNbid() == ignoreBook.getNbid()) {
-                continue;
-            }
-            TreeItem<Notebook> childNode = new TreeItem(childBook);
-            expandChildren(conn, childNode);
-            childNode.setExpanded(true);
-            node.getChildren().add(childNode);
         }
     }
 
@@ -163,7 +220,12 @@ public class ControlNotebookSelector extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    books = tableNotebook.children(notebook.getNbid());
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        books = tableNotebook.children(conn, notebook.getNbid());
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                     return true;
                 }
 
@@ -172,38 +234,9 @@ public class ControlNotebookSelector extends BaseController {
                     if (books == null) {
                         return;
                     }
-                    Notebook dummy = new Notebook();
-                    for (Notebook book : books) {
-                        if (ignoreBook != null && book.getNbid() == ignoreBook.getNbid()) {
-                            continue;
-                        }
-                        TreeItem<Notebook> child = new TreeItem(book);
-                        node.getChildren().add(child);
-                        child.setExpanded(false);
-                        child.expandedProperty().addListener(
-                                (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                    if (newVal && !child.isLeaf() && !loaded(child)) {
-                                        loadChildren(child);
-                                    }
-                                });
-                        TreeItem<Notebook> dummyItem = new TreeItem(dummy);
-                        child.getChildren().add(dummyItem);
-                    }
+                    loadChildren(node, books);
                     treeView.refresh();
                 }
-
-                protected boolean loaded(TreeItem<Notebook> item) {
-                    if (item == null || item.isLeaf()) {
-                        return true;
-                    }
-                    try {
-                        TreeItem<Notebook> child = (TreeItem<Notebook>) (item.getChildren().get(0));
-                        return child.getValue().getName() != null;
-                    } catch (Exception e) {
-                        return true;
-                    }
-                }
-
             };
             if (parentController != null) {
                 parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -215,6 +248,120 @@ public class ControlNotebookSelector extends BaseController {
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    protected void loadChildren(TreeItem<Notebook> node, List<Notebook> books) {
+        if (node == null || books == null) {
+            return;
+        }
+        Notebook dummy = new Notebook();
+        for (Notebook book : books) {
+            if (ignoreBook != null && book.getNbid() == ignoreBook.getNbid()) {
+                continue;
+            }
+            TreeItem<Notebook> child = new TreeItem(book);
+            node.getChildren().add(child);
+            child.setExpanded(false);
+            child.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                        if (newVal && !child.isLeaf() && !loaded(child)) {
+                            loadChildren(child);
+                        }
+                    });
+            TreeItem<Notebook> dummyItem = new TreeItem(dummy);
+            child.getChildren().add(dummyItem);
+        }
+    }
+
+    protected boolean loaded(TreeItem<Notebook> item) {
+        if (item == null || item.isLeaf()) {
+            return true;
+        }
+        try {
+            TreeItem<Notebook> child = (TreeItem<Notebook>) (item.getChildren().get(0));
+            return child.getValue().getName() != null;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    protected void fold(TreeItem<Notebook> node) {
+        if (node == null) {
+            return;
+        }
+        List<TreeItem<Notebook>> children = node.getChildren();
+        if (children != null) {
+            for (TreeItem<Notebook> child : children) {
+                fold(child);
+                child.setExpanded(false);
+            }
+        }
+        node.setExpanded(false);
+    }
+
+    @FXML
+    public void refreshAction() {
+        loadTree();
+    }
+
+    @FXML
+    protected void addBook() {
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            TreeItem<Notebook> selectedNode = treeView.getSelectionModel().getSelectedItem();
+            if (selectedNode == null) {
+                selectedNode = treeView.getRoot();
+                if (selectedNode == null) {
+                    return;
+                }
+            }
+            TreeItem<Notebook> targetNode = selectedNode;
+            Notebook targetBook = targetNode.getValue();
+            if (targetBook == null) {
+                return;
+            }
+            String chainName = ControlNotebookSelector.nodeName(targetNode);
+            String name = FxmlControl.askValue(getBaseTitle(), chainName, message("AddBook"), message("Notebook") + "m");
+            if (name == null || name.isBlank()) {
+                return;
+            }
+            if (name.contains(NotebooksSeparater)) {
+                popError(message("NotebookNameNotInclude") + " \"" + NotebooksSeparater + "\"");
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private Notebook newBook;
+
+                @Override
+                protected boolean handle() {
+                    newBook = new Notebook(targetBook.getNbid(), name);
+                    newBook = tableNotebook.insertData(newBook);
+                    return newBook != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    TreeItem<Notebook> newNode = new TreeItem<>(newBook);
+                    targetNode.getChildren().add(newNode);
+                    notesController.bookChanged(targetBook);
+                    popSuccessful();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        closeStage();
     }
 
     /*
@@ -251,7 +398,7 @@ public class ControlNotebookSelector extends BaseController {
         return chainName;
     }
 
-    public static void cloneTree(TreeView<Notebook> sourceTreeView, TreeView<Notebook> targetTreeView) {
+    public static void cloneTree(TreeView<Notebook> sourceTreeView, TreeView<Notebook> targetTreeView, Notebook ignore) {
         if (sourceTreeView == null || targetTreeView == null) {
             return;
         }
@@ -262,14 +409,17 @@ public class ControlNotebookSelector extends BaseController {
         TreeItem<Notebook> targetRoot = new TreeItem(sourceRoot.getValue());
         targetTreeView.setRoot(targetRoot);
         targetRoot.setExpanded(sourceRoot.isExpanded());
-        cloneNode(sourceRoot, targetRoot);
+        cloneNode(sourceRoot, targetRoot, ignore);
         TreeItem<Notebook> selected = sourceTreeView.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            select(targetTreeView, selected.getValue());
+            Notebook selectedBook = selected.getValue();
+            if (ignore == null || ignore.getNbid() != selectedBook.getNbid()) {
+                select(targetTreeView, selectedBook);
+            }
         }
     }
 
-    public static void cloneNode(TreeItem<Notebook> sourceNode, TreeItem<Notebook> targetNode) {
+    public static void cloneNode(TreeItem<Notebook> sourceNode, TreeItem<Notebook> targetNode, Notebook ignore) {
         if (sourceNode == null || targetNode == null) {
             return;
         }
@@ -278,10 +428,13 @@ public class ControlNotebookSelector extends BaseController {
             return;
         }
         for (TreeItem<Notebook> sourceChild : sourceChildren) {
+            if (ignore != null && sourceChild.getValue().getNbid() == ignore.getNbid()) {
+                continue;
+            }
             TreeItem<Notebook> targetChild = new TreeItem<>(sourceChild.getValue());
             targetChild.setExpanded(sourceChild.isExpanded());
             targetNode.getChildren().add(targetChild);
-            cloneNode(sourceChild, targetChild);
+            cloneNode(sourceChild, targetChild, ignore);
         }
     }
 

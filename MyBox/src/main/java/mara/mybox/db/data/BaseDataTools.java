@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import mara.mybox.data.DownloadHistory;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
+import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
-import mara.mybox.db.table.TableDownloadHistory;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
@@ -45,9 +46,6 @@ public class BaseDataTools {
 
         } else if (data instanceof Dataset) {
             return new TableDataset();
-
-        } else if (data instanceof DownloadHistory) {
-            return new TableDownloadHistory();
 
         } else if (data instanceof EpidemicReport) {
             return new TableEpidemicReport();
@@ -88,6 +86,15 @@ public class BaseDataTools {
         } else if (data instanceof NoteTag) {
             return new TableNoteTag();
 
+        } else if (data instanceof ColorPaletteName) {
+            return new TableColorPaletteName();
+
+        } else if (data instanceof ColorData) {
+            return new TableColor();
+
+        } else if (data instanceof ColorPalette) {
+            return new TableColorPalette();
+
         }
         return null;
     }
@@ -101,9 +108,6 @@ public class BaseDataTools {
 
         } else if (data instanceof Dataset) {
             return Dataset.valid((Dataset) data);
-
-        } else if (data instanceof DownloadHistory) {
-            return DownloadHistory.valid((DownloadHistory) data);
 
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.valid((EpidemicReport) data);
@@ -144,6 +148,15 @@ public class BaseDataTools {
         } else if (data instanceof NoteTag) {
             return NoteTag.valid((NoteTag) data);
 
+        } else if (data instanceof ColorPaletteName) {
+            return ColorPaletteName.valid((ColorPaletteName) data);
+
+        } else if (data instanceof ColorData) {
+            return ColorData.valid((ColorData) data);
+
+        } else if (data instanceof ColorPalette) {
+            return ColorPalette.valid((ColorPalette) data);
+
         }
 
         return false;
@@ -158,9 +171,6 @@ public class BaseDataTools {
 
         } else if (data instanceof Dataset) {
             return Dataset.getValue((Dataset) data, name);
-
-        } else if (data instanceof DownloadHistory) {
-            return DownloadHistory.getValue((DownloadHistory) data, name);
 
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.getValue((EpidemicReport) data, name);
@@ -201,6 +211,15 @@ public class BaseDataTools {
         } else if (data instanceof NoteTag) {
             return NoteTag.getValue((NoteTag) data, name);
 
+        } else if (data instanceof ColorPaletteName) {
+            return ColorPaletteName.getValue((ColorPaletteName) data, name);
+
+        } else if (data instanceof ColorData) {
+            return ColorData.getValue((ColorData) data, name);
+
+        } else if (data instanceof ColorPalette) {
+            return ColorPalette.getValue((ColorPalette) data, name);
+
         }
 
         return null;
@@ -215,9 +234,6 @@ public class BaseDataTools {
 
         } else if (data instanceof Dataset) {
             return Dataset.setValue((Dataset) data, name, value);
-
-        } else if (data instanceof DownloadHistory) {
-            return DownloadHistory.setValue((DownloadHistory) data, name, value);
 
         } else if (data instanceof EpidemicReport) {
             return EpidemicReport.setValue((EpidemicReport) data, name, value);
@@ -257,6 +273,15 @@ public class BaseDataTools {
 
         } else if (data instanceof NoteTag) {
             return NoteTag.setValue((NoteTag) data, name, value);
+
+        } else if (data instanceof ColorPaletteName) {
+            return ColorPaletteName.setValue((ColorPaletteName) data, name, value);
+
+        } else if (data instanceof ColorData) {
+            return ColorData.setValue((ColorData) data, name, value);
+
+        } else if (data instanceof ColorPalette) {
+            return ColorPalette.setValue((ColorPalette) data, name, value);
 
         }
         return false;

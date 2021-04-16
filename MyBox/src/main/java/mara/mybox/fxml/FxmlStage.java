@@ -62,29 +62,48 @@ import mara.mybox.value.CommonValues;
  */
 public class FxmlStage {
 
-    public static BaseController initScene(final Stage stage, final String newFxml, StageStyle stageStyle) {
+    public static BaseController initScene(Stage stage, String newFxml, StageStyle stageStyle) {
         return initScene(stage, newFxml, AppVariables.currentBundle, stageStyle);
     }
 
-    public static BaseController initScene(final Stage stage, final String newFxml,
+    public static BaseController initScene(Stage stage, String newFxml,
             ResourceBundle bundle, StageStyle stageStyle) {
         try {
             if (stage == null) {
                 return null;
             }
             FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), bundle);
-            Pane pane = fxmlLoader.load();
-            try {
-                pane.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
-            } catch (Exception e) {
-            }
-            Scene scene = new Scene(pane);
+            return initController(fxmlLoader, stage, stageStyle);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
 
-            final BaseController controller = (BaseController) fxmlLoader.getController();
-            controller.setMyStage(stage);
-            stage.setUserData(controller);
+    public static BaseController initController(FXMLLoader fxmlLoader,
+            Stage stage, StageStyle stageStyle) {
+        try {
+            if (fxmlLoader == null) {
+                return null;
+            }
+            Scene scene = new Scene(fxmlLoader.load());
+            BaseController controller = (BaseController) fxmlLoader.getController();
+            return initController(controller, scene, stage, stageStyle);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController initController(BaseController controller, Scene scene,
+            Stage stage, StageStyle stageStyle) {
+        try {
+            if (controller == null) {
+                return null;
+            }
             controller.setMyScene(scene);
-            controller.setLoadFxml(newFxml);
+            controller.setMyStage(stage);
+            scene.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
 
             stage.setUserData(controller);
             stage.getIcons().add(CommonFxValues.AppIcon);
@@ -108,10 +127,10 @@ public class FxmlStage {
 
             controller.afterSceneLoaded();
 
-            if (controller.getMainMenuController() != null && !newFxml.equals(CommonValues.LoadingFxml)) {
-                VisitHistoryTools.visitMenu(controller.getBaseTitle(), newFxml);
+            String fxml = controller.getMyFxml();
+            if (controller.getMainMenuController() != null && !fxml.contains(CommonValues.LoadingFxml)) {
+                VisitHistoryTools.visitMenu(controller.getBaseTitle(), fxml);
             }
-
             Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
 
             return controller;
@@ -119,6 +138,14 @@ public class FxmlStage {
             MyBoxLog.error(e.toString());
             return null;
         }
+    }
+
+    public static BaseController initController(FXMLLoader fxmlLoader) {
+        return initController(fxmlLoader, newStage(), null);
+    }
+
+    public static BaseController initController(BaseController controller, Scene scene) {
+        return initController(controller, scene, newStage(), null);
     }
 
     public static BaseController setScene(final String newFxml) {
@@ -136,7 +163,6 @@ public class FxmlStage {
 
             BaseController controller = (BaseController) fxmlLoader.getController();
             controller.setMyScene(scene);
-            controller.setLoadFxml(newFxml);
             controller.initSplitPanes();
             controller.refreshStyle();
 
@@ -145,6 +171,32 @@ public class FxmlStage {
             MyBoxLog.error(e.toString());
             return null;
         }
+    }
+
+    public static FXMLLoader newFxml(String fxml) {
+        try {
+            return new FXMLLoader(FxmlStage.class.getResource(fxml), AppVariables.currentBundle);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static Stage newStage() {
+        try {
+            Stage newStage = new Stage();
+            newStage.initModality(Modality.NONE);
+            newStage.initStyle(StageStyle.DECORATED);
+            newStage.initOwner(null);
+            return newStage;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController openStage(String fxml) {
+        return initController(newFxml(fxml), newStage(), null);
     }
 
     public static BaseController openStage(Stage myStage, String newFxml, ResourceBundle bundle,
@@ -189,10 +241,6 @@ public class FxmlStage {
 
     public static BaseController openStage(Stage myStage, String newFxml) {
         return openStage(myStage, newFxml, false, Modality.NONE);
-    }
-
-    public static BaseController openStage(String newFxml) {
-        return openStage(null, newFxml, false, Modality.NONE);
     }
 
     public static BaseController openScene(Stage stage, String newFxml, StageStyle stageStyle) {

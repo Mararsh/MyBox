@@ -4,12 +4,16 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
@@ -33,9 +37,10 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import mara.mybox.db.table.TableBrowserBypassSSL;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -46,7 +51,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.html.HTMLDocument;
 
 /**
  * @Author Mara
@@ -56,21 +60,57 @@ import org.w3c.dom.html.HTMLDocument;
 public class ControlWebview extends BaseController {
 
     protected WebEngine webEngine;
-    protected EventListener linkListener, frameListener;
+    protected EventListener linkListener, frameLinkListener;
     protected double linkX, linkY;
     protected float zoomScale;
     protected String address;
+    protected Charset charset;
+    protected Document doc;
+    protected Map<Integer, Document> frameDoc;
+    protected final SimpleIntegerProperty stateNotify;
+
+    public static final int TmpState = -9;
+    public static final int NoDoc = -3;
+    public static final int DocLoading = -2;
+    public static final int DocLoaded = -1;
 
     @FXML
     protected WebView webView;
     @FXML
-    protected Button snapshotButton, editButton;
+    protected Button snapshotButton, editButton, backwardButton, forwardButton;
     @FXML
     protected FlowPane buttonsPane;
 
     public ControlWebview() {
         baseTitle = AppVariables.message("Html");
+        stateNotify = new SimpleIntegerProperty(NoDoc);
+    }
 
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            webEngine = webView.getEngine();
+            linkX = linkY = -1;
+            zoomScale = 1.0f;
+            frameDoc = new HashMap<>();
+            charset = Charset.defaultCharset();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
+    }
+
+    // Listener should ignore state change from TmpState
+    public void changeState(int newState) {
+        synchronized (stateNotify) {
+            if (stateNotify.get() == newState) { // make sure state will change
+                stateNotify.set(TmpState);
+            }
+            stateNotify.set(newState);
+        }
     }
 
     @Override
@@ -87,21 +127,12 @@ public class ControlWebview extends BaseController {
 
     public void initWebView() {
         try {
-            if (AppVariables.getUserConfigBoolean("SSLBypassAll", false)) {
-                NetworkTools.trustAll();
-            } else {
-                NetworkTools.myBoxSSL();
-            }
-            webEngine = webView.getEngine();
-            linkX = linkY = -1;
-            zoomScale = 1.0f;
-
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
                 @Override
                 public void changed(ObservableValue ov, State oldState, State newState) {
                     switch (newState) {
                         case RUNNING:
-                            bottomLabel.setText(AppVariables.message("Loading..."));
+                            pageIsLoading();
                             break;
                         case SUCCEEDED:
                             afterPageLoaded();
@@ -122,23 +153,31 @@ public class ControlWebview extends BaseController {
             linkListener = new EventListener() {
                 @Override
                 public void handleEvent(org.w3c.dom.events.Event ev) {
-                    ev.preventDefault();
+
                     String domEventType = ev.getType();
                     Element element = (Element) ev.getTarget();
-                    String href = element.getAttribute("href");
-                    String finalHref = href != null ? URLDecoder.decode(href) : null;
-                    String value = element.getTextContent();
+                    String tag = element.getTagName();
+                    if (tag == null) {
+                        return;
+                    }
+                    ev.preventDefault();
+                    String href = null;
+                    if (tag.equalsIgnoreCase("a")) {
+                        href = element.getAttribute("href");
+                    } else if (tag.equalsIgnoreCase("img")) {
+                        href = element.getAttribute("src");
+                    }
                     if ("mouseover".equals(domEventType)) {
-                        bottomLabel.setText(finalHref);
+                        bottomLabel.setText(href != null ? URLDecoder.decode(href, charset) : null);
                     } else if ("mouseout".equals(domEventType)) {
                         bottomLabel.setText("");
-                    } else if (finalHref != null && ("click".equals(domEventType) || "contextmenu".equals(domEventType))) {
+                    } else if (href != null && ("click".equals(domEventType) || "contextmenu".equals(domEventType))) {
                         timer = new Timer();
                         timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 Platform.runLater(() -> {
-                                    popLinkMenu(finalHref, value);
+                                    popLinkMenu(element);
                                 });
                             }
                         }, 100);
@@ -146,23 +185,23 @@ public class ControlWebview extends BaseController {
                 }
             };
 
-            frameListener = new EventListener() {
+            frameLinkListener = new EventListener() {
                 @Override
                 public void handleEvent(org.w3c.dom.events.Event ev) {
                     String domEventType = ev.getType();
                     Element element = (Element) ev.getTarget();
                     String href = element.getAttribute("href");
-                    String finalHref = href != null ? URLDecoder.decode(href) : null;
+                    String finalHref = href != null ? URLDecoder.decode(href, charset) : null;
                     if ("mouseover".equals(domEventType)) {
                         bottomLabel.setText(finalHref);
                     } else if ("mouseout".equals(domEventType)) {
                         bottomLabel.setText("");
                     } else if (finalHref != null && "click".equals(domEventType)) {
-                        NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");
-                        for (int i = 0; i < frameList.getLength(); i++) {
-                            webEngine.executeScript("if ( window.frames[" + i + "].document.readyState==\"complete\") alert('FrameReady-" + i + "');");
-                            webEngine.executeScript("window.frames[" + i + "].document.onreadystatechange = "
-                                    + "function(){ if ( window.frames[" + i + "].document.readyState==\"complete\") alert('FrameReady-" + i + "'); }");
+                        String target = element.getAttribute("target");
+                        if (target != null && !target.equalsIgnoreCase("_blank")) {
+                            webEngine.executeScript("if ( window.frames." + target + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
+                            webEngine.executeScript("window.frames." + target + ".document.onreadystatechange = "
+                                    + "function(){ if ( window.frames." + target + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
                         }
                     }
                 }
@@ -187,6 +226,7 @@ public class ControlWebview extends BaseController {
                     }
                     try {
                         bottomLabel.setText(nt.getMessage());
+                        // https://stackoverflow.com/questions/3964703/can-i-add-a-new-certificate-to-the-keystore-without-restarting-the-jvm?r=SearchResults
                         if (nt.getMessage().contains("SSL handshake failed")) {
                             String host = new URI(webEngine.getLocation()).getHost();
                             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -197,26 +237,24 @@ public class ControlWebview extends BaseController {
                             stage.toFront();
                             if (NetworkTools.isHostCertificateInstalled(host)) {
                                 alert.setContentText(host + "\n" + message("SSLInstalledButFailed"));
-                                ButtonType buttonBypass = new ButtonType(AppVariables.message("SSLVerificationByPass"));
                                 ButtonType buttonCancel = new ButtonType(AppVariables.message("ISee"));
-                                alert.getButtonTypes().setAll(buttonBypass, buttonCancel);
-                                Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() != buttonBypass) {
-                                    return;
-                                }
-                                TableBrowserBypassSSL.write(host);
-                                refreshAction();
+                                alert.getButtonTypes().setAll(buttonCancel);
+                                alert.showAndWait();
 
-                            } else {
+                            } else if (AppVariables.getUserConfigBoolean("AskInstallCert" + host, true)) {
                                 alert.setContentText(host + "\n" + message("SSLCertificatesAskInstall"));
-                                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+                                ButtonType buttonSure = new ButtonType(message("Sure"));
+                                ButtonType buttonCancel = new ButtonType(message("Cancel"));
+                                ButtonType buttonNoAsk = new ButtonType(message("NotAskAnyMore"));
+                                alert.getButtonTypes().setAll(buttonSure, buttonNoAsk, buttonCancel);
                                 Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() != buttonSure) {
+                                if (result.get() == buttonNoAsk) {
+                                    AppVariables.setUserConfigValue("AskInstallCert" + host, false);
+                                    return;
+                                } else if (result.get() == buttonCancel) {
                                     return;
                                 }
-                                String msg = NetworkTools.installCertificateByHost(host, host);
+                                String msg = NetworkTools.installCertificateByHost(host, false);
                                 if (msg == null) {
                                     msg = host + "\n" + message("SSLCertificateInstalled");
                                 }
@@ -224,6 +262,8 @@ public class ControlWebview extends BaseController {
                                 ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
                                 alert.getButtonTypes().setAll(buttonISee);
                                 alert.showAndWait();
+                            } else {
+                                alertError(nt.getMessage());
                             }
 
                         }
@@ -238,7 +278,7 @@ public class ControlWebview extends BaseController {
                 @Override
                 public void handle(WebEvent<String> ev) {
 //                    javafx.event.EventTarget t = ev.getTarget();
-//                    MyBoxLog.console("here:" + t.getClass() + "  " + ev.getData());
+//                    MyBoxLog.console("here:" + ev.getData());
 //                    bottomLabel.setText(ev.getData());
                 }
             });
@@ -246,7 +286,7 @@ public class ControlWebview extends BaseController {
             webEngine.locationProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    bottomLabel.setText(URLDecoder.decode(newv));
+                    bottomLabel.setText(URLDecoder.decode(newv, charset));
                 }
             });
 
@@ -287,20 +327,27 @@ public class ControlWebview extends BaseController {
                 @Override
                 public void handle(WebEvent<String> ev) {
                     String msg = ev.getData();
-                    if (msg.startsWith("FrameReady-")) {
-                        int index = Integer.parseInt(msg.substring("FrameReady-".length()));
+                    int value = -1;
+                    if (msg.startsWith("FrameReadyIndex-")) {
+                        value = Integer.parseInt(msg.substring("FrameReadyIndex-".length()));
 //                        MyBoxLog.console("Frame " + index + " ready");
-                        Timer timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                Platform.runLater(() -> {
-                                    addFrameLinksListener(webEngine.getDocument(), index);
-                                });
-                            }
-                        }, 1000);
-
+                    } else if (msg.startsWith("FrameReadyName-")) {
+                        value = HtmlTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
                     }
+                    if (value < 0) {
+                        return;
+                    }
+                    int frameIndex = value;
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> {
+                                addFrameLinksListener(frameIndex);
+                                changeState(frameIndex);
+                            });
+                        }
+                    }, 500);
                 }
             });
 
@@ -333,11 +380,22 @@ public class ControlWebview extends BaseController {
         }
     }
 
+    protected void pageIsLoading() {
+        bottomLabel.setText(AppVariables.message("Loading..."));
+        changeState(DocLoading);
+    }
+
     protected void afterPageLoaded() {
         try {
             bottomLabel.setText(AppVariables.message("Loaded"));
-            addLinksListener(webEngine.getDocument());
-
+            charset = HtmlTools.charset(webEngine.getDocument());
+            doc = webEngine.getDocument();
+            frameDoc.clear();
+            addLinksListener(doc);
+            changeState(DocLoaded);
+            int hisSize = (int) webEngine.executeScript("window.history.length;");
+            backwardButton.setDisable(hisSize < 2);
+            forwardButton.setDisable(hisSize < 2);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -361,11 +419,24 @@ public class ControlWebview extends BaseController {
                 t.addEventListener("contextmenu", linkListener, false);
             }
 
+            nodeList = doc.getElementsByTagName("img");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                EventTarget t = (EventTarget) nodeList.item(i);
+                t.removeEventListener("click", linkListener, false);
+                t.removeEventListener("mouseover", linkListener, false);
+                t.removeEventListener("mouseout", linkListener, false);
+                t.removeEventListener("contextmenu", linkListener, false);
+                t.addEventListener("click", linkListener, false);
+                t.addEventListener("mouseover", linkListener, false);
+                t.addEventListener("mouseout", linkListener, false);
+                t.addEventListener("contextmenu", linkListener, false);
+            }
+
             NodeList frameList = doc.getElementsByTagName("frame");
             for (int i = 0; i < frameList.getLength(); i++) {
-                webEngine.executeScript("if ( window.frames[" + i + "].document.readyState==\"complete\") alert('FrameReady-" + i + "');");
+                webEngine.executeScript("if ( window.frames[" + i + "].document.readyState==\"complete\") alert('FrameReadyIndex-" + i + "');");
                 webEngine.executeScript("window.frames[" + i + "].document.onreadystatechange = "
-                        + "function(){ if ( window.frames[" + i + "].document.readyState==\"complete\") alert('FrameReady-" + i + "'); }");
+                        + "function(){ if ( window.frames[" + i + "].document.readyState==\"complete\") alert('FrameReadyIndex-" + i + "'); }");
             }
 
         } catch (Exception e) {
@@ -373,20 +444,28 @@ public class ControlWebview extends BaseController {
         }
     }
 
-    protected void addFrameLinksListener(Document doc, int frameIndex) {
+    protected void addFrameLinksListener(int frameIndex) {
         try {
-            if (doc == null || frameIndex < 0) {
-                return;
-            }
-            NodeList frameList = doc.getElementsByTagName("frame");
-            if (frameIndex >= frameList.getLength()) {
+            if (frameIndex < 0) {
                 return;
             }
             Object c = webEngine.executeScript("window.frames[" + frameIndex + "].document");
             if (c == null) {
                 return;
             }
-            HTMLDocument frameDoc = (HTMLDocument) c;
+            Document htmlDoc = (Document) c;
+            frameDoc.put(frameIndex, htmlDoc);
+            addFrameLinksListener(htmlDoc);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void addFrameLinksListener(Document frameDoc) {
+        try {
+            if (frameDoc == null) {
+                return;
+            }
             NodeList aList = frameDoc.getElementsByTagName("a");
             for (int j = 0; j < aList.getLength(); j++) {
                 Node node = aList.item(j);
@@ -397,14 +476,14 @@ public class ControlWebview extends BaseController {
                 Element element = (Element) node;
                 String target = element.getAttribute("target");
                 if (target != null && !target.equalsIgnoreCase("_blank")) {
-                    t.removeEventListener("click", frameListener, false);
-                    t.removeEventListener("mouseover", frameListener, false);
-                    t.removeEventListener("mouseout", frameListener, false);
-                    t.removeEventListener("contextmenu", frameListener, false);
-                    t.addEventListener("click", frameListener, false);
-                    t.addEventListener("mouseover", frameListener, false);
-                    t.addEventListener("mouseout", frameListener, false);
-                    t.addEventListener("contextmenu", frameListener, false);
+                    t.removeEventListener("click", frameLinkListener, false);
+                    t.removeEventListener("mouseover", frameLinkListener, false);
+                    t.removeEventListener("mouseout", frameLinkListener, false);
+                    t.removeEventListener("contextmenu", frameLinkListener, false);
+                    t.addEventListener("click", frameLinkListener, false);
+                    t.addEventListener("mouseover", frameLinkListener, false);
+                    t.addEventListener("mouseout", frameLinkListener, false);
+                    t.addEventListener("contextmenu", frameLinkListener, false);
                 } else {
                     t.removeEventListener("click", linkListener, false);
                     t.removeEventListener("mouseover", linkListener, false);
@@ -423,26 +502,22 @@ public class ControlWebview extends BaseController {
     }
 
     public void setAddress(String value) {
-        this.address = value;
-        if (address != null) {
-            if (address.toLowerCase().startsWith("file:/")) {
-                setSourceFile(new File(URLDecoder.decode(address.substring(6))));
-            } else if (address.startsWith("//")) {
-                this.address = "http:" + value;
+        address = HtmlTools.checkURL(value);
+        if (address != null && address.startsWith("file:/")) {
+            File file = new File(address.substring(6));
+            if (file.exists()) {
+                setSourceFile(file);
             } else {
-                File file = new File(URLDecoder.decode(address));
-                if (file.exists()) {
-                    setSourceFile(file);
-                } else {
-                    setSourceFile(null);
-                }
+                setSourceFile(null);
             }
         }
     }
 
     public void setSourceFile(File file) {
         this.sourceFile = file;
-        parentController.sourceFile = file;
+        if (parentController != null) {
+            parentController.sourceFile = file;
+        }
         if (address == null && sourceFile != null) {
             address = sourceFile.getAbsolutePath();
         }
@@ -490,28 +565,54 @@ public class ControlWebview extends BaseController {
         webEngine.load(address);
     }
 
-    protected void popLinkMenu(String href, String name) {
-        if (linkX < 0 || linkY < 0 || href == null || href.isBlank()) {
+    protected void popLinkMenu(Element element) {
+        if (linkX < 0 || linkY < 0 || element == null) {
+            return;
+        }
+        String tag = element.getTagName();
+        if (tag == null) {
+            return;
+        }
+        String href = null, hname = null;
+        if (tag.equalsIgnoreCase("a")) {
+            href = element.getAttribute("href");
+            hname = element.getTextContent();
+        } else if (tag.equalsIgnoreCase("img")) {
+            href = element.getAttribute("src");
+            hname = element.getAttribute("alt");
+        }
+        if (href == null) {
             return;
         }
         String linkAddress;
         try {
-            linkAddress = new URL(new URL(address), href).toString();
+            linkAddress = new URL(new URL(element.getBaseURI()), href).toString();
         } catch (Exception e) {
             linkAddress = href;
         }
-        String finalAddress = linkAddress == null ? URLDecoder.decode(href) : URLDecoder.decode(linkAddress);
+        String finalAddress = linkAddress;
+        String name = hname;
         List<MenuItem> items = new ArrayList<>();
         boolean showName = name != null && !name.isBlank() && !name.equalsIgnoreCase(href);
         String title = message("Name") + ": " + (showName ? name + "\n" : "")
-                + message("Link") + ": " + href
-                + (!finalAddress.equalsIgnoreCase(href) ? "\n" + message("Address") + ": " + linkAddress : "");
+                + message("Link") + ": " + URLDecoder.decode(href, charset)
+                + (!linkAddress.equalsIgnoreCase(href) ? "\n" + message("Address") + ": "
+                + URLDecoder.decode(linkAddress, charset) : "");
         MenuItem menu = new MenuItem(title);
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        if (parentController instanceof WebBrowserController) {
+        menu = new MenuItem(message("QueryNetworkAddress"));
+        menu.setOnAction((ActionEvent event) -> {
+            NetworkQueryAddressController controller
+                    = (NetworkQueryAddressController) FxmlStage.openStage(CommonValues.NetworkQueryAddressFxml);
+            controller.queryUrl(finalAddress);
+        });
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        if (parentController != null && parentController instanceof WebBrowserController) {
             menu = new MenuItem(message("OpenLinkInNewTab"));
             menu.setOnAction((ActionEvent event) -> {
                 WebBrowserController c = (WebBrowserController) parentController;
@@ -555,6 +656,21 @@ public class ControlWebview extends BaseController {
 
         items.add(new SeparatorMenuItem());
 
+        menu = new MenuItem(message("DownloadBySysBrowser"));
+        menu.setOnAction((ActionEvent event) -> {
+            browse(finalAddress);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("DownloadByMyBox"));
+        menu.setOnAction((ActionEvent event) -> {
+            WebBrowserController controller = WebBrowserController.oneOpen(false);
+            controller.download(URLDecoder.decode(finalAddress, charset), name);
+        });
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+
         menu = new MenuItem(message("CopyLink"));
         menu.setOnAction((ActionEvent event) -> {
             if (FxmlControl.copyToSystemClipboard(finalAddress)) {
@@ -583,7 +699,12 @@ public class ControlWebview extends BaseController {
 
         menu = new MenuItem(message("CopyLinkCode"));
         menu.setOnAction((ActionEvent event) -> {
-            String code = "<a href=\"" + finalAddress + "\">" + (name == null || name.isBlank() ? finalAddress : name) + "</a>";
+            String code;
+            if (tag.equalsIgnoreCase("img")) {
+                code = "<img src=\"" + finalAddress + "\" " + (name == null || name.isBlank() ? "" : " alt=\"" + name + "\"") + " />";
+            } else {
+                code = "<a href=\"" + finalAddress + "\">" + (name == null || name.isBlank() ? finalAddress : name) + "</a>";
+            }
             if (FxmlControl.copyToSystemClipboard(code)) {
                 popInformation(message("CopiedToSystemClipboard"));
             }

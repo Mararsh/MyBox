@@ -38,6 +38,16 @@ public class HtmlViewerController extends BaseController {
         baseTitle = AppVariables.message("Html");
     }
 
+    public String styleString() {
+        String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
+        MyBoxLog.console(htmlStyle);
+        return HtmlTools.styleValue(HtmlTools.styleName(htmlStyle));
+    }
+
+    public String styleTag() {
+        return "\n<style type=\"text/css\">/>\n" + styleString() + "</style>\n";
+    }
+
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Html);

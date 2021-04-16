@@ -256,15 +256,9 @@ License:    Apache License Version 2.0
                                     <children>
                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label text="%DataDirectory" />
-                                                        <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
-                                                    </children>
-                                                </HBox>
+                                                <Label text="%DataDirectory" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
-                                                        <Label text="%DataDirectory" visible="false" />
                                                         <TextField fx:id="dataDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                         <Button fx:id="settingsDataPathButton" mnemonicParsing="false" onAction="#selectDataPath">
                                                             <graphic>
@@ -277,15 +271,10 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
+                                                <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
+                                                <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
-                                                        <Label text="%DataDirectory" visible="false" />
-                                                        <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                    <children>
-                                                        <Label text="%DataDirectory" visible="false" />
                                                         <Button fx:id="settingsChangeRootButton" mnemonicParsing="false" onAction="#changeDataPath">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -501,7 +490,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="ocrBox1" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <CheckBox fx:id="devModeCheck" mnemonicParsing="false" text="%DevelopementMode" />
+                                        <CheckBox fx:id="devModeCheck" mnemonicParsing="false" text="%DevelopmentMode" />
                                         <fx:include fx:id="sourceCodesPath" source="ControlPathInput.fxml" />
                                     </children>
                                     <padding>

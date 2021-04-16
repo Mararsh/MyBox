@@ -4,14 +4,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -19,12 +19,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebEngine;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.tools.NetworkTools;
-import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -52,9 +54,7 @@ public class WebBrowserController extends BaseController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected CheckBox bypassCheck;
-    @FXML
-    protected TextField bottomText, findInput;
+    protected TextField findInput;
 
     public WebBrowserController() {
         baseTitle = AppVariables.message("WebBrowser");
@@ -76,35 +76,6 @@ public class WebBrowserController extends BaseController {
 
             tabControllers = new HashMap();
             newTabAction(null, false);
-
-            initOptions();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    protected void initOptions() {
-        try {
-
-            bypassCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    AppVariables.setUserConfigValue("SSLBypassAll", newv);
-                    if (newv) {
-                        NetworkTools.trustAll();
-                    } else {
-                        NetworkTools.myBoxSSL();
-                    }
-                }
-            });
-//            bypassCheck.setSelected(AppVariables.getUserConfigBoolean("SSLBypassAll", false));
-//            if (bypassCheck.isSelected()) {
-//                NetworkTools.trustAll();
-//            } else {
-//                NetworkTools.myBoxSSL();
-//            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -157,6 +128,9 @@ public class WebBrowserController extends BaseController {
 
             ControlWebBrowserBox controller = (ControlWebBrowserBox) fxmlLoader.getController();
             controller.setBrowser(this, tab);
+            if (tabControllers == null) {
+                tabControllers = new HashMap();
+            }
             tabControllers.put(tab, controller);
             tab.setOnClosed(new EventHandler<Event>() {
                 @Override
@@ -164,16 +138,30 @@ public class WebBrowserController extends BaseController {
                     tabControllers.remove(tab);
                 }
             });
-
             if (address != null) {
                 controller.loadAddress(address);
             }
             return controller;
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
+    }
+
+    protected ControlWebBrowserBox loadAddress(String address, boolean focus) {
+        ControlWebBrowserBox controller = newTabAction(null, focus);
+        if (address != null) {
+            controller.loadAddress(address);
+        }
+        return controller;
+    }
+
+    protected ControlWebBrowserBox loadContents(String contents, boolean focus) {
+        ControlWebBrowserBox controller = newTabAction(null, focus);
+        if (contents != null) {
+            controller.loadContents(contents);
+        }
+        return controller;
     }
 
     public void loadFile(File file) {
@@ -232,32 +220,6 @@ public class WebBrowserController extends BaseController {
     }
 
     @FXML
-    protected void manageCertificates() {
-        SecurityCertificatesController controller = (SecurityCertificatesController) openStage(CommonValues.SecurityCertificatesFxml);
-        controller.sourceFileChanged(new File(SystemTools.keystore()));
-    }
-
-    @FXML
-    protected void manageBypass() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(
-                    CommonValues.SecurityCertificatesBypassFxml), AppVariables.currentBundle);
-            Pane pane = fxmlLoader.load();
-            Tab tab = new Tab(message("SSLVerificationBypassList"));
-            ImageView tabImage = new ImageView("img/MyBox.png");
-            tabImage.setFitWidth(20);
-            tabImage.setFitHeight(20);
-            tab.setGraphic(tabImage);
-            tab.setContent(pane);
-            tabPane.getTabs().add(tab);
-            tabPane.getSelectionModel().select(tab);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
     protected void manageHistories() {
         try {
             if (hisTab != null && tabPane.getTabs().contains(hisTab)) {
@@ -285,6 +247,55 @@ public class WebBrowserController extends BaseController {
         }
     }
 
+    protected void download(String address, String name) {
+        if (address == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            String dname;
+            if (name != null && !name.isBlank()) {
+                dname = name;
+                String nameSuffix = FileTools.getFileSuffix(name);
+                String addrSuffix = FileTools.getFileSuffix(address);
+                if (addrSuffix != null && !addrSuffix.isBlank()) {
+                    if (nameSuffix == null || nameSuffix.isBlank()
+                            || !addrSuffix.equalsIgnoreCase(nameSuffix)) {
+                        dname = name + "." + addrSuffix;
+                    }
+                }
+            } else {
+                dname = FileTools.getName(address);
+            }
+            File dnFile = chooseSaveFile(VisitHistory.FileType.All, dname);
+            if (dnFile == null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    File tmpFile = HtmlTools.url2File(address);
+                    return FileTools.rename(tmpFile, dnFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    browseURI(dnFile.toURI());
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
     @Override
     public boolean leavingScene() {
         tabControllers.clear();
@@ -292,6 +303,58 @@ public class WebBrowserController extends BaseController {
         return super.leavingScene();
     }
 
+    protected void initWeibo() {
+        try {
+            getMyStage().toBack();
+            openHandlingStage(Modality.WINDOW_MODAL, message("FirstRunInfo"));
+            newTabAction("https://weibo.com", false);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        newTabAction("https://weibo.com", false);
+                    });
+                }
+            }, 12000);
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        AppVariables.setSystemConfigValue("WeiboRunFirstTime", false);
+                        closeStage();
+                    });
+                }
+            }, 20000);
+        } catch (Exception e) {
+            closeStage();
+        }
+    }
+
+    protected void initMap() {
+        try {
+            getMyStage().toBack();
+            openHandlingStage(Modality.WINDOW_MODAL, message("FirstRunInfo"));
+            loadAddress(FxmlControl.tiandituFile(true).toURI().toString(), false);
+            loadContents(FxmlControl.gaodeMap(), false);
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        AppVariables.setSystemConfigValue("MapRunFirstTime", false);
+                        closeStage();
+                    });
+                }
+            }, 5000);
+        } catch (Exception e) {
+            closeStage();
+        }
+    }
+
+    /*
+        static methods
+     */
     public static WebBrowserController oneOpen() {
         WebBrowserController controller = null;
         Stage stage = FxmlStage.findStage(message("WebBrowser"));
@@ -305,6 +368,7 @@ public class WebBrowserController extends BaseController {
             controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
         }
         if (controller != null) {
+            controller.getMyStage().toFront();
             controller.getMyStage().requestFocus();
         }
         return controller;
@@ -331,6 +395,18 @@ public class WebBrowserController extends BaseController {
         if (controller != null && his) {
             controller.manageHistories();
         }
+        return controller;
+    }
+
+    public static WebBrowserController weiboSnapFirstRun() {
+        WebBrowserController controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
+        controller.initWeibo();
+        return controller;
+    }
+
+    public static WebBrowserController mapFirstRun() {
+        WebBrowserController controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
+        controller.initMap();
         return controller;
     }
 

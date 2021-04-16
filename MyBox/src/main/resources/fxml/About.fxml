@@ -25,6 +25,7 @@ License:    Apache License Version 2.0
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -47,17 +48,19 @@ License:    Apache License Version 2.0
                 <Hyperlink fx:id="licenseLink" onAction="#link" text="http://www.apache.org/licenses/LICENSE-2.0" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="%MainPage" GridPane.rowIndex="5" />
                 <Hyperlink fx:id="sourceLink" onAction="#link" text="https://github.com/Mararsh/MyBox" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <Label text="%LatestRelease" GridPane.rowIndex="6" />
-                <Hyperlink fx:id="releasesLink" onAction="#link" text="https://github.com/Mararsh/MyBox/releases" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                <Label text="%KnownIssues" GridPane.rowIndex="7" />
-                <Hyperlink fx:id="issuesLink" onAction="#link" text="https://github.com/Mararsh/MyBox/issues" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                <Label text="%WelcomePR" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                <Label text="%UserGuide" GridPane.rowIndex="9" />
-                <Hyperlink fx:id="userGuideLink" onAction="#link" text="https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                <Label text="%CloudStorage" GridPane.rowIndex="10" />
-                <Hyperlink fx:id="cloudLink" onAction="#link" text="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-            <Label text="%MyBoxInternetDataPath" GridPane.rowIndex="11" />
-            <Hyperlink fx:id="cloudLink1" onAction="#link" text="https://github.com/Mararsh/MyBox_data" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                <Label text="%LatestRelease" GridPane.rowIndex="7" />
+                <Hyperlink fx:id="releasesLink" onAction="#link" text="https://github.com/Mararsh/MyBox/releases" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <Label text="%KnownIssues" GridPane.rowIndex="8" />
+                <Hyperlink fx:id="issuesLink" onAction="#link" text="https://github.com/Mararsh/MyBox/issues" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <Label text="%WelcomePR" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <Label text="%UserGuide" GridPane.rowIndex="10" />
+                <Hyperlink fx:id="userGuideLink" onAction="#link" text="https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                <Label text="%CloudStorage" GridPane.rowIndex="11" />
+                <Hyperlink fx:id="cloudLink" onAction="#link" text="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <Label text="%MyBoxInternetDataPath" GridPane.rowIndex="12" />
+            <Hyperlink fx:id="cloudLink1" onAction="#link" text="https://github.com/Mararsh/MyBox_data" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            <Label text="%Mirror" GridPane.rowIndex="6" />
+            <Hyperlink fx:id="sourceLink1" onAction="#link" text="https://sourceforge.net/projects/mara-mybox/files/" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             </children>
         </GridPane>
     </children>

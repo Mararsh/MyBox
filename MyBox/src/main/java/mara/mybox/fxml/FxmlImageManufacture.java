@@ -617,6 +617,16 @@ public class FxmlImageManufacture {
         return newImage;
     }
 
+    public static Image drawErase(Image image, DoubleLines penData, int strokeWidth) {
+        if (penData == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.image.ImageManufacture.drawErase(source, penData, strokeWidth);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
     public static Image drawMosaic(Image image,
             DoubleLines penData, ImageMosaic.MosaicType mosaicType, int strokeWidth) {
         if (penData == null || mosaicType == null || strokeWidth < 1) {

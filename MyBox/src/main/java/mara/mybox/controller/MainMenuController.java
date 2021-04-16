@@ -74,7 +74,7 @@ public class MainMenuController extends BaseController {
     @FXML
     protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
             newWindowCheck, restoreStagesSizeCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
-            controlTextCheck, hidpiIconsCheck;
+            controlTextCheck, hidpiIconsCheck, devCheck;
     @FXML
     protected Menu settingsMenu, recentMenu, helpMenu;
     @FXML
@@ -85,11 +85,6 @@ public class MainMenuController extends BaseController {
         try {
             super.initControls();
 
-//            menuBar.setOnMouseEntered((Event e) -> {
-//                getMyStage().setIconified(false);
-//                getMyStage().requestFocus();
-//                menuBar.requestFocus();
-//            });
             settingsMenu.setOnShowing((Event e) -> {
                 checkSettings();
             });
@@ -100,11 +95,7 @@ public class MainMenuController extends BaseController {
                 recentMenu.getItems().addAll(getRecentMenu());
             });
 
-            helpMenu.setOnShowing((Event e) -> {
-                if (!AppVariables.devMode) {
-                    helpMenu.getItems().remove(makeIconsItem);
-                }
-            });
+            devCheck.setSelected(AppVariables.devMode);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -231,6 +222,9 @@ public class MainMenuController extends BaseController {
         }
     }
 
+    /*
+        windows nenu
+     */
     @FXML
     protected void showHome(ActionEvent event) {
         openStage(CommonValues.MyboxFxml);
@@ -275,6 +269,954 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    @Override
+    public BaseController refresh() {
+        return parentController.refresh();
+    }
+
+    @FXML
+    protected void exit(ActionEvent event) {
+        FxmlStage.appExit();
+    }
+
+    /*
+        document tools menu
+     */
+    @FXML
+    protected void openNotes(ActionEvent event) {
+        loadScene(CommonValues.NotesFxml);
+    }
+
+    @FXML
+    protected void openPdfView(ActionEvent event) {
+        loadScene(CommonValues.PdfViewFxml);
+    }
+
+    @FXML
+    protected void openPdfHtmlViewer(ActionEvent event) {
+        loadScene(CommonValues.PdfHtmlViewerFxml);
+    }
+
+    @FXML
+    protected void openPDFAttributes(ActionEvent event) {
+        loadScene(CommonValues.PdfAttributesFxml);
+    }
+
+    @FXML
+    protected void openPDFAttributesBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfAttributesBatchFxml);
+    }
+
+    @FXML
+    protected void openPdfConvertImagesBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfConvertImagesBatchFxml);
+    }
+
+    @FXML
+    protected void openPdfConvertHtmlsBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfConvertHtmlsBatchFxml);
+    }
+
+    @FXML
+    protected void openImagesCombinePdf(ActionEvent event) {
+        loadScene(CommonValues.ImagesCombinePdfFxml);
+    }
+
+    @FXML
+    protected void openPdfExtractTextsBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfExtractTextsBatchFxml);
+    }
+
+    @FXML
+    protected void openPdfExtractImagesBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfExtractImagesBatchFxml);
+    }
+
+    @FXML
+    protected void openPdfImagesConvertBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfImagesConvertBatchFxml);
+    }
+
+    @FXML
+    protected void openMergePdf(ActionEvent event) {
+        loadScene(CommonValues.PdfMergeFxml);
+    }
+
+    @FXML
+    protected void openPdfSplitBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfSplitBatchFxml);
+    }
+
+    @FXML
+    protected void openPdfOCRBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfOCRBatchFxml);
+    }
+
+    @FXML
+    protected void openCompressPdfImagesBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfCompressImagesBatchFxml);
+    }
+
+    @FXML
+    protected void openMarkdownEditer(ActionEvent event) {
+        loadScene(CommonValues.MarkdownEditorFxml);
+    }
+
+    @FXML
+    protected void openMarkdownToHtml(ActionEvent event) {
+        loadScene(CommonValues.MarkdownToHtmlFxml);
+    }
+
+    @FXML
+    protected void openMarkdownToText(ActionEvent event) {
+        loadScene(CommonValues.MarkdownToTextFxml);
+    }
+
+    @FXML
+    protected void openMarkdownToPdf(ActionEvent event) {
+        loadScene(CommonValues.MarkdownToPdfFxml);
+    }
+
+    @FXML
+    protected void openHtmlToMarkdown(ActionEvent event) {
+        loadScene(CommonValues.HtmlToMarkdownFxml);
+    }
+
+    @FXML
+    protected void openHtmlToText(ActionEvent event) {
+        loadScene(CommonValues.HtmlToTextFxml);
+    }
+
+    @FXML
+    protected void openHtmlToPdf(ActionEvent event) {
+        loadScene(CommonValues.HtmlToPdfFxml);
+    }
+
+    @FXML
+    protected void openHtmlSetCharset(ActionEvent event) {
+        loadScene(CommonValues.HtmlSetCharsetFxml);
+    }
+
+    @FXML
+    protected void openHtmlSetStyle(ActionEvent event) {
+        loadScene(CommonValues.HtmlSetStyleFxml);
+    }
+
+    @FXML
+    protected void openHtmlSnap(ActionEvent event) {
+        loadScene(CommonValues.HtmlSnapFxml);
+    }
+
+    @FXML
+    protected void openHtmlMergeAsHtml(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsHtmlFxml);
+    }
+
+    @FXML
+    protected void openHtmlMergeAsMarkdown(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsMarkdownFxml);
+    }
+
+    @FXML
+    protected void openHtmlMergeAsPDF(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsPDFFxml);
+    }
+
+    @FXML
+    protected void openHtmlMergeAsText(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsTextFxml);
+    }
+
+    @FXML
+    protected void openHtmlFrameset(ActionEvent event) {
+        loadScene(CommonValues.HtmlFramesetFxml);
+    }
+
+    @FXML
+    protected void openHtmlEditor(ActionEvent event) {
+        loadScene(CommonValues.HtmlEditorFxml);
+    }
+
+    @FXML
+    protected void openTextEditer(ActionEvent event) {
+        loadScene(CommonValues.TextEditerFxml);
+    }
+
+    @FXML
+    protected void openTextConvert(ActionEvent event) {
+        loadScene(CommonValues.TextFilesConvertFxml);
+    }
+
+    @FXML
+    protected void openTextMerge(ActionEvent event) {
+        loadScene(CommonValues.TextFilesMergeFxml);
+    }
+
+    @FXML
+    protected void openTextReplaceBatch(ActionEvent event) {
+        loadScene(CommonValues.TextReplaceBatchFxml);
+    }
+
+    @FXML
+    protected void openTextToHtml(ActionEvent event) {
+        loadScene(CommonValues.TextToHtmlFxml);
+    }
+
+    @FXML
+    protected void openBytesEditer(ActionEvent event) {
+        loadScene(CommonValues.BytesEditerFxml);
+    }
+
+    /*
+        image tools menu
+     */
+    @FXML
+    protected void openImageViewer(ActionEvent event) {
+        loadScene(CommonValues.ImageViewerFxml);
+    }
+
+    @FXML
+    protected void openImagesBrowser(ActionEvent event) {
+        loadScene(CommonValues.ImagesBrowserFxml);
+    }
+
+    @FXML
+    protected void openImageData(ActionEvent event) {
+        loadScene(CommonValues.ImageAnalyseFxml);
+    }
+
+    @FXML
+    protected void openImageConverterBatch(ActionEvent event) {
+        loadScene(CommonValues.ImageConverterBatchFxml);
+    }
+
+    @FXML
+    protected void openImageManufacture(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchSize(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchSizeFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchCrop(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchCropFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchColor(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchColorFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchEffects(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchEffectsFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchEnhancement(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchEnhancementFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchReplaceColor(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchReplaceColorFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchText(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchTextFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchArc(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchArcFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchShadow(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchShadowFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchTransform(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchTransformFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchMargins(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchMarginsFxml);
+    }
+
+    @FXML
+    protected void openImageSplit(ActionEvent event) {
+        loadScene(CommonValues.ImageSplitFxml);
+    }
+
+    @FXML
+    protected void openImageSample(ActionEvent event) {
+        loadScene(CommonValues.ImageSampleFxml);
+    }
+
+    @FXML
+    protected void openImagesCombine(ActionEvent event) {
+        loadScene(CommonValues.ImagesCombineFxml);
+    }
+
+    @FXML
+    protected void openImageGifViewer(ActionEvent event) {
+        loadScene(CommonValues.ImageGifViewerFxml);
+    }
+
+    @FXML
+    protected void openImageGifEditer(ActionEvent event) {
+        loadScene(CommonValues.ImageGifEditerFxml);
+    }
+
+    @FXML
+    protected void openImageTiffEditer(ActionEvent event) {
+        loadScene(CommonValues.ImageTiffEditerFxml);
+    }
+
+    @FXML
+    protected void openImageFramesViewer(ActionEvent event) {
+        loadScene(CommonValues.ImageFramesViewerFxml);
+    }
+
+    @FXML
+    protected void openImagesBlend(ActionEvent event) {
+        loadScene(CommonValues.ImagesBlendFxml);
+    }
+
+    @FXML
+    protected void openImageStatistic(ActionEvent event) {
+        loadScene(CommonValues.ImageStatisticFxml);
+    }
+
+    @FXML
+    protected void openImageAlphaExtract(ActionEvent event) {
+        loadScene(CommonValues.ImageAlphaExtractBatchFxml);
+    }
+
+    @FXML
+    protected void openImageAlphaAdd(ActionEvent event) {
+        loadScene(CommonValues.ImageAlphaAddBatchFxml);
+    }
+
+    @FXML
+    protected void openImageOCR(ActionEvent event) {
+        loadScene(CommonValues.ImageOCRFxml);
+    }
+
+    @FXML
+    protected void openImageOCRBatch(ActionEvent event) {
+        loadScene(CommonValues.ImageOCRBatchFxml);
+    }
+
+    @FXML
+    protected void openConvolutionKernelManager(ActionEvent event) {
+        loadScene(CommonValues.ConvolutionKernelManagerFxml);
+    }
+
+    @FXML
+    protected void openManageColors(ActionEvent event) {
+        ColorsManageController.oneOpen(parentController);
+    }
+
+    @FXML
+    protected void openIccProfileEditor(ActionEvent event) {
+        loadScene(CommonValues.IccProfileEditorFxml);
+    }
+
+    @FXML
+    protected void openChromaticityDiagram(ActionEvent event) {
+        loadScene(CommonValues.ChromaticityDiagramFxml);
+    }
+
+    @FXML
+    protected void openChromaticAdaptationMatrix(ActionEvent event) {
+        loadScene(CommonValues.ChromaticAdaptationMatrixFxml);
+    }
+
+    @FXML
+    protected void openColorConversion(ActionEvent event) {
+        loadScene(CommonValues.ColorConversionFxml);
+    }
+
+    @FXML
+    protected void openRGBColorSpaces(ActionEvent event) {
+        loadScene(CommonValues.RGBColorSpacesFxml);
+    }
+
+    @FXML
+    protected void openRGB2XYZConversionMatrix(ActionEvent event) {
+        loadScene(CommonValues.RGB2XYZConversionMatrixFxml);
+    }
+
+    @FXML
+    protected void openRGB2RGBConversionMatrix(ActionEvent event) {
+        loadScene(CommonValues.RGB2RGBConversionMatrixFxml);
+    }
+
+    @FXML
+    protected void openIlluminants(ActionEvent event) {
+        loadScene(CommonValues.IlluminantsFxml);
+    }
+
+    @FXML
+    protected void openPixelsCalculator(ActionEvent event) {
+        openStage(CommonValues.PixelsCalculatorFxml);
+    }
+
+    /*
+        data tools menu
+     */
+    @FXML
+    protected void openMatricesManage(ActionEvent event) {
+        loadScene(CommonValues.MatricesManageFxml);
+    }
+
+    @FXML
+    protected void openMatrixUnaryCalculation(ActionEvent event) {
+        loadScene(CommonValues.MatrixUnaryCalculationFxml);
+    }
+
+    @FXML
+    protected void openMatricesBinaryCalculation(ActionEvent event) {
+        loadScene(CommonValues.MatricesBinaryCalculationFxml);
+    }
+
+    @FXML
+    protected void openDataset(ActionEvent event) {
+        loadScene(CommonValues.DatasetFxml);
+    }
+
+    @FXML
+    protected void openLocationData(ActionEvent event) {
+        loadScene(CommonValues.LocationDataFxml);
+    }
+
+    @FXML
+    protected void openGeographyCode(ActionEvent event) {
+        loadScene(CommonValues.GeographyCodeFxml);
+    }
+
+    @FXML
+    protected void openLocationsDataInMap(ActionEvent event) {
+        loadScene(CommonValues.LocationsDataInMapFxml);
+    }
+
+    @FXML
+    protected void openLocationInMap(ActionEvent event) {
+        loadScene(CommonValues.LocationInMapFxml);
+    }
+
+    @FXML
+    protected void openLocationTools(ActionEvent event) {
+        loadScene(CommonValues.LocationToolsFxml);
+    }
+
+    @FXML
+    protected void openEpidemicReports(ActionEvent event) {
+        loadScene(CommonValues.EpidemicReportsFxml);
+    }
+
+    @FXML
+    protected void openDataClipboard(ActionEvent event) {
+        loadScene(CommonValues.DataClipboardFxml);
+    }
+
+    @FXML
+    protected void openDataCsv(ActionEvent event) {
+        DataFileCSVController c = (DataFileCSVController) loadScene(CommonValues.DataFileCSVFxml);
+        c.newSheet(3, 3);
+    }
+
+    @FXML
+    protected void openDataExcel(ActionEvent event) {
+        DataFileExcelController c = (DataFileExcelController) loadScene(CommonValues.DataFileExcelFxml);
+        c.newSheet(3, 3);
+    }
+
+    @FXML
+    protected void openExcelConvert(ActionEvent event) {
+        loadScene(CommonValues.DataFileExcelConvertFxml);
+    }
+
+    @FXML
+    protected void openExcelMerge(ActionEvent event) {
+        loadScene(CommonValues.DataFileExcelMergeFxml);
+    }
+
+    @FXML
+    protected void openCsvConvert(ActionEvent event) {
+        loadScene(CommonValues.DataFileCSVConvertFxml);
+    }
+
+    @FXML
+    protected void openCsvMerge(ActionEvent event) {
+        loadScene(CommonValues.DataFileCSVMergeFxml);
+    }
+
+    /*
+        file tools menu
+     */
+    @FXML
+    protected void openFilesRename(ActionEvent event) {
+        loadScene(CommonValues.FilesRenameFxml);
+    }
+
+    @FXML
+    protected void openDirectorySynchronize(ActionEvent event) {
+        loadScene(CommonValues.DirectorySynchronizeFxml);
+    }
+
+    @FXML
+    protected void openFilesArrangement(ActionEvent event) {
+        loadScene(CommonValues.FilesArrangementFxml);
+    }
+
+    @FXML
+    protected void openDeleteEmptyDirectories(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteEmptyDirFxml);
+    }
+
+    @FXML
+    protected void openDeleteSysTempPath(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteSysTempFxml);
+    }
+
+    @FXML
+    protected void openDeleteNestedDirectories(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteNestedDirFxml);
+    }
+
+    @FXML
+    protected void openAlarmClock(ActionEvent event) {
+        loadScene(CommonValues.AlarmClockFxml);
+    }
+
+    @FXML
+    protected void openFileCut(ActionEvent event) {
+        loadScene(CommonValues.FileCutFxml);
+    }
+
+    @FXML
+    protected void openFilesMerge(ActionEvent event) {
+        loadScene(CommonValues.FilesMergeFxml);
+    }
+
+    @FXML
+    protected void openFilesDelete(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteFxml);
+    }
+
+    @FXML
+    protected void openFilesCopy(ActionEvent event) {
+        loadScene(CommonValues.FilesCopyFxml);
+    }
+
+    @FXML
+    protected void openFilesMove(ActionEvent event) {
+        loadScene(CommonValues.FilesMoveFxml);
+    }
+
+    @FXML
+    protected void openFilesFind(ActionEvent event) {
+        loadScene(CommonValues.FilesFindFxml);
+    }
+
+    @FXML
+    protected void openBarcodeCreator(ActionEvent event) {
+        loadScene(CommonValues.BarcodeCreatorFxml);
+    }
+
+    @FXML
+    protected void openBarcodeDecoder(ActionEvent event) {
+        loadScene(CommonValues.BarcodeDecoderFxml);
+    }
+
+    @FXML
+    protected void openMessageDigest(ActionEvent event) {
+        loadScene(CommonValues.MessageDigestFxml);
+    }
+
+    @FXML
+    protected void Base64Conversion(ActionEvent event) {
+        loadScene(CommonValues.Base64Fxml);
+    }
+
+    @FXML
+    protected void openFilesCompare(ActionEvent event) {
+        loadScene(CommonValues.FilesCompareFxml);
+    }
+
+    @FXML
+    protected void openFilesArchiveCompress(ActionEvent event) {
+        loadScene(CommonValues.FilesArchiveCompressFxml);
+    }
+
+    @FXML
+    protected void openFilesCompressBatch(ActionEvent event) {
+        loadScene(CommonValues.FilesCompressBatchFxml);
+    }
+
+    @FXML
+    protected void openFileDecompressUnarchive(ActionEvent event) {
+        loadScene(CommonValues.FileDecompressUnarchiveFxml);
+    }
+
+    @FXML
+    protected void openFilesDecompressUnarchiveBatch(ActionEvent event) {
+        loadScene(CommonValues.FilesDecompressUnarchiveBatchFxml);
+    }
+
+    @FXML
+    protected void openFilesRedundancy(ActionEvent event) {
+        loadScene(CommonValues.FilesRedundancyFxml);
+    }
+
+    /*
+        network tools menu
+     */
+    @FXML
+    protected void openWeiboSnap(ActionEvent event) {
+        loadScene(CommonValues.WeiboSnapFxml);
+    }
+
+    @FXML
+    protected void openWebBrowser(ActionEvent event) {
+        loadScene(CommonValues.WebBrowserFxml);
+    }
+
+    @FXML
+    protected void openConvertUrl(ActionEvent event) {
+        loadScene(CommonValues.NetworkConvertUrlFxml);
+    }
+
+    @FXML
+    protected void queryNetworkAddress(ActionEvent event) {
+        loadScene(CommonValues.NetworkQueryAddressFxml);
+    }
+
+    @FXML
+    protected void queryDNSBatch(ActionEvent event) {
+        loadScene(CommonValues.NetworkQueryDNSBatchFxml);
+    }
+
+    @FXML
+    protected void openSecurityCertificates(ActionEvent event) {
+        loadScene(CommonValues.SecurityCertificatesFxml);
+    }
+
+    @FXML
+    protected void downloadFirstLevelLinks(ActionEvent event) {
+        loadScene(CommonValues.DownloadFirstLevelLinksFxml);
+    }
+
+    /*
+        media tools menu
+     */
+    @FXML
+    protected void openMediaPlayer(ActionEvent event) {
+        loadScene(CommonValues.MediaPlayerFxml);
+    }
+
+    @FXML
+    protected void openMediaList(ActionEvent event) {
+        loadScene(CommonValues.MediaListFxml);
+    }
+
+    @FXML
+    protected void openScreenRecorder(ActionEvent event) {
+        loadScene(CommonValues.FFmpegScreenRecorderFxml);
+    }
+
+    @FXML
+    protected void openFFmpegMergeImages(ActionEvent event) {
+        loadScene(CommonValues.FFmpegMergeImagesFxml);
+    }
+
+    @FXML
+    protected void openFFmpegMergeImageFiles(ActionEvent event) {
+        loadScene(CommonValues.FFmpegMergeImageFilesFxml);
+    }
+
+    @FXML
+    protected void openFFmpegInformation(ActionEvent event) {
+        loadScene(CommonValues.FFmpegInformationFxml);
+    }
+
+    @FXML
+    protected void openFFmpegProbeMediaInformation(ActionEvent event) {
+        loadScene(CommonValues.FFmpegProbeMediaInformationFxml);
+    }
+
+    @FXML
+    protected void openFFmpegConvertMediaFiles(ActionEvent event) {
+        loadScene(CommonValues.FFmpegConvertMediaFilesFxml);
+    }
+
+    @FXML
+    protected void openFFmpegConvertMediaStreams(ActionEvent event) {
+        loadScene(CommonValues.FFmpegConvertMediaStreamsFxml);
+    }
+
+    @FXML
+    protected void openRecordImages(ActionEvent event) {
+        loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
+    }
+
+    @FXML
+    protected void openGameElimniation(ActionEvent event) {
+        loadScene(CommonValues.GameElimniationFxml);
+    }
+
+    @FXML
+    protected void openGameMine(ActionEvent event) {
+        loadScene(CommonValues.GameMineFxml);
+    }
+
+    /*
+        settings nenu
+     */
+    @FXML
+    protected void settingsAction(ActionEvent event) {
+        BaseController c = openStage(CommonValues.SettingsFxml);
+        c.setParentController(parentController);
+        c.setParentFxml(parentFxml);
+    }
+
+    @FXML
+    protected void setChinese(ActionEvent event) {
+        AppVariables.setLanguage("zh");
+        refresh();
+    }
+
+    @FXML
+    protected void openManageLanguages(ActionEvent event) {
+        loadScene(CommonValues.MyBoxLanguagesFxml);
+    }
+
+    @FXML
+    protected void setEnglish(ActionEvent event) {
+        AppVariables.setLanguage("en");
+        refresh();
+    }
+
+    @FXML
+    protected void setFont12(ActionEvent event) {
+        AppVariables.setSceneFontSize(12);
+        refresh();
+    }
+
+    @FXML
+    protected void setFont15(ActionEvent event) {
+        AppVariables.setSceneFontSize(15);
+        refresh();
+    }
+
+    @FXML
+    protected void setFont17(ActionEvent event) {
+        AppVariables.setSceneFontSize(17);
+        refresh();
+    }
+
+    @FXML
+    protected void normalIcon(ActionEvent event) {
+        AppVariables.setIconSize(20);
+        refresh();
+    }
+
+    @FXML
+    protected void bigIcon(ActionEvent event) {
+        AppVariables.setIconSize(30);
+        refresh();
+    }
+
+    @FXML
+    protected void smallIcon(ActionEvent event) {
+        AppVariables.setIconSize(15);
+        refresh();
+    }
+
+    @FXML
+    protected void setDefaultColor(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("default");
+        refresh();
+    }
+
+    @FXML
+    protected void setPink(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("pink");
+        refresh();
+    }
+
+    @FXML
+    protected void setRed(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("red");
+        refresh();
+    }
+
+    @FXML
+    protected void setBlue(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("blue");
+        refresh();
+    }
+
+    @FXML
+    protected void setLightBlue(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("lightBlue");
+        refresh();
+    }
+
+    @FXML
+    protected void setOrange(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("orange");
+        refresh();
+    }
+
+    @FXML
+    protected void setControlDisplayText(ActionEvent event) {
+        AppVariables.controlDisplayText = controlTextCheck.isSelected();
+        AppVariables.setUserConfigValue("ControlDisplayText", controlTextCheck.isSelected());
+        refresh();
+    }
+
+    @FXML
+    protected void hidpiIcons(ActionEvent event) {
+        AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
+        AppVariables.setUserConfigValue("HidpiIcons", AppVariables.hidpiIcons);
+        if (AppVariables.hidpiIcons) {
+            if (Toolkit.getDefaultToolkit().getScreenResolution() <= 120) {
+                parentController.alertInformation(message("HidpiIconsComments"));
+            }
+        } else {
+            if (Toolkit.getDefaultToolkit().getScreenResolution() > 120) {
+                parentController.alertInformation(message("HidpiIconsComments"));
+            }
+        }
+        refresh();
+    }
+
+    @FXML
+    protected void newWindowAction() {
+        AppVariables.setOpenStageInNewWindow(newWindowCheck.isSelected());
+    }
+
+    @FXML
+    protected void restoreStagesSizeAction() {
+        AppVariables.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
+    }
+
+    @FXML
+    protected void popRecentAction() {
+        if (popRecentCheck.isSelected()) {
+            AppVariables.fileRecentNumber = 15;
+        } else {
+            AppVariables.fileRecentNumber = 0;
+        }
+        AppVariables.setUserConfigInt("FileRecentNumber", AppVariables.fileRecentNumber);
+    }
+
+    @FXML
+    protected void popColorSetAction() {
+        AppVariables.setUserConfigValue("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
+    }
+
+    @FXML
+    protected void controlPanesAction() {
+        AppVariables.setUserConfigValue("MousePassControlPanes", controlPanesCheck.isSelected());
+    }
+
+    @FXML
+    protected void setDefaultStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.DefaultStyle);
+    }
+
+    @FXML
+    protected void setWhiteOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnBlackStyle);
+    }
+
+    @FXML
+    protected void setYellowOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.YellowOnBlackStyle);
+    }
+
+    @FXML
+    protected void setWhiteOnGreenStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnGreenStyle);
+    }
+
+    @FXML
+    protected void setCaspianStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.caspianStyle);
+    }
+
+    @FXML
+    protected void setGreenOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.GreenOnBlackStyle);
+    }
+
+    @FXML
+    protected void setPinkOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.PinkOnBlackStyle);
+    }
+
+    @FXML
+    protected void setBlackOnYellowStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.BlackOnYellowStyle);
+    }
+
+    @FXML
+    protected void setWhiteOnPurpleStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnPurpleStyle);
+    }
+
+    @FXML
+    protected void setWhiteOnBlueStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnBlueStyle);
+    }
+
+    @Override
+    public void setInterfaceStyle(String style) {
+        try {
+            AppVariables.setUserConfigValue("InterfaceStyle", style);
+            if (parentController != null) {
+                parentController.setInterfaceStyle(style);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void editConfigFile(ActionEvent event) {
+        TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml);
+        controller.hideLeftPane();
+        controller.hideRightPane();
+        controller.openTextFile(AppVariables.MyboxConfigFile);
+        controller.popInformation(message("TakeEffectWhenReboot"));
+    }
+
+    @FXML
+    public void clearSettings(ActionEvent event) {
+        parentController.clearUserSettings();
+    }
+
+    /*
+        development menus
+     */
+    @FXML
+    public void devMode() {
+        AppVariables.devMode = devCheck.isSelected();
+        AppVariables.setUserConfigValue("DevMode", AppVariables.devMode);
+    }
+
+    @FXML
     protected void MyBoxProperties(ActionEvent event) {
         openStage(CommonValues.MyBoxPropertiesFxml);
     }
@@ -282,11 +1224,6 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void MyBoxLogs(ActionEvent event) {
         openStage(CommonValues.MyBoxLogsFxml);
-    }
-
-    @FXML
-    protected void Shortcuts(ActionEvent event) {
-        openStage(CommonValues.ShortcutsFxml);
     }
 
     protected void makeMemoryMonitorBox() {
@@ -484,252 +1421,79 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void setChinese(ActionEvent event) {
-        AppVariables.setLanguage("zh");
-        refresh();
+    protected void runSystemCommand(ActionEvent event) {
+        loadScene(CommonValues.RunSystemCommandFxml);
     }
 
     @FXML
-    protected void openManageLanguages(ActionEvent event) {
-        loadScene(CommonValues.MyBoxLanguagesFxml);
+    protected void openTTC2TTF(ActionEvent event) {
+        loadScene(CommonValues.FileTTC2TTFFxml);
     }
 
+    // This is for developement to generate Icons automatically in different color style
     @FXML
-    protected void setEnglish(ActionEvent event) {
-        AppVariables.setLanguage("en");
-        refresh();
-    }
-
-    @FXML
-    protected void setFont12(ActionEvent event) {
-        AppVariables.setSceneFontSize(12);
-        refresh();
-    }
-
-    @FXML
-    protected void setFont15(ActionEvent event) {
-        AppVariables.setSceneFontSize(15);
-        refresh();
-    }
-
-    @FXML
-    protected void setFont17(ActionEvent event) {
-        AppVariables.setSceneFontSize(17);
-        refresh();
-    }
-
-    @FXML
-    protected void normalIcon(ActionEvent event) {
-        AppVariables.setIconSize(20);
-        refresh();
-    }
-
-    @FXML
-    protected void bigIcon(ActionEvent event) {
-        AppVariables.setIconSize(30);
-        refresh();
-    }
-
-    @FXML
-    protected void smallIcon(ActionEvent event) {
-        AppVariables.setIconSize(15);
-        refresh();
-    }
-
-    @FXML
-    protected void setDefaultColor(ActionEvent event) {
-        ControlStyle.setConfigColorStyle("default");
-        refresh();
-    }
-
-    @FXML
-    protected void setPink(ActionEvent event) {
-        ControlStyle.setConfigColorStyle("pink");
-        refresh();
-    }
-
-    @FXML
-    protected void setRed(ActionEvent event) {
-        ControlStyle.setConfigColorStyle("red");
-        refresh();
-    }
-
-    @FXML
-    protected void setBlue(ActionEvent event) {
-        ControlStyle.setConfigColorStyle("blue");
-        refresh();
-    }
-
-    @FXML
-    protected void setLightBlue(ActionEvent event) {
-        ControlStyle.setConfigColorStyle("lightBlue");
-        refresh();
-    }
-
-    @FXML
-    protected void setOrange(ActionEvent event) {
-        ControlStyle.setConfigColorStyle("orange");
-        refresh();
-    }
-
-    @FXML
-    protected void setControlDisplayText(ActionEvent event) {
-        AppVariables.controlDisplayText = controlTextCheck.isSelected();
-        AppVariables.setUserConfigValue("ControlDisplayText", controlTextCheck.isSelected());
-        refresh();
-    }
-
-    @FXML
-    protected void hidpiIcons(ActionEvent event) {
-        AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
-        AppVariables.setUserConfigValue("HidpiIcons", AppVariables.hidpiIcons);
-        if (AppVariables.hidpiIcons) {
-            if (Toolkit.getDefaultToolkit().getScreenResolution() <= 120) {
-                parentController.alertInformation(message("HidpiIconsComments"));
+    public void makeIcons() {
+        synchronized (this) {
+            if (iconTask != null && !iconTask.isQuit()) {
+                return;
             }
-        } else {
-            if (Toolkit.getDefaultToolkit().getScreenResolution() > 120) {
-                parentController.alertInformation(message("HidpiIconsComments"));
+            if (!FxmlControl.askSure("MyBox", message("MakeIcons"))) {
+                return;
             }
+            iconTask = DevTools.makeIconsTask(parentController);
+            if (iconTask == null) {
+                return;
+            }
+            parentController.openHandlingStage(iconTask, Modality.WINDOW_MODAL);
+            iconTask.setSelf(iconTask);
+            Thread thread = new Thread(iconTask);
+            thread.setDaemon(true);
+            thread.start();
         }
-        refresh();
     }
 
     @FXML
+    protected void messageAuthor(ActionEvent event) {
+        openStage(CommonValues.MessageAuthorFxml);
+    }
+
+    /*
+        help nenu
+     */
+    @FXML
+    protected void Shortcuts(ActionEvent event) {
+        openStage(CommonValues.ShortcutsFxml);
+    }
+
+    @FXML
+    public void documents(ActionEvent event) {
+        openStage(CommonValues.DocumentsFxml);
+    }
+
+    @FXML
+    public void readme(ActionEvent event) {
+        MarkdownEditerController c = (MarkdownEditerController) openStage(CommonValues.MarkdownEditorFxml);
+        String lang = AppVariables.isChinese() ? "zh" : "en";
+        File file = FxmlControl.getInternalFile("/doc/" + lang + "/README.md", "doc", "README-" + lang + ".md", false);
+        c.sourceFileChanged(file);
+    }
+
+    @FXML
+    protected void showAbout(ActionEvent event) {
+        openStage(CommonValues.AboutFxml);
+    }
+
+    /*
+        others
+     */
     @Override
-    public BaseController refresh() {
-        return parentController.refresh();
-    }
-
-    @FXML
-    protected void newWindowAction() {
-        AppVariables.setOpenStageInNewWindow(newWindowCheck.isSelected());
-    }
-
-    @FXML
-    protected void restoreStagesSizeAction() {
-        AppVariables.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
-    }
-
-    @FXML
-    protected void popRecentAction() {
-        if (popRecentCheck.isSelected()) {
-            AppVariables.fileRecentNumber = 15;
-        } else {
-            AppVariables.fileRecentNumber = 0;
-        }
-        AppVariables.setUserConfigInt("FileRecentNumber", AppVariables.fileRecentNumber);
-    }
-
-    @FXML
-    protected void popColorSetAction() {
-        AppVariables.setUserConfigValue("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
-    }
-
-    @FXML
-    protected void controlPanesAction() {
-        AppVariables.setUserConfigValue("MousePassControlPanes", controlPanesCheck.isSelected());
-    }
-
-    @FXML
-    protected void PdfMem500MB(ActionEvent event) {
-        AppVariables.setPdfMem("500MB");
-    }
-
-    @FXML
-    protected void PdfMem1GB(ActionEvent event) {
-        AppVariables.setPdfMem("1GB");
-    }
-
-    @FXML
-    protected void PdfMem2GB(ActionEvent event) {
-        AppVariables.setPdfMem("2GB");
-    }
-
-    @FXML
-    protected void pdfMemUnlimit(ActionEvent event) {
-        AppVariables.setPdfMem("Unlimit");
-    }
-
-    @FXML
-    protected void setDefaultStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.DefaultStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnBlackStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.WhiteOnBlackStyle);
-    }
-
-    @FXML
-    protected void setYellowOnBlackStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.YellowOnBlackStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnGreenStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.WhiteOnGreenStyle);
-    }
-
-    @FXML
-    protected void setCaspianStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.caspianStyle);
-    }
-
-    @FXML
-    protected void setGreenOnBlackStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.GreenOnBlackStyle);
-    }
-
-    @FXML
-    protected void setPinkOnBlackStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.PinkOnBlackStyle);
-    }
-
-    @FXML
-    protected void setBlackOnYellowStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.BlackOnYellowStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnPurpleStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.WhiteOnPurpleStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnBlueStyle(ActionEvent event) {
-        setInterfaceStyle(CommonValues.WhiteOnBlueStyle);
-    }
-
-    @Override
-    public void setInterfaceStyle(String style) {
-        try {
-            AppVariables.setUserConfigValue("InterfaceStyle", style);
-            if (parentController != null) {
-                parentController.setInterfaceStyle(style);
+    public Stage getMyStage() {
+        if (myStage == null) {
+            if (mainMenuPane != null && mainMenuPane.getScene() != null) {
+                myStage = (Stage) mainMenuPane.getScene().getWindow();
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
-    }
-
-    @FXML
-    public void editConfigFile(ActionEvent event) {
-        TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml);
-        controller.hideLeftPane();
-        controller.hideRightPane();
-        controller.openTextFile(AppVariables.MyboxConfigFile);
-        controller.popInformation(message("TakeEffectWhenReboot"));
-    }
-
-    @FXML
-    public void clearSettings(ActionEvent event) {
-        parentController.clearUserSettings();
-    }
-
-    @FXML
-    protected void exit(ActionEvent event) {
-        FxmlStage.appExit();
+        return myStage;
     }
 
     @Override
@@ -749,759 +1513,6 @@ public class MainMenuController extends BaseController {
     @Override
     public BaseController openStage(String newFxml) {
         return parentController.openStage(newFxml);
-    }
-
-    @FXML
-    protected void openNotes(ActionEvent event) {
-        loadScene(CommonValues.NotesFxml);
-    }
-
-    @FXML
-    protected void openPdfView(ActionEvent event) {
-        loadScene(CommonValues.PdfViewFxml);
-    }
-
-    @FXML
-    protected void openPdfHtmlViewer(ActionEvent event) {
-        loadScene(CommonValues.PdfHtmlViewerFxml);
-    }
-
-    @FXML
-    protected void openPDFAttributes(ActionEvent event) {
-        loadScene(CommonValues.PdfAttributesFxml);
-    }
-
-    @FXML
-    protected void openPDFAttributesBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfAttributesBatchFxml);
-    }
-
-    @FXML
-    protected void openPdfConvertImagesBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfConvertImagesBatchFxml);
-    }
-
-    @FXML
-    protected void openPdfConvertHtmlsBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfConvertHtmlsBatchFxml);
-    }
-
-    @FXML
-    protected void openImagesCombinePdf(ActionEvent event) {
-        loadScene(CommonValues.ImagesCombinePdfFxml);
-    }
-
-    @FXML
-    protected void openPdfExtractTextsBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfExtractTextsBatchFxml);
-    }
-
-    @FXML
-    protected void openPdfExtractImagesBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfExtractImagesBatchFxml);
-    }
-
-    @FXML
-    protected void openPdfImagesConvertBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfImagesConvertBatchFxml);
-    }
-
-    @FXML
-    protected void openMergePdf(ActionEvent event) {
-        loadScene(CommonValues.PdfMergeFxml);
-    }
-
-    @FXML
-    protected void openPdfSplitBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfSplitBatchFxml);
-    }
-
-    @FXML
-    protected void openPdfOCRBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfOCRBatchFxml);
-    }
-
-    @FXML
-    protected void openCompressPdfImagesBatch(ActionEvent event) {
-        loadScene(CommonValues.PdfCompressImagesBatchFxml);
-    }
-
-    @FXML
-    protected void openImageViewer(ActionEvent event) {
-        loadScene(CommonValues.ImageViewerFxml);
-    }
-
-    @FXML
-    protected void openImagesBrowser(ActionEvent event) {
-        loadScene(CommonValues.ImagesBrowserFxml);
-    }
-
-    @FXML
-    protected void openImageData(ActionEvent event) {
-        loadScene(CommonValues.ImageAnalyseFxml);
-    }
-
-    @FXML
-    protected void openImageConverterBatch(ActionEvent event) {
-        loadScene(CommonValues.ImageConverterBatchFxml);
-    }
-
-    @FXML
-    protected void openImageManufacture(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchSize(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchSizeFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchCrop(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchCropFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchColor(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchColorFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchEffects(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchEffectsFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchEnhancement(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchEnhancementFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchReplaceColor(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchReplaceColorFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchText(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchTextFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchArc(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchArcFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchShadow(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchShadowFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchTransform(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchTransformFxml);
-    }
-
-    @FXML
-    protected void openImageManufactureBatchMargins(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureBatchMarginsFxml);
-    }
-
-    @FXML
-    protected void openImageSplit(ActionEvent event) {
-        loadScene(CommonValues.ImageSplitFxml);
-    }
-
-    @FXML
-    protected void openImageSample(ActionEvent event) {
-        loadScene(CommonValues.ImageSampleFxml);
-    }
-
-    @FXML
-    protected void openImagesCombine(ActionEvent event) {
-        loadScene(CommonValues.ImagesCombineFxml);
-    }
-
-    @FXML
-    protected void openImageGifViewer(ActionEvent event) {
-        loadScene(CommonValues.ImageGifViewerFxml);
-    }
-
-    @FXML
-    protected void openImageGifEditer(ActionEvent event) {
-        loadScene(CommonValues.ImageGifEditerFxml);
-    }
-
-    @FXML
-    protected void openImageTiffEditer(ActionEvent event) {
-        loadScene(CommonValues.ImageTiffEditerFxml);
-    }
-
-    @FXML
-    protected void openImageFramesViewer(ActionEvent event) {
-        loadScene(CommonValues.ImageFramesViewerFxml);
-    }
-
-    @FXML
-    protected void openImagesBlend(ActionEvent event) {
-        loadScene(CommonValues.ImagesBlendFxml);
-    }
-
-    @FXML
-    protected void openImageStatistic(ActionEvent event) {
-        loadScene(CommonValues.ImageStatisticFxml);
-    }
-
-    @FXML
-    protected void openImageAlphaExtract(ActionEvent event) {
-        loadScene(CommonValues.ImageAlphaExtractBatchFxml);
-    }
-
-    @FXML
-    protected void openImageAlphaAdd(ActionEvent event) {
-        loadScene(CommonValues.ImageAlphaAddBatchFxml);
-    }
-
-    @FXML
-    protected void openImageOCR(ActionEvent event) {
-        loadScene(CommonValues.ImageOCRFxml);
-    }
-
-    @FXML
-    protected void openImageOCRBatch(ActionEvent event) {
-        loadScene(CommonValues.ImageOCRBatchFxml);
-    }
-
-    @FXML
-    protected void openConvolutionKernelManager(ActionEvent event) {
-        loadScene(CommonValues.ConvolutionKernelManagerFxml);
-    }
-
-    @FXML
-    protected void openColorPalette(ActionEvent event) {
-        openStage(CommonValues.ColorPaletteManageFxml);
-    }
-
-    @FXML
-    protected void openManageColors(ActionEvent event) {
-        loadScene(CommonValues.ManageColorsFxml);
-    }
-
-    @FXML
-    protected void openIccProfileEditor(ActionEvent event) {
-        loadScene(CommonValues.IccProfileEditorFxml);
-    }
-
-    @FXML
-    protected void openChromaticityDiagram(ActionEvent event) {
-        loadScene(CommonValues.ChromaticityDiagramFxml);
-    }
-
-    @FXML
-    protected void openChromaticAdaptationMatrix(ActionEvent event) {
-        loadScene(CommonValues.ChromaticAdaptationMatrixFxml);
-    }
-
-    @FXML
-    protected void openColorConversion(ActionEvent event) {
-        loadScene(CommonValues.ColorConversionFxml);
-    }
-
-    @FXML
-    protected void openRGBColorSpaces(ActionEvent event) {
-        loadScene(CommonValues.RGBColorSpacesFxml);
-    }
-
-    @FXML
-    protected void openRGB2XYZConversionMatrix(ActionEvent event) {
-        loadScene(CommonValues.RGB2XYZConversionMatrixFxml);
-    }
-
-    @FXML
-    protected void openRGB2RGBConversionMatrix(ActionEvent event) {
-        loadScene(CommonValues.RGB2RGBConversionMatrixFxml);
-    }
-
-    @FXML
-    protected void openIlluminants(ActionEvent event) {
-        loadScene(CommonValues.IlluminantsFxml);
-    }
-
-    @FXML
-    protected void openMatricesManage(ActionEvent event) {
-        loadScene(CommonValues.MatricesManageFxml);
-    }
-
-    @FXML
-    protected void openMatrixUnaryCalculation(ActionEvent event) {
-        loadScene(CommonValues.MatrixUnaryCalculationFxml);
-    }
-
-    @FXML
-    protected void openMatricesBinaryCalculation(ActionEvent event) {
-        loadScene(CommonValues.MatricesBinaryCalculationFxml);
-    }
-
-    @FXML
-    protected void openPixelsCalculator(ActionEvent event) {
-        openStage(CommonValues.PixelsCalculatorFxml);
-    }
-
-    @FXML
-    protected void openFilesRename(ActionEvent event) {
-        loadScene(CommonValues.FilesRenameFxml);
-    }
-
-    @FXML
-    protected void openDirectorySynchronize(ActionEvent event) {
-        loadScene(CommonValues.DirectorySynchronizeFxml);
-    }
-
-    @FXML
-    protected void openFilesArrangement(ActionEvent event) {
-        loadScene(CommonValues.FilesArrangementFxml);
-    }
-
-    @FXML
-    protected void openDeleteEmptyDirectories(ActionEvent event) {
-        loadScene(CommonValues.FilesDeleteEmptyDirFxml);
-    }
-
-    @FXML
-    protected void openDeleteSysTempPath(ActionEvent event) {
-        loadScene(CommonValues.FilesDeleteSysTempFxml);
-    }
-
-    @FXML
-    protected void openDeleteNestedDirectories(ActionEvent event) {
-        loadScene(CommonValues.FilesDeleteNestedDirFxml);
-    }
-
-    @FXML
-    protected void openAlarmClock(ActionEvent event) {
-        loadScene(CommonValues.AlarmClockFxml);
-    }
-
-    @FXML
-    protected void openHtmlEditor(ActionEvent event) {
-        loadScene(CommonValues.HtmlEditorFxml);
-    }
-
-    @FXML
-    protected void openTextEditer(ActionEvent event) {
-        loadScene(CommonValues.TextEditerFxml);
-    }
-
-    @FXML
-    protected void openTextConvert(ActionEvent event) {
-        loadScene(CommonValues.TextFilesConvertFxml);
-    }
-
-    @FXML
-    protected void openTextMerge(ActionEvent event) {
-        loadScene(CommonValues.TextFilesMergeFxml);
-    }
-
-    @FXML
-    protected void openTextReplaceBatch(ActionEvent event) {
-        loadScene(CommonValues.TextReplaceBatchFxml);
-    }
-
-    @FXML
-    protected void openTextToHtml(ActionEvent event) {
-        loadScene(CommonValues.TextToHtmlFxml);
-    }
-
-    @FXML
-    protected void openBytesEditer(ActionEvent event) {
-        loadScene(CommonValues.BytesEditerFxml);
-    }
-
-    @FXML
-    protected void openFileCut(ActionEvent event) {
-        loadScene(CommonValues.FileCutFxml);
-    }
-
-    @FXML
-    protected void openFilesMerge(ActionEvent event) {
-        loadScene(CommonValues.FilesMergeFxml);
-    }
-
-    @FXML
-    protected void openFilesDelete(ActionEvent event) {
-        loadScene(CommonValues.FilesDeleteFxml);
-    }
-
-    @FXML
-    protected void openFilesCopy(ActionEvent event) {
-        loadScene(CommonValues.FilesCopyFxml);
-    }
-
-    @FXML
-    protected void openFilesMove(ActionEvent event) {
-        loadScene(CommonValues.FilesMoveFxml);
-    }
-
-    @FXML
-    protected void openFilesFind(ActionEvent event) {
-        loadScene(CommonValues.FilesFindFxml);
-    }
-
-    @FXML
-    protected void openMarkdownEditer(ActionEvent event) {
-        loadScene(CommonValues.MarkdownEditorFxml);
-    }
-
-    @FXML
-    protected void openMarkdownToHtml(ActionEvent event) {
-        loadScene(CommonValues.MarkdownToHtmlFxml);
-    }
-
-    @FXML
-    protected void openMarkdownToText(ActionEvent event) {
-        loadScene(CommonValues.MarkdownToTextFxml);
-    }
-
-    @FXML
-    protected void openMarkdownToPdf(ActionEvent event) {
-        loadScene(CommonValues.MarkdownToPdfFxml);
-    }
-
-    @FXML
-    protected void openHtmlToMarkdown(ActionEvent event) {
-        loadScene(CommonValues.HtmlToMarkdownFxml);
-    }
-
-    @FXML
-    protected void openHtmlToText(ActionEvent event) {
-        loadScene(CommonValues.HtmlToTextFxml);
-    }
-
-    @FXML
-    protected void openHtmlToPdf(ActionEvent event) {
-        loadScene(CommonValues.HtmlToPdfFxml);
-    }
-
-    @FXML
-    protected void openHtmlSetCharset(ActionEvent event) {
-        loadScene(CommonValues.HtmlSetCharsetFxml);
-    }
-
-    @FXML
-    protected void openHtmlSetStyle(ActionEvent event) {
-        loadScene(CommonValues.HtmlSetStyleFxml);
-    }
-
-    @FXML
-    protected void openHtmlSnap(ActionEvent event) {
-        loadScene(CommonValues.HtmlSnapFxml);
-    }
-
-    @FXML
-    protected void openHtmlMergeAsHtml(ActionEvent event) {
-        loadScene(CommonValues.HtmlMergeAsHtmlFxml);
-    }
-
-    @FXML
-    protected void openHtmlMergeAsMarkdown(ActionEvent event) {
-        loadScene(CommonValues.HtmlMergeAsMarkdownFxml);
-    }
-
-    @FXML
-    protected void openHtmlMergeAsPDF(ActionEvent event) {
-        loadScene(CommonValues.HtmlMergeAsPDFFxml);
-    }
-
-    @FXML
-    protected void openHtmlMergeAsText(ActionEvent event) {
-        loadScene(CommonValues.HtmlMergeAsTextFxml);
-    }
-
-    @FXML
-    protected void openHtmlFrameset(ActionEvent event) {
-        loadScene(CommonValues.HtmlFramesetFxml);
-    }
-
-    @FXML
-    protected void openRecordImages(ActionEvent event) {
-        loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
-    }
-
-    @FXML
-    protected void openWeiboSnap(ActionEvent event) {
-        WeiboSnapController controller
-                = (WeiboSnapController) loadScene(CommonValues.WeiboSnapFxml);
-    }
-
-    @FXML
-    protected void openBarcodeCreator(ActionEvent event) {
-        loadScene(CommonValues.BarcodeCreatorFxml);
-    }
-
-    @FXML
-    protected void openBarcodeDecoder(ActionEvent event) {
-        loadScene(CommonValues.BarcodeDecoderFxml);
-    }
-
-    @FXML
-    protected void openMessageDigest(ActionEvent event) {
-        loadScene(CommonValues.MessageDigestFxml);
-    }
-
-    @FXML
-    protected void openFilesCompare(ActionEvent event) {
-        loadScene(CommonValues.FilesCompareFxml);
-    }
-
-    @FXML
-    protected void openFilesArchiveCompress(ActionEvent event) {
-        loadScene(CommonValues.FilesArchiveCompressFxml);
-    }
-
-    @FXML
-    protected void openFilesCompressBatch(ActionEvent event) {
-        loadScene(CommonValues.FilesCompressBatchFxml);
-    }
-
-    @FXML
-    protected void openFileDecompressUnarchive(ActionEvent event) {
-        loadScene(CommonValues.FileDecompressUnarchiveFxml);
-    }
-
-    @FXML
-    protected void openFilesDecompressUnarchiveBatch(ActionEvent event) {
-        loadScene(CommonValues.FilesDecompressUnarchiveBatchFxml);
-    }
-
-    @FXML
-    protected void openFilesRedundancy(ActionEvent event) {
-        loadScene(CommonValues.FilesRedundancyFxml);
-    }
-
-    @FXML
-    protected void openTTC2TTF(ActionEvent event) {
-        loadScene(CommonValues.FileTTC2TTFFxml);
-    }
-
-    @FXML
-    protected void openWebBrowser(ActionEvent event) {
-        loadScene(CommonValues.WebBrowserFxml);
-    }
-
-    @FXML
-    protected void openConvertUrl(ActionEvent event) {
-        loadScene(CommonValues.HtmlConvertUrlFxml);
-    }
-
-    @FXML
-    protected void openMediaPlayer(ActionEvent event) {
-        loadScene(CommonValues.MediaPlayerFxml);
-    }
-
-    @FXML
-    protected void openMediaList(ActionEvent event) {
-        loadScene(CommonValues.MediaListFxml);
-    }
-
-    @FXML
-    protected void openScreenRecorder(ActionEvent event) {
-        loadScene(CommonValues.FFmpegScreenRecorderFxml);
-    }
-
-    @FXML
-    protected void openFFmpegMergeImages(ActionEvent event) {
-        loadScene(CommonValues.FFmpegMergeImagesFxml);
-    }
-
-    @FXML
-    protected void openFFmpegMergeImageFiles(ActionEvent event) {
-        loadScene(CommonValues.FFmpegMergeImageFilesFxml);
-    }
-
-    @FXML
-    protected void openFFmpegInformation(ActionEvent event) {
-        loadScene(CommonValues.FFmpegInformationFxml);
-    }
-
-    @FXML
-    protected void openFFmpegProbeMediaInformation(ActionEvent event) {
-        loadScene(CommonValues.FFmpegProbeMediaInformationFxml);
-    }
-
-    @FXML
-    protected void openFFmpegConvertMediaFiles(ActionEvent event) {
-        loadScene(CommonValues.FFmpegConvertMediaFilesFxml);
-    }
-
-    @FXML
-    protected void openFFmpegConvertMediaStreams(ActionEvent event) {
-        loadScene(CommonValues.FFmpegConvertMediaStreamsFxml);
-    }
-
-    @FXML
-    protected void openSecurityCertificates(ActionEvent event) {
-        loadScene(CommonValues.SecurityCertificatesFxml);
-    }
-
-    @FXML
-    protected void restoreCheckingSSLCertifications(ActionEvent event) {
-        restoreCheckingSSL();
-    }
-
-    @FXML
-    protected void downloadManage(ActionEvent event) {
-        loadScene(CommonValues.DownloadManageFxml);
-    }
-
-    @FXML
-    protected void downloadFirstLevelLinks(ActionEvent event) {
-        loadScene(CommonValues.DownloadFirstLevelLinksFxml);
-    }
-
-    @FXML
-    protected void openGameElimniation(ActionEvent event) {
-        loadScene(CommonValues.GameElimniationFxml);
-    }
-
-    @FXML
-    protected void openGameMine(ActionEvent event) {
-        loadScene(CommonValues.GameMineFxml);
-    }
-
-    @FXML
-    protected void openDataset(ActionEvent event) {
-        loadScene(CommonValues.DatasetFxml);
-    }
-
-    @FXML
-    protected void openLocationData(ActionEvent event) {
-        loadScene(CommonValues.LocationDataFxml);
-    }
-
-    @FXML
-    protected void openGeographyCode(ActionEvent event) {
-        loadScene(CommonValues.GeographyCodeFxml);
-    }
-
-    @FXML
-    protected void openLocationsDataInMap(ActionEvent event) {
-        loadScene(CommonValues.LocationsDataInMapFxml);
-    }
-
-    @FXML
-    protected void openLocationInMap(ActionEvent event) {
-        loadScene(CommonValues.LocationInMapFxml);
-    }
-
-    @FXML
-    protected void openLocationTools(ActionEvent event) {
-        loadScene(CommonValues.LocationToolsFxml);
-    }
-
-    @FXML
-    protected void openEpidemicReports(ActionEvent event) {
-        loadScene(CommonValues.EpidemicReportsFxml);
-    }
-
-    @FXML
-    protected void openDataTextClipboard(ActionEvent event) {
-        loadScene(CommonValues.DataTextClipboardFxml);
-    }
-
-    @FXML
-    protected void openDataSheetClipboard(ActionEvent event) {
-        loadScene(CommonValues.DataSheetClipboardFxml);
-    }
-
-    @FXML
-    protected void openDataCsv(ActionEvent event) {
-        DataFileCSVController c = (DataFileCSVController) loadScene(CommonValues.DataFileCSVFxml);
-        c.createAction();
-    }
-
-    @FXML
-    protected void openDataExcel(ActionEvent event) {
-        DataFileExcelController c = (DataFileExcelController) loadScene(CommonValues.DataFileExcelFxml);
-        c.createAction();
-    }
-
-    @FXML
-    protected void openExcelConvert(ActionEvent event) {
-        loadScene(CommonValues.DataFileExcelConvertFxml);
-    }
-
-    @FXML
-    protected void openExcelMerge(ActionEvent event) {
-        loadScene(CommonValues.DataFileExcelMergeFxml);
-    }
-
-    @FXML
-    protected void openCsvConvert(ActionEvent event) {
-        loadScene(CommonValues.DataFileCSVConvertFxml);
-    }
-
-    @FXML
-    protected void openCsvMerge(ActionEvent event) {
-        loadScene(CommonValues.DataFileCSVMergeFxml);
-    }
-
-    @FXML
-    protected void messageAuthor(ActionEvent event) {
-        openStage(CommonValues.MessageAuthorFxml);
-    }
-
-    @FXML
-    protected void showAbout(ActionEvent event) {
-        openStage(CommonValues.AboutFxml);
-    }
-
-    @FXML
-    protected void settingsAction(ActionEvent event) {
-        BaseController c = openStage(CommonValues.SettingsFxml);
-        c.setParentController(parentController);
-        c.setParentFxml(parentFxml);
-    }
-
-    @Override
-    public Stage getMyStage() {
-        if (myStage == null) {
-            if (mainMenuPane != null && mainMenuPane.getScene() != null) {
-                myStage = (Stage) mainMenuPane.getScene().getWindow();
-            }
-        }
-        return myStage;
-    }
-
-    @FXML
-    public void documents(ActionEvent event) {
-        openStage(CommonValues.DocumentsFxml);
-    }
-
-    @FXML
-    public void readme(ActionEvent event) {
-        MarkdownEditerController c = (MarkdownEditerController) openStage(CommonValues.MarkdownEditorFxml);
-        String lang = AppVariables.isChinese() ? "zh" : "en";
-        File file = FxmlControl.getInternalFile("/doc/" + lang + "/README.md", "doc", "README-" + lang + ".md", false);
-        c.sourceFileChanged(file);
-    }
-
-    // This is for developement to generate Icons automatically in different color style
-    // Appears when "Developement mode" is on
-    @FXML
-    public void makeIcons() {
-        synchronized (this) {
-            if (iconTask != null && !iconTask.isQuit()) {
-                return;
-            }
-            iconTask = DevTools.makeIconsTask(parentController);
-            if (iconTask == null) {
-                return;
-            }
-            parentController.openHandlingStage(iconTask, Modality.WINDOW_MODAL);
-            iconTask.setSelf(iconTask);
-            Thread thread = new Thread(iconTask);
-            thread.setDaemon(true);
-            thread.start();
-        }
     }
 
 }

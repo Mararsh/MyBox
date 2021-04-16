@@ -201,6 +201,7 @@ public class ImageManufactureOperationsController extends BaseImageController {
                 controller.operationsController = this;
                 controller.imageView = imageController.imageView;
                 controller.maskView = imageController.maskView;
+                controller.maskPane = imageController.maskPane;
                 controller.baseName = imageController.baseName;
                 controller.baseTitle = imageController.baseTitle;
                 controller.initPane();

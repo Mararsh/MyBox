@@ -161,15 +161,17 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 makeContrastBox();
 
             } else {
-                if (scopeController != null && scopeController.scope != null
-                        && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                    imageController.hideImagePane();
-                    imageController.showScopePane();
-                } else {
-                    imageController.hideScopePane();
-                    imageController.showImagePane();
+                if (imageController != null) {
+                    if (scopeController != null && scopeController.scope != null
+                            && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
+                        imageController.hideImagePane();
+                        imageController.showScopePane();
+                    } else {
+                        imageController.hideScopePane();
+                        imageController.showImagePane();
+                    }
+                    commentsLabel.setText(message("DefineScopeAndManufacture"));
                 }
-                commentsLabel.setText(message("DefineScopeAndManufacture"));
 
                 if (smoothRadio.equals(selected)) {
                     enhanceType = OperationType.Smooth;

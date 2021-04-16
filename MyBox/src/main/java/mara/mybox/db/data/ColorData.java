@@ -1,30 +1,26 @@
 package mara.mybox.db.data;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
 import mara.mybox.color.AdobeRGB;
 import mara.mybox.color.AppleRGB;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.SRGB;
-import mara.mybox.db.table.TableColorData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
  * @CreateDate 2020-1-7
  * @License Apache License Version 2.0
  */
-public class ColorData {
+public class ColorData extends BaseData {
 
     protected int colorValue;
-    protected double paletteIndex = -1;
     protected javafx.scene.paint.Color color;
     protected String rgba, rgb, colorName, colorDisplay, colorSimpleDisplay;
     protected String srgb, hsb, adobeRGB, appleRGB, eciRGB, SRGBLinear, adobeRGBLinear,
@@ -32,15 +28,53 @@ public class ColorData {
             lchab, cieLuv, lchuv;
     protected float[] adobeRGBValues, appleRGBValues, eciRGBValues, eciCmykValues, adobeCmykValues;
     protected double[] cmyk, xyzValues, cieLabValues, lchabValues, cieLuvValues, lchuvValues;
-    protected BooleanProperty inPalette;
     protected boolean isSettingValues;
+    protected long paletteid;
+    protected float orderNumner;
 
+    // rgba is saved as upper-case in db
     private void init() {
-        inPalette = new SimpleBooleanProperty(false);
+        colorValue = CommonValues.InvalidInteger;
+        orderNumner = Float.MAX_VALUE;
+        paletteid = -1;
+        srgb = null;
     }
 
     public ColorData() {
         init();
+    }
+
+    public ColorData(Color color) {
+        init();
+        try {
+            this.color = color;
+            rgba = FxmlColor.color2rgba(color);
+            rgb = FxmlColor.color2rgb(color);
+            colorValue = FxmlColor.color2Value(color);
+        } catch (Exception e) {
+        }
+    }
+
+    public ColorData(int value) {
+        init();
+        setValue(value);
+    }
+
+    public ColorData(int value, String name) {
+        init();
+        colorName = name;
+        setValue(value);
+    }
+
+    final public void setValue(int value) {
+        colorValue = value;
+        try {
+            color = FxmlColor.value2color(value);
+            rgba = FxmlColor.color2rgba(color);  // rgba is saved as upper-case in db
+            rgb = FxmlColor.color2rgb(color);
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+        }
     }
 
     public ColorData(String web) {
@@ -57,47 +91,40 @@ public class ColorData {
     // https://openjfx.io/javadoc/14/javafx.graphics/javafx/scene/paint/Color.html#web(java.lang.String)
     final public void setWeb(String web) {
         try {
-            color = javafx.scene.paint.Color.web(web);
-            rgba = FxmlColor.color2rgba(color);  // rgba is saved as upper-case in db
+            color = Color.web(web);
+            rgba = FxmlColor.color2rgba(color);
             rgb = FxmlColor.color2rgb(color);
-            bindInPalette();
+            colorValue = FxmlColor.color2Value(color);
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
         }
     }
 
-    public void bindInPalette() {
-        if (inPalette == null) {
-            inPalette = new SimpleBooleanProperty(false);
-        }
-        inPalette.addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-            try {
-//                MyBoxLog.debug(colorName + " " + rgba + " " + newVal);
-                if (isSettingValues) {
-                    return;
-                }
-                if (newVal) {
-                    ColorData data = TableColorData.endPalette(this, false);
-                    if (data != null) {
-                        paletteIndex = data.getPaletteIndex();
-                    }
-                } else {
-                    paletteIndex = -1;
-                    TableColorData.removeFromPalette(rgba);
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
-            }
-        });
-    }
-
     public ColorData calculate() {
-        if (rgba == null || srgb != null) {
+        if (srgb != null) {
             return this;
         }
-        colorValue = ImageColor.getRGB(color);
         if (colorName == null) {
             colorName = "";
+        }
+        if (colorValue != CommonValues.InvalidInteger) {
+            color = FxmlColor.value2color(colorValue);
+            rgba = FxmlColor.color2rgba(color);
+            rgb = FxmlColor.color2rgb(color);
+        } else if (color != null) {
+            colorValue = FxmlColor.color2Value(color);
+            rgba = FxmlColor.color2rgba(color);
+            rgb = FxmlColor.color2rgb(color);
+        } else if (rgba != null) {
+            color = Color.web(rgba);
+            rgb = FxmlColor.color2rgb(color);
+            colorValue = FxmlColor.color2Value(color);
+        } else if (rgb != null) {
+            color = Color.web(rgb);
+            rgba = FxmlColor.color2rgba(color);
+            colorValue = FxmlColor.color2Value(color);
+        } else {
+            return this;
         }
         srgb = Math.round(color.getRed() * 255) + " "
                 + Math.round(color.getGreen() * 255) + " "
@@ -200,7 +227,8 @@ public class ColorData {
                     + "CIE-L*ab: " + cieLab + "\n"
                     + "LCH(ab): " + lchab + "\n"
                     + "CIE-L*uv: " + cieLuv + "\n"
-                    + "LCH(uv): " + lchuv;
+                    + "LCH(uv): " + lchuv
+                    + (orderNumner == Float.MAX_VALUE ? "" : "\nOrderNumber: " + orderNumner);
         }
         return colorDisplay;
     }
@@ -230,13 +258,150 @@ public class ColorData {
         return simpleDisplay().replaceAll("\n", "</br>");
     }
 
+    /*
+        Static methods
+     */
+    public static ColorData create() {
+        return new ColorData();
+    }
+
+    public static boolean setValue(ColorData data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "color_value":
+                    data.setColorValue(value == null ? CommonValues.InvalidInteger : (int) value);
+                    return true;
+                case "rgba":
+                    data.setRgba(value == null ? null : (String) value);
+                    return true;
+                case "color_name":
+                    data.setColorName(value == null ? null : (String) value);
+                    return true;
+                case "rgb":
+                    data.setRgb(value == null ? null : (String) value);
+                    return true;
+                case "srgb":
+                    data.setSrgb(value == null ? null : (String) value);
+                    return true;
+                case "hsb":
+                    data.setHsb(value == null ? null : (String) value);
+                    return true;
+                case "lchuv":
+                    data.setLchuv(value == null ? null : (String) value);
+                    return true;
+                case "cieLuv":
+                    data.setCieLuv(value == null ? null : (String) value);
+                    return true;
+                case "lchab":
+                    data.setLchab(value == null ? null : (String) value);
+                    return true;
+                case "cieLab":
+                    data.setCieLab(value == null ? null : (String) value);
+                    return true;
+                case "xyz":
+                    data.setXyz(value == null ? null : (String) value);
+                    return true;
+                case "adobeCMYK":
+                    data.setAdobeCMYK(value == null ? null : (String) value);
+                    return true;
+                case "adobeRGB":
+                    data.setAdobeRGB(value == null ? null : (String) value);
+                    return true;
+                case "appleRGB":
+                    data.setAppleRGB(value == null ? null : (String) value);
+                    return true;
+                case "eciRGB":
+                    data.setEciRGB(value == null ? null : (String) value);
+                    return true;
+                case "sRGBLinear":
+                    data.setSRGBLinear(value == null ? null : (String) value);
+                    return true;
+                case "adobeRGBLinear":
+                    data.setAdobeRGBLinear(value == null ? null : (String) value);
+                    return true;
+                case "appleRGBLinear":
+                    data.setAppleRGBLinear(value == null ? null : (String) value);
+                    return true;
+                case "calculatedCMYK":
+                    data.setCalculatedCMYK(value == null ? null : (String) value);
+                    return true;
+                case "eciCMYK":
+                    data.setEciCMYK(value == null ? null : (String) value);
+                    return true;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        return false;
+    }
+
+    public static Object getValue(ColorData data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        switch (column) {
+            case "color_value":
+                return data.getColorValue();
+            case "rgba":
+                return data.getRgba();
+            case "color_name":
+                return data.getColorName();
+            case "rgb":
+                return data.getRgb();
+            case "srgb":
+                return data.getSrgb();
+            case "hsb":
+                return data.getHsb();
+            case "adobeRGB":
+                return data.getAdobeRGB();
+            case "appleRGB":
+                return data.getAppleRGB();
+            case "eciRGB":
+                return data.getEciRGB();
+            case "sRGBLinear":
+                return data.getSRGBLinear();
+            case "adobeRGBLinear":
+                return data.getAdobeRGBLinear();
+            case "appleRGBLinear":
+                return data.getAppleRGBLinear();
+            case "calculatedCMYK":
+                return data.getCalculatedCMYK();
+            case "eciCMYK":
+                return data.getEciCMYK();
+            case "adobeCMYK":
+                return data.getAdobeCMYK();
+            case "xyz":
+                return data.getXyz();
+            case "cieLab":
+                return data.getCieLab();
+            case "lchab":
+                return data.getLchab();
+            case "cieLuv":
+                return data.getCieLuv();
+            case "lchuv":
+                return data.getLchuv();
+        }
+        return null;
+    }
+
+    public static boolean valid(ColorData data) {
+        return data != null && data.getRgba() != null;
+    }
+
 
     /*
         get/set
      */
     public Color getColor() {
-        if (color == null && rgba != null) {
-            setWeb(rgba);
+        if (color == null) {
+            if (rgba != null) {
+                setWeb(rgba);
+            } else if (rgb != null) {
+                setWeb(rgb);
+            }
         }
         return color;
     }
@@ -247,6 +412,17 @@ public class ColorData {
             setWeb(rgba);
         }
         return this;
+    }
+
+    public String getRgba() {
+        if (rgba == null && rgb != null) {
+            setWeb(rgb);
+        }
+        if (rgba != null) {
+            return rgba.toUpperCase();
+        } else {
+            return null;
+        }
     }
 
     public ColorData setRgb(String rgb) {
@@ -260,6 +436,13 @@ public class ColorData {
         return this;
     }
 
+    public String getRgb() {
+        if (rgb == null && rgba != null) {
+            setWeb(rgba);
+        }
+        return rgb;
+    }
+
     public void setColor(Color color) {
         this.color = color;
     }
@@ -270,10 +453,6 @@ public class ColorData {
 
     public void setColorValue(int colorValue) {
         this.colorValue = colorValue;
-    }
-
-    public String getRgba() {
-        return rgba.toUpperCase();
     }
 
     public String getColorName() {
@@ -317,10 +496,6 @@ public class ColorData {
 
     public void setHsb(String hsb) {
         this.hsb = hsb;
-    }
-
-    public String getRgb() {
-        return rgb;
     }
 
     public float[] getAdobeRGBValues() {
@@ -523,30 +698,20 @@ public class ColorData {
         this.lchuv = lchuv;
     }
 
-    public double getPaletteIndex() {
-        return paletteIndex;
+    public float getOrderNumner() {
+        return orderNumner;
     }
 
-    public void setPaletteIndex(double paletteIndex) {
-        this.paletteIndex = paletteIndex;
+    public void setOrderNumner(float orderNumner) {
+        this.orderNumner = orderNumner;
     }
 
-    public boolean getInPalette() {
-        return inPalette.get();
+    public long getPaletteid() {
+        return paletteid;
     }
 
-    public BooleanProperty getInPaletteProperty() {
-        return inPalette;
-    }
-
-    public void setInPalette(boolean in) {
-        isSettingValues = true;
-        if (inPalette == null) {
-            inPalette = new SimpleBooleanProperty(in);
-        } else {
-            inPalette.set(in);
-        }
-        isSettingValues = false;
+    public void setPaletteid(long paletteid) {
+        this.paletteid = paletteid;
     }
 
 }

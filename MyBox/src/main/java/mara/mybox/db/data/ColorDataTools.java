@@ -5,15 +5,15 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.TableColorData;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.AppVariables;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -26,47 +26,36 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class ColorDataTools {
 
-    public static List<ColorData> predefined(String type) {
-        switch (type) {
-            case "mybox":
-                String lang = AppVariables.isChinese() ? "zh" : "en";
-                return readCSV(FxmlControl.getInternalFile("/data/db/ColorsMyBox_" + lang + ".csv", "data", "ColorsMyBox_" + lang + ".csv", false));
-            case "chinese":
-                return readCSV(FxmlControl.getInternalFile("/data/db/ColorsChinese.csv", "data", "ColorsChinese.csv", false));
-            case "japanese":
-                return readCSV(FxmlControl.getInternalFile("/data/db/ColorsJapanese.csv", "data", "ColorsJapanese.csv", false));
-            case "colorhexa":
-                return readCSV(FxmlControl.getInternalFile("/data/db/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv", false));
-            default:
-                return readCSV(FxmlControl.getInternalFile("/data/db/ColorsWeb.csv", "data", "ColorsWeb.csv", false));
-        }
-    }
-
-    public static void printHeader(CSVPrinter printer) {
+    public static void printHeader(CSVPrinter printer, boolean orderNumber) {
         try {
             if (printer == null) {
                 return;
             }
-            printer.printRecord("name", "rgba", "rgb", "value", "SRGB", "HSB",
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList("name", "rgba", "rgb", "value", "SRGB", "HSB",
                     "AdobeRGB", "AppleRGB", "EciRGB", "SRGBLinear", "AdobeRGBLinear", "AppleRGBLinear",
-                    "CalculatedCMYK", "EciCMYK", "AdobeCMYK", "XYZ", "CieLab", "Lchab", "CieLuv", "Lchuv", "PaletteIndex");
+                    "CalculatedCMYK", "EciCMYK", "AdobeCMYK", "XYZ", "CieLab", "Lchab", "CieLuv", "Lchuv"));
+            if (orderNumber) {
+                names.add("PaletteIndex");
+            }
+            printer.printRecord(names);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public static void exportCSV(File file) {
+    public static void exportCSV(TableColor tableColor, File file) {
         try ( Connection conn = DerbyBase.getConnection();
                  CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
             conn.setReadOnly(true);
-            String sql = " SELECT * FROM Color_Data";
-            printHeader(printer);
-            try (final Statement statement = conn.createStatement();
-                    final ResultSet results = statement.executeQuery(sql)) {
+            printHeader(printer, false);
+            String sql = " SELECT * FROM Color ORDER BY color_value";
+            try ( PreparedStatement statement = conn.prepareStatement(sql);
+                     ResultSet results = statement.executeQuery()) {
                 List<String> row = new ArrayList<>();
                 while (results.next()) {
-                    ColorData data = TableColorData.read(results); //
-                    printRow(printer, row, data);
+                    ColorData data = tableColor.readData(results);
+                    printRow(printer, row, data, false);
                 }
             }
         } catch (Exception e) {
@@ -74,19 +63,44 @@ public class ColorDataTools {
         }
     }
 
-    public static void exportCSV(List<ColorData> dataList, File file) {
-        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
-            printHeader(printer);
-            List<String> row = new ArrayList<>();
-            for (ColorData data : dataList) {
-                printRow(printer, row, data);
+    public static void exportCSV(TableColorPalette tableColorPalette, File file, ColorPaletteName palette) {
+        try ( Connection conn = DerbyBase.getConnection();
+                 CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            conn.setReadOnly(true);
+            printHeader(printer, true);
+            String sql = "SELECT * FROM Color_Palette_View WHERE paletteid=" + palette.getCpnid() + " ORDER BY order_number";
+            try ( PreparedStatement statement = conn.prepareStatement(sql);
+                     ResultSet results = statement.executeQuery()) {
+                List<String> row = new ArrayList<>();
+                while (results.next()) {
+                    ColorPalette data = tableColorPalette.readData(results);
+                    ColorData color = data.getData();
+                    color.setColorName(data.getName());
+                    color.setOrderNumner(data.getOrderNumber());
+                    color.setPaletteid(data.getCpid());
+                    printRow(printer, row, color, true);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, sql);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public static void printRow(CSVPrinter printer, List<String> row, ColorData data) {
+    public static void exportCSV(List<ColorData> dataList, File file, boolean orderNumber) {
+        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            printHeader(printer, orderNumber);
+            List<String> row = new ArrayList<>();
+            for (ColorData data : dataList) {
+                printRow(printer, row, data, orderNumber);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public static void printRow(CSVPrinter printer, List<String> row, ColorData data, boolean orderNumber) {
         try {
             if (printer == null || row == null || data == null) {
                 return;
@@ -112,20 +126,24 @@ public class ColorDataTools {
             row.add(data.getLchab());
             row.add(data.getCieLuv());
             row.add(data.getLchuv());
-            row.add((long) data.getPaletteIndex() + "");
+            if (orderNumber) {
+                row.add(data.getOrderNumner() + "");
+            }
             printer.printRecord(row);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public static List<ColorData> readCSV(File file) {
+    public static List<ColorData> readCSV(File file, boolean reOrder) {
         List<ColorData> data = new ArrayList();
-        try (final CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8, CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+        try (final CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             List<String> names = parser.getHeaderNames();
             if (names == null || (!names.contains("rgba") && !names.contains("rgb"))) {
                 return null;
             }
+            int index = 0;
             for (CSVRecord record : parser) {
                 try {
                     ColorData item = new ColorData();
@@ -137,9 +155,6 @@ public class ColorDataTools {
                     }
                     if (names.contains("rgb")) {
                         item.setRgb(record.get("rgb"));
-                    }
-                    if (names.contains("PaletteIndex")) {
-                        item.setPaletteIndex(Double.parseDouble(record.get("PaletteIndex")));
                     }
                     try {
                         item.setColorValue(Integer.parseInt(record.get("value")));
@@ -161,6 +176,12 @@ public class ColorDataTools {
                         item.setLchuv(record.get("Lchuv"));
                     } catch (Exception e) {
                         item.calculate();
+                    }
+                    index++;
+                    if (!reOrder && names.contains("PaletteIndex")) {
+                        item.setOrderNumner(Float.parseFloat(record.get("PaletteIndex")));
+                    } else {
+                        item.setOrderNumner(index);
                     }
                     data.add(item);
                 } catch (Exception e) {

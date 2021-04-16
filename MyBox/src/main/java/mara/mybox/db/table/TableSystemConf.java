@@ -1,12 +1,11 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Map;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.CommonValues;
@@ -14,8 +13,6 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-10-15 9:31:28
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class TableSystemConf extends DerbyBase {
@@ -146,18 +143,16 @@ public class TableSystemConf extends DerbyBase {
             if (exist != CommonValues.InvalidInteger) {
                 return exist;
             } else {
-                try ( PreparedStatement insert = conn.prepareStatement(InsertInt)) {
+                try ( PreparedStatement insert = conn.prepareStatement(UpdateInt)) {
                     insert.setInt(1, defaultValue);
                     insert.setString(2, keyName);
                     insert.executeUpdate();
                 }
             }
-            return defaultValue;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-
-            return defaultValue;
+//            MyBoxLog.error(e);
         }
+        return defaultValue;
     }
 
     public static int readInt(Connection conn, String keyName) {
@@ -171,8 +166,7 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-
+//            MyBoxLog.error(e);
         }
         return value;
     }
@@ -209,8 +203,7 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-
+//            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -236,8 +229,7 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -254,7 +246,6 @@ public class TableSystemConf extends DerbyBase {
             return delete(conn, keyName);
         } catch (Exception e) {
             MyBoxLog.error(e);
-
             return false;
         }
     }
@@ -268,7 +259,6 @@ public class TableSystemConf extends DerbyBase {
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
             MyBoxLog.error(e);
-
             return false;
         }
     }
@@ -281,7 +271,6 @@ public class TableSystemConf extends DerbyBase {
             return deletePrefix(conn, keyName);
         } catch (Exception e) {
             MyBoxLog.error(e);
-
             return false;
         }
     }
@@ -295,7 +284,6 @@ public class TableSystemConf extends DerbyBase {
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
             MyBoxLog.error(e);
-
             return false;
         }
     }

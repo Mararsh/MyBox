@@ -19,23 +19,13 @@ License:    Apache License Version 2.0
     <children>
         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="400.0" maxWidth="1.7976931348623157E308" onMouseExited="#exitPane" pannable="true" prefViewportWidth="400.0">
             <content>
-                <FlowPane fx:id="colorsPane" focusTraversable="true" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="2.0" VBox.vgrow="NEVER" />
+                <FlowPane fx:id="colorsPane" focusTraversable="true" hgap="2.0" vgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0"  VBox.vgrow="NEVER" />
             </content>
         </ScrollPane>
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="label" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS" />
-            <CheckBox fx:id="popColorSetCheck" minHeight="-Infinity" mnemonicParsing="false" onAction="#popColorSet" selected="true" text="%PopColorSetWhenMousePassing" wrapText="true" />
-            <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconData.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-                <Button fx:id="paletteManageButton" mnemonicParsing="false" onAction="#managePalette">
+                <Label fx:id="label" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Button fx:id="paletteButton" mnemonicParsing="false" onMouseEntered="#popPaletteMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -44,11 +34,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconClose.png" />
+                                <Image url="@../buttons/iconCancel.png" />
                             </image>
                         </ImageView>
                     </graphic>

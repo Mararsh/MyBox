@@ -54,7 +54,7 @@ public class ImageStatistic {
                         continue;
                     }
                     nonTransparent++;
-                    color = new Color(p);
+                    color = new Color(p, true);
 
                     v = color.getRed();
                     redHistogram[v]++;
@@ -161,7 +161,7 @@ public class ImageStatistic {
                     if (p == 0) {
                         continue;
                     }
-                    color = new Color(p);
+                    color = new Color(p, true);
 
                     v = color.getRed();
                     redVariable += Math.pow(v - redMean, 2);

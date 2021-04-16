@@ -55,6 +55,9 @@ public abstract class BaseHtmlController extends BaseController {
 
     protected void initWebView() {
         try {
+            if (webviewController == null) {
+                return;
+            }
             webviewController.setValues(this, needSnap, needEdit);
             webView = webviewController.webView;
             webEngine = webviewController.webView.getEngine();

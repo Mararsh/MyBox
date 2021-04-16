@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.data.CoordinateSystem;
@@ -28,8 +25,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.NetworkTools.trustAllManager;
-import static mara.mybox.tools.NetworkTools.trustAllVerifier;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -388,21 +384,7 @@ public class GeographyCodeTools {
     public static GeographyCode gaodeCode(String urlString, GeographyCode geographyCode) {
         try {
             URL url = new URL(urlString);
-            File xmlFile = FileTools.getTempFile(".xml");
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
-            sc.init(null, trustAllManager(), new SecureRandom());
-            connection.setSSLSocketFactory(sc.getSocketFactory());
-            connection.setHostnameVerifier(trustAllVerifier());
-            connection.connect();
-            try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                    final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(xmlFile))) {
-                byte[] buf = new byte[CommonValues.IOBufferLength];
-                int len;
-                while ((len = inStream.read(buf)) > 0) {
-                    outputStream.write(buf, 0, len);
-                }
-            }
+            File xmlFile = HtmlTools.url2File(url.toString());
 //            MyBoxLog.debug(FileTools.readTexts(xmlFile));
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("formatted_address");
@@ -1988,21 +1970,7 @@ public class GeographyCodeTools {
                     + "&coordsys=" + sourceCS.gaodeConvertService()
                     + "&output=xml&key=" + AppVariables.getUserConfigValue("GaoDeMapServiceKey", CommonValues.GaoDeMapServiceKey);
             URL url = new URL(urlString);
-            File xmlFile = FileTools.getTempFile(".xml");
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
-            sc.init(null, trustAllManager(), new SecureRandom());
-            connection.setSSLSocketFactory(sc.getSocketFactory());
-            connection.setHostnameVerifier(trustAllVerifier());
-            connection.connect();
-            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(xmlFile))) {
-                byte[] buf = new byte[CommonValues.IOBufferLength];
-                int len;
-                while ((len = inStream.read(buf)) > 0) {
-                    outputStream.write(buf, 0, len);
-                }
-            }
+            File xmlFile = HtmlTools.url2File(url.toString());
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("info");
             if (nodes == null || nodes.getLength() == 0) {

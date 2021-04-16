@@ -954,11 +954,7 @@ public class ChromaticityDiagramController extends BaseImageController {
 
     @FXML
     public void aboutColor() {
-        try {
-            FxmlStage.browseURI(getMyStage(), ChromaticityBaseController.aboutColorHtml().toURI());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        openLink(ChromaticityBaseController.aboutColorHtml());
     }
 
 }

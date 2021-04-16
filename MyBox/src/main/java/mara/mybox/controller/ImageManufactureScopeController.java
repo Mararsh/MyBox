@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
@@ -46,7 +47,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.table.TableColorData;
+import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
@@ -78,6 +79,7 @@ import mara.mybox.value.CommonFxValues;
  */
 public class ImageManufactureScopeController extends ImageViewerController {
 
+    protected TableColor tableColor;
     protected ImageManufactureController imageController;
     protected float opacity;
     protected BufferedImage outlineSource;
@@ -138,6 +140,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
         sourceFile = imageController.sourceFile;
         imageInformation = imageController.imageInformation;
         image = imageController.image;
+        tableColor = new TableColor();
 
         initScopeView();
         initAreaBox();
@@ -1303,7 +1306,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    TableColorData.addColorsInPalette(colors);
+//                    TableColor.addColorsInPalette(colors);
                     return true;
                 }
 
@@ -1328,7 +1331,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    TableColorData.writeColors(colors, false);
+                    tableColor.writeColors(colors, false);
                     return true;
                 }
 
@@ -1351,6 +1354,15 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 @Override
                 public ListCell<ImageScope> call(ListView<ImageScope> param) {
                     return new ImageScopeCell();
+                }
+            });
+
+            scopesList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (event.getClickCount() > 1) {
+                        useScope();
+                    }
                 }
             });
 
@@ -1621,7 +1633,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
     }
 
     public void showScope(ImageScope scope) {
-        MyBoxLog.debug("here");
         if (scope == null || scope.getScopeType() == null) {
             return;
         }

@@ -14,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.FloatStringConverter;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
@@ -39,12 +40,12 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         super(conv);
     }
 
-    public static <S> Callback<TableColumn<S, String>, TableCell<S, String>> forTableColumn() {
-        return forTableColumn(new DefaultStringConverter());
+    public static <S> Callback<TableColumn<S, String>, TableCell<S, String>> forStringColumn() {
+        return list -> new TableAutoCommitCell<>(new DefaultStringConverter());
     }
 
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(final StringConverter<T> conv) {
-        return list -> new TableAutoCommitCell<>(conv);
+    public static <S> Callback<TableColumn<S, Float>, TableCell<S, Float>> forFloatColumn() {
+        return list -> new TableAutoCommitCell<>(new FloatStringConverter());
     }
 
     @Override

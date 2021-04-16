@@ -1,8 +1,6 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -10,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import mara.mybox.tools.DateTools;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 
 /**
  * @Author Mara
@@ -68,7 +67,7 @@ public class TableStringValue extends DerbyBase {
         }
         try ( PreparedStatement statement = conn.prepareStatement(Query)) {
             statement.setMaxRows(1);
-            statement.setString(1, name);
+            statement.setString(1, DerbyBase.stringValue(name));
             try ( ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     return results.getString("string_value");

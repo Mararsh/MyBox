@@ -324,6 +324,9 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                             font, (Color) colorSetController.rect.getFill(), x, y,
                             blendMode, opacity, !blendTopCheck.isSelected(), shadow, angle,
                             outlineCheck.isSelected(), verticalCheck.isSelected());
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
                     return newImage != null;
                 }
 

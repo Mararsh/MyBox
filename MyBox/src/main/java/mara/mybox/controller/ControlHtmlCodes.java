@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.net.URLDecoder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -16,6 +15,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -187,7 +188,7 @@ public class ControlHtmlCodes extends BaseController {
                 if (file == null) {
                     return;
                 }
-                insertText(URLDecoder.decode(file.toURI().toString()));
+                insertText(HtmlTools.decodeURL(file));
             });
             popMenu.getItems().add(menu);
 
@@ -217,6 +218,83 @@ public class ControlHtmlCodes extends BaseController {
             menu = new MenuItem(message("Bold"));
             menu.setOnAction((ActionEvent event) -> {
                 insertText("<b>" + message("Bold") + "</b>");
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void popCharMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("Blank"));
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&nbsp;");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem("<");
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&lt;");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(">");
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&gt;");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem("&");
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&amp;");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem("\"");
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&quot;");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Registered"));
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&reg;");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Copyright"));
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&copy;");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Trademark"));
+            menu.setOnAction((ActionEvent event) -> {
+                insertText("&trade;");
             });
             popMenu.getItems().add(menu);
 
@@ -292,6 +370,13 @@ public class ControlHtmlCodes extends BaseController {
     @Override
     public void clearAction() {
         codesArea.clear();
+    }
+
+    @FXML
+    public void txtAction() {
+        TextEditerController controller = (TextEditerController) FxmlStage.openStage(CommonValues.TextEditerFxml);
+        controller.loadContexts(codesArea.getText());
+        controller.toFront();
     }
 
 }

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -191,7 +190,7 @@ public class FilesCompareController extends BaseController {
                 default:
                     link = "https://en.wikipedia.org/wiki/Message_digest";
             }
-            browseURI(new URI(link));
+            openLink(link);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

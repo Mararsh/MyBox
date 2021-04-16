@@ -7,13 +7,10 @@ package mara.mybox.db.data;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.FileChooser;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistory.OperationType;
 import mara.mybox.db.data.VisitHistory.ResourceType;
@@ -76,6 +73,8 @@ public class VisitHistoryTools {
             return CommonFxValues.CsvExtensionFilter;
         } else if (fileType == VisitHistory.FileType.Sheet) {
             return CommonFxValues.SheetExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.Cert) {
+            return CommonFxValues.CertExtensionFilter;
         } else {
             return CommonFxValues.AllExtensionFilter;
         }

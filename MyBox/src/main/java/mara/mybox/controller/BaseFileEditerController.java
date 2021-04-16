@@ -863,8 +863,10 @@ public abstract class BaseFileEditerController extends BaseController {
             fileEnd += pageEnd;
         }
         selectionLabel.setText(AppVariables.message("Selection") + ":"
-                + (pageEnd - pageStart + 1) + "(" + pageStart + "-" + pageEnd + ")/"
-                + (fileEnd - fileStart + 1) + "(" + fileStart + "-" + fileEnd + ")");
+                + StringTools.format(pageEnd - pageStart + 1)
+                + "(" + StringTools.format(pageStart) + "-" + StringTools.format(pageEnd) + ")/"
+                + StringTools.format(fileEnd - fileStart + 1)
+                + "(" + StringTools.format(fileStart) + "-" + StringTools.format(fileEnd) + ")");
 
     }
 
@@ -1588,8 +1590,8 @@ public abstract class BaseFileEditerController extends BaseController {
             setLines(1, linesNumber);
             sourceInformation.setObjectsNumber(pageObjectsNumber);
             sourceInformation.setLinesNumber(linesNumber);
-            numbersLabel.setText(objectNumberName + ":" + pageObjectsNumber + "\n"
-                    + AppVariables.message("LinesNumber") + ":" + linesNumber);
+            numbersLabel.setText(objectNumberName + ":" + StringTools.format(pageObjectsNumber) + "\n"
+                    + AppVariables.message("LinesNumber") + ":" + StringTools.format(linesNumber));
         } else {
             if (!sourceInformation.isTotalNumberRead()) {
                 saveButton.setDisable(true);
@@ -1598,8 +1600,9 @@ public abstract class BaseFileEditerController extends BaseController {
                 }
                 setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
                 numbersLabel.setText(objectName + ":"
-                        + (sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
-                        + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + ")  "
+                        + StringTools.format(sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
+                        + StringTools.format(sourceInformation.getCurrentPageObjectStart() + 1)
+                        + "-" + StringTools.format(sourceInformation.getCurrentPageObjectEnd()) + ")  "
                         + AppVariables.message("CountingTotalNumber"));
                 if (locateObjectButton != null) {
                     locateObjectButton.setDisable(true);
@@ -1643,13 +1646,15 @@ public abstract class BaseFileEditerController extends BaseController {
                 if (!changed) {
                     setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
                     numbersLabel.setText(objectName + ":"
-                            + (sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
-                            + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + ")/"
-                            + sourceInformation.getObjectsNumber() + "\n"
+                            + StringTools.format(sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
+                            + StringTools.format(sourceInformation.getCurrentPageObjectStart() + 1)
+                            + "-" + StringTools.format(sourceInformation.getCurrentPageObjectEnd()) + ")/"
+                            + StringTools.format(sourceInformation.getObjectsNumber()) + "\n"
                             + AppVariables.message("Lines") + ":"
-                            + (sourceInformation.getCurrentPageLineEnd() - sourceInformation.getCurrentPageLineStart() + 1) + "("
-                            + sourceInformation.getCurrentPageLineStart() + "-" + sourceInformation.getCurrentPageLineEnd() + ")/"
-                            + sourceInformation.getLinesNumber());
+                            + StringTools.format(sourceInformation.getCurrentPageLineEnd() - sourceInformation.getCurrentPageLineStart() + 1) + "("
+                            + StringTools.format(sourceInformation.getCurrentPageLineStart())
+                            + "-" + StringTools.format(sourceInformation.getCurrentPageLineEnd()) + ")/"
+                            + StringTools.format(sourceInformation.getLinesNumber()));
                 } else {
                     long charsTo = sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber;
                     long charsTotal = sourceInformation.getObjectsNumber()
@@ -1659,9 +1664,12 @@ public abstract class BaseFileEditerController extends BaseController {
                             + (linesNumber - (sourceInformation.getCurrentPageLineEnd() - sourceInformation.getCurrentPageLineStart() + 1));
                     setLines(sourceInformation.getCurrentPageLineStart(), linesTo);
                     numbersLabel.setText(objectName + ":"
-                            + pageObjectsNumber + "(" + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + charsTo + ")/"
-                            + charsTotal + "  " + AppVariables.message("Lines") + ":" + linesNumber + "("
-                            + sourceInformation.getCurrentPageLineStart() + "-" + linesTo + ")/" + linesTotal);
+                            + StringTools.format(pageObjectsNumber) + "(" + StringTools.format(sourceInformation.getCurrentPageObjectStart() + 1)
+                            + "-" + StringTools.format(charsTo) + ")/"
+                            + StringTools.format(charsTotal) + "  "
+                            + AppVariables.message("Lines") + ":" + StringTools.format(linesNumber) + "("
+                            + StringTools.format(sourceInformation.getCurrentPageLineStart())
+                            + "-" + StringTools.format(linesTo) + ")/" + StringTools.format(linesTotal));
                 }
             }
         }
@@ -1788,7 +1796,7 @@ public abstract class BaseFileEditerController extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    if (backupController != null && backupController.backupCheck.isSelected()) {
+                    if (backupController != null && backupController.isBack()) {
                         backupController.addBackup(sourceFile);
                     }
                     return targetInformation.writePage(sourceInformation, mainArea.getText());

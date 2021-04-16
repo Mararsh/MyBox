@@ -27,7 +27,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -630,10 +629,7 @@ public class ControlMapOptions extends BaseController {
         try {
             if (gaodeRadio != null && gaodeRadio.isSelected()) {
                 mapName = MapName.GaoDe;
-                File map = FxmlControl.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", true);
-                String html = FileTools.readTexts(map);
-                html = html.replace("06b9e078a51325a843dfefd57ffd876c", AppVariables.getUserConfigValue("GaoDeMapWebKey", CommonValues.GaoDeMapWebKey));
-                webEngine.loadContent(html);
+                webEngine.loadContent(FxmlControl.gaodeMap());
 
                 gcj02Radio.setSelected(true);
                 gcj02Radio.setDisable(false);
@@ -659,16 +655,7 @@ public class ControlMapOptions extends BaseController {
 
             } else {
                 mapName = MapName.TianDiTu;
-                File map = FxmlControl.getInternalFile("/js/tianditu.html", "js", "tianditu.html", true);
-                String html = FileTools.readTexts(map);
-                html = html.replace("0ddeb917def62b4691500526cc30a9b1", AppVariables.getUserConfigValue("TianDiTuWebKey", CommonValues.TianDiTuWebKey));
-                if (geodeticRadio.isSelected()) {
-                    html = html.replace("'EPSG:900913", "EPSG:4326");
-                }
-                FileTools.writeFile(map, html);
-                String name = map.getAbsolutePath();
-                name = name.replace("\\\\", "/");
-                webEngine.load("file:///" + name);
+                webEngine.load(FxmlControl.tiandituFile(geodeticRadio.isSelected()).toURI().toString());
 
                 cgcs2000Radio.setSelected(true);
                 cgcs2000Radio.setDisable(false);

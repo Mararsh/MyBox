@@ -32,7 +32,7 @@ import mara.mybox.value.CommonValues;
  */
 public abstract class BaseTable<D> {
 
-    protected String tableName, idColumn;
+    protected String tableName, idColumn, orderColumns;
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns;
     protected Era.Format timeFormat;
     protected boolean supportBatchUpdate;
@@ -868,7 +868,9 @@ public abstract class BaseTable<D> {
         try ( ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 D data = readData(results);
-                dataList.add(data);
+                if (data != null) {
+                    dataList.add(data);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -897,7 +899,6 @@ public abstract class BaseTable<D> {
     public List<D> query(Connection conn, String sql, int max) {
         List<D> dataList = new ArrayList<>();
         try ( PreparedStatement statement = conn.prepareStatement(sql)) {
-//            conn.setReadOnly(true);
             if (max > 0) {
                 statement.setMaxRows(max);
             }
@@ -913,18 +914,33 @@ public abstract class BaseTable<D> {
         return dataList;
     }
 
+    public String queryAllStatement() {
+        return "SELECT * FROM " + tableName
+                + (orderColumns != null ? " ORDER BY " + orderColumns : "");
+    }
+
     public List<D> query(int start, int size) {
         if (start < 0 || size <= 0) {
             return new ArrayList<>();
         }
+        String sql = queryAllStatement()
+                + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
+        return readData(sql);
+    }
+
+    public List<D> queryConditions(String condition, int start, int size) {
+        if (condition == null || start < 0 || size <= 0) {
+            return new ArrayList<>();
+        }
         String sql = "SELECT * FROM " + tableName
+                + (condition.isBlank() ? "" : " WHERE " + condition)
+                + (orderColumns != null && !condition.contains("ORDER BY") ? " ORDER BY " + orderColumns : "")
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
         return readData(sql);
     }
 
     public List<D> query() {
-        String sql = "SELECT * FROM " + tableName;
-        return readData(sql);
+        return readAll();
     }
 
     public List<D> readData(String sql) {
@@ -936,7 +952,11 @@ public abstract class BaseTable<D> {
     }
 
     public List<D> readAll() {
-        return readData("SELECT * FROM " + tableName);
+        return query(queryAllStatement());
+    }
+
+    public List<D> readAll(Connection conn) {
+        return query(conn, queryAllStatement());
     }
 
     public D writeData(D data) {
@@ -1024,6 +1044,21 @@ public abstract class BaseTable<D> {
         return null;
     }
 
+    public int insertList(List<D> dataList) {
+        if (dataList == null) {
+            return -1;
+        }
+        int count = -1;
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setAutoCommit(false);
+            count = insertList(conn, dataList);
+            conn.commit();
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+        }
+        return count;
+    }
+
     public int insertList(Connection conn, List<D> dataList) {
         if (conn == null || dataList == null) {
             return -1;
@@ -1081,9 +1116,88 @@ public abstract class BaseTable<D> {
         return null;
     }
 
+    public int updateList(List<D> dataList) {
+        if (dataList == null) {
+            return -1;
+        }
+        int count = -1;
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setAutoCommit(false);
+            count = updateList(conn, dataList);
+            conn.commit();
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+        }
+        return count;
+    }
+
+    public int updateList(Connection conn, List<D> dataList) {
+        if (conn == null || dataList == null) {
+            return -1;
+        }
+        String sql = updateStatement();
+        int count = 0;
+        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            for (D data : dataList) {
+                if (setUpdateStatement(conn, statement, data)) {
+                    count += statement.executeUpdate();
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+        }
+        return count;
+    }
+
+    public int update(Connection conn, PreparedStatement statement, String value) {
+        if (conn == null || statement == null || value == null) {
+            return -1;
+        }
+        try {
+            statement.setString(1, value);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName + " " + value);
+            return -1;
+        }
+    }
+
+    public int updatePreLike(Connection conn, PreparedStatement statement, String value) {
+        if (conn == null || statement == null || value == null) {
+            return -1;
+        }
+        try {
+            statement.setString(1, "%" + value);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName + " " + value);
+            return -1;
+        }
+    }
+
+    public int update(Connection conn, String sql) {
+        if (conn == null || sql == null) {
+            return -1;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+            return -1;
+        }
+    }
+
     public int deleteData(D data) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return deleteData(conn, data);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+            return -1;
+        }
+    }
+
+    public int deleteData(Connection conn, D data) {
+        try ( PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
             setDeleteStatement(conn, statement, data);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -1131,42 +1245,13 @@ public abstract class BaseTable<D> {
         return count;
     }
 
-    public int update(Connection conn, PreparedStatement statement, String value) {
-        if (conn == null || statement == null || value == null) {
-            return -1;
+    public int deleteCondition(String condition) {
+        if (condition == null) {
+            return 0;
         }
-        try {
-            statement.setString(1, value);
-            return statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e, tableName + " " + value);
-            return -1;
-        }
-    }
-
-    public int updatePreLike(Connection conn, PreparedStatement statement, String value) {
-        if (conn == null || statement == null || value == null) {
-            return -1;
-        }
-        try {
-            statement.setString(1, "%" + value);
-            return statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e, tableName + " " + value);
-            return -1;
-        }
-    }
-
-    public int update(Connection conn, String sql) {
-        if (conn == null || sql == null) {
-            return -1;
-        }
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
-            return statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
-            return -1;
-        }
+        String sql = "DELETE FROM " + tableName
+                + (condition.isBlank() ? "" : " WHERE " + condition);
+        return DerbyBase.update(sql);
     }
 
     public BaseTable readDefinitionFromDB(String tableName) {
@@ -1315,6 +1400,14 @@ public abstract class BaseTable<D> {
 
     public void setNewID(long newID) {
         this.newID = newID;
+    }
+
+    public String getOrderColumns() {
+        return orderColumns;
+    }
+
+    public void setOrderColumns(String orderColumns) {
+        this.orderColumns = orderColumns;
     }
 
 }

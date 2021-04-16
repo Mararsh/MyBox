@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import javafx.scene.control.IndexRange;
+import mara.mybox.controller.ControlFileBackup;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
@@ -29,6 +30,7 @@ public class FindReplaceFile extends FindReplaceString {
     protected String fileFindString, fileReplaceString;
     protected long position;
     protected LongIndex fileRange;  // location in whole file
+    protected ControlFileBackup backupController;
 
     public FindReplaceFile() {
         multiplePages = false;
@@ -144,6 +146,12 @@ public class FindReplaceFile extends FindReplaceString {
             }
         }
         return true;
+    }
+
+    public void backup(File file) {
+        if (backupController != null && backupController.isBack()) {
+            backupController.addBackup(file);
+        }
     }
 
     /*
@@ -701,7 +709,8 @@ public class FindReplaceFile extends FindReplaceString {
             }
             findReplaceFile.setCount(total);
             if (total > 0 && tmpFile != null && tmpFile.exists()) {
-                FileTools.rename(tmpFile, sourceFile);
+                findReplaceFile.backup(sourceFile);
+                return FileTools.rename(tmpFile, sourceFile);
             }
             return true;
         } catch (Exception e) {
@@ -1302,6 +1311,7 @@ public class FindReplaceFile extends FindReplaceString {
             }
             findReplaceFile.setCount(total);
             if (total > 0 && tmpFile != null && tmpFile.exists()) {
+                findReplaceFile.backup(sourceFile);
                 FileTools.rename(tmpFile, sourceFile);
             }
             return true;
@@ -1405,6 +1415,15 @@ public class FindReplaceFile extends FindReplaceString {
 
     public FindReplaceFile setFileReplaceString(String fileReplaceString) {
         this.fileReplaceString = fileReplaceString;
+        return this;
+    }
+
+    public ControlFileBackup getBackupController() {
+        return backupController;
+    }
+
+    public FindReplaceFile setBackupController(ControlFileBackup backupController) {
+        this.backupController = backupController;
         return this;
     }
 

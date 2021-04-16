@@ -31,7 +31,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
@@ -55,7 +54,7 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController extends BaseController {
+public abstract class BaseSheetController extends ControlSheetData {
 
     protected TableDataDefinition tableDataDefinition;
     protected TableDataColumn tableDataColumn;
@@ -66,10 +65,10 @@ public abstract class BaseSheetController extends BaseController {
     protected TextField[][] inputs;
     protected CheckBox[] colsCheck, rowsCheck;
     protected List<String> copiedRow, copiedCol;
+    protected List<ColumnDefinition> columns;
     protected SimpleBooleanProperty notify;
     protected int widthChange;
     protected boolean rowsSelected, colsSelected, dataChanged, defaultColNotNull;
-    protected List<ColumnDefinition> columns;
     protected Label noDataLabel;
 
     @FXML
@@ -78,10 +77,6 @@ public abstract class BaseSheetController extends BaseController {
     protected Button sizeSheetButton, deleteSheetButton, copySheetButton, equalSheetButton;
     @FXML
     protected CheckBox htmlColumnCheck, htmlRowCheck;
-    @FXML
-    protected ControlDataText textController;
-    @FXML
-    protected WebView webView;
 
     public BaseSheetController() {
         baseTitle = message("DataEdit");
@@ -98,8 +93,8 @@ public abstract class BaseSheetController extends BaseController {
         try {
             super.initValues();
             widthChange = 10;
-            columns = new ArrayList<>();
             dataChanged = false;
+            columns = new ArrayList<>();
             tableDataDefinition = new TableDataDefinition();
             tableDataColumn = new TableDataColumn();
             notify = new SimpleBooleanProperty(false);
@@ -111,7 +106,7 @@ public abstract class BaseSheetController extends BaseController {
         }
     }
 
-    // Should always run this after scene loaded and before input data
+    @Override
     public void setControls(String baseName) {
         try {
             this.baseName = baseName;
@@ -121,14 +116,14 @@ public abstract class BaseSheetController extends BaseController {
             if (htmlColumnCheck != null) {
                 htmlColumnCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "HtmlColumn", true));
                 htmlColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                    webView.getEngine().loadContent(html());
+                    updateDataHtml(data());
                     AppVariables.setUserConfigValue(baseName + "HtmlColumn", newValue);
                 });
             }
             if (htmlColumnCheck != null) {
                 htmlRowCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "HtmlRow", true));
                 htmlRowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
-                    webView.getEngine().loadContent(html());
+                    updateDataHtml(data());
                     AppVariables.setUserConfigValue(baseName + "HtmlRow", newValue);
                 });
             }
@@ -485,10 +480,10 @@ public abstract class BaseSheetController extends BaseController {
                     noDataLabel.setAlignment(Pos.CENTER);
                     sheetBox.getChildren().add(noDataLabel);
                 }
+                sheet = data();
                 makeDataDefintion();
                 FxmlControl.refreshStyle(sheetBox);
-                sheetChanged();
-                dataChanged(changed);
+                sheetChanged(changed);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
             }
@@ -545,15 +540,19 @@ public abstract class BaseSheetController extends BaseController {
         FxmlControl.refreshStyle(defBox);
     }
 
-    public void sheetChanged() {
+    public void sheetChanged(boolean changed) {
         if (isSettingValues) {
             return;
         }
         if (checkValid()) {
-            updatePanes();
+            setData(data());
         }
         notify.set(!notify.get());
-        dataChanged(true);
+        dataChanged(changed);
+    }
+
+    public void sheetChanged() {
+        sheetChanged(true);
     }
 
     protected boolean checkValid() {
@@ -577,18 +576,6 @@ public abstract class BaseSheetController extends BaseController {
             saveButton.setDisable(!valid);
         }
         return valid;
-    }
-
-    public void updatePanes() {
-        if (isSettingValues) {
-            return;
-        }
-        if (textController != null) {
-            textController.update(data());
-        }
-        if (webView != null) {
-            webView.getEngine().loadContent(html());
-        }
     }
 
     // Notice: this does not concern columns names
@@ -628,13 +615,16 @@ public abstract class BaseSheetController extends BaseController {
         }
     }
 
+    @Override
     protected String[][] data() {
-        if (inputs == null) {
+        sheet = null;
+        rowsNumber = colsNumber = 0;
+        if (inputs == null || inputs.length == 0) {
             return null;
         }
-        int rowsNumber = inputs.length;
-        int colsNumber = inputs[0].length;
-        if (rowsNumber == 0 || colsNumber == 0) {
+        rowsNumber = inputs.length;
+        colsNumber = inputs[0].length;
+        if (colsNumber == 0) {
             return null;
         }
         String[][] data = new String[inputs.length][inputs[0].length];
@@ -643,6 +633,7 @@ public abstract class BaseSheetController extends BaseController {
                 data[j][i] = value(j, i);
             }
         }
+        sheet = data;
         return data;
     }
 
@@ -652,16 +643,20 @@ public abstract class BaseSheetController extends BaseController {
             return;
         }
         HtmlEditorController controller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
-        controller.loadContents(html());
+        controller.loadContents(html(data()));
     }
 
-    public String html() {
-        if (inputs == null) {
-            return null;
-        }
+    @Override
+    public String html(String[][] data) {
         try {
-            int rowsNumber = inputs.length;
-            int colsNumber = inputs[0].length;
+            if (data == null || data.length == 0) {
+                return "";
+            }
+            int rNumber = data.length;
+            int cNumber = data[0].length;
+            if (cNumber == 0) {
+                return "";
+            }
             List<String> names;
             if (htmlColumnCheck != null && htmlColumnCheck.isSelected()) {
                 names = new ArrayList<>();
@@ -675,13 +670,13 @@ public abstract class BaseSheetController extends BaseController {
                 names = null;
             }
             StringTable table = new StringTable(names, baseTitle + (sourceFile == null ? "" : sourceFile.getAbsolutePath()));
-            for (int i = 0; i < rowsNumber; i++) {
+            for (int i = 0; i < rNumber; i++) {
                 List<String> row = new ArrayList<>();
                 if (htmlRowCheck != null && htmlRowCheck.isSelected()) {
                     row.add(rowName(i));
                 }
-                for (int j = 0; j < colsNumber; j++) {
-                    row.add(value(i, j));
+                for (int j = 0; j < cNumber; j++) {
+                    row.add(data[i][j]);
                 }
                 table.add(row);
             }
@@ -702,7 +697,7 @@ public abstract class BaseSheetController extends BaseController {
     @FXML
     @Override
     public void pasteAction() {
-        DataTextClipboardController controller = (DataTextClipboardController) FxmlStage.openStage(CommonValues.DataTextClipboardFxml);
+        DataClipboardController controller = (DataClipboardController) FxmlStage.openStage(CommonValues.DataClipboardFxml);
         controller.setSheet(this);
         controller.toFront();
     }
@@ -1163,14 +1158,14 @@ public abstract class BaseSheetController extends BaseController {
         if (current == null) {
             makeSheet(null);
         } else {
-            int rowsNumber = current.length;
-            int colsNumber = current[0].length + number;
-            String[][] values = new String[rowsNumber][colsNumber];
-            for (int j = 0; j < rowsNumber; ++j) {
+            int rNumber = current.length;
+            int cNumber = current[0].length + number;
+            String[][] values = new String[rNumber][cNumber];
+            for (int j = 0; j < rNumber; ++j) {
                 for (int i = 0; i < base; ++i) {
                     values[j][i] = current[j][i];
                 }
-                for (int i = base + number; i < colsNumber; ++i) {
+                for (int i = base + number; i < cNumber; ++i) {
                     values[j][i] = current[j][i - 1];
                 }
                 for (int i = base; i < base + number; ++i) {
@@ -1194,12 +1189,12 @@ public abstract class BaseSheetController extends BaseController {
         if (current == null) {
             makeSheet(null);
         } else {
-            int rowsNumber = current.length;
-            int colsNumber = current[0].length;
-            String[][] values = new String[rowsNumber][colsNumber - 1];
-            for (int j = 0; j < rowsNumber; ++j) {
+            int rNumber = current.length;
+            int cNumber = current[0].length;
+            String[][] values = new String[rNumber][cNumber - 1];
+            for (int j = 0; j < rNumber; ++j) {
                 int index = 0;
-                for (int i = 0; i < colsNumber; ++i) {
+                for (int i = 0; i < cNumber; ++i) {
                     if (i == col) {
                         continue;
                     }
@@ -1388,19 +1383,19 @@ public abstract class BaseSheetController extends BaseController {
             menu = new MenuItem(message("InsertRowAbove"));
             menu.setOnAction((ActionEvent event) -> {
                 String[][] current = data();
-                int rowsNumber = current.length;
-                int colsNumber = current[0].length;
-                String[][] values = new String[++rowsNumber][colsNumber];
+                int rNumber = current.length;
+                int cNumber = current[0].length;
+                String[][] values = new String[++rNumber][cNumber];
                 for (int j = 0; j < row; ++j) {
-                    for (int i = 0; i < colsNumber; ++i) {
+                    for (int i = 0; i < cNumber; ++i) {
                         values[j][i] = current[j][i];
                     }
                 }
-                for (int i = 0; i < colsNumber; ++i) {
+                for (int i = 0; i < cNumber; ++i) {
                     values[row][i] = defaultColValue;
                 }
-                for (int j = row + 1; j < rowsNumber; ++j) {
-                    for (int i = 0; i < colsNumber; ++i) {
+                for (int j = row + 1; j < rNumber; ++j) {
+                    for (int i = 0; i < cNumber; ++i) {
                         values[j][i] = current[j - 1][i];
                     }
                 }
@@ -1411,19 +1406,19 @@ public abstract class BaseSheetController extends BaseController {
             menu = new MenuItem(message("InsertRowBelow"));
             menu.setOnAction((ActionEvent event) -> {
                 String[][] current = data();
-                int rowsNumber = current.length;
-                int colsNumber = current[0].length;
-                String[][] values = new String[++rowsNumber][colsNumber];
+                int rNumber = current.length;
+                int cNumber = current[0].length;
+                String[][] values = new String[++rNumber][cNumber];
                 for (int j = 0; j <= row; ++j) {
-                    for (int i = 0; i < colsNumber; ++i) {
+                    for (int i = 0; i < cNumber; ++i) {
                         values[j][i] = current[j][i];
                     }
                 }
-                for (int i = 0; i < colsNumber; ++i) {
+                for (int i = 0; i < cNumber; ++i) {
                     values[row + 1][i] = defaultColValue;
                 }
-                for (int j = row + 2; j < rowsNumber; ++j) {
-                    for (int i = 0; i < colsNumber; ++i) {
+                for (int j = row + 2; j < rNumber; ++j) {
+                    for (int i = 0; i < cNumber; ++i) {
                         values[j][i] = current[j - 1][i];
                     }
                 }
@@ -1441,15 +1436,15 @@ public abstract class BaseSheetController extends BaseController {
                     return;
                 }
                 String[][] current = data();
-                int rowsNumber = current.length;
-                int colsNumber = current[0].length;
-                String[][] values = new String[rowsNumber - 1][colsNumber];
+                int rNumber = current.length;
+                int cNumber = current[0].length;
+                String[][] values = new String[rNumber - 1][cNumber];
                 int index = 0;
-                for (int j = 0; j < rowsNumber; ++j) {
+                for (int j = 0; j < rNumber; ++j) {
                     if (j == row) {
                         continue;
                     }
-                    for (int i = 0; i < colsNumber; ++i) {
+                    for (int i = 0; i < cNumber; ++i) {
                         values[index][i] = current[j][i];
                     }
                     index++;
@@ -1998,7 +1993,7 @@ public abstract class BaseSheetController extends BaseController {
         if (inputs == null) {
             return;
         }
-        String value = askValue(message("All"), message("SetValue"), "");
+        String value = askValue(message("All"), message("SetValue"), defaultColumnType == ColumnType.String ? "v" : "0");
         if (value == null) {
             return;
         }

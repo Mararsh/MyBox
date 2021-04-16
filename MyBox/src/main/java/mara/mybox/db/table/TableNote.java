@@ -1,15 +1,15 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.Note;
+import mara.mybox.db.data.Notebook;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
@@ -41,6 +41,7 @@ public class TableNote extends BaseTable<Note> {
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(256));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("html", ColumnType.String).setLength(32672));
+        orderColumns = "update_time DESC";
         return this;
     }
 
@@ -65,18 +66,8 @@ public class TableNote extends BaseTable<Note> {
     public static final String DeleteNote
             = "DELETE FROM Note WHERE ntid=?";
 
-    public Note find(Connection conn, long id) {
-        if (conn == null) {
-            return null;
-        }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryID)) {
-            statement.setLong(1, id);
-            return query(conn, statement);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
+    public static final String Times
+            = "SELECT DISTINCT update_time FROM Note ORDER BY update_time DESC";
 
     public Note find(Connection conn, long notebook, String title) {
         if (conn == null) {
@@ -86,18 +77,6 @@ public class TableNote extends BaseTable<Note> {
             statement.setLong(1, notebook);
             statement.setString(2, title);
             return query(conn, statement);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public List<Note> notes(long notebook) {
-        if (notebook < 1) {
-            return null;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            return notes(conn, notebook);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -117,38 +96,114 @@ public class TableNote extends BaseTable<Note> {
         }
     }
 
-    public List<Note> queryBook(long notebook, int start, int size) {
-        if (start < 0 || size <= 0) {
-            return new ArrayList<>();
-        }
-        String sql = "SELECT * FROM " + tableName
-                + " WHERE notebook=" + notebook
-                + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
-        return readData(sql);
-    }
-
-    public int clearBook(long notebook) {
+    public int withSubSize(TableNotebook tableNotebook, long bookid) {
+        int count = 0;
         try ( Connection conn = DerbyBase.getConnection()) {
-            return clearBook(conn, notebook);
-        } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
-            return -1;
-        }
-    }
-
-    public int clearBook(Connection conn, long notebook) {
-        if (conn == null) {
-            return -1;
-        }
-        try ( PreparedStatement statement = conn.prepareStatement(DeleteBookNotes)) {
-            statement.setLong(1, notebook);
-            return statement.executeUpdate();
+            count = withSubSize(conn, tableNotebook, bookid);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return -1;
         }
+        return count;
     }
 
+    public int withSubSize(Connection conn, TableNotebook tableNotebook, long bookid) {
+        int count = TableNote.bookSize(conn, bookid);
+        if (tableNotebook == null) {
+            tableNotebook = new TableNotebook();
+        }
+        List<Notebook> children = tableNotebook.children(conn, bookid);
+        if (children != null) {
+            for (Notebook child : children) {
+                count += withSubSize(conn, tableNotebook, child.getNbid());
+            }
+        }
+        return count;
+    }
+
+    public List<Note> withSub(Connection conn, TableNotebook tableNotebook, long bookid) {
+        List<Note> notes = new ArrayList<>();
+        List<Note> bookNotes = notes(conn, bookid);
+        if (bookNotes != null && !bookNotes.isEmpty()) {
+            notes.addAll(notes);
+        }
+        if (tableNotebook == null) {
+            tableNotebook = new TableNotebook();
+        }
+        List<Notebook> children = tableNotebook.children(conn, bookid);
+        if (children != null) {
+            for (Notebook child : children) {
+                bookNotes = withSub(conn, tableNotebook, child.getNbid());
+                if (bookNotes != null && !bookNotes.isEmpty()) {
+                    notes.addAll(notes);
+                }
+            }
+        }
+        return notes;
+    }
+
+    public List<Note> withSub(TableNotebook tableNotebook, long bookid, int start, int size) {
+        List<Note> notes = new ArrayList<>();
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement qNotes = conn.prepareStatement(QueryNotebook)) {
+            if (tableNotebook == null) {
+                tableNotebook = new TableNotebook();
+            }
+            withSub(conn, qNotes, tableNotebook, bookid, start, size, notes, 0);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return notes;
+    }
+
+    public int withSub(Connection conn, PreparedStatement qNotes,
+            TableNotebook tableNotebook, long bookid, int start, int size, List<Note> notes, int index) {
+        if (conn == null || bookid < 1 || notes == null || tableNotebook == null
+                || qNotes == null || start < 0 || size <= 0 || notes.size() >= size) {
+            return index;
+        }
+        int thisIndex = index;
+        try {
+            int thisSize = notes.size();
+            boolean ok = false;
+            qNotes.setLong(1, bookid);
+            try ( ResultSet nresults = qNotes.executeQuery()) {
+                while (nresults.next()) {
+                    Note data = readData(nresults);
+                    if (data != null) {
+                        if (thisIndex >= start) {
+                            notes.add(data);
+                            thisSize++;
+                        }
+                        thisIndex++;
+                        if (thisSize >= size) {
+                            ok = true;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e, tableName);
+            }
+            if (!ok) {
+                List<Notebook> children = tableNotebook.children(conn, bookid);
+                if (children != null) {
+                    for (Notebook child : children) {
+                        thisIndex = withSub(conn, qNotes, tableNotebook, child.getNbid(), start, size, notes, thisIndex);
+                        if (notes.size() >= size) {
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return thisIndex;
+    }
+
+    /*
+        static methods
+     */
     public static int bookSize(long notebook) {
         try ( Connection conn = DerbyBase.getConnection()) {
             return bookSize(conn, notebook);
@@ -171,6 +226,53 @@ public class TableNote extends BaseTable<Note> {
             MyBoxLog.error(e);
         }
         return size;
+    }
+
+    public static String tagsCondition(List<Tag> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return null;
+        }
+        String condition = "ntid IN ( SELECT noteid FROM Note_Tag WHERE tagid IN ( " + tags.get(0).getTgid();
+        for (int i = 1; i < tags.size(); ++i) {
+            condition += ", " + tags.get(i).getTgid();
+        }
+        condition += " ) )";
+        return condition;
+    }
+
+    public static List<Date> times() {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setReadOnly(true);
+            return times(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<Date> times(Connection conn) {
+        List<Date> times = new ArrayList();
+        if (conn == null) {
+            return times;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(Times);
+                 ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                Date time = results.getTimestamp("update_time");
+                if (time != null) {
+                    times.add(time);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return times;
+    }
+
+    public static int conditionSize(String condition) {
+        String sql = "SELECT COUNT(ntid) FROM Note "
+                + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
+        return DerbyBase.size(sql);
     }
 
 }

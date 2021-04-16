@@ -1,21 +1,31 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -25,21 +35,31 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ColorInputController extends BaseController {
 
+    protected ColorsManageController colorsManager;
+
     @FXML
     protected TextArea valuesArea;
     @FXML
     protected Button examplesButton;
+    @FXML
+    protected ColorPicker colorPicker;
 
     public ColorInputController() {
         baseTitle = AppVariables.message("InputColors");
     }
 
-    @Override
-    public void afterSceneLoaded() {
+    public void setValues(ColorsManageController colorsManager) {
         try {
-            super.afterSceneLoaded();
+            this.colorsManager = colorsManager;
 
             FxmlControl.removeTooltip(examplesButton);
+
+            colorPicker.valueProperty().addListener((ObservableValue<? extends Color> ov, Color oldVal, Color newVal) -> {
+                if (isSettingValues || newVal == null) {
+                    return;
+                }
+                valuesArea.appendText(FxmlColor.color2rgba(newVal) + "\n");
+            });
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -94,13 +114,75 @@ public class ColorInputController extends BaseController {
     @FXML
     @Override
     public void okAction() {
-        if (parentController == null) {
-            return;
-        }
-        final ColorImportController pController = (ColorImportController) parentController;
-        pController.inputColors(valuesArea);
-        if (saveCloseCheck.isSelected()) {
-            closeStage();
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    String[] values = valuesArea.getText().split("\n");
+                    if (values == null || values.length == 0) {
+                        return true;
+                    }
+                    try ( Connection conn = DerbyBase.getConnection();) {
+                        TableColor tableColor = null;
+                        TableColorPalette tableColorPalette = null;
+                        long paletteid = -1;
+                        if (colorsManager != null) {
+                            tableColor = colorsManager.tableColor;
+                            if (!colorsManager.isAllColors()) {
+                                paletteid = colorsManager.currentPalette.getCpnid();
+                            }
+                            tableColorPalette = colorsManager.tableColorPalette;
+                        }
+                        if (tableColor == null) {
+                            tableColor = new TableColor();
+                        }
+                        if (tableColorPalette == null) {
+                            tableColorPalette = new TableColorPalette();
+                        }
+                        conn.setAutoCommit(false);
+                        for (String value : values) {
+                            value = value.trim();
+                            ColorData color = new ColorData(value).calculate();
+                            if (color.getSrgb() == null) {
+                                continue;
+                            }
+                            if (!value.startsWith("#") && !value.startsWith("0x")
+                                    && !value.startsWith("rgb") && !value.startsWith("hsl")) {
+                                color.setColorName(value);
+                            }
+                            tableColor.write(conn, color, true);
+                            if (paletteid >= 0) {
+                                tableColorPalette.findAndCreate(conn, paletteid, color, false);
+                            }
+                        }
+                        conn.commit();
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
+                        colorsManager = ColorsManageController.oneOpen(null);
+                    } else {
+                        colorsManager.refreshPalette();
+                    }
+                    closeStage();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
@@ -108,6 +190,12 @@ public class ColorInputController extends BaseController {
     @Override
     public void clearAction() {
         valuesArea.clear();
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        closeStage();
     }
 
 }

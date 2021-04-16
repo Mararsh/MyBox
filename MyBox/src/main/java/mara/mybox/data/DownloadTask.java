@@ -8,7 +8,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +16,6 @@ import javax.net.ssl.SSLContext;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.NetworkTools.trustAllManager;
-import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -75,9 +72,8 @@ public class DownloadTask<Void> extends BaseTask<Void> {
             if ("https".equals(url.getProtocol())) {
                 HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
                 SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
-                sc.init(null, trustAllManager(), new SecureRandom());
+                sc.init(null, null, null);
                 conn.setSSLSocketFactory(sc.getSocketFactory());
-                conn.setHostnameVerifier(trustAllVerifier());
                 return conn;
             } else {
                 return (HttpURLConnection) url.openConnection();

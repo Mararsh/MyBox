@@ -230,6 +230,12 @@ public class CommonFxValues {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> CertExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("X.509", "*.crt"));
+        }
+    };
+
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
 }

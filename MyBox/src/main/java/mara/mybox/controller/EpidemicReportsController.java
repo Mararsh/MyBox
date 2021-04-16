@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.MessageFormat;
@@ -32,9 +31,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.EpidemicReportTools;
@@ -281,7 +277,6 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         try {
             super.afterSceneLoaded();
 
-//            colorsController.afterSceneLoaded();
             chartController.initMap(this);
 
             setButtons();
@@ -917,24 +912,6 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                 controller.parent = this;
             });
             popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("ImportEpidemicReportBaidu"));
-            menu.setOnAction((ActionEvent event) -> {
-                EpidemicReportsImportBaiduController controller
-                        = (EpidemicReportsImportBaiduController) openStage(CommonValues.EpidemicReportsImportBaiduFxml);
-                controller.parent = this;
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ImportEpidemicReportTecent"));
-            menu.setOnAction((ActionEvent event) -> {
-                EpidemicReportsImportTecentController controller
-                        = (EpidemicReportsImportTecentController) openStage(CommonValues.EpidemicReportsImportTecentFxml);
-                controller.parent = this;
-            });
-            popMenu.getItems().add(menu);
-
             popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("ImportEpidemicReportJHUPredefined"));

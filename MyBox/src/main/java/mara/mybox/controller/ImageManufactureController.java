@@ -1093,7 +1093,7 @@ public class ImageManufactureController extends ImageViewerController {
                     if (!ok || task == null || isCancelled()) {
                         return false;
                     }
-                    if (backupController.backupCheck.isSelected()) {
+                    if (backupController.isBack()) {
                         backupController.addBackup(sourceFile);
                     }
                     if (!FileTools.rename(tmpFile, sourceFile)) {

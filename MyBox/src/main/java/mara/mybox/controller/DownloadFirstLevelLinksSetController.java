@@ -8,8 +8,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.Link.FilenameType;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara

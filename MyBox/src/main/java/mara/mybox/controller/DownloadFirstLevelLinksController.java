@@ -90,7 +90,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     protected final List<PathThread> pathThreads;
     protected final Map<File, Integer> paths;
     protected final Map<Link, Integer> retries;
-    protected final Map<URL, File> completedAddresses;
+    protected final Map<String, File> completedAddresses;
     protected final Map<File, Link> completedLinks;
     protected boolean stopped;
     protected Link addressLink;
@@ -233,7 +233,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
             linksTableView.setOnMouseClicked((MouseEvent event) -> {
                 if (event.getClickCount() > 1) {
-                    link();
+                    openLink();
                 }
             });
 
@@ -528,14 +528,15 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 protected boolean handle() {
                     try {
                         URL url = new URL(address);
-                        File httpFile = FileTools.getTempFile();
-                        HtmlTools.downloadHttp(url, httpFile);
-                        if (!httpFile.exists() || httpFile.length() == 0) {
+                        File urlFile = HtmlTools.url2File(address);
+                        String html = FileTools.readTexts(urlFile);
+                        if (html == null) {
                             return false;
                         }
-                        title = HtmlTools.title(httpFile);
-                        addressLink = Link.create().setUrl(url).setAddress(url.toString()).setName(title).setTitle(title);
-                        addressLink.setFile(httpFile.getAbsolutePath());
+                        title = HtmlTools.htmlTitle(html);
+                        addressLink = Link.create().setUrl(url).setAddress(url.toString())
+                                .setName(title).setTitle(title).setHtml(html);
+                        addressLink.setFile(urlFile.getAbsolutePath());
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
@@ -585,7 +586,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 @Override
                 protected boolean handle() {
                     File path = new File(downloadPath.getAbsolutePath() + File.separator + subPath);
-                    links = HtmlTools.addressLinks(addressLink, htmlParser, mdConverter, path, nameType);
+                    links = HtmlTools.links(addressLink, path, nameType);
                     return links != null;
                 }
 
@@ -964,31 +965,28 @@ public class DownloadFirstLevelLinksController extends BaseController {
     }
 
     @FXML
-    protected void link() {
+    protected void openLink() {
         Link link = linksTableView.getSelectionModel().getSelectedItem();
-        link(link);
+        openLink(link);
     }
 
     @FXML
     protected void linkDownloading() {
         Link link = downloadingTableView.getSelectionModel().getSelectedItem();
-        link(link);
+        openLink(link);
     }
 
     @FXML
     protected void linkFailed() {
         Link link = failedTableView.getSelectionModel().getSelectedItem();
-        link(link);
+        openLink(link);
     }
 
-    protected void link(Link link) {
-        try {
-            if (link == null) {
-                return;
-            }
-            browseURI(link.getUrl().toURI());
-        } catch (Exception e) {
+    protected void openLink(Link link) {
+        if (link == null) {
+            return;
         }
+        openLink(link.getAddress());
     }
 
     @FXML
@@ -1290,8 +1288,9 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 link.setFile(file.getAbsolutePath());
 
                 updateLogs(message("Downloading") + ": " + url + " --> " + file);
-                String error = HtmlTools.downloadHttp(url, file);
-                if (error == null) {
+                File tmpFile = HtmlTools.url2File(url.toString());
+                if (tmpFile != null && tmpFile.exists()) {
+                    FileTools.rename(tmpFile, file);
                     link.setDlTime(new Date());
                     updateLogs(message("Downloaded") + ": " + url + " --> " + file);
                     if (utf8Check.isSelected()) {
@@ -1305,7 +1304,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     }
                     if (relinksCheck.isSelected()) {
                         synchronized (completedAddresses) {
-                            completedAddresses.put(url, file);
+                            completedAddresses.put(url.toString(), file);
                             completedLinks.put(file, link);
                         }
                     }
@@ -1327,7 +1326,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     }
                     return;
                 }
-                MyBoxLog.console(link, error);
+                MyBoxLog.console(link);
             } catch (Exception e) {
                 MyBoxLog.console(link, e.toString());
             }
@@ -1475,7 +1474,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 if (stopped) {
                     return;
                 }
-                HtmlTools.relinkPage(file, htmlParser, mdConverter, completedLinks, completedAddresses);
+                HtmlTools.relinkPage(file, completedLinks, completedAddresses);
                 updateLogs(message("HtmlLinksRewritten") + ": " + file);
             }
         }
@@ -1517,7 +1516,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
                 try {
                     String html = FileTools.readTexts(file);
-                    String body = HtmlTools.body(html);
+                    String body = HtmlTools.body(html, true);
                     htmlBuilder.append(body);
                 } catch (Exception e) {
                     updateLogs(e.toString());

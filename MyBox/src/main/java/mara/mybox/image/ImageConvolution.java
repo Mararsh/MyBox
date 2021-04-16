@@ -7,8 +7,8 @@ import java.awt.image.Kernel;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.MatrixDoubleTools;
 
 /**
  * @Author Mara
@@ -128,7 +128,7 @@ public class ImageConvolution extends PixelsOperation {
                             continue; // Fill_zero
                         }
                     }
-                    Color color = new Color(image.getRGB(convolveX, convolveY));
+                    Color color = new Color(image.getRGB(convolveX, convolveY), true);
                     red += color.getRed() * intMatrix[matrixY][matrixX];
                     green += color.getGreen() * intMatrix[matrixY][matrixX];
                     blue += color.getBlue() * intMatrix[matrixY][matrixX];

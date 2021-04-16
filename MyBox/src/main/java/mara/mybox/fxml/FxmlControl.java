@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -98,9 +99,9 @@ public class FxmlControl {
     public static String darkBlueText = "-fx-text-fill: #2e598a;  -fx-font-weight: bolder;";
     public static String redText = "-fx-text-fill: #961c1c;";
     public static String darkRedText = "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
-    public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
+    public static String badStyle = "-fx-text-box-border: blue;   -fx-text-fill: blue;";
     public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
-    public static String errorData = "-fx-background-color: #fbe5e5";
+    public static String errorData = "-fx-background-color: #e5fbe5";
     public static String selectedData = "-fx-background-color:  #0096C9; -fx-text-background-color: white";
 
     public enum LabelType {
@@ -360,11 +361,15 @@ public class FxmlControl {
         Tooltip.uninstall(node, tooltip);
     }
 
-    public static String getFxmlName(String fullPath) {
-        if (fullPath == null) {
+    public static String getFxmlName(URL url) {
+        if (url == null) {
             return null;
         }
         try {
+            String fullPath = url.getPath();
+            if (!fullPath.endsWith(".fxml")) {
+                return null;
+            }
             String fname;
             int pos = fullPath.lastIndexOf('/');
             if (pos < 0) {
@@ -376,6 +381,10 @@ public class FxmlControl {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String getFxmlFile(URL url) {
+        return "/fxml/" + getFxmlName(url) + ".fxml";
     }
 
     public static int getInputInt(TextField input) {
@@ -1212,7 +1221,7 @@ public class FxmlControl {
                     "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      " + message("Email"),
                     "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + message("PhoneNumber"),
                     "[a-zA-z]+://[^\\s]*       " + message("URL"),
-                    "\\n\\s*\\r      " + message("BlankLine"),
+                    "^(\\s*)\\n       " + message("BlankLine"),
                     "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP")
             );
 
@@ -1423,6 +1432,22 @@ public class FxmlControl {
         }
     }
 
+    public static String getFrame(WebEngine engine, int index) {
+        try {
+            if (engine == null || index < 0) {
+                return "";
+            }
+            Object c = engine.executeScript("window.frames[" + index + "].document.documentElement.outerHTML");
+            if (c == null) {
+                return "";
+            }
+            return (String) c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return "";
+        }
+    }
+
     public static Document getFrameDocument(WebEngine engine, String frameName) {
         try {
             if (engine == null) {
@@ -1466,6 +1491,34 @@ public class FxmlControl {
             controller.recordFileOpened(file);
             return file;
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String gaodeMap() {
+        try {
+            File map = FxmlControl.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", false);
+            String html = FileTools.readTexts(map);
+            html = html.replace("06b9e078a51325a843dfefd57ffd876c", AppVariables.getUserConfigValue("GaoDeMapWebKey", CommonValues.GaoDeMapWebKey));
+            return html;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return "";
+        }
+    }
+
+    public static File tiandituFile(boolean geodetic) {
+        try {
+            File map = FxmlControl.getInternalFile("/js/tianditu.html", "js", "tianditu.html", false);
+            String html = FileTools.readTexts(map);
+            html = html.replace("0ddeb917def62b4691500526cc30a9b1", AppVariables.getUserConfigValue("TianDiTuWebKey", CommonValues.TianDiTuWebKey));
+            if (geodetic) {
+                html = html.replace("'EPSG:900913", "EPSG:4326");
+            }
+            FileTools.writeFile(map, html);
+            return map;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
             return null;
         }
     }

@@ -168,7 +168,6 @@ public class MyBoxLoadingController implements Initializable {
                             FxmlStage.openMyBox(myStage);
                         }
                     });
-
                 }
 
                 @Override

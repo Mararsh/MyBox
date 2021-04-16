@@ -5,25 +5,28 @@ Notebook is collection of notes and notebooks.<br>
 Notebooks are organized as a tree.
 
 
-Notebook > Web Address
-Chinese banks
+Note Examples > Web Address
+Search
+<a href="https://www.wikipedia.org/">wikipedia</a><br>
+<a href="https://www.answers.com/">answers</a><br>
+<a href="https://www.thefreedictionary.com/">thefreedictionary</a><br>
+<a href="https://www.ipaddress.com/">ipaddress</a><br>
+<a href="https://www.bing.com/">bing</a><br>
+<a href="https://www.google.com/">google</a><br>
+<a href="https://www.yahoo.com/">yahoo</a><br>
+<a href="https://www.baidu.com/">baidu</a><br>
+
+
+Note Examples > Web Address
+Life in Chinese
+<a href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
 <a href="https://www.boc.cn/">Bank of China</a><br>
 <a href="http://www.icbc.com.cn">Industrial and Commercial Bank of China</a><br>
 <a href="http://www.cmbchina.com">China Merchants Bank Ltd</a><br>
 <a href="http://www.bankcomm.com">Bank of Communications</a><br>
 
 
-Notebook > Web Address
-Novels in Chinese
-<a href="https://www.kunnu.com/">kunnu</a><br>
-<a href="http://www.fqxs.org/">fqxs</a><br>
-<a href="https://www.2kzw.com/">2kzw</a><br>
-<a href="https://www.jureshu.com/">jureshu</a><br>
-<a href="http://www.laifushuwang.com/">laifushuwang</a><br>
-<a href="http://www.44shu.com/">44shu</a><br>
-
-
-Notebook > Web Address
+Note Examples > Web Address
 Articles/Data in English
 <a href="https://www.cn-ki.net/">iData</a><br>
 <a href="https://sci-hub.se/">sci-hub</a><br>
@@ -40,9 +43,9 @@ Articles/Data in English
 <a href="https://www.ieee.org/">IEEE</a><br>
 
 
-Notebook > Web Address
+Note Examples > Web Address
 Articles/Data in Chinese
-<a href="https://data.stats.gov.cn/">国家数据</a><br>
+<a href="http://www.stats.gov.cn">国家数据</a><br>
 <a href="http://www.pbc.gov.cn/diaochatongjisi/116219/index.html">中国人民银行数据库</a><br>
 <a href="http://www.geodata.cn/index.html">国家地球系统科学数据中心</a><br>
 <a href="http://www.nlc.cn/">中国国家数字图书馆</a><br>
@@ -60,9 +63,54 @@ Articles/Data in Chinese
 <a href="http://www.gxlib.org.cn/">广西图书馆</a><br>
 <a href="https://www.cnki.net/">中国知网</a><br>
 <a href="http://www.wanfangdata.com.cn/index.html">万方数据</a><br>
+<a href="https://zm-digicol.dpm.org.cn/">故宫博物院藏品</a><br>
 
 
-Notebook > My Data
+Note Examples > Web Address
+Study in English
+<a href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
+<a href="https://www.bilibili.com/video/BV1Js411n7zv">MIT 18.01 Calculus</a><br>
+<a href="https://www.bilibili.com/video/BV1es411H7YH">MIT 6.042J Discrete Mathematics</a><br>
+<a href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>
+
+
+Note Examples > Web Address
+Study in Chinese
+<a href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
+<a href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
+<a href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>
+<a href="https://www.bilibili.com/video/BV1ux411G7zm">中国古代史（史前——魏晋南北朝）（阎步克教授/北京大学）</a><br>
+<a href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
+
+
+Note Examples > Web Address
+Novels in Chinese
+<a href="https://www.kunnu.com">鲲弩小说</a><br>
+<a href="https://www.jjwxc.net">晋江文学城</a><br>
+<a href="http://yunqi.qq.com">云起书院</a><br>
+<a href="https://www.qidian.com">起点中文网</a><br>
+<a href="http://chuangshi.qq.com">创世中文网</a><br>
+<a href="http://www.zhulang.com">逐浪网</a><br>
+<a href="http://yc.ireader.com.cn">掌阅小说网</a><br>
+<a href="https://www.17k.com">17k小说网</a><br>
+<a href="https://www.xxsy.net">潇湘书院</a><br>
+
+
+Note Examples > Web Address
+Entertainment in Chinese
+<a href="https://www.qingting.fm">蜻蜓FM</a><br>
+<a href="https://www.bilibili.com">哔哩哔哩</a><br>
+<a href="https://www.youku.com">优酷</a><br>
+<a href="https://www.missevan.com">猫耳</a><br>
+<a href="http://nga.178.com">NGA</a><br>
+<a href="https://weibo.com">微博</a><br>
+<a href="https://bbs.tianya.cn/">天涯</a><br>
+<a href="https://www.lofter.com/">lofter</a><br>
+<a href="https://www.qingting.fm/channels/138236/">小喇叭</a><br>
+<a href="https://www.bilibili.com/video/BV1Px411P761?from=search&seid=8480498709465058923">牡丹亭（1986年）张继青</a><br>
+
+
+Note Examples > My Data
 My eyes
 <p>Radian: 84</p>
 <table>
@@ -73,7 +121,7 @@ My eyes
 </table>
 
 
-Notebook > My Data
+Note Examples > My Data
 My weight
 <table>
     <tr><th> Time </th><th> Weight(kg) </th></tr>
@@ -83,7 +131,7 @@ My weight
 </table>
 
 
-Notebook > My Data
+Note Examples > My Data
 My height
 <table>
     <tr><th> Time </th><th> Height(cm) </th></tr>
@@ -93,7 +141,7 @@ My height
 </table>
 
 
-Notebook > My Data
+Note Examples > My Data
 My menstruation
             <table>
                 <tbody><tr><td>Year/Month</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
@@ -104,7 +152,7 @@ My menstruation
 </table>
 
 
-Notebook > My Data
+Note Examples > My Data
 My money
 <table>
     <tr><th> Time </th><th> Total </th><th> Bank A </th><th> Bank B </th><th> Bank C </th></tr>
@@ -114,7 +162,7 @@ My money
 </table>
 
 
-Notebook > Common knowledge
+Note Examples > Common knowledge
 Size of coat
             <table>
                 <tr><td>Size</td><td>Coat Length</td><td>Shoulder</td><td>Sleeve</td><td>Chest</td><td>Waist</td></tr>
@@ -130,7 +178,7 @@ Size of coat
             </table>
 
 
-Notebook > Contacts
+Note Examples > Contacts
 Relative
 <table>
     <tr><th> Relationship </th><th> Phone </th><th> Email </th><th> Address </th><th> Birthday </th><th> Comments </th></tr>
@@ -140,7 +188,7 @@ Relative
 </table>
 
 
-Notebook > Contacts
+Note Examples > Contacts
 Work
 <table>
     <tr><th> Relationship </th><th> Name </th><th> Phone </th><th> Email </th><th> Address </th><th> Comments </th></tr>
@@ -150,10 +198,11 @@ Work
 </table>
 
 
-Notebook > Coding
+Note Examples > Coding
 Coding Address
 <a href="https://sourceforge.net">sourceforge</a><br>
-<a href="https://stackoverflow.com">stackoverflow</a><br><br>
+<a href="https://stackoverflow.com">stackoverflow</a><br>
+<a href="https://github.com">github</a><br><br>
 <a href="https://docs.oracle.com/en/java/javase/15/docs/api/index.html">Java API</a><br>
 <a href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
 <a href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
@@ -162,7 +211,21 @@ Coding Address
 <a href="https://mvnrepository.com/">mvnrepository</a><br>
 
 
-Notebook > Coding > javafx
+Note Examples > Coding
+sftp to sourceforge (to upload large files)
+<PRE><CODE>
+C:\Users\mara>sftp mararsh@frs.sourceforge.net
+Password:
+Connected to mararsh@frs.sourceforge.net.
+sftp> cd /home/frs/project/mara-mybox
+sftp> ls
+sftp> cd v6.4.2
+sftp> lcd  D:\mara\Mybox\2021-03-21-v6.4.2
+sftp> put D:\mara\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
+</CODE></PRE>
+
+
+Note Examples > Coding > javafx
 Items in one sentence about javafx
 <ol>
     <li>Always assume user knows nothing about programming.</li>
@@ -188,7 +251,7 @@ Items in one sentence about javafx
 </ol>
 
 
-Notebook > Coding > javafx > Examples
+Note Examples > Coding > javafx > Examples
 ChangeListener<String>
 <PRE><CODE>
 input.textProperty().addListener(new ChangeListener<String>() {
@@ -200,7 +263,7 @@ input.textProperty().addListener(new ChangeListener<String>() {
 </CODE></PRE>
 
 
-Notebook > Coding > javafx > Examples
+Note Examples > Coding > javafx > Examples
 setOnMouseClicked
 <PRE><CODE>
 control.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -212,7 +275,7 @@ control.setOnMouseClicked(new EventHandler<MouseEvent>() {
 </CODE></PRE>
 
 
-Notebook > Coding > javafx > Examples
+Note Examples > Coding > javafx > Examples
 disableProperty().bind
 <PRE><CODE>
 startButton.disableProperty().bind(
@@ -223,7 +286,7 @@ startButton.disableProperty().bind(
 </CODE></PRE>
 
 
-Notebook > Coding > java
+Note Examples > Coding > java
 Items in one sentence about java
 <ol>
     <li>Always assume most extreme inputs and most weird operations.</li>
@@ -243,7 +306,7 @@ Items in one sentence about java
 </ol>
 
 
-Notebook > Coding > MyBox
+Note Examples > Coding > MyBox
 Packing Steps of MyBox on windows
 		<p>On Windows:</p>
 			<ol  class="inside">
@@ -256,7 +319,7 @@ Packing Steps of MyBox on windows
 			</ol>
 
 
-Notebook > Coding > MyBox
+Note Examples > Coding > MyBox
 Packing Steps of MyBox on linux
 		<p>On Linux:</p>
 			<ul  class="inside">
@@ -273,7 +336,7 @@ Packing Steps of MyBox on linux
 				<li>Generated launcher is "MyBox/pack/linux/app/MyBox/bin/MyBox".</li>
 			</ul>
 
-Notebook > Coding > MyBox
+Note Examples > Coding > MyBox
 Packing Steps of MyBox on mac
 		<p>On Mac:</p>
 			<ul  class="inside">
@@ -291,7 +354,7 @@ Packing Steps of MyBox on mac
 			</ul>
 
 
-Notebook > Coding > MyBox
+Note Examples > Coding > MyBox
 Colors of MyBox icons
             <table>
                 <tbody><tr style="font-weight:bold; "><th>name</th><th>rgba</th><th>rgb</th></tr>

@@ -164,7 +164,6 @@
                             </children>
                         </FlowPane>
                         <CheckBox fx:id="blendTopCheck" mnemonicParsing="false" selected="true" text="%OnTop" />
-                        <Label fx:id="blendCommentsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%TakeEffectWhenOK" />
                     </children>
                 </VBox>
                 <FlowPane fx:id="intensityPane" hgap="5.0" layoutX="10.0" layoutY="161.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">

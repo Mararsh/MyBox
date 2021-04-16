@@ -198,7 +198,6 @@ public abstract class BaseMapController extends BaseController {
                 return;
             }
 
-            // SSL handshake still fails even when above certficates imported! This is workaround
             webEngine = mapView.getEngine();
             webEngine.setJavaScriptEnabled(true);
 //            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
@@ -459,7 +458,7 @@ public abstract class BaseMapController extends BaseController {
             table.newLinkRow("GaoDeAPI", "https://lbs.amap.com/api/javascript-api/summary");
             table.newLinkRow("GaoDeKey", "https://console.amap.com/dev/index");
             File htmFile = HtmlTools.writeHtml(table.html());
-            FxmlStage.browseURI(getMyStage(), htmFile.toURI());
+            openLink(htmFile.toURI().toString());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

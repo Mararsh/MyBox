@@ -2,7 +2,6 @@ package mara.mybox.db;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -13,10 +12,8 @@ import java.util.List;
 import java.util.Map;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.EpidemicReport;
@@ -25,9 +22,9 @@ import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
-import mara.mybox.db.table.TableColorData;
-import static mara.mybox.db.table.TableColorData.read;
-import static mara.mybox.db.table.TableColorData.write;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
+import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
@@ -83,6 +80,9 @@ public class DataMigration {
                 if (lastVersion < 6004001) {
                     updateIn641(conn);
                 }
+                if (lastVersion < 6004003) {
+                    updateIn643(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", CommonValues.AppVersion);
             conn.setAutoCommit(true);
@@ -90,6 +90,46 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn643(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.4.3...");
+            TableColorPaletteName tableColorPaletteName = new TableColorPaletteName();
+            ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
+            long paletteid = defaultPalette.getCpnid();
+
+            TableColorPalette tableColorPalette = new TableColorPalette();
+            TableColor tableColor = new TableColor();
+            String sql = "SELECT * FROM Color_Data";
+            try ( Statement statement = conn.createStatement();
+                     ResultSet results = statement.executeQuery(sql)) {
+                conn.setAutoCommit(false);
+                while (results.next()) {
+                    ColorData color = tableColor.readData(results);
+                    color.setColorValue(results.getInt("color_value"));
+                    tableColor.writeData(conn, color);
+
+                    double orderNumber = results.getDouble("palette_index");
+                    if (orderNumber > 0) {
+                        color.setOrderNumner((float) orderNumber);
+                        tableColorPalette.findAndCreate(conn, paletteid, color, true);
+                    }
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.commit();
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("DROP TABLE Color_Data");
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            TableStringValues.add(conn, "InstalledVersions", "6.4.3");
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn641(Connection conn) {
@@ -197,7 +237,6 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.3.3...");
             updateGeographyCodeIn633(conn);
-            updateColorDataIn633(conn);
             updateConvolutionKernelIn633(conn);
             TableStringValues.add(conn, "InstalledVersions", "6.3.3");
             conn.setAutoCommit(true);
@@ -241,30 +280,6 @@ public class DataMigration {
         } catch (Exception e) {
         }
         return true;
-    }
-
-    private static void updateColorDataIn633(Connection conn) {
-        try ( Statement statement = conn.createStatement();
-                 PreparedStatement delete = conn.prepareStatement(TableColorData.Delete);) {
-            conn.setAutoCommit(false);
-            try ( ResultSet results = statement.executeQuery("SELECT * FROM Color_Data")) {
-                while (results.next()) {
-                    ColorData data = read(results);
-                    String rgba = data.getRgba();
-                    String rgbaUpper = rgba.toUpperCase();
-                    if (rgba.equals(rgbaUpper)) {
-                        continue;
-                    }
-                    data.setRgba(rgbaUpper);
-                    TableColorData.insert(conn, data);
-                    delete.setString(1, rgba);
-                    delete.executeUpdate();
-                }
-            }
-            conn.commit();
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-        }
     }
 
     private static boolean updateConvolutionKernelIn633(Connection conn) {
@@ -675,10 +690,10 @@ public class DataMigration {
                 String sql = "ALTER TABLE SRGB  add  column  palette_index  INT";
                 DerbyBase.update(sql);
 
-                List<String> saveColors = TableStringValues.read("ColorPalette");
-                if (saveColors != null && !saveColors.isEmpty()) {
-                    TableColorData.setPalette(saveColors);
-                }
+//                List<String> saveColors = TableStringValues.read("ColorPalette");
+//                if (saveColors != null && !saveColors.isEmpty()) {
+//                    TableColor.setPalette(saveColors);
+//                }
                 TableStringValues.clear("ColorPalette");
                 AppVariables.setSystemConfigValue("UpdatedTables5.8", true);
             }
@@ -688,12 +703,6 @@ public class DataMigration {
                 String sql = "DROP TABLE Browser_URLs";
                 DerbyBase.update(sql);
                 AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
-            }
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1", false)) {
-                MyBoxLog.info("Updating tables in 6.1...");
-                migrate61();
-                AppVariables.setSystemConfigValue("UpdatedTables6.1", true);
             }
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1.5", false)) {
@@ -822,32 +831,6 @@ public class DataMigration {
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean migrate61() {
-        try ( Connection conn = DerbyBase.getConnection();) {
-            String sql = " SELECT * FROM SRGB WHERE palette_index >= 0";
-            ResultSet olddata = conn.createStatement().executeQuery(sql);
-            List<ColorData> oldData = new ArrayList<>();
-            while (olddata.next()) {
-                ColorData data = new ColorData(olddata.getString("color_value")).calculate();
-                String name = olddata.getString("color_name");
-                if (name != null && !name.isEmpty()) {
-                    data.setColorName(name);
-                }
-                data.setPaletteIndex(olddata.getInt("palette_index"));
-                oldData.add(data);
-            }
-            for (ColorData data : oldData) {
-                write(conn, data, true);
-            }
-            sql = "DROP TABLE SRGB";
-            conn.createStatement().executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
             return false;
         }
     }

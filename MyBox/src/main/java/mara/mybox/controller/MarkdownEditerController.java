@@ -15,7 +15,6 @@ import com.vladsch.flexmark.util.ast.TextCollectingVisitor;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +22,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -108,18 +108,53 @@ public class MarkdownEditerController extends TextEditerController {
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowHtml", true)) {
                 tabPane.getTabs().remove(htmlTab);
             }
+            htmlTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    AppVariables.setUserConfigValue(baseName + "ShowHtml", false);
+                }
+            });
+
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowCodes", true)) {
                 tabPane.getTabs().remove(codesTab);
             }
+            codesTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    AppVariables.setUserConfigValue(baseName + "ShowCodes", false);
+                }
+            });
+
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowToc", true)) {
                 tabPane.getTabs().remove(tocTab);
             }
+            tocTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    AppVariables.setUserConfigValue(baseName + "ShowToc", false);
+                }
+            });
+
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowText", true)) {
                 tabPane.getTabs().remove(textTab);
             }
+            textTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    AppVariables.setUserConfigValue(baseName + "ShowText", false);
+                }
+            });
+
             if (!AppVariables.getUserConfigBoolean(baseName + "ShowLinks", true)) {
                 tabPane.getTabs().remove(linksTab);
             }
+            linksTab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event event) {
+                    AppVariables.setUserConfigValue(baseName + "ShowLinks", false);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -717,6 +752,7 @@ public class MarkdownEditerController extends TextEditerController {
 
             CheckMenuItem checkMenu;
             checkMenu = new CheckMenuItem(message("Html"));
+            checkMenu.setSelected(tabPane.getTabs().contains(htmlTab));
             checkMenu.setOnAction((ActionEvent event) -> {
                 if (tabPane.getTabs().contains(htmlTab)) {
                     tabPane.getTabs().remove(htmlTab);
@@ -729,10 +765,10 @@ public class MarkdownEditerController extends TextEditerController {
                 AppVariables.setUserConfigValue(baseName + "ShowHtml",
                         tabPane.getTabs().contains(htmlTab));
             });
-            checkMenu.setSelected(tabPane.getTabs().contains(htmlTab));
             popMenu.getItems().add(checkMenu);
 
             checkMenu = new CheckMenuItem(message("HtmlCodes"));
+            checkMenu.setSelected(tabPane.getTabs().contains(codesTab));
             checkMenu.setOnAction((ActionEvent event) -> {
                 if (tabPane.getTabs().contains(codesTab)) {
                     tabPane.getTabs().remove(codesTab);
@@ -745,10 +781,10 @@ public class MarkdownEditerController extends TextEditerController {
                 AppVariables.setUserConfigValue(baseName + "ShowCodes",
                         tabPane.getTabs().contains(codesTab));
             });
-            checkMenu.setSelected(tabPane.getTabs().contains(codesTab));
             popMenu.getItems().add(checkMenu);
 
             checkMenu = new CheckMenuItem(message("Headings"));
+            checkMenu.setSelected(tabPane.getTabs().contains(tocTab));
             checkMenu.setOnAction((ActionEvent event) -> {
                 if (tabPane.getTabs().contains(tocTab)) {
                     tabPane.getTabs().remove(tocTab);
@@ -761,10 +797,10 @@ public class MarkdownEditerController extends TextEditerController {
                 AppVariables.setUserConfigValue(baseName + "ShowToc",
                         tabPane.getTabs().contains(tocTab));
             });
-            checkMenu.setSelected(tabPane.getTabs().contains(tocTab));
             popMenu.getItems().add(checkMenu);
 
             checkMenu = new CheckMenuItem(message("Links"));
+            checkMenu.setSelected(tabPane.getTabs().contains(linksTab));
             checkMenu.setOnAction((ActionEvent event) -> {
                 if (tabPane.getTabs().contains(linksTab)) {
                     tabPane.getTabs().remove(linksTab);
@@ -777,10 +813,10 @@ public class MarkdownEditerController extends TextEditerController {
                 AppVariables.setUserConfigValue(baseName + "ShowLinks",
                         tabPane.getTabs().contains(linksTab));
             });
-            checkMenu.setSelected(tabPane.getTabs().contains(linksTab));
             popMenu.getItems().add(checkMenu);
 
             checkMenu = new CheckMenuItem(message("Text"));
+            checkMenu.setSelected(tabPane.getTabs().contains(textTab));
             checkMenu.setOnAction((ActionEvent event) -> {
                 if (tabPane.getTabs().contains(textTab)) {
                     tabPane.getTabs().remove(textTab);
@@ -793,7 +829,6 @@ public class MarkdownEditerController extends TextEditerController {
                 AppVariables.setUserConfigValue(baseName + "ShowText",
                         tabPane.getTabs().contains(textTab));
             });
-            checkMenu.setSelected(tabPane.getTabs().contains(textTab));
             popMenu.getItems().add(checkMenu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
@@ -1048,7 +1083,7 @@ public class MarkdownEditerController extends TextEditerController {
                 if (file == null) {
                     return;
                 }
-                insertText(URLDecoder.decode(file.toURI().toString()));
+                insertText(HtmlTools.decodeURL(file));
             });
             popMenu.getItems().add(menu);
 

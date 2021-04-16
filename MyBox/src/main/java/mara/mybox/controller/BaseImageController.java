@@ -78,7 +78,7 @@ public abstract class BaseImageController extends BaseController {
     protected LoadingController loadingController;
     protected SingletonTask loadTask;
     protected double mouseX, mouseY;
-    protected ColorPaletteManageController paletteController;
+    protected ColorsManageController paletteController;
     protected Label imageLabelOriginal;
 
     @FXML
@@ -1151,11 +1151,7 @@ public abstract class BaseImageController extends BaseController {
 
     protected void startPickingColor() {
         if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = ColorPaletteManageController.oneOpen();
-            paletteController.parentController = this;
-            popInformation(message("PickingColorsNow"));
-            paletteController.myStage.setX(0);
-            paletteController.myStage.setY(0);
+            paletteController = ColorsManageController.pickColor(this);
             if (imageLabel != null) {
                 imageLabelOriginal = new Label(imageLabel.getText());
                 imageLabelOriginal.setStyle(imageLabel.getStyle());

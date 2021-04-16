@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -12,12 +15,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -32,6 +37,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -69,12 +75,15 @@ public class NotesController extends BaseDataTableController<Note> {
     protected TableTag tableTag;
     protected TableNoteTag tableNoteTag;
     protected Note currentNote;
-    protected Notebook loadedBook, editingBook;
+    protected Notebook selectedBook, bookOfCurrentNote;
+    protected String queryConditions, queryLabel;
 
     @FXML
     protected ControlNotebookSelector notebooksController;
     @FXML
     protected ListView<Tag> tagsList, noteTagsList;
+    @FXML
+    protected ControlTimeTree timeController;
     @FXML
     protected TableColumn<Note, Long> ntidColumn;
     @FXML
@@ -84,10 +93,22 @@ public class NotesController extends BaseDataTableController<Note> {
     @FXML
     protected TextField idInput, titleInput, timeInput;
     @FXML
-    protected Button deleteBookButton, addBookButton, clearNotesButton, deleteNotesButton, moveDataButton,
-            queryTagsButton, deleteTagsButton, renameTagButton, okNoteTagsButton;
+    protected Button deleteBookButton, addBookButton, moveDataBookButton, copyBookButton, renameBookButton,
+            refreshNotesButton, clearNotesButton, deleteNotesButton, moveDataNotesButton, copyNotesButton, addBookNoteButton,
+            addNoteButton, queryTagsButton, deleteTagsButton, renameTagButton, okNoteTagsButton,
+            refreshTimesButton, queryTimesButton, refreshTagsButton;
     @FXML
-    protected FlowPane chainPane;
+    protected VBox notesConditionBox;
+    @FXML
+    protected CheckBox subCheck;
+    @FXML
+    protected FlowPane namesPane, tagsPane, timesPane, noteTagsPane;
+    @FXML
+    protected Label conditionLabel;
+    @FXML
+    protected RadioButton titleRadio, contentsRadio;
+    @FXML
+    protected ControlStringSelector searchController;
     @FXML
     protected TabPane notePane, noteEditPane;
     @FXML
@@ -120,7 +141,7 @@ public class NotesController extends BaseDataTableController<Note> {
         tableTag = new TableTag();
         tableNoteTag = new TableNoteTag();
         tableDefinition = tableNote;
-        loadedBook = null;
+        selectedBook = null;
         currentNote = null;
     }
 
@@ -140,11 +161,16 @@ public class NotesController extends BaseDataTableController<Note> {
     @Override
     public void initControls() {
         try {
+            notebooksController.setParentController(this);
+            notebooksController.setValues(this);
+            webviewController.setValues(this, true, true);
+            codesController.setValues(this);
+
             super.initControls();
 
-            moveDataButton.setDisable(true);
-
-            notebooksController.setValues(this, tableNotebook);
+            moveDataBookButton.setDisable(true);
+            copyBookButton.setDisable(true);
+            renameBookButton.setDisable(true);
             notebooksController.treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -157,10 +183,15 @@ public class NotesController extends BaseDataTableController<Note> {
                     } else if (node != null) {
                         loadBook(node.getValue());
                     }
-                    moveDataButton.setDisable(node == null || node.getValue().isRoot());
+                    boolean isRoot = node == null || node.getValue().isRoot();
+                    moveDataBookButton.setDisable(isRoot);
+                    copyBookButton.setDisable(isRoot);
+                    renameBookButton.setDisable(isRoot);
                 }
             });
-            loadedBook = notebooksController.rootBook;
+            selectedBook = notebooksController.rootBook;
+
+            searchController.init(this, baseName + "Saved", message("Note"), 20);
 
             noteEditPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
@@ -172,22 +203,19 @@ public class NotesController extends BaseDataTableController<Note> {
                         style = "";
                     }
                     if (oldTab == noteCodesTab || oldTab == noteStyleTab) {
-                        String html = style + HtmlTools.bodyWithoutTag(codesController.codes());
+                        String html = style + HtmlTools.body(codesController.codes(), false);
                         webviewController.loadContents(html);
                         htmlEditor.setHtmlText(html);
                     } else if (oldTab == noteEditorTab) {
-                        String html = HtmlTools.bodyWithoutTag(htmlEditor.getHtmlText());
+                        String html = HtmlTools.body(htmlEditor.getHtmlText(), false);
                         webviewController.loadContents(style + html);
                         codesController.load(html);
                     }
                 }
             });
 
-            webviewController.setValues(this, false, false);
-            codesController.setValues(this);
-
             titleInput.setText(message("Note"));
-            styleInput.setText(AppVariables.getUserConfigValue(baseName + "Style", null));
+            styleInput.setText(AppVariables.getUserConfigValue(baseName + "Style", HtmlTools.DefaultStyle));
 
             tagsList.setCellFactory(p -> new ListCell<Tag>() {
                 @Override
@@ -234,6 +262,16 @@ public class NotesController extends BaseDataTableController<Note> {
             });
             noteTagsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+            subCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "IncludeSub", false));
+            subCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
+                    if (selectedBook != null) {
+                        loadTableData();
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -245,9 +283,14 @@ public class NotesController extends BaseDataTableController<Note> {
             super.afterSceneLoaded();
 
             FxmlControl.setTooltip(deleteBookButton, new Tooltip(message("DeleteBook")));
+            FxmlControl.setTooltip(copyBookButton, new Tooltip(message("CopyBookAndContents")));
             FxmlControl.setTooltip(addBookButton, new Tooltip(message("AddBook")));
+            FxmlControl.setTooltip(renameBookButton, new Tooltip(message("RenameBook")));
+            FxmlControl.setTooltip(moveDataBookButton, new Tooltip(message("MoveBook")));
             FxmlControl.setTooltip(clearNotesButton, new Tooltip(message("ClearNotes")));
             FxmlControl.setTooltip(deleteNotesButton, new Tooltip(message("DeleteNotes")));
+            FxmlControl.setTooltip(moveDataNotesButton, new Tooltip(message("MoveNotes")));
+            FxmlControl.setTooltip(copyNotesButton, new Tooltip(message("CopyNotes")));
             FxmlControl.removeTooltip(importButton);
 
             if (tableNotebook.size() < 2
@@ -260,6 +303,16 @@ public class NotesController extends BaseDataTableController<Note> {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    protected void clearQuery() {
+        selectedBook = null;
+        queryConditions = null;
+        queryLabel = null;
+        tableData.clear();
+        notesConditionBox.getChildren().clear();
+        namesPane.getChildren().clear();
+        currentPageStart = 1;
     }
 
     /*
@@ -279,7 +332,7 @@ public class NotesController extends BaseDataTableController<Note> {
 
         menu = new MenuItem(message("AddBook"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addBook();
+            notebooksController.addBook();
         });
         items.add(menu);
 
@@ -289,6 +342,27 @@ public class NotesController extends BaseDataTableController<Note> {
         });
         items.add(menu);
 
+        menu = new MenuItem(message("MoveBook"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            moveBook();
+        });
+        menu.setDisable(node.getValue().isRoot());
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyBookAndContents"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            copyBook(false);
+        });
+        menu.setDisable(node.getValue().isRoot());
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyBookContents"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            copyBook(true);
+        });
+        menu.setDisable(node.getValue().isRoot());
+        items.add(menu);
+
         menu = new MenuItem(message("RenameBook"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             renameBook();
@@ -296,18 +370,17 @@ public class NotesController extends BaseDataTableController<Note> {
         menu.setDisable(node.getValue().isRoot());
         items.add(menu);
 
-        menu = new MenuItem(message("Move"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            moveBook();
-        });
-        menu.setDisable(node.getValue().isRoot());
-        items.add(menu);
-
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("Export"));
+        menu = new MenuItem(message("Unfold"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            exportBook();
+            unfoldBooks();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Fold"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldBooks();
         });
         items.add(menu);
 
@@ -318,6 +391,15 @@ public class NotesController extends BaseDataTableController<Note> {
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("Export"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            exportBook();
+        });
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+
         menu = new MenuItem(message("PopupClose"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -338,9 +420,9 @@ public class NotesController extends BaseDataTableController<Note> {
 
     }
 
-    @FXML
     protected void refreshBooks() {
         notebooksController.loadTree();
+        refreshTimes();
     }
 
     @FXML
@@ -373,28 +455,13 @@ public class NotesController extends BaseDataTableController<Note> {
             }
             task = new SingletonTask<Void>() {
 
-                private boolean clear, loadNull, editNull;
-
                 @Override
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         if (book.isRoot()) {
                             notebooksController.rootBook = tableNotebook.clear(conn);
-                            clear = true;
-                            loadNull = true;
-                            editNull = true;
                         } else {
-                            tableNotebook.deleteData(book);
-                            if (loadedBook != null) {
-                                if (tableNotebook.find(conn, loadedBook.getNbid()) == null) {
-                                    loadNull = true;
-                                }
-                            }
-                            if (editingBook != null) {
-                                if (tableNotebook.find(conn, editingBook.getNbid()) == null) {
-                                    editNull = true;
-                                }
-                            }
+                            tableNotebook.deleteData(conn, book);
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -405,69 +472,23 @@ public class NotesController extends BaseDataTableController<Note> {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (clear) {
+                    if (book.isRoot()) {
                         notebooksController.treeView.getRoot().getChildren().clear();
+                        loadBook(null);
+                        editNote(null);
                     } else {
                         node.getChildren().clear();
                         if (node.getParent() != null) {
                             node.getParent().getChildren().remove(node);
                         }
+                        if (selectedBook != null && book.getNbid() == selectedBook.getNbid()) {
+                            loadBook(null);
+                        }
+                        if (bookOfCurrentNote != null && book.getNbid() == bookOfCurrentNote.getNbid()) {
+                            editNote(null);
+                        }
                     }
-                    if (loadNull) {
-                        loadBook(null);
-                    }
-                    if (editNull) {
-                        editNote(null);
-                    }
-                    popSuccessful();
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    protected void addBook() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            TreeItem<Notebook> selectedNode = notebooksController.treeView.getSelectionModel().getSelectedItem();
-            if (selectedNode == null) {
-                selectedNode = notebooksController.treeView.getRoot();
-                if (selectedNode == null) {
-                    return;
-                }
-            }
-            TreeItem<Notebook> node = selectedNode;
-            Notebook book = node.getValue();
-            if (book == null) {
-                return;
-            }
-            String chainName = ControlNotebookSelector.nodeName(node);
-            String name = FxmlControl.askValue(getBaseTitle(), chainName, message("AddBook"), message("Notebook") + "m");
-            if (name == null || name.isBlank() || name.contains(NotebooksSeparater)) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Notebook newBook;
-
-                @Override
-                protected boolean handle() {
-                    newBook = new Notebook(book.getNbid(), name);
-                    newBook = tableNotebook.insertData(newBook);
-                    return newBook != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    TreeItem<Notebook> newNode = new TreeItem<>(newBook);
-                    node.getChildren().add(newNode);
+                    refreshTimes();
                     popSuccessful();
                 }
 
@@ -488,10 +509,7 @@ public class NotesController extends BaseDataTableController<Note> {
             }
             TreeItem<Notebook> selectedNode = notebooksController.treeView.getSelectionModel().getSelectedItem();
             if (selectedNode == null) {
-                selectedNode = notebooksController.treeView.getRoot();
-                if (selectedNode == null) {
-                    return;
-                }
+                return;
             }
             TreeItem<Notebook> node = selectedNode;
             Notebook book = node.getValue();
@@ -500,21 +518,27 @@ public class NotesController extends BaseDataTableController<Note> {
             }
             String chainName = ControlNotebookSelector.nodeName(node);
             String name = FxmlControl.askValue(getBaseTitle(), chainName, message("RenameBook"), book.getName() + "m");
-            if (name == null || name.isBlank() || name.contains(NotebooksSeparater)) {
+            if (name == null || name.isBlank()) {
+                return;
+            }
+            if (name.contains(NotebooksSeparater)) {
+                popError(message("NotebookNameNotInclude") + " \"" + NotebooksSeparater + "\"");
                 return;
             }
             task = new SingletonTask<Void>() {
+                private Notebook updatedBook;
+
                 @Override
                 protected boolean handle() {
                     book.setName(name);
-                    return tableNotebook.updateData(book) != null;
+                    updatedBook = tableNotebook.updateData(book);
+                    return updatedBook != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     notebooksController.treeView.refresh();
-                    makeLoadedNamePanes();
-                    makeEditingBookLabel();
+                    bookChanged(updatedBook);
                     popSuccessful();
                 }
             };
@@ -534,13 +558,28 @@ public class NotesController extends BaseDataTableController<Note> {
         }
         String chainName = ControlNotebookSelector.nodeName(selectedNode);
         NotesMoveNotebookController controller = (NotesMoveNotebookController) FxmlStage.openStage(CommonValues.NotesMoveNotebookFxml);
-        controller.setSource(this, selectedNode.getValue(), chainName);
+        controller.setValues(this, selectedNode.getValue(), chainName);
+    }
+
+    @FXML
+    protected void copyBook() {
+        copyBook(false);
+    }
+
+    protected void copyBook(Boolean onlyContents) {
+        TreeItem<Notebook> selectedNode = notebooksController.treeView.getSelectionModel().getSelectedItem();
+        if (selectedNode == null || selectedNode.getValue().isRoot()) {
+            return;
+        }
+        String chainName = ControlNotebookSelector.nodeName(selectedNode);
+        NotesCopyNotebookController controller = (NotesCopyNotebookController) FxmlStage.openStage(CommonValues.NotesCopyNotebookFxml);
+        controller.setValues(this, selectedNode.getValue(), chainName, onlyContents);
     }
 
     @FXML
     protected void exportBook() {
         NotesExportController exportController = (NotesExportController) FxmlStage.openStage(CommonValues.NotesExportFxml);
-        exportController.setSource(this);
+        exportController.setValues(this);
     }
 
     @FXML
@@ -591,12 +630,43 @@ public class NotesController extends BaseDataTableController<Note> {
 
     @FXML
     protected void foldBooks() {
-        notebooksController.loadTree(false);
+        TreeItem<Notebook> selectedNode = notebooksController.treeView.getSelectionModel().getSelectedItem();
+        if (selectedNode == null) {
+            selectedNode = notebooksController.treeView.getRoot();
+        }
+        notebooksController.fold(selectedNode);
     }
 
     @FXML
     protected void unfoldBooks() {
-        notebooksController.loadTree(true);
+        TreeItem<Notebook> selectedNode = notebooksController.treeView.getSelectionModel().getSelectedItem();
+        if (selectedNode == null) {
+            selectedNode = notebooksController.treeView.getRoot();
+        }
+        notebooksController.expandChildren(selectedNode);
+    }
+
+    protected void loadBook(Notebook book) {
+        clearQuery();
+        selectedBook = book;
+        if (book != null) {
+            queryConditions = " notebook=" + book.getNbid();
+            loadTableData();
+        }
+    }
+
+    protected void bookChanged(Notebook book) {
+        if (book == null) {
+            return;
+        }
+        if (bookOfCurrentNote != null && book.getNbid() == bookOfCurrentNote.getNbid()) {
+            bookOfCurrentNote = book;
+            updateBookOfCurrentNote();
+        }
+        if (selectedBook != null && selectedBook.getNbid() == book.getNbid()) {
+            selectedBook = book;
+            makeConditionPane();
+        }
     }
 
     /*
@@ -674,12 +744,10 @@ public class NotesController extends BaseDataTableController<Note> {
 
     @FXML
     public void refreshTags() {
-        tagsList.getItems().clear();
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
+            tagsList.getItems().clear();
+            tagsPane.setDisable(true);
+            SingletonTask tagsTask = new SingletonTask<Void>() {
                 private List<Tag> tags;
 
                 @Override
@@ -693,10 +761,14 @@ public class NotesController extends BaseDataTableController<Note> {
                     tagsList.getItems().setAll(tags);
                 }
 
+                @Override
+                protected void finalAction() {
+                    tagsPane.setDisable(false);
+                }
+
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
+            tagsTask.setSelf(tagsTask);
+            Thread thread = new Thread(tagsTask);
             thread.setDaemon(true);
             thread.start();
         }
@@ -759,38 +831,18 @@ public class NotesController extends BaseDataTableController<Note> {
 
     @FXML
     public void queryTags() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            List<Tag> tags = tagsList.getSelectionModel().getSelectedItems();
-            if (tags == null || tags.isEmpty()) {
-                return;
-            }
-            loadedBook = null;
-            tableData.clear();
-            chainPane.getChildren().clear();
-            task = new SingletonTask<Void>() {
-                private List<Note> notes;
-
-                @Override
-                protected boolean handle() {
-                    notes = tableNoteTag.readNotes(tags);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    tableData.setAll(notes);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+        List<Tag> selected = tagsList.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            popError(message("TagsQueryComments"));
+            return;
         }
+        clearQuery();
+        queryConditions = TableNote.tagsCondition(selected);
+        queryLabel = message("Tag") + ":";
+        for (Tag tag : selected) {
+            queryLabel += " " + tag.getTag();
+        }
+        loadTableData();
     }
 
     @FXML
@@ -806,7 +858,6 @@ public class NotesController extends BaseDataTableController<Note> {
 
                 @Override
                 protected boolean handle() {
-                    tableTag.clearData();
                     return tableTag.clearData() >= 0;
                 }
 
@@ -865,26 +916,115 @@ public class NotesController extends BaseDataTableController<Note> {
     }
 
     /*
-        Notes list
+        Times
      */
-    protected void loadBook(Notebook node) {
-        loadedBook = node;
-        if (node == null) {
-            tableData.clear();
-            chainPane.getChildren().clear();
-        } else {
-            loadTableData();
+    @FXML
+    protected void refreshTimes() {
+        synchronized (this) {
+            timeController.clearTree();
+            timesPane.setDisable(true);
+            SingletonTask timesTask = new SingletonTask<Void>() {
+                private List<Date> times;
+
+                @Override
+                protected boolean handle() {
+                    times = TableNote.times();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    timeController.loadTree("update_time", times, false);
+                }
+
+                @Override
+                protected void finalAction() {
+                    timesPane.setDisable(false);
+                }
+
+            };
+            timesTask.setSelf(timesTask);
+            Thread thread = new Thread(timesTask);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
-    @Override
-    public void postLoadedTableData() {
-        makeLoadedNamePanes();
+    @FXML
+    protected void queryTimes() {
+        String c = timeController.check();
+        if (c == null) {
+            popError(message("MissTime"));
+            return;
+        }
+        clearQuery();
+        queryConditions = c;
+        queryLabel = timeController.getFinalTitle();
+        loadTableData();
     }
 
-    public void makeLoadedNamePanes() {
-        if (loadedBook == null) {
-            chainPane.getChildren().clear();
+    /*
+        Search
+     */
+    @FXML
+    protected void search() {
+        String s = searchController.value();
+        if (s == null || s.isBlank()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        String[] values = StringTools.splitBySpace(s);
+        if (values == null || values.length == 0) {
+            popError(message("InvalidData"));
+            return;
+        }
+        searchController.refreshList();
+        clearQuery();
+        if (titleRadio.isSelected()) {
+            queryConditions = null;
+            queryLabel = message("Title") + ":";
+            for (String v : values) {
+                if (queryConditions != null) {
+                    queryConditions += " OR ";
+                } else {
+                    queryConditions = " ";
+                }
+                queryConditions += " ( title like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryLabel += " " + v;
+            }
+
+        } else {
+            queryConditions = null;
+            queryLabel = message("Contents") + ":";
+            for (String v : values) {
+                if (queryConditions != null) {
+                    queryConditions += " OR ";
+                } else {
+                    queryConditions = " ";
+                }
+                queryConditions += " ( html like '%" + DerbyBase.stringValue(v) + "%' ) ";
+                queryLabel += " " + v;
+            }
+        }
+        loadTableData();
+    }
+
+    /*
+        Notes list
+     */
+    @Override
+    public void postLoadedTableData() {
+        makeConditionPane();
+    }
+
+    public void makeConditionPane() {
+        notesConditionBox.getChildren().clear();
+        if (selectedBook == null) {
+            if (queryLabel != null) {
+                conditionLabel.setText(queryLabel);
+                notesConditionBox.getChildren().add(conditionLabel);
+            }
+            notesConditionBox.applyCss();
             return;
         }
         synchronized (this) {
@@ -893,7 +1033,7 @@ public class NotesController extends BaseDataTableController<Note> {
 
                 @Override
                 protected boolean handle() {
-                    ancestor = tableNotebook.ancestor(loadedBook.getNbid());
+                    ancestor = tableNotebook.ancestor(selectedBook.getNbid());
                     return true;
                 }
 
@@ -903,6 +1043,8 @@ public class NotesController extends BaseDataTableController<Note> {
                     if (ancestor != null) {
                         for (Notebook book : ancestor) {
                             Hyperlink link = new Hyperlink(book.getName());
+                            link.setWrapText(true);
+                            link.setMinHeight(Region.USE_PREF_SIZE);
                             link.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -913,12 +1055,15 @@ public class NotesController extends BaseDataTableController<Note> {
                             nodes.add(new Label(">"));
                         }
                     }
-                    nodes.add(new Label(loadedBook.getName()));
-                    chainPane.getChildren().setAll(nodes);
-                    chainPane.applyCss();
+                    Label label = new Label(selectedBook.getName());
+                    label.setWrapText(true);
+                    label.setMinHeight(Region.USE_PREF_SIZE);
+                    nodes.add(label);
+                    namesPane.getChildren().setAll(nodes);
+                    notesConditionBox.getChildren().addAll(namesPane, subCheck);
+                    notesConditionBox.applyCss();
                 }
             };
-            openHandlingStage(bookTask, Modality.WINDOW_MODAL);
             bookTask.setSelf(bookTask);
             Thread thread = new Thread(bookTask);
             thread.setDaemon(true);
@@ -929,26 +1074,38 @@ public class NotesController extends BaseDataTableController<Note> {
 
     @Override
     public int readDataSize() {
-        if (loadedBook == null) {
+        if (selectedBook != null && subCheck.isSelected()) {
+            return tableNote.withSubSize(tableNotebook, selectedBook.getNbid());
+
+        } else if (queryConditions != null) {
+            return TableNote.conditionSize(queryConditions);
+
+        } else {
             return 0;
         }
-        return TableNote.bookSize(loadedBook.getNbid());
     }
 
     @Override
     public List<Note> readPageData() {
-        if (loadedBook == null) {
+        if (selectedBook != null && subCheck.isSelected()) {
+            return tableNote.withSub(tableNotebook, selectedBook.getNbid(), currentPageStart - 1, currentPageSize);
+
+        } else if (queryConditions != null) {
+            return tableNote.queryConditions(queryConditions, currentPageStart - 1, currentPageSize);
+
+        } else {
             return null;
         }
-        return tableNote.queryBook(loadedBook.getNbid(), currentPageStart - 1, currentPageSize);
     }
 
     @Override
     protected int clearData() {
-        if (loadedBook == null) {
+        if (queryConditions != null) {
+            return tableNote.deleteCondition(queryConditions);
+
+        } else {
             return -1;
         }
-        return tableNote.clearBook(loadedBook.getNbid());
     }
 
     @Override
@@ -959,14 +1116,36 @@ public class NotesController extends BaseDataTableController<Note> {
 
             menu = new MenuItem(message("DeleteNotes"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                deleteAction();
+                deleteNotes();
             });
             menu.setDisable(deleteNotesButton.isDisabled());
             items.add(menu);
 
+            menu = new MenuItem(message("CopyNotes"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                copyNotes();
+            });
+            menu.setDisable(deleteNotesButton.isDisabled());
+            items.add(menu);
+
+            menu = new MenuItem(message("MoveNotes"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                moveNotes();
+            });
+            menu.setDisable(deleteNotesButton.isDisabled());
+            items.add(menu);
+
+            menu = new MenuItem(message("AddNote"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                addBookNote();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("ClearNotes"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                clearAction();
+                clearNotes();
             });
             items.add(menu);
 
@@ -1014,6 +1193,8 @@ public class NotesController extends BaseDataTableController<Note> {
         }
         int selection = tableView.getSelectionModel().getSelectedIndices().size();
         deleteNotesButton.setDisable(selection == 0);
+        copyNotesButton.setDisable(selection == 0);
+        moveDataNotesButton.setDisable(selection == 0);
         selectedLabel.setText(message("Selected") + ": " + selection);
     }
 
@@ -1023,45 +1204,133 @@ public class NotesController extends BaseDataTableController<Note> {
     }
 
     @FXML
+    protected void addBookNote() {
+        bookOfCurrentNote = selectedBook;
+        editNote(null);
+    }
+
+    @FXML
+    protected void copyNotes() {
+        NotesCopyNotesController.oneOpen(this);
+    }
+
+    @FXML
+    protected void moveNotes() {
+        NotesMoveNotesController.oneOpen(this);
+    }
+
+    @FXML
     protected void clearNotes() {
         clearAction();
+        refreshTimes();
     }
 
     @FXML
     protected void deleteNotes() {
         deleteAction();
+        refreshTimes();
+    }
+
+    @Override
+    protected int deleteData(List<Note> data) {
+        int ret = super.deleteData(data);
+        if (ret <= 0) {
+            return ret;
+        }
+        if (currentNote == null || data == null || data.isEmpty()) {
+            return 0;
+        }
+        for (Note note : data) {
+            if (note.getNtid() == currentNote.getNtid()) {
+                Platform.runLater(() -> {
+                    editNote(null);
+                });
+                break;
+            }
+        }
+        return ret;
     }
 
     @FXML
     @Override
     public void editAction(ActionEvent event) {
-        editNote(tableView.getSelectionModel().getSelectedItem());
+        Note note = tableView.getSelectionModel().getSelectedItem();
+        if (note != null) {
+            editNote(note);
+        }
     }
 
+    /*
+        edit note
+     */
     @FXML
     protected void addNote() {
         editNote(null);
     }
 
     protected void editNote(Note note) {
-        editingBook = loadedBook;
         currentNote = note;
-        makeEditingBookLabel();
         loadNote();
     }
 
-    public void makeEditingBookLabel() {
-        if (editingBook == null) {
-            notebookLabel.setText("");
-            return;
+    protected void loadNote() {
+        synchronized (this) {
+            if (currentNote != null) {
+                idInput.setText(currentNote.getNtid() + "");
+                titleInput.setText(currentNote.getTitle());
+                timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
+                String html = currentNote.getHtml();
+                String style = AppVariables.getUserConfigValue(baseName + "Style", HtmlTools.DefaultStyle);
+                if (style != null && !style.isBlank()) {
+                    style = "<!DOCTYPE html><html><head><style type=\"text/css\">\n" + style + "\n</style></head></html>";
+                } else {
+                    style = "";
+                }
+                isSettingValues = true;
+                webviewController.loadContents(style + html);
+                codesController.load(html);
+                htmlEditor.setHtmlText(style + html);
+                isSettingValues = false;
+            } else {
+                idInput.setText("");
+                timeInput.setText("");
+                titleInput.setText(message("Note"));
+                webviewController.loadContents("");
+                htmlEditor.setHtmlText("");
+                codesController.load("");
+            }
+            updateBookOfCurrentNote();
+            refreshNoteTags();
+            showRightPane();
         }
+    }
+
+    protected void updateBookOfCurrentNote() {
         synchronized (this) {
             SingletonTask noteTask = new SingletonTask<Void>() {
                 private List<Notebook> ancestor;
 
                 @Override
                 protected boolean handle() {
-                    ancestor = tableNotebook.ancestor(editingBook.getNbid());
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        if (currentNote != null) {
+                            if (bookOfCurrentNote == null || bookOfCurrentNote.getNbid() != currentNote.getNotebookid()) {
+                                bookOfCurrentNote = tableNotebook.find(conn, currentNote.getNotebookid());
+                            }
+                        } else {
+                            bookOfCurrentNote = null;
+                        }
+                        if (bookOfCurrentNote == null) {
+                            bookOfCurrentNote = notebooksController.rootBook;
+                        }
+                        if (bookOfCurrentNote == null) {
+                            return false;
+                        }
+                        ancestor = tableNotebook.ancestor(conn, bookOfCurrentNote.getNbid());
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                     return true;
                 }
 
@@ -1073,55 +1342,22 @@ public class NotesController extends BaseDataTableController<Note> {
                             chainName += book.getName() + ">";
                         }
                     }
-                    chainName += editingBook.getName();
+                    chainName += bookOfCurrentNote.getName();
                     notebookLabel.setText(chainName);
                 }
             };
-            openHandlingStage(noteTask, Modality.WINDOW_MODAL);
             noteTask.setSelf(noteTask);
             Thread thread = new Thread(noteTask);
             thread.setDaemon(true);
             thread.start();
         }
-
-    }
-
-    /*
-        edit note
-     */
-    protected void loadNote() {
-        if (currentNote != null) {
-            idInput.setText(currentNote.getNtid() + "");
-            titleInput.setText(currentNote.getTitle());
-            timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
-            String html = currentNote.getHtml();
-            String style = AppVariables.getUserConfigValue(baseName + "Style", null);
-            if (style != null && !style.isBlank()) {
-                style = "<!DOCTYPE html><html><head><style type=\"text/css\">\n" + style + "\n</style></head></html>";
-            } else {
-                style = "";
-            }
-            isSettingValues = true;
-            webviewController.loadContents(style + html);
-            codesController.load(html);
-            htmlEditor.setHtmlText(style + html);
-            isSettingValues = false;
-        } else {
-            idInput.setText("");
-            timeInput.setText("");
-            titleInput.setText(message("Note"));
-            webviewController.loadContents("");
-            htmlEditor.setHtmlText("");
-            codesController.load("");
-        }
-        refreshNoteTags();
-        showRightPane();
     }
 
     @FXML
     protected void copyNote() {
         idInput.setText("");
         timeInput.setText("");
+        titleInput.setText(titleInput.getText() + " - " + message("Copy"));
         currentNote = null;
     }
 
@@ -1133,33 +1369,38 @@ public class NotesController extends BaseDataTableController<Note> {
     @FXML
     @Override
     public void saveAction() {
-        String title = titleInput.getText();
-        if (title == null || title.isBlank()) {
-            popError(message("TitleNonEmpty"));
-            return;
-        }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
+            String title = titleInput.getText();
+            if (title == null || title.isBlank()) {
+                popError(message("TitleNonEmpty"));
                 return;
             }
-            task = new SingletonTask<Void>() {
+            rightPane.setDisable(true);
+            SingletonTask saveTask = new SingletonTask<Void>() {
                 private Note note;
 
                 @Override
                 protected boolean handle() {
                     note = new Note();
                     note.setTitle(title);
-                    note.setHtml(StringTools.discardBlankLines(codesController.codes()));
+                    String html;
+                    if (noteEditPane.getSelectionModel().getSelectedItem() == noteEditorTab) {
+                        html = HtmlTools.body(htmlEditor.getHtmlText(), false);
+                    } else {
+                        html = HtmlTools.body(codesController.codes(), false);
+                    }
+                    note.setHtml(StringTools.discardBlankLines(html));
                     note.setUpdateTime(new Date());
                     if (currentNote != null) {
                         note.setNtid(currentNote.getNtid());
                         note.setNotebook(currentNote.getNotebookid());
                         currentNote = tableNote.updateData(note);
-                    } else if (editingBook != null) {
-                        note.setNotebook(editingBook.getNbid());
-                        currentNote = tableNote.insertData(note);
                     } else {
-                        return false;
+                        if (bookOfCurrentNote == null) {
+                            bookOfCurrentNote = notebooksController.rootBook;
+                        }
+                        note.setNotebook(bookOfCurrentNote.getNbid());
+                        currentNote = tableNote.insertData(note);
                     }
                     return currentNote != null;
                 }
@@ -1167,17 +1408,22 @@ public class NotesController extends BaseDataTableController<Note> {
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    if (editingBook != null && loadedBook != null
-                            && editingBook.getNbid() == loadedBook.getNbid()) {
-                        loadTableData();
+                    timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
+                    updateBookOfCurrentNote();
+                    if (selectedBook != null && selectedBook.getNbid() == bookOfCurrentNote.getNbid()) {
+                        refreshNotes();
                     }
-                    loadNote();
+                    refreshTimes();
+                }
+
+                @Override
+                protected void finalAction() {
+                    rightPane.setDisable(false);
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
+            saveTask.setSelf(saveTask);
+            Thread thread = new Thread(saveTask);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1237,42 +1483,55 @@ public class NotesController extends BaseDataTableController<Note> {
      */
     @FXML
     public void refreshNoteTags() {
-        noteTagsList.getItems().clear();
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private List<Tag> tags = null;
-                private List<Long> noteTags = null;
+            noteTagsList.getItems().clear();
+            noteTagsPane.setDisable(true);
+            SingletonTask noteTagsTask = new SingletonTask<Void>() {
+                private List<Tag> noteTags = null;
+                private int count = 0;
 
                 @Override
                 protected boolean handle() {
-                    tags = tableTag.readAll();
-                    if (currentNote != null) {
-                        noteTags = tableNoteTag.readTags(currentNote.getNtid());
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        List<Tag> tags = tableTag.readAll(conn);
+                        if (tags != null && !tags.isEmpty() && currentNote != null) {
+                            List<Long> noteTagIDs = tableNoteTag.readTags(conn, currentNote.getNtid());
+                            if (noteTagIDs != null && !noteTagIDs.isEmpty()) {
+                                noteTags = new ArrayList<>();
+                                for (Tag tag : tags) {
+                                    if (noteTagIDs.contains(tag.getTgid())) {
+                                        noteTags.add(count++, tag);
+                                    } else {
+                                        noteTags.add(tag);
+                                    }
+                                }
+                            } else {
+                                noteTags = tags;
+                            }
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
                     }
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    noteTagsList.getItems().setAll(tags);
-                    if (tags != null && noteTags != null) {
-                        for (int i = 0; i < tags.size(); i++) {
-                            if (noteTags.contains(tags.get(i).getTgid())) {
-                                noteTagsList.getSelectionModel().select(i);
-                            }
-                        }
-                    } else {
-                        selectNoneNoteTags();
+                    if (noteTags != null) {
+                        noteTagsList.getItems().setAll(noteTags);
+                        noteTagsList.getSelectionModel().selectRange(0, count);
                     }
                 }
 
+                @Override
+                protected void finalAction() {
+                    noteTagsPane.setDisable(false);
+                }
+
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
+            noteTagsTask.setSelf(noteTagsTask);
+            Thread thread = new Thread(noteTagsTask);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1295,9 +1554,6 @@ public class NotesController extends BaseDataTableController<Note> {
 
     public void addTag(boolean forCurrentNote) {
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
             String name = FxmlControl.askValue(getBaseTitle(), message("Add"), message("Tag"), message("Tag") + new Date().getTime());
             if (name == null || name.isBlank()) {
                 return;
@@ -1308,16 +1564,22 @@ public class NotesController extends BaseDataTableController<Note> {
                     return;
                 }
             }
-            task = new SingletonTask<Void>() {
-                private Tag tag;
+            rightPane.setDisable(true);
+            SingletonTask tagTask = new SingletonTask<Void>() {
+                private Tag tag = null;
                 private boolean updateCurrent;
 
                 @Override
                 protected boolean handle() {
-                    tag = tableTag.insertData(new Tag(name));
-                    updateCurrent = forCurrentNote && tag != null && currentNote != null;
-                    if (updateCurrent) {
-                        tableNoteTag.insertData(new NoteTag(currentNote.getNtid(), tag.getTgid()));
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        tag = tableTag.insertData(conn, new Tag(name));
+                        updateCurrent = forCurrentNote && tag != null && currentNote != null;
+                        if (updateCurrent) {
+                            tableNoteTag.insertData(conn, new NoteTag(currentNote.getNtid(), tag.getTgid()));
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
                     }
                     return tag != null;
                 }
@@ -1332,10 +1594,14 @@ public class NotesController extends BaseDataTableController<Note> {
                     popSuccessful();
                 }
 
+                @Override
+                protected void finalAction() {
+                    rightPane.setDisable(false);
+                }
+
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
+            tagTask.setSelf(tagTask);
+            Thread thread = new Thread(tagTask);
             thread.setDaemon(true);
             thread.start();
         }
@@ -1347,20 +1613,18 @@ public class NotesController extends BaseDataTableController<Note> {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            List<Tag> selected = noteTagsList.getSelectionModel().getSelectedItems();
-            List<Long> tags = new ArrayList();
-            if (selected != null) {
-                for (Tag tag : selected) {
-                    tags.add(tag.getTgid());
-                }
-            }
-            task = new SingletonTask<Void>() {
+            rightPane.setDisable(true);
+            SingletonTask noteTagsTask = new SingletonTask<Void>() {
 
                 @Override
                 protected boolean handle() {
+                    List<Tag> selected = noteTagsList.getSelectionModel().getSelectedItems();
+                    List<Long> tags = new ArrayList();
+                    if (selected != null) {
+                        for (Tag tag : selected) {
+                            tags.add(tag.getTgid());
+                        }
+                    }
                     long noteid = currentNote.getNtid();
                     try ( Connection conn = DerbyBase.getConnection();
                              PreparedStatement statement = conn.prepareStatement(TableNoteTag.DeleteNoteTags)) {
@@ -1382,19 +1646,42 @@ public class NotesController extends BaseDataTableController<Note> {
                     popSuccessful();
                 }
 
+                @Override
+                protected void finalAction() {
+                    rightPane.setDisable(false);
+                }
+
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
+            noteTagsTask.setSelf(noteTagsTask);
+            Thread thread = new Thread(noteTagsTask);
             thread.setDaemon(true);
             thread.start();
         }
     }
 
+    protected void initInterfaces() {
+        try {
+            getMyStage().toBack();
+            openHandlingStage(Modality.WINDOW_MODAL, message("FirstRunInfo"));
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        closeStage();
+                    });
+                }
+            }, 6000);
+        } catch (Exception e) {
+            closeStage();
+        }
+    }
+
+
     /*
         static methods
      */
-    public static NotesController oneOpen(boolean load) {
+    public static NotesController oneOpen() {
         NotesController controller = null;
         Stage stage = FxmlStage.findStage(message("Notes"));
         if (stage != null && stage.getUserData() != null) {
@@ -1405,11 +1692,18 @@ public class NotesController extends BaseDataTableController<Note> {
         }
         if (controller == null) {
             controller = (NotesController) FxmlStage.openStage(CommonValues.NotesFxml);
-        } else if (load) {
-            controller.refreshBooks();
         }
         if (controller != null) {
+            controller.getMyStage().toFront();
             controller.getMyStage().requestFocus();
+        }
+        return controller;
+    }
+
+    public static NotesController firstRun() {
+        NotesController controller = oneOpen();
+        if (controller != null) {
+            controller.initInterfaces();
         }
         return controller;
     }

@@ -107,7 +107,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="linkButton" layoutX="802.0" layoutY="10.0" mnemonicParsing="false" onAction="#link">
+                                                <Button fx:id="linkButton" layoutX="802.0" layoutY="10.0" mnemonicParsing="false" onAction="#openLink">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

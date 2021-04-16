@@ -595,7 +595,7 @@ public class ControlStyle {
                             message("SaveAsImages") + "\n" + message("FilePrefixInput"), "", "");
 
                 case "saveTiffButton":
-                    return new ControlStyle(id, message("SaveAsTiff"), "", "iconTiff.png");
+                    return new ControlStyle(id, message("SaveAsTiff"), "", "iconTif.png");
 
                 case "savePdfButton":
                     return new ControlStyle(id, message("SaveAsPDF"), "", "iconPDF.png");
@@ -1042,6 +1042,14 @@ public class ControlStyle {
 
         if (id.startsWith("ignore")) {
             return new ControlStyle(id, message("Ignore"), "", "iconIgnore.png");
+        }
+
+        if (id.startsWith("github")) {
+            return new ControlStyle(id, "github", "", "iconGithub.png");
+        }
+
+        if (id.startsWith("txt")) {
+            return new ControlStyle(id, message("Texts"), "", "iconTxt.png");
         }
 
         switch (id) {

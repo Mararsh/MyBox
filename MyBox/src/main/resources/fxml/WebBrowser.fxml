@@ -25,97 +25,42 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <items>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#newTabAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconAdd.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="historyButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#manageHistories">
-                                 <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/iconHistory.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconDoubleRight.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </HBox>
-                                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                    <tabs>
-                                    </tabs>
-                                </TabPane>
-                            </children>
-                            <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                            </padding>
-                        </VBox>
-                        <ScrollPane fx:id="rightPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                    <children>
-                                        <TitledPane fx:id="favoritesPane1" animated="false" layoutX="10.0" layoutY="150.0" text="%SSLCertificates">
-                                            <content>
-                                                <VBox spacing="5.0">
-                                                    <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                             <children>
-                                                <Button fx:id="ignoreButton" layoutX="32.0" layoutY="90.0" mnemonicParsing="false" onAction="#manageBypass">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconIgnore.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="sslButton" mnemonicParsing="false" onAction="#manageCertificates">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconSSL.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                                        <CheckBox fx:id="bypassCheck" mnemonicParsing="false" text="%SSLBypassAll" visible="false" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                    </children>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
-                    </items>
-                </SplitPane>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="historyButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#manageHistories">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconHistory.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#newTabAction">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconAdd.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <tabs>
+                    </tabs>
+                </TabPane>
             </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
         </VBox>
     </center>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-    <bottom>
-        <TextField fx:id="bottomText" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
-    </bottom>
 </BorderPane>

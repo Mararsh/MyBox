@@ -70,6 +70,14 @@ public class DataFileCSVController extends BaseDataFileController {
         }
     }
 
+    public void setFile(File file, boolean withName) {
+        sourceFile = file;
+        csvReadController.withNamesCheck.setSelected(withName);
+        csvReadController.commaRadio.fire();
+        initCurrentPage();
+        loadFile(true);
+    }
+
     @Override
     protected boolean readDataDefinition(boolean pickOptions) {
         try ( Connection conn = DerbyBase.getConnection()) {
@@ -114,11 +122,11 @@ public class DataFileCSVController extends BaseDataFileController {
     @Override
     protected boolean readColumns() {
         columns = new ArrayList<>();
+        sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
+                .withDelimiter(sourceDelimiter);
         if (!sourceWithNames) {
             return true;
         }
-        sourceCsvFormat = CSVFormat.DEFAULT.withIgnoreEmptyLines().withTrim().withNullString("")
-                .withDelimiter(sourceDelimiter);
         sourceCsvFormat = sourceCsvFormat.withFirstRecordAsHeader();
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
             List<String> names = parser.getHeaderNames();
@@ -256,9 +264,7 @@ public class DataFileCSVController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    if (backupController.backupCheck.isSelected()) {
-                        backupController.addBackup(sourceFile);
-                    }
+                    backup();
                     error = save(sourceFile, sourceCharset, sourceCsvFormat, sourceWithNames);
                     return error == null;
                 }

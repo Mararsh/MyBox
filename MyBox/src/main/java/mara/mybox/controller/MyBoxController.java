@@ -82,6 +82,10 @@ public class MyBoxController extends BaseController {
                             hideMenu(null);
                         }
                     });
+            if (AppVariables.getSystemConfigBoolean("MapRunFirstTime", true)) {
+                WebBrowserController.mapFirstRun();
+            }
+            AppVariables.setSystemConfigValue("MapRunFirstTime", false);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -462,14 +466,9 @@ public class MyBoxController extends BaseController {
             openStage(CommonValues.PixelsCalculatorFxml);
         });
 
-        MenuItem colorPalette = new MenuItem(AppVariables.message("ColorPaletteManage"));
-        colorPalette.setOnAction((ActionEvent event1) -> {
-            openStage(CommonValues.ColorPaletteManageFxml);
-        });
-
         MenuItem ManageColors = new MenuItem(AppVariables.message("ManageColors"));
         ManageColors.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.ManageColorsFxml);
+            ColorsManageController.oneOpen(this);
         });
 
         Menu miscellaneousMenu = new Menu(AppVariables.message("Miscellaneous"));
@@ -490,7 +489,7 @@ public class MyBoxController extends BaseController {
                 imageViewer, imagesBrowser, imageData, new SeparatorMenuItem(),
                 ImageManufacture, manufactureBatchMenu, framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageOCR, imageOCRBatch, new SeparatorMenuItem(),
-                ManageColors, colorPalette, csMenu, miscellaneousMenu);
+                ManageColors, csMenu, miscellaneousMenu);
 
         popMenu.getItems().add(new SeparatorMenuItem());
         MenuItem closeMenu = new MenuItem(message("PopupClose"));
@@ -719,8 +718,7 @@ public class MyBoxController extends BaseController {
 
         MenuItem weiboSnap = new MenuItem(AppVariables.message("WeiboSnap"));
         weiboSnap.setOnAction((ActionEvent event1) -> {
-            WeiboSnapController controller
-                    = (WeiboSnapController) loadScene(CommonValues.WeiboSnapFxml);
+            loadScene(CommonValues.WeiboSnapFxml);
         });
 
         MenuItem webBrowserHtml = new MenuItem(AppVariables.message("WebBrowser"));
@@ -728,14 +726,19 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.WebBrowserFxml);
         });
 
-        MenuItem HtmlConvertUrl = new MenuItem(AppVariables.message("HtmlConvertUrl"));
-        HtmlConvertUrl.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.HtmlConvertUrlFxml);
+        MenuItem ConvertUrl = new MenuItem(AppVariables.message("ConvertUrl"));
+        ConvertUrl.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.NetworkConvertUrlFxml);
         });
 
-        MenuItem DownloadManage = new MenuItem(AppVariables.message("DownloadManage"));
-        DownloadManage.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DownloadManageFxml);
+        MenuItem QueryAddress = new MenuItem(AppVariables.message("QueryNetworkAddress"));
+        QueryAddress.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.NetworkQueryAddressFxml);
+        });
+
+        MenuItem QueryDNSBatch = new MenuItem(AppVariables.message("QueryDNSBatch"));
+        QueryDNSBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.NetworkQueryDNSBatchFxml);
         });
 
         MenuItem DownloadFirstLevelLinks = new MenuItem(AppVariables.message("DownloadFirstLevelLinks"));
@@ -748,18 +751,13 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.SecurityCertificatesFxml);
         });
 
-        MenuItem RestoreCheckingSSLCertifications = new MenuItem(AppVariables.message("RestoreCheckingSSLCertifications"));
-        RestoreCheckingSSLCertifications.setOnAction((ActionEvent event1) -> {
-            restoreCheckingSSL();
-        });
-
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
-                HtmlConvertUrl, webBrowserHtml, new SeparatorMenuItem(),
-                SecurityCertificates, RestoreCheckingSSLCertifications
-        //                new SeparatorMenuItem(), DownloadManage
+                webBrowserHtml, new SeparatorMenuItem(),
+                QueryAddress, QueryDNSBatch, ConvertUrl, new SeparatorMenuItem(),
+                SecurityCertificates
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
@@ -897,7 +895,8 @@ public class MyBoxController extends BaseController {
                 filesFind, filesRedundancy, filesCompare, new SeparatorMenuItem(),
                 filesRename, filesCopy, filesMove, new SeparatorMenuItem(),
                 fileDeleteMenu, new SeparatorMenuItem(),
-                archiveCompressMenu, new SeparatorMenuItem(), TTC2TTF
+                archiveCompressMenu, new SeparatorMenuItem(),
+                TTC2TTF
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
@@ -1096,13 +1095,13 @@ public class MyBoxController extends BaseController {
         MenuItem EditCSV = new MenuItem(AppVariables.message("EditCSV"));
         EditCSV.setOnAction((ActionEvent event1) -> {
             DataFileCSVController c = (DataFileCSVController) loadScene(CommonValues.DataFileCSVFxml);
-            c.createAction();
+            c.newSheet(3, 3);
         });
 
         MenuItem EditExcel = new MenuItem(AppVariables.message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
             DataFileExcelController c = (DataFileExcelController) loadScene(CommonValues.DataFileExcelFxml);
-            c.createAction();
+            c.newSheet(3, 3);
         });
 
         MenuItem ExcelConvert = new MenuItem(AppVariables.message("ExcelConvert"));
@@ -1131,14 +1130,9 @@ public class MyBoxController extends BaseController {
                 EditExcel, ExcelConvert, ExcelMerge
         );
 
-        MenuItem DataTextClipboard = new MenuItem(AppVariables.message("DataTextClipboard"));
-        DataTextClipboard.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DataTextClipboardFxml);
-        });
-
-        MenuItem DataSheetClipboard = new MenuItem(AppVariables.message("DataSheetClipboard"));
-        DataSheetClipboard.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.DataSheetClipboardFxml);
+        MenuItem DataClipboard = new MenuItem(AppVariables.message("DataClipboard"));
+        DataClipboard.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DataClipboardFxml);
         });
 
         MenuItem Dataset = new MenuItem(AppVariables.message("Dataset"));
@@ -1211,15 +1205,20 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.MessageDigestFxml);
         });
 
+        MenuItem Base64Conversion = new MenuItem(AppVariables.message("Base64Conversion"));
+        Base64Conversion.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.Base64Fxml);
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                DataFile, DataTextClipboard, DataSheetClipboard, new SeparatorMenuItem(),
+                DataFile, DataClipboard, new SeparatorMenuItem(),
                 MatricesManage, MatrixUnaryCalculation, MatricesBinaryCalculation, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationData, LocationTools, new SeparatorMenuItem(),
                 EpidemicReport, new SeparatorMenuItem(),
                 barcodeCreator, barcodeDecoder, new SeparatorMenuItem(),
-                messageDigest
+                messageDigest, Base64Conversion
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

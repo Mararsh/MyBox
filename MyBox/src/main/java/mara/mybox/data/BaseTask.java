@@ -35,10 +35,7 @@ public class BaseTask<P> extends Task<P> {
             return null;
         }
         try {
-            if (!handle() || isCancelled()) {
-                ok = false;
-                return null;
-            }
+            ok = handle();
         } catch (Exception e) {
             error = e.toString();
             ok = false;
@@ -61,7 +58,9 @@ public class BaseTask<P> extends Task<P> {
         cost = new Date().getTime() - startTime.getTime();
         taskQuit();
         Platform.runLater(() -> {
-            if (ok) {
+            if (isCancelled()) {
+                whenCanceled();
+            } else if (ok) {
                 whenSucceeded();
             } else {
                 whenFailed();

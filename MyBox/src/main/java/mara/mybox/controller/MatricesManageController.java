@@ -38,7 +38,7 @@ public class MatricesManageController extends BaseController {
         super.afterSceneLoaded();
 
         listController.loadTableData();
-        editController.setManager(listController);
+//        editController.setManager(listController);
     }
 
     @Override

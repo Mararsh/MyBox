@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -399,12 +398,8 @@ public class BytesEditerController extends BaseFileEditerController {
 
             menuItem = new MenuItem(message("AsciiTable"));
             menuItem.setOnAction((ActionEvent event) -> {
-                try {
-                    browseURI(new URI("https://www.ascii-code.com/"));
-//           browseURI(new URI("https://en.wikipedia.org/wiki/ASCII"));  // this address is unavaliable to someones
-                } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
-                }
+                openLink("https://www.ascii-code.com/");
+//                   openLink("https://en.wikipedia.org/wiki/ASCII"); // this address is unavaliable to someones
             });
             popMenu.getItems().add(menuItem);
 

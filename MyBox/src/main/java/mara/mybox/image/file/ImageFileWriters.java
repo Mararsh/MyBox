@@ -239,6 +239,9 @@ public class ImageFileWriters {
                             try {
                                 frame = reader.read(readIndex);
                             } catch (Exception e) {
+                                if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
+                                    break;
+                                }
                                 frame = ImageFileReaders.readBrokenImage(e, sourcefile, readIndex);
                             }
                         }

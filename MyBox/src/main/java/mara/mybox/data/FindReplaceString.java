@@ -33,7 +33,7 @@ public class FindReplaceString {
         count = 0;
         stringRange = null;
         lastMatch = null;
-        outputString = null;
+        outputString = inputString;
         error = null;
         lastStart = lastEnd = -1;
         return this;
@@ -41,6 +41,7 @@ public class FindReplaceString {
 
     public boolean run() {
         reset();
+//        MyBoxLog.console(findString);
         if (operation == null
                 || inputString == null || inputString.isEmpty()
                 || findString == null || findString.isEmpty()) {
@@ -137,8 +138,8 @@ public class FindReplaceString {
                     }
                     matcher.region(lastStart + unit, end);
                 } else {
-//                MyBoxLog.debug(count + " " + matcher.start() + " " + matcher.end() + " " + lastMatch);
-//                MyBoxLog.debug(orignialString.substring(0, matcher.start()) + "\n----------------");
+//                    MyBoxLog.debug(count + " " + matcher.start() + " " + matcher.end() + " " + lastMatch);
+//                    MyBoxLog.debug(inputString.substring(0, matcher.start()) + "\n----------------");
                     switch (operation) {
                         case FindNext:
                             break OUTER;
@@ -147,7 +148,7 @@ public class FindReplaceString {
                             break OUTER;
                         case ReplaceAll:
                             matcher.appendReplacement(s, replaceString);
-//                    MyBoxLog.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
+//                            MyBoxLog.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
                             break;
                         default:
                             if (matcher.start() >= end) {
@@ -168,10 +169,12 @@ public class FindReplaceString {
                     matcher.appendTail(s);
                     outputString = s.toString();
 //                    MyBoxLog.debug("\n---outputString---\n" + outputString + "\n-----");
-//                    MyBoxLog.debug("orignialString:" + orignialString.length() + " resultString:" + resultString.length());
+//                    MyBoxLog.debug("inputString:" + inputString.length() + " outputString:" + outputString.length());
                 }
 //                MyBoxLog.debug(operation + " stringRange:" + stringRange.getStart() + " " + stringRange.getEnd() + " len:" + stringRange.getLength()
 //                        + " findString:>>" + findString + "<< lastMatch:>>" + lastMatch + "<<");
+            } else {
+                outputString = inputString;
             }
             return true;
         } catch (Exception e) {
@@ -186,6 +189,11 @@ public class FindReplaceString {
      */
     public static FindReplaceString create() {
         return new FindReplaceString();
+    }
+
+    public static FindReplaceString finder(boolean isRegex, boolean isCaseInsensitive) {
+        return create().setOperation(FindReplaceString.Operation.FindNext)
+                .setAnchor(0).setIsRegex(isRegex).setCaseInsensitive(isCaseInsensitive).setMultiline(true);
     }
 
     public static int count(String string, String find) {

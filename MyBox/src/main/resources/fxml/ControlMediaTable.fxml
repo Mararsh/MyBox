@@ -20,8 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMediaTable">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMediaTable">
     <children>
         <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
@@ -120,15 +119,6 @@ License:    Apache License Version 2.0
                         <ImageView fitHeight="20.0" fitWidth="20.0" onDragDetected="#saveAction" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/iconSave.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconAdd.png" />
                             </image>
                         </ImageView>
                     </graphic>

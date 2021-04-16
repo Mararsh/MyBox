@@ -80,15 +80,6 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
-                                                                                <Button fx:id="refreshBooksButton" mnemonicParsing="false" onAction="#refreshBooks">
-                                                                                    <graphic>
-                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                            <image>
-                                                                                                <Image url="@../buttons/iconRefresh.png" />
-                                                                                            </image>
-                                                                                        </ImageView>
-                                                                                    </graphic>
-                                                                                </Button>
                                                                                 <Button fx:id="deleteBookButton" mnemonicParsing="false" onAction="#deleteBook">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -98,7 +89,7 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
-                                                                                <Button fx:id="moveDataButton" layoutX="226.0" layoutY="68.0" mnemonicParsing="false" onAction="#moveBook">
+                                                                                <Button fx:id="moveDataBookButton" layoutX="226.0" layoutY="68.0" mnemonicParsing="false" onAction="#moveBook">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
@@ -116,11 +107,11 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
-                                                                                <Button fx:id="addBookButton" mnemonicParsing="false" onAction="#addBook">
+                                                                                <Button fx:id="copyBookButton" mnemonicParsing="false" onAction="#copyBook">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconAdd.png" />
+                                                                                                <Image url="@../buttons/iconCopy.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -139,7 +130,7 @@ License:    Apache License Version 2.0
                                                             <content>
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                     <children>
-                                                                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                        <FlowPane fx:id="tagsPane" alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <Button fx:id="refreshTagsButton" mnemonicParsing="false" onAction="#refreshTags">
                                                                                     <graphic>
@@ -216,7 +207,81 @@ License:    Apache License Version 2.0
                                                                             </children>
                                                                         </FlowPane>
                                                                         <ListView fx:id="tagsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                      <Label minHeight="-Infinity" text="%TagsQueryComments" wrapText="true" />
+                                                                        <Label minHeight="-Infinity" text="%TagsQueryComments" wrapText="true" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </Tab>
+                                                        <Tab text="%Time">
+                                                            <content>
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                    <children>
+                                                                        <FlowPane fx:id="timesPane" alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Button fx:id="refreshTimesButton" mnemonicParsing="false" onAction="#refreshTimes">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconRefresh.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Button fx:id="queryTimesButton" mnemonicParsing="false" onAction="#queryTimes">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconQuery.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                        <fx:include fx:id="time" source="ControlTimeTree.fxml" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </Tab>
+                                                        <Tab text="%Search">
+                                                            <content>
+                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <RadioButton fx:id="titleRadio" mnemonicParsing="false" selected="true" text="%Title">
+                                                                                    <toggleGroup>
+                                                                                        <ToggleGroup fx:id="searchGroup" />
+                                                                                    </toggleGroup>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="contentsRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Contents" toggleGroup="$searchGroup" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label text="%Include" />
+                                                                                <fx:include fx:id="search" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#search">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconQuery.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </FlowPane>
                                                                     </children>
                                                                     <padding>
                                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -253,7 +318,7 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="deleteNotesButton" mnemonicParsing="false" onAction="#deleteNotes">
+                                                        <Button fx:id="deleteNotesButton" disable="true" mnemonicParsing="false" onAction="#deleteNotes">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -262,7 +327,25 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="addNoteButton" mnemonicParsing="false" onAction="#addNote">
+                                                        <Button fx:id="moveDataNotesButton" disable="true" mnemonicParsing="false" onAction="#moveNotes">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconRef.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="copyNotesButton" disable="true" mnemonicParsing="false" onAction="#copyNotes">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconCopy.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="addBookNoteButton" mnemonicParsing="false" onAction="#addBookNote">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -278,11 +361,13 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                <VBox fx:id="notesConditionBox" spacing="5.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <FlowPane fx:id="chainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="1000.0" HBox.hgrow="ALWAYS" />
+                                                        <FlowPane fx:id="namesPane" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="5.0" HBox.hgrow="ALWAYS" />
+                                                        <CheckBox fx:id="subCheck" mnemonicParsing="false" text="%IncludeSubNotebooks" />
+                                                        <Label fx:id="conditionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
-                                                </HBox>
+                                                </VBox>
                                                 <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                                     <columns>
                                                         <TableColumn fx:id="ntidColumn" text="%ID" />
@@ -380,7 +465,20 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/iconTips.png" />
                                                     </image>
                                                 </ImageView>
-                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Label fx:id="notebookLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS">
+                                                    <padding>
+                                                        <Insets right="1.0" />
+                                                    </padding>
+                                                </Label>
+                                                <Button fx:id="addNoteButton" mnemonicParsing="false" onAction="#addNote">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconAdd.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="copyNoteButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyNote">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -410,16 +508,21 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <Label fx:id="notebookLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
-                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="5.0" VBox.vgrow="NEVER">
+                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="505.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Label text="%ID" />
-                                                <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Label minHeight="-Infinity" text="%ID" wrapText="true">
+                                                    <HBox.margin>
+                                                        <Insets />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" prefWidth="100.0" />
+                                                <Label minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
+                                                <TextField fx:id="timeInput" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="505.0" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Label text="%Title" />
+                                                <Label minHeight="-Infinity" text="%Title" wrapText="true" />
                                                 <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
@@ -510,7 +613,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                <FlowPane fx:id="noteTagsPane" alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <Button fx:id="refreshNoteTagsButton" mnemonicParsing="false" onAction="#refreshNoteTags">
                                                                             <graphic>
@@ -560,7 +663,7 @@ License:    Apache License Version 2.0
                                                                     </children>
                                                                 </FlowPane>
                                                                 <ListView fx:id="noteTagsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                <Label minHeight="-Infinity" text="%NoteTagsComments" wrapText="true" />
+                                                                <Label minHeight="-Infinity" text="%NoteTagsComments" wrapText="true" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -570,12 +673,6 @@ License:    Apache License Version 2.0
                                                 </Tab>
                                             </tabs>
                                         </TabPane>
-                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="505.0" spacing="5.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label text="%UpdateTime" />
-                                                <TextField fx:id="timeInput" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                        </HBox>
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

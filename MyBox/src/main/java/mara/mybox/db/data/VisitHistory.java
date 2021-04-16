@@ -59,6 +59,7 @@ public class VisitHistory {
         public static int Excel = 20;
         public static int CSV = 21;
         public static int Sheet = 22;
+        public static int Cert = 23;
 
         public static int None = 100;
     }

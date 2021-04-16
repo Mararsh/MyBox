@@ -1,7 +1,6 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -136,8 +135,20 @@ public class TableStringValues extends DerbyBase {
         if (name == null || name.trim().isEmpty() || max < 0) {
             return records;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return max(conn, name, max);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return records;
+    }
+
+    public static List<String> max(Connection conn, String name, int max) {
+        List<String> records = new ArrayList<>();
+        if (conn == null || name == null || name.trim().isEmpty() || max < 0) {
+            return records;
+        }
+        try ( Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='"
                     + stringValue(name) + "' ORDER BY create_time DESC";
             int count = 0;
@@ -153,10 +164,11 @@ public class TableStringValues extends DerbyBase {
                 conn.setAutoCommit(false);
                 sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name) + "'";
                 statement.executeUpdate(sql);
+                long timeBase = new Date().getTime() - 100000;
                 for (int i = 0; i < records.size(); i++) {
                     sql = "INSERT INTO String_Values(key_name, string_value , create_time) VALUES('"
                             + stringValue(name) + "', '" + stringValue(records.get(i)) + "', '"
-                            + DateTools.datetimeToString(new Date().getTime() - i * 1000) + "')";
+                            + DateTools.datetimeToString(timeBase + i * 1000) + "')";
                     statement.executeUpdate(sql);
                 }
                 conn.commit();

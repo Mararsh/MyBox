@@ -142,14 +142,15 @@ public class MyBox {
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
             if (AppVariables.MyboxDataPath != null) {
-                System.setProperty("javax.net.ssl.trustStore", SystemTools.keystore());
-                System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());
                 System.setProperty("javax.net.ssl.keyStore", SystemTools.keystore());
                 System.setProperty("javax.net.ssl.keyStorePassword", SystemTools.keystorePassword());
+                System.setProperty("javax.net.ssl.trustStore", SystemTools.keystore());
+                System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());
+                MyBoxLog.console(System.getProperty("javax.net.ssl.keyStore"));
             }
 //            System.setProperty("derby.language.logQueryPlan", "true");
 
-//            System.setProperty("jdk.tls.client.protocols", "TLSv1");
+            System.setProperty("jdk.tls.client.protocols", "TLSv1.1,TLSv1.2");
             System.setProperty("jdk.tls.server.protocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3");
 //            System.setProperty("https.protocol", "TLSv1");
 //            System.setProperty("com.sun.security.enableAIAcaIssuers", "true");

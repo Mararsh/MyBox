@@ -35,6 +35,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <ColorPicker fx:id="colorPicker" />
                 <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamples">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -50,20 +51,11 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconFlower.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconClose.png" />
+                                <Image url="@../buttons/iconCancel.png" />
                             </image>
                         </ImageView>
                     </graphic>

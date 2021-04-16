@@ -64,7 +64,7 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
     public void initControls() {
         try {
             super.initControls();
-            editController.manager = this;
+            editController.setManager(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

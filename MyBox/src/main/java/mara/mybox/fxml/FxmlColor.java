@@ -8,8 +8,10 @@ import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.color.SRGB;
 import mara.mybox.db.data.ColorData;
-import mara.mybox.db.table.TableColorData;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.image.ImageColor;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -55,11 +57,11 @@ public class FxmlColor {
         }
     }
 
-    public static String colorNameDisplay(Color color) {
+    public static String colorNameDisplay(TableColor tableColor, Color color) {
         if (color == null) {
             return "";
         }
-        ColorData data = TableColorData.read(color);
+        ColorData data = tableColor.read(color);
         if (data != null) {
             return data.display();
         }
@@ -96,6 +98,22 @@ public class FxmlColor {
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255),
                 (int) (color.getOpacity() * 255));
+    }
+
+    public static Color value2color(int value) {
+        return ImageColor.converColor(new java.awt.Color(value, true));
+    }
+
+    public static int color2Value(Color color) {
+        return ImageColor.converColor(color).getRGB();
+    }
+
+    public static int web2Value(String web) {
+        try {
+            return FxmlColor.color2Value(Color.web(web));
+        } catch (Exception e) {
+            return CommonValues.InvalidInteger;
+        }
     }
 
     public static String randomRGB() {

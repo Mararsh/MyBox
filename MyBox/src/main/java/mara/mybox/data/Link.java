@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 
@@ -15,7 +16,7 @@ public class Link {
 
     private URL url;
     private String address, addressOriginal, addressPath, addressFile,
-            title, name, file, fileParent, filename;
+            title, name, file, fileParent, filename, html;
     private int index;
     private Date dlTime;
 
@@ -41,15 +42,13 @@ public class Link {
 
     public String pageName(FilenameType nameType) {
         String pageName = null;
-        if (nameType == FilenameType.ByLinkTitle) {
-            pageName = title;
-        } else if (nameType == FilenameType.ByLinkAddress) {
-            if (getUrl() != null) {
-                pageName = HtmlTools.filePrefix(url);
-            }
+        if (nameType == null || nameType == FilenameType.ByLinkName) {
+            pageName = name != null && !name.isBlank() ? name : title;
+        } else if (nameType == FilenameType.ByLinkTitle) {
+            pageName = title != null && !title.isBlank() ? title : name;
         }
         if (pageName == null || pageName.isBlank()) {
-            pageName = name;
+            pageName = HtmlTools.filePrefix(getUrl());
         }
         return FileTools.filenameFilter(pageName);
     }
@@ -71,7 +70,7 @@ public class Link {
             suffix = (suffix == null || suffix.isBlank()) ? ".html" : suffix;
             return path + File.separator + pageName + suffix;
         } catch (Exception e) {
-//            MyBoxLog.console(e.toString());
+            MyBoxLog.console(e.toString());
             return null;
         }
     }
@@ -213,6 +212,15 @@ public class Link {
 
     public Link setFilepath(String filepath) {
         this.fileParent = filepath;
+        return this;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public Link setHtml(String html) {
+        this.html = html;
         return this;
     }
 

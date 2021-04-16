@@ -357,7 +357,8 @@ public class ControlFindReplace extends BaseController {
         findReplace = new FindReplaceFile()
                 .setFileInfo(sourceInformation)
                 .setMultiplePages(multiplePages)
-                .setPosition(position);
+                .setPosition(position)
+                .setBackupController(editerController.backupController);
         findReplace.setOperation(operation)
                 .setInputString(pageText)
                 .setFindString(findString)

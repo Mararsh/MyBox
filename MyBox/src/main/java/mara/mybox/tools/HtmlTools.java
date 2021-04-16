@@ -1,26 +1,18 @@
 package mara.mybox.tools;
 
-import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.ast.Node;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.security.SecureRandom;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,24 +22,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 import javafx.scene.control.IndexRange;
 import javafx.scene.web.WebEngine;
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import mara.mybox.controller.HtmlViewerController;
-import mara.mybox.data.DownloadHistory;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.TableDownloadHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sf.image4j.codec.ico.ICODecoder;
+import org.jsoup.Jsoup;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @Author Mara
@@ -221,97 +216,52 @@ public class HtmlTools {
         return HtmlStyle.Default;
     }
 
-    // Not include <body> and </body>
-    public static String bodyWithoutTag(String html) {
-        if (html == null) {
-            return null;
-        }
-        int from = 0, to = html.length();
-        IndexRange start = FindReplaceString.next(html, "<body", 0, true, true, false);
-        if (start != null) {
-            start = FindReplaceString.next(html, ">", start.getEnd(), false, true, false);
-            from = start.getEnd();
-        } else {
-            IndexRange headend = FindReplaceString.next(html, "</head>", 0, false, true, false);
-            if (headend != null) {
-                from = headend.getEnd();
-            }
-        }
-        IndexRange end = FindReplaceString.next(html, "</body>", from, false, true, false);
-        if (end != null) {
-            to = end.getStart();
-        } else {
-            IndexRange htmlend = FindReplaceString.next(html, "</html>", 0, false, true, false);
-            if (htmlend != null) {
-                to = htmlend.getStart();
-            }
-        }
-        return html.substring(from, to);
+    public static String body(String html) {
+        return body(html, true);
     }
 
-    // Include <body> and </body>
-    public static String body(String html) {
+    public static String body(String html, boolean withTag) {
         if (html == null) {
             return null;
         }
         int from = 0, to = html.length();
-        IndexRange start = FindReplaceString.next(html, "<body", 0, false, true, false);
+        FindReplaceString finder = FindReplaceString.finder(false, true).setInputString(html).setAnchor(0);
+        IndexRange start = null;
+        if (finder.setFindString("<body").run()) {
+            start = finder.getStringRange();
+        }
         if (start != null) {
             from = start.getStart();
+            if (!withTag) {
+                if (finder.setAnchor(from).setFindString(">").run()) {
+                    IndexRange tagEnd = finder.getStringRange();
+                    if (tagEnd != null) {
+                        from = tagEnd.getEnd();
+                    }
+                }
+            }
         } else {
-            IndexRange headend = FindReplaceString.next(html, "</head>", 0, false, true, false);
-            if (headend != null) {
-                from = headend.getEnd();
+            if (finder.setFindString("</head>").run()) {
+                IndexRange headend = finder.getStringRange();
+                if (headend != null) {
+                    from = headend.getEnd();
+                }
             }
         }
-        IndexRange end = FindReplaceString.next(html, "</body>", from, false, true, false);
+        IndexRange end = null;
+        if (finder.setFindString("</body>").run()) {
+            end = finder.getStringRange();
+        }
         if (end != null) {
-            to = end.getEnd();
+            to = withTag ? end.getEnd() : end.getStart();
         } else {
-            IndexRange htmlend = FindReplaceString.next(html, "</html>", 0, false, true, false);
-            if (htmlend != null) {
-                to = htmlend.getStart();
+            if (finder.setFindString("</html>").run()) {
+                IndexRange htmlend = finder.getStringRange();
+                if (htmlend != null) {
+                    to = htmlend.getStart();
+                }
             }
         }
-        return html.substring(from, to);
-    }
-
-    // Not include <head> and </head>
-    public static String headWithoutTag(String html) {
-        if (html == null) {
-            return null;
-        }
-        int from = 0;
-        IndexRange start = FindReplaceString.next(html, "<head", 0, false, true, false);
-        if (start == null) {
-            return null;
-        }
-        start = FindReplaceString.next(html, ">", start.getEnd(), false, true, false);
-        from = start.getEnd();
-        IndexRange end = FindReplaceString.next(html, "</head>", from, false, true, false);
-        if (end == null) {
-            return null;
-        }
-        int to = end.getStart();
-        return html.substring(from, to);
-    }
-
-    // Include <head> and </head>
-    public static String head(String html) {
-        if (html == null) {
-            return null;
-        }
-        int from = 0;
-        IndexRange start = FindReplaceString.next(html, "<head", 0, false, true, false);
-        if (start == null) {
-            return null;
-        }
-        from = start.getStart();
-        IndexRange end = FindReplaceString.next(html, "</head>", from, false, true, false);
-        if (end == null) {
-            return null;
-        }
-        int to = end.getEnd();
         return html.substring(from, to);
     }
 
@@ -326,58 +276,62 @@ public class HtmlTools {
         return html.substring(0, start.getStart());
     }
 
-    public static String title(String string) {
-        if (string == null) {
+    public static String tag(String string, String tag, boolean withTag) {
+        if (string == null || tag == null) {
             return null;
         }
-        int from = 0;
-        IndexRange start = FindReplaceString.next(string, "<title>", 0, false, true, false);
+        return tag(FindReplaceString.finder(true, true), string, tag, withTag);
+    }
+
+    public static String tag(FindReplaceString finder, String string, String tag, boolean withTag) {
+        if (finder == null || string == null || tag == null) {
+            return null;
+        }
+        finder.setInputString(string);
+        if (!finder.setAnchor(0).setFindString("<" + tag + ">|<" + tag + " ").run()) {
+            return null;
+        }
+        IndexRange start = finder.getStringRange();
         if (start == null) {
             return null;
         }
-        from = start.getEnd();
-        IndexRange end = FindReplaceString.next(string, "</title>", from, false, true, false);
+        int from = start.getStart();
+        if (!withTag) {
+            if (!finder.setAnchor(from).setFindString(">").run()) {
+                return null;
+            }
+            IndexRange tagEnd = finder.getStringRange();
+            if (tagEnd == null) {
+                return null;
+            }
+            from = tagEnd.getEnd();
+        }
+        if (!finder.setAnchor(start.getEnd()).setFindString("</" + tag + ">").run()) {
+            return null;
+        }
+        IndexRange end = finder.getStringRange();
         if (end == null) {
             return null;
         }
-        int to = end.getStart();
+        int to = withTag ? end.getEnd() : end.getStart();
         return string.substring(from, to);
     }
 
     public static String htmlTitle(String html) {
-        return title(head(html));
-    }
-
-    public static String title(File file) {
-        try {
-            if (file == null || !file.exists()) {
-                return null;
-            }
-            try (final BufferedReader reader = new BufferedReader(new FileReader(file, FileTools.charset(file)))) {
-                String line, title;
-                while ((line = reader.readLine()) != null) {
-                    title = title(line);
-                    if (title != null) {
-                        return title.isBlank() ? null : title;
-                    }
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
+        FindReplaceString finder = FindReplaceString.finder(true, true);
+        return tag(finder, tag(finder, html, "head", true), "title", false);
     }
 
     public static String charsetName(String head) {
         if (head == null) {
             return null;
         }
-        IndexRange start = FindReplaceString.next(head, "charset=", 0, false, true, false);
-        if (start == null) {
+        String flag = " charset=";
+        int from = head.indexOf(flag);
+        if (from < 0) {
             return null;
         }
-        String s = head.substring(start.getEnd()).trim();
+        String s = head.substring(from + flag.length()).trim();
         int pos = s.indexOf(">");
         if (pos < 0) {
             return null;
@@ -462,9 +416,6 @@ public class HtmlTools {
         HtmlTools.editHtml(html(title, body));
     }
 
-//    public static void editHtml(String title, String style, String body) {
-//        HtmlTools.editHtml(html(title, style, body));
-//    }
     public static HtmlViewerController viewHtml(String title, String body) {
         return FxmlStage.openHtmlViewer(null, body);
     }
@@ -520,88 +471,8 @@ public class HtmlTools {
 
     public static String setStyleValue(String html, String styleValue) {
         String title = htmlTitle(html);
-        String body = body(html);
+        String body = body(html, true);
         return htmlWithStyleValue(title, styleValue, body);
-    }
-
-    public static String downloadHttp(String address, File targetFile) {
-        try {
-            return downloadHttp(new URL(address), targetFile);
-        } catch (Exception e) {
-            return e.toString();
-        }
-    }
-
-    public static String downloadHttp(URL url, File targetFile) {
-        try {
-            if (targetFile == null || url == null) {
-                return message("InvalidParameters");
-            }
-            if ("https".equals(url.getProtocol().toLowerCase())) {
-                return downloadHttps(url, targetFile);
-            } else {
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows 2000))");
-                connection.setConnectTimeout(AppVariables.getUserConfigInt("WebConnectTimeout", 10000));
-                connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
-                connection.connect();
-                File tmpFile = FileTools.getTempFile();
-                try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                        final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                    byte[] buf = new byte[CommonValues.IOBufferLength];
-                    int len;
-                    while ((len = inStream.read(buf)) > 0) {
-                        outputStream.write(buf, 0, len);
-                    }
-                }
-                FileTools.rename(tmpFile, targetFile);
-                if (targetFile.exists()) {
-                    return null;
-                } else {
-                    return message("Failed");
-                }
-            }
-        } catch (Exception e) {
-            return e.toString();
-        }
-    }
-
-    public static String downloadHttps(URL url, File targetFile) {
-        try {
-            if (targetFile == null || url == null) {
-                return message("InvalidParameters");
-            }
-            if ("http".equals(url.getProtocol().toLowerCase())) {
-                return downloadHttp(url, targetFile);
-            }
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
-            sc.init(null, NetworkTools.trustAllManager(), new SecureRandom());
-            connection.setSSLSocketFactory(sc.getSocketFactory());
-            connection.setHostnameVerifier(NetworkTools.trustAllVerifier());
-//            connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows 2000))");
-            connection.setConnectTimeout(AppVariables.getUserConfigInt("WebConnectTimeout", 10000));
-            connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
-            connection.connect();
-            File tmpFile = FileTools.getTempFile();
-            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                byte[] buf = new byte[CommonValues.IOBufferLength];
-                int len;
-                while ((len = inStream.read(buf)) > 0) {
-                    outputStream.write(buf, 0, len);
-                }
-            }
-            FileTools.rename(tmpFile, targetFile);
-            if (targetFile.exists()) {
-                return null;
-            } else {
-                return message("Failed");
-            }
-        } catch (Exception e) {
-            return e.toString();
-        }
     }
 
     public static boolean downloadIcon(String address, File targetFile) {
@@ -610,11 +481,6 @@ public class HtmlTools {
                 return false;
             }
             URL url = new URL(address);
-//            if (TableBrowserBypassSSL.bypass(url.getHost())) {
-//                NetworkTools.trustAll();
-//            } else {
-//                NetworkTools.defaultSSL();
-//            }
             BufferedImage image = null;
             try ( InputStream in = new BufferedInputStream(url.openStream())) {
                 try {
@@ -640,7 +506,6 @@ public class HtmlTools {
                 }
                 ImageIO.write(image, format, targetFile);
             }
-//            NetworkTools.defaultSSL();
             return targetFile.exists();
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
@@ -654,18 +519,12 @@ public class HtmlTools {
                 return null;
             }
             URL url = new URL(address);
-//            if (TableBrowserBypassSSL.bypass(url.getHost())) {
-//                NetworkTools.trustAll();
-//            } else {
-//                NetworkTools.defaultSSL();
-//            }
             try ( BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
                 String inputLine;
                 StringBuilder sb = new StringBuilder();
                 while ((inputLine = in.readLine()) != null) {
                     sb.append(inputLine).append("\n");
                 }
-//                NetworkTools.defaultSSL();
                 return sb.toString();
             }
         } catch (Exception e) {
@@ -691,7 +550,7 @@ public class HtmlTools {
             String iconUrl = url.getProtocol() + "://" + url.getHost() + "/favicon.ico";
             return downloadIcon(iconUrl, targetFile);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -713,7 +572,7 @@ public class HtmlTools {
                         new File(FileTools.replaceFileSuffix(targetFile.getAbsolutePath(), suffix)));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return false;
         }
     }
@@ -745,214 +604,12 @@ public class HtmlTools {
             }
             return null;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return null;
         }
     }
 
-    public static List<Link> hrefLinksInLine(String line) {
-        try {
-            if (line == null || line.isBlank()) {
-                return null;
-            }
-            List<Link> links = new ArrayList<>();
-            int pos;
-            String string = line;
-            String address;
-            String addressOriginal;
-            String name;
-            String title = null;
-            while (!string.isBlank()) {
-                pos = string.toLowerCase().indexOf("<a ");
-                if (pos < 0) {
-                    break;
-                }
-                String aString = string.substring(pos + 2);
-                String aStringLowerCase = aString.toLowerCase();
-                pos = aStringLowerCase.indexOf(" href");
-                if (pos < 0) {
-                    string = aString.substring(pos + 5);
-                    continue;
-                }
-                String hrefString = aString.substring(pos + 5).trim();
-                if (!hrefString.startsWith("=")) {
-                    string = hrefString.substring(pos);
-                    continue;
-                }
-                hrefString = hrefString.substring(1).trim();
-                //                MyBoxLog.debug("hrefString: " + hrefString);
-                if (hrefString.startsWith("\"")) {
-                    hrefString = hrefString.substring(1);
-                    pos = hrefString.indexOf("\"");
-                    if (pos <= 0) {
-                        string = hrefString.substring(pos);
-                        continue;
-                    }
-                    addressOriginal = "\"" + hrefString.substring(0, pos) + "\"";
-                } else if (hrefString.startsWith("'")) {
-                    hrefString = hrefString.substring(1);
-                    pos = hrefString.indexOf("'");
-                    if (pos <= 0) {
-                        string = hrefString.substring(pos);
-                        continue;
-                    }
-                    addressOriginal = "'" + hrefString.substring(0, pos) + "'";
-                } else {
-                    string = hrefString;
-                    continue;
-                }
-                address = hrefString.substring(0, pos);
-                if (address.toLowerCase().startsWith("javascript:") || address.startsWith("#")) {
-                    string = hrefString.substring(pos);
-                    continue;
-                }
-                pos = aStringLowerCase.indexOf(" title");
-                if (pos >= 0) {
-                    String titleString = aString.substring(pos + 6).trim();
-                    if (titleString.startsWith("=")) {
-                        titleString = titleString.substring(1).trim();
-                        if (titleString.startsWith("\"")) {
-                            titleString = titleString.substring(1);
-                            pos = titleString.indexOf("\"");
-                            if (pos > 0) {
-                                title = titleString.substring(0, pos);
-                            }
-                        } else if (titleString.startsWith("'")) {
-                            titleString = titleString.substring(1);
-                            pos = titleString.indexOf("'");
-                            if (pos > 0) {
-                                title = titleString.substring(0, pos);
-                            }
-                        }
-                    }
-                }
-                string = "";
-                pos = aString.indexOf(">");
-                if (pos < 0) {
-                    name = "";
-                } else {
-                    String nameString = aString.substring(pos + 1);
-                    pos = nameString.toLowerCase().indexOf("</a>");
-                    if (pos < 0) {
-                        name = nameString;
-                    } else {
-                        name = nameString.substring(0, pos);
-                        string = nameString.substring(pos + 4);
-                    }
-                    //                    MyBoxLog.debug("nameString: " + nameString + " name: " + name);
-                }
-                Link alink = Link.create().setAddress(address.trim())
-                        .setAddressOriginal(addressOriginal)
-                        .setName(FileTools.filenameFilter(name.trim()))
-                        .setTitle(title == null ? null : FileTools.filenameFilter(title.trim()));
-//                MyBoxLog.debug("address: " + address + " title: " + title + " name: " + name);
-                links.add(alink);
-                if (pos < 0) {
-                    break;
-                }
-            }
-            return links;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static List<Link> openLinksInLine(String line) {
-        try {
-            if (line == null || line.isBlank()) {
-                return null;
-            }
-            List<Link> links = new ArrayList<>();
-            int pos;
-            String string = line;
-            String address;
-            String name;
-            while (!string.isBlank()) {
-                pos = string.toLowerCase().indexOf("window.open(");
-                if (pos < 0) {
-                    break;
-                }
-                String openString = string.substring(pos + 12).trim();
-                if (openString.startsWith("\"")) {
-                    openString = openString.substring(1);
-                    pos = openString.indexOf("\"");
-                    if (pos <= 0) {
-                        break;
-                    }
-                } else if (openString.startsWith("'")) {
-                    openString = openString.substring(1);
-                    pos = openString.indexOf("'");
-                    if (pos <= 0) {
-                        break;
-                    }
-                }
-                address = openString.substring(0, pos);
-                string = "";
-                pos = openString.indexOf(">");
-                if (pos < 0) {
-                    name = "";
-                } else {
-                    String nameString = openString.substring(pos + 1);
-                    pos = nameString.indexOf("<");
-                    if (pos < 0) {
-                        name = nameString;
-                    } else {
-                        name = nameString.substring(0, pos);
-                        string = nameString.substring(pos + 1);
-                    }
-                }
-                Link alink = Link.create().setAddress(address.trim()).setName(FileTools.filenameFilter(name.trim()));
-                links.add(alink);
-                if (pos < 0) {
-                    break;
-                }
-            }
-            return links;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    // Parser of flexmark-Java can do this better.
-    // Just leave these codes here cause they cost lot of my time~
-    public static List<Link> linksInFile(File file) {
-        try {
-            if (file == null || !file.exists()) {
-                return null;
-            }
-            List<Link> links = new ArrayList<>();
-            try (final BufferedReader reader = new BufferedReader(new FileReader(file, FileTools.charset(file)))) {
-                String line;
-                int index = 0;
-                while ((line = reader.readLine()) != null) {
-                    List<Link> hrefLinks = hrefLinksInLine(line);
-                    if (hrefLinks != null) {
-                        for (Link link : hrefLinks) {
-                            link.setIndex(++index);
-                            links.add(link);
-                        }
-                    }
-                    List<Link> openLinks = openLinksInLine(line);
-                    if (openLinks != null) {
-                        for (Link link : openLinks) {
-                            link.setIndex(++index);
-                            links.add(link);
-                        }
-                    }
-                }
-            }
-            return links;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static List<Link> addressLinks(Link addressLink,
-            Parser htmlParser, FlexmarkHtmlConverter mdConverter,
-            File path, Link.FilenameType nameType) {
+    public static List<Link> links(Link addressLink, File path, Link.FilenameType nameType) {
         try {
             if (addressLink == null || path == null) {
                 return null;
@@ -963,40 +620,17 @@ public class HtmlTools {
                     .setName("0000_" + path.getName()).setTitle(path.getName());
             coverLink.setIndex(0).setFile(new File(coverLink.filename(path, nameType)).getAbsolutePath());
             validLinks.add(coverLink);
-
-            String linkRoot = url.getProtocol() + "://" + url.getHost();
-            String linkPath = fullPath(url);
-
-            String html = FileTools.readTexts(new File(addressLink.getFile()));
-            String md = mdConverter.convert(html);
-            Node document = htmlParser.parse(md);
-            List<Link> links = new ArrayList<>();
-            MarkdownTools.links(document, links);
-
+            String html = addressLink.getHtml();
+            if (html == null) {
+                html = FileTools.readTexts(new File(addressLink.getFile()));
+            }
+            List<Link> links = links(url, html);
             for (Link link : links) {
-                String linkAddress = link.getAddress();
-                URL linkURL;
-                try {
-                    linkURL = new URL(linkAddress);
-                } catch (Exception e) {
-                    String fullAddress = linkAddress;
-                    if (fullAddress.startsWith("/")) {
-                        fullAddress = linkRoot + linkAddress;
-                    } else {
-                        fullAddress = linkPath + linkAddress;
-                    }
-                    try {
-                        linkURL = new URL(fullAddress);
-//                        MyBoxLog.debug(linkAddress + "   " + fullAddress);
-                    } catch (Exception ex) {
-//                        MyBoxLog.debug(linkAddress);
-                        continue;
-                    }
+                if (link.getAddress() == null) {
+                    continue;
                 }
-                link.setUrl(linkURL);
-                link.setAddress(linkURL.toString());
-
                 String filename = link.filename(path, nameType);
+
                 if (filename == null) {
                     continue;
                 }
@@ -1012,151 +646,32 @@ public class HtmlTools {
         }
     }
 
-    public static boolean relinkPage(File file) {
-        if (file == null || !file.exists()) {
-            return false;
-        }
-        try (final Connection conn = DerbyBase.getConnection();
-                final PreparedStatement filenameQeury = conn.prepareStatement(TableDownloadHistory.FilenameQeury);
-                final PreparedStatement urlQuery = conn.prepareStatement(TableDownloadHistory.UrlQeury)) {
-            return relinkPage(conn, filenameQeury, urlQuery, file, null);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean relinkPage(Connection conn,
-            PreparedStatement filenameQeury, PreparedStatement urlQuery,
-            File file, DownloadHistory fileHis) {
-        try {
-            if (file == null || !file.exists()) {
-                return false;
-            }
-            TableDownloadHistory tableDownloadHistory = new TableDownloadHistory();
-            DownloadHistory fileHistory = fileHis;
-            if (fileHis == null) {
-                fileHistory = tableDownloadHistory.query(conn, filenameQeury, file.getAbsolutePath());
-            }
-            String linkRoot = null;
-            String linkPath = null;
-            try {
-                URL url = new URL(fileHistory.getUrl());
-                linkRoot = url.getProtocol() + "://" + url.getHost();
-                linkPath = path(url);
-            } catch (Exception e) {
-            }
-            List<Link> links = new ArrayList<>();
-            File tmpFile = FileTools.getTempFile();
-            Charset charset = FileTools.charset(file);
-            try (final BufferedReader reader = new BufferedReader(new FileReader(file, charset));
-                    final BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    links.clear();
-                    List<Link> hrefLinks = hrefLinksInLine(line);
-                    if (hrefLinks != null) {
-                        links.addAll(hrefLinks);
-                    }
-                    List<Link> openLinks = openLinksInLine(line);
-                    if (openLinks != null) {
-                        links.addAll(openLinks);
-                    }
-                    String newLine = line;
-                    for (Link link : links) {
-                        String linkAddress = link.getAddress();
-                        String fullAddress = linkAddress;
-                        if (!linkAddress.toLowerCase().startsWith("http")) {
-                            if (linkAddress.startsWith("/")) {
-                                if (linkRoot == null) {
-                                    continue;
-                                }
-                                fullAddress = linkRoot + linkAddress;
-                            } else {
-                                if (linkPath == null) {
-                                    continue;
-                                }
-                                fullAddress = linkPath + linkAddress;
-                            }
-                        }
-                        DownloadHistory linkHis = tableDownloadHistory.query(conn, urlQuery, fullAddress);
-                        if (linkHis == null || linkHis.getFilename() == null) {
-                            continue;
-                        }
-                        File linkFile = new File(linkHis.getFilename());
-                        if (!linkFile.exists()) {
-                            continue;
-                        }
-                        if (linkFile.getParent().equals(file.getParent())) {
-                            newLine = newLine.replace(link.getAddressOriginal(), "\"" + linkFile.getName() + "\"");
-                        } else {
-                            newLine = newLine.replace(link.getAddressOriginal(), "\"" + linkFile.getAbsolutePath() + "\"");
-                        }
-                    }
-                    writer.write(newLine + "\n");
-                }
-            }
-            return FileTools.rename(tmpFile, file);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
     public static boolean relinkPage(File httpFile,
-            Parser htmlParser, FlexmarkHtmlConverter mdConverter,
-            Map<File, Link> completedLinks, Map<URL, File> completedAddresses) {
+            Map<File, Link> completedLinks, Map<String, File> completedAddresses) {
         try {
             if (httpFile == null || !httpFile.exists() || completedAddresses == null) {
                 return false;
             }
-            String linkRoot = null;
-            String linkPath = null;
-            try {
-                Link link = completedLinks.get(httpFile);
-                URL url = link.getUrl();
-                linkRoot = url.getProtocol() + "://" + url.getHost();
-                linkPath = path(url);
-            } catch (Exception e) {
-            }
-
+            Link baseLink = completedLinks.get(httpFile);
             String html = FileTools.readTexts(httpFile);
-            String md = mdConverter.convert(html);
-            Node document = htmlParser.parse(md);
-            List<Link> links = new ArrayList<>();
-            MarkdownTools.links(document, links);
+            List<Link> links = links(baseLink.getUrl(), html);
             String replaced = "", unchecked = html;
             int pos;
             for (Link link : links) {
                 try {
-                    String linkAddress = link.getAddress();
-                    pos = unchecked.indexOf("\"" + linkAddress + "\"");
+                    String originalAddress = link.getAddressOriginal();
+                    pos = unchecked.indexOf("\"" + originalAddress + "\"");
                     if (pos < 0) {
-                        pos = unchecked.indexOf("\'" + linkAddress + "\'");
+                        pos = unchecked.indexOf("\'" + originalAddress + "\'");
                     }
                     if (pos < 0) {
                         continue;
                     }
                     replaced += unchecked.substring(0, pos);
-                    unchecked = unchecked.substring(pos + linkAddress.length() + 2);
-                    String fullAddress = linkAddress;
-                    if (!linkAddress.toLowerCase().startsWith("http")) {
-                        if (linkAddress.startsWith("/")) {
-                            if (linkRoot == null) {
-                                continue;
-                            }
-                            fullAddress = linkRoot + linkAddress;
-                        } else {
-                            if (linkPath == null) {
-                                continue;
-                            }
-                            fullAddress = linkPath + linkAddress;
-                        }
-                    }
-                    URL url = new URL(fullAddress);
-                    File linkFile = completedAddresses.get(url);
+                    unchecked = unchecked.substring(pos + originalAddress.length() + 2);
+                    File linkFile = completedAddresses.get(link.getAddress());
                     if (linkFile == null || !linkFile.exists()) {
-                        replaced += "\"" + linkAddress + "\"";
+                        replaced += "\"" + originalAddress + "\"";
                         continue;
                     }
                     if (linkFile.getParent().startsWith(httpFile.getParent())) {
@@ -1356,7 +871,7 @@ public class HtmlTools {
             }
             Charset fileCharset = FileTools.charset(htmlFile);
             String html = FileTools.readTexts(htmlFile, fileCharset);
-            String head = headWithoutTag(html);
+            String head = tag(html, "head", true);
             if (head == null) {
                 return fileCharset;
             } else {
@@ -1378,7 +893,7 @@ public class HtmlTools {
             if (html == null) {
                 return null;
             }
-            Charset charset = charset(headWithoutTag(html));
+            Charset charset = charset(tag(html, "head", true));
             if (charset == null) {
                 return Charset.forName("UTF-8");
             } else {
@@ -1397,7 +912,7 @@ public class HtmlTools {
             }
             Charset fileCharset = FileTools.charset(htmlFile);
             String html = FileTools.readTexts(htmlFile, fileCharset);
-            String head = headWithoutTag(html);
+            String head = tag(html, "head", false);
             String preHtml = preHtml(html);
             if (head == null) {
                 if (!must && fileCharset.equals(charset)) {
@@ -1425,7 +940,7 @@ public class HtmlTools {
                         + "    <head>\n"
                         + newHead + "\n"
                         + "    </head>\n"
-                        + body(html) + "\n"
+                        + body(html, true) + "\n"
                         + "</html>";
             }
             return html;
@@ -1447,7 +962,7 @@ public class HtmlTools {
             if (ignoreOriginal) {
                 head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
             } else {
-                head = headWithoutTag(html);
+                head = tag(html, "head", false);
                 if (head == null) {
                     head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + fileCharset.name() + "\" />\n";
                 }
@@ -1459,13 +974,356 @@ public class HtmlTools {
                     + css
                     + "        </style>/>\n"
                     + "    </head>\n"
-                    + body(html) + "\n"
+                    + body(html, true) + "\n"
                     + "</html>";
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public static Charset charset(Document doc) {
+        if (doc == null) {
+            return Charset.defaultCharset();
+        }
+        NodeList nodeList = doc.getElementsByTagName("meta");
+        if (nodeList == null || nodeList.getLength() < 1) {
+            return Charset.defaultCharset();
+        }
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node == null) {
+                continue;
+            }
+            Element element = (Element) node;
+            String attr = element.getAttribute("content");
+            if (attr != null) {
+                attr = attr.toLowerCase();
+                int pos = attr.indexOf("charset=");
+                if (pos >= 0) {
+                    String charset = attr.substring(pos + "charset=".length());
+                    pos = charset.indexOf(";");
+                    if (pos >= 0) {
+                        charset = charset.substring(0, pos);
+                    }
+                    return Charset.forName(charset);
+                }
+            }
+            attr = element.getAttribute("charset");
+            if (attr != null) {
+                return Charset.forName(attr);
+            }
+        }
+        return Charset.defaultCharset();
+    }
+
+    public static String toc(Document doc, int indentSize) {
+        if (doc == null) {
+            return null;
+        }
+        NodeList nodeList = doc.getElementsByTagName("body");
+        if (nodeList == null || nodeList.getLength() < 1) {
+            return null;
+        }
+        String indent = "";
+        for (int i = 0; i < indentSize; i++) {
+            indent += " ";
+        }
+        StringBuilder s = new StringBuilder();
+        toc(nodeList.item(0), indent, s);
+        return s.toString();
+    }
+
+    public static void toc(Node node, String indent, StringBuilder s) {
+        if (node == null || s == null || indent == null) {
+            return;
+        }
+        String tag = node.getNodeName();
+        String content = node.getTextContent();
+        if (tag != null && content != null && !content.isBlank()) {
+            content += "\n";
+            if (tag.equalsIgnoreCase("h1")) {
+                s.append(content);
+            } else if (tag.equalsIgnoreCase("h2")) {
+                s.append(indent).append(content);
+            } else if (tag.equalsIgnoreCase("h3")) {
+                s.append(indent).append(indent).append(content);
+            } else if (tag.equalsIgnoreCase("h4")) {
+                s.append(indent).append(indent).append(indent).append(content);
+            } else if (tag.equalsIgnoreCase("h5")) {
+                s.append(indent).append(indent).append(indent).append(indent).append(content);
+            } else if (tag.equalsIgnoreCase("h6")) {
+                s.append(indent).append(indent).append(indent).append(indent).append(indent).append(content);
+            }
+        }
+        Node child = node.getFirstChild();
+        while (child != null) {
+            toc(child, indent, s);
+            child = child.getNextSibling();
+        }
+    }
+
+    public static String toc(String html, int indentSize) {
+        try {
+            if (html == null) {
+                return null;
+            }
+            org.jsoup.nodes.Document doc = Jsoup.parse(html);
+            if (doc == null) {
+                return null;
+            }
+            org.jsoup.nodes.Element body = doc.body();
+            if (body == null) {
+                return null;
+            }
+            String indent = "";
+            for (int i = 0; i < indentSize; i++) {
+                indent += " ";
+            }
+            StringBuilder s = new StringBuilder();
+            toc(body, indent, s);
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void toc(org.jsoup.nodes.Element element, String indent, StringBuilder s) {
+        try {
+            if (element == null || s == null || indent == null) {
+                return;
+            }
+            String tag = element.tagName();
+            String content = element.text();
+            if (tag != null && content != null && !content.isBlank()) {
+                content += "\n";
+                if (tag.equalsIgnoreCase("h1")) {
+                    s.append(content);
+                } else if (tag.equalsIgnoreCase("h2")) {
+                    s.append(indent).append(content);
+                } else if (tag.equalsIgnoreCase("h3")) {
+                    s.append(indent).append(indent).append(content);
+                } else if (tag.equalsIgnoreCase("h4")) {
+                    s.append(indent).append(indent).append(indent).append(content);
+                } else if (tag.equalsIgnoreCase("h5")) {
+                    s.append(indent).append(indent).append(indent).append(indent).append(content);
+                } else if (tag.equalsIgnoreCase("h6")) {
+                    s.append(indent).append(indent).append(indent).append(indent).append(indent).append(content);
+                }
+            }
+            org.jsoup.select.Elements children = element.children();
+            if (children == null || children.isEmpty()) {
+                return;
+            }
+            for (org.jsoup.nodes.Element child : children) {
+                toc(child, indent, s);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static List<Link> links(URL baseURL, String html) {
+        if (html == null) {
+            return null;
+        }
+        org.jsoup.nodes.Document doc = Jsoup.parse(html);
+        org.jsoup.select.Elements elements = doc.getElementsByTag("a");
+        List<Link> links = new ArrayList<>();
+        for (org.jsoup.nodes.Element element : elements) {
+            String linkAddress = element.attr("href");
+            try {
+                URL url = new URL(baseURL, linkAddress);
+                Link link = Link.create()
+                        .setUrl(url).setAddress(url.toString())
+                        .setAddressOriginal(linkAddress)
+                        .setName(element.text())
+                        .setTitle(element.attr("title"))
+                        .setIndex(links.size());
+                links.add(link);
+            } catch (Exception e) {
+//                MyBoxLog.console(linkAddress);
+            }
+        }
+        return links;
+    }
+
+    public static int frameIndex(WebEngine webEngine, String frameName) {
+        try {
+            if (frameName == null) {
+                return -1;
+            }
+            Object c = webEngine.executeScript("function checkFrameIndex(frameName) { "
+                    + "  for (i=0; i<window.frames.length; i++) { "
+                    + "     if ( window.frames[i].name == frameName ) return i ;"
+                    + "  };"
+                    + "  return -1; "
+                    + "};"
+                    + "checkFrameIndex(\"" + frameName + "\");");
+            if (c == null) {
+                return -1;
+            }
+            return ((int) c);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return -1;
+        }
+    }
+
+    public static File url2File(String urlAddress) {
+        try {
+            if (urlAddress == null) {
+                return null;
+            }
+            URL url = new URL(urlAddress);
+            File tmpFile = FileTools.getTempFile();
+            if ("https".equalsIgnoreCase(url.getProtocol())) {
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
+                sc.init(null, null, null);
+                connection.setSSLSocketFactory(sc.getSocketFactory());
+                connection.setConnectTimeout(AppVariables.getUserConfigInt("WebConnectTimeout", 10000));
+                connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
+                connection.connect();
+                if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
+                    try ( BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
+                             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                        byte[] buf = new byte[CommonValues.IOBufferLength];
+                        int len;
+                        while ((len = inStream.read(buf)) > 0) {
+                            outputStream.write(buf, 0, len);
+                        }
+                    }
+                } else {
+                    try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
+                             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                        byte[] buf = new byte[CommonValues.IOBufferLength];
+                        int len;
+                        while ((len = inStream.read(buf)) > 0) {
+                            outputStream.write(buf, 0, len);
+                        }
+                    }
+                }
+            } else {
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                connection.setRequestMethod("GET");
+//                connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+                connection.setConnectTimeout(AppVariables.getUserConfigInt("WebConnectTimeout", 10000));
+                connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
+                connection.setUseCaches(false);
+                connection.connect();
+                if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
+                    try ( BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
+                             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                        byte[] buf = new byte[CommonValues.IOBufferLength];
+                        int len;
+                        while ((len = inStream.read(buf)) > 0) {
+                            outputStream.write(buf, 0, len);
+                        }
+                    }
+                } else {
+                    try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
+                             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                        byte[] buf = new byte[CommonValues.IOBufferLength];
+                        int len;
+                        while ((len = inStream.read(buf)) > 0) {
+                            outputStream.write(buf, 0, len);
+                        }
+                    }
+                }
+            }
+            return tmpFile;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String url2text(String urlAddress) {
+        File tmpFile = url2File(urlAddress);
+        if (tmpFile == null) {
+            return null;
+        }
+        return FileTools.readTexts(tmpFile);
+    }
+
+    public static org.jsoup.nodes.Document url2doc(String urlAddress) {
+        try {
+            String html = url2text(urlAddress);
+            if (html == null) {
+                return null;
+            }
+            return Jsoup.parse(html);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static org.jsoup.nodes.Document file2doc(File file) {
+        try {
+            String html = FileTools.readTexts(file);;
+            if (html == null) {
+                return null;
+            }
+            return Jsoup.parse(html);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static String checkURL(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String address = value;
+        String addressS = address.toLowerCase();
+        if (addressS.startsWith("file:/")
+                || addressS.startsWith("http://")
+                || addressS.startsWith("https://")) {
+
+        } else if (address.startsWith("//")) {
+            address = "http:" + value;
+        } else {
+            File file = new File(address);
+            if (file.exists()) {
+                address = file.toURI().toString();
+            } else {
+                address = "http://" + value;
+            }
+        }
+        address = decodeURL(address);
+        return address;
+    }
+
+    public static String decodeURL(String value) {
+        if (value == null) {
+            return null;
+        }
+        return URLDecoder.decode(value, Charset.forName("UTF-8"));
+    }
+
+    public static String decodeURL(File file) {
+        if (file == null) {
+            return null;
+        }
+        return decodeURL(file.toURI().toString());
+    }
+
+    public static String encodeEscape(String string) {
+        if (string == null) {
+            return null;
+        }
+        return string.replaceAll("&", "&amp;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll("\\s", "&nbsp;")
+                .replaceAll("©", "&copy;")
+                .replaceAll("®", "&reg;")
+                .replaceAll("™", "&trade;");
     }
 
 }

@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Locale;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
-import mara.mybox.db.table.TableBrowserBypassSSL;
 import mara.mybox.db.table.TableBrowserHistory;
-import mara.mybox.db.table.TableColorData;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
+import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
@@ -504,12 +505,6 @@ public class DerbyBase {
             if (!tables.contains("Browser_History".toUpperCase())) {
                 new TableBrowserHistory().init(conn);
             }
-            if (!tables.contains("Browser_Bypass_SSL".toUpperCase())) {
-                new TableBrowserBypassSSL().init(conn);
-            }
-            if (!tables.contains("Color_Data".toUpperCase())) {
-                new TableColorData().init(conn);
-            }
             if (!tables.contains("Geography_Code".toUpperCase())) {
                 new TableGeographyCode().createTable(conn);
             }
@@ -560,6 +555,15 @@ public class DerbyBase {
             }
             if (!tables.contains("Note_Tag".toUpperCase())) {
                 new TableNoteTag().createTable(conn);
+            }
+            if (!tables.contains("Color".toUpperCase())) {
+                new TableColor().createTable(conn);
+            }
+            if (!tables.contains("Color_Palette_Name".toUpperCase())) {
+                new TableColorPaletteName().createTable(conn);
+            }
+            if (!tables.contains("Color_Palette".toUpperCase())) {
+                new TableColorPalette().createTable(conn);
             }
             return true;
         } catch (Exception e) {
@@ -656,6 +660,13 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
+            if (!indexes.contains("Notebook_owner_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableNotebook.Create_Owner_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
             if (!indexes.contains("Tag_unique_index".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTag.Create_Unique_Index);
@@ -666,6 +677,27 @@ public class DerbyBase {
             if (!indexes.contains("Note_Tag_unique_index".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableNoteTag.Create_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Color_rgba_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableColor.Create_RGBA_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Color_Palette_Name_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableColorPaletteName.Create_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Color_Palette_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableColorPalette.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
@@ -698,6 +730,13 @@ public class DerbyBase {
             if (!views.contains("Data_Column_View".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableDataColumn.CreateView);
+                } catch (Exception e) {
+//                    MyBoxLog.error(e);
+                }
+            }
+            if (!views.contains("Color_Palette_View".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableColorPalette.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }

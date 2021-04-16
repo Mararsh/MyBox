@@ -1,11 +1,9 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.DerbyBase;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -18,6 +16,7 @@ import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.ImageScope.ColorScopeType;
@@ -239,13 +238,15 @@ public class TableImageScope extends DerbyBase {
                 case CircleColor:
                 case EllipseColor:
                 case PolygonColor: {
-                    String[] items = colorData.split(DataSeparator);
                     List<Color> colors = new ArrayList<>();
-                    for (String item : items) {
-                        try {
-                            colors.add(new Color((int) Double.parseDouble(item)));
-                        } catch (Exception e) {
-                            MyBoxLog.error(e);
+                    if (colorData != null && !colorData.isBlank()) {
+                        String[] items = colorData.split(DataSeparator);
+                        for (String item : items) {
+                            try {
+                                colors.add(new Color(Integer.parseInt(item), true));
+                            } catch (Exception e) {
+                                MyBoxLog.error(e);
+                            }
                         }
                     }
                     scope.setColors(colors);

@@ -111,6 +111,13 @@ public class DataFileExcelController extends BaseDataFileController {
         super.initCurrentPage();
     }
 
+    public void setFile(File file, boolean withName) {
+        sourceFile = file;
+        sourceWithNamesCheck.setSelected(withName);
+        initCurrentPage();
+        loadFile(true);
+    }
+
     @Override
     public void initFile() {
         sheetNames = null;
@@ -415,9 +422,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
                 @Override
                 protected boolean handle() {
-                    if (backupController.backupCheck.isSelected()) {
-                        backupController.addBackup(sourceFile);
-                    }
+                    backup();
                     error = save(sourceFile, sourceWithNames);
                     return error == null;
                 }

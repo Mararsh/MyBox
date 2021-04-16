@@ -327,6 +327,22 @@ public class WeiboSnapRunController extends BaseController {
 
     public void start(final WeiboSnapParameters parameters) {
         try {
+            setValues(parameters);
+//            MyBoxLog.debug(parameters.getWebAddress());
+            if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
+                closeStage();
+                return;
+            }
+            loadMain();
+
+        } catch (Exception e) {
+            alertError(e.toString());
+            closeStage();
+        }
+    }
+
+    public void setValues(final WeiboSnapParameters parameters) {
+        try {
             this.parameters = parameters;
 
             MinAccessInterval = parameters.getLoadInterval();  // To avoid 414
@@ -345,12 +361,6 @@ public class WeiboSnapRunController extends BaseController {
                 maxMergedSize = -1;
             } else {
                 maxMergedSize = 500 * 1024 * 1024L;
-            }
-
-//            MyBoxLog.debug(parameters.getWebAddress());
-            if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
-                closeStage();
-                return;
             }
 
             savedHtmlCount = savedMonthPdfCount = savedPagePdfCount = completedMonthsCount = savedPixCount = retried = 0;
@@ -379,8 +389,6 @@ public class WeiboSnapRunController extends BaseController {
             }
             myStage.setY(0);
             myStage.setHeight(primaryScreenBounds.getHeight());
-
-            loadMain();
 
         } catch (Exception e) {
             alertError(e.toString());

@@ -5,7 +5,6 @@ import com.github.kokorin.jaffree.ffprobe.Stream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +24,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
@@ -993,7 +991,7 @@ public class ControlFFmpegOptions extends BaseController {
             table.newLinkRow("CapturingDesktopScreenRecording", "http://trac.ffmpeg.org/wiki/Capture/Desktop");
 
             File htmFile = HtmlTools.writeHtml(table.html());
-            FxmlStage.browseURI(getMyStage(), htmFile.toURI());
+            openLink(htmFile.toURI().toString());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1015,11 +1013,7 @@ public class ControlFFmpegOptions extends BaseController {
 
     @FXML
     public void download() {
-        try {
-            browseURI(new URI("http://ffmpeg.org/download.html"));
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        openLink("http://ffmpeg.org/download.html");
     }
 
 }

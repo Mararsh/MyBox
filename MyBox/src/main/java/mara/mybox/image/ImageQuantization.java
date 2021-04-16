@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -156,7 +157,7 @@ public class ImageQuantization extends PixelsOperation {
                 int red = (int) Math.round(color.getRed() * 255);
                 int green = (int) Math.round(color.getGreen() * 255);
                 int blue = (int) Math.round(color.getBlue() * 255);
-                row.addAll(Arrays.asList((id++) + "", count.count + "",
+                row.addAll(Arrays.asList((id++) + "", StringTools.format(count.count),
                         (int) (count.count * 100 / totalCount) + "%",
                         FxmlColor.color2rgba(color), red + " ", green + " ", blue + " ",
                         (int) Math.round(color.getOpacity() * 100) + "%",

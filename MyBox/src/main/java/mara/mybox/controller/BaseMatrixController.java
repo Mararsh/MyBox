@@ -44,7 +44,7 @@ public class BaseMatrixController extends BaseSheetController {
     protected ControlMatricesList manager;
     protected TableMatrixCell tableMatrixCell;
     protected BaseTable tableMatrix;
-    protected int colsNumber, rowsNumber, maxRandom;
+    protected int maxRandom;
     protected short scale;
 
     @FXML
@@ -466,9 +466,10 @@ public class BaseMatrixController extends BaseSheetController {
 
     @FXML
     public void copyMatrixAction() {
-        dataChanged(false);
+//        dataChanged(false);
         createAction();
-        saveAction();
+        nameInput.setText(nameInput.getText() + " " + message("Copy"));
+//        saveAction();
     }
 
     @Override

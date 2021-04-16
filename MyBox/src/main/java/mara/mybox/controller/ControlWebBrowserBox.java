@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
@@ -19,9 +18,12 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableBrowserHistory;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -33,7 +35,7 @@ public class ControlWebBrowserBox extends ControlWebview {
 
     protected Tab tab;
     protected String status;
-    protected boolean bypassSSL, fetchIcon;
+    protected boolean fetchIcon;
     protected BrowserHistory his;
 
     @FXML
@@ -41,7 +43,7 @@ public class ControlWebBrowserBox extends ControlWebview {
     @FXML
     protected HBox addressBox;
     @FXML
-    protected Button settingsButton;
+    protected Button historyButton;
 
     public ControlWebBrowserBox() {
         baseTitle = AppVariables.message("WebBrowser");
@@ -81,7 +83,7 @@ public class ControlWebBrowserBox extends ControlWebview {
 
     public void setBrowser(BaseController parent, Tab tab) {
         setValues(parent, true, true);
-        addressBox.getChildren().remove(settingsButton);
+        addressBox.getChildren().remove(historyButton);
         this.tab = tab;
         fetchIcon = true;
     }
@@ -102,29 +104,30 @@ public class ControlWebBrowserBox extends ControlWebview {
             return;
         }
         sourceFile = file;
-        setAddress(URLDecoder.decode(file.toURI().toString()));
+        setAddress(HtmlTools.decodeURL(file));
     }
 
     @FXML
     @Override
     public void goAction() {
         try {
-            address = urlBox.getEditor().getText();
+            String value = urlBox.getEditor().getText();
             if (parentController != null && parentController instanceof BaseHtmlController) {
                 ((BaseHtmlController) parentController).updateTitle(false);
             }
-            if (address == null || address.isBlank()) {
+            if (value == null || value.isBlank()) {
+                popError(message("InvalidData"));
                 return;
             }
             URL url;
             try {
+                setAddress(value);
                 url = new URL(address);
                 urlBox.getEditor().setStyle(null);
             } catch (Exception e) {
                 urlBox.getEditor().setStyle(badStyle);
                 return;
             }
-            setAddress(address);
 
             webEngine.getLoadWorker().cancel();
             bottomLabel.setText(AppVariables.message("Loading..."));
@@ -227,8 +230,26 @@ public class ControlWebBrowserBox extends ControlWebview {
     }
 
     @FXML
-    public void setting() {
+    public void manageHistories() {
         WebBrowserController.oneOpen(true);
+    }
+
+    @FXML
+    @Override
+    public void infoAction() {
+        try {
+            String value = urlBox.getEditor().getText();
+            if (value == null || value.isBlank()) {
+                popError(message("InvalidData"));
+                return;
+            }
+            NetworkQueryAddressController controller
+                    = (NetworkQueryAddressController) FxmlStage.openStage(CommonValues.NetworkQueryAddressFxml);
+            controller.queryUrl(value);
+        } catch (Exception e) {
+            popError(message("InvalidData"));
+        }
+
     }
 
 }

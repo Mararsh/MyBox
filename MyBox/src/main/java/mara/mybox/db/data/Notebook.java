@@ -97,32 +97,36 @@ public class Notebook extends BaseData {
         return nbid;
     }
 
-    public void setNbid(long nbid) {
+    public Notebook setNbid(long nbid) {
         this.nbid = nbid;
+        return this;
     }
 
     public long getOwner() {
         return owner;
     }
 
-    public void setOwner(long owner) {
+    public Notebook setOwner(long owner) {
         this.owner = owner;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Notebook setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public Notebook setDescription(String description) {
         this.description = description;
+        return this;
     }
 
 }

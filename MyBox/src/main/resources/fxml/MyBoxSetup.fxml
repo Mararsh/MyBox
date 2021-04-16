@@ -54,7 +54,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Label text="%DataDirectory" />
+                                                <Label minHeight="-Infinity" text="%DataDirectory" wrapText="true" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">

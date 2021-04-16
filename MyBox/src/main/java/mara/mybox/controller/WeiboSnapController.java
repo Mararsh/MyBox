@@ -23,7 +23,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
@@ -68,7 +67,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     protected CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck,
-            bypassSSLCheck, likeCheck, postsCheck;
+            likeCheck, postsCheck;
     @FXML
     protected RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
@@ -114,13 +113,13 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void initWebOptions() {
+
         addressList = TableStringValues.max("WeiBoAddress", 20);
 
         addressBox.getItems().addAll(addressList);
         addressBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                 if (isSettingValues || newValue == null || newValue.trim().isEmpty()) {
                     return;
                 }
@@ -172,11 +171,8 @@ public class WeiboSnapController extends BaseController {
                             webAddress = "";
                         }
                     }
-                ;
+                });
             }
-        );
-
-        }
         });
         addressBox.getSelectionModel().select(0);
         if (!addressList.contains(exmapleAddress)) {
@@ -267,24 +263,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
         expandPicturesCheck.setSelected(AppVariables.getUserConfigBoolean(WeiboExpandPicturesKey));
-
-        bypassSSLCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                AppVariables.setUserConfigValue("SSLBypassAll", newv);
-                if (newv) {
-                    NetworkTools.trustAll();
-                } else {
-                    NetworkTools.myBoxSSL();
-                }
-            }
-        });
-        bypassSSLCheck.setSelected(AppVariables.getUserConfigBoolean("SSLBypassAll", false));
-        if (bypassSSLCheck.isSelected()) {
-            NetworkTools.trustAll();
-        } else {
-            NetworkTools.myBoxSSL();
-        }
 
     }
 
@@ -903,7 +881,6 @@ public class WeiboSnapController extends BaseController {
                 .or(addressBox.getSelectionModel().selectedItemProperty().isNull())
                 .or(widthBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(pdfCheck.styleProperty().isEqualTo(badStyle))
-        //                .or(bypassSSLCheck.selectedProperty().not())
         );
 
     }
@@ -960,9 +937,30 @@ public class WeiboSnapController extends BaseController {
     }
 
     @FXML
+    protected void initWebview() {
+        WebBrowserController.weiboSnapFirstRun();
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+
+            // Webview need be initialized for weibo.com.
+            if (AppVariables.getSystemConfigBoolean("WeiboRunFirstTime", true)) {
+                initWebview();
+            }
+            AppVariables.setSystemConfigValue("WeiboRunFirstTime", false);
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
     @Override
     public void startAction() {
-        makeParameters();
+        makeParameters(webAddress);
         if (parameters == null) {
             popError(AppVariables.message("ParametersError"));
             return;
@@ -976,7 +974,7 @@ public class WeiboSnapController extends BaseController {
             addressBox.setValue(exmapleAddress);
             webAddress = exmapleAddress;
         }
-        makeParameters();
+        makeParameters(webAddress);
         if (parameters == null) {
             popError(AppVariables.message("ParametersError"));
             return;
@@ -1003,13 +1001,10 @@ public class WeiboSnapController extends BaseController {
         pngRadio.setSelected(true);
     }
 
-    private WeiboSnapParameters makeParameters() {
+    protected WeiboSnapParameters makeParameters(String address) {
         try {
-            if (webAddress == null || webAddress.isEmpty()) {
-                return null;
-            }
             parameters = new WeiboSnapParameters();
-            parameters.setWebAddress(webAddress);
+            parameters.setWebAddress(address);
             if (startMonth == null) {
                 startMonth = DateTools.parseMonth("2009-08");
             }
@@ -1067,13 +1062,9 @@ public class WeiboSnapController extends BaseController {
 
     protected void startSnap() {
         try {
-            if (parameters == null) {
+            if (webAddress == null || webAddress.isEmpty() || parameters == null) {
                 popError(AppVariables.message("ParametersError"));
                 return;
-            }
-
-            if (AppVariables.getUserConfigBoolean("SSLBypassAll", false)) {
-                NetworkTools.trustAll();
             }
 
             if (postsCheck.isSelected()) {

@@ -98,6 +98,9 @@ public class ImageFileReaders {
                 try {
                     frame = reader.read(index, param);
                 } catch (Exception e) {
+                    if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
+                        break;
+                    }
                     frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
                 }
                 if (frame != null) {
@@ -148,6 +151,9 @@ public class ImageFileReaders {
                 try {
                     frame = reader.read(index, param);
                 } catch (Exception e) {
+                    if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
+                        break;
+                    }
                     frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
                 }
                 if (frame != null) {
@@ -203,6 +209,9 @@ public class ImageFileReaders {
                     }
                     frame = reader.read(index, param);
                 } catch (Exception e) {
+                    if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
+                        break;
+                    }
                     frame = readBrokenImage(e, new File(filename), index, bounds, realXScale, realYScale);
                 }
                 if (frame != null) {
@@ -460,7 +469,6 @@ public class ImageFileReaders {
         }
         BufferedImage image = null;
         String format = imageInfo.getImageFormat();
-        MyBoxLog.error(bounds != null);
         switch (format) {
             case "gif":
                 // Read Gif with JDK api normally. When broken, use DhyanB's API.
@@ -516,33 +524,42 @@ public class ImageFileReaders {
             if (readers.hasNext()) {
                 ImageReader reader = readers.next();
                 reader.setInput(iis, false);
-                int num = reader.getNumImages(true);
-                fileInfo.setNumberOfImages(num);
+                int index = 0;
                 String format = reader.getFormatName().toLowerCase();
                 fileInfo.setImageFormat(format);
-
                 List<ImageInformation> imagesInfo = new ArrayList<>();
-                for (int i = 0; i < num; ++i) {
-                    ImageInformation imageInfo = ImageInformation.create(format, file);
+                ImageInformation imageInfo = null;
+                while (true) {
+                    int width;
+                    try {
+                        width = reader.getWidth(index);
+                    } catch (Exception e) {
+                        break;
+                    }
+                    if (imageInfo != null) {
+                        imageInfo.setIsMultipleFrames(true);
+                    }
+                    imageInfo = ImageInformation.create(format, file);
                     imageInfo.setImageFileInformation(fileInfo);
                     imageInfo.setImageFormat(format);
                     imageInfo.setFileName(fileInfo.getFileName());
                     imageInfo.setCreateTime(fileInfo.getCreateTime());
                     imageInfo.setModifyTime(fileInfo.getModifyTime());
                     imageInfo.setFileSize(fileInfo.getFileSize());
-                    imageInfo.setWidth(reader.getWidth(i));
-                    imageInfo.setHeight(reader.getHeight(i));
-                    imageInfo.setIsMultipleFrames(num > 1);
-                    imageInfo.setIsTiled(reader.isImageTiled(i));
-                    imageInfo.setIndex(i);
+                    imageInfo.setWidth(width);
+                    imageInfo.setHeight(reader.getHeight(index));
+                    imageInfo.setPixelAspectRatio(reader.getAspectRatio(index));
 
-                    Iterator<ImageTypeSpecifier> types = reader.getImageTypes(i);
+                    imageInfo.setIsTiled(reader.isImageTiled(index));
+                    imageInfo.setIndex(index);
+
+                    Iterator<ImageTypeSpecifier> types = reader.getImageTypes(index);
                     List<ImageTypeSpecifier> typesValue = new ArrayList<>();
                     if (types != null) {
                         while (types.hasNext()) {
                             typesValue.add(types.next());
                         }
-                        ImageTypeSpecifier imageType = reader.getRawImageType(i);
+                        ImageTypeSpecifier imageType = reader.getRawImageType(index);
                         ColorModel colorModel = null;
                         if (imageType != null) {
                             imageInfo.setRawImageType(imageType);
@@ -562,28 +579,33 @@ public class ImageFileReaders {
                     }
                     imageInfo.setImageTypeSpecifiers(typesValue);
                     try {
-                        imageInfo.setPixelAspectRatio(reader.getAspectRatio(i));
+                        imageInfo.setPixelAspectRatio(reader.getAspectRatio(index));
                     } catch (Exception e) {
                         MyBoxLog.console(e.toString());
                     }
                     try {
-                        imageInfo.setHasThumbnails(reader.hasThumbnails(i));
-                        imageInfo.setNumberOfThumbnails(reader.getNumThumbnails(i));
+                        imageInfo.setHasThumbnails(reader.hasThumbnails(index));
+                        imageInfo.setNumberOfThumbnails(reader.getNumThumbnails(index));
                     } catch (Exception e) {
                         MyBoxLog.console(e.toString());
                     }
                     try {
-                        readImageMetaData(format, imageInfo, reader.getImageMetadata(i));
+                        readImageMetaData(format, imageInfo, reader.getImageMetadata(index));
                     } catch (Exception e) {
                         MyBoxLog.console(e.toString());
                     }
                     ImageInformation.countMaxWidth(imageInfo);
                     imagesInfo.add(imageInfo);
+                    index++;
+                }
+                if (imageInfo != null) {
+                    imageInfo.setIsMultipleFrames(index > 1);
                 }
                 fileInfo.setImagesInformation(imagesInfo);
                 if (!imagesInfo.isEmpty()) {
                     fileInfo.setImageInformation(imagesInfo.get(0));
                 }
+                fileInfo.setNumberOfImages(index);
                 reader.dispose();
             }
 

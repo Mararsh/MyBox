@@ -85,6 +85,9 @@ License:    Apache License Version 2.0
                                             </content>
                                         </ScrollPane>
                                     </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -117,6 +120,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                                <ComboBox fx:id="frameSelector" prefWidth="240.0" />
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="panesMenuButton" layoutX="441.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
                                                     <graphic>
@@ -218,21 +222,73 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <HBox fx:id="htmlBox1" alignment="CENTER_LEFT" spacing="5.0">
+                                                                <fx:include fx:id="links" source="ControlWebview.fxml" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="imagesTab" text="%Images">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <fx:include fx:id="images" source="ControlWebview.fxml" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="elementsTab" text="%Elements">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
-                                                                        <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
+                                                                        <RadioButton fx:id="tagRadio" layoutX="716.0" layoutY="19.0" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Tag" wrapText="true">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="elementGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <RadioButton fx:id="idRadio" minHeight="-Infinity" mnemonicParsing="false" text="%ID" toggleGroup="$elementGroup" wrapText="true" />
+                                                                        <RadioButton fx:id="nameRadio" layoutX="716.0" layoutY="19.0" minHeight="-Infinity" mnemonicParsing="false" text="%Name" toggleGroup="$elementGroup" wrapText="true" />
+                                                                        <fx:include fx:id="elementInput" prefWidth="200.0" source="ControlStringSelector.fxml" />
+                                                                        <Button fx:id="queryElementButton" mnemonicParsing="false" onAction="#queryElement">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
-                                                                                        <Image url="@../buttons/iconStyle.png" />
+                                                                                        <Image url="@../buttons/iconQuery.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                     </children>
                                                                 </HBox>
-                                                                <WebView fx:id="linksWebview" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                                                                <fx:include fx:id="element" source="ControlWebview.fxml" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="findTab" text="%Find">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
+                                                                        <fx:include fx:id="findColor" source="ColorSet.fxml" />
+                                                                        <Label layoutX="10.0" layoutY="19.0" minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
+                                                                        <fx:include fx:id="findBgColor" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="findInput" source="ControlStringSelector.fxml" />
+                                                                        <Button fx:id="queryFindButton" mnemonicParsing="false" onAction="#findString">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconQuery.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                                <fx:include fx:id="find" source="ControlWebview.fxml" />
                                                             </children>
                                                         </VBox>
                                                     </content>
@@ -249,6 +305,9 @@ License:    Apache License Version 2.0
                                             </tabs>
                                         </TabPane>
                                     </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>

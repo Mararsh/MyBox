@@ -420,13 +420,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     }
 
     public void addColors() {
-        if (quantizationColors == null || quantizationColors.isEmpty()) {
-            return;
-        }
-        ColorPaletteManageController controller = ColorPaletteManageController.oneOpen();
-        if (controller != null) {
-            controller.addColors(quantizationColors);
-        }
+        ColorsManageController.addColors(quantizationColors);
     }
 
 }

@@ -1,41 +1,66 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
+import javafx.stage.Window;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
+import mara.mybox.db.data.ColorPalette;
+import mara.mybox.db.data.ColorPaletteName;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
-import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.db.table.TableColorData;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
+import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
+import static mara.mybox.fxml.FxmlStage.initController;
 import mara.mybox.fxml.TableColorCell;
-import mara.mybox.image.ImageColor;
-import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -48,6 +73,17 @@ import thridparty.TableAutoCommitCell;
  */
 public class ColorsManageController extends BaseDataTableController<ColorData> {
 
+    protected TableColorPaletteName tableColorPaletteName;
+    protected TableColorPalette tableColorPalette;
+    protected TableColor tableColor;
+    protected ColorPaletteName currentPalette;
+    protected double rectSize;
+    protected Rectangle clickedRect, enteredRect;
+    protected DropShadow shadowEffect;
+    protected boolean pickMode = false;
+
+    @FXML
+    protected ControlColorPaletteSelector palettesController;
     @FXML
     protected TableColumn<ColorData, Integer> colorValueColumn;
     @FXML
@@ -58,18 +94,97 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn, CalculatedCMYKColumn,
             ECICMYKColumn, AdobeCMYKColumn, XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn;
     @FXML
-    protected TableColumn<ColorData, Boolean> inPaletteColumn;
+    protected TableColumn<ColorData, Float> orderColumn;
     @FXML
-    protected Button htmlButton, inButton, outButton;
-    @FXML
-    protected ColorPicker colorPicker;
+    protected Button deletePaletteButton, renamePaletteButton, addPaletteButton,
+            copyPaletteButton, addColorsButton, trimButton;
     @FXML
     protected CheckBox mergeCheck, allColumnsCheck;
     @FXML
-    protected ColorImportController colorImportController;
+    protected Label paletteLabel, colorsPaneLabel;
+    @FXML
+    protected TabPane paletteTabPane;
+    @FXML
+    protected Tab dataTab, colorsTab;
+    @FXML
+    protected FlowPane buttonsPane, colorsPane;
+    @FXML
+    protected TextArea colorArea;
+    @FXML
+    protected VBox colorsBox;
 
     public ColorsManageController() {
         baseTitle = AppVariables.message("ManageColors");
+        TipsLabelKey = "ColorsManageTips";
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            tableColorPaletteName = new TableColorPaletteName();
+            tableColorPalette = new TableColorPalette();
+            tableColor = new TableColor();
+            tableColorPalette.setTableColor(tableColor);
+            rectSize = AppVariables.iconSize * 0.8;
+            shadowEffect = new DropShadow();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.CSV);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            buttonsPane.getChildren().remove(topCheck);
+
+            palettesController.setParent(this);
+            palettesController.palettesList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (event != null && event.getButton() == MouseButton.SECONDARY) {
+                        popPaletteMenu(event);
+                    }
+                }
+            });
+
+            palettesController.palettesList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends ColorPaletteName> ov, ColorPaletteName t, ColorPaletteName t1) -> {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
+                        boolean isAll = isAllColors();
+                        deletePaletteButton.setDisable(isAll);
+                        renamePaletteButton.setDisable(isAll);
+                        copyPaletteButton.setDisable(isAll);
+                        trimButton.setDisable(isAll);
+                        if (!isAll) {
+                            AppVariables.setUserConfigValue(baseName + "Palette", currentPalette.getName());
+                        }
+                        refreshPalette();
+                    });
+
+            paletteTabPane.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) -> {
+                        if (newTab == dataTab) {
+                            deleteButton.setDisable(tableView.getSelectionModel().getSelectedItem() == null);
+                        } else {
+                            deleteButton.setDisable(clickedRect == null);
+                        }
+                    });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -80,33 +195,38 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
 
             colorValueColumn.setCellValueFactory(new PropertyValueFactory<>("colorValue"));
 
+            orderColumn.setCellValueFactory(new PropertyValueFactory<>("orderNumner"));
+            orderColumn.setCellFactory(TableAutoCommitCell.forFloatColumn());
+            orderColumn.setOnEditCommit((TableColumn.CellEditEvent<ColorData, Float> t) -> {
+                if (t == null || isAllColors()) {
+                    return;
+                }
+                ColorData row = t.getRowValue();
+                row.setOrderNumner(t.getNewValue());
+                tableColorPalette.setOrder(currentPalette.getCpnid(), row, t.getNewValue());
+                refreshPalette();
+            });
+            orderColumn.getStyleClass().add("editable-column");
+
             colorNameColumn.setCellValueFactory(new PropertyValueFactory<>("colorName"));
-            colorNameColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
+            colorNameColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
             colorNameColumn.setOnEditCommit((TableColumn.CellEditEvent<ColorData, String> t) -> {
                 if (t == null) {
                     return;
                 }
                 ColorData row = t.getRowValue();
                 row.setColorName(t.getNewValue());
-                TableColorData.setName(row.getRgba(), t.getNewValue());
+                if (currentPalette != null) {
+                    tableColorPalette.setName(currentPalette.getCpnid(), row, t.getNewValue());
+                } else {
+                    tableColor.setName(row.getRgba(), t.getNewValue());
+                }
+                refreshPalette();
             });
             colorNameColumn.getStyleClass().add("editable-column");
 
             colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
             colorColumn.setCellFactory(new TableColorCell<>());
-
-            inPaletteColumn.setCellValueFactory(new PropertyValueFactory<>("inPalette"));
-            inPaletteColumn.setCellFactory((TableColumn<ColorData, Boolean> p) -> {
-                CheckBoxTableCell<ColorData, Boolean> cell = new CheckBoxTableCell<>();
-                cell.setSelectedStateCallback(new Callback<Integer, ObservableValue<Boolean>>() {
-                    @Override
-                    public ObservableValue<Boolean> call(Integer index) {
-                        return tableData.get(index).getInPaletteProperty();
-                    }
-                });
-                return cell;
-            });
-            inPaletteColumn.getStyleClass().add("editable-column");
 
             rgbaColumn.setCellValueFactory(new PropertyValueFactory<>("rgba"));
             rgbColumn.setCellValueFactory(new PropertyValueFactory<>("rgb"));
@@ -135,22 +255,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
     @Override
     protected void initButtons() {
         try {
-            colorImportController.setParentController(this);
-
-            colorPicker.valueProperty().addListener(
-                    (ObservableValue<? extends Color> ov, Color oldVal, Color newVal) -> {
-                        if (isSettingValues || newVal == null) {
-                            return;
-                        }
-                        ColorData data = TableColorData.write(newVal, false);
-                        if (data != null) {
-                            tableData.add(0, data);
-                        } else {
-                            scrollTo(newVal);
-                        }
-                    });
-
-            htmlButton.disableProperty().bind(Bindings.isEmpty(tableData));
+            exportButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
             allColumnsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                 checkColumns();
@@ -173,7 +278,10 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
         try {
             isSettingValues = true;
             tableView.getColumns().clear();
-            tableView.getColumns().addAll(colorColumn, inPaletteColumn, colorNameColumn);
+            tableView.getColumns().addAll(colorColumn, colorNameColumn);
+            if (!isAllColors()) {
+                tableView.getColumns().add(orderColumn);
+            }
             if (mergeCheck.isSelected()) {
                 if (allColumnsCheck.isSelected()) {
                     dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorDisplay"));
@@ -200,64 +308,224 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        FxmlControl.setTooltip(inButton, message("PutInColorPalette"));
-        FxmlControl.setTooltip(outButton, message("RemoveFromColorPalette"));
 
-        loadTableData();
+        FxmlControl.setTooltip(deletePaletteButton, message("DeletePalette"));
+        FxmlControl.setTooltip(renamePaletteButton, message("RenamePalette"));
+        FxmlControl.setTooltip(addPaletteButton, message("AddPalette"));
+        FxmlControl.setTooltip(copyPaletteButton, message("CopyPalette"));
+        FxmlControl.setTooltip(addColorsButton, message("AddColors"));
+        FxmlControl.setTooltip(trimButton, message("TrimOrderInPalette"));
+
+        if (pickMode) {
+            paletteTabPane.getSelectionModel().select(colorsTab);
+            myStage.setTitle(message("ManageColors") + " " + message("PickingColorsNow"));
+            popInformation(message("PickingColorsNow"));
+            currentPage = Integer.MAX_VALUE;
+            isSettingValues = true;
+            topCheck.setVisible(true);
+            topCheck.setSelected(true);
+            buttonsPane.getChildren().add(0, topCheck);
+            isSettingValues = false;
+            checkAlwaysTop();
+        }
+
+        hideRightPane();
+        refreshPalettes();
     }
 
-    public void scrollTo(Color color) {
-        int value = ImageColor.getRGB(color);
-        for (ColorData data : tableData) {
-            if (data.getColorValue() == value) {
-                tableView.scrollTo(data);
-                tableView.getSelectionModel().select(data);
-                return;
-            }
+    @Override
+    public String interfaceKeysPrefix() {
+        if (pickMode) {
+            return "Interface_" + baseName + "PickColor";
+        } else {
+            return "Interface_" + baseName;
         }
     }
 
     @Override
-    public int readDataSize() {
-        return TableColorData.size();
+    public void restoreStageStatus(String prefix, int minSize) {
+        if (pickMode) {
+            String p = interfaceKeysPrefix();
+            int w = AppVariables.getUserConfigInt(p + "StageWidth", 600);
+            int h = AppVariables.getUserConfigInt(p + "StageHeight", 500);
+            int x = AppVariables.getUserConfigInt(p + "StageX", 0);
+            int y = AppVariables.getUserConfigInt(p + "StageY", 0);
+            w = w < minSize ? 600 : w;
+            h = h < minSize ? 500 : h;
+            x = x < 0 ? 0 : x;
+            y = y < 0 ? 0 : y;
+            myStage.setWidth(w);
+            myStage.setHeight(h);
+            myStage.setX(x);
+            myStage.setY(y);
+        } else {
+            super.restoreStageStatus(prefix, minSize);
+        }
     }
 
-    @Override
-    public List<ColorData> readPageData() {
-        return TableColorData.readPage(currentPageStart - 1, currentPageSize);
+
+    /*
+        palettes list
+     */
+    protected void refreshPalettes() {
+        palettesController.loadPalettes();
     }
 
-    @Override
-    protected void checkSelected() {
+    protected boolean isAllColors() {
+        return currentPalette == null
+                || currentPalette.getName().equals(palettesController.allColors.getName());
+    }
+
+    protected void popPaletteMenu(MouseEvent event) {
         if (isSettingValues) {
             return;
         }
-        super.checkSelected();
-        int selection = tableView.getSelectionModel().getSelectedIndices().size();
-        inButton.setDisable(selection == 0);
-        outButton.setDisable(selection == 0);
+        ColorPaletteName palette = palettesController.palettesList.getSelectionModel().getSelectedItem();
+        boolean isALl = palette.getName().equals(palettesController.allColors.getName());
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu = new MenuItem(palette.getName());
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("AddPalette"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            palettesController.addPaltte();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("DeletePalette"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            deletePalette();
+        });
+        menu.setDisable(isALl);
+        items.add(menu);
+
+        menu = new MenuItem(message("RenamePalette"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            renamePalette();
+        });
+        menu.setDisable(isALl);
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyPalette"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            copyPalette();
+        });
+        menu.setDisable(isALl);
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("Export"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            exportCSV("all");
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Refresh"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshPalettes();
+        });
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+        menu = new MenuItem(message("PopupClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menu);
+
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
+
     }
 
     @FXML
-    public void inPaletteAction() {
-        List<ColorData> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return;
-        }
+    protected void deletePalette() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
+                return;
+            }
+            ColorPaletteName selected = palettesController.palettesList.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                popError(message("NoData"));
+                return;
+            }
+            if (!FxmlControl.askSure(baseTitle, selected.getName(), message("DeletePalette"))) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    return tableColorPaletteName.deleteData(selected) > 0;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    palettesController.palettesList.getItems().remove(selected);
+                    popSuccessful();
+
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    protected void renamePalette() {
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            ColorPaletteName selected = palettesController.palettesList.getSelectionModel().getSelectedItem();
+            if (selected == null || selected.getName().equals(message("AllColors"))) {
+                popError(message("SelectColorPalette"));
+                return;
+            }
+            String name = FxmlControl.askValue(baseTitle, message("RenamePalette") + "\n" + selected.getName(),
+                    message("NewName"), selected.getName() + "m");
+            if (name == null || name.isBlank()) {
                 return;
             }
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    TableColorData.addDataInPalette(selected, false);
-                    return true;
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        if (tableColorPaletteName.find(conn, name) != null) {
+                            error = "AlreadyExisted";
+                            return false;
+                        }
+                        selected.setName(name);
+                        return tableColorPaletteName.updateData(conn, selected) != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    loadTableData();
+                    if (currentPalette != null && selected.getCpnid() == currentPalette.getCpnid()) {
+                        palettesController.palettesList.refresh();
+                        paletteLabel.setText(currentPalette.getName());
+                    }
+                    popSuccessful();
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -269,25 +537,56 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
     }
 
     @FXML
-    public void outPaletteAction() {
-        List<ColorData> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return;
-        }
+    protected void copyPalette() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
+            ColorPaletteName selected = palettesController.palettesList.getSelectionModel().getSelectedItem();
+            if (selected == null || selected.getName().equals(message("AllColors"))) {
+                popError(message("SelectColorPalette"));
+                return;
+            }
+            String name = FxmlControl.askValue(baseTitle, message("CopyPalette") + "\n" + selected.getName(),
+                    message("Name"), selected.getName() + " " + message("Copy"));
+            if (name == null || name.isBlank()) {
+                return;
+            }
             task = new SingletonTask<Void>() {
+                private ColorPaletteName newPalatte;
+
                 @Override
                 protected boolean handle() {
-                    TableColorData.removeFromPalette(selected);
+                    try ( Connection conn = DerbyBase.getConnection();
+                             PreparedStatement query = conn.prepareStatement(TableColorPalette.QueryPalette)) {
+                        if (tableColorPaletteName.find(conn, name) != null) {
+                            error = "AlreadyExisted";
+                            return false;
+                        }
+                        newPalatte = new ColorPaletteName(name);
+                        newPalatte = tableColorPaletteName.insertData(conn, newPalatte);
+                        long paletteid = newPalatte.getCpnid();
+                        query.setLong(1, selected.getCpnid());
+                        conn.setAutoCommit(false);
+                        try ( ResultSet results = query.executeQuery()) {
+                            while (results.next()) {
+                                ColorPalette data = tableColorPalette.readData(results);
+                                data.setPaletteid(paletteid);
+                                tableColorPalette.insertData(conn, data);
+                            }
+                        }
+                        conn.commit();
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    loadTableData();
+                    palettesController.palettesList.getItems().add(newPalatte);
+                    popSuccessful();
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -298,42 +597,8 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
         }
     }
 
-    @Override
-    protected int deleteData(List<ColorData> data) {
-        if (data == null || data.isEmpty()) {
-            return 0;
-        }
-        return TableColorData.deleteData(data);
-    }
-
-    @Override
-    protected int clearData() {
-        return new TableColorData().clear();
-    }
-
     @FXML
-    @Override
-    public void refreshAction() {
-        loadTableData();
-    }
-
-    @Override
-    public void itemDoubleClicked() {
-        viewAction();
-    }
-
-    @FXML
-    @Override
-    public void viewAction() {
-        ColorData selected = (ColorData) tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            return;
-        }
-        HtmlTools.viewHtml(message("Color"), selected.display().replaceAll("\n", "</BR>"));
-    }
-
-    @FXML
-    protected void popCsvMenu(MouseEvent mouseEvent) {
+    protected void popExamplesMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -343,21 +608,193 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
 
             MenuItem menu;
 
-            menu = new MenuItem(message("ExportSelectedData"));
+            if (AppVariables.devMode) {
+                menu = new MenuItem(message("MyBoxColors"));
+                menu.setOnAction((ActionEvent event) -> {
+                    String lang = AppVariables.isChinese() ? "zh" : "en";
+                    File file = FxmlControl.getInternalFile("/data/db/ColorsMyBox_" + lang + ".csv", "data",
+                            "ColorsMyBox_" + lang + ".csv", false);
+                    importColors(file, "MyBox", true);
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            menu = new MenuItem(message("WebCommonColors"));
             menu.setOnAction((ActionEvent event) -> {
-                exportCSV("selected");
+                File file = FxmlControl.getInternalFile("/data/db/ColorsWeb.csv", "data", "ColorsWeb.csv", false);
+                importColors(file, message("WebCommonColors"), true);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("ExportAllData"));
+            menu = new MenuItem(message("ChineseTraditionalColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxmlControl.getInternalFile("/data/db/ColorsChinese.csv", "data", "ColorsChinese.csv", false);
+                importColors(file, message("ChineseTraditionalColors"), true);
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("JapaneseTraditionalColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxmlControl.getInternalFile("/data/db/ColorsJapanese.csv", "data", "ColorsJapanese.csv", false);
+                importColors(file, message("JapaneseTraditionalColors"), true);
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("HexaColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                File file = FxmlControl.getInternalFile("/data/db/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv", false);
+                importColors(file, message("HexaColors"), true);
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void importColors(File file, String paletteName, boolean reOrder) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                @Override
+                protected boolean handle() {
+                    List<ColorData> data = ColorDataTools.readCSV(file, reOrder);
+                    if (data == null) {
+                        return false;
+                    }
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        tableColor.writeData(conn, data, false);
+                        if (paletteName != null && !paletteName.isBlank()) {
+                            ColorPaletteName palette = tableColorPaletteName.findAndCreate(conn, paletteName);
+                            tableColorPalette.write(conn, palette.getCpnid(), data, true);
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (paletteName != null && !paletteName.isBlank()) {
+                        if (currentPalette != null && currentPalette.getName().equals(paletteName)) {
+                            refreshPalette();
+                        } else {
+                            refreshPalettes();
+                        }
+                    } else {
+                        refreshPalette();
+                    }
+                    popSuccessful();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    /*
+       Palette
+     */
+    protected void refreshPalette() {
+        paletteLabel.setText(isAllColors() ? message("AllColors") : currentPalette.getName());
+
+        checkColumns();
+        loadTableData();
+    }
+
+    protected void loadPaletteLast(ColorPaletteName palette) {
+        currentPage = Integer.MAX_VALUE;
+        paletteTabPane.getSelectionModel().select(colorsTab);
+        currentPalette = palettesController.allColors;
+        if (palette != null) {
+            for (ColorPaletteName p : palettesController.palettesList.getItems()) {
+                if (p.getName().equals(palette.getName())) {
+                    currentPalette = p;
+                    break;
+                }
+            }
+        }
+        isSettingValues = true;
+        palettesController.palettesList.getSelectionModel().clearSelection();
+        isSettingValues = false;
+        palettesController.palettesList.getSelectionModel().select(currentPalette);
+    }
+
+    @FXML
+    @Override
+    public void addAction(ActionEvent event) {
+        ColorInputController controller = (ColorInputController) openStage(CommonValues.ColorInputFxml);
+        controller.setValues(this);
+    }
+
+    @FXML
+    protected void popExportMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("ExportAllData") + " - CSV");
             menu.setOnAction((ActionEvent event) -> {
                 exportCSV("all");
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("ExportCurrentPage"));
+            menu = new MenuItem(message("ExportCurrentPage") + " - CSV");
             menu.setOnAction((ActionEvent event) -> {
                 exportCSV("page");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExportSelectedData") + " - CSV");
+            menu.setOnAction((ActionEvent event) -> {
+                exportCSV("selected");
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ExportAllData") + " - Html");
+            menu.setOnAction((ActionEvent event) -> {
+                exportHtml("all");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExportCurrentPage") + " - Html");
+            menu.setOnAction((ActionEvent event) -> {
+                exportHtml("page");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExportSelectedData") + " - Html");
+            menu.setOnAction((ActionEvent event) -> {
+                exportHtml("selected");
             });
             popMenu.getItems().add(menu);
 
@@ -379,7 +816,8 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
 
     public void exportCSV(String type) {
         final List<ColorData> rows;
-        String filename = message("Color");
+        boolean isAll = isAllColors();
+        String filename = isAll ? message("AllColors") : currentPalette.getName();
         if ("selected".equals(type)) {
             rows = tableView.getSelectionModel().getSelectedItems();
             if (rows == null || rows.isEmpty()) {
@@ -399,14 +837,10 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
                 filename += "_" + message("All");
             }
         }
-        List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
-        csvExtensionFilter.add(new FileChooser.ExtensionFilter("csv", "*.csv"));
-        final File file = chooseSaveFile(VisitHistoryTools.getSavedPath(FileType.Text),
-                filename + ".csv", csvExtensionFilter);
+        final File file = chooseSaveFile(FileType.CSV, filename + ".csv");
         if (file == null) {
             return;
         }
-        recordFileWritten(file, FileType.Text);
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -415,9 +849,13 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
                 @Override
                 protected boolean handle() {
                     if ("all".equals(type)) {
-                        ColorDataTools.exportCSV(file);
+                        if (isAll) {
+                            ColorDataTools.exportCSV(tableColor, file);
+                        } else {
+                            ColorDataTools.exportCSV(tableColorPalette, file, currentPalette);
+                        }
                     } else {
-                        ColorDataTools.exportCSV(rows, file);
+                        ColorDataTools.exportCSV(rows, file, !isAll);
                     }
                     return true;
                 }
@@ -425,7 +863,9 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
                 @Override
                 protected void whenSucceeded() {
                     if (file.exists()) {
-                        FxmlStage.openTextEditer(null, file);
+                        recordFileWritten(file, FileType.Text);
+                        DataFileCSVController controller = (DataFileCSVController) openStage(CommonValues.DataFileCSVFxml);
+                        controller.setFile(file, true);
                     }
                 }
             };
@@ -438,55 +878,12 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
 
     }
 
-    @FXML
-    protected void popHtmlMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            menu = new MenuItem(message("ExportSelectedData"));
-            menu.setOnAction((ActionEvent event) -> {
-                exportHtml("selected");
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ExportAllData"));
-            menu.setOnAction((ActionEvent event) -> {
-                exportHtml("all");
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ExportCurrentPage"));
-            menu.setOnAction((ActionEvent event) -> {
-                exportHtml("page");
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public void exportHtml(String type) {
         try {
             List<ColorData> rows;
-            String title = message("Color");
+            boolean isAll = isAllColors();
+            String title = isAll ? message("AllColors") : currentPalette.getName();
+            MyBoxLog.console(title);
             if ("selected".equals(type)) {
                 rows = tableView.getSelectionModel().getSelectedItems();
                 if (rows == null || rows.isEmpty()) {
@@ -505,6 +902,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
                     title += "_" + message("Page") + currentPage;
                     displayHtml(title, rows);
                 } else {
+                    String atitle = title + "_" + message("All");
                     synchronized (this) {
                         if (task != null && !task.isQuit()) {
                             return;
@@ -515,13 +913,17 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
 
                             @Override
                             protected boolean handle() {
-                                data = TableColorData.readAll();
-                                return true;
+                                if (isAll) {
+                                    data = tableColor.readAll();
+                                } else {
+                                    data = tableColorPalette.colors(currentPalette.getCpnid());
+                                }
+                                return data != null;
                             }
 
                             @Override
                             protected void whenSucceeded() {
-                                displayHtml(message("Color") + "_" + message("All"), data);
+                                displayHtml(atitle, data);
                             }
                         };
                         openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -547,7 +949,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             List<String> names = new ArrayList<>();
             for (TableColumn column : tableView.getColumns()) {
                 if (!column.equals(rgbaColumn) && !column.equals(rgbColumn)
-                        && !column.equals(inPaletteColumn)) {
+                        && !column.equals(orderColumn)) {
                     names.add(column.getText());
                 }
             }
@@ -559,8 +961,6 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
                         row.add(data.getColorValue() + "");
                     } else if (column.equals(colorColumn)) {
                         row.add(data.getRgba());
-//                    } else if (column.equals(inPaletteColumn)) {
-//                        row.add(message(data.getInPalette() + ""));
                     } else if (column.equals(colorNameColumn)) {
                         row.add(data.getColorName());
                     } else if (column.equals(sRGBColumn)) {
@@ -612,33 +1012,550 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
         }
     }
 
-    @FXML
-    public void managePalette() {
-        ColorPaletteManageController.oneOpen();
+    @Override
+    public void sourceFileChanged(File file) {
+        importColors(file, isAllColors() ? null : currentPalette.getName(), false);
     }
 
     @FXML
     @Override
-    public void closePopup(KeyEvent event) {
-        super.closePopup(event);
-        colorImportController.closePopup(event);
+    public void deleteAction() {
+        if (paletteTabPane.getSelectionModel().getSelectedItem() == dataTab) {
+            super.deleteAction();
+            return;
+        }
+        if (clickedRect != null) {
+            synchronized (this) {
+                if (task != null && !task.isQuit()) {
+                    return;
+                }
+                task = new SingletonTask<Void>() {
+
+                    private int deletedCount = 0;
+
+                    @Override
+                    protected boolean handle() {
+                        deletedCount = tableColorPalette.delete(currentPalette.getCpnid(), (ColorData) (clickedRect.getUserData()));
+                        return deletedCount >= 0;
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        popInformation(message("Deleted") + ":" + deletedCount);
+                        if (deletedCount > 0) {
+                            afterDeletion();
+                        }
+                    }
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
+        }
     }
 
-    public static ColorsManageController oneOpen() {
+    @Override
+    protected int clearData() {
+        if (isAllColors()) {
+            return tableColor.clearData();
+        } else {
+            return tableColorPalette.clear(currentPalette.getCpnid());
+        }
+    }
+
+    @Override
+    public void clearView() {
+        super.clearView();
+        colorsPane.getChildren().clear();
+        colorArea.clear();
+    }
+
+    @FXML
+    protected void trimAction() {
+        if (isAllColors()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    return tableColorPalette.trim(currentPalette.getCpnid());
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    refreshPalette();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    /*
+       Data
+     */
+    @Override
+    public int readDataSize() {
+        if (isAllColors()) {
+            return tableColor.size();
+        } else {
+            return TableColorPalette.size(currentPalette.getCpnid());
+        }
+    }
+
+    @Override
+    public List<ColorData> readPageData() {
+        if (isAllColors()) {
+            return tableColor.query(currentPageStart - 1, currentPageSize);
+        } else {
+            return tableColorPalette.colors(currentPalette.getCpnid(), currentPageStart - 1, currentPageSize);
+        }
+    }
+
+    @Override
+    public void postLoadedTableData() {
+        makeColorsPane();
+    }
+
+    @Override
+    protected int deleteData(List<ColorData> data) {
+        if (data == null || data.isEmpty()) {
+            return 0;
+        }
+        if (isAllColors()) {
+            return tableColor.deleteData(data);
+        } else {
+            return tableColorPalette.delete(currentPalette.getCpnid(), data);
+        }
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        refreshPalette();
+    }
+
+    @Override
+    protected void checkSelected() {
+        super.checkSelected();
+        ColorData color = tableView.getSelectionModel().getSelectedItem();
+        copyButton.setDisable(color == null);
+        if (color != null) {
+            showRightPane();
+            colorArea.setText(color.display());
+        }
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        ColorCopyController controller = (ColorCopyController) openStage(CommonValues.ColorCopyFxml);
+        controller.setValues(this);
+        controller.toFront();
+    }
+
+    protected void addColor(Color color) {
+        if (color == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                task.cancel();
+                task = null;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    try ( Connection conn = DerbyBase.getConnection()) {
+                        ColorData colorData = tableColor.write(conn, new ColorData(color), false);
+                        if (colorData == null) {
+                            return false;
+                        }
+                        if (!isAllColors()) {
+                            tableColorPalette.findAndCreate(conn, currentPalette.getCpnid(), colorData, false);
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    loadPaletteLast(currentPalette);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+
+    /*
+        Colors pane
+     */
+    public void makeColorsPane() {
+        synchronized (this) {
+            colorsPane.getChildren().clear();
+            colorArea.clear();
+            colorsPaneLabel.setVisible(!isAllColors());
+            if (tableData == null || tableData.isEmpty()) {
+                return;
+            }
+            colorsPane.setDisable(true);
+            SingletonTask colorsTask = new SingletonTask<Void>() {
+
+                private List<ColorData> colors;
+
+                @Override
+                protected boolean handle() {
+                    colors = new ArrayList<>();
+                    colors.addAll(tableData);
+                    Collections.sort(colors, new Comparator<ColorData>() {
+                        @Override
+                        public int compare(ColorData c1, ColorData c2) {
+                            float diff = c1.getOrderNumner() - c2.getOrderNumner();
+                            if (diff > 0) {
+                                return 1;
+                            } else if (diff < 0) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    for (ColorData data : colors) {
+                        makeColorRect(data, false);
+                    }
+                    colorsBox.applyCss();
+                }
+
+                @Override
+                protected void finalAction() {
+                    colorsPane.setDisable(false);
+                }
+            };
+            colorsTask.setSelf(colorsTask);
+            Thread thread = new Thread(colorsTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void makeColorRect(ColorData data, boolean ahead) {
+        try {
+            if (data == null) {
+                return;
+            }
+            Rectangle rect = new Rectangle(rectSize, rectSize);
+            rect.setUserData(data);
+            FxmlControl.setTooltip(rect, new Tooltip(data.display()));
+            Color color = data.getColor();
+            rect.setFill(color);
+            rect.setStroke(Color.BLACK);
+            rect.setOnMouseClicked((MouseEvent event) -> {
+                Platform.runLater(() -> {
+                    rectClicked(event);
+                });
+            });
+            rect.setOnMouseEntered((MouseEvent event) -> {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        rectEntered(rect);
+                    }
+                });
+            });
+
+            if (!isAllColors()) {
+                rect.setOnDragDetected(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        try {
+                            Dragboard dragboard = rect.startDragAndDrop(TransferMode.ANY);
+                            ClipboardContent content = new ClipboardContent();
+                            content.putString(FxmlColor.color2rgba(color));
+                            dragboard.setContent(content);
+                            event.consume();
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e.toString());
+                        }
+                    }
+                });
+                rect.setOnDragOver(new EventHandler<DragEvent>() {
+                    @Override
+                    public void handle(DragEvent event) {
+                        try {
+                            rectEntered(rect);
+                            event.acceptTransferModes(TransferMode.ANY);
+                            event.consume();
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e.toString());
+                        }
+                    }
+                });
+                rect.setOnDragDropped(new EventHandler<DragEvent>() {
+                    @Override
+                    public void handle(DragEvent event) {
+                        colorDropped(event, rect);
+                    }
+                });
+            }
+            if (ahead) {
+                colorsPane.getChildren().add(0, rect);
+            } else {
+                colorsPane.getChildren().add(rect);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void rectClicked(MouseEvent event) {
+        if (isSettingValues) {
+            return;
+        }
+        isSettingValues = true;
+        try {
+            Rectangle rect = (Rectangle) event.getSource();
+            ColorData data = (ColorData) rect.getUserData();
+            if (clickedRect != null) {
+                clickedRect.setEffect(null);
+                clickedRect.setWidth(rectSize);
+                clickedRect.setHeight(rectSize);
+                clickedRect.setStroke(Color.BLACK);
+                clickedRect.setUserData(data);
+            }
+            rect.setEffect(shadowEffect);
+            rect.setWidth(rectSize * 1.6);
+            rect.setHeight(rectSize * 1.6);
+            rect.setStroke(Color.RED);
+            clickedRect = rect;
+            colorArea.setText(data.display());
+            deleteButton.setDisable(false);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        isSettingValues = false;
+        showRightPane();
+    }
+
+    public void rectEntered(Rectangle rect) {
+        if (isSettingValues || rect.equals(enteredRect) || rect.equals(clickedRect)) {
+            return;
+        }
+        isSettingValues = true;
+        if (enteredRect != null && !enteredRect.equals(clickedRect)) {
+            enteredRect.setEffect(null);
+            enteredRect.setWidth(rectSize);
+            enteredRect.setHeight(rectSize);
+            enteredRect.setStroke(Color.BLACK);
+        }
+        rect.setEffect(shadowEffect);
+        rect.setWidth(rectSize * 1.4);
+        rect.setHeight(rectSize * 1.4);
+        rect.setStroke(Color.BLUE);
+        enteredRect = rect;
+        isSettingValues = false;
+    }
+
+    public void colorDropped(DragEvent event, Rectangle targetRect) {
+        if (event == null) {
+            return;
+        }
+        if (targetRect == null || isAllColors()) {
+            event.setDropCompleted(true);
+            event.consume();
+            return;
+        }
+        List<Node> nodes = colorsPane.getChildren();
+        if (nodes.isEmpty()) {
+            event.setDropCompleted(true);
+            event.consume();
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            Color sourceColor = Color.web(event.getDragboard().getString());
+            task = new SingletonTask<Void>() {
+
+                private List<ColorData> colors = null;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        ColorData targetData = (ColorData) targetRect.getUserData();
+                        int sourceValue = FxmlColor.color2Value(sourceColor);
+                        int targetValue = targetData.getColorValue();
+                        int sourceIndex = -1, targetIndex = -1;
+                        colors = new ArrayList<>();
+                        ColorData sourceColor = null;
+                        for (int i = 0; i < nodes.size(); i++) {
+                            Node node = nodes.get(i);
+                            ColorData data = (ColorData) node.getUserData();
+                            if (data.getColorValue() == sourceValue) {
+                                sourceIndex = i;
+                                sourceColor = data;
+                            }
+                            if (data.getColorValue() == targetValue) {
+                                targetIndex = i;
+                            }
+                            colors.add(data);
+                        }
+                        if (sourceIndex < 0 || targetIndex < 0) {
+                            return true;
+                        }
+                        float f0 = colors.get(0).getOrderNumner();
+                        float fn = colors.get(colors.size() - 1).getOrderNumner();
+                        if (f0 == fn) {
+                            fn = f0 + 0.0001f;
+                        }
+                        float offset = (fn - f0) / (colors.size() - 1);
+                        colors.remove(sourceIndex);
+                        colors.add(sourceIndex < targetIndex ? targetIndex : targetIndex + 1, sourceColor);
+                        for (int i = 0; i < colors.size(); i++) {
+                            ColorData data = colors.get(i);
+                            data.setOrderNumner(f0 + offset * i);
+                        }
+                        tableColorPalette.write(currentPalette.getCpnid(), colors, true);
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    refreshPalette();
+                }
+
+                @Override
+                protected void finalAction() {
+                    event.setDropCompleted(true);
+                    event.consume();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (pickMode && parentController != null && (parentController instanceof BaseImageController)) {
+            BaseImageController c = (BaseImageController) parentController;
+            if (c.pickColorCheck != null && c.pickColorCheck.isSelected()) {
+                c.pickColorCheck.setSelected(false);
+            }
+        }
+        return true;
+    }
+
+    /*
+        static methods
+     */
+    public static ColorsManageController oneOpen(boolean pickMode, BaseController parent) {
         ColorsManageController controller = null;
-        Stage stage = FxmlStage.findStage(message("ManageColors"));
-        if (stage != null && stage.getUserData() != null) {
+        for (Window window : Window.getWindows()) {
+            if (!(window instanceof Stage)) {
+                continue;
+            }
             try {
+                Stage stage = (Stage) window;
+                if (!stage.getTitle().startsWith(message("ManageColors"))) {
+                    continue;
+                }
                 controller = (ColorsManageController) stage.getUserData();
+                if (pickMode) {
+                    if (controller.pickMode) {
+                        break;
+                    }
+                } else {
+                    if (!controller.pickMode) {
+                        break;
+                    }
+                }
+                controller = null;
             } catch (Exception e) {
             }
         }
         if (controller == null) {
-            controller = (ColorsManageController) FxmlStage.openStage(CommonValues.ManageColorsFxml);
+            if (pickMode) {
+                try {
+                    FXMLLoader fxmlLoader
+                            = new FXMLLoader(FxmlStage.class.getResource(CommonValues.ColorsManageFxml), AppVariables.currentBundle);
+                    Scene scene = new Scene(fxmlLoader.load());
+                    controller = (ColorsManageController) fxmlLoader.getController();
+                    controller.pickMode = true;
+                    initController(controller, scene, FxmlStage.newStage(), null);
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    return null;
+                }
+            } else if (parent == null) {
+                controller = (ColorsManageController) FxmlStage.openStage(CommonValues.ColorsManageFxml);
+            } else {
+                controller = (ColorsManageController) parent.loadScene(CommonValues.ColorsManageFxml);
+            }
         }
         if (controller != null) {
+            controller.pickMode = pickMode;
             controller.getMyStage().toFront();
+            controller.myStage.requestFocus();
+            controller.parentController = parent;
         }
+        return controller;
+    }
+
+    public static ColorsManageController oneOpen(BaseController parent) {
+        ColorsManageController controller = oneOpen(false, parent);
+        return controller;
+    }
+
+    public static ColorsManageController addColors(List<Color> colors) {
+        if (colors == null || colors.isEmpty()) {
+            return null;
+        }
+        ColorsManageController manageController = oneOpen(false, null);
+        if (manageController == null) {
+            return null;
+        }
+        ColorCopyController addController = (ColorCopyController) FxmlStage.openStage(CommonValues.ColorCopyFxml);
+        addController.setValues(manageController, colors);
+        addController.toFront();
+        return manageController;
+    }
+
+    public static ColorsManageController pickColor(BaseController parent) {
+        ColorsManageController controller = oneOpen(true, parent);
         return controller;
     }
 

@@ -105,12 +105,16 @@ public class ImageColor {
         return color.getRGB();
     }
 
+    public static Color pixel2RGBA(int pixel) {
+        return new Color(pixel, true);
+    }
+
     public static Color pixel2RGB(int pixel) {
         return new Color(pixel);
     }
 
     public static float[] pixel2HSB(int pixel) {
-        Color rgb = pixel2RGB(pixel);
+        Color rgb = pixel2RGBA(pixel);
         return Color.RGBtoHSB(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), null);
     }
 
@@ -390,18 +394,6 @@ public class ImageColor {
         return new Color(
                 (int) (color.getRed() * 255), (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255), (int) (color.getOpacity() * 255));
-    }
-
-    public static int getRGB(javafx.scene.paint.Color color) {
-        return ImageColor.converColor(color).getRGB();
-    }
-
-    public static int getRGB(String rgba) {
-        return ImageColor.converColor(javafx.scene.paint.Color.web(rgba)).getRGB();
-    }
-
-    public static javafx.scene.paint.Color getColor(int pixel) {
-        return ImageColor.converColor(new Color(pixel));
     }
 
     // https://www.cnblogs.com/xiaonanxia/p/9448444.html

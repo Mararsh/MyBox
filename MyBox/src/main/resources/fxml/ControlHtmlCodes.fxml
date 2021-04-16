@@ -18,20 +18,47 @@ License:    Apache License Version 2.0
     <children>
         <FlowPane alignment="TOP_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
-                <Button fx:id="brButton" mnemonicParsing="false" onAction="#addBr">
+            <Button fx:id="txtButton" layoutX="1087.0" layoutY="10.0" mnemonicParsing="false" onAction="#txtAction">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconTxt.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconBr.png" />
+                                <Image url="@../buttons/iconClear.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="pButton" mnemonicParsing="false" onAction="#addP">
+                <Button fx:id="codesButton" mnemonicParsing="false" onMouseEntered="#popCodesMenu">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconP.png" />
+                                <Image url="@../buttons/iconMeta.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="headerButton" mnemonicParsing="false" onMouseEntered="#popHeaderMenu">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconHeader.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="listButton" mnemonicParsing="false" onMouseEntered="#popListMenu">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconList.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -63,38 +90,29 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="listButton" mnemonicParsing="false" onMouseEntered="#popListMenu">
+                <Button fx:id="pButton" mnemonicParsing="false" onAction="#addP">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconList.png" />
+                                <Image url="@../buttons/iconP.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="headerButton" mnemonicParsing="false" onMouseEntered="#popHeaderMenu">
+            <Button fx:id="charButton" layoutX="965.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popCharMenu">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconCharacter.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                <Button fx:id="brButton" mnemonicParsing="false" onAction="#addBr">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconHeader.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="codesButton" mnemonicParsing="false" onMouseEntered="#popCodesMenu">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconMeta.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconClear.png" />
+                                <Image url="@../buttons/iconBr.png" />
                             </image>
                         </ImageView>
                     </graphic>

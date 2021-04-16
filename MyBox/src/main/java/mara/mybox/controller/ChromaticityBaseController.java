@@ -17,7 +17,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
@@ -127,11 +126,7 @@ public class ChromaticityBaseController extends BaseController {
 
     @FXML
     public void aboutColor() {
-        try {
-            FxmlStage.browseURI(getMyStage(), aboutColorHtml().toURI());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        openLink(aboutColorHtml());
     }
 
     public static File aboutColorHtml() {

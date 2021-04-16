@@ -830,17 +830,9 @@ public abstract class BaseImageShapesController extends BaseImageController {
         if (imageView == null || maskPane == null) {
             return;
         }
-        if (maskPenLines != null) {
-            for (List<Line> penline : maskPenLines) {
-                maskPane.getChildren().removeAll(penline);
-            }
-            maskPenLines.clear();
-        }
+        clearMaskPenLines();
         if (maskPenData != null) {
             maskPenData.clear();
-        }
-        if (polygonP1 != null) {
-            polygonP1.setOpacity(0);
         }
         if (show) {
             maskPenLines = new ArrayList<>();
@@ -851,11 +843,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
 
     // strokeWidth is value expected shown on image, so it needs apply ratio for view
     public boolean drawMaskPenLines(double strokeWidth, Color strokeColor, boolean dotted, float opacity) {
-        for (List<Line> penline : maskPenLines) {
-            maskPane.getChildren().removeAll(penline);
-        }
-        maskPenLines.clear();
-        polygonP1.setOpacity(0);
+        clearMaskPenLines();
         int size = maskPenData.getPointsSize();
         if (size == 0) {
             return true;
@@ -875,22 +863,11 @@ public abstract class BaseImageShapesController extends BaseImageController {
                 List<Line> penLine = new ArrayList<>();
                 lastx = -1;
                 for (DoublePoint p : lineData) {
-                    thisx = p.getX() * xRatio;
-                    thisy = p.getY() * yRatio;
-                    if (lastx >= 0) {
-                        Line line = new Line(lastx, lasty, thisx, thisy);
-                        if (strokeColor.equals(Color.TRANSPARENT)) {
-                            // Have not found how to make line as transparent. For display only.
-                            line.setStroke(Color.WHITE);
-                        } else {
-                            line.setStroke(strokeColor);
-                        }
-                        line.setStrokeWidth(drawStrokeWidth);
-                        line.getStrokeDashArray().clear();
-                        if (dotted) {
-                            line.getStrokeDashArray().addAll(drawStrokeWidth * 1d, drawStrokeWidth * 3d);
-                        }
-                        line.setOpacity(opacity);
+                    thisx = p.getX();
+                    thisy = p.getY();
+                    Line line = makeMaskPenLine(strokeWidth, strokeColor, dotted, opacity, drawStrokeWidth,
+                            lastx, lasty, thisx, thisy, xRatio, yRatio);
+                    if (line != null) {
                         penLine.add(line);
                         maskPane.getChildren().add(line);
                         line.setLayoutX(imageView.getLayoutX());
@@ -901,17 +878,70 @@ public abstract class BaseImageShapesController extends BaseImageController {
                 }
                 maskPenLines.add(penLine);
             }
-
         }
         return true;
     }
 
-    public boolean drawMaskMosaicLines(double strokeWidth) {
-        for (List<Line> penline : maskPenLines) {
-            maskPane.getChildren().removeAll(penline);
+    public void clearMaskPenLines() {
+        if (maskPenLines != null) {
+            for (List<Line> penline : maskPenLines) {
+                maskPane.getChildren().removeAll(penline);
+            }
+            maskPenLines.clear();
         }
-        maskPenLines.clear();
+        if (polygonP1 != null) {
+            polygonP1.setOpacity(0);
+        }
+    }
+
+    public Line drawMaskPenLine(double strokeWidth, Color strokeColor, boolean dotted, float opacity,
+            DoublePoint lastPonit, DoublePoint thisPoint) {
+        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        double drawStrokeWidth = strokeWidth * xRatio;
+        if (lastPonit == null) {
+            polygonP1.setOpacity(1);
+            DoublePoint p1 = thisPoint;
+            int anchorHW = AppVariables.getUserConfigInt("AnchorWidth", 10) / 2;
+            polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
+            polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
+            return null;
+        } else if (thisPoint != null) {
+            Line line = makeMaskPenLine(strokeWidth, strokeColor, dotted, opacity, drawStrokeWidth,
+                    lastPonit.getX(), lastPonit.getY(), thisPoint.getX(), thisPoint.getY(), xRatio, yRatio);
+            if (line != null) {
+                polygonP1.setOpacity(0);
+                maskPane.getChildren().add(line);
+                line.setLayoutX(imageView.getLayoutX());
+                line.setLayoutY(imageView.getLayoutY());
+            }
+            return line;
+        } else {
+            return null;
+        }
+    }
+
+    public Line makeMaskPenLine(double strokeWidth, Color strokeColor, boolean dotted, float opacity, double drawStrokeWidth,
+            double lastx, double lasty, double thisx, double thisy, double xRatio, double yRatio) {
         polygonP1.setOpacity(0);
+        Line line = new Line(lastx * xRatio, lasty * yRatio, thisx * xRatio, thisy * yRatio);
+        if (strokeColor.equals(Color.TRANSPARENT)) {
+            // Have not found how to make line as transparent. For display only.
+            line.setStroke(Color.WHITE);
+        } else {
+            line.setStroke(strokeColor);
+        }
+        line.setStrokeWidth(drawStrokeWidth);
+        line.getStrokeDashArray().clear();
+        if (dotted) {
+            line.getStrokeDashArray().addAll(drawStrokeWidth * 1d, drawStrokeWidth * 3d);
+        }
+        line.setOpacity(opacity);
+        return line;
+    }
+
+    public boolean drawMaskMosaicLines(double strokeWidth) {
+        clearMaskPenLines();
         int size = maskPenData.getPointsSize();
         if (size == 0) {
             return true;

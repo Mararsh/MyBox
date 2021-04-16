@@ -67,26 +67,26 @@ License:    Apache License Version 2.0
                                                         <VBox fx:id="fileOptionsBox" spacing="5.0">
                                                             <children>
                                                                 <Label fx:id="loadedLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
-                                                                <Button fx:id="editTextFileButton" mnemonicParsing="false" onAction="#editTextFile">
+                                                                <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTextFile">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconEdit.png" />
+                                                                                <Image url="@../buttons/iconTxt.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
                                                                 <Separator prefWidth="200.0" />
-                                                                  <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
-                                                                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                                      <graphic>
-                                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                              <image>
-                                                                                  <Image url="@../buttons/iconRefresh.png" />
-                                                                              </image>
-                                                                          </ImageView>
-                                                                      </graphic>
-                                                                  </Button>
+                                                                <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
+                                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconRefresh.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </VBox>
                                                     </children>

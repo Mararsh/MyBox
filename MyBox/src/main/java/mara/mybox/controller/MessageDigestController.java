@@ -1,26 +1,30 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.net.URI;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.Base64;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.Clipboard;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -32,6 +36,7 @@ public class MessageDigestController extends BaseController {
 
     protected InputType inputType;
     protected String algorithm;
+    protected Charset charset;
     protected byte[] digest;
 
     protected enum InputType {
@@ -39,15 +44,17 @@ public class MessageDigestController extends BaseController {
     }
 
     @FXML
-    protected ToggleGroup inputGroup, algorithmGroup;
+    protected ToggleGroup inputGroup, algorithmGroup, formatGroup;
     @FXML
-    protected VBox handleBox, outputBox;
+    protected VBox handleBox;
     @FXML
-    protected HBox fileBox;
+    protected HBox fileBox, charsetBox;
     @FXML
     protected TextArea inputArea, resultArea;
     @FXML
-    protected CheckBox formatCheck;
+    protected RadioButton base64Radio, hexRadio, fhexRadio;
+    @FXML
+    protected ComboBox<String> charsetSelector;
 
     public MessageDigestController() {
         baseTitle = AppVariables.message("MessageDigest");
@@ -75,10 +82,26 @@ public class MessageDigestController extends BaseController {
             });
             checkAlgorithm();
 
-            formatCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     display();
+                }
+            });
+
+            List<String> setNames = TextTools.getCharsetNames();
+            charsetSelector.getItems().addAll(setNames);
+            try {
+                charset = Charset.forName(AppVariables.getUserConfigValue(baseName + "Charset", Charset.defaultCharset().name()));
+            } catch (Exception e) {
+                charset = Charset.defaultCharset();
+            }
+            charsetSelector.setValue(charset.name());
+            charsetSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
+                    AppVariables.setUserConfigValue(baseName + "Charset", charset.name());
                 }
             });
 
@@ -88,22 +111,22 @@ public class MessageDigestController extends BaseController {
 
     }
 
-    private void checkInputType() {
+    protected void checkInputType() {
         try {
             clear();
             String selected = ((RadioButton) inputGroup.getSelectedToggle()).getText();
             handleBox.getChildren().clear();
             if (message("File").equals(selected)) {
-                handleBox.getChildren().addAll(fileBox, outputBox);
+                handleBox.getChildren().addAll(fileBox);
                 inputType = InputType.File;
 
             } else {
-                handleBox.getChildren().addAll(inputArea, outputBox);
+                handleBox.getChildren().addAll(charsetBox, inputArea);
                 inputType = InputType.Input;
                 sourceFileInput.setStyle(null);
             }
 
-            FxmlControl.refreshStyle(thisPane);
+            FxmlControl.refreshStyle(handleBox);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -111,7 +134,7 @@ public class MessageDigestController extends BaseController {
     }
 
     // https://docs.oracle.com/javase/10/docs/specs/security/standard-names.html#messagedigest-algorithms
-    private void checkAlgorithm() {
+    protected void checkAlgorithm() {
         try {
             clear();
             algorithm = ((RadioButton) algorithmGroup.getSelectedToggle()).getText();
@@ -121,19 +144,22 @@ public class MessageDigestController extends BaseController {
         }
     }
 
-    private void clear() {
+    protected void clear() {
         resultArea.clear();
         bottomLabel.setText("");
         digest = null;
     }
 
-    private void display() {
+    protected void display() {
         if (digest == null) {
             resultArea.clear();
             return;
         }
         String result;
-        if (formatCheck.isSelected()) {
+        if (base64Radio.isSelected()) {
+            Base64.Encoder encoder = Base64.getEncoder();
+            result = encoder.encodeToString(digest);
+        } else if (fhexRadio.isSelected()) {
             result = ByteTools.bytesToHexFormat(digest);
         } else {
             result = ByteTools.bytesToHex(digest);
@@ -151,14 +177,12 @@ public class MessageDigestController extends BaseController {
     public void dmHelp() {
         try {
             String link;
-            switch (AppVariables.getLanguage()) {
-                case "zh":
-                    link = "https://baike.baidu.com/item/%E6%95%B0%E5%AD%97%E6%91%98%E8%A6%81/4069118";
-                    break;
-                default:
-                    link = "https://en.wikipedia.org/wiki/Message_digest";
+            if (AppVariables.isChinese()) {
+                link = "https://baike.baidu.com/item/%E6%95%B0%E5%AD%97%E6%91%98%E8%A6%81/4069118";
+            } else {
+                link = "https://en.wikipedia.org/wiki/Message_digest";
             }
-            browseURI(new URI(link));
+            openLink(link);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -182,7 +206,7 @@ public class MessageDigestController extends BaseController {
         }
         try {
             synchronized (this) {
-                if (task != null && !task.isQuit() ) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -196,7 +220,7 @@ public class MessageDigestController extends BaseController {
                                 digest = SystemTools.messageDigest(sourceFile, algorithm);
                                 datalen = sourceFile.length();
                             } else {
-                                byte[] data = inputArea.getText().getBytes();
+                                byte[] data = inputArea.getText().getBytes(charset);
                                 digest = SystemTools.messageDigest(data, algorithm);
                                 datalen = data.length;
                             }
@@ -218,7 +242,8 @@ public class MessageDigestController extends BaseController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);Thread thread = new Thread(task);
+                task.setSelf(task);
+                Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -227,6 +252,33 @@ public class MessageDigestController extends BaseController {
             MyBoxLog.error(e.toString());
         }
 
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        if (resultArea.getText().isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        if (FxmlControl.copyToSystemClipboard(resultArea.getText())) {
+            popInformation(message("CopiedToSystemClipboard"));
+        }
+    }
+
+    @FXML
+    @Override
+    public void pasteAction() {
+        String string = Clipboard.getSystemClipboard().getString();
+        if (string != null && !string.isBlank()) {
+            inputArea.setText(string);
+        }
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        inputArea.clear();
     }
 
 }

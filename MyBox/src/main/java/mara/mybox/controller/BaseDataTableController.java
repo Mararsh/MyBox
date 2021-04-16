@@ -116,7 +116,6 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     (ObservableValue<? extends P> ov, P t, P t1) -> {
                         checkSelected();
                     });
-            checkSelected();
 
             tableView.setOnMouseClicked((MouseEvent event) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -144,6 +143,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
             initButtons();
             initPagination();
 
+            checkSelected();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -165,7 +165,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 //                }
 //            }
 //        }
-        checkSelected();
+//        checkSelected();
     }
 
     protected void checkSelected() {
@@ -188,7 +188,6 @@ public abstract class BaseDataTableController<P> extends BaseController {
     }
 
     public void itemClicked() {
-
     }
 
     public void itemDoubleClicked() {

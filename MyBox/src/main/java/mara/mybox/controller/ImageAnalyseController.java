@@ -771,8 +771,8 @@ public class ImageAnalyseController extends ImageViewerController {
             }
             StringBuilder s = new StringBuilder();
             long imageSize = (long) (image.getWidth() * image.getHeight());
-            s.append("<P>").append(message("Pixels")).append(":").append(imageSize).append(" ")
-                    .append(message("NonTransparent")).append(":").append(nonTransparent)
+            s.append("<P>").append(message("Pixels")).append(":").append(StringTools.format(imageSize)).append(" ")
+                    .append(message("NonTransparent")).append(":").append(StringTools.format(nonTransparent))
                     .append("(").append(FloatTools.roundFloat2(nonTransparent * 100f / imageSize)).append("%)").append("</P>");
             String indent = "    ";
             s.append(indent).append(indent).append("<DIV align=\"center\" >\n");
@@ -977,18 +977,13 @@ public class ImageAnalyseController extends ImageViewerController {
 
     @FXML
     public void addKmeans() {
-        ColorPaletteManageController controller = ColorPaletteManageController.oneOpen();
-        if (controller != null) {
-            controller.addColors(kmeansColors);
-        }
+        ColorsManageController.addColors(kmeansColors);
     }
 
     @FXML
     public void addPopularity() {
-        ColorPaletteManageController controller = ColorPaletteManageController.oneOpen();
-        if (controller != null) {
-            controller.addColors(popularityColors);
-        }
+        ColorsManageController.addColors(popularityColors);
+
     }
 
 
@@ -1028,7 +1023,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 int green = aColor.getGreen();
                 int blue = aColor.getBlue();
                 Color fColor = ImageColor.converColor(aColor);
-                row.addAll(Arrays.asList(i + "", histogram[i] + "",
+                row.addAll(Arrays.asList(i + "", StringTools.format(histogram[i]),
                         (int) (histogram[i] * 100 / total) + "%",
                         FxmlColor.color2rgba(fColor), red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",

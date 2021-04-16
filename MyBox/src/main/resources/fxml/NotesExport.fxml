@@ -35,20 +35,6 @@ License:    Apache License Version 2.0
                            <items>
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                  <children>
-                                    <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
-                                       <children>
-                                          <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectNotebookExport" wrapText="true" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" onMouseEntered="#popTargetPath">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/iconRefresh.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </HBox>
                                             <fx:include fx:id="notebooks" source="ControlNotebookSelector.fxml" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>

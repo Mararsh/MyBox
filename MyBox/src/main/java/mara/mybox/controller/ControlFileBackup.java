@@ -117,7 +117,7 @@ public class ControlFileBackup extends BaseController {
                         protected void updateItem(FileBackup item, boolean empty) {
                             super.updateItem(item, empty);
                             setGraphic(null);
-                            if (empty || item == null) {
+                            if (empty || item == null || item.getBackup() == null) {
                                 setText(null);
                                 return;
                             }
@@ -332,6 +332,10 @@ public class ControlFileBackup extends BaseController {
         }
         File path = new File(AppVariables.getFileBackupsPath(sourceFile));
         browseURI(path.toURI());
+    }
+
+    public boolean isBack() {
+        return backupCheck != null && backupCheck.isSelected();
     }
 
 }
