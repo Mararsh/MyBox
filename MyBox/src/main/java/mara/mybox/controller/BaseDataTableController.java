@@ -44,18 +44,18 @@ public abstract class BaseDataTableController<P> extends BaseController {
     protected BaseTable tableDefinition;
     protected ObservableList<P> tableData;
     protected int currentPage, pageSize, pagesNumber, totalSize, currentPageSize, currentPageStart;  // 1-based
-    protected String tableName, idColumn;
+    protected String tableName, idColumn, queryConditions, queryConditionsString;
     protected boolean paginate;
 
     @FXML
     protected TableView<P> tableView;
     @FXML
     protected Button editButton, examplesButton, refreshButton, resetButton,
-            importButton, exportButton, chartsButton, queryButton;
+            importButton, exportButton, chartsButton, queryButton, moveDataButton;
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
-    protected Label pageLabel, dataSizeLabel, selectedLabel;
+    protected Label pageLabel, dataSizeLabel, selectedLabel, queryConditionsLabel;
     @FXML
     protected HBox paginationBox;
     @FXML
@@ -455,6 +455,9 @@ public abstract class BaseDataTableController<P> extends BaseController {
     }
 
     public void postLoadedTableData() {
+        if (queryConditionsLabel != null) {
+            queryConditionsLabel.setText(queryConditionsString);
+        }
     }
 
     protected void setPagination() {
@@ -513,7 +516,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     public int readDataSize() {
         if (tableDefinition != null) {
-            return tableDefinition.size();
+            return tableDefinition.conditionSize(queryConditions);
         } else {
             return 0;
         }
@@ -521,7 +524,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     public List<P> readPageData() {
         if (tableDefinition != null) {
-            return tableDefinition.query(currentPageStart - 1, currentPageSize);
+            return tableDefinition.queryConditions(queryConditions, currentPageStart - 1, currentPageSize);
         } else {
             return null;
         }
@@ -529,7 +532,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     public List<P> readData() {
         if (tableDefinition != null) {
-            return tableDefinition.query();
+            return tableDefinition.readAll();
         } else {
             return null;
         }
@@ -537,32 +540,15 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     @FXML
     public void editAction(ActionEvent event) {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
     }
 
     @FXML
     public void viewAction() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
     }
 
     @FXML
     @Override
     public void copyAction() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @FXML
@@ -701,7 +687,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     protected int clearData() {
         if (tableDefinition != null) {
-            return tableDefinition.clearData();
+            return tableDefinition.deleteCondition(queryConditions);
         } else {
             return 0;
         }

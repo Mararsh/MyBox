@@ -250,6 +250,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     }
 
     @FXML
+    @Override
     public void editFileAction() {
         try {
             ImageInformation info = tableView.getSelectionModel().getSelectedItem();

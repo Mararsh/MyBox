@@ -111,7 +111,7 @@ public class DataClipboardController extends BaseSheetController {
                         sourceDelimiter = ";";
                     }
                     AppVariables.setUserConfigValue(baseName + "SourceDelimiter", sourceDelimiter);
-                    textsChanged();
+                    synchronizeChanged();
                 }
             });
             delimiterSourceInput.textProperty().addListener(new ChangeListener<String>() {
@@ -127,7 +127,7 @@ public class DataClipboardController extends BaseSheetController {
                     sourceDelimiter = newValue;
                     AppVariables.setUserConfigValue(baseName + "SourceDelimiter", sourceDelimiter);
                     delimiterSourceInput.setStyle(null);
-                    textsChanged();
+                    synchronizeChanged();
                 }
             });
 
@@ -137,7 +137,7 @@ public class DataClipboardController extends BaseSheetController {
                     if (isSettingValues) {
                         return;
                     }
-                    textsChanged();
+                    synchronizeChanged();
                 }
             });
 
@@ -221,7 +221,7 @@ public class DataClipboardController extends BaseSheetController {
         }
     }
 
-    protected void textsChanged() {
+    public synchronized void synchronizeChanged() {
         try {
             if (isSettingValues) {
                 return;
@@ -294,7 +294,6 @@ public class DataClipboardController extends BaseSheetController {
                 }
             }
             makeSheet(sheet, false);
-
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -305,7 +304,7 @@ public class DataClipboardController extends BaseSheetController {
         isSettingValues = true;
         inputArea.setText(TextTools.readText(file));
         isSettingValues = false;
-        textsChanged();
+        synchronizeChanged();
     }
 
     @Override

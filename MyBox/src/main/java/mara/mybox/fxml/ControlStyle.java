@@ -48,8 +48,7 @@ public class ControlStyle {
         this.iconName = iconName;
     }
 
-    public ControlStyle(String id, String name, String comments, String shortcut,
-            String iconName) {
+    public ControlStyle(String id, String name, String comments, String shortcut, String iconName) {
         this.id = id;
         this.name = name;
         this.comments = comments;
@@ -595,7 +594,7 @@ public class ControlStyle {
                             message("SaveAsImages") + "\n" + message("FilePrefixInput"), "", "");
 
                 case "saveTiffButton":
-                    return new ControlStyle(id, message("SaveAsTiff"), "", "iconTif.png");
+                    return new ControlStyle(id, message("SaveAsTiff"), "", "iconTIF.png");
 
                 case "savePdfButton":
                     return new ControlStyle(id, message("SaveAsPDF"), "", "iconPDF.png");
@@ -753,6 +752,9 @@ public class ControlStyle {
             switch (id) {
                 case "pasteButton":
                     return new ControlStyle(id, message("Paste"), "CTRL+v / ALT+v", "iconPaste.png");
+
+                case "pasteTxtButton":
+                    return new ControlStyle(id, message("PasteTexts"), "", "iconPaste.png");
 
                 default:
                     return new ControlStyle(id, message("Paste"), "", "iconPaste.png");
@@ -1214,7 +1216,7 @@ public class ControlStyle {
                 return new ControlStyle("filesListButton", message("FilesList"), "", "iconList.png");
 
             case "gridButton":
-                return new ControlStyle("snapshotButton", message("Grid"), "", "iconBrowse.png");
+                return new ControlStyle(id, message("Grid"), "", "iconBrowse.png");
 
             case "snapshotButton":
                 return new ControlStyle("snapshotButton", message("Snapshot"), "", "iconSnapshot.png");

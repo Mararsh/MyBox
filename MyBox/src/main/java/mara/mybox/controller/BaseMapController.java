@@ -250,6 +250,19 @@ public abstract class BaseMapController extends BaseController {
 
     }
 
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            if (FxmlStage.mapFirstRun(this)) {
+                return;
+            }
+
+            super.afterSceneLoaded();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void mapEvents(String data) {
         try {
 //            MyBoxLog.debug(data);

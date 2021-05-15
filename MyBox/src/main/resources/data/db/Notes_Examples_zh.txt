@@ -221,8 +221,8 @@ Connected to mararsh@frs.sourceforge.net.
 sftp> cd /home/frs/project/mara-mybox
 sftp> ls
 sftp> cd v6.4.2
-sftp> lcd  D:\玛瑞\Mybox\2021-03-21-v6.4.2
-sftp> put D:\玛瑞\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
+sftp> lcd  D:\releases\Mybox\2021-03-21-v6.4.2
+sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
 </CODE></PRE>
 
 
@@ -307,6 +307,9 @@ startButton.disableProperty().bind(
     <li>若修改JVM参数，或想粗暴清理应用环境时，需要重启应用。</li>
     <li>注意索引参数是基于0（0-based）还是基于1（1-based），尤其是对第三方库。自己写的方法最好注明。一般默认基于0，若是基于1则必须注明。</li>
     <li>Double.MIN_VALUE是最小正double（最接近于零的正数）。-Double.MAX_VALUE 是最小double。</li>
+    <li>若处理货币，应当用整型保存各个货币单位。</li>
+    <li>BigDecimal比double慢很多。大多数情况下double的精度够用。</li>
+    <li>若是判断数字范围，应当用 if (abs(x - 7.3) < TOLERANCE) 而不是 if (x == 7.3)。</li>
 </ol>
 
 

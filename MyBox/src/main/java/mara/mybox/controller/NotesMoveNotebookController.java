@@ -20,31 +20,32 @@ public class NotesMoveNotebookController extends ControlNotebookSelector {
     protected Label sourceLabel;
 
     public NotesMoveNotebookController() {
-        baseTitle = message("Notebook");
+        baseTitle = message("MoveNode");
     }
 
     public void setValues(NotesController notesController, Notebook sourceBook, String name) {
         this.sourceBook = sourceBook;
+        ignoreNode = sourceBook;
         sourceLabel.setText(message("NotebookMoved") + ":\n" + name);
-        setValues(notesController);
+        setCaller(notesController);
     }
 
     @Override
-    public Notebook getIgnoreBook() {
+    public Notebook getIgnoreNode() {
         return sourceBook;
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (notesController == null || sourceBook == null || sourceBook.isRoot()) {
+        if (sourceBook == null || sourceBook.isRoot()) {
             return;
         }
-        TreeItem<Notebook> selectedNode = treeView.getSelectionModel().getSelectedItem();
-        if (selectedNode == null) {
+        TreeItem<Notebook> selectedItem = treeView.getSelectionModel().getSelectedItem();
+        if (selectedItem == null) {
             return;
         }
-        Notebook targetBook = selectedNode.getValue();
+        Notebook targetBook = selectedItem.getValue();
         if (targetBook == null) {
             return;
         }
@@ -67,10 +68,10 @@ public class NotesMoveNotebookController extends ControlNotebookSelector {
                     if (notesController == null || !notesController.getMyStage().isShowing()) {
                         notesController = NotesController.oneOpen();
                     } else {
-                        notesController.refreshBooks();
                         notesController.bookChanged(sourceBook);
                         notesController.bookChanged(targetBook);
                     }
+                    notesController.notebooksController.loadTree(targetBook);
                     notesController.popSuccessful();
                     closeStage();
                 }

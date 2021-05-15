@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -457,8 +459,7 @@ public class FxmlStage {
 
     public static WebBrowserController openWebBrowser(Stage stage, File file) {
         try {
-            WebBrowserController controller = WebBrowserController.oneOpen(false);
-            controller.loadFile(file);
+            WebBrowserController controller = WebBrowserController.oneOpen(file);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -913,6 +914,24 @@ public class FxmlStage {
             return null;
         }
 
+    }
+
+    public static boolean mapFirstRun(BaseController c) {
+        if (AppVariables.getSystemConfigBoolean("MapRunFirstTime" + CommonValues.AppVersion, true)) {
+            WebBrowserController.mapFirstRun();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        AppVariables.setSystemConfigValue("MapRunFirstTime" + CommonValues.AppVersion, false);
+                        c.refresh();
+                    });
+                }
+            }, 2000);
+            return true;
+        }
+        return false;
     }
 
 }

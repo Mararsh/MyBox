@@ -11,7 +11,6 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javax.net.ssl.SSLServerSocket;
@@ -95,61 +94,6 @@ public class SystemTools {
 
     public static String keystorePassword() {
         return "changeit";
-    }
-
-    // https://blog.csdn.net/sdtvyyb_007/article/details/77160239
-    public static void listAllThreads() {
-        ThreadGroup currentThreadGroup = Thread.currentThread().getThreadGroup();
-        ThreadGroup root = currentThreadGroup;
-        ThreadGroup parent = root.getParent();
-        while (parent != null) {
-            root = parent;
-            parent = root.getParent();
-        }
-        showThreadGroup(root, "");
-    }
-
-    public static void showThreadGroup(ThreadGroup group, String index) {//显示线程组信息
-        if (group == null) {
-            return;
-        }
-        int count = group.activeCount();
-        int countGroup = group.activeGroupCount();
-        Thread[] threads = new Thread[count];
-        ThreadGroup[] groups = new ThreadGroup[countGroup];
-        group.enumerate(threads, false);
-        group.enumerate(groups, false);
-        System.out.println(index + "线程组的名称- " + group.getName() + " 最高优先级- "
-                + group.getMaxPriority() + (group.isDaemon() ? " 守护" : " "));
-        for (int i = 0; i < count; ++i) {
-            showThread(threads[i], index + "  ");
-        }
-        for (int i = 0; i < countGroup; ++i) {
-            showThreadGroup(groups[i], index + "  ");
-        }
-    }
-
-    public static void showThread(Thread thread, String index) {
-        if (thread == null) {
-            return;
-        }
-        System.out.println(index + "线程的名称-" + thread.getName() + " 最高优先级- "
-                + thread.getPriority() + (thread.isDaemon() ? " 守护" : " ") + (thread.isAlive() ? " 活动" : " 不活动"));
-    }
-
-    public static void threadsStackTrace() {
-        for (Map.Entry<Thread, StackTraceElement[]> entry
-                : Thread.getAllStackTraces().entrySet()) {
-            Thread thread = entry.getKey();
-            StackTraceElement[] stackTraceElements = entry.getValue();
-            if (thread.equals(Thread.currentThread())) {
-                continue;
-            }
-            System.out.println("\n线程： " + thread.getName() + "\n");
-            for (StackTraceElement element : stackTraceElements) {
-                System.out.println("\t" + element + "\n");
-            }
-        }
     }
 
     public static void currentThread() {
@@ -283,7 +227,7 @@ public class SystemTools {
     public static byte[] messageDigest(File file, String algorithm) {
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
                 while ((len = in.read(buf)) > 0) {

@@ -22,7 +22,6 @@ import mara.mybox.value.AppVariables;
 /**
  * @Author Mara
  * @CreateDate 2020-9-7
- * @Description
  * @License Apache License Version 2.0
  */
 public class ControlFileSelecter extends BaseController {
@@ -130,6 +129,7 @@ public class ControlFileSelecter extends BaseController {
             if (permitNull) {
                 file = null;
                 fileInput.setStyle(null);
+                notify.set(!notify.get());
             } else {
                 fileInput.setStyle(badStyle);
             }
@@ -295,6 +295,14 @@ public class ControlFileSelecter extends BaseController {
             setFile(new File(string));
         } else {
             fileInput.setText(string);
+        }
+    }
+
+    public String text() {
+        if (fileInput == null) {
+            return null;
+        } else {
+            return fileInput.getText();
         }
     }
 

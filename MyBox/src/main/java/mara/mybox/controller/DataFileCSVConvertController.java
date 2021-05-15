@@ -80,9 +80,8 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
             convertController.names = names;
             String filePrefix = FileTools.getFilePrefix(srcFile.getName());
             convertController.openWriters(filePrefix);
-            List<String> rowData = new ArrayList<>();
             for (CSVRecord record : parser) {
-                rowData.clear();
+                List<String> rowData = new ArrayList<>();
                 for (String name : names) {
                     rowData.add(record.get(name));
                 }
@@ -109,7 +108,6 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         }
         try ( CSVParser parser = CSVParser.parse(srcFile, fileCharset, csvFormat)) {
             List<String> names = null;
-            List<String> rowData = new ArrayList<>();
             for (CSVRecord record : parser) {
                 if (names == null) {
                     names = new ArrayList<>();
@@ -120,7 +118,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                     String filePrefix = FileTools.getFilePrefix(srcFile.getName());
                     convertController.openWriters(filePrefix);
                 }
-                rowData.clear();
+                List<String> rowData = new ArrayList<>();
                 for (int i = 0; i < record.size(); i++) {
                     rowData.add(record.get(i));
                 }

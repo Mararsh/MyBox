@@ -40,7 +40,6 @@ public class HtmlViewerController extends BaseController {
 
     public String styleString() {
         String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
-        MyBoxLog.console(htmlStyle);
         return HtmlTools.styleValue(HtmlTools.styleName(htmlStyle));
     }
 

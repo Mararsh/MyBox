@@ -225,6 +225,18 @@ public class TableStringValues extends DerbyBase {
             return false;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
+            return add(conn, name, values);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean add(Connection conn, String name, List<String> values) {
+        if (conn == null || values == null || values.isEmpty()) {
+            return false;
+        }
+        try {
             conn.setAutoCommit(false);
             for (int i = 0; i < values.size(); i++) {
                 add(conn, name, values.get(i));
@@ -233,7 +245,6 @@ public class TableStringValues extends DerbyBase {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-
             return false;
         }
     }
@@ -286,6 +297,27 @@ public class TableStringValues extends DerbyBase {
 //            MyBoxLog.debug(e.toString());
             return false;
         }
+    }
+
+    public static int size(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return -1;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            conn.setReadOnly(true);
+            return size(conn, name);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return -1;
+    }
+
+    public static int size(Connection conn, String name) {
+        if (conn == null || name == null || name.trim().isEmpty()) {
+            return -1;
+        }
+        String sql = " SELECT count(string_value) FROM String_Values WHERE key_name='" + stringValue(name) + "'";
+        return DerbyBase.size(conn, sql);
     }
 
 }

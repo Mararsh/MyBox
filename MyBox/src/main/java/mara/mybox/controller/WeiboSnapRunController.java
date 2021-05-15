@@ -900,9 +900,10 @@ public class WeiboSnapRunController extends BaseController {
                                             return;
                                         }
                                         if (stasisTimes >= MaxStasisTimes) {
-                                            errorString = AppVariables.message("TimeOver");
-//                                            MyBoxLog.debug(errorString);
-                                            loadFailed = loadCompleted = true;
+//                                            errorString = AppVariables.message("TimeOver");
+////                                            MyBoxLog.debug(errorString);
+//                                            loadFailed = loadCompleted = true;
+                                            loadCompleted = true;  // Snap anyway
                                             return;
                                         }
 

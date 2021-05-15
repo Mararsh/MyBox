@@ -4,21 +4,20 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
-2021-4-16 版本6.4.3       
-- 网页编辑器：对于frameset可以选择frame来编辑；图片列表；按标签/编号/名字查找元素；查找网页中的字串。       
-- 合并颜色管理和调色盘管理：可定义多个调色盘；同一颜色在不同调色盘中可有不同的名字和顺序编号；优化取色界面。       
-- 笔记：按标题/内容/时间查找；可选是否查找子笔记本；复制笔记本；复制/移动笔记。       
-- 改进：合并数据文本/表格粘贴板；图像处理的画笔在起笔时应用混合模式。       
-- 新增：按URL/主机/IP查询网址；批量查询DNS；运行系统命令；编码/解码Base64。       
-- 移除：地图和微博无需安装证书；网页浏览器不再支持忽略SSL认证；疫情报告不再访问过期链接；笔记的示例不包含非法链接。       
-- 解决的主要问题：新SSL证书无法加入密钥库；一些界面/功能首次运行时异常；一些操作没有备份文件。       
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.3)       
+2021-5-15 版本6.4.4       
 
- ## 下载与运行
+* 改进和修正网页编辑器、Markdown编辑器、网页浏览器。     
+* 新增：管理收藏的网址、查询网址历史、从Excel/Word/PowerPoint/Publisher/Visio中提取文本、功能列表。       
+* 升级到Java16和javafx16。       
+* 解决的主要问题：数据粘贴板无法输入汉字；CSV/Excel转换为PDF的结果是错误的；导出数据的界面异常；保存网页frame会覆盖frameset。       
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4)         
+   
+## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
 
 ### 源码
-[MyBox-6.4.3-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-src.zip)   39M（大约值）       
+[MyBox-6.4.4-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-src.zip)   39M（大约值）       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -29,36 +28,36 @@
 
 | 平台 | 链接 | 大小（大约值） | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.4.3-win10-x64.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-win10-x64.zip)  | 217MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.4.3-CentOS7-x64.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-CentOS7-x64.tar.gz)  | 233MB  | bin/MyBox  |
-| mac | [MyBox-6.4.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-mac.dmg)  | 237MB  |  MyBox-6.4.3.app   |
+| win10 x64 | [MyBox-6.4.4-win10-x64.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-win10-x64.zip)  | 231MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.4.4-CentOS7-x64.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.4.4-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-mac.dmg)  | 245MB  |  MyBox-6.4.4.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件）       
 
 ### Jar包
-在已安装JRE或者JDK 15或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。       
+在已安装JRE或者JDK 16或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。       
 
 | 平台 | 链接 | 大小（大约值） | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.4.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-win-jar.zip)  | 151MB | Java 15.0.1或更高版本 |
-| linux | [MyBox-6.4.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-linux-jar.zip)  | 160MB  | Java 15.0.1或更高版本 |
-| mac | [MyBox-6.4.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-mac-jar.zip)  |  156MB  | Java 15.0.1或更高版本 |
+| win | [MyBox-6.4.4-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-win-jar.zip)  | 168MB | Java 16或更高版本 |
+| linux | [MyBox-6.4.4-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-linux-jar.zip)  | 176MB  | Java 16或更高版本 |
+| mac | [MyBox-6.4.4-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-mac-jar.zip)  |  173MB  | Java 16或更高版本 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.4.3.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.4.4.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.4.3.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.4.4.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
-从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F       
-从sourceforge下载：https://sourceforge.net/projects/mara-mybox/files/       
+从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
+从sourceforge下载：[https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)      
 
 ### 限制
-自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
-[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)       
 
-在某个输入法运行时，MyBox的窗口经常僵住。解决办法：禁用/卸载此输入法。       
+* 自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
+[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)       
+* 在某个输入法运行时，MyBox的窗口经常僵住。解决办法：禁用/卸载此输入法。       
 
 ## 版本迁移
 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
@@ -67,9 +66,9 @@
 配置文件在"用户目录"下:       
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.4.3.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.4.3.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.4.3.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.4.4.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.4.4.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.4.4.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -88,7 +87,7 @@
 # 文档       
 | 文档名 | 版本 | 修改时间  | 链接 |       
 | --- | --- | --- | --- |
-| 开发日志 | 6.4.3 |  2021-4-16 | [html](#devLog) |
+| 开发日志 | 6.4.4 |  2021-5-15 | [html](#devLog) |
 | 快捷键 | 6.3.9 |  2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
@@ -110,7 +109,7 @@ MyBox基于以下开放资源：
 |   |   |  https://docs.oracle.com/javafx/2/  |
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |
 | NetBeans | 集成开发环境 | https://netbeans.org/ |
-| jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/15/docs/specs/man/jpackage.html |
+| jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/16/docs/specs/man/jpackage.html |
 | maven | 代码构建 | https://maven.apache.org/ |
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |
@@ -159,10 +158,12 @@ MyBox基于以下开放资源：
 
 
 # 当前版本       
-当前是版本6.4.3，已实现的特点概述如下:       
+当前是版本6.4.4，已实现的特点概述如下:      
+  
 * [跨平台](#cross-platform)
 * [国际化](#international)
-* [本机](#localhost)
+* [个人的](#personal)
+* [数据兼容](#dataCompatible)
 * [文档工具](#documentTools)
     - [笔记](#notes)
     - [PDF工具](#pdfTools)
@@ -217,40 +218,44 @@ MyBox基于以下开放资源：
 * [网络工具](#netTools)
     - [下载第一级链接](#downloadFirstLevelLinks)
     - [微博截图工具](#weiboSnap)
-    - [解码/编码URL](#encodeDecodeURL)
-    - [浏览器](#webBrowser)
-    - [管理安全证书](#securityCerificates)
+    - [网页浏览器](#webBrowser)
     - [查询网址](#queryAddress)
     - [批量查询DNS](#queryDNS)
+    - [解码/编码URL](#encodeDecodeURL)
+    - [管理安全证书](#securityCerificates)
 * [开发工具](#devTools)
 * [设置](#settings)
 * [窗口](#windows)
 * [帮助](#helps)
-* [对于高清晰屏幕的支持](#Hidpi)       
 
 ## 跨平台<a id="cross-platform" />       
-MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 15的平台。       
+MyBox用纯Java实现且只基于开放资源，MyBox可运行于所有支持Java 16的平台。       
 MyBox v5.3以前的版本均基于Java 8。       
 
 ## 国际化<a id="international" />       
 1. 所有代码均国际化。可实时切换语言。
 2. 一种语言对应两个资源文件："Messages_语言名.properties"、"TableMessages_语言名.properties"。
-3. 内置中文和英文， 在目录`MyBox/src/main/resources/bundles/`中：       
+3. 支持在线添加语言。提供表格，对照英语翻译。新语言可实时生效。       
+例如，新语言名字为“aa”，则它的资源文件是：Messages_aa.properties和TableMessages_aa.properties。       
+4. 新语言可共享给别人：把资源文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。       
+5. 内置中文和英文， 在目录`MyBox/src/main/resources/bundles/`中：       
 
 | 语言 | 界面的资源文件 | 数据表的资源文件 |       
 | --- | --- |  --- |
 | 中文 | Messages_zh_CN.properties | TableMessages_zh_CN.properties |
 | 英文 | Messages_en.properties | TableMessages_en.properties |       
 
-4. 支持在线添加语言。提供表格，对照英语翻译。新语言可实时生效。       
-例如，新语言名字为“aa”，则它的资源文件是：Messages_aa.properties和TableMessages_aa.properties。       
-5. 新语言可共享给别人：把资源文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。       
-
 ![截屏-封面](https://mararsh.github.io/MyBox/snap-cover.jpg)       
 
-## 本机<a id="localhost" />
-1. 如无必要，不访问网络。       
-2. 如无必要，不读不写。       
+## 个人的<a id="personal" />
+1. 无注册/登录/数据中心/云存储。
+2. 如无必要，不访问网络。       
+3. 如无必要，不读不写。       
+
+## 数据兼容<a id="dataCompatible" />
+1. 导出的数据是通用的文本格式，如txt/csv/xml/json/html。
+2. 导入的数据是通用的文本格式，如txt/csv。       
+3. 导入的数据是自包含的，即重建原数据无需辅助数据。       
 
 
 ## 文档工具<a id="documentTools" />       
@@ -343,31 +348,22 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  编辑网页富文本
 	-  编辑网页代码
 	-  编辑Markdown
-2. 显示：
-	-  转换的文本
-	-  提取网页中标题
-	-  提取网页中的链接
-	-  提取网页中的图片
-3. 查找：
-	-  按标签/编号/名字查找元素
-	-  查找网页中的字串
-4. 对于frameset可以选择frame来编辑。       
+2. 对于frameset可以选择frame来编辑。       
 
 ![截屏-textEditor](https://mararsh.github.io/MyBox/snap-htmlEditor.jpg)       
 
 ### 网页工具<a id="htmlTools" />
 1. 网页截图：可设置dpi，看选保存为一张图还是多图保存在PDF中。
 2. 合并多个网页为一个网页/Markdown/文本/PDF文件。
-3. 对多个文件生成框架文件。       
+3. 对多个文件生成框架文件。   
+4. 提取网页中的文本、链接、图片、标题。
+    
 
 ### 编辑Markdown<a id="markdownEditor" />
 1. 提供输入格式的按钮。       
 2. 显示，可选是否同步更新：
 	-  转换的网页
-	-  转换的网页代码
-	-  转换为文本
-	-  提取网页中标题
-	-  提取网页中的链接              
+	-  转换的网页代码 
 
 ### 转换文档<a id="convertDocuments" />
 1. 批量转换文本：
@@ -384,6 +380,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  转换Markdown为网页。
 	-  转换Markdown为文本。
 	-  转换Markdown为PDF。       
+4. 从Excel/Word/PowerPoint/Publisher/Visio中提取文本。
 
 ## 图像工具<a id="imageTools" />
 
@@ -1170,6 +1167,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 ### 封装ffmpeg的功能<a id="ffmpeg" />        
 注：这一组功能依赖于ffmpeg，需要用户自己下载ffmpeg（建议使用静态版本）。        
+
 1. 处理媒体时：
 	-  可选择/设置所有的参数，包括文件格式（合成器）、视频编码、音频编码、字幕、视频帧率、宽高比、音频采样率、改变音量等。
 	-  “缺省”按钮：当有NVIDIA时，选择"h264_nvenc"作为视频编码器，以利用硬件加速。
@@ -1267,28 +1265,13 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 ![截屏-weibo](https://mararsh.github.io/MyBox/snap-weibo.jpg)        
 
-### 解码/编码URL<a id="encodeDecodeURL" />
-此工具帮助将字符串与application/x-www-form-urlencoded MIME之间转换。        
-在编码时应用以下规则：        
--  "a"到"z"之间的字母、 "A"到 "Z"之间的字母、以及 "0"到 "9"之间的数字保留原样。
--  特殊字符".", "-", "*", 和 "_"保留原样。
--  空字符" "转换为加号"+"
--  其它所有字符被认为是不安全的，首先采用指定的字符集转换为1个或多个字节。        
-   然后每个字节被表达为形如 "%xy"的3个字符的字符串，其中xy是字节的十六进制两位数字表示。        
-
-解码反过来。        
-
-
-### 浏览器<a id="webBrowser" />
+### 网页浏览器<a id="webBrowser" />
 1. 多页签显示网页
 2. 管理浏览历史
-
-### 管理安全证书<a id="securityCerificates" />
-1. 读取任意密钥库文件中的证书内容，可导出为html文件
-2. 添加/读取任意证书文件的内容
-3. 下载并安装任意网址的证书。
-4. 删除密钥库中的证书。
-5. 自动备份。
+3. 管理收藏的网址
+4. 查找网页中的字串
+5. 查找网页中的元素
+    
 
 ### 查询网址<a id="queryAddress" />
 1. 查询URL/主机/IP
@@ -1299,6 +1282,28 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 1. 输入主机/ip列表。提供示例。
 2. 打开hosts文件。
 3. 执行刷新DNS的命令。
+
+
+### 解码/编码URL<a id="encodeDecodeURL" />
+此工具帮助将字符串与application/x-www-form-urlencoded MIME之间转换。        
+在编码时应用以下规则：        
+
+-  "a"到"z"之间的字母、 "A"到 "Z"之间的字母、以及 "0"到 "9"之间的数字保留原样。
+-  特殊字符".", "-", "*", 和 "_"保留原样。
+-  空字符" "转换为加号"+"
+-  其它所有字符被认为是不安全的，首先采用指定的字符集转换为1个或多个字节。        
+   然后每个字节被表达为形如 "%xy"的3个字符的字符串，其中xy是字节的十六进制两位数字表示。        
+
+解码反过来。    
+
+
+### 管理安全证书<a id="securityCerificates" />
+1. 读取任意密钥库文件中的证书内容，可导出为html文件
+2. 添加/读取任意证书文件的内容
+3. 下载并安装任意网址的证书。
+4. 删除密钥库中的证书。
+5. 自动备份。
+
 
 ## 开发工具<a id="devTools" />
 1. 开/关内存监视条
@@ -1319,7 +1324,6 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 7. 从ttc文件中提取ttf文件
 8. 制作图标
 9. 给作者发消息
-
 
 ## 设置<a id="settings" />
 1. 界面：
@@ -1366,18 +1370,22 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 1. MyBox快捷键：
 	-  若焦点在“文本输入”控件中，则Delete/Home/End/PageUp/PageDown/Ctrl-c/v/z/y/x作用于此控件中的文本。否则，快捷键作用于界面。
 	-  若焦点不在“文本输入”控件中，Ctrl/Alt键可省略。例如，焦点在图片上时，按"c"以复制，按"2"以设置为面板尺寸。
-2. ReadMe
-3. 文档：帮助用户启动下载任务。若数据目录下已有MyBox文档，则MyBox会自动发现它们。
-4. About
-
-
-## 对于高清晰屏幕的支持<a id="Hidpi" />
-1. Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。MyBox支持在线关闭/打开DPI敏感，修改时MyBox会自动重启。        
-开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。
-2. 用户可以选择高清晰图标还是普通图标。
+2. 功能列表
+3. ReadMe
+4. 文档：帮助用户启动下载任务。若数据目录下已有MyBox文档，则MyBox会自动发现它们。
+5. About
 
 
 # 开发日志<a id="devLog" />        
+2021-5-15 版本6.4.4       
+
+* 改进和修正网页编辑器、Markdown编辑器、网页浏览器。     
+* 新增：管理收藏的网址、查询网址历史、从Excel/Word/PowerPoint/Publisher/Visio中提取文本、功能列表。       
+* 升级到Java16和javafx16。       
+* 解决的主要问题：数据粘贴板无法输入汉字；CSV/Excel转换为PDF的结果是错误的；导出数据的界面异常；保存网页frame会覆盖frameset。       
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4)         
+
 2021-4-16 版本6.4.3        
 - 网页编辑器：对于frameset可以选择frame来编辑；图片列表；按标签/编号/名字查找元素；查找网页中的字串。        
 - 合并颜色管理和调色盘管理：可定义多个调色盘；同一颜色在不同调色盘中可有不同的名字和顺序编号；优化取色界面。        
@@ -1386,7 +1394,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 - 新增：按URL/主机/IP查询网址；批量查询DNS；运行系统命令；编码/解码Base64。        
 - 移除：地图和微博无需安装证书；网页浏览器不再支持忽略SSL认证；疫情报告不再访问过期链接；笔记的示例不包含非法链接。        
 - 解决的主要问题：新SSL证书无法加入密钥库；一些界面/功能首次运行时异常；一些操作没有备份文件。        
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.3)        
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4)        
 
 2021-3-21 版本6.4.2        
 - 笔记。设置笔记的标签、按标签查询笔记。笔记本可移动。富文本编辑笔记。设置显示风格。导出格式增加：单个网页、网页框架、xml，可以设置导出文件的字符集和样式。                 

@@ -27,37 +27,26 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                    <children>
-                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="historyButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#manageHistories">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconHistory.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#newTabAction">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconAdd.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </HBox>
                 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <tabs>
-                    </tabs>
-                </TabPane>
+               <tabs>
+                  <Tab fx:id="addTab" closable="false">
+                     <graphic>
+                        <Button fx:id="addTabButton" mnemonicParsing="false" onAction="#newTabAction">
+                           <graphic>
+                                      <ImageView fx:id="addIcon" fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/iconAdd.png" />
+                                          </image>
+                                      </ImageView>
+                           </graphic>
+                        </Button>
+                     </graphic>
+                  </Tab>
+               </tabs></TabPane>
             </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
         </VBox>
     </center>
     <padding>

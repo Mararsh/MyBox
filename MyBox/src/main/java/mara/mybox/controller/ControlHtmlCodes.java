@@ -6,13 +6,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
@@ -30,16 +34,18 @@ public class ControlHtmlCodes extends BaseController {
 
     @FXML
     protected TextArea codesArea;
+    @FXML
+    protected Button pasteTxtButton;
 
     public ControlHtmlCodes() {
         baseTitle = AppVariables.message("Html");
-
     }
 
     public void setValues(BaseController parent) {
         try {
             this.parentController = parent;
             this.baseName = parent.baseName;
+            FxmlControl.setTooltip(pasteTxtButton, new Tooltip(message("PasteTexts")));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -128,9 +134,14 @@ public class ControlHtmlCodes extends BaseController {
 
             for (int i = 1; i <= 6; i++) {
                 String name = message("Headings") + " " + i;
-                String value = "<h" + i + ">" + name + "</h" + i + ">\n";
+                int level = i;
                 menu = new MenuItem(name);
                 menu.setOnAction((ActionEvent event) -> {
+                    String value = FxmlControl.askValue(baseTitle, message("Image"), null,
+                            "<H" + level + ">" + name + "</H" + level + ">\n");
+                    if (value == null) {
+                        return;
+                    }
                     insertText(value);
                 });
                 popMenu.getItems().add(menu);
@@ -184,7 +195,7 @@ public class ControlHtmlCodes extends BaseController {
 
             menu = new MenuItem(message("ReferLocalFile"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxmlControl.selectFile(this);
+                File file = FxmlControl.selectFile(this, VisitHistory.FileType.All);
                 if (file == null) {
                     return;
                 }
@@ -211,13 +222,23 @@ public class ControlHtmlCodes extends BaseController {
 
             menu = new MenuItem(message("Font"));
             menu.setOnAction((ActionEvent event) -> {
-                insertText("<font size=\"3\" color=\"red\">" + message("Font") + "</font>");
+                String value = FxmlControl.askValue(baseTitle, message("Font"), null,
+                        "<font size=\"3\" color=\"red\">" + message("Font") + "</font>");
+                if (value == null) {
+                    return;
+                }
+                insertText(value);
             });
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Bold"));
             menu.setOnAction((ActionEvent event) -> {
-                insertText("<b>" + message("Bold") + "</b>");
+                String value = FxmlControl.askValue(baseTitle, message("Bold"), null,
+                        "<b>" + message("Bold") + "</b>");
+                if (value == null) {
+                    return;
+                }
+                insertText(value);
             });
             popMenu.getItems().add(menu);
 
@@ -318,12 +339,22 @@ public class ControlHtmlCodes extends BaseController {
 
     @FXML
     public void addImage() {
-        insertText("<img src=\"https://mararsh.github.io/MyBox/iconGo.png\" alt=\"ReadMe\" />\n");
+        String value = FxmlControl.askValue(baseTitle, message("Image"), null,
+                "<img src=\"https://mararsh.github.io/MyBox/iconGo.png\" alt=\"ReadMe\" />");
+        if (value == null) {
+            return;
+        }
+        insertText(value);
     }
 
     @FXML
     public void addlink() {
-        insertText("<a href=\"https://github.com/Mararsh/MyBox\">MyBox</a>\n");
+        String value = FxmlControl.askValue(baseTitle, message("Link"), null,
+                "<a href=\"https://github.com/Mararsh/MyBox\">MyBox</a>");
+        if (value == null) {
+            return;
+        }
+        insertText(value);
     }
 
     @FXML
@@ -367,13 +398,23 @@ public class ControlHtmlCodes extends BaseController {
     }
 
     @FXML
+    public void pasteTxt() {
+        String string = Clipboard.getSystemClipboard().getString();
+        if (string == null || string.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        insertText(string.replaceAll("\n", "<BR>\n"));
+    }
+
+    @FXML
     @Override
     public void clearAction() {
         codesArea.clear();
     }
 
     @FXML
-    public void txtAction() {
+    public void editAction() {
         TextEditerController controller = (TextEditerController) FxmlStage.openStage(CommonValues.TextEditerFxml);
         controller.loadContexts(codesArea.getText());
         controller.toFront();

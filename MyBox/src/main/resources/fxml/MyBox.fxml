@@ -29,7 +29,7 @@ License:    Apache License Version 2.0
                         <Image url="@../img/MyBox.png" />
                     </image>
                 </ImageView>
-                <Label maxWidth="1.7976931348623157E308" text="%AppTitle" HBox.hgrow="ALWAYS" >
+                <Label maxWidth="1.7976931348623157E308" text="%AppTitle" HBox.hgrow="ALWAYS">
                     <font>
                         <Font size="18.0" />
                     </font>
@@ -193,7 +193,7 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onKeyPressed="#hideMenu" onMouseClicked="#showAbout" onMouseEntered="#showAboutImage" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onMouseEntered="#showAboutMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

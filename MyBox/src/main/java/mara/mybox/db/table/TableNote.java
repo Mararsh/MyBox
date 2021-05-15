@@ -96,30 +96,6 @@ public class TableNote extends BaseTable<Note> {
         }
     }
 
-    public int withSubSize(TableNotebook tableNotebook, long bookid) {
-        int count = 0;
-        try ( Connection conn = DerbyBase.getConnection()) {
-            count = withSubSize(conn, tableNotebook, bookid);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return count;
-    }
-
-    public int withSubSize(Connection conn, TableNotebook tableNotebook, long bookid) {
-        int count = TableNote.bookSize(conn, bookid);
-        if (tableNotebook == null) {
-            tableNotebook = new TableNotebook();
-        }
-        List<Notebook> children = tableNotebook.children(conn, bookid);
-        if (children != null) {
-            for (Notebook child : children) {
-                count += withSubSize(conn, tableNotebook, child.getNbid());
-            }
-        }
-        return count;
-    }
-
     public List<Note> withSub(Connection conn, TableNotebook tableNotebook, long bookid) {
         List<Note> notes = new ArrayList<>();
         List<Note> bookNotes = notes(conn, bookid);
@@ -228,6 +204,30 @@ public class TableNote extends BaseTable<Note> {
         return size;
     }
 
+    public static int withSubSize(TableNotebook tableNotebook, long bookid) {
+        int count = 0;
+        try ( Connection conn = DerbyBase.getConnection()) {
+            count = withSubSize(conn, tableNotebook, bookid);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return count;
+    }
+
+    public static int withSubSize(Connection conn, TableNotebook tableNotebook, long bookid) {
+        int count = bookSize(conn, bookid);
+        if (tableNotebook == null) {
+            tableNotebook = new TableNotebook();
+        }
+        List<Notebook> children = tableNotebook.children(conn, bookid);
+        if (children != null) {
+            for (Notebook child : children) {
+                count += withSubSize(conn, tableNotebook, child.getNbid());
+            }
+        }
+        return count;
+    }
+
     public static String tagsCondition(List<Tag> tags) {
         if (tags == null || tags.isEmpty()) {
             return null;
@@ -267,12 +267,6 @@ public class TableNote extends BaseTable<Note> {
             MyBoxLog.error(e);
         }
         return times;
-    }
-
-    public static int conditionSize(String condition) {
-        String sql = "SELECT COUNT(ntid) FROM Note "
-                + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
-        return DerbyBase.size(sql);
     }
 
 }

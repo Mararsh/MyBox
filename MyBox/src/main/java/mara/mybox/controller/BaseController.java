@@ -799,7 +799,7 @@ public abstract class BaseController implements Initializable {
         isSettingValues = false;
         ControlStyle.setIconName(leftPaneControl, "iconDoubleRight.png");
         setSplitDividerPositions();
-        splitPane.applyCss();
+        FxmlControl.refreshStyle(splitPane);
         AppVariables.setUserConfigValue(baseName + "ShowLeftControl", false);
     }
 
@@ -814,7 +814,7 @@ public abstract class BaseController implements Initializable {
         isSettingValues = false;
         ControlStyle.setIconName(leftPaneControl, "iconDoubleLeft.png");
         setSplitDividerPositions();
-        splitPane.applyCss();
+        FxmlControl.refreshStyle(splitPane);
         AppVariables.setUserConfigValue(baseName + "ShowLeftControl", true);
     }
 
@@ -849,7 +849,7 @@ public abstract class BaseController implements Initializable {
         isSettingValues = false;
         ControlStyle.setIconName(rightPaneControl, "iconDoubleLeft.png");
         setSplitDividerPositions();
-        splitPane.applyCss();
+        FxmlControl.refreshStyle(splitPane);
         AppVariables.setUserConfigValue(baseName + "ShowRightControl", false);
     }
 
@@ -864,7 +864,7 @@ public abstract class BaseController implements Initializable {
         isSettingValues = false;
         ControlStyle.setIconName(rightPaneControl, "iconDoubleRight.png");
         setSplitDividerPositions();
-        splitPane.applyCss();
+        FxmlControl.refreshStyle(splitPane);
         AppVariables.setUserConfigValue(baseName + "ShowRightControl", true);
     }
 

@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.4.3";
-    public static final String AppVersionDate = "2021-4-16";
+    public static final String AppVersion = "6.4.4";
+    public static final String AppVersionDate = "2021-5-15";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -26,7 +26,9 @@ public class CommonValues {
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
     public static final String MyBoxLogsFxml = "/fxml/MyBoxLogs.fxml";
     public static final String MyBoxLogViewerFxml = "/fxml/MyBoxLogViewer.fxml";
+    public static final String MyBoxDataFxml = "/fxml/MyBoxData.fxml";
     public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
+    public static final String FunctionsListFxml = "/fxml/FunctionsList.fxml";
     public static final String NotesFxml = "/fxml/Notes.fxml";
     public static final String NotesImportFxml = "/fxml/NotesImport.fxml";
     public static final String NotesExportFxml = "/fxml/NotesExport.fxml";
@@ -49,6 +51,7 @@ public class CommonValues {
     public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
+    public static final String ExtractTextsFromMSFxml = "/fxml/ExtractTextsFromMS.fxml";
     public static final String AboutFxml = "/fxml/About.fxml";
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String LoadingFxml = "/fxml/Loading.fxml";
@@ -184,7 +187,17 @@ public class CommonValues {
     public static final String FileTTC2TTFFxml = "/fxml/FileTTC2TTF.fxml";
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
     public static final String ControlWebBrowserBoxFxml = "/fxml/ControlWebBrowserBox.fxml";
-    public static final String WebBrowserHistoryFxml = "/fxml/WebBrowserHistory.fxml";
+    public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
+    public static final String WebFavoritesFxml = "/fxml/WebFavorites.fxml";
+    public static final String WebFavoriteAddFxml = "/fxml/WebFavoriteAdd.fxml";
+    public static final String WebFavoriteNodeCopyFxml = "/fxml/WebFavoriteNodeCopy.fxml";
+    public static final String WebFavoritesCopyFxml = "/fxml/WebFavoritesCopy.fxml";
+    public static final String WebFavoritesMoveFxml = "/fxml/WebFavoritesMove.fxml";
+    public static final String WebFavoritesExportFxml = "/fxml/WebFavoritesExport.fxml";
+    public static final String WebFavoritesImportFxml = "/fxml/WebFavoritesImport.fxml";
+    public static final String WebFindFxml = "/fxml/WebFind.fxml";
+    public static final String WebElementsFxml = "/fxml/WebElements.fxml";
+    public static final String TreeNodeMoveFxml = "/fxml/TreeNodeMove.fxml";
     public static final String NetworkConvertUrlFxml = "/fxml/NetworkConvertUrl.fxml";
     public static final String NetworkQueryAddressFxml = "/fxml/NetworkQueryAddress.fxml";
     public static final String NetworkQueryDNSBatchFxml = "/fxml/NetworkQueryDNSBatch.fxml";
@@ -228,6 +241,7 @@ public class CommonValues {
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
     public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
+    public static final String DataFileExcelExtractTextsFxml = "/fxml/DataFileExcelExtractTexts.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
@@ -235,10 +249,11 @@ public class CommonValues {
     public static final String DatasetEditFxml = "/fxml/DatasetEdit.fxml";
     public static final String LocationDataImportCSVFxml = "/fxml/LocationDataImportCSV.fxml";
     public static final String LocationDataImportMovebankFxml = "/fxml/LocationDataImportMovebank.fxml";
-    public static final String LocationToolsFxml = "/fxml/LocationTools.fxml";
+    public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";
     public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
+    public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEn = new Locale("en");

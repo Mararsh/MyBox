@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -10,12 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
@@ -141,8 +138,8 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                     treeView.setSelection();
                 }
             };
-            if (getUserController() != null) {
-                loading = getUserController().openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                loading = parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
@@ -303,8 +300,8 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                     addNodes(parent, nodes, haveChildren, haveLevels);
                 }
             };
-            if (getUserController() != null) {
-                loading = getUserController().openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                loading = parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }

@@ -467,6 +467,11 @@ public class MainMenuController extends BaseController {
         loadScene(CommonValues.BytesEditerFxml);
     }
 
+    @FXML
+    protected void extractTextsFromMS(ActionEvent event) {
+        loadScene(CommonValues.ExtractTextsFromMSFxml);
+    }
+
     /*
         image tools menu
      */
@@ -714,8 +719,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void openLocationTools(ActionEvent event) {
-        loadScene(CommonValues.LocationToolsFxml);
+    protected void ConvertCoordinate(ActionEvent event) {
+        loadScene(CommonValues.ConvertCoordinateFxml);
     }
 
     @FXML
@@ -889,6 +894,26 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void openWebBrowser(ActionEvent event) {
         loadScene(CommonValues.WebBrowserFxml);
+    }
+
+    @FXML
+    protected void webFavorites(ActionEvent event) {
+        WebFavoritesController.oneOpen();
+    }
+
+    @FXML
+    protected void webHistories(ActionEvent event) {
+        WebHistoriesController.oneOpen();
+    }
+
+    @FXML
+    protected void webFind(ActionEvent event) {
+        loadScene(CommonValues.WebFindFxml);
+    }
+
+    @FXML
+    protected void webElements(ActionEvent event) {
+        loadScene(CommonValues.WebElementsFxml);
     }
 
     @FXML
@@ -1226,6 +1251,11 @@ public class MainMenuController extends BaseController {
         openStage(CommonValues.MyBoxLogsFxml);
     }
 
+    @FXML
+    protected void MyBoxData(ActionEvent event) {
+        openStage(CommonValues.MyBoxDataFxml);
+    }
+
     protected void makeMemoryMonitorBox() {
         sysMemLabel = new Label();
         sysMemBar = new ProgressBar();
@@ -1463,6 +1493,11 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void Shortcuts(ActionEvent event) {
         openStage(CommonValues.ShortcutsFxml);
+    }
+
+    @FXML
+    protected void FunctionsList(ActionEvent event) {
+        openStage(CommonValues.FunctionsListFxml);
     }
 
     @FXML

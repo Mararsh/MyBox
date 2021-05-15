@@ -562,8 +562,8 @@ public class ImageManufactureController extends ImageViewerController {
         if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
             autoSize();
         }
-        mainSplitPane.applyCss();
         isSettingValues = false;
+        FxmlControl.refreshStyle(mainSplitPane);
     }
 
     public void hideScopePane() {
@@ -579,8 +579,9 @@ public class ImageManufactureController extends ImageViewerController {
         if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
             autoSize();
         }
-        mainSplitPane.applyCss();
         isSettingValues = false;
+        FxmlControl.refreshStyle(mainSplitPane);
+
     }
 
     public void controlImagePaneOnMouseEnter() {
@@ -623,8 +624,8 @@ public class ImageManufactureController extends ImageViewerController {
         if (AppVariables.getUserConfigBoolean(baseName + "FitSize", false)) {
             autoSize();
         }
-        mainSplitPane.applyCss();
         isSettingValues = false;
+        FxmlControl.refreshStyle(mainSplitPane);
     }
 
     public void hideImagePane() {
@@ -637,8 +638,8 @@ public class ImageManufactureController extends ImageViewerController {
         mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
         mainSplitPane.getItems().remove(imagePane);
         ControlStyle.setIconName(scopePaneControl, "iconDoubleLeft.png");
-        mainSplitPane.applyCss();
         isSettingValues = false;
+        FxmlControl.refreshStyle(mainSplitPane);
     }
 
     @FXML

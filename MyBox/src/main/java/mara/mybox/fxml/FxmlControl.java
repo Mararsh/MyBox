@@ -580,7 +580,7 @@ public class FxmlControl {
             file.deleteOnExit();
             return file;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }
@@ -1373,7 +1373,7 @@ public class FxmlControl {
         dialog.setHeaderText(header);
         dialog.setContentText(name);
         dialog.getEditor().setText(initValue);
-        dialog.getEditor().setPrefWidth(200);
+        dialog.getEditor().setPrefWidth(initValue == null ? 200 : Math.min(600, initValue.length() * AppVariables.sceneFontSize));
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
@@ -1438,6 +1438,22 @@ public class FxmlControl {
                 return "";
             }
             Object c = engine.executeScript("window.frames[" + index + "].document.documentElement.outerHTML");
+            if (c == null) {
+                return "";
+            }
+            return (String) c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return "";
+        }
+    }
+
+    public static String getFrame(WebEngine engine, String frameName) {
+        try {
+            if (engine == null || frameName == null) {
+                return "";
+            }
+            Object c = engine.executeScript("window.frames." + frameName + ".document.documentElement.outerHTML");
             if (c == null) {
                 return "";
             }

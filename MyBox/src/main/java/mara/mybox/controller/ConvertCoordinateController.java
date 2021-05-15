@@ -17,9 +17,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.db.data.GeographyCode;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.GeographyCode;
 import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
@@ -27,7 +28,6 @@ import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
 import static mara.mybox.tools.LocationTools.longitudeToDmsString;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import thridparty.CoordinateConverter;
@@ -37,7 +37,7 @@ import thridparty.CoordinateConverter;
  * @CreateDate 2020-8-4
  * @License Apache License Version 2.0
  */
-public class LocationToolsController extends BaseMapController {
+public class ConvertCoordinateController extends BaseMapController {
 
     protected int degrees, minutes;
     protected double seconds, longitude, latitude, coordinate;
@@ -52,9 +52,9 @@ public class LocationToolsController extends BaseMapController {
     @FXML
     protected WebView csView;
 
-    public LocationToolsController() {
-        baseTitle = AppVariables.message("LocationTools");
-        TipsLabelKey = "LocationToolsTips";
+    public ConvertCoordinateController() {
+        baseTitle = AppVariables.message("ConvertCoordinate");
+        TipsLabelKey = "ConvertCoordinateTips";
     }
 
     @Override

@@ -797,12 +797,6 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @Override
-    public void setImageChanged(boolean imageChanged) {
-        this.imageChanged = imageChanged;
-        updateLabelsTitle();
-    }
-
-    @Override
     public void setDafultMaskRectangleValues() {
         if (imageView == null || maskPane == null || maskRectangleLine == null) {
             return;
@@ -898,6 +892,15 @@ public class PdfViewController extends ImageViewerController {
         isSettingValues = false;
     }
 
+    /*
+        image
+     */
+    @Override
+    public void setImageChanged(boolean imageChanged) {
+        this.imageChanged = imageChanged;
+        updateLabelsTitle();
+    }
+
     @FXML
     @Override
     public void loadedSize() {
@@ -928,6 +931,11 @@ public class PdfViewController extends ImageViewerController {
         scrolledSet = true;
         super.zoomOut();
         setSizeBox();
+    }
+
+    @Override
+    public File imageFile() {
+        return null;
     }
 
     /*

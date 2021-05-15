@@ -22,6 +22,7 @@ import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
+import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
@@ -31,6 +32,7 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
@@ -83,6 +85,9 @@ public class DataMigration {
                 if (lastVersion < 6004003) {
                     updateIn643(conn);
                 }
+                if (lastVersion < 6004004) {
+                    updateIn644(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", CommonValues.AppVersion);
             conn.setAutoCommit(true);
@@ -90,6 +95,38 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn644(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.4.4...");
+            TableWebHistory tableWebHistory = new TableWebHistory();
+            String sql = "SELECT * FROM Browser_History";
+            try ( Statement statement = conn.createStatement();
+                     ResultSet results = statement.executeQuery(sql)) {
+                conn.setAutoCommit(false);
+                while (results.next()) {
+                    WebHistory his = new WebHistory();
+                    his.setAddress(results.getString("address"));
+                    his.setTitle(results.getString("title"));
+                    his.setIcon(results.getString("icon"));
+                    his.setVisitTime(results.getTimestamp("visit_time"));
+                    tableWebHistory.insertData(conn, his);
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.commit();
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("DROP TABLE Browser_History");
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            TableStringValues.add(conn, "InstalledVersions", "6.4.4");
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn643(Connection conn) {
@@ -655,40 +692,40 @@ public class DataMigration {
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.4", false)) {
                 MyBoxLog.info("Updating tables in 5.4...");
                 String sql = "ALTER TABLE User_Conf  alter  column  key_Name set data type VARCHAR(1024)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE User_Conf  alter  column  default_string_Value set data type VARCHAR(32672)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE System_Conf  alter  column  key_Name set data type VARCHAR(1024)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE System_Conf  alter  column  string_Value set data type VARCHAR(32672)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE System_Conf  alter  column  default_string_Value set data type VARCHAR(32672)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE image_history  add  column  temp VARCHAR(128)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "UPDATE image_history SET temp=CHAR(update_type)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE image_history drop column update_type";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "RENAME COLUMN image_history.temp TO update_type";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE image_history  add  column  object_type VARCHAR(128)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE image_history  add  column  op_type VARCHAR(128)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE image_history  add  column  scope_type  VARCHAR(128)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "ALTER TABLE image_history  add  column  scope_name  VARCHAR(1024)";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 sql = "DROP TABLE image_init";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 AppVariables.setSystemConfigValue("UpdatedTables5.4", true);
             }
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.8", false)) {
                 MyBoxLog.info("Updating tables in 5.8...");
                 String sql = "ALTER TABLE SRGB  add  column  palette_index  INT";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
 
 //                List<String> saveColors = TableStringValues.read("ColorPalette");
 //                if (saveColors != null && !saveColors.isEmpty()) {
@@ -701,7 +738,7 @@ public class DataMigration {
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9", false)) {
                 MyBoxLog.info("Updating tables in 5.9...");
                 String sql = "DROP TABLE Browser_URLs";
-                DerbyBase.update(sql);
+                DerbyBase.update(conn, sql);
                 AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
             }
 

@@ -37,20 +37,20 @@ License:    Apache License Version 2.0
                     <children>
                         <Label minHeight="-Infinity" minWidth="-Infinity" text="%Command" wrapText="true" />
                         <fx:include fx:id="cmd" maxWidth="1.7976931348623157E308" source="ControlStringSelector.fxml" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#pasteAction" HBox.hgrow="NEVER">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconPaste.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
                         <Button fx:id="startButton" layoutX="924.0" layoutY="10.0" mnemonicParsing="false" onAction="#startAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#pasteAction" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconPaste.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

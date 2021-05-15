@@ -4,9 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -25,19 +25,25 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import javafx.scene.control.IndexRange;
 import javafx.scene.web.WebEngine;
-import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.HtmlViewerController;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
-import net.sf.image4j.codec.ico.ICODecoder;
 import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -475,44 +481,6 @@ public class HtmlTools {
         return htmlWithStyleValue(title, styleValue, body);
     }
 
-    public static boolean downloadIcon(String address, File targetFile) {
-        try {
-            if (address == null || targetFile == null) {
-                return false;
-            }
-            URL url = new URL(address);
-            BufferedImage image = null;
-            try ( InputStream in = new BufferedInputStream(url.openStream())) {
-                try {
-                    List<BufferedImage> images = ICODecoder.read(in);
-                    if (images != null && !images.isEmpty()) {
-                        image = images.get(0);
-                    }
-                } catch (Exception e) {
-//                    MyBoxLog.debug(e.toString());
-                }
-                if (image == null) {
-                    try {
-                        image = ImageIO.read(in);
-                    } catch (Exception e) {
-//                        MyBoxLog.debug(e.toString());
-                    }
-                }
-            }
-            if (image != null) {
-                String format = FileTools.getFileSuffix(targetFile);
-                if (format == null || format.isBlank()) {
-                    format = "png";
-                }
-                ImageIO.write(image, format, targetFile);
-            }
-            return targetFile.exists();
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return false;
-        }
-    }
-
     public static String readURL(String address) {
         try {
             if (address == null) {
@@ -533,47 +501,103 @@ public class HtmlTools {
         }
     }
 
-    // https://www.cnblogs.com/luguo3000/p/3767380.html
-    public static boolean readIcon(String address, File targetFile) {
-        if (readHostIcon(address, targetFile)) {
-            return true;
-        }
-        return readHtmlIcon(address, targetFile);
-    }
-
-    public static boolean readHostIcon(String address, File targetFile) {
-        try {
-            if (address == null || targetFile == null) {
-                return false;
-            }
-            URL url = new URL(address);
-            String iconUrl = url.getProtocol() + "://" + url.getHost() + "/favicon.ico";
-            return downloadIcon(iconUrl, targetFile);
-        } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean readHtmlIcon(String address, File targetFile) {
+    public static File readIcon(String address, boolean download) {
         try {
             if (address == null) {
-                return false;
+                return null;
+            }
+            URL url = new URL(address);
+            String host = url.getHost();
+            if (host == null || host.isBlank()) {
+                return null;
+            }
+            File file = FxmlControl.getInternalFile("/icons/" + host + ".png", "icons", host + ".png", false);
+            if (file == null || !file.exists()) {
+                file = FxmlControl.getInternalFile("/icons/" + host + ".ico", "icons", host + ".ico", false);
+                if ((file == null || !file.exists()) && download) {
+                    file = new File(MyboxDataPath + File.separator + "icons" + File.separator + host + ".ico");
+                    file = readIcon(address, file);
+                }
+            }
+            return file != null && file.exists() ? file : null;
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    // https://www.cnblogs.com/luguo3000/p/3767380.html
+    public static File readIcon(String address, File targetFile) {
+        File actualTarget = readHostIcon(address, targetFile);
+        if (actualTarget == null) {
+            actualTarget = readHtmlIcon(address, targetFile);
+        }
+        if (actualTarget != null) {
+            BufferedImage image = ImageFileReaders.readImage(actualTarget);
+            if (image != null) {
+                return actualTarget;
+            } else {
+                FileTools.delete(actualTarget);
+            }
+        }
+        return null;
+    }
+
+    public static File readHostIcon(String address, File targetFile) {
+        try {
+            if (address == null || targetFile == null) {
+                return null;
+            }
+            URL url = new URL(address);
+            String iconUrl = "https://" + url.getHost() + "/favicon.ico";
+            File actualTarget = downloadIcon(iconUrl, targetFile);
+            if (actualTarget == null) {
+                iconUrl = "http://" + url.getHost() + "/favicon.ico";
+                actualTarget = downloadIcon(iconUrl, targetFile);
+            }
+            return actualTarget;
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static File readHtmlIcon(String address, File targetFile) {
+        try {
+            if (address == null) {
+                return null;
             }
             String iconUrl = htmlIconAddress(address);
             if (iconUrl == null) {
-                return false;
+                return null;
             }
-            String suffix = FileTools.getFilePrefix(iconUrl);
-            if (suffix == null || suffix.isBlank()) {
-                return downloadIcon(iconUrl, targetFile);
-            } else {
-                return downloadIcon(iconUrl,
-                        new File(FileTools.replaceFileSuffix(targetFile.getAbsolutePath(), suffix)));
-            }
+            return downloadIcon(iconUrl, targetFile);
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
-            return false;
+            return null;
+        }
+    }
+
+    public static File downloadIcon(String address, File targetFile) {
+        try {
+            if (address == null || targetFile == null) {
+                return null;
+            }
+            File iconFile = url2File(address);
+            if (iconFile == null || !iconFile.exists()) {
+                return null;
+            }
+            String suffix = FileTools.getFileSuffix(address);
+            File actualTarget = targetFile;
+            if (suffix != null && !suffix.isBlank()) {
+                actualTarget = new File(FileTools.replaceFileSuffix(targetFile.getAbsolutePath(), suffix));
+
+            }
+            FileTools.rename(iconFile, actualTarget);
+            return actualTarget;
+        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+            return null;
         }
     }
 
@@ -762,7 +786,7 @@ public class HtmlTools {
             String body = nav.toString();
             FileTools.writeFile(navFile, HtmlTools.html(message("PathIndex"), body));
             String frameset = " <FRAMESET border=2 cols=400,*>\n"
-                    + "<FRAME name=nav src=\"" + namePrefix + "_Nav.html\" />\n";
+                    + "<FRAME name=nav src=\"" + namePrefix + "_nav.html\" />\n";
             if (first.getParent().equals(targetFile.getParent())) {
                 frameset += "<FRAME name=main src=\"" + first.getName() + "\" />\n";
             } else {
@@ -770,7 +794,7 @@ public class HtmlTools {
             }
             frameset += "</FRAMESET>";
             File frameFile = new File(targetFile.getParent() + File.separator + namePrefix + ".html");
-            FileTools.writeFile(frameFile, frameset);
+            FileTools.writeFile(frameFile, HtmlTools.html(null, frameset));
             return frameFile.exists();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1125,6 +1149,72 @@ public class HtmlTools {
         }
     }
 
+    public static int replace(Document doc, String findString,
+            boolean reg, boolean caseInsensitive, String color, String bgColor, String font) {
+        if (doc == null) {
+            return 0;
+        }
+        NodeList nodeList = doc.getElementsByTagName("body");
+        if (nodeList == null || nodeList.getLength() < 1) {
+            return 0;
+        }
+        FindReplaceString finder = FindReplaceString.create()
+                .setOperation(FindReplaceString.Operation.FindNext).setFindString(findString)
+                .setIsRegex(reg).setCaseInsensitive(caseInsensitive).setMultiline(true);
+        String replaceSuffix = " style=\"color:" + color
+                + "; background: " + bgColor
+                + "; font-size:" + font + ";\">" + findString + "</span>";
+        return replace(finder, nodeList.item(0), 0, replaceSuffix);
+    }
+
+    public static int replace(FindReplaceString finder, Node node, int index, String replaceSuffix) {
+        if (node == null || replaceSuffix == null || finder == null) {
+            return index;
+        }
+        String texts = node.getTextContent();
+        int newIndex = index;
+        if (texts != null && !texts.isBlank()) {
+            StringBuilder s = new StringBuilder();
+            while (true) {
+                finder.setInputString(texts).setAnchor(0).run();
+                if (finder.getStringRange() == null) {
+                    break;
+                }
+                String replaceString = "<span id=\"MyBoxSearchLocation" + (++newIndex) + "\" " + replaceSuffix;
+                if (finder.getLastStart() > 0) {
+                    s.append(texts.substring(0, finder.getLastStart()));
+                }
+                s.append(replaceString);
+                texts = texts.substring(finder.getLastEnd());
+            }
+            s.append(texts);
+            node.setTextContent(s.toString());
+        }
+        Node child = node.getFirstChild();
+        while (child != null) {
+            replace(finder, child, newIndex, replaceSuffix);
+            child = child.getNextSibling();
+        }
+        return newIndex;
+    }
+
+    public static String doc2html(Document doc, String charset) {
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.METHOD, "html");
+            transformer.setOutputProperty(OutputKeys.ENCODING, charset);
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            transformer.transform(new DOMSource(doc), new StreamResult(baos));
+            baos.close();
+//             MyBoxLog.console(baos.toString(charset));
+            return baos.toString(charset);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static List<Link> links(URL baseURL, String html) {
         if (html == null) {
             return null;
@@ -1234,6 +1324,13 @@ public class HtmlTools {
                     }
                 }
             }
+            if (tmpFile == null || !tmpFile.exists()) {
+                return null;
+            }
+            if (tmpFile.length() == 0) {
+                FileTools.delete(tmpFile);
+                return null;
+            }
             return tmpFile;
         } catch (Exception e) {
             return null;
@@ -1324,6 +1421,17 @@ public class HtmlTools {
                 .replaceAll("©", "&copy;")
                 .replaceAll("®", "&reg;")
                 .replaceAll("™", "&trade;");
+    }
+
+    public static String fullAddress(String baseAddress, String address) {
+        try {
+            URL baseURL = new URL(baseAddress);
+            URL url = new URL(baseURL, address);
+            return url.toString();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return address;
+        }
     }
 
 }

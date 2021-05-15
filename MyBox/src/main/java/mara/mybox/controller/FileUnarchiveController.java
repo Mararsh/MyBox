@@ -487,7 +487,9 @@ public class FileUnarchiveController extends FilesTreeController {
                 }
                 try ( FileOutputStream out = new FileOutputStream(file);
                          InputStream in = zipFile.getInputStream(entry)) {
-                    IOUtils.copy(in, out);
+                    if (in != null) {
+                        IOUtils.copy(in, out);
+                    }
                 } catch (Exception e) {
                     recordError(e.toString());
                     continue;

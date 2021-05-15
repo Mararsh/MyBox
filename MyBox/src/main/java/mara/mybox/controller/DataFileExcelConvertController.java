@@ -60,7 +60,6 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
         String result;
         String filePrefix = FileTools.getFilePrefix(srcFile.getName());
         try ( Workbook wb = WorkbookFactory.create(srcFile)) {
-            List<String> rowData = new ArrayList<>();
             for (int s = 0; s < wb.getNumberOfSheets(); s++) {
                 Sheet sheet = wb.getSheetAt(s);
                 updateLogs(message("Reading") + " " + message("Sheet") + ":" + sheet.getSheetName());
@@ -69,6 +68,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                     if (row == null) {
                         continue;
                     }
+                    List<String> rowData = new ArrayList<>();
                     for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
                         rowData.add(ExcelTools.cellString(row.getCell(c)));
                     }
@@ -85,7 +85,6 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                         }
                     }
                     convertController.writeRow(rowData);
-                    rowData.clear();
                 }
                 convertController.closeWriters();
             }

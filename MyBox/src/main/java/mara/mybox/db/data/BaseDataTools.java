@@ -14,6 +14,7 @@ import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageEditHistory;
@@ -25,6 +26,8 @@ import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
+import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.message;
@@ -95,6 +98,15 @@ public class BaseDataTools {
         } else if (data instanceof ColorPalette) {
             return new TableColorPalette();
 
+        } else if (data instanceof TreeNode) {
+            return new TableTree();
+
+        } else if (data instanceof WebFavorite) {
+            return new TableWebFavorite();
+
+        } else if (data instanceof WebHistory) {
+            return new TableWebHistory();
+
         }
         return null;
     }
@@ -156,6 +168,15 @@ public class BaseDataTools {
 
         } else if (data instanceof ColorPalette) {
             return ColorPalette.valid((ColorPalette) data);
+
+        } else if (data instanceof TreeNode) {
+            return TreeNode.valid((TreeNode) data);
+
+        } else if (data instanceof WebFavorite) {
+            return WebFavorite.valid((WebFavorite) data);
+
+        } else if (data instanceof WebHistory) {
+            return WebHistory.valid((WebHistory) data);
 
         }
 
@@ -220,6 +241,15 @@ public class BaseDataTools {
         } else if (data instanceof ColorPalette) {
             return ColorPalette.getValue((ColorPalette) data, name);
 
+        } else if (data instanceof TreeNode) {
+            return TreeNode.getValue((TreeNode) data, name);
+
+        } else if (data instanceof WebFavorite) {
+            return WebFavorite.getValue((WebFavorite) data, name);
+
+        } else if (data instanceof WebHistory) {
+            return WebHistory.getValue((WebHistory) data, name);
+
         }
 
         return null;
@@ -282,6 +312,15 @@ public class BaseDataTools {
 
         } else if (data instanceof ColorPalette) {
             return ColorPalette.setValue((ColorPalette) data, name, value);
+
+        } else if (data instanceof TreeNode) {
+            return TreeNode.setValue((TreeNode) data, name, value);
+
+        } else if (data instanceof WebFavorite) {
+            return WebFavorite.setValue((WebFavorite) data, name, value);
+
+        } else if (data instanceof WebHistory) {
+            return WebHistory.setValue((WebHistory) data, name, value);
 
         }
         return false;

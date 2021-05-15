@@ -73,6 +73,7 @@ public class NotesImportController extends BaseBatchFileController {
 
     public void importExamples(NotesController notesController) {
         this.notesController = notesController;
+        tableNotebook = notesController.tableNotebook;
         String lang = AppVariables.isChinese() ? "zh" : "en";
         File file = FxmlControl.getInternalFile("/data/db/Notes_Examples_" + lang + ".txt",
                 "data", "Notes_Examples_" + lang + ".txt", true);
@@ -120,6 +121,7 @@ public class NotesImportController extends BaseBatchFileController {
             conn.setAutoCommit(false);
             String line, title, html;
             Date time;
+            long baseTime = new Date().getTime();
             Notebook notebook;
             Map<String, Notebook> owners = new HashMap<>();
             while (true) {
@@ -133,31 +135,32 @@ public class NotesImportController extends BaseBatchFileController {
                 } else {
                     notebook = tableNotebook.findAndCreateChain(conn, line);
                     if (notebook == null) {
-                        continue;
+                        break;
                     }
                     owners.put(line, notebook);
                 }
                 long notebookid = notebook.getNbid();
                 title = reader.readLine();
-                if (title == null) {
-                    break;
+                if (title == null || title.isBlank()) {
+                    continue;
                 }
                 Note exist = null;
                 if (!title.isBlank() && !createRadio.isSelected()) {
                     exist = tableNote.find(conn, notebookid, title);
                 }
-                time = null;
                 if (timeCheck.isSelected()) {
                     line = reader.readLine();
-                    if (line == null) {
-                        break;
+                    if (line == null || title.isBlank()) {
+                        continue;
                     }
                     time = DateTools.stringToDatetime(line);
                     if (time == null) {
                         updateLogs(message("InvalidData") + ": " + message("Datetime")
                                 + ". " + message("Entry") + " " + count);
-                        break;
+                        continue;
                     }
+                } else {
+                    time = new Date(baseTime - count * 1000); // to keep the order of id
                 }
                 html = null;
                 while ((line = reader.readLine()) != null && !line.isBlank()) {
@@ -170,9 +173,7 @@ public class NotesImportController extends BaseBatchFileController {
                 if (exist != null) {
                     if (overrideRadio.isSelected()) {
                         exist.setHtml(html);
-                        if (timeCheck.isSelected()) {
-                            exist.setUpdateTime(time);
-                        }
+                        exist.setUpdateTime(time);
                         if (tableNote.updateData(conn, exist) != null) {
                             count++;
                         }
@@ -194,20 +195,14 @@ public class NotesImportController extends BaseBatchFileController {
     @Override
     public void donePost() {
         if (notesController != null) {
-            // Tree is not displayed when import for first time. Do not know why~
-            if (AppVariables.getUserConfigBoolean(baseName + "ImportFirstTime", true)) {
-                AppVariables.setUserConfigValue(baseName + "ImportFirstTime", false);
-                notesController.refresh();
-            } else {
-                notesController.refreshBooks();
-            }
+            notesController.notebooksController.loadTree();
             notesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
             closeStage();
-            return;
-        }
-        tableView.refresh();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            FxmlControl.miao3();
+        } else {
+            tableView.refresh();
+            if (miaoCheck != null && miaoCheck.isSelected()) {
+                FxmlControl.miao3();
+            }
         }
     }
 

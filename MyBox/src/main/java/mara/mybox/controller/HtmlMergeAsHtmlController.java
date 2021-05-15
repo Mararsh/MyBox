@@ -125,7 +125,7 @@ public class HtmlMergeAsHtmlController extends BaseBatchFileController {
     public String handleFile(File srcFile, File targetPath) {
         try {
             String html = FileTools.readTexts(srcFile);
-            String body = HtmlTools.body(html);
+            String body = HtmlTools.body(html, false);
             writer.write(body + "\n");
             return AppVariables.message("Successful");
         } catch (Exception e) {

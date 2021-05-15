@@ -560,21 +560,30 @@ public abstract class BaseTable<D> {
     }
 
     public int size() {
+        return conditionSize(null);
+    }
+
+    public int size(Connection conn) {
+        return conditionSize(conn, null);
+    }
+
+    public int conditionSize(String condition) {
         try ( Connection conn = DerbyBase.getConnection()) {
-            return size(conn);
+            return conditionSize(conn, condition);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
             return 0;
         }
     }
 
-    public int size(Connection conn) {
+    public int conditionSize(Connection conn, String condition) {
         if (conn == null) {
             return 0;
         }
         String sql = null;
         try {
-            sql = sizeStatement();
+            sql = sizeStatement()
+                    + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
             ResultSet results = conn.createStatement().executeQuery(sql);
             if (results.next()) {
                 return results.getInt(1);
@@ -929,12 +938,12 @@ public abstract class BaseTable<D> {
     }
 
     public List<D> queryConditions(String condition, int start, int size) {
-        if (condition == null || start < 0 || size <= 0) {
+        if (start < 0 || size <= 0) {
             return new ArrayList<>();
         }
         String sql = "SELECT * FROM " + tableName
-                + (condition.isBlank() ? "" : " WHERE " + condition)
-                + (orderColumns != null && !condition.contains("ORDER BY") ? " ORDER BY " + orderColumns : "")
+                + (condition == null || condition.isBlank() ? "" : " WHERE " + condition)
+                + (orderColumns != null && (condition != null && !condition.contains("ORDER BY")) ? " ORDER BY " + orderColumns : "")
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
         return readData(sql);
     }
@@ -1246,11 +1255,8 @@ public abstract class BaseTable<D> {
     }
 
     public int deleteCondition(String condition) {
-        if (condition == null) {
-            return 0;
-        }
         String sql = "DELETE FROM " + tableName
-                + (condition.isBlank() ? "" : " WHERE " + condition);
+                + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
         return DerbyBase.update(sql);
     }
 

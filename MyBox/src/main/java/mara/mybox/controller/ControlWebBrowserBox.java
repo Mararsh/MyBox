@@ -7,43 +7,36 @@ import java.util.Date;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javax.imageio.ImageIO;
-import mara.mybox.data.BrowserHistory;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableBrowserHistory;
+import mara.mybox.db.data.WebHistory;
+import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
  * @CreateDate 2018-7-31
- * @Description
  * @License Apache License Version 2.0
  */
 public class ControlWebBrowserBox extends ControlWebview {
 
+    protected TableWebHistory tableWebHistory;
     protected Tab tab;
     protected String status;
     protected boolean fetchIcon;
-    protected BrowserHistory his;
 
     @FXML
     protected ComboBox<String> urlBox;
     @FXML
     protected HBox addressBox;
-    @FXML
-    protected Button historyButton;
 
     public ControlWebBrowserBox() {
         baseTitle = AppVariables.message("WebBrowser");
@@ -59,6 +52,7 @@ public class ControlWebBrowserBox extends ControlWebview {
     public void initControls() {
         try {
             super.initControls();
+
             initURLBox();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -68,7 +62,8 @@ public class ControlWebBrowserBox extends ControlWebview {
 
     public void initURLBox() {
         try {
-            List<String> urls = TableBrowserHistory.recentBrowse();
+            tableWebHistory = new TableWebHistory();
+            List<String> urls = tableWebHistory.recent(20);
             if (!urls.isEmpty()) {
                 isSettingValues = true;
                 urlBox.getItems().addAll(urls);
@@ -81,9 +76,8 @@ public class ControlWebBrowserBox extends ControlWebview {
 
     }
 
-    public void setBrowser(BaseController parent, Tab tab) {
-        setValues(parent, true, true);
-        addressBox.getChildren().remove(historyButton);
+    public void initTab(BaseController parent, Tab tab) {
+        setValues(parent);
         this.tab = tab;
         fetchIcon = true;
     }
@@ -119,40 +113,18 @@ public class ControlWebBrowserBox extends ControlWebview {
                 popError(message("InvalidData"));
                 return;
             }
-            URL url;
             try {
-                setAddress(value);
-                url = new URL(address);
+                URL url = new URL(value);
                 urlBox.getEditor().setStyle(null);
             } catch (Exception e) {
                 urlBox.getEditor().setStyle(badStyle);
                 return;
             }
-
+            setAddress(value);
             webEngine.getLoadWorker().cancel();
             bottomLabel.setText(AppVariables.message("Loading..."));
             webEngine.load(address);
 
-            his = new BrowserHistory();
-            his.setAddress(address);
-            his.setVisitTime(new Date().getTime());
-            his.setTitle(address);
-            if (fetchIcon) {
-                File iconFile = new File(MyboxDataPath + File.separator + "icons" + File.separator + url.getHost() + ".png");
-                if (iconFile.exists()) {
-                    his.setIcon(iconFile.getAbsolutePath());
-                    if (tab != null) {
-                        BufferedImage image = ImageIO.read(iconFile);
-                        if (image != null) {
-                            ImageView tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
-                            tabImage.setFitWidth(20);
-                            tabImage.setFitHeight(20);
-                            tab.setGraphic(tabImage);
-                        }
-                    }
-                }
-            }
-            TableBrowserHistory.write(his);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -162,94 +134,54 @@ public class ControlWebBrowserBox extends ControlWebview {
     protected void afterPageLoaded() {
         try {
             super.afterPageLoaded();
+            String title = webEngine.getTitle();
+            if (tab != null) {
+                tab.setText(title != null ? title.substring(0, Math.min(10, title.length())) : "");
+            }
             if (address == null) {
                 return;
             }
             isSettingValues = true;
             urlBox.getItems().clear();
-            List<String> urls = TableBrowserHistory.recentBrowse();
+            List<String> urls = tableWebHistory.recent(20);
             if (!urls.isEmpty()) {
                 urlBox.getItems().addAll(urls);
                 urlBox.getEditor().setText(address);
             }
             isSettingValues = false;
 
-            if (his == null) {
-                his = new BrowserHistory();
-                his.setAddress(address);
-            }
-            his.setVisitTime(new Date().getTime());
-            String title = webEngine.getTitle();
-            if (title != null) {
-                his.setTitle(title);
-                if (tab != null) {
-                    tab.setText(title.substring(0, Math.min(10, title.length())));
-                }
-            } else {
-                his.setTitle("");
-                if (tab != null) {
-                    tab.setText("");
-                }
-            }
+            WebHistory his = new WebHistory();
+            his.setAddress(address);
+            his.setVisitTime(new Date());
+            his.setTitle(title != null ? title : "");
             if (fetchIcon) {
-                File path = new File(MyboxDataPath + File.separator + "icons");
-                if (!path.exists()) {
-                    path.mkdirs();
-                }
-                URL url = new URL(address);
-                File file = new File(MyboxDataPath + File.separator + "icons" + File.separator + url.getHost() + ".png");
-                if (!file.exists()) {
-                    HtmlTools.readIcon(address, file);
-                }
-                if (file.exists()) {
-                    his.setIcon(file.getAbsolutePath());
+                ImageView tabImage = null;
+                File iconFile = HtmlTools.readIcon(address, true);
+                if (iconFile != null && iconFile.exists()) {
+                    his.setIcon(iconFile.getAbsolutePath());
                     if (tab != null) {
-                        BufferedImage image = ImageIO.read(file);
+                        BufferedImage image = ImageIO.read(iconFile);
                         if (image != null) {
-                            ImageView tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
-                            tabImage.setFitWidth(20);
-                            tabImage.setFitHeight(20);
-                            tab.setGraphic(tabImage);
+                            tabImage = new ImageView(SwingFXUtils.toFXImage(image, null));
                         }
                     }
                 } else {
                     his.setIcon("");
-                    if (tab != null) {
-                        ImageView tabImage = new ImageView("img/MyBox.png");
-                        tabImage.setFitWidth(20);
-                        tabImage.setFitHeight(20);
-                        tab.setGraphic(tabImage);
+                }
+                if (tab != null) {
+                    if (tabImage == null) {
+                        tabImage = new ImageView("img/MyBox.png");
                     }
+                    tabImage.setFitWidth(20);
+                    tabImage.setFitHeight(20);
+                    tab.setGraphic(tabImage);
                 }
             }
-            TableBrowserHistory.write(his);
+            tableWebHistory.insertData(his);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    @FXML
-    public void manageHistories() {
-        WebBrowserController.oneOpen(true);
-    }
-
-    @FXML
-    @Override
-    public void infoAction() {
-        try {
-            String value = urlBox.getEditor().getText();
-            if (value == null || value.isBlank()) {
-                popError(message("InvalidData"));
-                return;
-            }
-            NetworkQueryAddressController controller
-                    = (NetworkQueryAddressController) FxmlStage.openStage(CommonValues.NetworkQueryAddressFxml);
-            controller.queryUrl(value);
-        } catch (Exception e) {
-            popError(message("InvalidData"));
-        }
-
     }
 
 }

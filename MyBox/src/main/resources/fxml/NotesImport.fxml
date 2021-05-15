@@ -43,9 +43,9 @@ License:    Apache License Version 2.0
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                                     <children>
                                                         <CheckBox fx:id="timeCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%NotesHaveTime" />
-                                                        <VBox spacing="5.0"  styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <Label text="%WhenNotesSameTitleInSameNotebook" />
+                                                                <Label text="%WhenSameTitleInSameNode" />
                                                                 <RadioButton fx:id="overrideRadio" mnemonicParsing="false" selected="true" text="%Override">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="sameGroup" />

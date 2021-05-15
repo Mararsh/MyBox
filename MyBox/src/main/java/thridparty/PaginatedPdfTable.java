@@ -18,8 +18,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
  * @Author Eduardo Lomonaco
  * https://github.com/eduardohl/Paginated-PDFBox-Table-Sample
  *
- * Changed by Mara
- * Update Date: 2020-12-10
+ * Changed by Mara Update Date: 2020-12-10
  */
 public class PaginatedPdfTable {
 
@@ -52,6 +51,7 @@ public class PaginatedPdfTable {
 
     public boolean createDoc(File file) {
         try {
+            doc = null;
             if (file == null) {
                 return false;
             }
@@ -79,7 +79,7 @@ public class PaginatedPdfTable {
             rowHeight = fontSize + 2 * cellMargin;
 //            MyBoxLog.console("fontSize:" + fontSize + " cellMargin:" + cellMargin + " rowHeight:" + rowHeight
 //                    + " getFontBoundingBox:" + textFont.getFontDescriptor().getFontBoundingBox().getHeight());
-            rowsPerPage = new Double(Math.floor(contentHeight / rowHeight)).intValue() - 1;
+            rowsPerPage = Double.valueOf(Math.floor(contentHeight / rowHeight)).intValue() - 1;
             if (ttf != null) {
                 textFont = PdfTools.getFont(doc, ttf);
             }
@@ -103,6 +103,7 @@ public class PaginatedPdfTable {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+        doc = null;
     }
 
     public void writePages() {
@@ -116,7 +117,7 @@ public class PaginatedPdfTable {
                 return;
             }
         }
-        numberOfPages = new Double(Math.ceil(rows.size() * 1f / rowsPerPage)).intValue();
+        numberOfPages = Double.valueOf(Math.ceil(rows.size() * 1f / rowsPerPage)).intValue();
 //        MyBoxLog.console(rowsPerPage + " " + numberOfPages);
         for (int pageCount = 0; pageCount < numberOfPages; pageCount++) {
             int startRange = pageCount * rowsPerPage;
@@ -213,7 +214,8 @@ public class PaginatedPdfTable {
     public void writeRow(PDPageContentStream contentStream, List<String> row, float x, float y) {
         try {
             float nextX = x;
-            for (int i = 0; i < getNumberOfColumns(); i++) {
+            int actualCols = Math.min(getNumberOfColumns(), row.size());
+            for (int i = 0; i < actualCols; i++) {
                 String text = row.get(i);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(nextX, y);

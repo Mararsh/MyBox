@@ -25,25 +25,26 @@ public class NotesCopyNotebookController extends ControlNotebookSelector {
     protected Label sourceLabel;
 
     public NotesCopyNotebookController() {
-        baseTitle = message("Notebook");
+        baseTitle = message("CopyNode");
     }
 
     public void setValues(NotesController notesController, Notebook sourceBook, String name, boolean onlyContents) {
         this.sourceBook = sourceBook;
         this.onlyContents = onlyContents;
+        ignoreNode = sourceBook;
         sourceLabel.setText(message("NotebookCopyed") + ":\n" + name);
-        setValues(notesController);
+        setCaller(notesController);
     }
 
     @Override
-    public Notebook getIgnoreBook() {
+    public Notebook getIgnoreNode() {
         return sourceBook;
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (notesController == null || sourceBook == null || sourceBook.isRoot()) {
+        if (sourceBook == null || sourceBook.isRoot()) {
             return;
         }
         synchronized (this) {
@@ -122,13 +123,10 @@ public class NotesCopyNotebookController extends ControlNotebookSelector {
                     if (notesController == null || !notesController.getMyStage().isShowing()) {
                         notesController = NotesController.oneOpen();
                     } else {
-                        notesController.refreshBooks();
                         notesController.refreshTimes();
                         notesController.bookChanged(targetBook);
-                        if (notesController.selectedBook != null && notesController.selectedBook.getNbid() == targetBook.getNbid()) {
-                            notesController.loadTableData();
-                        }
                     }
+                    notesController.notebooksController.loadTree(targetBook);
                     notesController.popSuccessful();
                     closeStage();
                 }

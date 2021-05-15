@@ -237,7 +237,7 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFrame(File file, int index) {
-        if (file == null) {
+        if (file == null || !file.exists()) {
             return null;
         }
         return readFrameByWidth(null, file.getAbsolutePath(), index, -1);
@@ -425,7 +425,7 @@ public class ImageFileReaders {
             }
             return frames.get(index >= 0 && index < frames.size() ? index : 0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e.toString());
             return null;
         }
     }

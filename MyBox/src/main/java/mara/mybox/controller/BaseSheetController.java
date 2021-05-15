@@ -25,6 +25,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -77,6 +78,8 @@ public abstract class BaseSheetController extends ControlSheetData {
     protected Button sizeSheetButton, deleteSheetButton, copySheetButton, equalSheetButton;
     @FXML
     protected CheckBox htmlColumnCheck, htmlRowCheck;
+    @FXML
+    protected Tab sheetTab;
 
     public BaseSheetController() {
         baseTitle = message("DataEdit");
@@ -313,7 +316,12 @@ public abstract class BaseSheetController extends ControlSheetData {
         if (isSettingValues) {
             return;
         }
-        LoadingController loading = openHandlingStage(Modality.WINDOW_MODAL);
+        LoadingController loading;
+        if (sheetTab != null && !sheetTab.isSelected()) {
+            loading = null;
+        } else {
+            loading = openHandlingStage(Modality.WINDOW_MODAL);
+        }
         Platform.runLater(() -> {
             try {
                 clearSheet();

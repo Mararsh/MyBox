@@ -24,8 +24,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction"
-                        styleClass="big" stylesheets="@../styles/MyBox.css">
+                <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -39,7 +38,7 @@ License:    Apache License Version 2.0
                 <Label fx:id="fileProgressValue" prefWidth="80.0" HBox.hgrow="NEVER" />
                 <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
                 <Label fx:id="progressValue" prefWidth="110.0" HBox.hgrow="NEVER" />
-                <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTarget" HBox.hgrow="NEVER">
+                <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget" HBox.hgrow="NEVER">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

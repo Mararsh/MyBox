@@ -434,15 +434,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                    <Button fx:id="refreshPairButton" mnemonicParsing="false" onAction="#refreshPairAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconRefresh.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <Button fx:id="refreshPairButton" mnemonicParsing="false" onAction="#refreshPairAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconRefresh.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="panesMenuButton" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
                                                     <graphic>
@@ -469,61 +469,6 @@ License:    Apache License Version 2.0
                                                 <Tab fx:id="codesTab" text="%HtmlCodes">
                                                     <content>
                                                         <TextArea fx:id="htmlArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="textTab" text="%Text">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="editTextButton" mnemonicParsing="false" onAction="#editText">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconEdit.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                                <TextArea fx:id="textArea" editable="false" layoutX="10.0" layoutY="68.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="tocTab" text="%Headings">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <TextArea fx:id="tocArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="linksTab" text="%Links">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <HBox fx:id="htmlBox1" alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconStyle.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <WebView fx:id="linksWebview" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                                                            </children>
-                                                        </VBox>
                                                     </content>
                                                 </Tab>
                                             </tabs>

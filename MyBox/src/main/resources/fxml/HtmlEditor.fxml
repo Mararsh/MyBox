@@ -54,24 +54,6 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconSaveAs.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconSave.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
                                                 <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/iconDoubleRight.png" />
@@ -111,6 +93,24 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSaveAs.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSave.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="synchronizePairButton" mnemonicParsing="false" onAction="#synchronizePair">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -120,7 +120,6 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <ComboBox fx:id="frameSelector" prefWidth="240.0" />
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="panesMenuButton" layoutX="441.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
                                                     <graphic>
@@ -182,113 +181,6 @@ License:    Apache License Version 2.0
                                                                 </HBox>
                                                                 <TextArea fx:id="markdownArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                                                                 <Label fx:id="mdLabel" wrapText="true" VBox.vgrow="NEVER" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="textTab" text="%Text">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="editTextButton" mnemonicParsing="false" onAction="#editText">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconEdit.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                                <TextArea fx:id="textArea" editable="false" layoutX="10.0" layoutY="68.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="tocTab" text="%Headings">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <TextArea fx:id="tocArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="linksTab" text="%Links">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <fx:include fx:id="links" source="ControlWebview.fxml" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="imagesTab" text="%Images">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <fx:include fx:id="images" source="ControlWebview.fxml" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="elementsTab" text="%Elements">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <RadioButton fx:id="tagRadio" layoutX="716.0" layoutY="19.0" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Tag" wrapText="true">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="elementGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton fx:id="idRadio" minHeight="-Infinity" mnemonicParsing="false" text="%ID" toggleGroup="$elementGroup" wrapText="true" />
-                                                                        <RadioButton fx:id="nameRadio" layoutX="716.0" layoutY="19.0" minHeight="-Infinity" mnemonicParsing="false" text="%Name" toggleGroup="$elementGroup" wrapText="true" />
-                                                                        <fx:include fx:id="elementInput" prefWidth="200.0" source="ControlStringSelector.fxml" />
-                                                                        <Button fx:id="queryElementButton" mnemonicParsing="false" onAction="#queryElement">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconQuery.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                                <fx:include fx:id="element" source="ControlWebview.fxml" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="findTab" text="%Find">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
-                                                                        <fx:include fx:id="findColor" source="ColorSet.fxml" />
-                                                                        <Label layoutX="10.0" layoutY="19.0" minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
-                                                                        <fx:include fx:id="findBgColor" source="ColorSet.fxml" />
-                                                                        <fx:include fx:id="findInput" source="ControlStringSelector.fxml" />
-                                                                        <Button fx:id="queryFindButton" mnemonicParsing="false" onAction="#findString">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconQuery.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                                <fx:include fx:id="find" source="ControlWebview.fxml" />
                                                             </children>
                                                         </VBox>
                                                     </content>

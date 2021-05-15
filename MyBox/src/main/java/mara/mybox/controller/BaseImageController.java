@@ -969,11 +969,15 @@ public abstract class BaseImageController extends BaseController {
                 fileInfo = AppVariables.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
                         + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified());
             }
-            imageInfo = AppVariables.message("FramesNumber") + ":" + framesNumber + "\n"
-                    + AppVariables.message("CurrentFrame") + ":" + (frameIndex + 1);
+            if (framesNumber > 1) {
+                imageInfo = AppVariables.message("FramesNumber") + ":" + framesNumber + "\n"
+                        + AppVariables.message("CurrentFrame") + ":" + (frameIndex + 1) + "\n";
+            }
             if (imageInformation != null) {
-                imageInfo += "\n" + AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "\n"
+                imageInfo += AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "\n"
                         + AppVariables.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight();
+            } else {
+                imageInfo += AppVariables.message("Pixels") + ":" + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight();
             }
             if (imageView != null && imageView.getImage() != null) {
                 displayInfo = AppVariables.message("LoadedSize") + ":"

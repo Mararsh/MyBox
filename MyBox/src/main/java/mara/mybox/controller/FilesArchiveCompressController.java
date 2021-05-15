@@ -455,7 +455,9 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                          BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
                          CompressorOutputStream compressOut = new CompressorStreamFactory().
                                 createCompressorOutputStream(compressor, out)) {
-                    IOUtils.copy(inputStream, compressOut);
+                    if (inputStream != null) {
+                        IOUtils.copy(inputStream, compressOut);
+                    }
                 }
                 FileTools.rename(tmpFile, targetFile);
             } else {

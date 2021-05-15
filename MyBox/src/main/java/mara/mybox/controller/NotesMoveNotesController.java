@@ -25,18 +25,9 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
         baseTitle = message("MoveNotes");
     }
 
-    @Override
-    public Notebook getIgnoreBook() {
-        return notesController.selectedBook;
-    }
-
     @FXML
     @Override
     public void okAction() {
-        if (notesController == null) {
-            closeStage();
-            return;
-        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -47,13 +38,17 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
                 notesController.getMyStage().requestFocus();
                 return;
             }
-            TreeItem<Notebook> selectedNode = treeView.getSelectionModel().getSelectedItem();
-            if (selectedNode == null) {
+            TreeItem<Notebook> targetNode = treeView.getSelectionModel().getSelectedItem();
+            if (targetNode == null) {
                 alertError(message("SelectNotebook"));
                 return;
             }
-            Notebook targetBook = selectedNode.getValue();
+            Notebook targetBook = targetNode.getValue();
             if (targetBook == null) {
+                return;
+            }
+            if (equal(targetBook, notesController.notebooksController.selectedNode)) {
+                alertError(message("TargetShouldDifferentWithSource"));
                 return;
             }
             long bookid = targetBook.getNbid();
@@ -78,6 +73,7 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
                         count = tableNote.updateList(notes);
                         return count > 0;
                     } catch (Exception e) {
+                        error = e.toString();
                         return false;
                     }
                 }
@@ -87,14 +83,15 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
                     if (notesController == null || !notesController.getMyStage().isShowing()) {
                         notesController = NotesController.oneOpen();
                     } else {
-                        notesController.refreshNotes();
-                        if (updateNote) {
-                            notesController.currentNote.setNotebook(bookid);
-                            notesController.bookOfCurrentNote = targetBook;
-                            notesController.updateBookOfCurrentNote();
-                        }
+                        notesController.bookChanged(targetBook);
                     }
+                    notesController.notebooksController.loadTree(targetBook);
                     notesController.popInformation(message("Moved") + ": " + count);
+                    if (updateNote) {
+                        notesController.currentNote.setNotebook(bookid);
+                        notesController.bookOfCurrentNote = targetBook;
+                        notesController.updateBookOfCurrentNote();
+                    }
                     closeStage();
                 }
             };
@@ -122,7 +119,7 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
             controller = (NotesMoveNotesController) FxmlStage.openStage(CommonValues.NotesMoveNotesFxml);
         }
         if (controller != null) {
-            controller.setValues(notesController);
+            controller.setCaller(notesController);
             Stage cstage = controller.getMyStage();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {

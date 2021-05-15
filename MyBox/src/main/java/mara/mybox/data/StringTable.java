@@ -78,6 +78,10 @@ public class StringTable {
         HtmlTools.editHtml(tableHtml(this));
     }
 
+    public void viewHtml() {
+        HtmlTools.viewHtml(title, body(this));
+    }
+
     public void newLinkRow(String name, String link) {
         List<String> row = new ArrayList<>();
         if (name != null && !name.isBlank()) {

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Locale;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
-import mara.mybox.db.table.TableBrowserHistory;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
@@ -22,6 +21,7 @@ import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
+import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
@@ -41,8 +41,10 @@ import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableTag;
+import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
+import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
@@ -502,8 +504,8 @@ public class DerbyBase {
             if (!tables.contains("media".toUpperCase())) {
                 new TableMedia().init(conn);
             }
-            if (!tables.contains("Browser_History".toUpperCase())) {
-                new TableBrowserHistory().init(conn);
+            if (!tables.contains("Web_History".toUpperCase())) {
+                new TableWebHistory().createTable(conn);
             }
             if (!tables.contains("Geography_Code".toUpperCase())) {
                 new TableGeographyCode().createTable(conn);
@@ -564,6 +566,12 @@ public class DerbyBase {
             }
             if (!tables.contains("Color_Palette".toUpperCase())) {
                 new TableColorPalette().createTable(conn);
+            }
+            if (!tables.contains("Tree".toUpperCase())) {
+                new TableTree().createTable(conn);
+            }
+            if (!tables.contains("Web_Favorite".toUpperCase())) {
+                new TableWebFavorite().createTable(conn);
             }
             return true;
         } catch (Exception e) {
@@ -698,6 +706,34 @@ public class DerbyBase {
             if (!indexes.contains("Color_Palette_unique_index".toUpperCase())) {
                 try ( Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableColorPalette.Create_Unique_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Tree_parent_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTree.Create_Parent_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Tree_title_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableTree.Create_Title_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Web_Favorite_owner_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableWebFavorite.Create_Owner_Index);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+            if (!indexes.contains("Web_History_time_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableWebHistory.Create_Time_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

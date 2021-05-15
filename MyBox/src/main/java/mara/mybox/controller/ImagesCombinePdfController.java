@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -76,8 +75,7 @@ public class ImagesCombinePdfController extends BaseImagesListController {
             }
         }
 
-        final File file = chooseSaveFile(VisitHistoryTools.getSavedPath(VisitHistory.FileType.PDF),
-                null, targetExtensionFilter);
+        final File file = chooseSaveFile(VisitHistory.FileType.PDF, "Combine");
         if (file == null) {
             return;
         }

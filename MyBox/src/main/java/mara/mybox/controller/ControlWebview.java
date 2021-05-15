@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
@@ -37,6 +39,7 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
@@ -45,6 +48,7 @@ import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
+import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,7 +81,7 @@ public class ControlWebview extends BaseController {
     @FXML
     protected WebView webView;
     @FXML
-    protected Button snapshotButton, editButton, backwardButton, forwardButton;
+    protected Button backwardButton, forwardButton;
     @FXML
     protected FlowPane buttonsPane;
 
@@ -365,16 +369,10 @@ public class ControlWebview extends BaseController {
         }
     }
 
-    public void setValues(BaseController parent, boolean snap, boolean edit) {
+    public void setValues(BaseController parent) {
         try {
             this.parentController = parent;
             this.baseName = parent.baseName;
-            if (!snap) {
-                buttonsPane.getChildren().remove(snapshotButton);
-            }
-            if (!edit) {
-                buttonsPane.getChildren().remove(editButton);
-            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -394,8 +392,10 @@ public class ControlWebview extends BaseController {
             addLinksListener(doc);
             changeState(DocLoaded);
             int hisSize = (int) webEngine.executeScript("window.history.length;");
-            backwardButton.setDisable(hisSize < 2);
-            forwardButton.setDisable(hisSize < 2);
+            if (backwardButton != null) {
+                backwardButton.setDisable(hisSize < 2);
+                forwardButton.setDisable(hisSize < 2);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -610,20 +610,29 @@ public class ControlWebview extends BaseController {
             controller.queryUrl(finalAddress);
         });
         items.add(menu);
+
+        menu = new MenuItem(message("AddAsFavorite"));
+        menu.setOnAction((ActionEvent event) -> {
+            WebFavoriteAddController controller = (WebFavoriteAddController) openStage(CommonValues.WebFavoriteAddFxml);
+            controller.setValues(name == null || name.isBlank() ? finalAddress : name, finalAddress);
+
+        });
+        items.add(menu);
+
         items.add(new SeparatorMenuItem());
 
         if (parentController != null && parentController instanceof WebBrowserController) {
             menu = new MenuItem(message("OpenLinkInNewTab"));
             menu.setOnAction((ActionEvent event) -> {
                 WebBrowserController c = (WebBrowserController) parentController;
-                c.newTabAction(finalAddress, false);
+                c.loadAddress(finalAddress, false);
             });
             items.add(menu);
 
             menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
             menu.setOnAction((ActionEvent event) -> {
                 WebBrowserController c = (WebBrowserController) parentController;
-                c.newTabAction(finalAddress, true);
+                c.loadAddress(finalAddress, true);
             });
             items.add(menu);
         }
@@ -649,8 +658,7 @@ public class ControlWebview extends BaseController {
 
         menu = new MenuItem(message("OpenLinkByBrowser"));
         menu.setOnAction((ActionEvent event) -> {
-            WebBrowserController controller = WebBrowserController.oneOpen(false);
-            controller.newTabAction(finalAddress, true);
+            WebBrowserController.oneOpen(finalAddress);
         });
         items.add(menu);
 
@@ -664,7 +672,7 @@ public class ControlWebview extends BaseController {
 
         menu = new MenuItem(message("DownloadByMyBox"));
         menu.setOnAction((ActionEvent event) -> {
-            WebBrowserController controller = WebBrowserController.oneOpen(false);
+            WebBrowserController controller = WebBrowserController.oneOpen();
             controller.download(URLDecoder.decode(finalAddress, charset), name);
         });
         items.add(menu);
@@ -760,25 +768,392 @@ public class ControlWebview extends BaseController {
     }
 
     @FXML
-    protected void snap() {
-        String html = FxmlControl.getHtml(webEngine);
-        if (html.isBlank()) {
-            popError(message("NoData"));
-            return;
-        }
-        HtmlSnapController controller = (HtmlSnapController) openStage(CommonValues.HtmlSnapFxml);
-        controller.load(address, html);
+    @Override
+    public void cancelAction() {
+        webEngine.getLoadWorker().cancel();
     }
 
     @FXML
-    protected void editAction() {
-        String html = FxmlControl.getHtml(webEngine);
-        if (html.isBlank()) {
-            popError(message("NoData"));
+    protected void popFunctionsMenu(MouseEvent mouseEvent) {
+        try {
+            String html = FxmlControl.getHtml(webEngine);
+            doc = webEngine.getDocument();
+            boolean isFrameset = frameDoc != null && frameDoc.size() > 0;
+
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            items.add(new SeparatorMenuItem());
+
+            if (backwardButton == null) {
+                int hisSize = (int) webEngine.executeScript("window.history.length;");
+
+                menu = new MenuItem(message("ZoomIn"));
+                menu.setOnAction((ActionEvent event) -> {
+                    zoomIn();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("ZoomOut"));
+                menu.setOnAction((ActionEvent event) -> {
+                    zoomOut();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Refresh"));
+                menu.setOnAction((ActionEvent event) -> {
+                    refreshAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Cancel"));
+                menu.setOnAction((ActionEvent event) -> {
+                    cancelAction();
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Backward"));
+                menu.setOnAction((ActionEvent event) -> {
+                    backAction();
+                });
+                menu.setDisable(hisSize < 2);
+                items.add(menu);
+
+                menu = new MenuItem(message("Forward"));
+                menu.setOnAction((ActionEvent event) -> {
+                    forwardAction();
+                });
+                menu.setDisable(hisSize < 2);
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("AddAsFavorite"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebFavoriteAddController controller = (WebFavoriteAddController) openStage(CommonValues.WebFavoriteAddFxml);
+                controller.setValues(webEngine.getTitle(), address);
+
+            });
+            menu.setDisable(address == null || address.isBlank());
+            items.add(menu);
+
+            menu = new MenuItem(message("WebFavorites"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebFavoritesController.oneOpen();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("WebHistories"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebHistoriesController.oneOpen();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("WebFind"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebFindController controller = (WebFindController) openStage(CommonValues.WebFindFxml);
+                controller.loadContents(html);
+                controller.setAddress(address);
+                controller.toFront();
+            });
+            menu.setDisable(html == null || html.isBlank());
+            items.add(menu);
+
+            menu = new MenuItem(message("QueryNetworkAddress"));
+            menu.setOnAction((ActionEvent event) -> {
+                NetworkQueryAddressController controller
+                        = (NetworkQueryAddressController) FxmlStage.openStage(CommonValues.NetworkQueryAddressFxml);
+                controller.queryUrl(address);
+            });
+            menu.setDisable(address == null || address.isBlank());
+            items.add(menu);
+
+            if (!(parentController instanceof HtmlSnapController)) {
+                menu = new MenuItem(message("HtmlSnap"));
+                menu.setOnAction((ActionEvent event) -> {
+                    HtmlSnapController controller = (HtmlSnapController) openStage(CommonValues.HtmlSnapFxml);
+                    if (address != null && !address.isBlank()) {
+                        controller.loadAddress(address);
+                    } else if (html != null && !html.isBlank()) {
+                        controller.loadContents(html);
+                    }
+                });
+                menu.setDisable(html == null || html.isBlank());
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            List<MenuItem> editItems = new ArrayList<>();
+
+            if (!(parentController instanceof HtmlEditorController)) {
+                menu = new MenuItem(message("HtmlEditor"));
+                menu.setOnAction((ActionEvent event) -> {
+                    HtmlEditorController controller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
+                    if (address != null && !address.isBlank()) {
+                        controller.loadAddress(address);
+                    } else if (html != null && !html.isBlank()) {
+                        controller.loadContents(html);
+                    }
+                });
+                menu.setDisable(html == null || html.isBlank());
+                editItems.add(menu);
+            }
+
+            if (isFrameset) {
+                NodeList frameList = webEngine.getDocument().getElementsByTagName("frame");
+                if (frameList != null) {
+                    List<MenuItem> frameItems = new ArrayList<>();
+                    for (int i = 0; i < frameList.getLength(); i++) {
+                        org.w3c.dom.Node node = frameList.item(i);
+                        if (node == null) {
+                            continue;
+                        }
+                        int index = i;
+                        Element element = (Element) node;
+                        String src = element.getAttribute("src");
+                        String name = element.getAttribute("name");
+                        String frame = message("Frame") + index;
+                        if (name != null && !name.isBlank()) {
+                            frame += " :   " + name;
+                        } else if (src != null && !src.isBlank()) {
+                            frame += " :   " + src;
+                        }
+                        menu = new MenuItem(frame);
+                        menu.setOnAction((ActionEvent event) -> {
+                            HtmlEditorController controller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
+                            if (src != null && !src.isBlank()) {
+                                controller.loadAddress(HtmlTools.fullAddress(address, src));
+                            } else {
+                                controller.loadContents(FxmlControl.getFrame(webEngine, index));
+                            }
+
+                        });
+                        menu.setDisable(html == null || html.isBlank());
+                        frameItems.add(menu);
+                    }
+                    if (!frameItems.isEmpty()) {
+                        Menu frameMenu = new Menu(message("Frame"));
+                        frameMenu.getItems().addAll(frameItems);
+                        editItems.add(frameMenu);
+                    }
+                }
+            }
+
+            if (!editItems.isEmpty()) {
+                editItems.add(new SeparatorMenuItem());
+                items.addAll(editItems);
+            }
+
+            menu = new MenuItem(message("WebElements"));
+            menu.setOnAction((ActionEvent event) -> {
+                WebElementsController controller = (WebElementsController) openStage(CommonValues.WebElementsFxml);
+                if (address != null && !address.isBlank()) {
+                    controller.loadAddress(address);
+                } else if (html != null && !html.isBlank()) {
+                    controller.loadContents(html);
+                }
+                controller.toFront();
+            });
+            menu.setDisable(html == null || html.isBlank());
+            items.add(menu);
+
+            Menu elementsMenu = new Menu(message("Extract"));
+            List<MenuItem> elementsItems = new ArrayList<>();
+
+            menu = new MenuItem(message("Texts"));
+            menu.setOnAction((ActionEvent event) -> {
+                texts(html);
+            });
+            menu.setDisable(isFrameset || html == null || html.isBlank());
+            elementsItems.add(menu);
+
+            menu = new MenuItem(message("Links"));
+            menu.setOnAction((ActionEvent event) -> {
+                links();
+            });
+            menu.setDisable(isFrameset || doc == null);
+            elementsItems.add(menu);
+
+            menu = new MenuItem(message("Images"));
+            menu.setOnAction((ActionEvent event) -> {
+                images();
+            });
+            menu.setDisable(isFrameset || doc == null);
+            elementsItems.add(menu);
+
+            menu = new MenuItem(message("Headings"));
+            menu.setOnAction((ActionEvent event) -> {
+                toc(html);
+            });
+            menu.setDisable(isFrameset || html == null || html.isBlank());
+            elementsItems.add(menu);
+
+            elementsMenu.getItems().setAll(elementsItems);
+            items.add(elementsMenu);
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                if (popMenu != null && popMenu.isShowing()) {
+                    popMenu.hide();
+                }
+                popMenu = null;
+            });
+            items.add(menu);
+
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+            popMenu.getItems().addAll(items);
+            FxmlControl.locateCenter((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void links() {
+        doc = webEngine.getDocument();
+        if (doc == null) {
+            parentController.popInformation(message("NoData"));
             return;
         }
-        HtmlEditorController controller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
-        controller.load(address, html);
+        try {
+            NodeList aList = doc.getElementsByTagName("a");
+            if (aList == null || aList.getLength() < 1) {
+                parentController.popInformation(message("NoData"));
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(
+                    message("Index"), message("Link"), message("Name"), message("Title"),
+                    message("Address"), message("FullAddress")
+            ));
+            StringTable table = new StringTable(names);
+            int index = 1;
+            for (int i = 0; i < aList.getLength(); i++) {
+                org.w3c.dom.Node node = aList.item(i);
+                if (node == null) {
+                    continue;
+                }
+                Element element = (Element) node;
+                String href = element.getAttribute("href");
+                if (href == null || href.isBlank()) {
+                    continue;
+                }
+                String linkAddress = href;
+                try {
+                    URL url = new URL(new URL(element.getBaseURI()), href);
+                    linkAddress = url.toString();
+                } catch (Exception e) {
+                }
+                String name = element.getTextContent();
+                String title = element.getAttribute("title");
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(
+                        index + "",
+                        "<a href=\"" + linkAddress + "\">" + (name == null ? title : name) + "</a>",
+                        name == null ? "" : name,
+                        title == null ? "" : title,
+                        URLDecoder.decode(href, charset),
+                        URLDecoder.decode(linkAddress, charset)
+                ));
+                table.add(row);
+                index++;
+            }
+            table.editHtml();
+        } catch (Exception e) {
+            parentController.popError(e.toString());
+        }
+    }
+
+    protected void images() {
+        doc = webEngine.getDocument();
+        if (doc == null) {
+            parentController.popInformation(message("NoData"));
+            return;
+        }
+        try {
+            NodeList aList = doc.getElementsByTagName("img");
+            if (aList == null || aList.getLength() < 1) {
+                parentController.popInformation(message("NoData"));
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(
+                    message("Index"), message("Link"), message("Name"), message("Title"),
+                    message("Address"), message("FullAddress")
+            ));
+            StringTable table = new StringTable(names);
+            int index = 1;
+            for (int i = 0; i < aList.getLength(); i++) {
+                org.w3c.dom.Node node = aList.item(i);
+                if (node == null) {
+                    continue;
+                }
+                Element element = (Element) node;
+                String href = element.getAttribute("src");
+                if (href == null || href.isBlank()) {
+                    continue;
+                }
+                String linkAddress = href;
+                try {
+                    URL url = new URL(new URL(element.getBaseURI()), href);
+                    linkAddress = url.toString();
+                } catch (Exception e) {
+                }
+                String name = element.getAttribute("alt");
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(
+                        index + "",
+                        "<a href=\"" + linkAddress + "\">" + (name == null ? message("Link") : name) + "</a>",
+                        "<img src=\"" + linkAddress + "\" " + (name == null ? "" : "alt=\"" + name + "\"") + " width=100/>",
+                        name == null ? "" : name,
+                        URLDecoder.decode(href, charset),
+                        URLDecoder.decode(linkAddress, charset)
+                ));
+                table.add(row);
+                index++;
+            }
+            table.editHtml();
+        } catch (Exception e) {
+            parentController.popError(e.toString());
+        }
+    }
+
+    protected void toc(String html) {
+        if (html == null) {
+            parentController.popInformation(message("NoData"));
+            return;
+        }
+        String toc = HtmlTools.toc(html, 8);
+        if (toc == null || toc.isBlank()) {
+            parentController.popInformation(message("NoData"));
+            return;
+        }
+        TextEditerController c = (TextEditerController) openStage(CommonValues.TextEditerFxml);
+        c.loadContexts(toc);
+        c.toFront();
+    }
+
+    protected void texts(String html) {
+        if (html == null) {
+            parentController.popInformation(message("NoData"));
+            return;
+        }
+        String texts = Jsoup.parse(html).wholeText();
+        if (texts == null || texts.isBlank()) {
+            parentController.popInformation(message("NoData"));
+            return;
+        }
+        TextEditerController c = (TextEditerController) openStage(CommonValues.TextEditerFxml);
+        c.loadContexts(texts);
+        c.toFront();
     }
 
 }

@@ -1110,7 +1110,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
         if (isAllColors()) {
             return tableColor.size();
         } else {
-            return TableColorPalette.size(currentPalette.getCpnid());
+            return tableColorPalette.size(currentPalette.getCpnid());
         }
     }
 

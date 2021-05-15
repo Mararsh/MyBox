@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,14 +10,11 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.web.WebEngine;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
@@ -34,27 +30,19 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-7-31
- * @Description
  * @License Apache License Version 2.0
  */
 public class WebBrowserController extends BaseController {
 
-    protected int delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
-    protected int snapHeight, snapCount;
-    protected boolean isOneImage;
-    protected List<Image> images;
-    protected float zoomScale;
-    protected boolean loadSynchronously, isFrameSet;
-    protected int cols, rows;
     protected Map<Tab, ControlWebBrowserBox> tabControllers;
-    protected Tab hisTab;
+    protected Tab hisTab, favoriteTab;
 
-    @FXML
-    protected Button loadButton;
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected TextField findInput;
+    protected Tab addTab;
+    @FXML
+    protected ImageView addIcon;
 
     public WebBrowserController() {
         baseTitle = AppVariables.message("WebBrowser");
@@ -66,32 +54,13 @@ public class WebBrowserController extends BaseController {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
-            isSettingValues = false;
-            fontSize = 14;
-            zoomScale = 1.0f;
-            isFrameSet = false;
-
+            super.initValues();
             tabControllers = new HashMap();
-            newTabAction(null, false);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
-    }
-
-    protected WebEngine initWebEngine() {
-        if (tabControllers == null || tabControllers.isEmpty()) {
-            return null;
-        }
-        for (Tab tab : tabControllers.keySet()) {
-            ControlWebBrowserBox c = tabControllers.get(tab);
-            return c.webEngine;
-        }
-        return null;
     }
 
     @Override
@@ -99,7 +68,8 @@ public class WebBrowserController extends BaseController {
         try {
             super.afterSceneLoaded();
 
-            hideRightPane();
+            FxmlControl.setTooltip(addIcon, new Tooltip(message("Add")));
+            newTabAction();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -107,10 +77,10 @@ public class WebBrowserController extends BaseController {
 
     @FXML
     protected void newTabAction() {
-        newTabAction(null, true);
+        newTab(true);
     }
 
-    protected ControlWebBrowserBox newTabAction(String address, boolean focus) {
+    protected ControlWebBrowserBox newTab(boolean focus) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(
                     CommonValues.ControlWebBrowserBoxFxml), AppVariables.currentBundle);
@@ -121,13 +91,15 @@ public class WebBrowserController extends BaseController {
             tabImage.setFitHeight(20);
             tab.setGraphic(tabImage);
             tab.setContent(pane);
-            tabPane.getTabs().add(tab);
+            tabPane.getTabs().remove(addTab);
+            tabPane.getTabs().addAll(tab, addTab);
             if (focus) {
                 tabPane.getSelectionModel().select(tab);
             }
+            FxmlControl.refreshStyle(pane);
 
             ControlWebBrowserBox controller = (ControlWebBrowserBox) fxmlLoader.getController();
-            controller.setBrowser(this, tab);
+            controller.initTab(this, tab);
             if (tabControllers == null) {
                 tabControllers = new HashMap();
             }
@@ -138,9 +110,6 @@ public class WebBrowserController extends BaseController {
                     tabControllers.remove(tab);
                 }
             });
-            if (address != null) {
-                controller.loadAddress(address);
-            }
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -149,7 +118,7 @@ public class WebBrowserController extends BaseController {
     }
 
     protected ControlWebBrowserBox loadAddress(String address, boolean focus) {
-        ControlWebBrowserBox controller = newTabAction(null, focus);
+        ControlWebBrowserBox controller = newTab(focus);
         if (address != null) {
             controller.loadAddress(address);
         }
@@ -157,94 +126,17 @@ public class WebBrowserController extends BaseController {
     }
 
     protected ControlWebBrowserBox loadContents(String contents, boolean focus) {
-        ControlWebBrowserBox controller = newTabAction(null, focus);
+        ControlWebBrowserBox controller = newTab(focus);
         if (contents != null) {
             controller.loadContents(contents);
         }
         return controller;
     }
 
-    public void loadFile(File file) {
-        ControlWebBrowserBox c = newTabAction(null, true);
-        c.loadFile(file);
-    }
-
-    @FXML
-    protected void zoomIn() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        ControlWebBrowserBox controller = tabControllers.get(tab);
-        if (controller == null) {
-            return;
-        }
-        controller.zoomIn();
-    }
-
-    @FXML
-    protected void zoomOut() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        ControlWebBrowserBox controller = tabControllers.get(tab);
-        if (controller == null) {
-            return;
-        }
-        controller.zoomOut();
-    }
-
-    @FXML
-    protected void backAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        ControlWebBrowserBox controller = tabControllers.get(tab);
-        if (controller == null) {
-            return;
-        }
-        controller.backAction();
-    }
-
-    @FXML
-    protected void forwardAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        ControlWebBrowserBox controller = tabControllers.get(tab);
-        if (controller == null) {
-            return;
-        }
-        controller.forwardAction();
-    }
-
-    @FXML
-    protected void refreshAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        ControlWebBrowserBox controller = tabControllers.get(tab);
-        if (controller == null) {
-            return;
-        }
-        controller.refreshAction();
-    }
-
-    @FXML
-    protected void manageHistories() {
-        try {
-            if (hisTab != null && tabPane.getTabs().contains(hisTab)) {
-                tabPane.getSelectionModel().select(hisTab);
-                return;
-            }
-            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(
-                    CommonValues.WebBrowserHistoryFxml), AppVariables.currentBundle);
-            Pane pane = fxmlLoader.load();
-            hisTab = new Tab(message("ManageHistories"));
-            ImageView tabImage = new ImageView("img/MyBox.png");
-            tabImage.setFitWidth(20);
-            tabImage.setFitHeight(20);
-            hisTab.setGraphic(tabImage);
-            hisTab.setContent(pane);
-            tabPane.getTabs().add(hisTab);
-            tabPane.getSelectionModel().select(hisTab);
-
-            WebBrowserHistoryController controller = (WebBrowserHistoryController) fxmlLoader.getController();
-            controller.browserConroller = this;
-            controller.loadTableData();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    public ControlWebBrowserBox loadFile(File file) {
+        ControlWebBrowserBox controller = newTab(true);
+        controller.loadFile(file);
+        return controller;
     }
 
     protected void download(String address, String name) {
@@ -306,13 +198,14 @@ public class WebBrowserController extends BaseController {
     protected void initWeibo() {
         try {
             getMyStage().toBack();
-            openHandlingStage(Modality.WINDOW_MODAL, message("FirstRunInfo"));
-            newTabAction("https://weibo.com", false);
+            LoadingController c = openHandlingStage(Modality.WINDOW_MODAL, message("FirstRunInfo"));
+            c.cancelButton.setDisable(true);
+            loadAddress("https://weibo.com", true);
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        newTabAction("https://weibo.com", false);
+                        loadAddress("https://weibo.com", true);
                     });
                 }
             }, 12000);
@@ -334,9 +227,10 @@ public class WebBrowserController extends BaseController {
     protected void initMap() {
         try {
             getMyStage().toBack();
-            openHandlingStage(Modality.WINDOW_MODAL, message("FirstRunInfo"));
-            loadAddress(FxmlControl.tiandituFile(true).toURI().toString(), false);
+            LoadingController c = openHandlingStage(Modality.WINDOW_MODAL, message("FirstRunInfo"));
+            c.cancelButton.setDisable(true);
             loadContents(FxmlControl.gaodeMap(), false);
+            loadAddress(FxmlControl.tiandituFile(true).toURI().toString(), true);
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -346,7 +240,7 @@ public class WebBrowserController extends BaseController {
                         closeStage();
                     });
                 }
-            }, 5000);
+            }, 3000);
         } catch (Exception e) {
             closeStage();
         }
@@ -385,15 +279,7 @@ public class WebBrowserController extends BaseController {
     public static WebBrowserController oneOpen(String address) {
         WebBrowserController controller = oneOpen();
         if (controller != null && address != null) {
-            controller.newTabAction(address, true);
-        }
-        return controller;
-    }
-
-    public static WebBrowserController oneOpen(boolean his) {
-        WebBrowserController controller = oneOpen();
-        if (controller != null && his) {
-            controller.manageHistories();
+            controller.loadAddress(address, true);
         }
         return controller;
     }

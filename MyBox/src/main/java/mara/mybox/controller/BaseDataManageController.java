@@ -340,9 +340,10 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             setButtons();
             loadInfo();
             if (geoController != null) {
-                geoController.setUserController(this);
+                geoController.setParent(this);
                 geoController.loadTree();
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

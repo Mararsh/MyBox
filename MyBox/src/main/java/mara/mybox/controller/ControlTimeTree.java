@@ -6,8 +6,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.tools.DateTools;
@@ -25,6 +28,11 @@ public class ControlTimeTree extends ControlConditionTree {
     protected List<Date> times;
     protected boolean isEra;
 
+    @FXML
+    protected FlowPane buttonsPane;
+    @FXML
+    protected Button refreshNodesButton, queryNodesButton;
+
     public ControlTimeTree() {
     }
 
@@ -32,11 +40,19 @@ public class ControlTimeTree extends ControlConditionTree {
     public void initControls() {
         try {
             super.initControls();
+
             List<String> s = new ArrayList();
             s.add(message("AllTime"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setParent(BaseController parent, boolean noQueryButton) {
+        setParent(parent);
+        if (noQueryButton) {
+            buttonsPane.getChildren().removeAll(refreshNodesButton, queryNodesButton);
         }
     }
 

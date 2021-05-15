@@ -48,9 +48,9 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </children>
                                         </HBox>
-                                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                        <TabPane fx:id="editTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                             <tabs>
-                                                <Tab text="%Texts">
+                                                <Tab fx:id="textsTab" text="%Texts">
                                                     <content>
                                                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="566.0" prefViewportWidth="268.0">
                                                             <content>
@@ -129,7 +129,7 @@ License:    Apache License Version 2.0
                                                         </ScrollPane>
                                                     </content>
                                                 </Tab>
-                                                <Tab text="%Sheet">
+                                                <Tab fx:id="sheetTab" text="%Sheet">
                                                     <content>
                                                         <ScrollPane fx:id="leftPane1" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="566.0" prefViewportWidth="268.0">
                                                             <content>
@@ -211,7 +211,7 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="excelButton" mnemonicParsing="false" onAction="#excelAction" >
+                                                <Button fx:id="excelButton" mnemonicParsing="false" onAction="#excelAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

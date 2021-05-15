@@ -7,7 +7,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import javax.imageio.ImageIO;
+import mara.mybox.image.file.ImageFileReaders;
 
 /**
  * @Author Mara
@@ -37,19 +37,18 @@ public class TableImageFileCell<T> extends TableCell<T, String>
             @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                    return;
-                }
-                try {
-                    File file = new File(item);
-                    BufferedImage image = ImageIO.read(file);
-                    imageview.setImage(SwingFXUtils.toFXImage(image, null));
-                    setGraphic(imageview);
-                } catch (Exception e) {
-                    setText(null);
-                    setGraphic(null);
+                setText(null);
+                setGraphic(null);
+                if (!empty && item != null) {
+                    try {
+                        File file = new File(item);
+                        BufferedImage image = ImageFileReaders.readImage(file);
+                        if (image != null) {
+                            imageview.setImage(SwingFXUtils.toFXImage(image, null));
+                            setGraphic(imageview);
+                        }
+                    } catch (Exception e) {
+                    }
                 }
             }
         };

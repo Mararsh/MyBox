@@ -1,19 +1,12 @@
 package mara.mybox.controller;
 
-import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.profile.pegdown.Extensions;
-import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.ast.TextCollectingVisitor;
-import com.vladsch.flexmark.util.data.DataHolder;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import org.jsoup.Jsoup;
 
 /**
  * @Author Mara
@@ -22,12 +15,6 @@ import mara.mybox.value.AppVariables;
  */
 public class HtmlToTextController extends BaseBatchFileController {
 
-    protected FlexmarkHtmlConverter mdConverter;
-    protected MutableDataSet parserOptions;
-    protected MutableDataSet textOptions;
-    protected Parser textParser;
-    protected TextCollectingVisitor textCollectingVisitor;
-
     public HtmlToTextController() {
         baseTitle = AppVariables.message("HtmlToText");
     }
@@ -35,25 +22,6 @@ public class HtmlToTextController extends BaseBatchFileController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.Text);
-    }
-
-    @Override
-    public boolean makeMoreParameters() {
-        try {
-            mdConverter = FlexmarkHtmlConverter.builder(new MutableDataSet()).build();
-
-            DataHolder textHolder = PegdownOptionsAdapter.flexmarkOptions(Extensions.ALL);
-            textOptions = new MutableDataSet();
-            textOptions.set(Parser.EXTENSIONS, textHolder.get(Parser.EXTENSIONS));
-            textParser = Parser.builder(textOptions).build();
-            textCollectingVisitor = new TextCollectingVisitor();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-
-        return super.makeMoreParameters();
     }
 
     @Override
@@ -74,10 +42,7 @@ public class HtmlToTextController extends BaseBatchFileController {
                 return AppVariables.message("Skip");
             }
 
-            String html = FileTools.readTexts(srcFile);
-            String md = mdConverter.convert(html);
-            Node document = textParser.parse(md);
-            String text = textCollectingVisitor.collectAndGetText(document);
+            String text = Jsoup.parse(FileTools.readTexts(srcFile)).wholeText();
 
             FileTools.writeFile(target, text, Charset.forName("utf-8"));
             targetFileGenerated(target);

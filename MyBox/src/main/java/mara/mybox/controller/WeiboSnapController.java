@@ -947,10 +947,10 @@ public class WeiboSnapController extends BaseController {
             super.afterSceneLoaded();
 
             // Webview need be initialized for weibo.com.
-            if (AppVariables.getSystemConfigBoolean("WeiboRunFirstTime", true)) {
+            if (AppVariables.getSystemConfigBoolean("WeiboRunFirstTime" + CommonValues.AppVersion, true)) {
                 initWebview();
+                AppVariables.setSystemConfigValue("WeiboRunFirstTime" + CommonValues.AppVersion, false);
             }
-            AppVariables.setSystemConfigValue("WeiboRunFirstTime", false);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

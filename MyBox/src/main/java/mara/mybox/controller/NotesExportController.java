@@ -152,7 +152,7 @@ public class NotesExportController extends BaseTaskController {
         this.tableNotebook = notesController.tableNotebook;
         this.tableNote = notesController.tableNote;
 
-        notebooksController.setValues(notesController);
+        notebooksController.setCaller(notesController);
         if (treeView.getSelectionModel().getSelectedItem() == null) {
             treeView.getSelectionModel().select(treeView.getRoot());
         }
@@ -246,7 +246,7 @@ public class NotesExportController extends BaseTaskController {
         count = level = 0;
         try ( Connection conn = DerbyBase.getConnection()) {
             exportNotes(conn, selectedNode.getValue(),
-                    ControlNotebookSelector.nodeName(selectedNode.getParent()));
+                    notebooksController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -258,7 +258,7 @@ public class NotesExportController extends BaseTaskController {
             return false;
         }
         try {
-            String nodeName = ControlNotebookSelector.nodeName(selectedNode);
+            String nodeName = notebooksController.chainName(selectedNode);
             String prefix = nodeName.replaceAll(Notebook.NotebooksSeparater, "-") + "_" + DateTools.nowFileString();
 
             if (textsCheck.isSelected()) {

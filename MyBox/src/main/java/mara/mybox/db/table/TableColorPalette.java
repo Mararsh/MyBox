@@ -508,19 +508,13 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         return true;
     }
 
-    /*
-        static methods
-     */
-    public static int conditionSize(String condition) {
-        String sql = "SELECT COUNT(cpid) FROM Color_Palette "
-                + (condition == null || condition.isBlank() ? "" : " WHERE " + condition);
-        return DerbyBase.size(sql);
-    }
-
-    public static int size(long paletteid) {
+    public int size(long paletteid) {
         return conditionSize("paletteid=" + paletteid);
     }
 
+    /*
+        static methods
+     */
     public static float max(Connection conn, long paletteid) {
         try ( PreparedStatement statement = conn.prepareStatement(MaxOrder)) {
             statement.setLong(1, paletteid);

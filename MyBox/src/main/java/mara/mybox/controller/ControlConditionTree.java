@@ -3,9 +3,9 @@ package mara.mybox.controller;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBoxTreeItem;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.fxml.ConditionTreeView;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -15,13 +15,16 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ControlConditionTree extends BaseController {
 
-    private BaseController userController;
     private String finalConditions, finalTitle;
 
     @FXML
     protected ConditionTreeView treeView;
 
     public ControlConditionTree() {
+    }
+
+    public void setParent(BaseController parent) {
+        this.parentController = parent;
     }
 
     @FXML
@@ -87,14 +90,6 @@ public class ControlConditionTree extends BaseController {
     /*
         get/set
      */
-    public BaseController getUserController() {
-        return userController;
-    }
-
-    public void setUserController(BaseController userController) {
-        this.userController = userController;
-    }
-
     public String getFinalConditions() {
         return finalConditions;
     }

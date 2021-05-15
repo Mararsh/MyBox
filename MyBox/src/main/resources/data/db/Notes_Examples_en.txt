@@ -220,8 +220,8 @@ Connected to mararsh@frs.sourceforge.net.
 sftp> cd /home/frs/project/mara-mybox
 sftp> ls
 sftp> cd v6.4.2
-sftp> lcd  D:\mara\Mybox\2021-03-21-v6.4.2
-sftp> put D:\mara\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
+sftp> lcd  D:\releases\Mybox\2021-03-21-v6.4.2
+sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
 </CODE></PRE>
 
 
@@ -229,7 +229,7 @@ Note Examples > Coding > javafx
 Items in one sentence about javafx
 <ol>
     <li>Always assume user knows nothing about programming.</li>
-    <li>Do not expect user will open user guide. Someone, including me, even will not look at or think about prompts on the screen.</li>
+    <li>Do not expect user will open user guide. Someone, including me, even will not look at nor think about prompts on the screen.</li>
     <li>Necessary prompts can help user understand intention of the program.</li>
     <li>Ambiguous prompt is worse than no prompt.</li>
     <li>Always response for user, like pop information, make sound, or update interface.</li>
@@ -303,7 +303,9 @@ Items in one sentence about java
     <li>Reboot application when change JVM parameters or need clean env in simple way.</li>
     <li>Notice whether the index is 0-based or 1-based, especially for thrid-party codes. 0-based is default. If 1-based, should write comment for it.</li>
     <li>Double.MIN_VALUE is the minimum positive double(almost zero). -Double.MAX_VALUE is the minimum double.</li>
-</ol>
+    <li>When handle money, store integer number for each unit.</li>
+    <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
+    <li>To determine value's broken, write if (abs(x - 7.3) < TOLERANCE) instead of if (x == 7.3).</li></ol>
 
 
 Note Examples > Coding > MyBox

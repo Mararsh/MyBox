@@ -3,17 +3,15 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
-## What's New        
-2021-4-16 v6.4.3        
-- Html Editor. Frame can be selected for frameset. Images list. Query elements by tag/id/name. Search string in page.        
-- Merge colors/palettes management. Multiple palettes can be defined. Same color can have different names and orders in different palettes.
-Improve interface of picking colors.        
-- Notes. Search by title/contents/time. Whether query sub-notebooks. Copy notebook. Copy/move notes.        
-- Merge data text/sheet clipboard.  Apply blend mode when mouse released in Image Manufacture-Pen.        
-- Add. Query address by host/ip/url. Query DNS in batch. Run system command. Encode/Decode Base64.        
-- Remove. Not install certificates for map and weibo. No bypass of SSL verification. No expired links in Epidemic reports. No invalid links in notes examples.        
-- Solved problems.  New cert entry fails into keystore. Abnormal of some interfaces/functions when run at first time. Should do backup before some operations.        
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.3)        
+## What's New            
+2021-5-15 v6.4.4       
+
+* Improve and fix Html Editor, Markdown Editor, and Web Browser. 
+* Add: Manage Web Favorites, Query Web Histories, Extract Texts From Excel/Word/PowerPoint/Publisher/Visio, Functions List.       
+* Upgrade to Java16 and javafx16.       
+* Solved problems. Texts are stuck when input Chinese in Data Clipboard. Wrong results when convert CSV/Excel to PDF. Error interface for exporting data. Frameset is override when save html frame.       
+  
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4)        
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
@@ -21,7 +19,7 @@ You can find them by clicking `releases` tab in main page of this project.
 
 
 ### Source Codes
-[MyBox-6.4.3-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-src.zip)   39M(approximation)        
+[MyBox-6.4.4-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-src.zip)   39M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -32,39 +30,39 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.4.3-win-x64.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-win10-x64.zip)  | 217MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.4.3-CentOS7-x64.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-CentOS7-x64.tar.gz)  | 233MB  | bin/MyBox  |
-| mac | [MyBox-6.4.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-mac.dmg)  | 237MB  |  MyBox-6.4.3.app   |        
+| win10 x64 | [MyBox-6.4.4-win-x64.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-win10-x64.zip)  | 231MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.4.4-CentOS7-x64.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.4.4-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-mac.dmg)  | 245MB  |  MyBox-6.4.4.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)        
 
 ### Jar
-When JRE or JDK 15 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:        
+When JRE or JDK 16 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:        
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.4.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-win-jar.zip)  | 151MB | Java 15.0.1 or higher |
-| linux | [MyBox-6.4.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-linux-jar.zip)  | 160MB  | Java 15.0.1 or higher |
-| mac | [MyBox-6.4.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.3/MyBox-6.4.3-mac-jar.zip)  |  156MB  | Java 15.0.1 or higher |        
+| win | [MyBox-6.4.4-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-win-jar.zip)  | 168MB | Java 16 or higher |
+| linux | [MyBox-6.4.4-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-linux-jar.zip)  | 176MB  | Java 16 or higher |
+| mac | [MyBox-6.4.4-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.4.4/MyBox-6.4.4-mac-jar.zip)  |  173MB  | Java 16 or higher |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.4.3.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.4.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.4.3.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.4.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
-Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F        
-Download from sourceforge: https://sourceforge.net/projects/mara-mybox/files/        
+Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
+Download from sourceforge: [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)             
 
 ## Limitation        
-Self-contain packages can not be lanuched under path including non-English characters.  And file with name including non-ascii can not be opened by double clicking.
+
+* Self-contain packages can not be lanuched under path including non-English characters.  And file with name including non-ascii can not be opened by double clicking.
 A bug has been reported to jpackage dev team:
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)        
-
-MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
+* MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
 
 ## Migration
 Each version has itself's configuration file. New version can copy parameters from existed versions.        
@@ -74,9 +72,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.4.3.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.4.3.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.4.3.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.4.4.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.4.4.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.4.4.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -96,7 +94,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.4.3 | 2021-4-16 | [html](#devLog) |
+| Development Logs | 6.4.4 | 2021-5-15 | [html](#devLog) |
 | Shortcuts | 6.3.9 | 2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -118,7 +116,7 @@ MyBox is based on following open sources:
 |   |   |  https://docs.oracle.com/javafx/2/  |
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |
 | NetBeans | IDE| https://netbeans.org/ |
-| jpackage | pack | https://docs.oracle.com/en/java/javase/15/docs/specs/man/jpackage.html |
+| jpackage | pack | https://docs.oracle.com/en/java/javase/16/docs/specs/man/jpackage.html |
 | maven | build | https://maven.apache.org/ |
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |
@@ -166,102 +164,109 @@ MyBox is based on following open sources:
 | jsoup | DOM | https://jsoup.org/ |        
 
 # Current Version        
-Current version is 6.4.3. Its features are mentioned below in summary:        
-* [Cross Platforms](#Cross-platform)
-* [Internationalized](#Internationalized)
-* [Local Host](#localhost)
-* [Document Tools](#documentTools)
-    - [Notes](#notes)
-    - [PDF Tools](#pdfTools)
-    - [Editor Base](#editTextBase)
-    - [Edit Text](#editText)
-    - [Edit Bytes](#editBytes)
-    - [Edit Html](#htmlEditor)
-    - [Html Tools](#htmlTools)
-    - [Edit Markdown](#markdownEditor)
-    - [Convert Documents](#convertDocuments)
-* [Image Tools](#imageTools)
-    - [View Image](#viewImage)
-    - [Browse Images](#browserImage)
-    - [Analyse Image](#analyseImage)
-    - [Manufacture Image](#imageManufacture)
-    - [Multi-frames Image](#multiFrames)
-    - [Merge Images](#multipleImages)
-    - [Part Image](#imagePart)
-    - [Convert Image](#imageConvert)
-    - [Recognize Texts in Image](#imageOCR)
-    - [Color Management](#ColorManagement)
-    - [Color Spaces](#colorSpaces)
-    - [Others](#imageOthers)
-    - [Big Image](#bigImage)
-* [Data Tools](#dataTools)
-    - [Data File](#dataFiles)
-    - [Data Clipboard](#dataClipboard)
-    - [Matrix](#matrix)
-    - [Common Data Management](#dataManage)
-    - [Map Data](#mapData)
-    - [Geography Codes](#geographyCode)
-    - [Location in Map](#locationInMap)
-    - [Location Data](#locationData)
-    - [Location Tools](#locationTools)
-    - [Epidemic Reports](#epidemicReport)
-    - [Matrcies Calculation](#matrixTool)
-    - [Create Barcodes](#createBarcodes)
-    - [Decode Barcodes](#decodeBarcodes)
-    - [Message Digest](#messageDigest)
-    - [Encode/Decode Base64](#base64)
- * [File Tools](#fileTools)
-    - [Manage Files/Directories](#directoriesArrange)
-    - [Archive/Compress/Decompress/Unarchive](#archiveCompress)
-    - [Check Redundant Files](#filesRedundancy)
-    - [Others](#fileOthers)
-* [Media Tools](#MediaTools)
-    - [Play Videos/Audios](#mediaPlayer)
-    - [Manage Playlists](#mediaList)
-    - [Wrap ffmpeg functions](#ffmpeg)
-    - [Game-Elimination](#gameElimination)
-    - [Game-Mine](#gameMine)
-    - [Others](#mediaOthers)
-* [Network Tools](#netTools)
-    - [Download First Level Links](#downloadFirstLevelLinks)
-    - [Snap WeiBo](#weiboSnap)
-    - [Encode/Decode URL](#encodeDecodeURL)
-    - [Web Browser](#webBrowser)
-    - [Security Certificates](#securityCerificates)
-    - [Query Address](#queryAddress)
-    - [Query DNS](#queryDNS)
-* [Development Tools](#devTools)
-* [Settings](#settings)
-* [Window](#windows)
-* [Helps](#helps)
-* [Supporting HiDPI](#Hidpig)        
+Current version is 6.4.4. Its features are mentioned below in summary:          
+
+*  [Cross Platforms](#Cross-platform)         
+*  [Internationalized](#Internationalized)         
+*  [Personal](#personal)
+*  [Data Compatible](#dataCompatible)
+*  [Document Tools](#documentTools)         
+    -  [Notes](#notes)         
+    -  [PDF Tools](#pdfTools)         
+    -  [Editor Base](#editTextBase)         
+    -  [Edit Text](#editText)         
+    -  [Edit Bytes](#editBytes)         
+    -  [Edit Html](#htmlEditor)         
+    -  [Html Tools](#htmlTools)         
+    -  [Edit Markdown](#markdownEditor)         
+    -  [Convert Documents](#convertDocuments)         
+*  [Image Tools](#imageTools)         
+    -  [View Image](#viewImage)         
+    -  [Browse Images](#browserImage)         
+    -  [Analyse Image](#analyseImage)         
+    -  [Manufacture Image](#imageManufacture)         
+    -  [Multi-frames Image](#multiFrames)         
+    -  [Merge Images](#multipleImages)         
+    -  [Part Image](#imagePart)         
+    -  [Convert Image](#imageConvert)         
+    -  [Recognize Texts in Image](#imageOCR)         
+    -  [Color Management](#ColorManagement)         
+    -  [Color Spaces](#colorSpaces)         
+    -  [Others](#imageOthers)         
+    -  [Big Image](#bigImage)         
+*  [Data Tools](#dataTools)         
+    -  [Data File](#dataFiles)         
+    -  [Data Clipboard](#dataClipboard)         
+    -  [Matrix](#matrix)         
+    -  [Common Data Management](#dataManage)         
+    -  [Map Data](#mapData)         
+    -  [Geography Codes](#geographyCode)         
+    -  [Location in Map](#locationInMap)         
+    -  [Location Data](#locationData)         
+    -  [Location Tools](#locationTools)         
+    -  [Epidemic Reports](#epidemicReport)         
+    -  [Matrcies Calculation](#matrixTool)         
+    -  [Create Barcodes](#createBarcodes)         
+    -  [Decode Barcodes](#decodeBarcodes)         
+    -  [Message Digest](#messageDigest)         
+    -  [Encode/Decode Base64](#base64)         
+ *  [File Tools](#fileTools)         
+    -  [Manage Files/Directories](#directoriesArrange)         
+    -  [Archive/Compress/Decompress/Unarchive](#archiveCompress)         
+    -  [Check Redundant Files](#filesRedundancy)         
+    -  [Others](#fileOthers)         
+*  [Media Tools](#MediaTools)         
+    -  [Play Videos/Audios](#mediaPlayer)         
+    -  [Manage Playlists](#mediaList)         
+    -  [Wrap ffmpeg functions](#ffmpeg)         
+    -  [Game-Elimination](#gameElimination)         
+    -  [Game-Mine](#gameMine)         
+    -  [Others](#mediaOthers)         
+*  [Network Tools](#netTools)         
+    -  [Download First Level Links](#downloadFirstLevelLinks)         
+    -  [Snap WeiBo](#weiboSnap)         
+    -  [Web Browser](#webBrowser)         
+    -  [Query Address](#queryAddress)         
+    -  [Query DNS](#queryDNS)         
+    -  [Encode/Decode URL](#encodeDecodeURL)         
+    -  [Security Certificates](#securityCerificates)                  
+*  [Development Tools](#devTools)         
+*  [Settings](#settings)         
+*  [Window](#windows)         
+*  [Helps](#helps)         
+             
 
 ## Cross Platforms <a id="Cross-platform"></a>        
 
-MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 15.        
+MyBox is implemented in pure Java and only based on open sources, and it can run any platform which supports Java 16.        
 Versions before v5.3 are based on Java 8.        
 
 ## Internationalized <a id="Internationalized"></a>        
 1. All codes of MyBox are internationalized. Language can be switched in time.
 2. Each langauge is defined in two resource files, like: "Messages_NAME.properties" and "TableMessages_NAME.properties"。
-3. Embed Chinese and English, whose files are under path `MyBox/src/main/resources/bundles/`.        
+3. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.        
+Example,  the new language is named as “aa”, and its resource files are Messages_aa.properties and TableMessages_aa.properties.        
+4. Translated languages can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.        
+5. Embed Chinese and English, whose files are under path `MyBox/src/main/resources/bundles/`.        
 
 | Language | Resource file of interface | Resource file of data tables |
 | --- | --- |  --- |
 | Chinese | Messages_zh_CN.properties | TableMessages_zh_CN.properties |
 | English | Messages_en.properties | TableMessages_en.properties |        
 
-4. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.        
-Example,  the new language is named as “aa”, and its resource files are Messages_aa.properties and TableMessages_aa.properties.        
-5. Translated languages can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.        
-
 
 ![Snap-Cover](https://mararsh.github.io/MyBox/snap-cover-en.jpg)        
 
 
-## Local Host<a id="localhost" />
+## Personal<a id="personal" />
+1. No register/login/DataCenter/Cloud.
 1. No network if unnecessary.
-2. Not read/write if unnecessary.
+2. Not read/write if unnecessary.       
+
+## Data Compatible<a id="dataCompatible" />
+1. Exported data are in common text formats, like txt/csv/xml/json/html.
+2. Imported data are in common text format, like txt/csv。       
+3. Imported data are self-contain, that original data can be rebuilt without extra data.       
 
 
 ##  Document Tools <a id="documentTools"></a>
@@ -353,15 +358,8 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 	-  Edit rich texts. (Not support FrameSet)
 	-  Edit Html codes. (Support FrameSet)
 	-  Edit Markdown.
-2. Display:
-	-  Converted texts.
-	-  Extracted headers in page.
-	-  Extracts links in page.
-	-  Extracts images in page.
-3. Query:
-	-  Search elements by tag/id/name.
-	-  Search string in page.
-4. Select frame in frameset.        
+2. Select frame in frameset to edit.        
+
 
 ![Snap-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor-en.jpg)        
 
@@ -369,6 +367,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 1. Snap html page. Dpi can be set. Save as one image or images in PDF.
 2. Merge multiple pages as one html/Markdown/texts/PDF.
 3. Generate frameset file for multiple files.
+4. Extract texts/links/images/titles in html.
 
 
 ### Edit Markdown<a id="markdownEditor" />
@@ -376,9 +375,6 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 2. Display, and update synchronously：
 	-  Converted htmls.
 	-  Converted html codes.
-	-  Converted texts.
-	-  Extracted headers in page.
-	-  Extracts links in page.
 
 ### Convert Documents<a id="convertDocuments" />
 1. Convert text files in batch:
@@ -395,6 +391,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 	-  Convert Markdown as html.
 	-  Convert Markdown as texts.
 	-  Convert Markdown as PDFs.
+4. Extract texts from Excel/Word/PowerPoint/Publisher/Visio
 
 
 ## Image Tools <a id="imageTools"></a>
@@ -1283,27 +1280,13 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 ![Snap-weibo](https://mararsh.github.io/MyBox/snap-weibo-en.jpg)       
 
 
-### Encode/Decode URL<a id="encodeDecodeURL" />
-This tool helps to convert a string from/to the application/x-www-form-urlencoded MIME format.
-The following rules are applied for encoding:
--  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
--  The special characters ".", "-", "*", and "_" remain the same.
--  The space character "   " is converted into a plus sign "+".
--  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.
-   Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.       
-
-Decoding does reverse conversion.       
-
 ### Web Browser<a id="webBrowser" />
 1. Display pages in multiple tabs
-2. Manage visiting histories
+2. Manage web histories
+3. Manage web favorites
+4. Find string in web page
+5. Find elements in web page
 
-### Manage Security Cerificates <a id="securityCerificates" />
-1. Read certificates in any keystore/truststore, and export as html file.
-2. Add/Read cerificates in any CA files.
-3. Download and install cerificates of any websites.
-4. Delete certifcates in keystore/truststore.
-5. Backup keystore/truststore automatically when update.
 
 ### Query Address<a id="queryAddress" />
 1. Query URL/host/IP
@@ -1314,6 +1297,28 @@ Decoding does reverse conversion.
 1. Input hosts/ips list.  Example is provided.
 2. Open file "hosts".
 3. Execute command to refresh DNS.
+
+
+### Encode/Decode URL<a id="encodeDecodeURL" />
+This tool helps to convert a string from/to the application/x-www-form-urlencoded MIME format.
+The following rules are applied for encoding:
+
+-  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
+-  The special characters ".", "-", "*", and "_" remain the same.
+-  The space character "   " is converted into a plus sign "+".
+-  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.
+   Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.       
+
+Decoding does reverse conversion.       
+
+
+### Manage Security Cerificates <a id="securityCerificates" />
+1. Read certificates in any keystore/truststore, and export as html file.
+2. Add/Read cerificates in any CA files.
+3. Download and install cerificates of any websites.
+4. Delete certifcates in keystore/truststore.
+5. Backup keystore/truststore automatically when update.
+
 
 ## Development Tools<a id="devTools" />
 1. Open/Close monitor bar of Memory.
@@ -1380,18 +1385,21 @@ Decoding does reverse conversion.
 1. MyBox shortcuts:
 	- When focus is in "Text Input" control, Delete/Home/End/PageUp/PageDown/Ctrl-c/v/z/y/x work for texts in the focus.  Or else shortcuts work for interface.</BR>
 	- When focus is not in "Text Input" control,  Ctrl/Alt can be omitted. Example, if an image is currently foused, press "c" to copy and press "2" to set as pane size.
-2. ReadMe
-3. Documents：Help user start download tasks. If MyBox documents are put into data path, MyBox will find them automatically.
-4. About
-
-## Supporting HiDPI<a id="Hidpi" />
-1. Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.       
-MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.       
-Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.       
-2. User can select hi-dpi icons and common icons.
-
+2. Functions list
+3. ReadMe
+4. Documents：Help user start download tasks. If MyBox documents are put into data path, MyBox will find them automatically.
+5. About
 
 # Development Logs <a id="devLog"></a>
+2021-5-15 v6.4.4       
+
+* Improve and fix Html Editor, Markdown Editor, and Web Browser. 
+* Add: Manage Web Favorites, Query Web Histories, Extract Texts From Excel/Word/PowerPoint/Publisher/Visio, Functions List.       
+* Upgrade to Java16 and javafx16.       
+* Solved problems. Texts are stuck when input Chinese in Data Clipboard. Wrong results when convert CSV/Excel to PDF. Error interface for exporting data. Frameset is override when save html frame.       
+  
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4)        
+
 2021-4-16 v6.4.3              
 - Html Editor. Frame can be selected for frameset. Images list. Query elements by tag/id/name. Search string in page.       
 - Merge colors/palettes management. Multiple palettes can be defined. Same color can have different names and orders in different palettes.
@@ -1401,7 +1409,7 @@ Improve interface of picking colors.
 - Add. Query address by host/ip/url. Query DNS in batch. Run system command. Encode/Decode Base64.       
 - Remove. Not install certificates for map and weibo. No bypass of SSL verification. No expired links in Epidemic reports. No invalid links in notes examples.       
 - Solved problems.  New cert entry fails into keystore. Abnormal of some interfaces/functions when run at first time. Should do backup before some operations.       
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.3)       
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.4)       
 
 2021-3-21 v6.4.2       
 - Notes. Set tags of note and query notes by tags. NoteBook can be moved. Edit note in Rich Text. Set note's style.     

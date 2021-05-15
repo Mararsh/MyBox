@@ -160,11 +160,10 @@ public class FileTools {
         }
         pos = name.lastIndexOf('.');
         if (pos >= 0) {
-            name = path + name.substring(0, pos + 1) + newSuffix;
+            return path + name.substring(0, pos + 1) + newSuffix;
         } else {
-            name = path + name + "." + newSuffix;
+            return path + name + "." + newSuffix;
         }
-        return name;
     }
 
     public static String appendName(String file, String append) {
@@ -646,7 +645,7 @@ public class FileTools {
     }
 
     public static boolean rename(File sourceFile, File targetFile) {
-        return rename(sourceFile, targetFile, false);
+        return rename(sourceFile, targetFile, true);
     }
 
     public static boolean rename(File sourceFile, File targetFile, boolean noEmpty) {
@@ -1132,14 +1131,12 @@ public class FileTools {
     public static String readTexts(File file, Charset charset) {
         StringBuilder s = new StringBuilder();
         try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
-            String line;
-            boolean moreLine = false;
-            while ((line = reader.readLine()) != null) {
-                if (moreLine) {
-                    s.append(System.lineSeparator());
-                }
+            String line = reader.readLine();
+            if (line != null) {
                 s.append(line);
-                moreLine = true;
+                while ((line = reader.readLine()) != null) {
+                    s.append(System.lineSeparator()).append(line);
+                }
             }
         } catch (Exception e) {
             return null;

@@ -155,64 +155,64 @@ public class ConfigTools {
     }
 
     public static boolean writeConfigValue(File file, String key, String value) {
-        try {
-            Properties conf = new Properties();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-                conf.load(in);
-            }
-            try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
-                if (value == null) {
-                    conf.remove(key);
-                } else {
-                    conf.setProperty(key, value);
-                }
-                conf.store(out, "Update " + key);
-            }
-            return true;
+        Properties conf = new Properties();
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            conf.load(in);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
+        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            if (value == null) {
+                conf.remove(key);
+            } else {
+                conf.setProperty(key, value);
+            }
+            conf.store(out, "Update " + key);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+        return true;
     }
 
     public static boolean writeValue(File file, String key, String value) {
-        try {
-            Properties conf = new Properties();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-                conf.load(in);
-            }
-            try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
-                if (value == null) {
-                    conf.remove(key);
-                } else {
-                    conf.setProperty(key, value);
-                }
-                conf.store(out, "Update " + key);
-            }
-            return true;
+        Properties conf = new Properties();
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            conf.load(in);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
+        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            if (value == null) {
+                conf.remove(key);
+            } else {
+                conf.setProperty(key, value);
+            }
+            conf.store(out, "Update " + key);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+        return true;
     }
 
     public static boolean writeValues(File file, Map<String, String> values) {
-        try {
-            if (file == null || values == null) {
-                return false;
+        if (file == null || values == null) {
+            return false;
+        }
+        Properties conf = new Properties();
+        try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            for (String key : values.keySet()) {
+                conf.setProperty(key, values.get(key));
             }
-            Properties conf = new Properties();
-            try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
-                for (String key : values.keySet()) {
-                    conf.setProperty(key, values.get(key));
-                }
-                conf.store(out, "Update ");
-            }
-            return true;
+            conf.store(out, "Update ");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
+        return true;
     }
 
 }

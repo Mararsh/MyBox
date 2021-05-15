@@ -26,18 +26,9 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
         baseTitle = message("CopyNotes");
     }
 
-    @Override
-    public Notebook getIgnoreBook() {
-        return notesController.selectedBook;
-    }
-
     @FXML
     @Override
     public void okAction() {
-        if (notesController == null) {
-            closeStage();
-            return;
-        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -48,9 +39,17 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
                 notesController.getMyStage().requestFocus();
                 return;
             }
-            TreeItem<Notebook> selectedNode = treeView.getSelectionModel().getSelectedItem();
-            if (selectedNode == null) {
+            TreeItem<Notebook> targetNode = treeView.getSelectionModel().getSelectedItem();
+            if (targetNode == null) {
                 alertError(message("SelectNotebook"));
+                return;
+            }
+            Notebook targetBook = targetNode.getValue();
+            if (targetBook == null) {
+                return;
+            }
+            if (equal(targetBook, notesController.notebooksController.selectedNode)) {
+                alertError(message("TargetShouldDifferentWithSource"));
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -60,7 +59,7 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
                 @Override
                 protected boolean handle() {
                     try {
-                        long bookid = selectedNode.getValue().getNbid();
+                        long bookid = targetBook.getNbid();
                         List<Note> newNotes = new ArrayList<>();
                         for (Note note : notes) {
                             Note newNote = new Note(bookid, note.getTitle(), note.getHtml(), null);
@@ -79,7 +78,9 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
                         notesController = NotesController.oneOpen();
                     } else {
                         notesController.refreshTimes();
+                        notesController.bookChanged(targetBook);
                     }
+                    notesController.notebooksController.loadTree(targetBook);
                     notesController.popInformation(message("Copied") + ": " + count);
                     closeStage();
                 }
@@ -91,7 +92,6 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
             thread.start();
         }
     }
-
 
     /*
         static methods
@@ -109,7 +109,7 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
             controller = (NotesCopyNotesController) FxmlStage.openStage(CommonValues.NotesCopyNotesFxml);
         }
         if (controller != null) {
-            controller.setValues(notesController);
+            controller.setCaller(notesController);
             Stage cstage = controller.getMyStage();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {

@@ -10,7 +10,9 @@ import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -61,11 +63,18 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
                     "GITHUB", "MARKDOWN", "GITHUB_DOC", "COMMONMARK", "KRAMDOWN", "PEGDOWN",
                     "FIXED_INDENT", "MULTI_MARKDOWN", "PEGDOWN_STRICT"
             ));
-            emulationSelector.getSelectionModel().select(0);
+            emulationSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "Emulation", "GITHUB"));
+            emulationSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    AppVariables.setUserConfigValue(baseName + "Emulation", newValue);
+                }
+            });
 
             indentSelector.getItems().addAll(Arrays.asList(
                     "4", "2", "0", "6", "8"
             ));
+            indentSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "Indent", "4"));
             indentSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -73,17 +82,57 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
                         int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             indentSize = v;
+                            AppVariables.setUserConfigValue(baseName + "Indent", newValue);
                         }
                     } catch (Exception e) {
                     }
                 }
             });
-            indentSelector.getSelectionModel().select(0);
 
-            styleSelector.getItems().addAll(Arrays.asList(
-                    message("DefaultStyle"), message("ConsoleStyle"), message("None")
-            ));
-            styleSelector.getSelectionModel().select(0);
+            trimCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Trim", false));
+            trimCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "Indent", trimCheck.isSelected());
+                }
+            });
+
+            appendCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Append", false));
+            appendCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "Append", appendCheck.isSelected());
+                }
+            });
+
+            discardCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Discard", false));
+            discardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "Discard", discardCheck.isSelected());
+                }
+            });
+
+            linesCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Trim", false));
+            linesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "Trim", linesCheck.isSelected());
+                }
+            });
+
+            List<String> styles = new ArrayList<>();
+            for (HtmlTools.HtmlStyle style : HtmlTools.HtmlStyle.values()) {
+                styles.add(message(style.name()));
+            }
+            styleSelector.getItems().addAll(styles);
+            styleSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "HtmlStyle", message("Default")));
+            styleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    AppVariables.setUserConfigValue(baseName + "HtmlStyle", newValue);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -139,15 +188,8 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
             }
             Node document = htmlParser.parse(FileTools.readTexts(srcFile));
             String html = htmlRender.render(document);
-            String style;
-            if (message("ConsoleStyle").equals(styleSelector.getValue())) {
-                style = HtmlTools.ConsoleStyle;
-            } else if (message("DefaultStyle").equals(styleSelector.getValue())) {
-                style = HtmlTools.DefaultStyle;
-            } else {
-                style = null;
-            }
-            html = HtmlTools.htmlWithStyleValue(titleInput.getText(), style, html);
+            String style = AppVariables.getUserConfigValue(baseName + "HtmlStyle", message("Default"));
+            html = HtmlTools.html(titleInput.getText(), style, html);
 
             FileTools.writeFile(target, html, Charset.forName("utf-8"));
             updateLogs(MessageFormat.format(message("ConvertSuccessfully"),

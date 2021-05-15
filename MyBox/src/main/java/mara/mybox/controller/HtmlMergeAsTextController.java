@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import com.vladsch.flexmark.util.ast.Node;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
@@ -14,6 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
+import org.jsoup.Jsoup;
 
 /**
  * @Author Mara
@@ -50,11 +50,6 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     }
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.Text);
-    }
-
-    @Override
     public boolean makeMoreParameters() {
         try {
             targetFile = targetFileController.file;
@@ -72,10 +67,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            String html = FileTools.readTexts(srcFile);
-            String md = mdConverter.convert(html);
-            Node document = textParser.parse(md);
-            String text = textCollectingVisitor.collectAndGetText(document);
+            String text = Jsoup.parse(FileTools.readTexts(srcFile)).wholeText();
             writer.write(text + "\n");
             return AppVariables.message("Successful");
         } catch (Exception e) {

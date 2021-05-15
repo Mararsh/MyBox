@@ -88,8 +88,6 @@ public class HtmlSnapController extends BaseHtmlController {
         try {
             super.initValues();
             lastCodesLen = lastHtmlLen = 0;
-            needSnap = false;
-            needEdit = true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

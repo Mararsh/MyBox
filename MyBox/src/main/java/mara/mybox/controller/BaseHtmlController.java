@@ -19,23 +19,12 @@ public abstract class BaseHtmlController extends BaseController {
     protected WebView webView;
     protected WebEngine webEngine;
     protected Label webLabel;
-    protected boolean needEdit, needSnap;
 
     @FXML
     protected ControlWebBrowserBox webviewController;
 
     public BaseHtmlController() {
         baseTitle = AppVariables.message("Html");
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-            needEdit = needSnap = false;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @Override
@@ -58,7 +47,7 @@ public abstract class BaseHtmlController extends BaseController {
             if (webviewController == null) {
                 return;
             }
-            webviewController.setValues(this, needSnap, needEdit);
+            webviewController.setValues(this);
             webView = webviewController.webView;
             webEngine = webviewController.webView.getEngine();
             webLabel = webviewController.bottomLabel;

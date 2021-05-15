@@ -157,7 +157,9 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                     ArchiveEntry entry = archiveOut.createArchiveEntry(srcFile, srcFile.getName());
                     archiveOut.putArchiveEntry(entry);
                     try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile))) {
-                        IOUtils.copy(inputStream, archiveOut);
+                        if (inputStream != null) {
+                            IOUtils.copy(inputStream, archiveOut);
+                        }
                     }
                     archiveOut.closeArchiveEntry();
                     archiveOut.finish();
@@ -168,7 +170,9 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                          BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
                          CompressorOutputStream compressOut = new CompressorStreamFactory().
                                 createCompressorOutputStream(compressor, out)) {
-                    IOUtils.copy(inputStream, compressOut);
+                    if (inputStream != null) {
+                        IOUtils.copy(inputStream, compressOut);
+                    }
                 }
             }
             if (FileTools.rename(tmpFile, targetFile)) {

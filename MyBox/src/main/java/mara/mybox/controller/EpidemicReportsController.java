@@ -40,6 +40,7 @@ import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.fxml.FxmlStage.openScene;
 import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.fxml.TableTimeCell;
@@ -133,9 +134,9 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             locationsReports = new HashMap<>();
             orderNames = new ArrayList<>();
 
-            sourceController.setUserController(this);
-            geoController.setUserController(this);
-            timeController.setUserController(this);
+            sourceController.setParent(this);
+            geoController.setParent(this);
+            timeController.setParent(this, true);
             chartController.setReportsController(this);
             chartController.setColorsController(colorsController);
             colorsController.setReportsController(this);
@@ -275,8 +276,11 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     @Override
     public void afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (FxmlStage.mapFirstRun(this)) {
+                return;
+            }
 
+            super.afterSceneLoaded();
             chartController.initMap(this);
 
             setButtons();

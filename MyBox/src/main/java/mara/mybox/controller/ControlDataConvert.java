@@ -213,6 +213,12 @@ public class ControlDataConvert extends BaseController {
             xssfSheet = null;
             columnWidths = null;
             pdfTable = null;
+            csvFile = null;
+            htmlFile = null;
+            xmlFile = null;
+            xlsxFile = null;
+            jsonFile = null;
+            pdfFile = null;
             firstRow = true;
             filePrefix = null;
             fileIndex = 1;
@@ -268,6 +274,12 @@ public class ControlDataConvert extends BaseController {
         xmlWriter = null;
         jsonWriter = null;
         xssfSheet = null;
+        csvFile = null;
+        htmlFile = null;
+        xmlFile = null;
+        xlsxFile = null;
+        jsonFile = null;
+        pdfFile = null;
         firstRow = true;
         if (csvWriteController.charset == null) {
             csvWriteController.charset = Charset.forName("utf-8");
@@ -340,7 +352,7 @@ public class ControlDataConvert extends BaseController {
                     updateLogs(message("Skipped"));
                 }
             }
-            if (toPdf && pdfTable != null) {
+            if (toPdf && pdfCheck.isSelected() && pdfTable != null) {
                 pdfFile = makeTargetFile(currentPrefix, ".pdf", targetPath);
                 if (pdfFile != null) {
                     updateLogs(message("Writing") + " " + pdfFile.getAbsolutePath());
@@ -433,16 +445,15 @@ public class ControlDataConvert extends BaseController {
                 jsonWriter.write(s.toString());
             }
 
-            if (pdfTable != null) {
+            if (pdfFile != null) {
                 if (pageRows == null) {
                     pageRows = new ArrayList<>();
                 }
-                if (pageRows.size() < pdfTable.getRowsPerPage()) {
-                    pageRows.add(row);
-                } else {
+                if (pageRows.size() >= pdfTable.getRowsPerPage()) {
                     pdfTable.writePage(pageRows);
-                    pageRows.clear();
+                    pageRows = new ArrayList<>();
                 }
+                pageRows.add(row);
             }
 
             if (xssfSheet != null) {
@@ -461,39 +472,44 @@ public class ControlDataConvert extends BaseController {
 
     protected void closeWriters() {
         try {
-            if (csvPrinter != null) {
+            if (csvPrinter != null && csvFile != null) {
                 csvPrinter.flush();
                 csvPrinter.close();
                 targetFileGenerated(csvFile);
             }
-            if (htmlWriter != null) {
+
+            if (htmlWriter != null && htmlFile != null) {
                 htmlWriter.write(StringTable.tableSuffix(new StringTable(names)));
                 htmlWriter.write(indent + "<BODY>\n</HTML>\n");
                 htmlWriter.flush();
                 htmlWriter.close();
                 targetFileGenerated(htmlFile);
             }
-            if (xmlWriter != null) {
+
+            if (xmlWriter != null && xmlFile != null) {
                 xmlWriter.write("</Data>\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 targetFileGenerated(xmlFile);
             }
-            if (jsonWriter != null) {
+
+            if (jsonWriter != null && jsonFile != null) {
                 jsonWriter.write("\n]}\n");
                 jsonWriter.flush();
                 jsonWriter.close();
                 targetFileGenerated(jsonFile);
             }
-            if (pdfTable != null) {
+
+            if (pdfFile != null && pdfTable != null) {
                 if (pageRows != null && !pageRows.isEmpty()) {
                     pdfTable.writePage(pageRows);
-                    pageRows.clear();
+                    pageRows = null;
                 }
                 pdfTable.closeDoc();
                 targetFileGenerated(pdfFile);
             }
-            if (xssfBook != null && xssfSheet != null) {
+
+            if (xssfBook != null && xssfSheet != null && xlsxFile != null) {
                 for (int i = 0; i < names.size(); i++) {
                     xssfSheet.autoSizeColumn(i);
                 }

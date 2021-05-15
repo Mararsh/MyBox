@@ -8,8 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mara.mybox.controller.MyBoxLoadingController;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -56,6 +56,7 @@ public class MainApp extends Application {
             stage.getIcons().add(CommonFxValues.AppIcon);
             stage.setScene(scene);
             stage.show();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             stage.close();

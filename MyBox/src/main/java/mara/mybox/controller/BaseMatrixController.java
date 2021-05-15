@@ -14,8 +14,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -47,10 +45,10 @@ public class BaseMatrixController extends BaseSheetController {
     protected int maxRandom;
     protected short scale;
 
-    @FXML
-    protected TabPane tabPane;
-    @FXML
-    protected Tab attributesTab, sheetTab, textTab;
+//    @FXML
+//    protected TabPane tabPane;
+//    @FXML
+//    protected Tab attributesTab, textTab;
     @FXML
     protected TextField nameInput, idInput;
     @FXML

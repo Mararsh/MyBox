@@ -3,9 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.HBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlTools;
@@ -19,11 +16,6 @@ import static mara.mybox.value.AppVariables.message;
  * @License Apache License Version 2.0
  */
 public class ShortcutsController extends HtmlViewerController {
-
-    @FXML
-    protected HBox iccBox;
-    @FXML
-    protected ComboBox<String> indexSelector;
 
     public ShortcutsController() {
         baseTitle = message("Shortcuts");

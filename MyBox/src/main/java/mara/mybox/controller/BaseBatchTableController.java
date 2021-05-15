@@ -67,7 +67,7 @@ public abstract class BaseBatchTableController<P> extends BaseController {
 
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
-            deleteFilesButton, clearFilesButton, upFilesButton, downFilesButton, viewFileButton,
+            deleteFilesButton, clearFilesButton, upFilesButton, downFilesButton, viewFileButton, editFileButton,
             unselectAllFilesButton, selectAllFilesButton, listButton, exampleRegexButton;
     @FXML
     protected TableView<P> tableView;
@@ -234,6 +234,13 @@ public abstract class BaseBatchTableController<P> extends BaseController {
                 });
                 items.add(menu);
             }
+            if (editFileButton != null && editFileButton.isVisible() && !editFileButton.isDisabled()) {
+                menu = new MenuItem(message("Edit"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    editFileAction();
+                });
+                items.add(menu);
+            }
             if (selectAllFilesButton != null && selectAllFilesButton.isVisible() && !selectAllFilesButton.isDisabled()) {
                 menu = new MenuItem(message("SelectAll") + "  CTRL+a");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -387,6 +394,9 @@ public abstract class BaseBatchTableController<P> extends BaseController {
         }
         if (viewFileButton != null) {
             viewFileButton.setDisable(none);
+        }
+        if (editFileButton != null) {
+            editFileButton.setDisable(none);
         }
         if (selectAllFilesButton != null) {
             selectAllFilesButton.setDisable(isEmpty);
@@ -717,6 +727,11 @@ public abstract class BaseBatchTableController<P> extends BaseController {
         } else {
             view(info.getFile());
         }
+    }
+
+    @FXML
+    public void editFileAction() {
+
     }
 
     public void stopCountSize() {

@@ -1396,6 +1396,10 @@ public class ImageViewerController extends BaseImageShapesController {
         operation(controller);
     }
 
+    public File imageFile() {
+        return sourceFile;
+    }
+
     public void operation(BaseImageController controller) {
         if (imageView == null || imageView.getImage() == null || controller == null) {
             return;
@@ -1404,7 +1408,7 @@ public class ImageViewerController extends BaseImageShapesController {
             if (imageChanged || (imageInformation != null && imageInformation.isIsScaled())) {
                 controller.loadImage(image);
             } else {
-                controller.loadImage(sourceFile, imageInformation, image);
+                controller.loadImage(imageFile(), imageInformation, image);
             }
             return;
         }

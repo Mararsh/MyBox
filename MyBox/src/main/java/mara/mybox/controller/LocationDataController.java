@@ -103,6 +103,18 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            timeController.setParent(this, true);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     protected void initColumns() {
         try {
             dataidColumn.setCellValueFactory(new PropertyValueFactory<>("ldid"));
@@ -140,8 +152,11 @@ public class LocationDataController extends BaseDataManageController<Location> {
     @Override
     public void afterSceneLoaded() {
         try {
-            super.afterSceneLoaded();
+            if (FxmlStage.mapFirstRun(this)) {
+                return;
+            }
 
+            super.afterSceneLoaded();
             mapController.initMap(this);
 
             FxmlControl.setTooltip(datesetButton, message("Dataset"));
