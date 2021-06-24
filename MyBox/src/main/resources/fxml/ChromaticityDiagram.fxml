@@ -87,7 +87,7 @@ License:    Apache License Version 2.0
                                                                                                             <graphic>
                                                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                                                     <image>
-                                                                                                                        <Image url="@../buttons/iconCheckAll.png" />
+                                                                                                                        <Image url="@../buttons/Red/iconCheckAll.png" />
                                                                                                                     </image>
                                                                                                                 </ImageView>
                                                                                                             </graphic>
@@ -96,7 +96,7 @@ License:    Apache License Version 2.0
                                                                                                             <graphic>
                                                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                                                     <image>
-                                                                                                                        <Image url="@../buttons/iconClear.png" />
+                                                                                                                        <Image url="@../buttons/Red/iconClear.png" />
                                                                                                                     </image>
                                                                                                                 </ImageView>
                                                                                                             </graphic>
@@ -168,7 +168,7 @@ License:    Apache License Version 2.0
                                                                                                               <graphic>
                                                                                                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                                                       <image>
-                                                                                                                          <Image url="@../buttons/iconCalculator.png" />
+                                                                                                                          <Image url="@../buttons/Red/iconCalculator.png" />
                                                                                                                       </image>
                                                                                                                   </ImageView>
                                                                                                               </graphic>
@@ -190,7 +190,7 @@ License:    Apache License Version 2.0
                                                                                                               <graphic>
                                                                                                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                                                       <image>
-                                                                                                                          <Image url="@../buttons/iconCalculator.png" />
+                                                                                                                          <Image url="@../buttons/Red/iconCalculator.png" />
                                                                                                                       </image>
                                                                                                                   </ImageView>
                                                                                                               </graphic>
@@ -243,14 +243,14 @@ License:    Apache License Version 2.0
                                                                                                                             <graphic>
                                                                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                                                                     <image>
-                                                                                                                                        <Image url="@../buttons/iconOpen.png" />
+                                                                                                                                        <Image url="@../buttons/Red/iconOpen.png" />
                                                                                                                                     </image>
                                                                                                                                 </ImageView>
                                                                                                                             </graphic>
                                                                                                                         </Button>
                                                                                                                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                                                             <image>
-                                                                                                                                <Image url="@../buttons/iconTips.png" />
+                                                                                                                                <Image url="@../buttons/Red/iconTips.png" />
                                                                                                                             </image>
                                                                                                                         </ImageView>
                                                                                                                         <Label maxWidth="1.7976931348623157E308" text="" HBox.hgrow="ALWAYS" />
@@ -272,7 +272,7 @@ License:    Apache License Version 2.0
                                                                                                                             <graphic>
                                                                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                                                                     <image>
-                                                                                                                                        <Image url="@../buttons/iconGraph.png" />
+                                                                                                                                        <Image url="@../buttons/Red/iconGraph.png" />
                                                                                                                                     </image>
                                                                                                                                 </ImageView>
                                                                                                                             </graphic>
@@ -305,7 +305,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconDoubleLeft.png" />
+                                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                                                     </image>
                                                                 </ImageView>
                                                                 <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
@@ -314,7 +314,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconZoomOut.png" />
+                                                                                <Image url="@../buttons/Red/iconZoomOut.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -323,7 +323,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconZoomIn.png" />
+                                                                                <Image url="@../buttons/Red/iconZoomIn.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -332,7 +332,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconPicBig.png" />
+                                                                                <Image url="@../buttons/Red/iconPicBig.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -341,7 +341,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconPicSmall.png" />
+                                                                                <Image url="@../buttons/Red/iconPicSmall.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -350,7 +350,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconSave.png" />
+                                                                                <Image url="@../buttons/Red/iconSave.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>

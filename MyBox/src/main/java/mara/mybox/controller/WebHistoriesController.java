@@ -140,7 +140,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
             };
             timesTask.setSelf(timesTask);
             Thread thread = new Thread(timesTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

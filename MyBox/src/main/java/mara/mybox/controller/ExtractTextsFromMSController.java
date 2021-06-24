@@ -53,6 +53,7 @@ public class ExtractTextsFromMSController extends BaseBatchFileController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
+                    AppVariables.setUserConfigValue(baseName + "Charset", newValue);
                 }
             });
 

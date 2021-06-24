@@ -100,7 +100,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     public void initOptionsSection() {
         try {
             initPreprocessBox();
-            ocrOptionsController.setValues(this, false, false);
+            ocrOptionsController.setParameters(this, false, false);
             FxmlControl.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

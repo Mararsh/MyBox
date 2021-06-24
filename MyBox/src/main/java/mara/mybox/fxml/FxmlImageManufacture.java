@@ -119,6 +119,9 @@ public class FxmlImageManufacture {
 
     // https://stackoverflow.com/questions/19548363/image-saved-in-javafx-as-jpg-is-pink-toned
     public static BufferedImage bufferedImage(Image image) {
+        if (image == null) {
+            return null;
+        }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         return source;
     }
@@ -171,6 +174,9 @@ public class FxmlImageManufacture {
     }
 
     public static Image scaleImage(Image image, int width) {
+        if (width <= 0 || width == image.getWidth()) {
+            return image;
+        }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageManufacture.scaleImageWidthKeep(source, width);
         Image newImage = SwingFXUtils.toFXImage(target, null);
@@ -1009,21 +1015,43 @@ public class FxmlImageManufacture {
 
     // This way may be more quicker than comparing digests
     public static boolean sameImage(Image imageA, Image imageB) {
-        if (imageA == null || imageB == null
-                || imageA.getWidth() != imageB.getWidth()
-                || imageA.getHeight() != imageB.getHeight()) {
-            return false;
-        }
-        PixelReader readA = imageA.getPixelReader();
-        PixelReader readB = imageB.getPixelReader();
-        for (int y = 0; y < imageA.getHeight(); y++) {
-            for (int x = 0; x < imageA.getWidth(); x++) {
-                if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
-                    return false;
+        try {
+            if (imageA == null || imageB == null
+                    || imageA.getWidth() != imageB.getWidth()
+                    || imageA.getHeight() != imageB.getHeight()) {
+                return false;
+            }
+            int width = (int) imageA.getWidth(), height = (int) imageA.getHeight();
+            PixelReader readA = imageA.getPixelReader();
+            PixelReader readB = imageB.getPixelReader();
+            for (int y = 0; y < height / 2; y++) {
+                for (int x = 0; x < width / 2; x++) {
+                    if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
+                        return false;
+                    }
+                }
+                for (int x = width - 1; x >= width / 2; x--) {
+                    if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
+                        return false;
+                    }
                 }
             }
+            for (int y = height - 1; y >= height / 2; y--) {
+                for (int x = 0; x < width / 2; x++) {
+                    if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
+                        return false;
+                    }
+                }
+                for (int x = width - 1; x >= width / 2; x--) {
+                    if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        return true;
     }
 
     public static int calculateColorDistance2(Color color1, Color color2) {

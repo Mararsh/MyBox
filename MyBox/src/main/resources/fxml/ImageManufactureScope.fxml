@@ -48,7 +48,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconPicSmall.png" />
+                                                                        <Image url="@../buttons/Red/iconPicSmall.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -57,7 +57,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconColorFill.png" />
+                                                                        <Image url="@../buttons/Red/iconColorFill.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -88,7 +88,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconRectangle.png" />
+                                                                        <Image url="@../buttons/Red/iconRectangle.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -97,7 +97,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconCircle.png" />
+                                                                        <Image url="@../buttons/Red/iconCircle.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -106,7 +106,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconEllipse.png" />
+                                                                        <Image url="@../buttons/Red/iconEllipse.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -115,7 +115,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconStar.png" />
+                                                                        <Image url="@../buttons/Red/iconStar.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -128,7 +128,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconRectangleFilled.png" />
+                                                                        <Image url="@../buttons/Red/iconRectangleFilled.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -137,7 +137,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconCircleFilled.png" />
+                                                                        <Image url="@../buttons/Red/iconCircleFilled.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -146,7 +146,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconEllipseFilled.png" />
+                                                                        <Image url="@../buttons/Red/iconEllipseFilled.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -155,7 +155,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconStarFilled.png" />
+                                                                        <Image url="@../buttons/Red/iconStarFilled.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -171,87 +171,87 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <VBox fx:id="scopeSetBox" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
-                                                <VBox fx:id="rectangleBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                   <children>
-                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Label fx:id="rectangleLabel" text="%Rectangle" />
-                                                            <Button fx:id="okRectangleButton" mnemonicParsing="false" onAction="#okRectangle">
-                                                               <graphic>
-                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@../buttons/iconOK.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                               </graphic>
-                                                            </Button>
-                                                         </children>
-                                                      </HBox>
-                                                      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Label text="%LeftTop" />
-                                                            <Label text="x">
-                                                               <FlowPane.margin>
-                                                                  <Insets left="10.0" />
-                                                               </FlowPane.margin>
-                                                            </Label>
-                                                            <TextField fx:id="rectLeftTopXInput" prefWidth="100.0" />
-                                                            <Label layoutX="96.0" layoutY="19.0" text="y" />
-                                                            <TextField fx:id="rectLeftTopYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
-                                                         </children>
-                                                      </FlowPane>
-                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0">
-                                                         <children>
-                                                            <Label text="%RightBottom" />
-                                                            <Label text="x">
-                                                               <FlowPane.margin>
-                                                                  <Insets left="10.0" />
-                                                               </FlowPane.margin>
-                                                            </Label>
-                                                            <TextField fx:id="rightBottomXInput" prefWidth="100.0" />
-                                                            <Label layoutX="96.0" layoutY="19.0" text="y" />
-                                                            <TextField fx:id="rightBottomYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
-                                                         </children>
-                                                      </FlowPane>
-                                                   </children>
-                                                </VBox>
-                                                <VBox fx:id="circleBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                   <children>
-                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Label text="%Circle" />
-                                                            <Button fx:id="okCircleButton" mnemonicParsing="false" onAction="#okCircle">
-                                                               <graphic>
-                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                     <image>
-                                                                        <Image url="@../buttons/iconOK.png" />
-                                                                     </image>
-                                                                  </ImageView>
-                                                               </graphic>
-                                                            </Button>
-                                                         </children>
-                                                      </HBox>
-                                                      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Label text="%Center" />
-                                                            <Label text="x">
-                                                               <FlowPane.margin>
-                                                                  <Insets left="10.0" />
-                                                               </FlowPane.margin>
-                                                            </Label>
-                                                            <TextField fx:id="circleCenterXInput" prefWidth="100.0" />
-                                                            <Label layoutX="96.0" layoutY="19.0" text="y" />
-                                                            <TextField fx:id="circleCenterYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
-                                                         </children>
-                                                      </FlowPane>
-                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0">
-                                                         <children>
-                                                            <Label text="%Radius" />
-                                                            <TextField fx:id="circleRadiusInput" prefWidth="100.0" />
-                                                         </children>
-                                                      </FlowPane>
-                                                   </children>
-                                                </VBox>
+                                                                <VBox fx:id="rectangleBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label fx:id="rectangleLabel" text="%Rectangle" />
+                                                                                <Button fx:id="okRectangleButton" mnemonicParsing="false" onAction="#okRectangle">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label text="%LeftTop" />
+                                                                                <Label text="x">
+                                                                                    <FlowPane.margin>
+                                                                                        <Insets left="10.0" />
+                                                                                    </FlowPane.margin>
+                                                                                </Label>
+                                                                                <TextField fx:id="rectLeftTopXInput" prefWidth="100.0" />
+                                                                                <Label layoutX="96.0" layoutY="19.0" text="y" />
+                                                                                <TextField fx:id="rectLeftTopYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0">
+                                                                            <children>
+                                                                                <Label text="%RightBottom" />
+                                                                                <Label text="x">
+                                                                                    <FlowPane.margin>
+                                                                                        <Insets left="10.0" />
+                                                                                    </FlowPane.margin>
+                                                                                </Label>
+                                                                                <TextField fx:id="rightBottomXInput" prefWidth="100.0" />
+                                                                                <Label layoutX="96.0" layoutY="19.0" text="y" />
+                                                                                <TextField fx:id="rightBottomYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox fx:id="circleBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label text="%Circle" />
+                                                                                <Button fx:id="okCircleButton" mnemonicParsing="false" onAction="#okCircle">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label text="%Center" />
+                                                                                <Label text="x">
+                                                                                    <FlowPane.margin>
+                                                                                        <Insets left="10.0" />
+                                                                                    </FlowPane.margin>
+                                                                                </Label>
+                                                                                <TextField fx:id="circleCenterXInput" prefWidth="100.0" />
+                                                                                <Label layoutX="96.0" layoutY="19.0" text="y" />
+                                                                                <TextField fx:id="circleCenterYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0">
+                                                                            <children>
+                                                                                <Label text="%Radius" />
+                                                                                <TextField fx:id="circleRadiusInput" prefWidth="100.0" />
+                                                                            </children>
+                                                                        </FlowPane>
+                                                                    </children>
+                                                                </VBox>
                                                                 <VBox fx:id="scopePointsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <HBox fx:id="pointsSetBox1" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -261,7 +261,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconDelete.png" />
+                                                                                                <Image url="@../buttons/Red/iconDelete.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -270,7 +270,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconClear.png" />
+                                                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -291,7 +291,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconSave.png" />
+                                                                                                <Image url="@../buttons/Red/iconSave.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -310,7 +310,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconPickColor.png" />
+                                                                                                <Image url="@../buttons/Red/iconPickColor.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -319,7 +319,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconDelete.png" />
+                                                                                                <Image url="@../buttons/Red/iconDelete.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -328,7 +328,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconClear.png" />
+                                                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -360,7 +360,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconSaturation.png" />
+                                                                                                <Image url="@../buttons/Red/iconSaturation.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -378,7 +378,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconBrightness.png" />
+                                                                                                <Image url="@../buttons/Red/iconBrightness.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -404,24 +404,24 @@ License:    Apache License Version 2.0
                                                                                 </RadioButton>
                                                                             </children>
                                                                         </HBox>
-                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                                              <Label text="%Distance" VBox.vgrow="NEVER" />
+                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label text="%Distance" VBox.vgrow="NEVER" />
                                                                                 <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
-                                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                                        <Image url="@../buttons/Red/iconTips.png" />
                                                                                     </image>
                                                                                 </ImageView>
-                                                         </children>
-                                                      </HBox>
+                                                                            </children>
+                                                                        </HBox>
                                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <ComboBox fx:id="scopeDistanceSelector" editable="true" prefWidth="200.0" />
                                                                             </children>
                                                                         </HBox>
-                                                      <CheckBox fx:id="squareRootCheck" layoutX="15.0" layoutY="235.0" mnemonicParsing="false" text="%SquareRoot" />
+                                                                        <CheckBox fx:id="squareRootCheck" layoutX="15.0" layoutY="235.0" mnemonicParsing="false" text="%SquareRoot" />
                                                                         <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%ColorExclude" />
-                                                      <CheckBox fx:id="ignoreTransparentCheck" layoutX="15.0" layoutY="235.0" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
+                                                                        <CheckBox fx:id="ignoreTransparentCheck" layoutX="15.0" layoutY="235.0" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
                                                                     </children>
                                                                 </VBox>
                                                                 <VBox fx:id="scopeOutlineBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
@@ -433,7 +433,7 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconOpen.png" />
+                                                                                                <Image url="@../buttons/Red/iconOpen.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
@@ -442,14 +442,14 @@ License:    Apache License Version 2.0
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/iconAspectRatio.png" />
+                                                                                                <Image url="@../buttons/Red/iconAspectRatio.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </CheckBox>
                                                                             </children>
                                                                         </HBox>
-                                                      <ListView fx:id="outlinesList" maxHeight="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="ALWAYS" />
+                                                                        <ListView fx:id="outlinesList" maxHeight="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="ALWAYS" />
                                                                     </children>
                                                                 </VBox>
                                                             </children>
@@ -475,7 +475,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconSave.png" />
+                                                                                <Image url="@../buttons/Red/iconSave.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -498,20 +498,20 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <HBox fx:id="scopesBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                     <children>
-                                          <Button fx:id="refreshScopesButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshScopes">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/iconRefresh.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
+                                                        <Button fx:id="refreshScopesButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshScopes">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                         <Button fx:id="clearScopesButton" mnemonicParsing="false" onAction="#clearScopes">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconClear.png" />
+                                                                        <Image url="@../buttons/Red/iconClear.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -520,7 +520,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconDelete.png" />
+                                                                        <Image url="@../buttons/Red/iconDelete.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -529,14 +529,14 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/iconYes.png" />
+                                                                        <Image url="@../buttons/Red/iconYes.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                    <ListView fx:id="scopesList" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                <ListView fx:id="scopesList" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                             </children>
                                         </VBox>
                                     </content>

@@ -127,10 +127,6 @@ Examples > Articles/Data > Chinese
 http://www.cnsda.org
 
 Examples > Articles/Data > Chinese
-国家科技图书文献中心
-https://www.nstl.gov.cn
-
-Examples > Articles/Data > Chinese
 上海研发公共服务平台
 http://www.sgst.cn
 
@@ -142,9 +138,6 @@ Examples > Articles/Data > Chinese
 全国图书馆论文搜索网
 http://www.ucdrs.superlib.net
 
-Examples > Articles/Data > Chinese
-国家科技图书文献中心
-https://www.nstl.gov.cn
 
 Examples > Articles/Data > Chinese
 浙江大学图书馆
@@ -208,7 +201,7 @@ Examples > Study > Chinese
 https://www.bilibili.com/video/BV1BW411n7gw
 
 Examples > Study > Chinese
-中国古代史（史前——魏晋南北朝）（阎步克教授/北京大学）
+中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）
 https://www.bilibili.com/video/BV1ux411G7zm
 
 Examples > Study > Chinese
@@ -290,8 +283,15 @@ https://www.qingting.fm/channels/138236
 
 Examples > Entertainment > Chinese
 牡丹亭（1986年）张继青
-https://www.bilibili.com/video/BV1Px411P761?from=search&seid=8480498709465058923
+https://www.bilibili.com/video/BV1Px411P761
 
+Examples > Entertainment > Chinese
+白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）
+https://www.bilibili.com/video/BV1rs411n7Dd
+
+Examples > Entertainment > Chinese
+梁祝-范瑞娟 傅全香
+https://www.bilibili.com/video/BV11x411j7As
 
 Examples > Coding 
 sourceforge

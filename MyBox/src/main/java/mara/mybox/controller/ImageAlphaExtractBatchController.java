@@ -12,7 +12,6 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -20,7 +19,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAlphaExtractBatchController extends ImageManufactureBatchController {
+public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchController {
 
     public ImageAlphaExtractBatchController() {
         baseTitle = AppVariables.message("ImageAlphaExtract");
@@ -55,34 +54,31 @@ public class ImageAlphaExtractBatchController extends ImageManufactureBatchContr
             if (target == null) {
                 return AppVariables.message("Skip");
             }
-            finalTargetName = target.getAbsolutePath();
+
             BufferedImage source = ImageFileReaders.readImage(srcFile);
             BufferedImage[] targets = ImageManufacture.extractAlpha(source);
             if (targets == null) {
                 return AppVariables.message("Failed");
             }
-            targetFormat = targetFileSuffix;
-            if (targetFormat == null) {
-                targetFormat = FileTools.getFileSuffix(srcFile.getName());
-            }
-            if (targetFormat == null || !CommonValues.SupportedImages.contains(targetFormat)) {
-                return AppVariables.message("Failed");
-            }
-            String alphaFileName = FileTools.getFilePrefix(finalTargetName)
-                    + "_noAlpha." + targetFormat;
-            ImageFileWriters.writeImageFile(targets[0], targetFormat, alphaFileName);
-            targetFiles.add(new File(alphaFileName));
+            String prefix = FileTools.getFilePrefix(target.getAbsolutePath());
+            String alphaFileName = prefix + "_noAlpha." + targetFileSuffix;
+            ImageFileWriters.writeImageFile(targets[0], attributes, alphaFileName);
+            targetFileGenerated(new File(alphaFileName));
 
-            String noAlphaFileName = FileTools.getFilePrefix(finalTargetName)
-                    + "_alpha." + targetFormat;
+            String noAlphaFileName = prefix + "_alpha.png";
             ImageFileWriters.writeImageFile(targets[1], "png", noAlphaFileName);
-            targetFiles.add(new File(noAlphaFileName));
+            targetFileGenerated(new File(noAlphaFileName));
 
             return AppVariables.message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return AppVariables.message("Failed");
         }
+    }
+
+    @Override
+    protected BufferedImage handleImage(BufferedImage source) {
+        return null;
     }
 
 }

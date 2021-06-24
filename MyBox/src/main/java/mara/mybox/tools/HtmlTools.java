@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import javafx.scene.control.IndexRange;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.xml.transform.OutputKeys;
@@ -57,6 +58,7 @@ import org.w3c.dom.NodeList;
  */
 public class HtmlTools {
 
+    public static String HttpUserAgent = new WebView().getEngine().getUserAgent();
     public static String Indent = "    ";
     public static final String BaseStyle
             = ".center { text-align:center;  max-width:95%; }\n"
@@ -511,9 +513,9 @@ public class HtmlTools {
             if (host == null || host.isBlank()) {
                 return null;
             }
-            File file = FxmlControl.getInternalFile("/icons/" + host + ".png", "icons", host + ".png", false);
+            File file = FxmlControl.getInternalFile("/icons/" + host + ".png", "icons", host + ".png");
             if (file == null || !file.exists()) {
-                file = FxmlControl.getInternalFile("/icons/" + host + ".ico", "icons", host + ".ico", false);
+                file = FxmlControl.getInternalFile("/icons/" + host + ".ico", "icons", host + ".ico");
                 if ((file == null || !file.exists()) && download) {
                     file = new File(MyboxDataPath + File.separator + "icons" + File.separator + host + ".ico");
                     file = readIcon(address, file);
@@ -1206,8 +1208,8 @@ public class HtmlTools {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             transformer.transform(new DOMSource(doc), new StreamResult(baos));
+            baos.flush();
             baos.close();
-//             MyBoxLog.console(baos.toString(charset));
             return baos.toString(charset);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1269,13 +1271,17 @@ public class HtmlTools {
             }
             URL url = new URL(urlAddress);
             File tmpFile = FileTools.getTempFile();
-            if ("https".equalsIgnoreCase(url.getProtocol())) {
+            if ("file".equalsIgnoreCase(url.getProtocol())) {
+                FileTools.copyFile(new File(url.getFile()), tmpFile);
+
+            } else if ("https".equalsIgnoreCase(url.getProtocol())) {
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
                 sc.init(null, null, null);
                 connection.setSSLSocketFactory(sc.getSocketFactory());
                 connection.setConnectTimeout(AppVariables.getUserConfigInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
+                connection.setRequestProperty("User-Agent", HttpUserAgent);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
                     try ( BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
@@ -1296,10 +1302,10 @@ public class HtmlTools {
                         }
                     }
                 }
-            } else {
+            } else if ("http".equalsIgnoreCase(url.getProtocol())) {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 //                connection.setRequestMethod("GET");
-//                connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+                connection.setRequestProperty("User-Agent", HttpUserAgent);
                 connection.setConnectTimeout(AppVariables.getUserConfigInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(AppVariables.getUserConfigInt("WebReadTimeout", 10000));
                 connection.setUseCaches(false);
@@ -1333,6 +1339,7 @@ public class HtmlTools {
             }
             return tmpFile;
         } catch (Exception e) {
+            MyBoxLog.console(e.toString());
             return null;
         }
     }

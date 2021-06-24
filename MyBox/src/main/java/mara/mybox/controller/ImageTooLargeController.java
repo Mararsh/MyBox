@@ -27,7 +27,7 @@ public class ImageTooLargeController extends BaseController {
 
     }
 
-    public void setValues(BaseImageController parent, ImageInformation imageInfo) {
+    public void setParameters(BaseImageController parent, ImageInformation imageInfo) {
         if (parent == null || imageInfo == null) {
             return;
         }
@@ -40,11 +40,11 @@ public class ImageTooLargeController extends BaseController {
     public void sample() {
         thisPane.setDisable(true);
         if (parent.baseName.equals("ImageSample")) {
-            parent.loadImage(imageInfo);
+            parent.loadImageInfo(imageInfo);
             closeStage();
         } else {
             ImageSampleController controller = (ImageSampleController) loadScene(CommonValues.ImageSampleFxml);
-            controller.loadImage(imageInfo);
+            controller.loadImageInfo(imageInfo);
             parent.closeStage();
             closeStage();
         }
@@ -54,11 +54,11 @@ public class ImageTooLargeController extends BaseController {
     public void split() {
         thisPane.setDisable(true);
         if (parent.baseName.equals("ImageSplit")) {
-            parent.loadImage(imageInfo);
+            parent.loadImageInfo(imageInfo);
             closeStage();
         } else {
             ImageSplitController controller = (ImageSplitController) loadScene(CommonValues.ImageSplitFxml);
-            controller.loadImage(imageInfo);
+            controller.loadImageInfo(imageInfo);
             parent.closeStage();
             closeStage();
         }
@@ -76,11 +76,11 @@ public class ImageTooLargeController extends BaseController {
     public void view() {
         thisPane.setDisable(true);
         if (parent.baseName.equals("ImageViewer")) {
-            parent.loadImage(imageInfo);
+            parent.loadImageInfo(imageInfo);
             closeStage();
         } else {
             ImageViewerController controller = (ImageViewerController) loadScene(CommonValues.ImageViewerFxml);
-            controller.loadImage(imageInfo);
+            controller.loadImageInfo(imageInfo);
             parent.closeStage();
             closeStage();
         }

@@ -128,7 +128,7 @@ public class RunSystemCommandController extends HtmlViewerController {
             };
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

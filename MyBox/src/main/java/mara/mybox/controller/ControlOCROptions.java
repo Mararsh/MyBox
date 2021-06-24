@@ -284,9 +284,11 @@ public class ControlOCROptions extends BaseController {
         }
     }
 
-    public void setValues(BaseController parent, boolean needFormats, boolean needLevels) {
+    public void setParameters(BaseController parent, boolean needFormats, boolean needLevels) {
         try {
             parentController = parent;
+            baseTitle = parent.baseTitle;
+            baseName = parent.baseName;
             this.setFormats = needFormats;
             this.setLevels = needLevels;
             if (needFormats) {
@@ -535,7 +537,7 @@ public class ControlOCROptions extends BaseController {
             table.newLinkRow("ImproveQuality", "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html");
 
             File htmFile = HtmlTools.writeHtml(table.html());
-            openLink(htmFile.toURI().toString());
+            openLink(htmFile);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -545,7 +547,7 @@ public class ControlOCROptions extends BaseController {
     @FXML
     public void helpMe() {
         File help = FxmlControl.getInternalFile(
-                "/data/tessdata/tesseract-parameters.txt", "doc", "tesseract-parameters.txt", false);
+                "/data/tessdata/tesseract-parameters.txt", "doc", "tesseract-parameters.txt");
         TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml);
         controller.hideLeftPane();
         controller.hideRightPane();

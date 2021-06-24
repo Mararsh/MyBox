@@ -1,48 +1,35 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import javafx.util.Callback;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
-import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelBlend;
 import mara.mybox.image.PixelBlend.ImagesBlendMode;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -57,17 +44,16 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     protected DoubleRectangle rectangle;
     protected Image lastSystemClip;
     protected int rotateAngle, keepRatioType, currentAngle;
-    protected ObservableList<ImageClipboard> thumbnails;
     protected boolean loaded;
 
     @FXML
-    protected ListView<ImageClipboard> thumbnailsList;
+    protected ControlImagesClipboard clipsController;
     @FXML
     protected TabPane tabPane;
     @FXML
     protected Tab imagesPane, setPane;
     @FXML
-    protected ComboBox<String> blendBox, maxBox, opacityBox, angleBox, ratioBox;
+    protected ComboBox<String> blendBox, opacityBox, angleBox, ratioBox;
     @FXML
     protected Slider angleSlider;
     @FXML
@@ -75,15 +61,39 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     protected Label listLabel;
     @FXML
-    protected Button editButton, refreshButton, demoButton;
+    protected Button demoButton;
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            clipsController.useClipButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    selectClip();
+                }
+            });
+
+            clipsController.tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (event.getClickCount() > 1) {
+                        selectClip();
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
     @Override
     public void initPane() {
         try {
             rotateAngle = currentAngle = 0;
-
-            thumbnails = FXCollections.observableArrayList();
-            thumbnailsList.setItems(thumbnails);
+            clipsController.setParameters(imageController, true);
 
             enlargeCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "EnlargerImageAsClip", true));
             enlargeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -118,13 +128,24 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             });
 
+            keepRatioType = KeepRatioType.BaseOnWidth;
             ratioBox.getItems().addAll(Arrays.asList(message("BaseOnWidth"), message("BaseOnHeight"),
                     message("BaseOnLarger"), message("BaseOnSmaller")));
             ratioBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
-                        checkRatioAdjustion(newValue);
+                        if (message("BaseOnWidth").equals(newValue)) {
+                            keepRatioType = KeepRatioType.BaseOnWidth;
+                        } else if (message("BaseOnHeight").equals(newValue)) {
+                            keepRatioType = KeepRatioType.BaseOnHeight;
+                        } else if (message("BaseOnLarger").equals(newValue)) {
+                            keepRatioType = KeepRatioType.BaseOnLarger;
+                        } else if (message("BaseOnSmaller").equals(newValue)) {
+                            keepRatioType = KeepRatioType.BaseOnSmaller;
+                        } else {
+                            keepRatioType = KeepRatioType.None;
+                        }
                     }
                 }
             });
@@ -146,7 +167,10 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             });
 
+            opacity = AppVariables.getUserConfigInt(baseName + "ImageClipOpacity", 100) / 100f;
+            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
             opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            opacityBox.setValue(opacity + "");
             opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -167,7 +191,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                 }
             });
-            opacityBox.getSelectionModel().select((AppVariables.getUserConfigInt("ImageClipOpacity", 100) / 100f) + "");
 
             angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -195,58 +218,10 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             });
 
-            thumbnailsList.setCellFactory(new Callback<ListView<ImageClipboard>, ListCell<ImageClipboard>>() {
-                @Override
-                public ListCell<ImageClipboard> call(ListView<ImageClipboard> param) {
-                    ListCell<ImageClipboard> cell = new ListCell<ImageClipboard>() {
-                        private final ImageView view;
-
-                        {
-                            setContentDisplay(ContentDisplay.LEFT);
-                            view = new ImageView();
-                            view.setPreserveRatio(true);
-                        }
-
-                        @Override
-                        protected void updateItem(ImageClipboard item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (empty || item == null || item.getThumbnail() == null) {
-                                setText(null);
-                                setGraphic(null);
-                                return;
-                            }
-                            view.setFitWidth(AppVariables.getUserConfigInt("ThumbnailWidth", 100));
-                            Image image = item.getThumbnail();
-                            view.setImage(image);
-                            setGraphic(view);
-                            setText(item.size());
-                        }
-                    };
-                    return cell;
-                }
-            });
-            thumbnailsList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        selectClip();
-                    }
-                }
-            });
-
-            deleteButton.disableProperty().bind(thumbnailsList.getSelectionModel().selectedItemProperty().isNull());
-            editButton.disableProperty().bind(thumbnailsList.getSelectionModel().selectedItemProperty().isNull());
             okButton.setDisable(true);
             cancelButton.disableProperty().bind(okButton.disableProperty());
             demoButton.disableProperty().bind(okButton.disableProperty());
             angleSlider.disableProperty().bind(okButton.disableProperty());
-
-            maxBox.getItems().addAll(
-                    Arrays.asList("20", "50", "100", "10", "30", "5", "80")
-            );
-            maxBox.setValue(ImageClipboard.max() + "");
-
-            loadClipboard();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -259,274 +234,15 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         imageController.hideScopePane();
         imageController.resetImagePane();
         imageController.showImagePane();
-        refreshButton.requestFocus();
     }
 
-    protected void checkRatioAdjustion(String s) {
-        try {
-            if (message("BaseOnWidth").equals(s)) {
-                keepRatioType = KeepRatioType.BaseOnWidth;
-            } else if (message("BaseOnHeight").equals(s)) {
-                keepRatioType = KeepRatioType.BaseOnHeight;
-            } else if (message("BaseOnLarger").equals(s)) {
-                keepRatioType = KeepRatioType.BaseOnLarger;
-            } else if (message("BaseOnSmaller").equals(s)) {
-                keepRatioType = KeepRatioType.BaseOnSmaller;
-            } else {
-                keepRatioType = KeepRatioType.None;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
     public void loadClipboard() {
-        imageController.showRightPane();
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            loaded = false;
-            thumbnails.clear();
-            tabPane.getSelectionModel().select(imagesPane);
-            task = new SingletonTask<Void>() {
-
-                private List<ImageClipboard> clipboards;
-
-                @Override
-                protected boolean handle() {
-                    clipboards = ImageClipboard.thumbnails();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (clipboards != null) {
-                        thumbnails.addAll(clipboards);
-                    }
-                    loaded = true;
-                    refreshButton.requestFocus();
-                    thumbnailsList.getSelectionModel().selectFirst();
-                }
-            };
-            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
+        clipsController.loadTableData();
     }
 
-    @FXML
-    public void loadSystemClipboard() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            final Image clip = SystemTools.fetchImageInClipboard(false);
-            if (clip == null
-                    || (lastSystemClip != null
-                    && FxmlImageManufacture.sameImage(lastSystemClip, clip))) {
-                imageController.popInformation(message("NoImageInClipboard"));
-                return;
-            }
-            lastSystemClip = clip;
-            task = new SingletonTask<Void>() {
-
-                private ImageClipboard clip;
-
-                @Override
-                protected boolean handle() {
-                    String name = ImageClipboard.add(lastSystemClip, false);
-                    clip = ImageClipboard.thumbnail(name);
-                    return clip != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    thumbnails.add(0, clip);
-                    refreshButton.requestFocus();
-                }
-            };
-            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    @Override
-    public void selectSourceFileDo(File file) {
-        recordFileOpened(file);
-        selectSourceFile(file);
-    }
-
-    @Override
-    public void selectSourceFile(final File file) {
-        try {
-            if (file == null) {
-                return;
-            }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>() {
-
-                    private ImageClipboard clip;
-
-                    @Override
-                    protected boolean handle() {
-                        String name = ImageClipboard.add(file);
-                        clip = ImageClipboard.thumbnail(name);
-                        return clip != null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        thumbnails.add(0, clip);
-                        refreshButton.requestFocus();
-                    }
-                };
-                imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(true);
-                thread.start();
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void rotateRight() {
-        pasteClip(rotateAngle);
-    }
-
-    @FXML
-    public void rotateLeft() {
-        pasteClip(360 - rotateAngle);
-
-    }
-
-    @FXML
-    @Override
-    public void deleteAction() {
-        ImageClipboard clip = thumbnailsList.getSelectionModel().getSelectedItem();
-        if (clip == null) {
-            return;
-        }
-        ImageClipboard.delete(clip.getImageFile().getAbsolutePath());
-        thumbnails.remove(clip);
-    }
-
-    @FXML
-    @Override
-    public void clearAction() {
-        if (!FxmlControl.askSure(getBaseTitle(), message("SureClear"))) {
-            return;
-        }
-        ImageClipboard.clear();
-        thumbnails.clear();
-    }
-
-    @FXML
-    public void editAction(ActionEvent event) {
-        try {
-            ImageClipboard selected = thumbnailsList.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-                return;
-            }
-            Image selectedImage = selected.image();
-            if (selectedImage == null) {
-                return;
-            }
-            final ImageManufactureController controller
-                    = (ImageManufactureController) FxmlStage.openStage(CommonValues.ImageManufactureFxml);
-            controller.loadImage(selectedImage);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void clipsPath() {
-        File path = new File(AppVariables.getImageClipboardPath());
-        browseURI(path.toURI());
-    }
-
-    @FXML
-    public void setMax() {
-        try {
-            int v = Integer.valueOf(maxBox.getValue());
-            if (v > 0) {
-                FxmlControl.setEditorNormal(maxBox);
-                AppVariables.setUserConfigInt("ImageClipboardMax", v);
-                loadClipboard();
-            } else {
-                FxmlControl.setEditorBadStyle(maxBox);
-            }
-        } catch (Exception e) {
-            FxmlControl.setEditorBadStyle(maxBox);
-        }
-    }
-
-    @FXML
-    public void examplesAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                List<ImageClipboard> clips;
-
-                @Override
-                protected boolean handle() {
-                    List<Image> examples = Arrays.asList(
-                            new Image("img/ww1.png"), new Image("img/ww2.png"), new Image("img/ww5.png"),
-                            new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
-                            new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
-                            new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
-                            new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
-                            new Image("img/DocumentTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
-                            new Image("img/Settings.png"), new Image("img/zz1.png"), new Image("img/jade.png")
-                    );
-                    clips = new ArrayList<>();
-                    for (int i = examples.size() - 1; i >= 0; --i) {
-                        String name = ImageClipboard.add(examples.get(i), false);
-                        ImageClipboard clip = ImageClipboard.clip(name, false, true);
-                        if (clip != null) {
-                            clips.add(0, clip);
-                        }
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    thumbnails.addAll(0, clips);
-                    refreshButton.requestFocus();
-                }
-            };
-            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-
-    }
-
-    @FXML
     public void selectClip() {
         initOperation();
-        if (thumbnails.isEmpty()) {
+        if (clipsController.tableData.isEmpty()) {
             return;
         }
         synchronized (this) {
@@ -538,15 +254,11 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 @Override
                 protected boolean handle() {
                     try {
-                        ImageClipboard clip = thumbnailsList.getSelectionModel().getSelectedItem();
+                        ImageClipboard clip = clipsController.tableView.getSelectionModel().getSelectedItem();
                         if (clip == null) {
-                            clip = thumbnails.get(0);
+                            clip = clipsController.tableData.get(0);
                         }
-                        clip = ImageClipboard.image(clip.getImageFile().getAbsolutePath());
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        clipSource = clip.getImage();
+                        clipSource = ImageClipboard.loadImage(clip);
                         currentClip = clipSource;
                         return clipSource != null;
                     } catch (Exception e) {
@@ -566,7 +278,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -662,12 +374,23 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void rotateRight() {
+        pasteClip(rotateAngle);
+    }
+
+    @FXML
+    public void rotateLeft() {
+        pasteClip(360 - rotateAngle);
+
     }
 
     @Override
@@ -698,7 +421,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     @FXML
     protected void demo() {
-        BaseImageController.blendDemo(imageController, demoButton, finalClip, bgImage,
+        FxmlControl.blendDemoFx(imageController, demoButton, finalClip, bgImage,
                 (int) imageController.scope.getRectangle().getSmallX(),
                 (int) imageController.scope.getRectangle().getSmallY(),
                 opacity, !clipTopCheck.isSelected());
@@ -710,7 +433,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         currentClip = null;
         okButton.setDisable(true);
         tabPane.getSelectionModel().select(imagesPane);
-        refreshButton.requestFocus();
     }
 
 }

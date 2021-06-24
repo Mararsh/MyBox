@@ -11,6 +11,7 @@ import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 
@@ -61,6 +62,8 @@ public class ColumnDefinition extends BaseData {
         onDelete = OnDelete.Restrict;
         onUpdate = OnUpdate.Restrict;
         timeFormat = Era.Format.Datetime;
+        maxValue = null;
+        minValue = null;
     }
 
     public ColumnDefinition() {
@@ -130,6 +133,12 @@ public class ColumnDefinition extends BaseData {
                 return !notNull;
             }
             switch (type) {
+                case String:
+                case Text:
+                case Color:
+                case File:
+                case Image:
+                    return length <= 0 || value.length() <= length;
                 case Double:
                     Double.parseDouble(value);
                     return true;
@@ -227,7 +236,7 @@ public class ColumnDefinition extends BaseData {
                         return -1;
                     }
                 default:
-                    return value1.compareTo(value2);
+                    return StringTools.compare(value1, value2);
             }
         } catch (Exception e) {
         }

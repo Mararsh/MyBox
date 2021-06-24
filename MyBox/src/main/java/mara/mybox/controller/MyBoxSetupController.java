@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
@@ -62,8 +61,6 @@ public class MyBoxSetupController implements Initializable {
     protected Button openPathButton, okButton;
     @FXML
     protected RadioButton embeddedRadio, networkRadio;
-    @FXML
-    protected CheckBox hidpiCheck;
 
     public MyBoxSetupController() {
     }
@@ -115,7 +112,6 @@ public class MyBoxSetupController implements Initializable {
                         if (message(lang, "Default").equals(name)) {
                             dataDirInput.setText(configPath.getAbsolutePath() + File.separator + "data_v" + CommonValues.AppVersion);
                             embeddedRadio.fire();
-                            hidpiCheck.setSelected(false);
                             final long jvmM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
                             String m = message(lang, "PhysicalMemory") + ": " + totalM + "MB"
                                     + "    " + message(lang, "JvmXmx") + ": " + jvmM + "MB";
@@ -133,8 +129,6 @@ public class MyBoxSetupController implements Initializable {
                             } else {
                                 embeddedRadio.fire();
                             }
-                            String DisableHidpi = ConfigTools.readValue(file, "DisableHidpi");
-                            hidpiCheck.setSelected("true".equals(DisableHidpi));
                             String JVMmemory = ConfigTools.readValue(file, "JVMmemory");
                             if (JVMmemory != null && JVMmemory.startsWith("-Xms") && JVMmemory.endsWith("m")) {
                                 jvmInput.setText(JVMmemory.substring(4, JVMmemory.length() - 1));
@@ -244,7 +238,6 @@ public class MyBoxSetupController implements Initializable {
             if (newJVM != jvmM && newJVM > 50) {
                 ConfigTools.writeConfigValue("JVMmemory", "-Xms" + newJVM + "m");
             }
-            ConfigTools.writeConfigValue("DisableHidpi", hidpiCheck.isSelected() ? "true" : "false");
 
             MainApp.MyBoxLoading(getMyStage());
         } catch (Exception e) {

@@ -113,6 +113,10 @@ public class SystemTools {
         return getAvaliableMemory() / (1024 * 1024L);
     }
 
+    public static long freeBytes() {
+        return getAvaliableMemory() - 200 * 1024 * 1024;
+    }
+
     public static Point getMousePoint() {
         return MouseInfo.getPointerInfo().getLocation();
     }
@@ -227,7 +231,7 @@ public class SystemTools {
     public static byte[] messageDigest(File file, String algorithm) {
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
-            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[CommonValues.IOBufferLength];
                 int len;
                 while ((len = in.read(buf)) > 0) {
@@ -289,7 +293,7 @@ public class SystemTools {
             }
 
             // http://wenq.org/wqy2/
-            File wqy_microhei = FxmlControl.getInternalFile("/data/wqy-microhei.ttf", "data", "wqy-microhei.ttf", false);
+            File wqy_microhei = FxmlControl.getInternalFile("/data/wqy-microhei.ttf", "data", "wqy-microhei.ttf");
             String wqy_microhei_name = wqy_microhei.getAbsolutePath() + "      " + message("wqy_microhei");
             if (!names.isEmpty() && names.get(0).contains("    ")) {
                 names.add(1, wqy_microhei_name);

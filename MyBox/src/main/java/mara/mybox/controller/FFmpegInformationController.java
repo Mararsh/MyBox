@@ -304,7 +304,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
 
             openHandlingStage(formatsTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(formatsTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
 
         }
@@ -396,7 +396,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
 
             openHandlingStage(codecsTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(codecsTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
 
         }
@@ -483,7 +483,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
 
             openHandlingStage(filtersTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(filtersTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
 
         }
@@ -560,7 +560,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
 
             openHandlingStage(queryTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(queryTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
 
         }

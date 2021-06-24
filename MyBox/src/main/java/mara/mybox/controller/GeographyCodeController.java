@@ -245,7 +245,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             openHandlingStage(backgroundTask, Modality.WINDOW_MODAL);
             backgroundTask.setSelf(backgroundTask);
             Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -419,7 +419,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -434,7 +434,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                 @Override
                 protected boolean handle() {
                     File file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_towns_internal.csv",
-                            "data", "Geography_Code_china_towns_internal.csv", true);
+                            "data", "Geography_Code_china_towns_internal.csv");
                     GeographyCodeTools.importInternalCSV(loading, file, true);
                     return true;
                 }
@@ -447,7 +447,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -524,7 +524,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

@@ -1,85 +1,47 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.text.MessageFormat;
+import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistory.FileType;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
-import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.image.ImageManufacture;
-import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.image.file.ImageFileWriters;
-import static mara.mybox.image.file.ImageTiffFile.getPara;
-import static mara.mybox.image.file.ImageTiffFile.getWriter;
-import static mara.mybox.image.file.ImageTiffFile.getWriterMeta;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
-import mara.mybox.value.CommonValues;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 /**
  * @Author Mara
  * @CreateDate 2018-8-8
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageSplitController extends ImageViewerController {
 
-    private List<Integer> rows, cols;
-    private int rowsNumber, colsNumber, width, height;
+    protected List<Integer> rows, cols;
+    protected int rowsNumber, colsNumber, width, height;
     protected SimpleBooleanProperty splitValid;
-    private SplitMethod splitMethod;
-    private LoadingController imageLoading, pdfLoading, tiffLoading;
-    private SingletonTask imageTask, pdfTask, tiffTask;
+    protected SplitMethod splitMethod;
 
     public static enum SplitMethod {
         Predefined, ByNumber, BySize, Customize
@@ -91,20 +53,16 @@ public class ImageSplitController extends ImageViewerController {
     protected FlowPane splitPredefinedPane, splitSizePane, splitNumberPane,
             splitCustomized1Pane, splitCustomized2Pane;
     @FXML
-    protected Button saveImagesButton, saveTiffButton, savePdfButton;
-    @FXML
     protected TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
             widthInput, heightInput;
     @FXML
     protected CheckBox displaySizeCheck;
     @FXML
-    protected ControlPdfWriteOptions pdfOptionsController;
-    @FXML
-    protected VBox splitOptionsBox, optionsBox, showBox;
-    @FXML
-    protected HBox opBox;
+    protected VBox splitOptionsBox;
     @FXML
     protected Label promptLabel, sizeLabel;
+    @FXML
+    protected ControlImagesSave saveController;
 
     public ImageSplitController() {
         baseTitle = AppVariables.message("ImageSplit");
@@ -117,6 +75,7 @@ public class ImageSplitController extends ImageViewerController {
             super.initValues();
 
             operateOriginalSize = true;
+            splitValid = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -128,9 +87,86 @@ public class ImageSplitController extends ImageViewerController {
         try {
             super.initControls();
 
-            initCommon();
-            initSplitTab();
-            pdfOptionsController.set(baseName, true);
+            initSplitPane();
+
+            saveController.setParameters(this);
+            this.saveButton = saveController.saveButton;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initSplitPane() {
+        try {
+            splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+                    checkSplitMethod();
+                }
+            });
+
+            widthInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    checkSizeValues();
+                }
+            });
+
+            rowsInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (splitMethod == SplitMethod.ByNumber) {
+                        checkNumberValues();
+                    } else if (splitMethod == SplitMethod.BySize) {
+                        checkSizeValues();
+                    }
+                }
+            });
+            colsInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (splitMethod == SplitMethod.ByNumber) {
+                        checkNumberValues();
+                    } else if (splitMethod == SplitMethod.BySize) {
+                        checkSizeValues();
+                    }
+                }
+            });
+
+            customizedRowsInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    checkCustomValues();
+                }
+            });
+            customizedColsInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    checkCustomValues();
+                }
+            });
+
+            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(badStyle)
+                    .or(colsInput.styleProperty().isEqualTo(badStyle))
+            );
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    protected void initViewPane() {
+        try {
+            super.initViewPane();
+            displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    indicateSplit();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -140,93 +176,7 @@ public class ImageSplitController extends ImageViewerController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         checkSplitMethod();
-        FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
 
-    }
-
-    protected void initCommon() {
-        opBox.disableProperty().bind(imageView.imageProperty().isNull());
-        optionsBox.disableProperty().bind(imageView.imageProperty().isNull());
-        showBox.disableProperty().bind(imageView.imageProperty().isNull());
-
-        splitValid = new SimpleBooleanProperty(false);
-
-        displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                indicateSplit();
-            }
-        });
-
-        saveImagesButton.disableProperty().bind(
-                splitValid.not()
-        );
-        savePdfButton.disableProperty().bind(
-                splitValid.not()
-                        .or(pdfOptionsController.customWidthInput.styleProperty().isEqualTo(badStyle))
-                        .or(pdfOptionsController.customHeightInput.styleProperty().isEqualTo(badStyle))
-                        .or(pdfOptionsController.marginSelector.styleProperty().isEqualTo(badStyle))
-                        .or(pdfOptionsController.jpegQualitySelector.styleProperty().isEqualTo(badStyle))
-                        .or(pdfOptionsController.thresholdInput.styleProperty().isEqualTo(badStyle))
-        );
-        saveTiffButton.disableProperty().bind(
-                splitValid.not()
-        );
-    }
-
-    protected void initSplitTab() {
-        splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-                checkSplitMethod();
-            }
-        });
-
-        widthInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                checkSizeValues();
-            }
-        });
-
-        rowsInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (splitMethod == SplitMethod.ByNumber) {
-                    checkNumberValues();
-                } else if (splitMethod == SplitMethod.BySize) {
-                    checkSizeValues();
-                }
-            }
-        });
-        colsInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (splitMethod == SplitMethod.ByNumber) {
-                    checkNumberValues();
-                } else if (splitMethod == SplitMethod.BySize) {
-                    checkSizeValues();
-                }
-            }
-        });
-
-        customizedRowsInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                checkCustomValues();
-            }
-        });
-        customizedColsInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                checkCustomValues();
-            }
-        });
-
-        okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(badStyle)
-                .or(colsInput.styleProperty().isEqualTo(badStyle))
-        );
     }
 
     protected void checkSplitMethod() {
@@ -429,16 +379,6 @@ public class ImageSplitController extends ImageViewerController {
 
     }
 
-    @FXML
-    @Override
-    public void okAction() {
-        if (splitMethod == SplitMethod.ByNumber) {
-            divideImageByNumber();
-        } else if (splitMethod == SplitMethod.BySize) {
-            divideImageBySize();
-        }
-    }
-
     protected void divideImageBySize() {
         if (width <= 0 || height <= 0) {
             return;
@@ -613,6 +553,7 @@ public class ImageSplitController extends ImageViewerController {
     protected void indicateSplit() {
         try {
             if (image == null) {
+                checkImages();
                 return;
             }
             List<Node> nodes = new ArrayList<>();
@@ -628,6 +569,7 @@ public class ImageSplitController extends ImageViewerController {
                     || (rows.size() == 2 && cols.size() == 2)) {
                 imageView.setImage(image);
                 splitValid.set(false);
+                checkImages();
                 return;
             }
             Color strokeColor = Color.web(AppVariables.getUserConfigValue("StrokeColor", "#FF0000"));
@@ -686,7 +628,6 @@ public class ImageSplitController extends ImageViewerController {
                         maskPane.getChildren().add(text);
                     }
                 }
-
             }
 
             String comments = AppVariables.message("SplittedNumber") + ": "
@@ -701,11 +642,12 @@ public class ImageSplitController extends ImageViewerController {
             }
             sizeLabel.setText(comments);
             splitValid.set(true);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             splitValid.set(false);
         }
-
+        checkImages();
     }
 
     @Override
@@ -715,419 +657,50 @@ public class ImageSplitController extends ImageViewerController {
     }
 
     @FXML
-    public void popSaveAsPdf(MouseEvent event) { //
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return recentTargetPaths();
-            }
-
-            @Override
-            public void handleSelect() {
-                saveAsPdfAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleTargetPath(fname);
-            }
-
-        }.setFileType(FileType.PDF).pop();
-    }
-
-    @FXML
-    public void popSaveAsTif(MouseEvent event) { //
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return recentTargetPaths();
-            }
-
-            @Override
-            public void handleSelect() {
-                saveAsTiffAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleTargetPath(fname);
-            }
-
-        }.setFileType(FileType.Tif).pop();
-    }
-
-    private File validationBeforeSave(List<FileChooser.ExtensionFilter> ext, int fileType, String diagTitle) {
-        if (image == null || !splitValid.getValue()
-                || rows == null || cols == null
-                || rows.size() < 1 || cols.size() < 1) {
-            return null;
-        }
-        String prefix = null;
-        if (sourceFile != null) {
-            prefix = FileTools.getFilePrefix(sourceFile.getName()) + "-p";
-        }
-        final File tFile = chooseSaveFile(diagTitle, VisitHistoryTools.getSavedPath(fileType), prefix, ext);
-        if (tFile == null) {
-            return null;
-        }
-        recordFileWritten(tFile, fileType);
-        return tFile;
-    }
-
-    @FXML
-    public void saveAsImagesAction(ActionEvent event) {
-        if (image == null || rows == null || rows.isEmpty()
-                || cols == null || cols.isEmpty()) {
-            return;
-        }
-        final File tFile
-                = validationBeforeSave(CommonFxValues.ImageExtensionFilter, FileType.Image, message("FilePrefixInput"));
-        if (tFile == null) {
-            return;
-        }
-        if (imageTask != null) {
-            imageTask.cancel();
-            imageLoading = null;
-        }
-        imageTask = new SingletonTask<Void>() {
-            List<String> fileNames = new ArrayList<>();
-
-            @Override
-            protected boolean handle() {
-                int x1, y1, x2, y2;
-                String targetFormat = FileTools.getFileSuffix(tFile.getAbsolutePath()).toLowerCase();
-                String filePrefix = FileTools.getFilePrefix(tFile.getAbsolutePath());
-                String sourceFormat = null, sourceFilename = null;
-                BufferedImage sourceImage = null;
-                if (sourceFile != null && imageInformation != null) {
-                    sourceFormat = imageInformation.getImageFormat();
-                    sourceFilename = sourceFile.getAbsolutePath();
-                }
-                if ((imageInformation == null) || !imageInformation.isIsScaled()) {
-                    sourceImage = FxmlImageManufacture.bufferedImage(image);
-                }
-                int total = (rows.size() - 1) * (cols.size() - 1);
-                for (int i = 0; i < rows.size() - 1; ++i) {
-                    if (imageTask == null || isCancelled()) {
-                        return false;
-                    }
-                    y1 = rows.get(i);
-                    y2 = rows.get(i + 1);
-                    for (int j = 0; j < cols.size() - 1; ++j) {
-                        if (imageTask == null || isCancelled()) {
-                            return false;
-                        }
-                        x1 = cols.get(j);
-                        x2 = cols.get(j + 1);
-                        BufferedImage target;
-                        if (sourceImage != null) {
-                            target = ImageManufacture.cropOutside(sourceImage, x1, y1, x2, y2);
-                        } else {
-                            target = ImageFileReaders.readFrame(sourceFormat, sourceFilename, x1, y1, x2, y2);
-                        }
-                        if (imageTask == null || isCancelled()) {
-                            return false;
-                        }
-                        final String fileName = filePrefix + "_"
-                                + (rows.size() - 1) + "x" + (cols.size() - 1) + "_"
-                                + (i + 1) + "-" + (j + 1)
-                                + "." + targetFormat;
-                        ImageFileWriters.writeImageFile(target, targetFormat, fileName);
-                        fileNames.add(new File(fileName).getAbsolutePath());
-                        updateLabel(fileName, total, (i + 1) * (j + 1));
-                    }
-                }
-                return true;
-            }
-
-            protected void updateLabel(final String fileName, final int total, final int number) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (imageTask == null || imageTask.isQuit() || imageLoading == null) {
-                            return;
-                        }
-                        imageLoading.setInfo(MessageFormat.format(AppVariables.message("NumberFileGenerated"),
-                                number + "/" + total, "\"" + fileName + "\""));
-                        imageLoading.setProgress(number * 1f / total);
-                    }
-                });
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                multipleFilesGenerated(fileNames);
-            }
-
-        };
-        imageLoading = openHandlingStage(imageTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(imageTask);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-    @FXML
-    protected void saveAsPdfAction() {
-        if (image == null || rows == null || rows.isEmpty()
-                || cols == null || cols.isEmpty()) {
-            return;
-        }
-        final File tFile = validationBeforeSave(CommonFxValues.PdfExtensionFilter, FileType.PDF, null);
-        if (tFile == null) {
-            return;
-        }
-        if (pdfTask != null) {
-            pdfTask.cancel();
-            pdfLoading = null;
-        }
-        pdfTask = new SingletonTask<Void>() {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    String sourceFormat = null, sourceFilename = null;
-                    BufferedImage sourceImage = null;
-                    if (sourceFile != null && imageInformation != null) {
-                        sourceFormat = imageInformation.getImageFormat();
-                        sourceFilename = sourceFile.getAbsolutePath();
-                    }
-                    if ((imageInformation == null) || !imageInformation.isIsScaled()) {
-                        sourceImage = FxmlImageManufacture.bufferedImage(image);
-                    }
-                    File tmpFile = FileTools.getTempFile();
-                    try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
-                        PDDocumentInformation info = new PDDocumentInformation();
-                        info.setCreationDate(Calendar.getInstance());
-                        info.setModificationDate(Calendar.getInstance());
-                        info.setProducer("MyBox v" + CommonValues.AppVersion);
-                        info.setAuthor(pdfOptionsController.authorInput.getText());
-                        document.setDocumentInformation(info);
-                        document.setVersion(1.0f);
-                        int x1, y1, x2, y2;
-                        int count = 0;
-                        int total = (rows.size() - 1) * (cols.size() - 1);
-                        for (int i = 0; i < rows.size() - 1; ++i) {
-                            if (pdfTask == null || isCancelled()) {
-                                return false;
-                            }
-                            y1 = rows.get(i);
-                            y2 = rows.get(i + 1);
-                            for (int j = 0; j < cols.size() - 1; ++j) {
-                                if (pdfTask == null || isCancelled()) {
-                                    return false;
-                                }
-                                x1 = cols.get(j);
-                                x2 = cols.get(j + 1);
-                                BufferedImage target;
-                                if (sourceImage != null) {
-                                    target = ImageManufacture.cropOutside(sourceImage, x1, y1, x2, y2);
-                                } else {
-                                    target = ImageFileReaders.readFrame(sourceFormat, sourceFilename, x1, y1, x2, y2);
-                                }
-                                if (pdfTask == null || isCancelled()) {
-                                    return false;
-                                }
-
-                                PdfTools.writePage(document, sourceFormat, target, ++count, total, pdfOptionsController);
-                                updateLabel(total, (i + 1) * (j + 1));
-                            }
-                        }
-                        PDPage page = document.getPage(0);
-                        PDPageXYZDestination dest = new PDPageXYZDestination();
-                        dest.setPage(page);
-                        dest.setZoom(pdfOptionsController.zoom / 100.0f);
-                        dest.setTop((int) page.getCropBox().getHeight());
-                        PDActionGoTo action = new PDActionGoTo();
-                        action.setDestination(dest);
-                        document.getDocumentCatalog().setOpenAction(action);
-
-                        document.save(tmpFile);
-                        document.close();
-                    }
-                    return FileTools.rename(tmpFile, tFile);
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            protected void updateLabel(final int total, final int number) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (pdfTask == null || pdfTask.isQuit() || pdfLoading == null) {
-                            return;
-                        }
-                        pdfLoading.setInfo(MessageFormat.format(AppVariables.message("NumberPageWritten"),
-                                number + "/" + total));
-                        pdfLoading.setProgress(number * 1f / total);
-                    }
-                });
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                FxmlStage.openPdfViewer(null, tFile);
-            }
-
-        };
-        pdfLoading = openHandlingStage(pdfTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(pdfTask);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    @FXML
-    protected void saveAsTiffAction() {
-        if (image == null || rows == null || rows.isEmpty()
-                || cols == null || cols.isEmpty()) {
-            return;
-        }
-        final File tFile = validationBeforeSave(CommonFxValues.TiffExtensionFilter, FileType.Tif, null);
-        if (tFile == null) {
-            return;
-        }
-        if (tiffTask != null) {
-            tiffTask.cancel();
-            tiffLoading = null;
-        }
-        tiffTask = new SingletonTask<Void>() {
-
-            @Override
-            protected boolean handle() {
-
-                try {
-                    String sourceFormat = null, sourceFilename = null;
-                    BufferedImage sourceImage = null;
-                    if (sourceFile != null && imageInformation != null) {
-                        sourceFormat = imageInformation.getImageFormat();
-                        sourceFilename = sourceFile.getAbsolutePath();
-                    }
-                    if ((imageInformation == null) || !imageInformation.isIsScaled()) {
-                        sourceImage = FxmlImageManufacture.bufferedImage(image);
-                    }
-                    ImageWriter writer = getWriter();
-                    File tmpFile = FileTools.getTempFile();
-                    try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                        writer.setOutput(out);
-                        ImageWriteParam param = getPara(null, writer);
-                        writer.prepareWriteSequence(null);
-                        int x1, y1, x2, y2;
-                        int total = (rows.size() - 1) * (cols.size() - 1);
-                        for (int i = 0; i < rows.size() - 1; ++i) {
-                            if (tiffTask == null || isCancelled()) {
-                                return false;
-                            }
-                            y1 = rows.get(i);
-                            y2 = rows.get(i + 1);
-                            for (int j = 0; j < cols.size() - 1; ++j) {
-                                if (tiffTask == null || isCancelled()) {
-                                    return false;
-                                }
-                                x1 = cols.get(j);
-                                x2 = cols.get(j + 1);
-                                BufferedImage bufferedImage;
-                                if (sourceImage != null) {
-                                    bufferedImage = ImageManufacture.cropOutside(sourceImage, x1, y1, x2, y2);
-                                } else {
-                                    bufferedImage = ImageFileReaders.readFrame(sourceFormat, sourceFilename, x1, y1, x2, y2);
-                                }
-                                if (tiffTask == null || isCancelled()) {
-                                    return false;
-                                }
-                                IIOMetadata metaData = getWriterMeta(null, bufferedImage, writer, param);
-                                if (tiffTask == null || isCancelled()) {
-                                    return false;
-                                }
-                                writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                                updateLabel(total, (i + 1) * (j + 1));
-                            }
-                        }
-                        writer.endWriteSequence();
-                        out.flush();
-                    }
-                    writer.dispose();
-                    return FileTools.rename(tmpFile, tFile);
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-
-            }
-
-            protected void updateLabel(final int total, final int number) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (tiffTask == null || tiffTask.isQuit() || tiffLoading == null) {
-                            return;
-                        }
-                        tiffLoading.setInfo(MessageFormat.format(AppVariables.message("NumberImageWritten"),
-                                number + "/" + total));
-                        tiffLoading.setProgress(number * 1f / total);
-                    }
-                });
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popSuccessful();
-                final ImageFramesViewerController controller
-                        = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
-                controller.selectSourceFile(tFile);
-            }
-
-        };
-        tiffLoading = openHandlingStage(tiffTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(tiffTask);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
     @Override
-    public boolean checkBeforeNextAction() {
-        if (imageTask != null && !imageTask.isQuit()) {
-            imageTask.cancel();
-            imageTask = null;
+    public void okAction() {
+        if (splitMethod == SplitMethod.ByNumber) {
+            divideImageByNumber();
+        } else if (splitMethod == SplitMethod.BySize) {
+            divideImageBySize();
         }
-        if (pdfTask != null && !pdfTask.isQuit()) {
-            pdfTask.cancel();
-            pdfTask = null;
+    }
+
+    public synchronized void checkImages() {
+        if (!splitValid.get()) {
+            saveController.setImages(null);
+            return;
         }
-        if (tiffTask != null && !tiffTask.isQuit()) {
-            tiffTask.cancel();
-            tiffTask = null;
+        List<ImageInformation> infos = new ArrayList<>();
+        try {
+            int x1, y1, x2, y2;
+            for (int i = 0; i < rows.size() - 1; ++i) {
+                y1 = rows.get(i);
+                y2 = rows.get(i + 1);
+                for (int j = 0; j < cols.size() - 1; ++j) {
+                    x1 = cols.get(j);
+                    x2 = cols.get(j + 1);
+                    ImageInformation info;
+                    if (imageInformation != null) {
+                        info = (ImageInformation) (imageInformation.clone());
+                    } else {
+                        info = new ImageInformation(image);
+                    }
+                    info.setImage(null);
+                    info.setRegion(new Rectangle(x1, y1, Math.abs(x2 - x1 + 1), Math.abs(y2 - y1 + 1)));
+                    infos.add(info);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
-        return true;
+        saveController.setImages(infos);
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        saveController.saveAsAction();
     }
 
 }

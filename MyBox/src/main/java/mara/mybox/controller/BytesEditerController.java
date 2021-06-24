@@ -19,7 +19,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
@@ -138,7 +137,7 @@ public class BytesEditerController extends BaseFileEditerController {
             isSettingValues = false;
 
             if (sourceFile == null) {
-                formatMainArea();
+                validMainArea();
                 updateInterface(false);
             } else {
                 sourceInformation.setTotalNumberRead(false);
@@ -219,8 +218,7 @@ public class BytesEditerController extends BaseFileEditerController {
     }
 
     @Override
-    protected void initDisplayTab() {
-        super.initDisplayTab();
+    protected void initCharsetTab() {
         List<String> setNames = TextTools.getCharsetNames();
         encodeBox.getItems().addAll(setNames);
         encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -228,32 +226,33 @@ public class BytesEditerController extends BaseFileEditerController {
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 sourceInformation.setCharset(Charset.forName(newValue));
                 AppVariables.setUserConfigValue(baseName + "Charset", newValue);
-                charsetByUser = !isSettingValues;
-                if (!isSettingValues) {
-                    updatePairArea();
-                }
+                charsetByUser = true;
+                refreshPairAction();
             }
         });
         encodeBox.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "Charset", "UTF-8"));
     }
 
     @Override
+    protected boolean validMainArea() {
+        return ByteTools.isBytesHex(mainArea.getText());
+    }
+
+    @Override
     protected boolean formatMainArea() {
-        if (isSettingValues) {
-            return true;
-        }
         String text = mainArea.getText();
         text = ByteTools.validateTextHex(text);
         if (text != null) {
             if (text.isEmpty()) {
                 return true;
             }
-            final String hex = ByteTools.formatHex(text, lineBreak, lineBreakWidth, lineBreakValue);
+            String hex = ByteTools.formatHex(text, lineBreak, lineBreakWidth, lineBreakValue);
             isSettingValues = true;
             mainArea.setText(hex);
             isSettingValues = false;
             return true;
         } else {
+            popError(message("InvalidData"));
             return false;
         }
     }
@@ -261,30 +260,66 @@ public class BytesEditerController extends BaseFileEditerController {
     @FXML
     @Override
     public void refreshPairAction() {
-        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
+        if (pairArea.isDisable() || !splitPane.getItems().contains(rightPane)) {
             return;
         }
-        isSettingValues = true;
-        LoadingController loadingController = openHandlingStage(Modality.WINDOW_MODAL);
-        String text = mainArea.getText();
-        if (!text.isEmpty()) {
-            String[] lines = text.split("\n");
-            StringBuilder bytes = new StringBuilder();
-            String lineText;
-            for (String line : lines) {
-                lineText = new String(ByteTools.hexFormatToBytes(line), sourceInformation.getCharset());
-                lineText = lineText.replaceAll("\n|\r", " ") + "\n";
-                bytes.append(lineText);
+        pairArea.setDisable(true);
+        SingletonTask pairTask = new SingletonTask<Void>() {
+
+            private String pairText;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    String text = mainArea.getText();
+                    if (!text.isEmpty()) {
+                        String[] lines = text.split("\n");
+                        StringBuilder bytes = new StringBuilder();
+                        String lineText;
+                        for (String line : lines) {
+                            byte[] hex = ByteTools.hexFormatToBytes(line);
+                            if (hex == null) {
+                                error = message("InvalidData");
+                                return false;
+                            }
+                            lineText = new String(hex, sourceInformation.getCharset());
+                            lineText = lineText.replaceAll("\n|\r", " ") + "\n";
+                            bytes.append(lineText);
+                        }
+                        pairText = bytes.toString();
+                    } else {
+                        pairText = "";
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
-            pairArea.setText(bytes.toString());
-            setPairAreaSelection();
-        } else {
-            pairArea.clear();
-        }
-        if (loadingController != null) {
-            loadingController.closeStage();
-        }
-        isSettingValues = false;
+
+            @Override
+            protected void whenSucceeded() {
+                if (pairText.isEmpty()) {
+                    pairArea.clear();
+                } else {
+                    isSettingValues = true;
+                    pairArea.setText(pairText);
+                    pairArea.setScrollLeft(mainArea.getScrollLeft());
+                    pairArea.setScrollTop(mainArea.getScrollTop());
+                    isSettingValues = false;
+                    setPairAreaSelection();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                pairArea.setDisable(false);
+            }
+        };
+        pairTask.setSelf(pairTask);
+        Thread thread = new Thread(pairTask);
+        thread.setDaemon(false);
+        thread.start();
     }
 
     @Override

@@ -52,8 +52,6 @@ import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
-import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.file.ImageFileReaders;
@@ -111,8 +109,6 @@ public class ImageManufactureController extends ImageViewerController {
     protected Label scopeLabel;
     @FXML
     protected CheckBox recordHistoriesCheck;
-    @FXML
-    protected ControlFileBackup backupController;
 
     public ImageManufactureController() {
         baseTitle = AppVariables.message("ImageManufacture");
@@ -446,20 +442,7 @@ public class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void editFrames() {
-        if (sourceFile == null) {
-            return;
-        }
-        String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
-        if (format.contains("gif")) {
-            ImageGifEditerController controller
-                    = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);
-            controller.selectSourceFile(sourceFile);
-
-        } else {
-            ImageTiffEditerController controller
-                    = (ImageTiffEditerController) openStage(CommonValues.ImageTiffEditerFxml);
-            controller.selectSourceFile(sourceFile);
-        }
+        loadMultipleFramesImage(sourceFile);
     }
 
     @FXML
@@ -730,7 +713,7 @@ public class ImageManufactureController extends ImageViewerController {
             };
             Thread thread = new Thread(loadTask);
 //        openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -840,7 +823,7 @@ public class ImageManufactureController extends ImageViewerController {
                 task.setSelf(task);
                 Thread thread = new Thread(task);
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
         } catch (Exception e) {
@@ -925,7 +908,7 @@ public class ImageManufactureController extends ImageViewerController {
             };
             Thread thread = new Thread(loadTask);
             openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1035,151 +1018,9 @@ public class ImageManufactureController extends ImageViewerController {
         popInformation(message("Recovered"));
     }
 
-    @FXML
     @Override
-    public void saveAction() {
-        if (saveButton.isDisabled()) {
-            return;
-        }
-        if (sourceFile == null) {
-            saveAsAction();
-            return;
-        }
-        if (saveConfirmCheck.isSelected()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVariables.message("SureOverrideFile"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(AppVariables.message("Save"));
-            ButtonType buttonSaveAs = new ButtonType(AppVariables.message("SaveAs"));
-            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonCancel) {
-                return;
-            } else if (result.get() == buttonSaveAs) {
-                saveAsAction();
-                return;
-            }
-        }
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    String format = "png";
-                    if (imageInformation != null) {
-                        format = imageInformation.getImageFormat();
-                    }
-                    final BufferedImage bufferedImage
-                            = FxmlImageManufacture.bufferedImage(imageView.getImage());
-                    if (bufferedImage == null || task == null || isCancelled()) {
-                        return false;
-                    }
-                    File tmpFile = FileTools.getTempFile(format);
-                    if (framesNumber > 1) {
-                        error = ImageFileWriters.writeFrame(tmpFile, frameIndex, bufferedImage);
-                        ok = error == null;
-                    } else {
-                        ok = ImageFileWriters.writeImageFile(bufferedImage, format, tmpFile.getAbsolutePath());
-                    }
-                    if (!ok || task == null || isCancelled()) {
-                        return false;
-                    }
-                    if (backupController.isBack()) {
-                        backupController.addBackup(sourceFile);
-                    }
-                    if (!FileTools.rename(tmpFile, sourceFile)) {
-                        return false;
-                    }
-                    ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(sourceFile.getAbsolutePath());
-                    if (finfo == null || finfo.getImageInformation() == null) {
-                        return false;
-                    }
-                    imageInformation = finfo.getImageInformation();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setImageChanged(false);
-                    updateBottom(message("Saved"));
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        if (saveAsButton.isDisabled()) {
-            return;
-        }
-        try {
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    saveAsPrefix(), targetExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file);
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>() {
-
-                    @Override
-                    protected boolean handle() {
-                        String format = FileTools.getFileSuffix(file.getName());
-                        final BufferedImage bufferedImage
-                                = FxmlImageManufacture.bufferedImage(imageView.getImage());
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        if (framesNumber > 1 && saveAllFramesRadio.isSelected()) {
-                            error = ImageFileWriters.writeFrame(sourceFile, frameIndex, bufferedImage, file, format);
-                            return error == null;
-                        } else {
-                            return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (sourceFile == null
-                                || saveAsType == SaveAsType.Load) {
-                            sourceFileChanged(file);
-
-                        } else if (saveAsType == SaveAsType.Open) {
-                            FxmlStage.openImageManufacture(file.getAbsolutePath());
-                        }
-                        popSuccessful();
-                    }
-                };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(true);
-                thread.start();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
+    public Image imageToSave() {
+        return imageView.getImage();
     }
 
     public void updateImage(ImageOperation operation, Image newImage) {
@@ -1310,31 +1151,6 @@ public class ImageManufactureController extends ImageViewerController {
     public void applyKernel(ConvolutionKernel kernel) {
         operationsController.enhancementPane.setExpanded(true);
         operationsController.enhancementController.optionsController.applyKernel(kernel);
-    }
-
-    /*
-        Browse
-     */
-    @FXML
-    @Override
-    public void nextAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        if (nextFile != null) {
-            loadImage(nextFile.getAbsoluteFile(), loadWidth, 0);
-        }
-    }
-
-    @FXML
-    @Override
-    public void previousAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        if (previousFile != null) {
-            loadImage(previousFile.getAbsoluteFile(), loadWidth, 0);
-        }
     }
 
     @Override

@@ -24,21 +24,23 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER" spacing="20.0">
             <children>
                 <Button fx:id="myboxBuuton" mnemonicParsing="false" onAction="#mybox">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconMyBox.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconMyBox.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconCancel.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </children>
             <VBox.margin>
                 <Insets top="10.0" />

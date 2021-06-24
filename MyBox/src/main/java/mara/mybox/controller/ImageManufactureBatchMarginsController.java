@@ -30,7 +30,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchMarginsController extends ImageManufactureBatchController {
+public class ImageManufactureBatchMarginsController extends BaseImageManufactureBatchController {
 
     protected int width, distance;
     private ImageManufactureMarginsController.OperationType opType;

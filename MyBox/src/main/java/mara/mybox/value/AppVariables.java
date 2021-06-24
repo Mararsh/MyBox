@@ -47,7 +47,7 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
-            disableHiDPI, devMode, hidpiIcons, ignoreDbUnavailable, popErrorLogs;
+            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
     public static ControlStyle.ColorStyle ControlColor;
 
     public AppVariables() {
@@ -60,7 +60,6 @@ public class AppVariables {
             getBundle();
             getTableBundle();
             getPdfMem();
-            devMode = getUserConfigBoolean("DevMode", false);
             openStageInNewWindow = getUserConfigBoolean("OpenStageInNewWindow", false);
             restoreStagesSize = getUserConfigBoolean("RestoreStagesSize", true);
             sceneFontSize = getUserConfigInt("SceneFontSize", 15);
@@ -70,13 +69,13 @@ public class AppVariables {
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = getUserConfigBoolean("ControlDisplayText", false);
             hidpiIcons = getUserConfigBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
-            devMode = getUserConfigBoolean("DevMode", false);
-            disableHiDPI = ignoreDbUnavailable = false;
+            saveDebugLogs = getUserConfigBoolean("SaveDebugLogs", false);
+            detailedDebugLogs = getUserConfigBoolean("DetailedDebugLogs", false);
+            ignoreDbUnavailable = false;
             popErrorLogs = true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     public static void clear() {

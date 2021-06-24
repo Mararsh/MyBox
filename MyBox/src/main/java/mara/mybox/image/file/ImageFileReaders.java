@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -42,12 +44,249 @@ import org.w3c.dom.Node;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileReaders {
 
-    public static ImageReader getReader(String format) {
-        return ImageIO.getImageReadersByFormatName(format).next();
+    public static ImageReader getReader(ImageInputStream iis) {
+        if (iis == null) {
+            return null;
+        }
+        try {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            if (readers == null) {
+                return null;
+            }
+            ImageReader reader = null;
+            while (readers.hasNext()) {
+                reader = readers.next();
+//                MyBoxLog.console(reader.getFormatName() + "  " + reader.getClass());
+                if (!reader.getClass().toString().contains("TIFFImageReader")
+                        || reader instanceof com.github.jaiimageio.impl.plugins.tiff.TIFFImageReader) {
+                    return reader;
+                }
+            }
+            return reader;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
     }
 
-    public static ImageReader getReader(File file) {
-        return getReader(FileTools.getFileSuffix(file));
+    public static Object readFrame(File file, boolean onlyInformation, int index, int width, ImageInformation existImageInfo) {
+        try {
+            if (file == null) {
+                return null;
+            }
+            ImageFileInformation fileInfo = null;
+            ImageInformation imageInfo = null;
+            if (existImageInfo != null) {
+                ImageFileInformation referFileInfo = existImageInfo.getImageFileInformation();
+                if (referFileInfo != null && referFileInfo.getFile().equals(file)) {
+                    int size = referFileInfo.getNumberOfImages();
+                    if (size > 0) {
+                        fileInfo = referFileInfo;
+                        int targetIndex = index;
+                        if (targetIndex < 0) {
+                            targetIndex = size > 0 ? size - 1 : 0;
+                        }
+                        if (targetIndex >= size) {
+                            targetIndex = 0;
+                        }
+                        if (targetIndex == existImageInfo.getIndex()) {
+                            Image referThumb = existImageInfo.getThumbnail();
+                            if (referThumb != null) {
+                                int targetWidth = width <= 0 ? existImageInfo.getWidth() : width;
+                                if (referThumb.getWidth() == targetWidth) {
+                                    return existImageInfo;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            int targetIndex = index, targetWidth = width;
+            String targetFormat = FileTools.getFileSuffix(file);
+            BufferedImage bufferedImage = null;
+            if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
+                if (fileInfo == null) {
+                    fileInfo = new ImageFileInformation(file);
+                    ImageFileReaders.readImageFileMetaData(null, fileInfo);
+                }
+                int size = fileInfo.getNumberOfImages();
+                if (size > 0) {
+                    if (targetIndex < 0) {
+                        targetIndex = size > 0 ? size - 1 : 0;
+                    }
+                    if (targetIndex >= size) {
+                        targetIndex = 0;
+                    }
+                    imageInfo = fileInfo.getImagesInformation().get(targetIndex);
+                    if (!onlyInformation) {
+                        bufferedImage = readIcon(file, targetIndex);
+                        bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, targetWidth);
+                    }
+                }
+            } else {
+                try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                    ImageReader reader = getReader(iis);
+                    if (reader != null) {
+                        if (fileInfo == null) {
+                            reader.setInput(iis, false, false);
+                            fileInfo = new ImageFileInformation(file);
+                            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
+                        } else {
+                            reader.setInput(iis, false, true);
+                        }
+
+                        int size = fileInfo.getNumberOfImages();
+                        if (size > 0) {
+                            if (targetIndex < 0) {
+                                targetIndex = size > 0 ? size - 1 : 0;
+                            }
+                            if (targetIndex >= size) {
+                                targetIndex = 0;
+                            }
+                            imageInfo = fileInfo.getImagesInformation().get(targetIndex);
+                            imageInfo.setThumbnail(null);
+                            if (!onlyInformation) {
+                                targetWidth = targetWidth <= 0 ? imageInfo.getWidth() : targetWidth;
+                                int maxWidth = ImageInformation.countMaxWidth(imageInfo);
+                                if (targetWidth > maxWidth) {
+                                    System.gc();
+                                    maxWidth = ImageInformation.countMaxWidth(imageInfo);
+                                }
+                                if (targetWidth <= maxWidth) {
+                                    Object ret = ImageFileReaders.readFrameByWidth(reader, targetIndex, null, targetWidth);
+                                    if (ret != null) {
+                                        if (ret instanceof BufferedImage) {
+                                            bufferedImage = (BufferedImage) ret;
+                                        } else if (ret instanceof Exception) {
+                                            bufferedImage = ImageFileReaders.readBrokenImage((Exception) ret, file.getAbsolutePath(), targetIndex, null, targetWidth);
+                                            if (bufferedImage == null) {
+                                                return ret;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        reader.dispose();
+                    }
+                } catch (Exception e) {
+//                    MyBoxLog.console(e);
+                    return e;
+                }
+            }
+            if (imageInfo != null && bufferedImage != null) {
+                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+                imageInfo.setThumbnail(image);
+                imageInfo.setIsScaled(image.getWidth() != imageInfo.getWidth());
+                imageInfo.setImageType(bufferedImage.getType());
+            }
+            return imageInfo;
+        } catch (Exception e) {
+            return e;
+        }
+    }
+
+    public static boolean checkInfo(List<File> files, Map<File, List<ImageInformation>> map, ImageInformation imageInfo, int width) {
+        if (map == null || imageInfo == null || files == null) {
+            return false;
+        }
+        Image image = ImageInformation.readImage(imageInfo, width, false);
+        if (image != null) {
+            imageInfo.setThumbnail(image);
+            return true;
+        } else {
+            File file = imageInfo.getFile();
+            if (file == null) {
+                return false;
+            }
+            List<ImageInformation> fileInfos = null;
+            if (files.contains(file)) {
+                fileInfos = map.get(file);
+            } else {
+                files.add(file);
+            }
+            if (fileInfos == null) {
+                fileInfos = new ArrayList<>();
+                map.put(file, fileInfos);
+            }
+            fileInfos.add(imageInfo);
+            return false;
+        }
+    }
+
+    public static void readFrames(List<File> files, Map<File, List<ImageInformation>> map, int index, int width) {
+        if (map == null || files == null || files.isEmpty()) {
+            return;
+        }
+        File file = files.get(0);
+        boolean first = true;
+//        for (File file : files) {
+//            List<ImageInformation> list = map.get(file);
+//            if (list == null || list.isEmpty()) {
+//                continue;
+//            }
+//            Map<Integer, ImageInformation> infos = new HashMap<>();
+//            for (ImageInformation info : list) {
+//                int targetWidth = width <= 0 ? info.getWidth() : width;
+//                int maxWidth = ImageInformation.countMaxWidth(info);
+//                if (targetWidth > maxWidth) {
+//                    System.gc();
+//                    maxWidth = ImageInformation.countMaxWidth(info);
+//                }
+//                if (targetWidth > maxWidth) {
+//                    if (index !=) {
+//                        break;
+//                    }
+//                    int index = info.getIndex();
+//                    for (int i = 0; i <) {
+//
+//                    }
+//                }
+//                infos.put(info.getIndex(), info);
+//                first = false;
+//            }
+//
+//            readFrames(file, infos, width);
+//        }
+
+    }
+
+    public static void readFrames(List<ImageInformation> imageInfos, int index, int width) {
+        try {
+            if (imageInfos == null || imageInfos.isEmpty()) {
+                return;
+            }
+            Map<File, List<ImageInformation>> map = new HashMap<>();
+            List<File> files = new ArrayList<>();
+            int pos = -1;
+            if (index >= 0 && index < imageInfos.size()) {
+                ImageInformation imageInfo = imageInfos.get(index);
+                Image image = ImageInformation.readImage(imageInfo, width, false);
+                if (image != null) {
+                    imageInfo.setThumbnail(image);
+                } else {
+                    File file = imageInfo.getFile();
+                    if (file != null) {
+                        List<ImageInformation> fileInfos = null;
+                        fileInfos.add(imageInfo);
+                    }
+                }
+                checkInfo(files, map, imageInfo, width);
+                pos = index;
+            }
+            for (int i = pos + 1; i < imageInfos.size(); i++) {
+                ImageInformation imageInfo = imageInfos.get(i);
+                checkInfo(files, map, imageInfo, width);
+            }
+            for (int i = 0; i < pos; i++) {
+                ImageInformation imageInfo = imageInfos.get(i);
+                checkInfo(files, map, imageInfo, width);
+            }
+//            readFrames(files, map, width);
+        } catch (Exception e) {
+
+        }
     }
 
     public static List<BufferedImage> readFrames(File file) {
@@ -80,13 +319,12 @@ public class ImageFileReaders {
             }
             return frames;
         }
-        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-            if (!readers.hasNext()) {
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            ImageReader reader = getReader(iis);
+            if (reader == null) {
                 return frames;
             }
-            ImageReader reader = readers.next();
-            reader.setInput(in, false);
+            reader.setInput(iis, true, true);
             int index = 0;
             ImageReadParam param = reader.getDefaultReadParam();
             while (true) {
@@ -101,7 +339,7 @@ public class ImageFileReaders {
                     if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                         break;
                     }
-                    frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
+                    frame = readBrokenImage(e, filename, index, null, scale, scale);
                 }
                 if (frame != null) {
                     frame = ImageManufacture.scaleImageWidthKeep(frame, width);
@@ -137,9 +375,12 @@ public class ImageFileReaders {
             }
             return frames;
         }
-        ImageReader reader = getReader(format);
-        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            reader.setInput(in, false);
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            ImageReader reader = getReader(iis);
+            if (reader == null) {
+                return frames;
+            }
+            reader.setInput(iis, true, true);
             int index = 0;
             ImageReadParam param = reader.getDefaultReadParam();
             while (true) {
@@ -154,7 +395,7 @@ public class ImageFileReaders {
                     if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                         break;
                     }
-                    frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
+                    frame = readBrokenImage(e, filename, index, null, 1, 1);
                 }
                 if (frame != null) {
                     frame = ImageManufacture.scaleImageHeightKeep(frame, height);
@@ -171,8 +412,7 @@ public class ImageFileReaders {
         return frames;
     }
 
-    public static List<BufferedImage> readFramesByScale(String format, String filename,
-            Rectangle bounds, int xscale, int yscale) {
+    public static List<BufferedImage> readFramesByScale(String format, String filename, Rectangle region, int xscale, int yscale) {
         if (filename == null) {
             return null;
         }
@@ -181,41 +421,48 @@ public class ImageFileReaders {
         }
         int realXScale = xscale > 0 ? xscale : 1;
         int realYScale = yscale > 0 ? yscale : 1;
-        List<BufferedImage> images = new ArrayList<>();
+        List<BufferedImage> frames = new ArrayList<>();
         if ("ico".equals(format) || "icon".equals(format)) {
             try {
                 List<BufferedImage> imageSrc = ICODecoder.read(new File(filename));
                 for (BufferedImage image : imageSrc) {
                     int width = image.getWidth() / realXScale;
                     int height = image.getHeight() / realYScale;
-                    images.add(ImageManufacture.scaleImageBySize(image, width, height));
+                    BufferedImage frame = image;
+                    if (region != null) {
+                        frame = ImageManufacture.cropOutside(frame, new DoubleRectangle(region));
+                    }
+                    frames.add(ImageManufacture.scaleImageBySize(frame, width, height));
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
             }
-            return images;
+            return frames;
         }
-        ImageReader reader = getReader(format);
-        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            reader.setInput(in, false);
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            ImageReader reader = getReader(iis);
+            if (reader == null) {
+                return frames;
+            }
+            reader.setInput(iis, true, true);
             int index = 0;
             ImageReadParam param = reader.getDefaultReadParam();
             while (true) {
                 BufferedImage frame;
                 try {
                     param.setSourceSubsampling(realXScale, realYScale, 0, 0);
-                    if (bounds != null) {
-                        param.setSourceRegion(bounds);
+                    if (region != null) {
+                        param.setSourceRegion(region);
                     }
                     frame = reader.read(index, param);
                 } catch (Exception e) {
                     if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                         break;
                     }
-                    frame = readBrokenImage(e, new File(filename), index, bounds, realXScale, realYScale);
+                    frame = readBrokenImage(e, filename, index, region, realXScale, realYScale);
                 }
                 if (frame != null) {
-                    images.add(frame);
+                    frames.add(frame);
                     index++;
                 } else {
                     break;
@@ -225,7 +472,7 @@ public class ImageFileReaders {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        return images;
+        return frames;
     }
 
     public static List<BufferedImage> readFramesByScale(String format, String filename, int xscale, int yscale) {
@@ -248,6 +495,10 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFrameByWidth(String format, String filename, int index, int width) {
+        return readFrameByWidth(format, filename, index, null, width);
+    }
+
+    public static BufferedImage readFrameByWidth(String format, String filename, int index, Rectangle region, int width) {
         if (filename == null) {
             return null;
         }
@@ -257,31 +508,25 @@ public class ImageFileReaders {
         BufferedImage frame = null;
         if ("ico".equals(format) || "icon".equals(format)) {
             frame = readIcon(new File(filename), index);
+            if (region != null) {
+                frame = ImageManufacture.cropOutside(frame, new DoubleRectangle(region));
+            }
             frame = ImageManufacture.scaleImageWidthKeep(frame, width);
             return frame;
         }
-        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-            if (!readers.hasNext()) {
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            ImageReader reader = getReader(iis);
+            if (reader == null) {
                 return null;
             }
-            ImageReader reader = readers.next();
-            reader.setInput(in, false);
-            ImageReadParam param = reader.getDefaultReadParam();
-            int imageWidth = reader.getWidth(index);
-            int requriedWidth = width <= 0 ? imageWidth : width;
-            int scale = imageWidth / requriedWidth;
-            scale = scale > 1 ? scale : 1;
-            if (scale > 1) {
-                param.setSourceSubsampling(scale, scale, 0, 0);
-            }
-            try {
-                frame = reader.read(index, param);
-            } catch (Exception e) {
-                frame = readBrokenImage(e, new File(filename), index, null, scale, scale);
-            }
-            if (frame != null) {
-                frame = ImageManufacture.scaleImageWidthKeep(frame, requriedWidth);
+            reader.setInput(iis, true, true);
+            Object ret = readFrameByWidth(reader, index, region, width);
+            if (ret != null) {
+                if (ret instanceof BufferedImage) {
+                    frame = (BufferedImage) ret;
+                } else if (ret instanceof Exception) {
+                    frame = readBrokenImage((Exception) ret, filename, index, region, width);
+                }
             }
             reader.dispose();
         } catch (Exception e) {
@@ -290,7 +535,55 @@ public class ImageFileReaders {
         return frame;
     }
 
+    public static Object readFrameByWidth(ImageReader reader, int index, Rectangle region, int width) {
+        if (reader == null || index < 0) {
+            return null;
+        }
+        try {
+            ImageReadParam param = reader.getDefaultReadParam();
+            int imageWidth = reader.getWidth(index);
+            int requriedWidth, scale;
+            if (region != null) {
+                param.setSourceRegion(region);
+                if (width <= 0) {
+                    requriedWidth = (int) region.getWidth();
+                    scale = 1;
+                } else {
+                    requriedWidth = width;
+                    scale = (int) region.getWidth() / width;
+                }
+            } else {
+                if (width <= 0) {
+                    requriedWidth = imageWidth;
+                    scale = 1;
+                } else {
+                    requriedWidth = width;
+                    scale = imageWidth / width;
+                }
+            }
+            if (scale > 1) {
+                param.setSourceSubsampling(scale, scale, 0, 0);
+            } else {
+                scale = 1;
+            }
+            BufferedImage frame;
+            try {
+                frame = reader.read(index, param);
+            } catch (Exception e) {
+                return e;
+            }
+            frame = ImageManufacture.scaleImageWidthKeep(frame, requriedWidth);
+            return frame;
+        } catch (Exception e) {
+            return e;
+        }
+    }
+
     public static BufferedImage readFrameByHeight(String format, String filename, int index, int height) {
+        return readFrameByHeight(format, filename, index, null, height);
+    }
+
+    public static BufferedImage readFrameByHeight(String format, String filename, int index, Rectangle region, int height) {
         if (filename == null) {
             return null;
         }
@@ -300,28 +593,48 @@ public class ImageFileReaders {
         BufferedImage frame = null;
         if ("ico".equals(format) || "icon".equals(format)) {
             frame = readIcon(new File(filename), index);
+            if (region != null) {
+                frame = ImageManufacture.cropOutside(frame, new DoubleRectangle(region));
+            }
             frame = ImageManufacture.scaleImageHeightKeep(frame, height);
             return frame;
         }
-        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-            if (!readers.hasNext()) {
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            ImageReader reader = getReader(iis);
+            if (reader == null) {
                 return null;
             }
-            ImageReader reader = readers.next();
-            reader.setInput(in, false);
+            reader.setInput(iis, true, true);
             ImageReadParam param = reader.getDefaultReadParam();
             int imageHeight = reader.getHeight(index);
-            int requriedHeight = height <= 0 ? imageHeight : height;
-            int scale = imageHeight / requriedHeight;
-            scale = scale > 1 ? scale : 1;
+            int requriedHeight, scale;
+            if (region != null) {
+                param.setSourceRegion(region);
+                if (height <= 0) {
+                    requriedHeight = (int) region.getWidth();
+                    scale = 1;
+                } else {
+                    requriedHeight = height;
+                    scale = (int) region.getWidth() / height;
+                }
+            } else {
+                if (height <= 0) {
+                    requriedHeight = imageHeight;
+                    scale = 1;
+                } else {
+                    requriedHeight = height;
+                    scale = imageHeight / height;
+                }
+            }
             if (scale > 1) {
                 param.setSourceSubsampling(scale, scale, 0, 0);
+            } else {
+                scale = 1;
             }
             try {
                 frame = reader.read(index, param);
             } catch (Exception e) {
-                frame = readBrokenImage(e, new File(filename), index, null, 1, 1);
+                frame = readBrokenImage(e, filename, index, region, scale, scale);
             }
             if (frame != null) {
                 frame = ImageManufacture.scaleImageHeightKeep(frame, requriedHeight);
@@ -349,8 +662,11 @@ public class ImageFileReaders {
         return readFrame(format, filename, index, null, xscale, yscale);
     }
 
-    public static BufferedImage readFrame(String format, String filename, int index,
-            Rectangle rectangle, int xscale, int yscale) {
+    public static BufferedImage readFrameByScale(String format, String filename, int index, Rectangle rectangle, int scale) {
+        return readFrame(format, filename, index, rectangle, scale, scale);
+    }
+
+    public static BufferedImage readFrame(String format, String filename, int index, Rectangle region, int xscale, int yscale) {
         if (filename == null) {
             return null;
         }
@@ -362,30 +678,29 @@ public class ImageFileReaders {
         BufferedImage frame = null;
         if ("ico".equals(format) || "icon".equals(format)) {
             frame = readIcon(new File(filename), index);
-            if (rectangle == null) {
+            if (region == null) {
                 frame = ImageManufacture.scaleImageByScale(frame, xscale, yscale);
             } else {
-                frame = ImageManufacture.sample(frame, new DoubleRectangle(rectangle), xscale, yscale);
+                frame = ImageManufacture.sample(frame, new DoubleRectangle(region), xscale, yscale);
             }
             return frame;
         }
-        try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-            if (!readers.hasNext()) {
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            ImageReader reader = getReader(iis);
+            if (reader == null) {
                 return null;
             }
-            ImageReader reader = readers.next();
-            reader.setInput(in, false);
+            reader.setInput(iis, true, true);
             ImageReadParam param = reader.getDefaultReadParam();
 
             try {
                 param.setSourceSubsampling(realXScale, realYScale, 0, 0);
-                if (rectangle != null) {
-                    param.setSourceRegion(rectangle);
+                if (region != null) {
+                    param.setSourceRegion(region);
                 }
                 frame = reader.read(index, param);
             } catch (Exception e) {
-                frame = readBrokenImage(e, new File(filename), index, rectangle, realXScale, realYScale);
+                frame = readBrokenImage(e, filename, index, region, realXScale, realYScale);
             }
             reader.dispose();
         } catch (Exception e) {
@@ -433,58 +748,62 @@ public class ImageFileReaders {
     /*
         Broken image
      */
-    public static BufferedImage readBrokenImage(Exception e, File file) {
-        return readBrokenImage(e, file, 0);
-    }
-
-    public static BufferedImage readBrokenImage(Exception e, File file, int index) {
-        return readBrokenImage(e, file, index, null, 1, 1);
-    }
-
-//    public static BufferedImage readBrokenImage(Exception e, File file, int scale) {
-//        return readBrokenImage(e, file, 0, null, scale, scale);
-//    }
-    public static BufferedImage readBrokenImage(Exception e, File file, int index, Rectangle bounds, int xscale, int yscale) {
+    public static BufferedImage readBrokenImage(Exception e, String filename, int index, Rectangle region, int width) {
         BufferedImage image = null;
         try {
-            ImageFileInformation finfo = readImageFileMetaData(file.getAbsolutePath());
-            if (finfo == null) {
+            if (e == null || filename == null) {
                 return null;
             }
-            image = readBrokenImage(e, file, finfo.getImageInformation(), index, bounds, xscale, yscale);
+            String format = FileTools.getFileSuffix(filename).toLowerCase();
+            switch (format) {
+                case "gif":
+                    // Read Gif with JDK api normally. When broken, use DhyanB's API.
+                    // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
+                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
+                        image = ImageGifFile.readBrokenGifFile(filename, index, region, width);
+                    }
+                    break;
+                case "jpg":
+                case "jpeg":
+                    if (e.toString().contains("Unsupported Image Type")) {
+                        image = ImageJpgFile.readBrokenJpgFile(filename, index, region, width);
+                    }
+                    break;
+                default:
+//                MyBoxLog.error(e.toString());
+            }
         } catch (Exception ex) {
             MyBoxLog.error(ex.toString());
         }
         return image;
     }
 
-    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo) {
-        return readBrokenImage(e, file, imageInfo, 0, null, 1, 1);
-    }
-
-    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo,
-            int index, Rectangle bounds, int xscale, int yscale) {
-        if (imageInfo == null) {
-            return null;
-        }
+    public static BufferedImage readBrokenImage(Exception e, String filename, int index, Rectangle region, int xscale, int yscale) {
         BufferedImage image = null;
-        String format = imageInfo.getImageFormat();
-        switch (format) {
-            case "gif":
-                // Read Gif with JDK api normally. When broken, use DhyanB's API.
-                // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
-                if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
-                    image = ImageGifFile.readBrokenGifFile(file.getAbsolutePath(), index, bounds, xscale, yscale);
-                }
-                break;
-            case "jpg":
-            case "jpeg":
-                if (e.toString().contains("Unsupported Image Type") && imageInfo.getColorChannels() == 4) {
-                    image = ImageJpgFile.readBrokenJpgFile(file, imageInfo, index, bounds, xscale, yscale);
-                }
-                break;
-            default:
+        try {
+            if (e == null || filename == null) {
+                return null;
+            }
+            String format = FileTools.getFileSuffix(filename).toLowerCase();
+            switch (format) {
+                case "gif":
+                    // Read Gif with JDK api normally. When broken, use DhyanB's API.
+                    // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
+                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
+                        image = ImageGifFile.readBrokenGifFile(filename, index, region, xscale, yscale);
+                    }
+                    break;
+                case "jpg":
+                case "jpeg":
+                    if (e.toString().contains("Unsupported Image Type")) {
+                        image = ImageJpgFile.readBrokenJpgFile(filename, index, region, xscale, yscale);
+                    }
+                    break;
+                default:
 //                MyBoxLog.error(e.toString());
+            }
+        } catch (Exception ex) {
+            MyBoxLog.error(ex.toString());
         }
         return image;
     }
@@ -503,116 +822,134 @@ public class ImageFileReaders {
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String targetFormat = fileInfo.getImageFormat();
         if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-            fileInfo.setNumberOfImages(1);
-            ImageInformation imageInfo = ImageInformation.create(targetFormat, file);
-            imageInfo.setImageFileInformation(fileInfo);
-            imageInfo.setImageFormat(targetFormat);
-            imageInfo.setFileName(fileInfo.getFileName());
-            imageInfo.setCreateTime(fileInfo.getCreateTime());
-            imageInfo.setModifyTime(fileInfo.getModifyTime());
-            imageInfo.setFileSize(fileInfo.getFileSize());
-            imageInfo.setIndex(0);
-            ImageInformation.countMaxWidth(imageInfo);
-            List<ImageInformation> imagesInfo = new ArrayList<>();
-            imagesInfo.add(imageInfo);
-            fileInfo.setImagesInformation(imagesInfo);
-            fileInfo.setImageInformation(imageInfo);
-            return fileInfo;
+            readImageFileMetaData(null, fileInfo);
+        } else {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                ImageReader reader = getReader(iis);
+                if (reader == null) {
+                    return null;
+                }
+                reader.setInput(iis, true, false);
+                readImageFileMetaData(reader, fileInfo);
+                reader.dispose();
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
+            }
         }
-        try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-            if (readers.hasNext()) {
-                ImageReader reader = readers.next();
-                reader.setInput(iis, false);
-                int index = 0;
-                String format = reader.getFormatName().toLowerCase();
-                fileInfo.setImageFormat(format);
+        return fileInfo;
+    }
+
+    public static void readImageFileMetaData(ImageReader reader, ImageFileInformation fileInfo) {
+        try {
+            if (fileInfo == null) {
+                return;
+            }
+            String targetFormat = fileInfo.getImageFormat();
+            File file = fileInfo.getFile();
+            if (reader == null) {
+                fileInfo.setNumberOfImages(1);
+                ImageInformation imageInfo = ImageInformation.create(targetFormat, file);
+                imageInfo.setImageFileInformation(fileInfo);
+                imageInfo.setImageFormat(targetFormat);
+                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setCreateTime(fileInfo.getCreateTime());
+                imageInfo.setModifyTime(fileInfo.getModifyTime());
+                imageInfo.setFileSize(fileInfo.getFileSize());
+                imageInfo.setIndex(0);
+                ImageInformation.countMaxWidth(imageInfo);
                 List<ImageInformation> imagesInfo = new ArrayList<>();
-                ImageInformation imageInfo = null;
-                while (true) {
-                    int width;
-                    try {
-                        width = reader.getWidth(index);
-                    } catch (Exception e) {
-                        break;
-                    }
-                    if (imageInfo != null) {
-                        imageInfo.setIsMultipleFrames(true);
-                    }
-                    imageInfo = ImageInformation.create(format, file);
-                    imageInfo.setImageFileInformation(fileInfo);
-                    imageInfo.setImageFormat(format);
-                    imageInfo.setFileName(fileInfo.getFileName());
-                    imageInfo.setCreateTime(fileInfo.getCreateTime());
-                    imageInfo.setModifyTime(fileInfo.getModifyTime());
-                    imageInfo.setFileSize(fileInfo.getFileSize());
-                    imageInfo.setWidth(width);
-                    imageInfo.setHeight(reader.getHeight(index));
-                    imageInfo.setPixelAspectRatio(reader.getAspectRatio(index));
-
-                    imageInfo.setIsTiled(reader.isImageTiled(index));
-                    imageInfo.setIndex(index);
-
-                    Iterator<ImageTypeSpecifier> types = reader.getImageTypes(index);
-                    List<ImageTypeSpecifier> typesValue = new ArrayList<>();
-                    if (types != null) {
-                        while (types.hasNext()) {
-                            typesValue.add(types.next());
-                        }
-                        ImageTypeSpecifier imageType = reader.getRawImageType(index);
-                        ColorModel colorModel = null;
-                        if (imageType != null) {
-                            imageInfo.setRawImageType(imageType);
-                            colorModel = imageType.getColorModel();
-                        }
-                        if (colorModel == null) {
-                            if (!typesValue.isEmpty()) {
-                                colorModel = typesValue.get(0).getColorModel();
-                            }
-                        }
-                        if (colorModel != null) {
-                            ColorSpace colorSpace = colorModel.getColorSpace();
-                            imageInfo.setColorSpace(ColorBase.colorSpaceType(colorSpace.getType()));
-                            imageInfo.setColorChannels(colorModel.getNumComponents());
-                            imageInfo.setBitDepth(colorModel.getPixelSize());
-                        }
-                    }
-                    imageInfo.setImageTypeSpecifiers(typesValue);
-                    try {
-                        imageInfo.setPixelAspectRatio(reader.getAspectRatio(index));
-                    } catch (Exception e) {
-                        MyBoxLog.console(e.toString());
-                    }
-                    try {
-                        imageInfo.setHasThumbnails(reader.hasThumbnails(index));
-                        imageInfo.setNumberOfThumbnails(reader.getNumThumbnails(index));
-                    } catch (Exception e) {
-                        MyBoxLog.console(e.toString());
-                    }
-                    try {
-                        readImageMetaData(format, imageInfo, reader.getImageMetadata(index));
-                    } catch (Exception e) {
-                        MyBoxLog.console(e.toString());
-                    }
-                    ImageInformation.countMaxWidth(imageInfo);
-                    imagesInfo.add(imageInfo);
-                    index++;
+                imagesInfo.add(imageInfo);
+                fileInfo.setImagesInformation(imagesInfo);
+                fileInfo.setImageInformation(imageInfo);
+                return;
+            }
+            int index = 0;
+            String format = reader.getFormatName().toLowerCase();
+            fileInfo.setImageFormat(format);
+            List<ImageInformation> imagesInfo = new ArrayList<>();
+            ImageInformation imageInfo = null;
+            while (true) {
+                int width;
+                try {
+                    width = reader.getWidth(index);
+                } catch (Exception e) {
+//                    MyBoxLog.console(e);
+                    break;
                 }
                 if (imageInfo != null) {
-                    imageInfo.setIsMultipleFrames(index > 1);
+                    imageInfo.setIsMultipleFrames(true);
                 }
-                fileInfo.setImagesInformation(imagesInfo);
-                if (!imagesInfo.isEmpty()) {
-                    fileInfo.setImageInformation(imagesInfo.get(0));
+                imageInfo = ImageInformation.create(format, file);
+                imageInfo.setImageFileInformation(fileInfo);
+                imageInfo.setImageFormat(format);
+                imageInfo.setFileName(fileInfo.getFileName());
+                imageInfo.setCreateTime(fileInfo.getCreateTime());
+                imageInfo.setModifyTime(fileInfo.getModifyTime());
+                imageInfo.setFileSize(fileInfo.getFileSize());
+                imageInfo.setWidth(width);
+                imageInfo.setHeight(reader.getHeight(index));
+                imageInfo.setPixelAspectRatio(reader.getAspectRatio(index));
+
+                imageInfo.setIsTiled(reader.isImageTiled(index));
+                imageInfo.setIndex(index);
+
+                Iterator<ImageTypeSpecifier> types = reader.getImageTypes(index);
+                List<ImageTypeSpecifier> typesValue = new ArrayList<>();
+                if (types != null) {
+                    while (types.hasNext()) {
+                        typesValue.add(types.next());
+                    }
+                    ImageTypeSpecifier imageType = reader.getRawImageType(index);
+                    ColorModel colorModel = null;
+                    if (imageType != null) {
+                        imageInfo.setRawImageType(imageType);
+                        colorModel = imageType.getColorModel();
+                    }
+                    if (colorModel == null) {
+                        if (!typesValue.isEmpty()) {
+                            colorModel = typesValue.get(0).getColorModel();
+                        }
+                    }
+                    if (colorModel != null) {
+                        ColorSpace colorSpace = colorModel.getColorSpace();
+                        imageInfo.setColorSpace(ColorBase.colorSpaceType(colorSpace.getType()));
+                        imageInfo.setColorChannels(colorModel.getNumComponents());
+                        imageInfo.setBitDepth(colorModel.getPixelSize());
+                    }
                 }
-                fileInfo.setNumberOfImages(index);
-                reader.dispose();
+                imageInfo.setImageTypeSpecifiers(typesValue);
+                try {
+                    imageInfo.setPixelAspectRatio(reader.getAspectRatio(index));
+                } catch (Exception e) {
+                    MyBoxLog.console(e.toString());
+                }
+                try {
+                    imageInfo.setHasThumbnails(reader.hasThumbnails(index));
+                    imageInfo.setNumberOfThumbnails(reader.getNumThumbnails(index));
+                } catch (Exception e) {
+                    MyBoxLog.console(e.toString());
+                }
+                try {
+                    readImageMetaData(format, imageInfo, reader.getImageMetadata(index));
+                } catch (Exception e) {
+                    MyBoxLog.console(e.toString());
+                }
+                ImageInformation.countMaxWidth(imageInfo);
+                imagesInfo.add(imageInfo);
+                index++;
+            }
+            if (imageInfo != null) {
+                imageInfo.setIsMultipleFrames(index > 1);
+            }
+            fileInfo.setNumberOfImages(index);
+            fileInfo.setImagesInformation(imagesInfo);
+            if (!imagesInfo.isEmpty()) {
+                fileInfo.setImageInformation(imagesInfo.get(0));
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        return fileInfo;
     }
 
     public static void readImageMetaData(String format, ImageInformation imageInfo, IIOMetadata iioMetaData) {
@@ -1051,14 +1388,14 @@ public class ImageFileReaders {
 
     public static IIOMetadata getIIOMetadata(File file) {
         IIOMetadata iioMetaData = null;
-        try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-            if (readers.hasNext()) {
-                ImageReader reader = readers.next();
-                reader.setInput(iis, false);
-                iioMetaData = reader.getImageMetadata(0);
-                reader.dispose();
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            ImageReader reader = getReader(iis);
+            if (reader == null) {
+                return null;
             }
+            reader.setInput(iis, true, false);
+            iioMetaData = reader.getImageMetadata(0);
+            reader.dispose();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

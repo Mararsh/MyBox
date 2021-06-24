@@ -24,21 +24,21 @@ License:    Apache License Version 2.0
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                            <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openDataPath">
-                                <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@../buttons/iconOpen.png" />
-                                        </image>
-                                    </ImageView>
-                                </graphic>
-                            </Button>
-                  <Label text="%SelectCopy" />
-                      <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-               </children>
-            </VBox>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openDataPath">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconOpen.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Label text="%SelectCopy" />
+                        <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -64,7 +64,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconOpen.png" />
+                                                                <Image url="@../buttons/Red/iconOpen.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -96,7 +96,6 @@ License:    Apache License Version 2.0
                                             </children>
                                         </HBox>
                                         <Label fx:id="currentJvmLabel" text="Label" />
-                                        <CheckBox fx:id="hidpiCheck" mnemonicParsing="false" text="%DisableHiDPI2" />
                                     </children>
                                 </VBox>
 
@@ -117,7 +116,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconOK.png" />
+                                <Image url="@../buttons/Red/iconOK.png" />
                             </image>
                         </ImageView>
                     </graphic>

@@ -5,15 +5,10 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker.State;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
@@ -26,6 +21,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
 import org.fit.pdfdom.PDFDomTreeConfig;
@@ -48,10 +44,6 @@ public class PdfHtmlViewerController extends PdfViewController {
 
     @FXML
     protected WebView webView;
-    @FXML
-    protected HTMLEditor htmlEditor;
-    @FXML
-    protected TextArea textArea;
 
     public PdfHtmlViewerController() {
         baseTitle = AppVariables.message("PdfHtmlViewer");
@@ -91,28 +83,8 @@ public class PdfHtmlViewerController extends PdfViewController {
                 FxmlControl.setTooltip(tipsView,
                         new Tooltip(message("PDFComments") + "\n\n" + message("PdfHtmlViewerTips")));
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initOperationBox() {
-        try {
-            super.initOperationBox();
 
             operationBox.disableProperty().bind(Bindings.not(infoLoaded));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initViewPane() {
-        try {
-            super.initViewPane();
-
             mainPane.disableProperty().bind(Bindings.not(infoLoaded));
 
             domConfig = PDFDomTreeConfig.createDefaultConfig();
@@ -182,21 +154,6 @@ public class PdfHtmlViewerController extends PdfViewController {
                 }
             });
 
-            webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-                @Override
-                public void changed(ObservableValue ov, State oldState, State newState) {
-                    try {
-                        if (newState == State.SUCCEEDED) {
-                            String contents = FxmlControl.getHtml(webEngine);
-                            htmlEditor.setHtmlText(contents);
-                            textArea.setText(contents);
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                    }
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -205,12 +162,9 @@ public class PdfHtmlViewerController extends PdfViewController {
     @Override
     public void loadFile(File file, PdfInformation pdfInfo, int page) {
         try {
+            initPage(file, page);
             webEngine.load(null);
-            currentPage = page;
             infoLoaded.set(false);
-            pageSelector.setValue(null);
-            pageLabel.setText("");
-            thumbBox.getChildren().clear();
             outlineTree.setRoot(null);
             if (file == null) {
                 return;
@@ -235,14 +189,10 @@ public class PdfHtmlViewerController extends PdfViewController {
         if (pdfInformation == null) {
             return;
         }
-        if (currentPage < 0) {
-            currentPage = 0;
-        } else if (infoLoaded.get() && currentPage >= pdfInformation.getNumberOfPages()) {
-            currentPage = pdfInformation.getNumberOfPages() - 1;
-        }
+        initCurrentPage();
         synchronized (this) {
             if (task != null && !task.isQuit()) {
-                return;
+                task.cancel();
             }
             task = new SingletonTask<Void>() {
 
@@ -250,7 +200,7 @@ public class PdfHtmlViewerController extends PdfViewController {
 
                 @Override
                 protected boolean handle() {
-                    title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (currentPage + 1) + "");
+                    title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
                     htmlFile = FileTools.getTempFile(".html");
                     subPath = new File(htmlFile.getParent() + File.separator
                             + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
@@ -259,8 +209,8 @@ public class PdfHtmlViewerController extends PdfViewController {
                     domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
                     try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                         PDFDomTree parser = new PDFDomTree(domConfig);
-                        parser.setStartPage(currentPage + 1);
-                        parser.setEndPage(currentPage + 1);
+                        parser.setStartPage(frameIndex + 1);
+                        parser.setEndPage(frameIndex + 1);
                         parser.setPageStart(title);
 //                    MyBoxLog.debug(parser.getSpacingTolerance());
 //                    parser.setSpacingTolerance(0f);
@@ -270,8 +220,6 @@ public class PdfHtmlViewerController extends PdfViewController {
                             } catch (Exception e) {
 //                                MyBoxLog.debug(error);
                             }
-                            doc.close();
-                            ok = true;
                         } catch (Exception e) {
                             error = e.toString();
 //                            MyBoxLog.debug(error);
@@ -293,17 +241,17 @@ public class PdfHtmlViewerController extends PdfViewController {
 
                     getMyStage().setTitle(getBaseTitle() + " " + title);
                     isSettingValues = true;
-                    pageSelector.setValue((currentPage + 1) + "");
+                    pageSelector.setValue((frameIndex + 1) + "");
                     isSettingValues = false;
-                    pagePreviousButton.setDisable(currentPage <= 0);
-                    pageNextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
+                    pagePreviousButton.setDisable(frameIndex <= 0);
+                    pageNextButton.setDisable(!infoLoaded.get() || frameIndex >= (pdfInformation.getNumberOfPages() - 1));
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL,
-                    MessageFormat.format(message("LoadingPageNumber"), (currentPage + 1) + ""));
+                    MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -323,9 +271,15 @@ public class PdfHtmlViewerController extends PdfViewController {
     }
 
     @Override
-    protected void setPrecent(int percent) {
+    protected void setPercent(int percent) {
         zoomScale = percent / 100f;
         webView.setZoom(zoomScale);
+    }
+
+    @FXML
+    public void editAction() {
+        HtmlEditorController controller = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
+        controller.loadContents(FxmlControl.getHtml(webEngine));
     }
 
     @FXML
@@ -335,8 +289,12 @@ public class PdfHtmlViewerController extends PdfViewController {
             if (htmlFile == null || subPath == null) {
                 return;
             }
+            String name = "";
+            if (sourceFile != null) {
+                name = FileTools.getFilePrefix(sourceFile.getName());
+            }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    saveAsPrefix(), targetExtensionFilter);
+                    name, targetExtensionFilter);
             if (file == null) {
                 return;
             }

@@ -27,7 +27,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchColorController extends ImageManufactureBatchController {
+public class ImageManufactureBatchColorController extends BaseImageManufactureBatchController {
 
     private int colorValue;
     private OperationType colorOperationType;

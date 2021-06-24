@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
@@ -36,16 +37,27 @@ public class ControlHtmlCodes extends BaseController {
     protected TextArea codesArea;
     @FXML
     protected Button pasteTxtButton;
+    @FXML
+    protected CheckBox wrapCheck;
 
     public ControlHtmlCodes() {
         baseTitle = AppVariables.message("Html");
     }
 
-    public void setValues(BaseController parent) {
+    public void setParameters(BaseController parent) {
         try {
             this.parentController = parent;
             this.baseName = parent.baseName;
             FxmlControl.setTooltip(pasteTxtButton, new Tooltip(message("PasteTexts")));
+
+            wrapCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Wrap", true));
+            wrapCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
+                        AppVariables.setUserConfigValue(baseName + "Wrap", wrapCheck.isSelected());
+                        codesArea.setWrapText(wrapCheck.isSelected());
+                    });
+            codesArea.setWrapText(wrapCheck.isSelected());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -404,7 +416,7 @@ public class ControlHtmlCodes extends BaseController {
             popError(message("NoData"));
             return;
         }
-        insertText(string.replaceAll("\n", "<BR>\n"));
+        insertText(string.replaceAll("\n", "<BR>\n") + "<BR>\n");
     }
 
     @FXML

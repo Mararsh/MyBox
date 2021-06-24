@@ -268,10 +268,10 @@ public class BaseMatrixController extends BaseSheetController {
                     loadMatrix(values);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+//            openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -456,7 +456,7 @@ public class BaseMatrixController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 

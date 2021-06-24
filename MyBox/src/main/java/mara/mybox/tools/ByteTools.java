@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -9,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
+import javax.imageio.ImageIO;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
@@ -236,12 +238,13 @@ public class ByteTools {
 
     public static boolean isBytesHex(String inHex) {
         try {
-            int hexlen = inHex.length();
+            String hex = inHex.replaceAll("\\s+|\n", "").toUpperCase();
+            int hexlen = hex.length();
             if (hexlen % 2 == 1) {
                 return false;
             }
             for (int i = 0; i < hexlen; i += 2) {
-                Integer.parseInt(inHex.substring(i, i + 2), 16);
+                Integer.parseInt(hex.substring(i, i + 2), 16);
             }
             return true;
         } catch (Exception e) {
@@ -251,7 +254,7 @@ public class ByteTools {
 
     public static String validateTextHex(String text) {
         try {
-            String inHex = text.replaceAll(" ", "").replaceAll("\n", "").toUpperCase();
+            String inHex = text.replaceAll("\\s+|\n", "").toUpperCase();
             int hexlen = inHex.length();
             if (hexlen % 2 == 1) {
                 return null;
@@ -269,31 +272,27 @@ public class ByteTools {
         }
     }
 
-    public static byte[] hexToBytesAnyway(String inHex) {
+    public static byte[] hexFormatToBytes(String hexFormat) {
         try {
-            int hexlen = inHex.length();
+            String hex = hexFormat.replaceAll("\\s+|\n", "");
+            int hexlen = hex.length();
             byte[] result;
             if (hexlen % 2 == 1) {
                 hexlen++;
                 result = new byte[(hexlen / 2)];
-                inHex = "0" + inHex;
+                hex = "0" + hex;
             } else {
                 result = new byte[(hexlen / 2)];
             }
             int j = 0;
             for (int i = 0; i < hexlen; i += 2) {
-                result[j] = hexToByteAnyway(inHex.substring(i, i + 2));
+                result[j] = hexToByteAnyway(hex.substring(i, i + 2));
                 j++;
             }
             return result;
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public static byte[] hexFormatToBytes(String hexFormat) {
-        String hex = hexFormat.replaceAll(" ", "").replaceAll("\n", "");
-        return hexToBytesAnyway(hex);
     }
 
     public static byte[] subBytes(byte[] bytes, int off, int length) {
@@ -510,6 +509,16 @@ public class ByteTools {
                 return in.readObject();
             }
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static byte[] imageToBytes(BufferedImage image, String format) {
+        try ( ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            ImageIO.write(image, format, out);
+            return out.toByteArray();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }

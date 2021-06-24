@@ -30,32 +30,33 @@ License:    Apache License Version 2.0
         </TextArea>
         <HBox alignment="CENTER" spacing="10.0">
             <children>
-            <Button fx:id="myboxBuuton" mnemonicParsing="false" onAction="#mybox">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconMyBox.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="myboxBuuton" mnemonicParsing="false" onAction="#mybox">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconMyBox.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openPath">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconOpen.png" />
-                     </image>
-                  </ImageView>
-               </graphic></Button>
-            <Button fx:id="stopButton" layoutX="691.0" layoutY="10.0" mnemonicParsing="false" onAction="#stopAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconStop.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOpen.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="stopButton" layoutX="691.0" layoutY="10.0" mnemonicParsing="false" onAction="#stopAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconStop.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </children>
             <VBox.margin>
                 <Insets />

@@ -60,6 +60,10 @@ public class VisitHistory {
         public static int CSV = 21;
         public static int Sheet = 22;
         public static int Cert = 23;
+        public static int Word = 24;
+        public static int PPT = 25;
+        public static int PPTX = 26;
+        public static int PPTS = 27;
 
         public static int None = 100;
     }

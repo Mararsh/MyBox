@@ -9,7 +9,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -35,7 +34,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchTextController extends ImageManufactureBatchController {
+public class ImageManufactureBatchTextController extends BaseImageManufactureBatchController {
 
     private int fontSize, angle, shadow, waterX, waterY, positionType, textWidth, textHeight, margin;
     protected PixelBlend.ImagesBlendMode blendMode;
@@ -44,9 +43,8 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     private java.awt.Color color;
 
     @FXML
-    protected ChoiceBox<String> waterFamilyBox, waterStyleBox;
-    @FXML
-    protected ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacitySelector, blendSelector;
+    protected ComboBox<String> waterFamilyBox, waterStyleBox, waterSizeBox, waterShadowBox,
+            waterAngleBox, opacitySelector, blendSelector;
     @FXML
     protected ColorSet colorSetController;
     @FXML
@@ -398,16 +396,16 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     y = (source.getHeight() + textHeight) / 2;
                     break;
                 case PositionType.RightBottom:
-                    x = source.getWidth() - textWidth - margin;
-                    y = source.getHeight() - margin;
+                    x = source.getWidth() - 1 - textWidth - margin;
+                    y = source.getHeight() - 1 - margin;
                     break;
                 case PositionType.RightTop:
-                    x = source.getWidth() - textWidth - margin;
+                    x = source.getWidth() - 1 - textWidth - margin;
                     y = textHeight + margin;
                     break;
                 case PositionType.LeftBottom:
                     x = margin;
-                    y = source.getHeight() - margin;
+                    y = source.getHeight() - 1 - margin;
                     break;
                 case PositionType.Custom:
                     x = waterX - textWidth / 2;

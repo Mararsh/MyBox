@@ -84,7 +84,6 @@ import mara.mybox.value.CommonValues;
 public class DownloadFirstLevelLinksController extends BaseController {
 
     protected final ObservableList<Link> linksData, downloadingData, failedData;
-    protected static final Boolean downloadingLock = false, failedLock = false;
     protected int maxThreadsNumber, maxLogs, maxRetries;
     protected final List<DownloadThread> downloadThreads;
     protected final List<PathThread> pathThreads;
@@ -213,7 +212,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         try {
             List<String> urls = VisitHistoryTools.recentDownloadAddress();
             if (urls == null || urls.isEmpty()) {
-                urlBox.getItems().add("https://www.kunnu.com/hongloumeng/");
+                urlBox.getItems().add("http://novel.tingroom.com/kehuan/209/");
             } else {
                 urlBox.getItems().addAll(urls);
             }
@@ -552,7 +551,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -621,7 +620,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -649,7 +648,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     }
                 }
             }
-            synchronized (downloadingLock) {
+            synchronized (downloadingData) {
                 downloadingData.addAll(selected);
             }
             checkData();
@@ -680,7 +679,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -933,7 +932,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         };
         Thread thread = new Thread(infoTask);
         openHandlingStage(infoTask, Modality.WINDOW_MODAL);
-        thread.setDaemon(true);
+        thread.setDaemon(false);
         thread.start();
     }
 
@@ -1031,7 +1030,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
     @FXML
     public void clearDownloading() {
-        synchronized (downloadingLock) {
+        synchronized (downloadingData) {
             for (Link link : downloadingData) {
                 File file = new File(link.getFile());
                 File path = file.getParentFile();
@@ -1063,7 +1062,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 }
             }
         }
-        synchronized (downloadingLock) {
+        synchronized (downloadingData) {
             downloadingData.removeAll(links);
         }
         checkData();
@@ -1104,7 +1103,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
     @FXML
     public void clearFailed() {
-        synchronized (failedLock) {
+        synchronized (failedData) {
             failedData.clear();
         }
     }
@@ -1117,7 +1116,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         }
         List<Link> links = new ArrayList<>();
         links.addAll(selected);
-        synchronized (failedLock) {
+        synchronized (failedData) {
             failedData.removeAll(links);
         }
     }
@@ -1145,13 +1144,13 @@ public class DownloadFirstLevelLinksController extends BaseController {
         links.addAll(selected);
         boolean added = false;
         for (Link link : links) {
-            synchronized (downloadingLock) {
+            synchronized (downloadingData) {
                 if (!downloadingData.contains(link)) {
                     downloadingData.add(0, link);
                     added = true;
                 }
             }
-            synchronized (failedLock) {
+            synchronized (failedData) {
                 failedData.remove(link);
             }
         }
@@ -1163,7 +1162,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
     public void checkData() {
         int dataSize;
-        synchronized (downloadingLock) {
+        synchronized (downloadingData) {
             dataSize = downloadingData.size();
         }
         if (!stopped) {
@@ -1267,7 +1266,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         protected void download() {
             Link link = null;
             try {
-                synchronized (downloadingLock) {
+                synchronized (downloadingData) {
                     if (downloadingData.isEmpty()) {
                         if (emptyTime <= 0) {
                             emptyTime = new Date().getTime();
@@ -1334,7 +1333,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
         protected void failed(Link link, String error) {
             if (link != null && link.getFile() != null) {
-                synchronized (downloadingLock) {
+                synchronized (downloadingData) {
                     if (downloadingData.contains(link)) {
                         return;
                     }
@@ -1346,13 +1345,13 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     }
                     retries.put(link, currentRetries);
                     if (currentRetries <= maxRetries) {
-                        synchronized (downloadingLock) {
+                        synchronized (downloadingData) {
                             downloadingData.add(0, link);
                         }
                         updateLogs(message("Retry") + " " + currentRetries
                                 + ": " + link.getUrl() + " --> " + link.getFile());
                     } else {
-                        synchronized (failedLock) {
+                        synchronized (failedData) {
                             if (!failedData.contains(link)) {
                                 failedData.add(0, link);
                             }
@@ -1699,7 +1698,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
     public boolean checkBeforeNextAction() {
         if (!stopped) {
             boolean ask = false;
-            synchronized (downloadingLock) {
+            synchronized (downloadingData) {
                 if (!downloadingData.isEmpty()) {
                     ask = true;
                 }

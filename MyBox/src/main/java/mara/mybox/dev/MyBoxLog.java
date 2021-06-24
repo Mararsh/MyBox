@@ -235,7 +235,7 @@ public class MyBoxLog extends BaseData {
                     .setMethodName(stack.getMethodName())
                     .setLine(stack.getLineNumber())
                     .setCallers(callers);
-            String logText = println(myboxLog, type == LogType.Error);
+            String logText = println(myboxLog, type == LogType.Error || (AppVariables.detailedDebugLogs && type == LogType.Console));
             System.out.print(logText);
             if (AppVariables.popErrorLogs && type == LogType.Error) {
                 Platform.runLater(() -> {
@@ -246,7 +246,7 @@ public class MyBoxLog extends BaseData {
                 });
             }
             boolean notSave = mylog || type == LogType.Console
-                    || (type == LogType.Debug && !AppVariables.devMode);
+                    || (type == LogType.Debug && !AppVariables.saveDebugLogs);
             if (!notSave) {
                 new TableMyBoxLog().writeData(myboxLog);
             }

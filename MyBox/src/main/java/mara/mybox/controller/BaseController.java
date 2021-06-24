@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -201,22 +202,16 @@ public abstract class BaseController implements Initializable {
     }
 
     public void setFileType(int fileType) {
-        SourceFileType = fileType;
-        SourcePathType = fileType;
-        AddFileType = fileType;
-        AddPathType = fileType;
-        LastPathKey = VisitHistoryTools.getPathKey(fileType);
-        sourcePathKey = LastPathKey;
-        sourceExtensionFilter = VisitHistoryTools.getExtensionFilter(fileType);
-
-        TargetPathType = fileType;
-        TargetFileType = fileType;
-        targetPathKey = LastPathKey;
-        defaultPath = null;
-        targetExtensionFilter = sourceExtensionFilter;
+        setSourceFileType(fileType);
+        setTargetFileType(fileType);
     }
 
     public void setFileType(int sourceType, int targetType) {
+        setSourceFileType(sourceType);
+        setTargetFileType(targetType);
+    }
+
+    public void setSourceFileType(int sourceType) {
         SourceFileType = sourceType;
         SourcePathType = sourceType;
         AddFileType = sourceType;
@@ -224,7 +219,9 @@ public abstract class BaseController implements Initializable {
         LastPathKey = VisitHistoryTools.getPathKey(sourceType);
         sourcePathKey = LastPathKey;
         sourceExtensionFilter = VisitHistoryTools.getExtensionFilter(sourceType);
+    }
 
+    public void setTargetFileType(int targetType) {
         TargetPathType = targetType;
         TargetFileType = targetType;
         targetPathKey = VisitHistoryTools.getPathKey(targetType);
@@ -301,7 +298,7 @@ public abstract class BaseController implements Initializable {
                         checkTargetPathInput();
                     }
                 });
-                File tfile = AppVariables.getUserConfigPath(targetPathKey);
+                File tfile = AppVariables.getUserConfigPath(baseName + "TargetPath");
                 if (tfile != null) {
                     targetPathInput.setText(tfile.getAbsolutePath());
                 }
@@ -440,18 +437,7 @@ public abstract class BaseController implements Initializable {
                 dpiSelector.setValue(dpi + "");
                 dpiSelector.getSelectionModel().selectedItemProperty().addListener(
                         (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                            try {
-                                int v = Integer.parseInt(newValue);
-                                if (v > 0) {
-                                    dpi = v;
-                                    AppVariables.setUserConfigInt(baseName + "DPI", dpi);
-                                    dpiSelector.getEditor().setStyle(null);
-                                } else {
-                                    dpiSelector.getEditor().setStyle(badStyle);
-                                }
-                            } catch (Exception e) {
-                                dpiSelector.getEditor().setStyle(badStyle);
-                            }
+                            checkDPI();
                         });
             }
 
@@ -925,7 +911,7 @@ public abstract class BaseController implements Initializable {
         }
         sourceFileInput.setStyle(null);
         sourceFileChanged(file);
-        if (parentController != null) {
+        if (parentController != null && parentController != this) {
             parentController.sourceFileChanged(file);
         }
         if (file.isDirectory()) {
@@ -947,7 +933,7 @@ public abstract class BaseController implements Initializable {
             }
             targetPath = file;
             targetPathInput.setStyle(null);
-            AppVariables.setUserConfigValue(targetPathKey, file.getPath());
+            AppVariables.setUserConfigValue(baseName + "TargetPath", file.getPath());
             recordFileWritten(file);
         } catch (Exception e) {
         }
@@ -958,7 +944,7 @@ public abstract class BaseController implements Initializable {
             String input = targetFileInput.getText();
             targetFile = new File(input);
             targetFileInput.setStyle(null);
-            AppVariables.setUserConfigValue(targetPathKey, targetFile.getParent());
+            AppVariables.setUserConfigValue(baseName + "TargetFile", targetFile.getParent());
         } catch (Exception e) {
             targetFile = null;
             targetFileInput.setStyle(badStyle);
@@ -991,6 +977,21 @@ public abstract class BaseController implements Initializable {
             targetExistType = TargetExistType.Skip;
         }
         setUserConfigValue(baseName + "TargetExistType", selected.getText());
+    }
+
+    public void checkDPI() {
+        try {
+            int v = Integer.parseInt(dpiSelector.getValue());
+            if (v > 0) {
+                dpi = v;
+                AppVariables.setUserConfigInt(baseName + "DPI", dpi);
+                dpiSelector.getEditor().setStyle(null);
+            } else {
+                dpiSelector.getEditor().setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            dpiSelector.getEditor().setStyle(badStyle);
+        }
     }
 
     // Shortcuts like PageDown/PageUp/Home/End/Ctrl-c/v/x/z/y/a may work for text editing
@@ -1336,7 +1337,7 @@ public abstract class BaseController implements Initializable {
         }
         AppVariables.setSceneFontSize(size);
         thisPane.setStyle("-fx-font-size: " + size + "px;");
-        if (parentController != null) {
+        if (parentController != null && parentController != this) {
             parentController.setSceneFontSize(size);
         }
         return true;
@@ -1347,38 +1348,31 @@ public abstract class BaseController implements Initializable {
             return false;
         }
         AppVariables.setIconSize(size);
-        if (parentController != null) {
+        if (parentController != null && parentController != this) {
             parentController.setIconSize(size);
         }
-        refreshBase();
+        refreshInterface();
         return true;
     }
 
     public BaseController refresh() {
-        return refreshBase();
+        refreshInterface();
+        if (checkBeforeNextAction()) {
+            selectSourceFileDo(sourceFile);
+        }
+        return this;
     }
 
-    public BaseController refreshBase() {
+    public BaseController refreshInterface() {
         try {
-            if (getMyStage() == null || myFxml == null) {
-                return null;
+            if (thisPane != null) {
+                thisPane.setStyle("-fx-font-size: " + AppVariables.sceneFontSize + "px;");
             }
-            String title = myStage.getTitle();
-            BaseController c, p = parentController;
-            c = loadScene(myFxml);
-            if (c == null) {
-                return null;
+            refreshStyle();
+            if (parentController != null && parentController != this) {
+                parentController.refreshInterface();
             }
-            if (p != null) {
-                c.parentFxml = p.myFxml;
-                c.parentController = p;
-                p.refresh();
-            }
-            if (c.getMyStage() != null) {
-                c.getMyStage().requestFocus();
-                c.getMyStage().setTitle(title);
-            }
-            return c;
+            return this;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -1410,6 +1404,39 @@ public abstract class BaseController implements Initializable {
         }
         return menus;
 
+    }
+
+    public BaseController reload() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return this;
+            }
+            if (getMyStage() == null || myFxml == null) {
+                refresh();
+                return this;
+            }
+            BaseController p = parentController;
+            File file = sourceFile;
+            BaseController b = loadScene(myFxml);
+            if (b == null) {
+                return this;
+            }
+            if (file != null) {
+                b.selectSourceFileDo(file);
+            }
+            if (p != null) {
+                p = p.reload();
+                if (p != null) {
+                    b.setParentController(p);
+                    b.setParentFxml(p.getMyFxml());
+                }
+            }
+            b.toFront();
+            return b;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return this;
+        }
     }
 
     @FXML
@@ -1612,9 +1639,11 @@ public abstract class BaseController implements Initializable {
 
     public void selectTargetFileFromPath(File path) {
         try {
-            String name = null;
+            String name;
             if (sourceFile != null) {
                 name = FileTools.getFilePrefix(sourceFile.getName());
+            } else {
+                name = new Date().getTime() + "";
             }
             final File file = chooseSaveFile(path, name, targetExtensionFilter);
             if (file == null) {
@@ -2065,7 +2094,6 @@ public abstract class BaseController implements Initializable {
         }
     }
 
-    //
     public File makeTargetFile(String fileName, File targetPath) {
         try {
             if (fileName == null || targetPath == null) {
@@ -2112,6 +2140,9 @@ public abstract class BaseController implements Initializable {
                         }
                     }
                 }
+            }
+            if (target != null) {
+                target.getParentFile().mkdirs();
             }
             return target;
         } catch (Exception e) {
@@ -2370,14 +2401,14 @@ public abstract class BaseController implements Initializable {
 
                 @Override
                 protected void whenSucceeded() {
-                    refresh();
+                    reload();
                     popSuccessful();
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -2540,6 +2571,15 @@ public abstract class BaseController implements Initializable {
         return true;
     }
 
+    public File chooseSaveFile() {
+        return chooseSaveFile(TargetFileType,
+                sourceFile != null ? FileTools.getFilePrefix(sourceFile.getName()) : null);
+    }
+
+    public File chooseSaveFile(String defaultName) {
+        return chooseSaveFile(TargetFileType, defaultName);
+    }
+
     public File chooseSaveFile(int type, String defaultName) {
         return chooseSaveFile(VisitHistoryTools.getSavedPath(type), defaultName,
                 VisitHistoryTools.getExtensionFilter(type));
@@ -2571,7 +2611,7 @@ public abstract class BaseController implements Initializable {
             }
             if (suffix != null) {
                 if (name == null) {
-                    name = "." + suffix;
+                    name = new Date().getTime() + "." + suffix;
                 } else {
                     if (FileTools.getFileSuffix(name).isEmpty()) {
                         name += "." + suffix;
@@ -2709,6 +2749,10 @@ public abstract class BaseController implements Initializable {
         popInformation(message("Successful"));
     }
 
+    public void popSaved() {
+        popInformation(message("Saved"));
+    }
+
     public void popError(String text, int duration, String size) {
         popText(text, duration, getPopTextbgColor(), getPopErrorColor(), size, null);
     }
@@ -2782,6 +2826,9 @@ public abstract class BaseController implements Initializable {
         try {
             final LoadingController controller
                     = FxmlStage.openLoadingStage(getMyStage(), block, task, info);
+//            if (controller == null) {
+//                return null;
+//            }
             controller.parentController = myController;
 
             task.setOnSucceeded((WorkerStateEvent event) -> {
@@ -2921,7 +2968,6 @@ public abstract class BaseController implements Initializable {
         protected void whenFailed() {
             if (error != null) {
                 popError(error);
-                MyBoxLog.debug(error);
             } else {
                 popFailed();
             }

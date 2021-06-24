@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconSelectAll.png" />
+                        <Image url="@../buttons/Red/iconSelectAll.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconSelectNone.png" />
+                        <Image url="@../buttons/Red/iconSelectNone.png" />
                      </image>
                   </ImageView>
                </graphic>

@@ -19,7 +19,7 @@ import mara.mybox.value.AppVariables;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchEffectsController extends ImageManufactureBatchController {
+public class ImageManufactureBatchEffectsController extends BaseImageManufactureBatchController {
 
     @FXML
     protected ImageManufactureEffectsOptionsController optionsController;

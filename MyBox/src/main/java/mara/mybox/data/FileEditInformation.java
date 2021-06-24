@@ -334,6 +334,29 @@ public abstract class FileEditInformation extends FileInformation {
         return message(filterType.name());
     }
 
+    public String lineBreakName() {
+        if (lineBreak == null) {
+            return "";
+        }
+        switch (lineBreak) {
+            case Width:
+                return message("BytesNumber") + lineBreakWidth;
+            case Value:
+                return message("BytesHex") + lineBreakWidth;
+            case LF:
+                return message("LFHex");
+            case CR:
+                return message("CRHex");
+            case CRLF:
+                return message("CRLFHex");
+            default:
+                return "";
+        }
+    }
+
+    /*
+        get/set
+     */
     public boolean isWithBom() {
         return withBom;
     }

@@ -40,8 +40,11 @@ import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.MarkdownEditerController;
 import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
+import mara.mybox.controller.PptViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.controller.WebBrowserController;
+import mara.mybox.controller.WordViewController;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -49,6 +52,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -390,6 +394,7 @@ public class FxmlStage {
             final PdfViewController controller
                     = (PdfViewController) openScene(stage, CommonValues.PdfViewFxml);
             controller.sourceFileChanged(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -402,6 +407,7 @@ public class FxmlStage {
             DataFileCSVController controller
                     = (DataFileCSVController) openScene(stage, CommonValues.DataFileCSVFxml);
             controller.sourceFileChanged(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -414,6 +420,33 @@ public class FxmlStage {
             final DataFileExcelController controller
                     = (DataFileExcelController) openScene(stage, CommonValues.DataFileExcelFxml);
             controller.sourceFileChanged(file);
+            controller.toFront();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static PptViewController viewPPT(Stage stage, File file) {
+        try {
+            final PptViewController controller
+                    = (PptViewController) openScene(stage, CommonValues.PptViewFxml);
+            controller.sourceFileChanged(file);
+            controller.toFront();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static WordViewController viewWord(Stage stage, File file) {
+        try {
+            final WordViewController controller
+                    = (WordViewController) openScene(stage, CommonValues.WordViewFxml);
+            controller.sourceFileChanged(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -426,6 +459,7 @@ public class FxmlStage {
             final HtmlEditorController controller
                     = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
             controller.loadAddress(link);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -438,6 +472,7 @@ public class FxmlStage {
             final HtmlEditorController controller
                     = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
             controller.sourceFileChanged(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -450,6 +485,7 @@ public class FxmlStage {
             final HtmlViewerController controller
                     = (HtmlViewerController) openScene(stage, CommonValues.HtmlViewerFxml);
             controller.loadBody(body);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -460,6 +496,7 @@ public class FxmlStage {
     public static WebBrowserController openWebBrowser(Stage stage, File file) {
         try {
             WebBrowserController controller = WebBrowserController.oneOpen(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -467,12 +504,12 @@ public class FxmlStage {
         }
     }
 
-    public static ImageManufactureController openImageManufacture(Stage stage,
-            File file) {
+    public static ImageManufactureController openImageManufacture(Stage stage, File file) {
         try {
             final ImageManufactureController controller
                     = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
-            controller.loadImage(file.getAbsolutePath());
+            controller.loadImageFile(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -485,6 +522,7 @@ public class FxmlStage {
             final ImageManufactureController controller
                     = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
             controller.loadImage(file, imageInfo);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -496,7 +534,8 @@ public class FxmlStage {
         try {
             final ImageManufactureController controller
                     = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
-            controller.loadImage(imageInfo);
+            controller.loadImageInfo(imageInfo);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -510,6 +549,7 @@ public class FxmlStage {
             final ImageManufactureController controller
                     = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
             controller.loadImage(image);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -521,6 +561,7 @@ public class FxmlStage {
         try {
             final ImageViewerController controller
                     = (ImageViewerController) openScene(stage, CommonValues.ImageViewerFxml);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -532,7 +573,8 @@ public class FxmlStage {
         try {
             final ImageViewerController controller = openImageViewer(stage);
             if (controller != null && file != null) {
-                controller.loadImage(file.getAbsolutePath());
+                controller.loadImageFile(file);
+                controller.toFront();
             }
             return controller;
         } catch (Exception e) {
@@ -545,6 +587,7 @@ public class FxmlStage {
         try {
             final ImagesBrowserController controller = (ImagesBrowserController) openScene(stage,
                     CommonValues.ImagesBrowserFxml);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -557,6 +600,7 @@ public class FxmlStage {
             final TextEditerController controller
                     = (TextEditerController) openScene(stage, CommonValues.TextEditerFxml);
             controller.openFile(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -569,6 +613,7 @@ public class FxmlStage {
             final BytesEditerController controller
                     = (BytesEditerController) openScene(stage, CommonValues.BytesEditerFxml);
             controller.openFile(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -582,6 +627,7 @@ public class FxmlStage {
             final MarkdownEditerController controller
                     = (MarkdownEditerController) openScene(stage, CommonValues.MarkdownEditorFxml);
             controller.openFile(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -598,6 +644,7 @@ public class FxmlStage {
             final ImageInformationController controller = (ImageInformationController) openScene(stage,
                     CommonValues.ImageInformationFxml);
             controller.loadImageFileInformation(info);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -611,6 +658,7 @@ public class FxmlStage {
             final ImageMetaDataController controller = (ImageMetaDataController) openScene(stage,
                     CommonValues.ImageMetaDataFxml);
             controller.loadImageFileMeta(info);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -624,6 +672,7 @@ public class FxmlStage {
             final FileDecompressUnarchiveController controller = (FileDecompressUnarchiveController) openScene(stage,
                     CommonValues.FileDecompressUnarchiveFxml);
             controller.sourceFileChanged(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -636,6 +685,7 @@ public class FxmlStage {
             final MediaPlayerController controller
                     = (MediaPlayerController) openScene(stage, CommonValues.MediaPlayerFxml);
             controller.loadFile(file);
+            controller.toFront();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -683,6 +733,12 @@ public class FxmlStage {
 
         } else if ("xlsx".equals(suffix) || "xls".equals(suffix)) {
             controller = openExcelEditor(stage, file);
+
+        } else if ("ppt".equals(suffix) || "pptx".equals(suffix)) {
+            controller = viewPPT(stage, file);
+
+        } else if ("doc".equals(suffix) || "docx".equals(suffix)) {
+            controller = viewWord(stage, file);
 
         } else if (Arrays.asList(CommonValues.TextFileSuffix).contains(suffix)) {
             controller = openTextEditer(stage, file);
@@ -861,7 +917,7 @@ public class FxmlStage {
     public static ImageViewerController openImageViewer(ImageInformation info) {
         try {
             ImageViewerController controller = FxmlStage.openImageViewer(null, null);
-            controller.loadImage(info);
+            controller.loadImageInfo(info);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -925,13 +981,41 @@ public class FxmlStage {
                 public void run() {
                     Platform.runLater(() -> {
                         AppVariables.setSystemConfigValue("MapRunFirstTime" + CommonValues.AppVersion, false);
-                        c.refresh();
+                        c.reload();
                     });
                 }
             }, 2000);
             return true;
         }
         return false;
+    }
+
+    public static void about() {
+        try {
+            StringTable table = new StringTable(null, "MyBox");
+            table.newNameValueRow("Author", "Mara");
+            table.newNameValueRow("Version", CommonValues.AppVersion);
+            table.newNameValueRow("Date", CommonValues.AppVersionDate);
+            table.newNameValueRow("License", message("FreeOpenSource"));
+            table.newLinkRow("", "http://www.apache.org/licenses/LICENSE-2.0");
+            table.newLinkRow("MainPage", "https://github.com/Mararsh/MyBox");
+            table.newLinkRow("Mirror", "https://sourceforge.net/projects/mara-mybox/files/");
+            table.newLinkRow("LatestRelease", "https://github.com/Mararsh/MyBox/releases");
+            table.newLinkRow("KnownIssues", "https://github.com/Mararsh/MyBox/issues");
+            table.newNameValueRow("", message("WelcomePR"));
+            table.newLinkRow("UserGuide", "https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf");
+            table.newLinkRow("CloudStorage", "https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F");
+            table.newLinkRow("MyBoxInternetDataPath", "https://github.com/Mararsh/MyBox_data");
+
+            File htmFile = HtmlTools.writeHtml(table.html());
+            if (htmFile == null || !htmFile.exists()) {
+                return;
+            }
+            FxmlControl.miao5();
+            WebBrowserController.oneOpen(htmFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

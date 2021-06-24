@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,13 +10,10 @@ import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataDefinition;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.ExcelTools;
+import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -94,7 +90,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
                         continue;
                     }
                     for (int c = sourceRow.getFirstCellNum(); c < sourceRow.getLastCellNum(); c++) {
-                        rowData.add(ExcelTools.cellString(sourceRow.getCell(c)));
+                        rowData.add(MicrosoftDocumentTools.cellString(sourceRow.getCell(c)));
                     }
                     if (targetIndex == 0 && targetWithNamesCheck.isSelected()) {
                         Row targetRow = targetSheet.createRow(targetIndex++);
@@ -141,7 +137,6 @@ public class DataFileExcelMergeController extends FilesMergeController {
                         .setDataName(targetFile.getAbsolutePath())
                         .setDataType(DataDefinition.DataType.DataFile)
                         .setHasHeader(targetWithNamesCheck.isSelected());
-                MyBoxLog.console(targetWithNamesCheck.isSelected());
                 tableDataDefinition.insertData(conn, dataDefinition);
                 conn.commit();
             } catch (Exception e) {

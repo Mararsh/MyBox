@@ -7,13 +7,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
 import org.apache.pdfbox.rendering.ImageType;
@@ -31,7 +31,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
     protected PDFRenderer renderer;
 
     @FXML
-    protected ControlImageConverterOptions optionsController;
+    protected ControlImageFormat formatController;
     @FXML
     protected CheckBox appendColorCheck, appendCompressionCheck, appendQualityCheck, appendDensityCheck;
 
@@ -46,17 +46,16 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
         try {
             super.initControls();
 
-            optionsController.setValues(true);
+            formatController.setParameters(this, true);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(tableView.getItems())
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.dpiSelector.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.profileInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.thresholdInput.styleProperty().isEqualTo(badStyle))
+                            .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(formatController.profileInput.styleProperty().isEqualTo(badStyle))
+                            .or(formatController.thresholdInput.styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
@@ -116,7 +115,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
             return false;
         }
 
-        attributes = optionsController.attributes;
+        attributes = formatController.attributes;
 
         return true;
     }

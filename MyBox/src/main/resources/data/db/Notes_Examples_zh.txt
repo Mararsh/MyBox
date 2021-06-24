@@ -51,11 +51,9 @@
 <a href="http://www.nlc.cn/">中国国家数字图书馆</a><br>
 <a href="http://43.248.49.97/">海关统计数据在线查询平台</a><br>
 <a href="http://www.cnsda.org/">中国学术调查数据资料库</a><br>
-<a href="https://www.nstl.gov.cn/">国家科技图书文献中心</a><br>
 <a href="http://www.sgst.cn/">上海研发公共服务平台</a><br>
 <a href="https://ctext.org/">中国哲学书电子化计划</a><br>
 <a href="http://www.ucdrs.superlib.net/">全国图书馆论文搜索网</a><br>
-<a href="https://www.nstl.gov.cn/">国家科技图书文献中心</a><br>
 <a href="http://libweb.zju.edu.cn/">浙江大学图书馆</a><br>
 <a href="https://www.hzlib.net/">杭州图书馆</a><br>
 <a href="http://www.gzlib.org/">贵州数字图书馆</a><br>
@@ -79,7 +77,7 @@
 <a href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
 <a href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
 <a href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>
-<a href="https://www.bilibili.com/video/BV1ux411G7zm">中国古代史（史前——魏晋南北朝）（阎步克教授/北京大学）</a><br>
+<a href="https://www.bilibili.com/video/BV1ux411G7zm">中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）</a><br>
 <a href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
 
 
@@ -107,7 +105,9 @@
 <a href="https://bbs.tianya.cn/">天涯</a><br>
 <a href="https://www.lofter.com/">lofter</a><br>
 <a href="https://www.qingting.fm/channels/138236/">小喇叭</a><br>
-<a href="https://www.bilibili.com/video/BV1Px411P761?from=search&seid=8480498709465058923">牡丹亭（1986年）张继青</a><br>
+<a href="https://www.bilibili.com/video/BV1Px411P761">牡丹亭（1986年）张继青</a><br>
+<a href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br>
+<a href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
 
 
 笔记示例 > 我的数据
@@ -294,6 +294,7 @@ startButton.disableProperty().bind(
     <li>假设用户硬件配置（cpu/内存/硬盘）略低于平均水平。</li>
     <li>文件读写用BufferedInputStream和BufferedOutputStream。</li>
     <li>访问资源用try-with-resource语句。</li>
+    <li>读写文件或数据时始终考虑内存不够的情形。</li>
     <li>读写文本文件时，注意字符集。</li>
     <li>字符串与字节转换时，注意字符集。</li>
     <li>读文件时判断结束的条件应是“len &gt; 0”。如果用“len != -1”则在读取零字节时陷入死循环。</li>

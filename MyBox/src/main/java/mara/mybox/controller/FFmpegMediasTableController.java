@@ -130,7 +130,7 @@ public class FFmpegMediasTableController extends ControlMediaTable {
                 parentController.openHandlingStage(task, Modality.WINDOW_MODAL, msg);
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
 

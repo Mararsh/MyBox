@@ -135,10 +135,6 @@ public class MyBox {
 //            System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
 
-            // https://stackoverflow.com/questions/47613006/how-to-disable-scaling-the-ui-on-windows-for-java-9-applications?r=SearchResults
-//            System.setProperty("sun.java2d.uiScale", "1.0");
-            System.setProperty("prism.allowhidpi", "true".equals(ConfigTools.readValue("DisableHidpi")) ? "false" : "true");
-
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
             if (AppVariables.MyboxDataPath != null) {

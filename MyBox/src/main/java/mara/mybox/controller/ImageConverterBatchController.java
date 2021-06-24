@@ -26,7 +26,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
     protected ImageAttributes attributes;
 
     @FXML
-    protected ControlImageConverterOptions optionsController;
+    protected ControlImageFormat formatController;
     @FXML
     protected CheckBox appendColorCheck, appendCompressionCheck, appendQualityCheck;
 
@@ -42,17 +42,16 @@ public class ImageConverterBatchController extends BaseBatchImageController {
 
             super.initControls();
 
-            optionsController.setValues(false);
+            formatController.setParameters(this, false);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(tableView.getItems())
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.profileInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.thresholdInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.icoWidthSelector.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(formatController.profileInput.styleProperty().isEqualTo(badStyle))
+                            .or(formatController.thresholdInput.styleProperty().isEqualTo(badStyle))
+                            .or(formatController.icoWidthSelector.getEditor().styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
@@ -103,7 +102,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
             return false;
         }
 
-        attributes = optionsController.attributes;
+        attributes = formatController.attributes;
 
         return true;
     }

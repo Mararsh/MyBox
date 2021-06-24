@@ -127,13 +127,13 @@ public class GeographyCode extends BaseData {
                     data.setLongitude(value == null ? CommonValues.InvalidDouble : (Double) value);
                     return true;
                 case "latitude":
-                    data.setLatitude(value == null ? CommonValues.InvalidDouble : (Double) value);
+                    data.setLatitude(value == null ? CommonValues.InvalidDouble : (double) value);
                     return true;
                 case "altitude":
-                    data.setAltitude(value == null ? CommonValues.InvalidDouble : (Double) value);
+                    data.setAltitude(value == null ? CommonValues.InvalidDouble : (double) value);
                     return true;
                 case "precision":
-                    data.setPrecision(value == null ? CommonValues.InvalidDouble : (Double) value);
+                    data.setPrecision(value == null ? CommonValues.InvalidDouble : (double) value);
                     return true;
                 case "coordinate_system":
                     data.setCoordinateSystem(value == null

@@ -6,6 +6,8 @@ import com.github.jaiimageio.impl.plugins.pnm.PNMImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.pnm.PNMImageWriterSpi;
 import com.github.jaiimageio.impl.plugins.raw.RawImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi;
+import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi;
+import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -17,17 +19,16 @@ import java.util.List;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.image.file.ImageJpgFile.getJpegCompressionTypes;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:07:27
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageValue {
@@ -63,14 +64,16 @@ public class ImageValue {
 
     public static void registrySupportedImageFormats() {
         IIORegistry registry = IIORegistry.getDefaultInstance();
-//        registry.registerServiceProvider(new TIFFImageWriterSpi());
-//        registry.registerServiceProvider(new TIFFImageReaderSpi());
+
+        // tiff of ECI CMYK can not be opened by reader in jdk
+        registry.registerServiceProvider(new TIFFImageWriterSpi());
+        registry.registerServiceProvider(new TIFFImageReaderSpi());
+
 //        registry.registerServiceProvider(new BMPImageWriterSpi());
 //        registry.registerServiceProvider(new BMPImageReaderSpi());
 //        registry.registerServiceProvider(new GIFImageWriterSpi());
 //        registry.registerServiceProvider(new WBMPImageWriterSpi());
 //        registry.registerServiceProvider(new WBMPImageReaderSpi());
-
         registry.registerServiceProvider(new RawImageWriterSpi());
         registry.registerServiceProvider(new RawImageReaderSpi());
         registry.registerServiceProvider(new PCXImageWriterSpi());
@@ -82,8 +85,8 @@ public class ImageValue {
 
 //        String readFormats[] = ImageIO.getReaderFormatNames();
 //        String writeFormats[] = ImageIO.getWriterFormatNames();
-//        logger.info("Readers:" + Arrays.asList(readFormats));
-//        logger.info("Writers:" + Arrays.asList(writeFormats));
+//        MyBoxLog.console("Readers:" + Arrays.asList(readFormats));
+//        MyBoxLog.console("Writers:" + Arrays.asList(writeFormats));
 //Readers:[JPG, JPEG 2000, tiff, bmp, PCX, gif, WBMP, PNG, RAW, JPEG, PNM, tif, TIFF, wbmp, jpeg, jpg, JPEG2000, BMP, pcx, GIF, png, raw, pnm, TIF, jpeg2000, jpeg 2000]
 //Writers:[JPEG 2000, JPG, tiff, bmp, PCX, gif, WBMP, PNG, RAW, JPEG, PNM, tif, TIFF, wbmp, jpeg, jpg, JPEG2000, BMP, pcx, GIF, png, raw, pnm, TIF, jpeg2000, jpeg 2000]
     }

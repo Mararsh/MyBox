@@ -29,7 +29,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconSelectAll.png" />
+                                <Image url="@../buttons/Red/iconSelectAll.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -38,7 +38,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconSelectNone.png" />
+                                <Image url="@../buttons/Red/iconSelectNone.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -47,7 +47,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconView.png" />
+                                <Image url="@../buttons/Red/iconView.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -56,7 +56,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconEdit.png" />
+                                <Image url="@../buttons/Red/iconEdit.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -65,7 +65,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconMeta.png" />
+                                <Image url="@../buttons/Red/iconMeta.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -74,7 +74,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconInfo.png" />
+                                <Image url="@../buttons/Red/iconInfo.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -83,7 +83,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconThumbsList.png" />
+                                <Image url="@../buttons/Red/iconThumbsList.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -91,7 +91,7 @@ License:    Apache License Version 2.0
                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../buttons/iconTipsRight.png" />
+                        <Image url="@../buttons/Red/iconTipsRight.png" />
                     </image>
                 </ImageView>
             </children>

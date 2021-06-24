@@ -1,18 +1,15 @@
 package mara.mybox.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEvent;
+import javafx.scene.web.WebView;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -26,37 +23,58 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class FunctionsListController extends BaseController {
 
-    protected int index;
+    protected StringTable table;
+    protected String goImage;
+    protected Map<String, MenuItem> map;
 
     @FXML
-    protected GridPane gridPane;
+    protected WebView webView;
 
     public FunctionsListController() {
         baseTitle = message("FunctionsList");
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            goImage = FxmlControl.getInternalFile(
+                    "/" + ControlStyle.ButtonsPath + AppVariables.ControlColor.name() + "/iconGo.png",
+                    "icons", "iconGo.png").toURI().toString();
+            webView.getEngine().setOnAlert(new EventHandler<WebEvent<String>>() {
+                @Override
+                public void handle(WebEvent<String> ev) {
+                    String name = ev.getData();
+                    MenuItem menu = map.get(name);
+                    if (menu != null) {
+                        menu.fire();
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            display();
+
+            table = new StringTable(message("FunctionsList"));
+            map = new HashMap<>();
+            List<Menu> menus = mainMenuController.menuBar.getMenus();
+            for (Menu menu : menus) {
+                menu(menu, 1);
+            }
+            webView.getEngine().loadContent(table.html());
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
 
-    }
-
-    public void display() {
-        try {
-            index = 0;
-            List<Menu> menus = mainMenuController.menuBar.getMenus();
-            for (Menu menu : menus) {
-                menu(menu, 1);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     public void menu(Menu menu, int level) {
@@ -77,28 +95,16 @@ public class FunctionsListController extends BaseController {
         }
         String indent = "";
         for (int i = 0; i < level * 4; i++) {
-            indent += "  ";
+            indent += "&nbsp;&nbsp;";
         }
-        Label label = new Label(indent + name);
-        label.setWrapText(true);
-        VBox.setVgrow(label, Priority.NEVER);
-        HBox.setHgrow(label, Priority.ALWAYS);
-
+        String link;
         if (menu.getOnAction() != null) {
-            Button button = new Button();
-            ImageView view = new ImageView(ControlStyle.getIcon("iconGo.png"));
-            view.setFitWidth(AppVariables.iconSize);
-            view.setFitHeight(AppVariables.iconSize);
-            button.setGraphic(view);
-            FxmlControl.setTooltip(button, new Tooltip(message("Go")));
-
-            button.setOnMouseClicked((MouseEvent event) -> {
-                menu.fire();
-            });
-            gridPane.addRow(index++, label, button);
+            link = "<a><img src=\"" + goImage + "\" onclick=\"alert('" + name + "')\" alt=\"" + message("Go") + "\"></a>";
+            map.put(name, menu);
         } else {
-            gridPane.addRow(index++, label);
+            link = "";
         }
+        table.newNameValueRow(indent + name, link);
 
     }
 

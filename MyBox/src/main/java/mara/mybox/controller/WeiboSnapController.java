@@ -37,7 +37,7 @@ import mara.mybox.value.CommonValues;
  */
 public class WeiboSnapController extends BaseController {
 
-    public final static String exmapleAddress = "https://weibo.com/p/1005053926428816/home";
+    public final static String exmapleAddress = "https://weibo.com/p/1001067609807801/home";
     private final String WeiboZoomKey;
     private final String WeiboLastAddressKey, WeiboRetryKey, WeiboOpenPathKey, WeiboColseWindowKey;
     private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey;

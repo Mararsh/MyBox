@@ -293,7 +293,7 @@ public class LocationDataMapController extends BaseMapController {
                 }
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
 
@@ -527,7 +527,7 @@ public class LocationDataMapController extends BaseMapController {
                 }
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
 
@@ -883,9 +883,8 @@ public class LocationDataMapController extends BaseMapController {
                                                 loading.setInfo(message("Opening") + ": " + gifFile);
                                             }
                                         });
-                                        ImageGifViewerController controller
-                                                = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-                                        controller.sourceFileChanged(gifFile);
+                                        ImagesEditorController controller = (ImagesEditorController) openStage(CommonValues.ImagesEditorFxml);
+                                        controller.open(gifFile);
                                     }
                                 } else {
                                     browseURI(filePath.toURI());

@@ -93,7 +93,7 @@ public class ControlStringSelector extends BaseController {
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         value = value();
-                        if (value != null && !value.isBlank() && !value.equals(getName() + "MaxSaved")) {
+                        if (value != null && !value.isBlank() && !value.equals(setting)) {
                             TableStringValues.add(conn, getName(), value);
                         }
                         max = AppVariables.getUserConfigInt(getName() + "MaxSaved", defaultMax);
@@ -127,9 +127,9 @@ public class ControlStringSelector extends BaseController {
                     }
                     isSettingValues = true;
                     selector.getItems().setAll(values);
-                    if (value != null && value.isBlank()) {
+                    if (value != null && !value.isBlank() && !value.equals(setting)) {
                         selector.getSelectionModel().select(value);
-                    } else {
+                    } else if (values.size() > 1) {
                         selector.getSelectionModel().select(0);
                     }
                     isSettingValues = false;
@@ -138,7 +138,7 @@ public class ControlStringSelector extends BaseController {
             };
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 

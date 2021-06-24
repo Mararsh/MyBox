@@ -257,7 +257,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             };
             bookTask.setSelf(bookTask);
             Thread thread = new Thread(bookTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -506,7 +506,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             };
             updateTask.setSelf(updateTask);
             Thread thread = new Thread(updateTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -551,7 +551,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             updateTask.setSelf(updateTask);
             openHandlingStage(updateTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(updateTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -619,7 +619,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             };
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -640,8 +640,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             controller = (WebFavoritesController) FxmlStage.openStage(CommonValues.WebFavoritesFxml);
             controller.loadTree(null);
         }
-        controller.getMyStage().toFront();
-        controller.getMyStage().requestFocus();
+        controller.toFront();
         return controller;
     }
 

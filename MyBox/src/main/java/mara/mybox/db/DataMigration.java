@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.data.WebHistory;
@@ -29,12 +31,14 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -58,6 +62,8 @@ public class DataMigration {
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
             if (lastVersion > 0) {
+                reloadInternalDoc();
+
                 if (lastVersion < 6002001) {
                     migrateBefore621(conn);
                 }
@@ -88,6 +94,9 @@ public class DataMigration {
                 if (lastVersion < 6004004) {
                     updateIn644(conn);
                 }
+                if (lastVersion < 6004005) {
+                    updateIn645(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", CommonValues.AppVersion);
             conn.setAutoCommit(true);
@@ -95,6 +104,38 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn645(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.4.5...");
+            String sql = "SELECT * FROM String_Values where key_name='ImageClipboard'";
+            try ( Statement statement = conn.createStatement();
+                     ResultSet results = statement.executeQuery(sql)) {
+                conn.setAutoCommit(false);
+                TableImageClipboard tableImageClipboard = new TableImageClipboard();
+                while (results.next()) {
+                    ImageClipboard clip = new ImageClipboard();
+                    clip.setImageFile(new File(results.getString("string_value")));
+                    clip.setCreateTime(results.getTimestamp("create_time"));
+                    clip.setSource(null);
+                    tableImageClipboard.insertData(conn, clip);
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.commit();
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("DELETE FROM String_Values where key_name='ImageClipboard'");
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            reloadInternalData();
+            TableStringValues.add(conn, "InstalledVersions", "6.4.5");
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn644(Connection conn) {
@@ -132,16 +173,16 @@ public class DataMigration {
     private static void updateIn643(Connection conn) {
         try {
             MyBoxLog.info("Updating tables in 6.4.3...");
-            TableColorPaletteName tableColorPaletteName = new TableColorPaletteName();
-            ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
-            long paletteid = defaultPalette.getCpnid();
-
-            TableColorPalette tableColorPalette = new TableColorPalette();
-            TableColor tableColor = new TableColor();
             String sql = "SELECT * FROM Color_Data";
             try ( Statement statement = conn.createStatement();
                      ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
+                TableColorPaletteName tableColorPaletteName = new TableColorPaletteName();
+                ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
+                long paletteid = defaultPalette.getCpnid();
+
+                TableColorPalette tableColorPalette = new TableColorPalette();
+                TableColor tableColor = new TableColor();
                 while (results.next()) {
                     ColorData color = tableColor.readData(results);
                     color.setColorValue(results.getInt("color_value"));
@@ -173,9 +214,10 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.4.1...");
             String sql = "SELECT * FROM image_history";
-            TableImageEditHistory tableImageEditHistory = new TableImageEditHistory();
+
             try ( Statement statement = conn.createStatement();
                      ResultSet results = statement.executeQuery(sql)) {
+                TableImageEditHistory tableImageEditHistory = new TableImageEditHistory();
                 while (results.next()) {
                     ImageEditHistory his = new ImageEditHistory();
                     his.setImage(results.getString("image_location"));
@@ -870,6 +912,50 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
             return false;
         }
+    }
+
+    public static void reloadInternalData() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    MyBoxLog.info("Reloading internal data...");
+                    List<String> names = Arrays.asList(
+                            "ColorsChinese.csv", "ColorsColorhexa.csv", "ColorsJapanese.csv",
+                            "ColorsMyBox_en.csv", "ColorsMyBox_zh.csv", "ColorsWeb.csv",
+                            "Geography_Code_china_cities_internal.csv",
+                            "Geography_Code_china_counties_internal.csv", "Geography_Code_china_provinces_internal.csv",
+                            "Geography_Code_countries_internal.csv", "Geography_Code_global_internal.csv",
+                            "Location_Data_ChineseHistoricalCapitals_en.csv", "Location_Data_ChineseHistoricalCapitals_zh.csv",
+                            "Location_Data_EuropeanGadwalls_en.csv", "Location_Data_EuropeanGadwalls_zh.csv",
+                            "Location_Data_SpermWhales_en.csv", "Location_Data_SpermWhales_zh.csv",
+                            "Notes_Examples_en.txt", "Notes_Examples_zh.txt",
+                            "WebFavorites_Examples_en.txt", "WebFavorites_Examples_zh.txt",
+                            "Epidemic_Report_JHU_2020924.csv"
+                    );
+                    for (String name : names) {
+                        FxmlControl.getInternalFile("/data/db/" + name, "data", name, true);
+                    }
+                    MyBoxLog.info("Internal data loaded.");
+                } catch (Exception e) {
+                }
+            }
+        }.start();
+    }
+
+    public static void reloadInternalDoc() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    MyBoxLog.info("Reloading internal doc...");
+                    FxmlControl.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
+                    FxmlControl.getInternalFile("/doc/zh/README.md", "doc", "README-zh.md", true);
+                    MyBoxLog.info("Internal doc loaded.");
+                } catch (Exception e) {
+                }
+            }
+        }.start();
     }
 
 }

@@ -236,6 +236,39 @@ public class CommonFxValues {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> WordExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("word", "*.doc", "*.docx"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> PPTExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("ppt", "*.ppt"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> PPTXExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("pptx", "*.pptx"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> PPTSExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("ppt", "*.ppt", "*.pptx"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> ImagesListExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("*", "*.png", "*.jpg", "*.jpeg", "*.bmp",
+                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon", "*.pdf", "*.ppt", "*.pptx"));
+            addAll(ImageExtensionFilter);
+            addAll(PdfExtensionFilter);
+            addAll(PPTSExtensionFilter);
+        }
+    };
+
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
 }

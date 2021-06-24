@@ -14,9 +14,9 @@ import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
-import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.db.table.TableMatrix;
@@ -27,6 +27,7 @@ import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -107,6 +108,9 @@ public class BaseDataTools {
         } else if (data instanceof WebHistory) {
             return new TableWebHistory();
 
+        } else if (data instanceof ImageClipboard) {
+            return new TableImageClipboard();
+
         }
         return null;
     }
@@ -177,6 +181,9 @@ public class BaseDataTools {
 
         } else if (data instanceof WebHistory) {
             return WebHistory.valid((WebHistory) data);
+
+        } else if (data instanceof ImageClipboard) {
+            return ImageClipboard.valid((ImageClipboard) data);
 
         }
 
@@ -250,6 +257,9 @@ public class BaseDataTools {
         } else if (data instanceof WebHistory) {
             return WebHistory.getValue((WebHistory) data, name);
 
+        } else if (data instanceof ImageClipboard) {
+            return ImageClipboard.getValue((ImageClipboard) data, name);
+
         }
 
         return null;
@@ -321,6 +331,9 @@ public class BaseDataTools {
 
         } else if (data instanceof WebHistory) {
             return WebHistory.setValue((WebHistory) data, name, value);
+
+        } else if (data instanceof ImageClipboard) {
+            return ImageClipboard.setValue((ImageClipboard) data, name, value);
 
         }
         return false;

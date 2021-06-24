@@ -210,7 +210,7 @@ public class ControlFileBackup extends BaseController {
             };
             Thread thread = new Thread(task);
 //        openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 

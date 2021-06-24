@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,8 +27,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.ExcelTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -51,13 +52,15 @@ public class DataFileExcelController extends BaseDataFileController {
     protected List<String> sheetNames;
 
     @FXML
+    protected TitledPane sheetsPane;
+    @FXML
     protected ComboBox<String> sheetSelector;
     @FXML
     protected CheckBox sourceWithNamesCheck, targetWithNamesCheck, currentOnlyCheck;
     @FXML
-    protected VBox sheetsBox;
-    @FXML
     protected Button okSheetButton, plusSheetButton, renameSheetButton, deleteSheetButton2;
+    @FXML
+    protected VBox sheetsBox;
 
     public DataFileExcelController() {
         baseTitle = message("EditExcel");
@@ -121,15 +124,7 @@ public class DataFileExcelController extends BaseDataFileController {
     @Override
     public void initFile() {
         sheetNames = null;
-        if (sourceFile == null) {
-            if (fileOptionsBox.getChildren().contains(sheetsBox)) {
-                fileOptionsBox.getChildren().remove(sheetsBox);
-            }
-        } else {
-            if (!fileOptionsBox.getChildren().contains(sheetsBox)) {
-                fileOptionsBox.getChildren().add(0, sheetsBox);
-            }
-        }
+        sheetsBox.setDisable(sourceFile == null);
         super.initFile();
     }
 
@@ -238,7 +233,7 @@ public class DataFileExcelController extends BaseDataFileController {
                             type = ColumnType.Boolean;
                             break;
                     }
-                    String v = ExcelTools.cellString(cell);
+                    String v = MicrosoftDocumentTools.cellString(cell);
                     if (!v.isBlank()) {
                         name = v;
                     }
@@ -305,6 +300,10 @@ public class DataFileExcelController extends BaseDataFileController {
         }
         sheetSelector.setValue(currentSheetName);
         deleteSheetButton2.setDisable(sheetNames == null || sheetNames.size() <= 1);
+        int current = sheetSelector.getSelectionModel().getSelectedIndex();
+        nextButton.setDisable(current >= sheetSelector.getItems().size() - 1);
+        previousButton.setDisable(current <= 0);
+        sheetsPane.setExpanded(true);
         targetSheetName = currentSheetName;
         updateStatus();
     }
@@ -352,7 +351,7 @@ public class DataFileExcelController extends BaseDataFileController {
                     }
                     List<String> row = new ArrayList<>();
                     for (int cellIndex = fileRow.getFirstCellNum(); cellIndex < fileRow.getLastCellNum(); cellIndex++) {
-                        String v = ExcelTools.cellString(fileRow.getCell(cellIndex));
+                        String v = MicrosoftDocumentTools.cellString(fileRow.getCell(cellIndex));
                         row.add(v);
                     }
                     rows.add(row);
@@ -403,6 +402,10 @@ public class DataFileExcelController extends BaseDataFileController {
         }
         initCurrentPage();
         currentSheetName = sheetSelector.getValue();
+        int current = sheetSelector.getSelectionModel().getSelectedIndex();
+        nextButton.setDisable(current >= sheetSelector.getItems().size() - 1);
+        previousButton.setDisable(current <= 0);
+        sheetSelector.getSelectionModel().select(current + 1);
         loadFile(false);
     }
 
@@ -439,7 +442,7 @@ public class DataFileExcelController extends BaseDataFileController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -488,7 +491,7 @@ public class DataFileExcelController extends BaseDataFileController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -555,7 +558,7 @@ public class DataFileExcelController extends BaseDataFileController {
                         sourceRowIndex++;
                         if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
                             Row targetRow = targetSheet.createRow(targetRowIndex++);
-                            ExcelTools.copyRow(sourceRow, targetRow);
+                            MicrosoftDocumentTools.copyRow(sourceRow, targetRow);
                         } else if (sourceRowIndex == currentPageStart) {
                             targetRowIndex = writePageData(targetSheet, targetRowIndex);
                         }
@@ -745,7 +748,7 @@ public class DataFileExcelController extends BaseDataFileController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -822,9 +825,33 @@ public class DataFileExcelController extends BaseDataFileController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
+    }
+
+    @FXML
+    @Override
+    public void nextAction() {
+        int current = sheetSelector.getSelectionModel().getSelectedIndex();
+        if (current >= sheetSelector.getItems().size() - 1) {
+            popError(message("NoMore"));
+            return;
+        }
+        sheetSelector.getSelectionModel().select(current + 1);
+        setSheet();
+    }
+
+    @FXML
+    @Override
+    public void previousAction() {
+        int current = sheetSelector.getSelectionModel().getSelectedIndex();
+        if (current == 0) {
+            popError(message("NoMore"));
+            return;
+        }
+        sheetSelector.getSelectionModel().select(current - 1);
+        setSheet();
     }
 
     @Override
@@ -875,9 +902,9 @@ public class DataFileExcelController extends BaseDataFileController {
                         }
                         Cell targetCell = targetRow.createCell(cellIndex, type);
                         if (targetIndex == cellIndex) {
-                            ExcelTools.setCell(targetCell, type, value);
+                            MicrosoftDocumentTools.setCell(targetCell, type, value);
                         } else {
-                            ExcelTools.copyCell(sourceCell, targetCell, type);
+                            MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
                         }
                     }
                 }
@@ -925,7 +952,7 @@ public class DataFileExcelController extends BaseDataFileController {
                         String v = null;
                         int cellIndex = sourceRow.getFirstCellNum() + col;
                         if (cellIndex < sourceRow.getLastCellNum()) {
-                            v = ExcelTools.cellString(sourceRow.getCell(cellIndex));
+                            v = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
                         }
                         copiedCol.add(v == null ? "" : v);
                     } else if (sourceRowIndex == currentPageStart) {
@@ -999,9 +1026,9 @@ public class DataFileExcelController extends BaseDataFileController {
                         }
                         Cell targetCell = targetRow.createCell(cellIndex, type);
                         if ((rowIndex < copiedSize) && (targetIndex == cellIndex)) {
-                            ExcelTools.setCell(targetCell, type, copiedCol.get(rowIndex));
+                            MicrosoftDocumentTools.setCell(targetCell, type, copiedCol.get(rowIndex));
                         } else {
-                            ExcelTools.copyCell(sourceCell, targetCell, type);
+                            MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
                         }
                     }
                     rowIndex++;
@@ -1064,7 +1091,7 @@ public class DataFileExcelController extends BaseDataFileController {
                         if (col == cellIndex && left) {
                             for (int i = 0; i < number; i++) {
                                 targetCell = targetRow.createCell(targetCol++, CellType.STRING);
-                                ExcelTools.setCell(targetCell, CellType.STRING, defaultColValue);
+                                MicrosoftDocumentTools.setCell(targetCell, CellType.STRING, defaultColValue);
                             }
                         }
                         CellType type = CellType.STRING;
@@ -1073,11 +1100,11 @@ public class DataFileExcelController extends BaseDataFileController {
                             type = sourceCell.getCellType();
                         }
                         targetCell = targetRow.createCell(targetCol++, type);
-                        ExcelTools.copyCell(sourceCell, targetCell, type);
+                        MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
                         if (col == cellIndex && !left) {
                             for (int i = 0; i < number; i++) {
                                 targetCell = targetRow.createCell(targetCol++, CellType.STRING);
-                                ExcelTools.setCell(targetCell, CellType.STRING, defaultColValue);
+                                MicrosoftDocumentTools.setCell(targetCell, CellType.STRING, defaultColValue);
                             }
                         }
                     }
@@ -1151,7 +1178,7 @@ public class DataFileExcelController extends BaseDataFileController {
                             type = sourceCell.getCellType();
                         }
                         targetCell = targetRow.createCell(targetCol++, type);
-                        ExcelTools.copyCell(sourceCell, targetCell, type);
+                        MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
                     }
                 }
             }
@@ -1241,7 +1268,7 @@ public class DataFileExcelController extends BaseDataFileController {
                 @Override
                 public int compare(Row row1, Row row2) {
                     ColumnDefinition column = columns.get(col);
-                    int v = column.compare(ExcelTools.cellString(row1.getCell(col)), ExcelTools.cellString(row2.getCell(col)));
+                    int v = column.compare(MicrosoftDocumentTools.cellString(row1.getCell(col)), MicrosoftDocumentTools.cellString(row2.getCell(col)));
                     return asc ? v : -v;
                 }
             });
@@ -1255,7 +1282,7 @@ public class DataFileExcelController extends BaseDataFileController {
             }
             for (Row sourceRow : records) {
                 Row targetRow = targetSheet.createRow(targetRowIndex++);
-                ExcelTools.copyRow(sourceRow, targetRow);
+                MicrosoftDocumentTools.copyRow(sourceRow, targetRow);
             }
             try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
@@ -1301,7 +1328,7 @@ public class DataFileExcelController extends BaseDataFileController {
                         String rowString = null;
                         for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                             if (colsCheck[cellIndex - sourceRow.getFirstCellNum()].isSelected()) {
-                                String cellString = ExcelTools.cellString(sourceRow.getCell(cellIndex));
+                                String cellString = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
                                 cellString = cellString == null ? "" : cellString;
                                 if (rowString == null) {
                                     rowString = cellString;
@@ -1388,7 +1415,7 @@ public class DataFileExcelController extends BaseDataFileController {
                             type = sourceCell.getCellType();
                         }
                         targetCell = targetRow.createCell(targetCol++, type);
-                        ExcelTools.copyCell(sourceCell, targetCell, type);
+                        MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
                     }
                 }
             }
@@ -1452,9 +1479,9 @@ public class DataFileExcelController extends BaseDataFileController {
                         }
                         Cell targetCell = targetRow.createCell(cellIndex, type);
                         if (colsCheck[cellIndex - sourceRow.getFirstCellNum()].isSelected()) {
-                            ExcelTools.setCell(targetCell, type, value);
+                            MicrosoftDocumentTools.setCell(targetCell, type, value);
                         } else {
-                            ExcelTools.copyCell(sourceCell, targetCell, type);
+                            MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
                         }
                     }
                 }

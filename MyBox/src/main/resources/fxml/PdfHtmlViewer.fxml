@@ -35,14 +35,14 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconOpen.png" />
+                                        <Image url="@../buttons/Red/iconOpen.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </Button>
                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconTips.png" />
+                                <Image url="@../buttons/Red/iconTips.png" />
                             </image>
                         </ImageView>
                         <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconTree.png" />
+                                        <Image url="@../buttons/Red/iconTree.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconBrowse.png" />
+                                        <Image url="@../buttons/Red/iconBrowse.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -71,7 +71,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconZoomOut.png" />
+                                                <Image url="@../buttons/Red/iconZoomOut.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -80,7 +80,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconZoomIn.png" />
+                                                <Image url="@../buttons/Red/iconZoomIn.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -100,7 +100,16 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconInfo.png" />
+                                                <Image url="@../buttons/Red/iconInfo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="editButton" layoutX="795.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconEdit.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -112,7 +121,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconGo.png" />
+                                                <Image url="@../buttons/Red/iconGo.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -121,7 +130,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconFirst.png" />
+                                                <Image url="@../buttons/Red/iconFirst.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -130,7 +139,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconLast.png" />
+                                                <Image url="@../buttons/Red/iconLast.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -139,7 +148,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconPrevious.png" />
+                                                <Image url="@../buttons/Red/iconPrevious.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -148,7 +157,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconNext.png" />
+                                                <Image url="@../buttons/Red/iconNext.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -169,25 +178,7 @@ License:    Apache License Version 2.0
                                 <TreeView fx:id="outlineTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                             </content>
                         </ScrollPane>
-                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                            <tabs>
-                                <Tab closable="false" text="%View">
-                                    <content>
-                                        <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" />
-                                    </content>
-                                </Tab>
-                                <Tab closable="false" text="%Edit">
-                                    <content>
-                                        <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                    </content>
-                                </Tab>
-                                <Tab closable="false" text="Html">
-                                    <content>
-                                        <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                    </content>
-                                </Tab>
-                            </tabs>
-                        </TabPane>
+                          <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" />
                     </items>
                 </SplitPane>
             </children>

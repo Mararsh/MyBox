@@ -471,7 +471,7 @@ public abstract class BaseMapController extends BaseController {
             table.newLinkRow("GaoDeAPI", "https://lbs.amap.com/api/javascript-api/summary");
             table.newLinkRow("GaoDeKey", "https://console.amap.com/dev/index");
             File htmFile = HtmlTools.writeHtml(table.html());
-            openLink(htmFile.toURI().toString());
+            openLink(htmFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -606,7 +606,7 @@ public abstract class BaseMapController extends BaseController {
             }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -696,7 +696,7 @@ public abstract class BaseMapController extends BaseController {
             }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 

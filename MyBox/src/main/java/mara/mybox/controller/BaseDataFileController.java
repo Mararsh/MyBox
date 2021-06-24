@@ -412,7 +412,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             task.setSelf(task);
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -472,7 +472,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             };
             backgroundTask.setSelf(backgroundTask);
             Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -537,7 +537,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -769,7 +769,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -806,7 +806,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -864,7 +864,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -912,7 +912,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -966,7 +966,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1007,7 +1007,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1054,7 +1054,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1107,7 +1107,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1185,7 +1185,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1229,7 +1229,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1281,7 +1281,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

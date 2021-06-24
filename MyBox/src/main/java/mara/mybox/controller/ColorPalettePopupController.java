@@ -150,7 +150,7 @@ public class ColorPalettePopupController extends BaseController {
             };
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 

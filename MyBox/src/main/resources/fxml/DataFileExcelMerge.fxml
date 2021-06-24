@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox fx:id="convertVBox1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <CheckBox fx:id="sourceWithNamesCheck" mnemonicParsing="false" selected="true" text="%FirstRowDefineNames" />
+                                                <CheckBox fx:id="sourceWithNamesCheck" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" />
                                                 <Separator prefWidth="200.0" />
                                                 <Label text="%ExcelMergeComments" />
                                             </children>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox fx:id="convertVBox11" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <CheckBox fx:id="targetWithNamesCheck" mnemonicParsing="false" selected="true" text="%FirstRowDefineNames" />
+                                                <CheckBox fx:id="targetWithNamesCheck" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -81,7 +81,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconOpen.png" />
+                                                                <Image url="@../buttons/Red/iconOpen.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -122,7 +122,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconClear.png" />
+                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

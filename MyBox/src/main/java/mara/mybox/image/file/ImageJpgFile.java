@@ -6,7 +6,9 @@ import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,9 @@ import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.message;
@@ -44,50 +48,113 @@ public class ImageJpgFile {
         return new JPEGImageWriteParam(null).getCompressionTypes();
     }
 
-    public static BufferedImage readBrokenJpgFile(File file, ImageInformation imageInfo,
-            int index, Rectangle bounds, int xscale, int yscale) {
+    public static BufferedImage readBrokenJpgFile(String filename, int index, Rectangle region, int width) {
         BufferedImage bufferedImage = null;
-        try {
-            if (imageInfo.getColorChannels() != 4) {
+        File file = new File(filename);
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            ImageReader reader = null;
+            while (readers.hasNext()) {
+                reader = readers.next();
+                if (reader.canReadRaster()) {
+                    break;
+                }
+            }
+            if (reader == null) {
+                iis.close();
                 return null;
             }
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-                ImageReader reader = null;
-                while (readers.hasNext()) {
-                    reader = readers.next();
-                    if (reader.canReadRaster()) {
-                        break;
-                    }
+            reader.setInput(iis);
+            ImageFileInformation fileInfo = new ImageFileInformation(file);
+            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
+            ImageInformation imageInfo = fileInfo.getImageInformation();
+            int imageWidth = reader.getWidth(index);
+            int requriedWidth, scale;
+            if (region != null) {
+                if (width <= 0) {
+                    requriedWidth = (int) region.getWidth();
+                    scale = 1;
+                } else {
+                    requriedWidth = width;
+                    scale = (int) region.getWidth() / width;
                 }
-                if (reader != null) {
-                    reader.setInput(iis);
-                    ImageReadParam param = reader.getDefaultReadParam();
-                    if (bounds != null) {
-                        param.setSourceRegion(bounds);
-                    }
-                    param.setSourceSubsampling(xscale, yscale, 0, 0);
-
-                    WritableRaster srcRaster = (WritableRaster) reader.readRaster(index, param);
-                    boolean isAdobe = (boolean) imageInfo.getNativeAttribute("Adobe");
-                    if ("YCCK".equals(imageInfo.getColorSpace())) {
-                        ImageConvert.ycck2cmyk(srcRaster, isAdobe);
-                    } else if (isAdobe) {
-                        ImageConvert.invertPixelValue(srcRaster);
-                    }
-                    bufferedImage = new BufferedImage(srcRaster.getWidth(), srcRaster.getHeight(), BufferedImage.TYPE_INT_RGB);
-                    WritableRaster rgbRaster = bufferedImage.getRaster();
-                    ColorSpace cmykCS;
-                    if (isAdobe) {
-                        cmykCS = ImageValue.adobeCmykColorSpace();
-                    } else {
-                        cmykCS = ImageValue.eciCmykColorSpace();
-                    }
-                    ColorSpace rgbCS = bufferedImage.getColorModel().getColorSpace();
-                    ColorConvertOp cmykToRgb = new ColorConvertOp(cmykCS, rgbCS, null);
-                    cmykToRgb.filter(srcRaster, rgbRaster);
+            } else {
+                if (width <= 0) {
+                    requriedWidth = imageWidth;
+                    scale = 1;
+                } else {
+                    requriedWidth = width;
+                    scale = imageWidth / width;
                 }
             }
+            bufferedImage = readBrokenJpgFile(reader, imageInfo, index, region, scale, scale);
+            if (bufferedImage != null) {
+                bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, requriedWidth);
+            }
+        } catch (Exception ex) {
+            MyBoxLog.error(ex.toString());
+        }
+        return bufferedImage;
+    }
+
+    public static BufferedImage readBrokenJpgFile(String filename, int index, Rectangle region, int xscale, int yscale) {
+        BufferedImage bufferedImage = null;
+        File file = new File(filename);
+        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            ImageReader reader = null;
+            while (readers.hasNext()) {
+                reader = readers.next();
+                if (reader.canReadRaster()) {
+                    break;
+                }
+            }
+            if (reader == null) {
+                iis.close();
+                return null;
+            }
+            reader.setInput(iis);
+            ImageFileInformation fileInfo = new ImageFileInformation(file);
+            ImageFileReaders.readImageFileMetaData(reader, fileInfo);
+            ImageInformation imageInfo = fileInfo.getImageInformation();
+            bufferedImage = readBrokenJpgFile(reader, imageInfo, index, region, xscale, yscale);
+        } catch (Exception ex) {
+            MyBoxLog.error(ex.toString());
+        }
+        return bufferedImage;
+    }
+
+    public static BufferedImage readBrokenJpgFile(ImageReader reader, ImageInformation imageInfo,
+            int index, Rectangle region, int xscale, int yscale) {
+        if (reader == null || imageInfo == null || imageInfo.getColorChannels() != 4) {
+            return null;
+        }
+        BufferedImage bufferedImage = null;
+        try {
+            ImageReadParam param = reader.getDefaultReadParam();
+            if (region != null) {
+                param.setSourceRegion(region);
+            }
+            param.setSourceSubsampling(xscale, yscale, 0, 0);
+            WritableRaster srcRaster = (WritableRaster) reader.readRaster(index, param);
+            boolean isAdobe = (boolean) imageInfo.getNativeAttribute("Adobe");
+            if ("YCCK".equals(imageInfo.getColorSpace())) {
+                ImageConvert.ycck2cmyk(srcRaster, isAdobe);
+            } else if (isAdobe) {
+                ImageConvert.invertPixelValue(srcRaster);
+            }
+            bufferedImage = new BufferedImage(srcRaster.getWidth(), srcRaster.getHeight(), BufferedImage.TYPE_INT_RGB);
+            WritableRaster rgbRaster = bufferedImage.getRaster();
+            ColorSpace cmykCS;
+            if (isAdobe) {
+                cmykCS = ImageValue.adobeCmykColorSpace();
+            } else {
+                cmykCS = ImageValue.eciCmykColorSpace();
+            }
+            ColorSpace rgbCS = bufferedImage.getColorModel().getColorSpace();
+            ColorConvertOp cmykToRgb = new ColorConvertOp(cmykCS, rgbCS, null);
+            cmykToRgb.filter(srcRaster, rgbRaster);
+
         } catch (Exception ex) {
             MyBoxLog.error(ex.toString());
         }

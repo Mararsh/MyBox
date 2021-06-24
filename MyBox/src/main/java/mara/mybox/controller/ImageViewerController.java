@@ -4,16 +4,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -40,12 +43,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.image.ImageClipboard;
+import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageScope;
@@ -53,6 +57,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -61,7 +66,6 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-20
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageViewerController extends BaseImageShapesController {
@@ -72,13 +76,13 @@ public class ImageViewerController extends BaseImageShapesController {
     protected FileSortMode sortMode;
 
     @FXML
-    protected TitledPane filePane, viewPane, saveAsPane, editPane, browsePane;
+    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, browsePane;
     @FXML
-    protected VBox contentBox, fileBox, saveAsBox, saveFormatsBox;
+    protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
     protected HBox operationBox;
     @FXML
-    protected FlowPane frameSelectorPane, saveFramesPane, formatsPane1, formatsPane2, formatsPane3, formatsPane4;
+    protected FlowPane saveFramesPane;
     @FXML
     protected CheckBox selectAreaCheck, deleteConfirmCheck, saveConfirmCheck;
     @FXML
@@ -88,7 +92,13 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     protected Label framesLabel;
     @FXML
-    protected RadioButton saveAllFramesRadio, gifRadio, tifRadio, pngRadio;
+    protected RadioButton saveAllFramesRadio;
+    @FXML
+    protected ControlImageFormat formatController;
+    @FXML
+    protected Button clipboardSystemLoadImageButton;
+    @FXML
+    protected ControlFileBackup backupController;
 
     public ImageViewerController() {
         baseTitle = message("ImageViewer");
@@ -100,6 +110,7 @@ public class ImageViewerController extends BaseImageShapesController {
         try {
             super.initControls();
             initFilePane();
+            initFramePane();
             initViewPane();
             initSaveAsPane();
             initEditPane();
@@ -125,6 +136,14 @@ public class ImageViewerController extends BaseImageShapesController {
                 List<String> values = Arrays.asList(message("OriginalSize"),
                         "512", "1024", "256", "128", "2048", "100", "80", "4096");
                 loadWidthBox.getItems().addAll(values);
+                int v = AppVariables.getUserConfigInt(baseName + "LoadWidth", defaultLoadWidth);
+                if (v <= 0) {
+                    loadWidth = -1;
+                    loadWidthBox.getSelectionModel().select(0);
+                } else {
+                    loadWidth = v;
+                    loadWidthBox.setValue(v + "");
+                }
                 loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -143,15 +162,6 @@ public class ImageViewerController extends BaseImageShapesController {
                         setLoadWidth();
                     }
                 });
-
-                isSettingValues = true;
-                int v = AppVariables.getUserConfigInt(baseName + "LoadWidth", defaultLoadWidth);
-                if (v <= 0) {
-                    loadWidthBox.getSelectionModel().select(0);
-                } else {
-                    loadWidthBox.getSelectionModel().select(v + "");
-                }
-                isSettingValues = false;
                 FxmlControl.setTooltip(loadWidthBox, new Tooltip(AppVariables.message("ImageLoadWidthCommnets")));
             }
 
@@ -173,6 +183,41 @@ public class ImageViewerController extends BaseImageShapesController {
                     }
                 });
                 saveConfirmCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ConfirmSave", true));
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initFramePane() {
+        try {
+            if (framePane == null) {
+                return;
+            }
+            if (imageView != null) {
+                framePane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+            if (frameSelector != null) {
+                frameSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        try {
+                            if (isSettingValues) {
+                                return;
+                            }
+                            int v = Integer.parseInt(frameSelector.getValue());
+                            if (v < 1 || v > framesNumber) {
+                                frameSelector.getEditor().setStyle(badStyle);
+                            } else {
+                                frameSelector.getEditor().setStyle(null);
+                                loadFrame(v - 1);
+                            }
+                        } catch (Exception e) {
+                            frameSelector.getEditor().setStyle(badStyle);
+                        }
+                    }
+                });
             }
 
         } catch (Exception e) {
@@ -293,7 +338,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 subItems.add(checkMenu);
             }
 
-            if (copyButton != null && copyButton.isVisible() && !copyButton.isDisabled()) {
+            if (copyButton == null || (copyButton.isVisible() && !copyButton.isDisabled())) {
                 menu = new MenuItem(message("Copy") + "  CTRL+c");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     copyAction();
@@ -484,6 +529,10 @@ public class ImageViewerController extends BaseImageShapesController {
                 saveAsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "SaveAsPane", false));
             }
 
+            if (formatController != null) {
+                formatController.setParameters(this, false);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -502,10 +551,10 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (previousButton != null) {
-                previousButton.setDisable(sourceFile == null);
+                previousButton.setDisable(imageFile() == null);
             }
             if (nextButton != null) {
-                nextButton.setDisable(sourceFile == null);
+                nextButton.setDisable(imageFile() == null);
             }
 
             String saveMode = AppVariables.getUserConfigValue(baseName + "SortMode",
@@ -600,8 +649,29 @@ public class ImageViewerController extends BaseImageShapesController {
                     selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
                 }
                 return;
+            case V:
+                if (pasteButton != null && !pasteButton.isDisabled() && pasteButton.isVisible()) {
+                    pasteAction();
+                } else if (clipboardSystemLoadImageButton != null) {
+                    loadSystemClipboardImage();
+                }
+                return;
         }
         super.controlAltHandler(event);
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+
+            if (pasteButton == null) {
+                FxmlControl.setTooltip(clipboardSystemLoadImageButton, message("LoadSystemClipboardImage") + "\nCTRL+v / ALT+v");
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     protected void checkSaveAs() {
@@ -626,8 +696,8 @@ public class ImageViewerController extends BaseImageShapesController {
         if (isSettingValues) {
             return;
         }
-        if (sourceFile != null) {
-            loadImage(sourceFile, loadWidth);
+        if (imageFile() != null) {
+            loadImageFile(imageFile(), loadWidth);
         } else if (imageView.getImage() != null) {
             loadImage(imageView.getImage(), loadWidth);
         } else if (image != null) {
@@ -649,21 +719,20 @@ public class ImageViewerController extends BaseImageShapesController {
             metaButton.setDisable(imageInformation == null);
         }
         if (deleteButton != null) {
-            deleteButton.setDisable(sourceFile == null);
+            deleteButton.setDisable(imageFile() == null);
         }
         if (renameButton != null) {
-            renameButton.setDisable(sourceFile == null);
+            renameButton.setDisable(imageFile() == null);
         }
         if (deleteConfirmCheck != null) {
-            deleteConfirmCheck.setDisable(sourceFile == null);
+            deleteConfirmCheck.setDisable(imageFile() == null);
         }
         if (previousButton != null) {
-            previousButton.setDisable(sourceFile == null);
+            previousButton.setDisable(imageFile() == null);
         }
         if (nextButton != null) {
-            nextButton.setDisable(sourceFile == null);
+            nextButton.setDisable(imageFile() == null);
         }
-
     }
 
     @Override
@@ -673,9 +742,15 @@ public class ImageViewerController extends BaseImageShapesController {
                 return false;
             }
             afterInfoLoaded();
-            if (image == null || imageView == null) {
-                return false;
+            if (imageView == null) {
+                return true;
             }
+            imageView.setPreserveRatio(true);
+            imageView.setImage(image);
+            if (image == null) {
+                return true;
+            }
+
             if (sampledView != null) {
                 if (imageInformation != null && imageInformation.isIsSampled()) {
                     FxmlControl.setTooltip(sampledView, imageInformation.sampleInformation(image));
@@ -685,29 +760,26 @@ public class ImageViewerController extends BaseImageShapesController {
                 }
             }
 
-            imageView.setPreserveRatio(true);
-            imageView.setImage(image);
-
-            if (fileBox != null && frameSelectorPane != null) {
+            if (saveAsBox != null && saveFramesPane != null) {
                 if (framesNumber <= 1) {
-                    if (fileBox.getChildren().contains(frameSelectorPane)) {
-                        fileBox.getChildren().remove(frameSelectorPane);
-                    }
                     if (saveAsBox.getChildren().contains(saveFramesPane)) {
                         saveAsBox.getChildren().remove(saveFramesPane);
                     }
 
                 } else {
-                    if (!fileBox.getChildren().contains(frameSelectorPane)) {
-                        fileBox.getChildren().add(0, frameSelectorPane);
-                    }
                     if (!saveAsBox.getChildren().contains(saveFramesPane)) {
                         saveAsBox.getChildren().add(0, saveFramesPane);
                     }
                 }
+            }
+            if (saveAllFramesRadio != null) {
                 saveAllFramesRadio.fire();
                 saveAllFramesSelected();
+            }
+            if (framesLabel != null) {
                 framesLabel.setText("/" + framesNumber);
+            }
+            if (frameSelector != null) {
                 List<String> frames = new ArrayList<>();
                 for (int i = 1; i <= framesNumber; i++) {
                     frames.add(i + "");
@@ -717,8 +789,20 @@ public class ImageViewerController extends BaseImageShapesController {
                 frameSelector.setValue((frameIndex + 1) + "");
                 isSettingValues = false;
             }
+            if (panesBox != null && framePane != null) {
+                if (framesNumber <= 1) {
+                    if (panesBox.getChildren().contains(framePane)) {
+                        panesBox.getChildren().remove(framePane);
+                    }
+                } else {
+                    if (!panesBox.getChildren().contains(framePane)) {
+                        panesBox.getChildren().add(1, framePane);
+                        framePane.setExpanded(true);
+                    }
+                }
+            }
 
-            if (sourceFile != null && nextButton != null) {
+            if (imageFile() != null && nextButton != null) {
                 makeImageNevigator();
             }
             fitSize();
@@ -737,14 +821,16 @@ public class ImageViewerController extends BaseImageShapesController {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            imageView.setImage(null);
+            if (imageView != null) {
+                imageView.setImage(null);
+            }
             alertInformation(AppVariables.message("NotSupported"));
             return false;
         }
     }
 
     public void makeImageNevigator() {
-        makeImageNevigator(sourceFile);
+        makeImageNevigator(imageFile());
     }
 
     public void makeImageNevigator(File currentfile) {
@@ -797,49 +883,51 @@ public class ImageViewerController extends BaseImageShapesController {
     }
 
     @FXML
-    public void loadFrame() {
+    @Override
+    public void playAction() {
         try {
-            if (frameSelector == null) {
-                return;
-            }
-            int v = Integer.parseInt(frameSelector.getValue());
-            if (v < 1 || v > framesNumber) {
-                frameSelector.getEditor().setStyle(badStyle);
-            } else {
-                frameSelector.getEditor().setStyle(null);
-                loadFrame(v - 1);
-            }
+            ImagesPlayController controller
+                    = (ImagesPlayController) openStage(CommonValues.ImagesPlayFxml);
+            controller.sourceFileChanged(sourceFile);
         } catch (Exception e) {
-            frameSelector.getEditor().setStyle(badStyle);
+            MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
-    public void viewFrames() {
-        loadMultipleFramesImage(sourceFile);
+    public void nextFrame() {
+        loadFrame(frameIndex + 1);
+    }
+
+    @FXML
+    public void previousFrame() {
+        loadFrame(frameIndex - 1);
     }
 
     @FXML
     public void saveAllFramesSelected() {
-        if (sourceFile != null && framesNumber > 1) {
-            saveFormatsBox.getChildren().clear();
-            saveFormatsBox.getChildren().addAll(formatsPane2);
-            if ("gif".equalsIgnoreCase(FileTools.getFileSuffix(sourceFile))) {
-                gifRadio.fire();
+        if (imageFile() != null && framesNumber > 1) {
+            formatController.formatPane.getChildren().setAll(formatController.tifRadio, formatController.gifRadio);
+            if ("gif".equalsIgnoreCase(FileTools.getFileSuffix(imageFile()))) {
+                formatController.gifRadio.fire();
             } else {
-                tifRadio.fire();
+                formatController.tifRadio.fire();
             }
         } else {
-            saveFormatsBox.getChildren().clear();
-            saveFormatsBox.getChildren().addAll(formatsPane1, formatsPane2, formatsPane3, formatsPane4);
-            pngRadio.fire();
+            formatController.formatPane.getChildren().setAll(formatController.pngRadio, formatController.jpgRadio,
+                    formatController.tifRadio, formatController.gifRadio,
+                    formatController.pcxRadio, formatController.pnmRadio,
+                    formatController.bmpRadio, formatController.wbmpRadio, formatController.icoRadio);
+            formatController.pngRadio.fire();
         }
     }
 
     @FXML
     public void saveCurrentFramesSelected() {
-        saveFormatsBox.getChildren().clear();
-        saveFormatsBox.getChildren().addAll(formatsPane1, formatsPane2, formatsPane3, formatsPane4);
+        formatController.formatPane.getChildren().setAll(formatController.pngRadio, formatController.jpgRadio,
+                formatController.tifRadio, formatController.gifRadio,
+                formatController.pcxRadio, formatController.pnmRadio,
+                formatController.bmpRadio, formatController.wbmpRadio, formatController.icoRadio);
     }
 
     @FXML
@@ -852,24 +940,43 @@ public class ImageViewerController extends BaseImageShapesController {
     }
 
     @FXML
+    public void loadSystemClipboardImage() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        Image clip = SystemTools.fetchImageInClipboard(false);
+        if (clip == null) {
+            popError(message("NoImageInClipboard"));
+            return;
+        }
+        loadImage(clip);
+    }
+
+    @FXML
     @Override
     public void nextAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
         if (nextFile != null) {
-            loadImage(nextFile.getAbsoluteFile(), loadWidth, 0);
+            loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
         }
     }
 
     @FXML
     @Override
     public void previousAction() {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
         if (previousFile != null) {
-            loadImage(previousFile.getAbsoluteFile(), loadWidth, 0);
+            loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
         }
     }
 
     @FXML
     public void viewImageAction() {
-        FxmlStage.openImageViewer(null, sourceFile);
+        FxmlStage.openImageViewer(null, imageFile());
     }
 
     @FXML
@@ -943,7 +1050,7 @@ public class ImageViewerController extends BaseImageShapesController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -996,7 +1103,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
         } catch (Exception e) {
@@ -1051,7 +1158,7 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     @Override
     public void copyAction() {
-        if (imageView == null || imageView.getImage() == null || copyButton == null) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
         synchronized (this) {
@@ -1068,19 +1175,20 @@ public class ImageViewerController extends BaseImageShapesController {
                     if (areaImage == null) {
                         areaImage = imageView.getImage();
                     }
-                    return ImageClipboard.add(areaImage) != null;
+                    return ImageClipboard.add(areaImage, ImageClipboard.ImageSource.Copy) != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     popInformation(AppVariables.message("ImageSelectionInClipBoard"));
+                    ControlImagesClipboard.updateClipboards();
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1088,14 +1196,15 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     @Override
     public void saveAction() {
-        if (imageView == null) {
+        if (imageView == null || imageView.getImage() == null
+                || (saveButton != null && saveButton.isDisabled())) {
             return;
         }
-        if (sourceFile == null) {
+        File imageFile = imageFile();
+        if (imageFile == null) {
             saveAsAction();
             return;
         }
-
         try {
             String ask = null;
             if (imageInformation != null && imageInformation.isIsScaled()) {
@@ -1131,32 +1240,41 @@ public class ImageViewerController extends BaseImageShapesController {
                 }
                 task = new SingletonTask<Void>() {
 
-                    private String filename;
-                    private Image selected;
+                    private Image targetImage;
 
                     @Override
                     protected boolean handle() {
-                        String format = FileTools.getFileSuffix(sourceFile.getName());
-                        selected = cropImage();
-                        if (selected == null) {
-                            selected = imageView.getImage();
+                        Object imageToSave = imageToSave();
+                        if (imageToSave == null) {
+                            return false;
                         }
-
-                        final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(selected);
+                        BufferedImage bufferedImage;
+                        if (imageToSave instanceof Image) {
+                            targetImage = (Image) imageToSave;
+                            bufferedImage = SwingFXUtils.fromFXImage(targetImage, null);
+                        } else if (imageToSave instanceof BufferedImage) {
+                            bufferedImage = (BufferedImage) imageToSave;
+                            targetImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                        } else {
+                            return false;
+                        }
                         if (bufferedImage == null || task == null || isCancelled()) {
                             return false;
                         }
-                        filename = sourceFile.getAbsolutePath();
+                        if (backupController != null && backupController.isBack()) {
+                            backupController.addBackup(imageFile);
+                        }
+                        String format = FileTools.getFileSuffix(imageFile.getName());
                         if (framesNumber > 1) {
-                            error = ImageFileWriters.writeFrame(sourceFile, frameIndex, bufferedImage);
+                            error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, imageFile, null);
                             ok = error == null;
                         } else {
-                            ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                            ok = ImageFileWriters.writeImageFile(bufferedImage, format, imageFile.getAbsolutePath());
                         }
                         if (!ok || task == null || isCancelled()) {
                             return false;
                         }
-                        ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(filename);
+                        ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(imageFile);
                         if (finfo == null || finfo.getImageInformation() == null) {
                             return false;
                         }
@@ -1166,9 +1284,9 @@ public class ImageViewerController extends BaseImageShapesController {
 
                     @Override
                     protected void whenSucceeded() {
-                        image = selected;
+                        image = targetImage;
                         imageView.setImage(image);
-                        popInformation(filename + "   " + AppVariables.message("Saved"));
+                        popInformation(imageFile + "   " + AppVariables.message("Saved"));
                         setImageChanged(false);
                     }
 
@@ -1176,7 +1294,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
         } catch (Exception e) {
@@ -1186,75 +1304,105 @@ public class ImageViewerController extends BaseImageShapesController {
     }
 
     public String saveAsPrefix() {
-        String name = "";
-        if (sourceFile != null) {
-            name = FileTools.getFilePrefix(sourceFile.getName());
+        String name;
+        if (imageFile() != null) {
+            name = FileTools.getFilePrefix(imageFile().getName())
+                    + (framesNumber > 1 && (saveAllFramesRadio == null || !saveAllFramesRadio.isSelected())
+                    ? "-" + message("Frame") + (frameIndex + 1) : "")
+                    + "-" + new Date().getTime();
+        } else {
+            name = new Date().getTime() + "";
         }
-        if (fileTypeGroup != null) {
+        if (formatController != null) {
+            name += "." + formatController.attributes.getImageFormat();
+        } else if (fileTypeGroup != null) {
             name += "." + ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
         }
         return name;
     }
 
+    public Object imageToSave() {
+        Image selected = cropImage();
+        if (selected == null) {
+            selected = imageView.getImage();
+        }
+        return selected;
+    }
+
     @FXML
     @Override
     public void saveAsAction() {
-        if (imageView == null) {
+        if (imageView == null || imageView.getImage() == null
+                || (saveAsButton != null && saveAsButton.isDisabled())) {
             return;
         }
-        try {
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    saveAsPrefix(), CommonFxValues.ImageExtensionFilter);
-            if (file == null) {
+        targetFile = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                saveAsPrefix(), CommonFxValues.ImageExtensionFilter);
+        if (targetFile == null) {
+            return;
+        }
+        File imageFile = imageFile();
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
-            recordFileWritten(file);
+            task = new SingletonTask<Void>() {
 
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>() {
-
-                    @Override
-                    protected boolean handle() {
-                        Image selected = cropImage();
-                        if (selected == null) {
-                            selected = imageView.getImage();
-                        }
-                        String format = FileTools.getFileSuffix(file.getName());
-                        final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(selected);
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        if (framesNumber > 1 && saveAllFramesRadio.isSelected()) {
-                            error = ImageFileWriters.writeFrame(sourceFile, frameIndex, bufferedImage, file, format);
+                @Override
+                protected boolean handle() {
+                    Object imageToSave = imageToSave();
+                    if (imageToSave == null) {
+                        return false;
+                    }
+                    BufferedImage bufferedImage;
+                    if (imageToSave instanceof Image) {
+                        bufferedImage = SwingFXUtils.fromFXImage((Image) imageToSave, null);
+                    } else if (imageToSave instanceof BufferedImage) {
+                        bufferedImage = (BufferedImage) imageToSave;
+                    } else {
+                        return false;
+                    }
+                    if (bufferedImage == null || task == null || isCancelled()) {
+                        return false;
+                    }
+                    boolean multipleFrames = imageFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
+                    if (formatController != null) {
+                        if (multipleFrames) {
+                            error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, targetFile, formatController.attributes);
                             return error == null;
                         } else {
-                            return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                            BufferedImage converted = ImageConvert.convertColorSpace(bufferedImage, formatController.attributes);
+                            return ImageFileWriters.writeImageFile(converted, formatController.attributes, targetFile.getAbsolutePath());
+                        }
+                    } else {
+                        if (multipleFrames) {
+                            error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, targetFile, null);
+                            return error == null;
+                        } else {
+                            return ImageFileWriters.writeImageFile(bufferedImage, targetFile);
                         }
                     }
+                }
 
-                    @Override
-                    protected void whenSucceeded() {
-                        popInformation(AppVariables.message("Saved"));
-                        if (sourceFile == null || saveAsType == SaveAsType.Load) {
-                            loadImage(file);
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(AppVariables.message("Saved"));
+                    recordFileWritten(targetFile);
 
-                        } else if (saveAsType == SaveAsType.Open) {
-                            FxmlStage.openImageViewer(file);
-                        }
+                    if (saveAsType == SaveAsType.Load) {
+                        sourceFileChanged(targetFile);
+
+                    } else if (saveAsType == SaveAsType.Open) {
+                        FxmlStage.openImageViewer(targetFile);
+
                     }
-
-                };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(true);
-                thread.start();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
         }
 
     }
@@ -1361,14 +1509,18 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     public void browseAction() {
         ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
-        if (sourceFile != null) {
-            controller.loadImages(sourceFile.getParentFile(), 9);
+        File file = imageFile();
+        if (file != null) {
+            controller.loadImages(file.getParentFile(), 9);
         }
     }
 
     @FXML
     @Override
     public void popAction() {
+        if (imageView.getImage() == null) {
+            return;
+        }
         ImageViewerController controller = (ImageViewerController) FxmlStage.openStage(CommonValues.ImagePopupFxml);
         operation(controller);
     }
@@ -1404,11 +1556,18 @@ public class ImageViewerController extends BaseImageShapesController {
         if (imageView == null || imageView.getImage() == null || controller == null) {
             return;
         }
+        controller.toFront();
         if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
-            if (imageChanged || (imageInformation != null && imageInformation.isIsScaled())) {
-                controller.loadImage(image);
+            if (imageChanged) {
+                controller.loadImage(imageView.getImage());
             } else {
-                controller.loadImage(imageFile(), imageInformation, image);
+                if (controller instanceof ImageSampleController || controller instanceof ImageSplitController) {
+                    controller.loadImage(imageFile(), imageInformation, imageView.getImage());
+                } else if (imageInformation != null && imageInformation.isIsScaled()) {
+                    controller.loadImage(imageView.getImage());
+                } else {
+                    controller.loadImage(imageFile(), imageInformation, imageView.getImage());
+                }
             }
             return;
         }
@@ -1437,7 +1596,7 @@ public class ImageViewerController extends BaseImageShapesController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1445,8 +1604,9 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     public void convertAction() {
         ImageConverterBatchController controller = (ImageConverterBatchController) FxmlStage.openStage(CommonValues.ImageConverterBatchFxml);
-        if (sourceFile != null) {
-            controller.tableController.addFile(sourceFile);
+        File file = imageFile();
+        if (file != null) {
+            controller.tableController.addFile(file);
         }
     }
 
@@ -1461,9 +1621,6 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     public void popFunctionsMenu(MouseEvent mouseEvent) {
         try {
-            if (image == null) {
-                return;
-            }
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
             }
@@ -1471,6 +1628,19 @@ public class ImageViewerController extends BaseImageShapesController {
             popMenu.setAutoHide(true);
 
             MenuItem menu;
+
+            menu = new MenuItem(message("Copy"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("View"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageViewerController controller = (ImageViewerController) FxmlStage.openStage(CommonValues.ImageViewerFxml);
+                operation(controller);
+            });
+            popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Manufacture"));
             menu.setOnAction((ActionEvent event) -> {
@@ -1504,10 +1674,16 @@ public class ImageViewerController extends BaseImageShapesController {
             });
             popMenu.getItems().add(menu);
 
-            if (sourceFile != null) {
+            if (imageFile() != null) {
                 menu = new MenuItem(message("Convert"));
                 menu.setOnAction((ActionEvent event) -> {
                     convertAction();
+                });
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("Browse"));
+                menu.setOnAction((ActionEvent event) -> {
+                    browseAction();
                 });
                 popMenu.getItems().add(menu);
             }
@@ -1526,16 +1702,21 @@ public class ImageViewerController extends BaseImageShapesController {
                     popMetaData();
                 });
                 popMenu.getItems().add(menu);
-                popMenu.getItems().add(new SeparatorMenuItem());
             }
 
-            if (sourceFile != null) {
-                menu = new MenuItem(message("Browse"));
-                menu.setOnAction((ActionEvent event) -> {
-                    browseAction();
-                });
-                popMenu.getItems().add(menu);
-            }
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("ImagesInMyBoxClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagesInMyBoxClipboardController.oneOpen();
+
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImagesInSystemClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImagesInSystemClipboardController.oneOpen();
+            });
+            popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("Settings"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {

@@ -354,7 +354,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -767,7 +767,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -945,7 +945,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                 = (EpidemicReportsImportExternalCSVController) openStage(CommonValues.EpidemicReportsImportExternalCSVFxml);
         controller.parent = this;
         File file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_JHU_2020924.csv",
-                "data", "Epidemic_Report_JHU_2020924.csv", false);
+                "data", "Epidemic_Report_JHU_2020924.csv");
         controller.predefined = false;
         controller.startFile(file, true, true);
     }

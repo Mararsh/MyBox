@@ -126,7 +126,7 @@ public class AlarmClockRunController extends BaseController {
             }
         };
         Thread thread = new Thread(playTask);
-        thread.setDaemon(true);
+        thread.setDaemon(false);
         thread.start();
 
     }

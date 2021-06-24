@@ -2,6 +2,7 @@ package mara.mybox.fxml;
 
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -15,9 +16,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -32,6 +36,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
@@ -73,10 +78,14 @@ import javafx.util.Duration;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.ImageBlend;
+import mara.mybox.image.PixelBlend;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
@@ -246,7 +255,7 @@ public class FxmlControl {
             }
         };
         Thread thread = new Thread(miaoTask);
-        thread.setDaemon(true);
+        thread.setDaemon(false);
         thread.start();
     }
 
@@ -264,7 +273,7 @@ public class FxmlControl {
             }
         };
         Thread thread = new Thread(miaoTask);
-        thread.setDaemon(true);
+        thread.setDaemon(false);
         thread.start();
     }
 
@@ -534,8 +543,7 @@ public class FxmlControl {
         });
     }
 
-    public static File getInternalFile(String resourceFile, String subPath,
-            String userFile) {
+    public static File getInternalFile(String resourceFile, String subPath, String userFile) {
         return getInternalFile(resourceFile, subPath, userFile, false);
     }
 
@@ -1513,7 +1521,7 @@ public class FxmlControl {
 
     public static String gaodeMap() {
         try {
-            File map = FxmlControl.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", false);
+            File map = FxmlControl.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html");
             String html = FileTools.readTexts(map);
             html = html.replace("06b9e078a51325a843dfefd57ffd876c", AppVariables.getUserConfigValue("GaoDeMapWebKey", CommonValues.GaoDeMapWebKey));
             return html;
@@ -1525,7 +1533,7 @@ public class FxmlControl {
 
     public static File tiandituFile(boolean geodetic) {
         try {
-            File map = FxmlControl.getInternalFile("/js/tianditu.html", "js", "tianditu.html", false);
+            File map = FxmlControl.getInternalFile("/js/tianditu.html", "js", "tianditu.html");
             String html = FileTools.readTexts(map);
             html = html.replace("0ddeb917def62b4691500526cc30a9b1", AppVariables.getUserConfigValue("TianDiTuWebKey", CommonValues.TianDiTuWebKey));
             if (geodetic) {
@@ -1537,6 +1545,104 @@ public class FxmlControl {
             MyBoxLog.error(e.toString());
             return null;
         }
+    }
+
+    public static void blendDemoFx(BaseController parent, Button demoButton,
+            Image foreImage, Image backImage, int x, int y, float opacity, boolean orderReversed) {
+        BufferedImage foreBI = null;
+        if (foreImage != null) {
+            foreBI = SwingFXUtils.fromFXImage(foreImage, null);
+        }
+        BufferedImage backBI = null;
+        if (backImage != null) {
+            backBI = SwingFXUtils.fromFXImage(backImage, null);
+        }
+        blendDemo(parent, demoButton, foreBI, backBI, x, y, opacity, orderReversed);
+    }
+
+    public static void blendDemo(BaseController parent, Button demoButton,
+            BufferedImage foreImage, BufferedImage backImage, int x, int y, float opacity, boolean orderReversed) {
+        if (parent != null) {
+            parent.popInformation(message("WaitAndHandling"), 6000);
+        }
+        if (demoButton != null) {
+            demoButton.setVisible(false);
+        }
+        Task demoTask = new Task<Void>() {
+            private List<File> files;
+
+            @Override
+            protected Void call() {
+                try {
+                    BufferedImage foreBI = foreImage;
+                    if (foreBI == null) {
+                        foreBI = SwingFXUtils.fromFXImage(new Image("img/About.png"), null);
+                    }
+                    BufferedImage backBI = backImage;
+                    if (backBI == null) {
+                        backBI = SwingFXUtils.fromFXImage(new Image("img/ww8.png"), null);
+                    }
+                    files = new ArrayList<>();
+                    for (String name : PixelBlend.allBlendModes()) {
+                        PixelBlend.ImagesBlendMode mode = PixelBlend.getBlendModeByName(name);
+                        if (mode == PixelBlend.ImagesBlendMode.NORMAL) {
+                            BufferedImage blended = ImageBlend.blendImages(foreBI, backBI, x, y, mode, 1f, orderReversed);
+                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
+                                    + message("Opacity") + "-1.0f.png");
+                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                                files.add(tmpFile);
+                            }
+                            if (opacity < 1f) {
+                                blended = ImageBlend.blendImages(foreBI, backBI, x, y, mode, opacity, orderReversed);
+                                tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
+                                        + message("Opacity") + "-" + opacity + "f.png");
+                                if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                                    files.add(tmpFile);
+                                }
+                            }
+                        } else {
+                            BufferedImage blended = ImageBlend.blendImages(foreBI, backBI, x, y, mode, opacity, orderReversed);
+                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
+                                    + message("Opacity") + "-" + opacity + "f.png");
+                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                                files.add(tmpFile);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.debug(e.toString());
+                }
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (demoButton != null) {
+                    demoButton.setVisible(true);
+                }
+                if (files.isEmpty()) {
+                    return;
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ImagesBrowserController controller
+                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
+                            controller.loadImages(files);
+                        } catch (Exception e) {
+                            MyBoxLog.error(e.toString());
+                        }
+                    }
+                });
+            }
+
+        };
+        Thread thread = new Thread(demoTask);
+        thread.setDaemon(false);
+        thread.start();
+
     }
 
 }

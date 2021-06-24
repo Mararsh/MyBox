@@ -21,10 +21,10 @@ import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableEpidemicReport;
-import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableLocationData;
@@ -44,6 +44,7 @@ import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
+import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
@@ -572,6 +573,9 @@ public class DerbyBase {
             }
             if (!tables.contains("Web_Favorite".toUpperCase())) {
                 new TableWebFavorite().createTable(conn);
+            }
+            if (!tables.contains("Image_Clipboard".toUpperCase())) {
+                new TableImageClipboard().createTable(conn);
             }
             return true;
         } catch (Exception e) {

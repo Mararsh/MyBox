@@ -135,7 +135,7 @@ public class ImageOCRController extends ImageViewerController {
             initImageBox();
             initPreprocessBox();
 
-            ocrOptionsController.setValues(this, false, true);
+            ocrOptionsController.setParameters(this, false, true);
 
             imageOptionsBox.disableProperty().bind(originalView.imageProperty().isNull());
             imagesBox.disableProperty().bind(originalView.imageProperty().isNull());
@@ -415,7 +415,7 @@ public class ImageOCRController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -456,7 +456,7 @@ public class ImageOCRController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -621,7 +621,7 @@ public class ImageOCRController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -792,7 +792,7 @@ public class ImageOCRController extends ImageViewerController {
 
         };
         Thread thread = new Thread(demoTask);
-        thread.setDaemon(true);
+        thread.setDaemon(false);
         thread.start();
 
     }
@@ -832,7 +832,7 @@ public class ImageOCRController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -915,7 +915,7 @@ public class ImageOCRController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1202,7 +1202,7 @@ public class ImageOCRController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -1241,7 +1241,7 @@ public class ImageOCRController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

@@ -28,6 +28,10 @@ public class StringTable {
         this.names = names;
     }
 
+    public StringTable(String title) {
+        this.title = title;
+    }
+
     public StringTable(List<String> names, String title) {
         this.names = names;
         this.title = title;
@@ -83,12 +87,12 @@ public class StringTable {
     }
 
     public void newLinkRow(String name, String link) {
+        newNameValueRow(name, "<a href=\"" + link + "\" target=_blank>" + link + "</a>");
+    }
+
+    public void newNameValueRow(String name, String value) {
         List<String> row = new ArrayList<>();
-        if (name != null && !name.isBlank()) {
-            row.addAll(Arrays.asList(message(name), "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
-        } else {
-            row.addAll(Arrays.asList("", "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
-        }
+        row.addAll(Arrays.asList(name != null && !name.isBlank() ? message(name) : "", value));
         add(row);
     }
 

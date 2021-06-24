@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.Collator;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -156,8 +158,7 @@ public class StringTools {
             int pos2 = string2.indexOf(int2 + "");
             if (pos1 != pos2
                     || (pos1 > 0 && !string1.substring(0, pos1).equals(string2.substring(0, pos2)))) {
-                Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
-                return compare.compare(string1, string2);
+                return compare(string1, string2);
             }
             if (int1 == int2) {
                 return 0;
@@ -167,9 +168,57 @@ public class StringTools {
                 return -1;
             }
         } else {
-            Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
-            return compare.compare(string1, string2);
+            return compare(string1, string2);
         }
+    }
+
+    public static int compare(String s1, String s2) {
+        if (s1 == null) {
+            return s2 == null ? 0 : -1;
+        }
+        if (s2 == null) {
+            return 1;
+        }
+        Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
+        return compare.compare(s1, s2);
+    }
+
+    public static void sort(List<String> strings, Locale locale) {
+        if (strings == null || strings.isEmpty()) {
+            return;
+        }
+        Collections.sort(strings, new Comparator<String>() {
+
+            private final Comparator<Object> compare = Collator.getInstance(locale);
+
+            @Override
+            public int compare(String f1, String f2) {
+                return compare.compare(f1, f2);
+            }
+        });
+    }
+
+    public static void sort(List<String> strings) {
+        sort(strings, Locale.getDefault());
+    }
+
+    public static void sortDesc(List<String> strings, Locale locale) {
+        if (strings == null || strings.isEmpty()) {
+            return;
+        }
+        Collections.sort(strings, new Comparator<String>() {
+
+            private final Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
+
+            @Override
+            public int compare(String f1, String f2) {
+                return 0 - compare.compare(f1, f2);
+            }
+        });
+    }
+
+    public static void sortDesc(List<String> strings) {
+        sortDesc(strings, Locale.getDefault());
     }
 
     public static String format(long data) {

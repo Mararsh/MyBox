@@ -46,7 +46,7 @@ License:    Apache License Version 2.0
                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconTipsRight.png" />
+                                <Image url="@../buttons/Red/iconTipsRight.png" />
                             </image>
                         </ImageView>
                     </children>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconPaste.png" />
+                                        <Image url="@../buttons/Red/iconPaste.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -80,7 +80,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconEqual.png" />
+                                        <Image url="@../buttons/Red/iconEqual.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -95,7 +95,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconCopy.png" />
+                                        <Image url="@../buttons/Red/iconCopy.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

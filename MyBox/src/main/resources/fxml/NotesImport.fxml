@@ -45,7 +45,7 @@ License:    Apache License Version 2.0
                                                         <CheckBox fx:id="timeCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%NotesHaveTime" />
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <Label text="%WhenSameTitleInSameNode" />
+                                                                <Label text="%WhenFileNodesExisted" />
                                                                 <RadioButton fx:id="overrideRadio" mnemonicParsing="false" selected="true" text="%Override">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="sameGroup" />
@@ -68,7 +68,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconPreview.png" />
+                                                        <Image url="@../buttons/Red/iconPreview.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -94,7 +94,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconClear.png" />
+                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

@@ -444,7 +444,7 @@ public class WebFavoritesExportController extends BaseTaskController {
             return;
         }
         try {
-            String title = node.getTitle();
+            String title = node.getTitle() + "_" + node.getNodeid();
             FileWriter bookWriter = null, bookNavWriter = null;
             File nodeFile = null;
             if (framesetNavWriter != null) {
@@ -462,10 +462,12 @@ public class WebFavoritesExportController extends BaseTaskController {
                 for (int i = 1; i < level; i++) {
                     prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
                 }
-                framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + title + "</A><BR>\n");
+                framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
             }
             if (baseName != null) {
-                title = baseName + TreeNode.NodeSeparater + title;
+                title = baseName + TreeNode.NodeSeparater + node.getTitle();
+            } else {
+                title = node.getTitle();
             }
             List<WebFavorite> favorites = tableFavoriteAddress.addresses(conn, node.getNodeid());
             if (favorites != null) {

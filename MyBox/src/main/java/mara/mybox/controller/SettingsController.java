@@ -39,7 +39,6 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigInt;
@@ -62,13 +61,13 @@ public class SettingsController extends BaseController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, mapTab, devTab;
+    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, mapTab;
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
-            copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
-            clearCurrentRootCheck, hidpiCheck, devModeCheck, splitPaneSensitiveCheck,
+            anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
+            clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
@@ -96,8 +95,6 @@ public class SettingsController extends BaseController {
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
             derbyStatus;
-    @FXML
-    protected ControlFileSelecter sourceCodesPathController;
 
     public SettingsController() {
         baseTitle = AppVariables.message("Settings");
@@ -114,7 +111,6 @@ public class SettingsController extends BaseController {
             initPdfTab();
             initImageTab();
             initMapTab();
-            initDevTab();
 
             isSettingValues = true;
             initSettingValues();
@@ -127,7 +123,6 @@ public class SettingsController extends BaseController {
 
     protected void initSettingValues() {
         try {
-            devModeCheck.setSelected(AppVariables.devMode);
             stopAlarmCheck.setSelected(AppVariables.getUserConfigBoolean("StopAlarmsWhenExit"));
             newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
 
@@ -182,7 +177,6 @@ public class SettingsController extends BaseController {
                 case Orange:
                     orangeRadio.fire();
                     break;
-                case Default:
                 case Red:
                 default:
                     redRadio.fire();
@@ -305,7 +299,7 @@ public class SettingsController extends BaseController {
             controlColorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                    checkControlsColor(newValue);
+                    checkControlsColor();
                 }
             });
 
@@ -317,7 +311,7 @@ public class SettingsController extends BaseController {
                     }
                     AppVariables.controlDisplayText = controlsTextCheck.isSelected();
                     AppVariables.setUserConfigValue("ControlDisplayText", AppVariables.controlDisplayText);
-                    refresh();
+                    refreshInterface();
                 }
             });
 
@@ -329,7 +323,7 @@ public class SettingsController extends BaseController {
                     }
                     AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
                     AppVariables.setUserConfigValue("HidpiIcons", AppVariables.hidpiIcons);
-                    refresh();
+                    refreshInterface();
                 }
             });
 
@@ -457,25 +451,23 @@ public class SettingsController extends BaseController {
 
     }
 
-    protected void checkControlsColor(Toggle s) {
+    protected void checkControlsColor() {
         try {
             if (isSettingValues) {
                 return;
             }
-            if (s == null || redRadio.equals(s)) {
-                ControlStyle.setConfigColorStyle("default");
-            } else if (pinkRadio.equals(s)) {
-                ControlStyle.setConfigColorStyle("pink");
-            } else if (lightBlueRadio.equals(s)) {
-                ControlStyle.setConfigColorStyle("lightblue");
-            } else if (blueRadio.equals(s)) {
-                ControlStyle.setConfigColorStyle("blue");
-            } else if (orangeRadio.equals(s)) {
-                ControlStyle.setConfigColorStyle("orange");
+            if (pinkRadio.isSelected()) {
+                ControlStyle.setConfigColorStyle("Pink");
+            } else if (lightBlueRadio.isSelected()) {
+                ControlStyle.setConfigColorStyle("LightBlue");
+            } else if (blueRadio.isSelected()) {
+                ControlStyle.setConfigColorStyle("Blue");
+            } else if (orangeRadio.isSelected()) {
+                ControlStyle.setConfigColorStyle("Orange");
             } else {
-                return;
+                ControlStyle.setConfigColorStyle("Red");
             }
-            refresh();
+            refreshInterface();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -497,13 +489,13 @@ public class SettingsController extends BaseController {
     @FXML
     protected void setChinese(ActionEvent event) {
         AppVariables.setLanguage("zh");
-        refresh();
+        reload();
     }
 
     @FXML
     protected void setEnglish(ActionEvent event) {
         AppVariables.setLanguage("en");
-        refresh();
+        reload();
     }
 
     @FXML
@@ -564,31 +556,6 @@ public class SettingsController extends BaseController {
             isSettingValues = true;
             jvmInput.setText(jvmM + "");
             settingsJVMButton.setDisable(true);
-            isSettingValues = false;
-
-            hidpiCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    AppVariables.disableHiDPI = hidpiCheck.isSelected();
-                    ConfigTools.writeConfigValue("DisableHidpi", AppVariables.disableHiDPI ? "true" : "false");
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                MyBox.restart();
-                            } catch (Exception e) {
-                                MyBoxLog.debug(e.toString());
-                            }
-                        }
-                    });
-                }
-            });
-            isSettingValues = true;
-            AppVariables.disableHiDPI = "true".equals(ConfigTools.readValue("DisableHidpi"));
-            hidpiCheck.setSelected(AppVariables.disableHiDPI);
             isSettingValues = false;
 
             webConnectTimeoutInput.setText(AppVariables.getUserConfigInt("WebConnectTimeout", 10000) + "");
@@ -839,7 +806,7 @@ public class SettingsController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1015,8 +982,7 @@ public class SettingsController extends BaseController {
 
             thumbnailWidthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(thumbnailWidthInput.getText());
                         if (v > 0) {
@@ -1053,14 +1019,6 @@ public class SettingsController extends BaseController {
                 }
             });
             imageWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("MaxImageSampleWidth", "4096"));
-
-            copyToSystemClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("CopyToSystemClipboard", copyToSystemClipboardCheck.isSelected());
-                }
-            });
-            copyToSystemClipboardCheck.setSelected(AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -1128,29 +1086,6 @@ public class SettingsController extends BaseController {
         gaodeWebKeyInput.setText(CommonValues.GaoDeMapWebKey);
         gaodeServiceKeyInput.setText(CommonValues.GaoDeMapServiceKey);
         setMapKeysAction();
-    }
-
-    /*
-        Dev settings
-     */
-    public void initDevTab() {
-        try {
-            sourceCodesPathController.label(message("sourceCodesPath"))
-                    .isDirectory(true).isSource(false).mustExist(true).permitNull(true)
-                    .defaultValue("win".equals(SystemTools.os()) ? "D:\\MyBox" : "/home/mara/mybox")
-                    .name("SourceCodesPath", true);
-
-            devModeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("DevMode", devModeCheck.isSelected());
-                    AppVariables.devMode = devModeCheck.isSelected();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     /*

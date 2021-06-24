@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -18,6 +19,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -29,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
@@ -40,11 +43,13 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -104,7 +109,6 @@ public class ControlWebview extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     // Listener should ignore state change from TmpState
@@ -228,53 +232,8 @@ public class ControlWebview extends BaseController {
                     if (nt == null) {
                         return;
                     }
-                    try {
-                        bottomLabel.setText(nt.getMessage());
-                        // https://stackoverflow.com/questions/3964703/can-i-add-a-new-certificate-to-the-keystore-without-restarting-the-jvm?r=SearchResults
-                        if (nt.getMessage().contains("SSL handshake failed")) {
-                            String host = new URI(webEngine.getLocation()).getHost();
-                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                            alert.setTitle(getBaseTitle());
-                            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                            stage.setAlwaysOnTop(true);
-                            stage.toFront();
-                            if (NetworkTools.isHostCertificateInstalled(host)) {
-                                alert.setContentText(host + "\n" + message("SSLInstalledButFailed"));
-                                ButtonType buttonCancel = new ButtonType(AppVariables.message("ISee"));
-                                alert.getButtonTypes().setAll(buttonCancel);
-                                alert.showAndWait();
-
-                            } else if (AppVariables.getUserConfigBoolean("AskInstallCert" + host, true)) {
-                                alert.setContentText(host + "\n" + message("SSLCertificatesAskInstall"));
-                                ButtonType buttonSure = new ButtonType(message("Sure"));
-                                ButtonType buttonCancel = new ButtonType(message("Cancel"));
-                                ButtonType buttonNoAsk = new ButtonType(message("NotAskAnyMore"));
-                                alert.getButtonTypes().setAll(buttonSure, buttonNoAsk, buttonCancel);
-                                Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() == buttonNoAsk) {
-                                    AppVariables.setUserConfigValue("AskInstallCert" + host, false);
-                                    return;
-                                } else if (result.get() == buttonCancel) {
-                                    return;
-                                }
-                                String msg = NetworkTools.installCertificateByHost(host, false);
-                                if (msg == null) {
-                                    msg = host + "\n" + message("SSLCertificateInstalled");
-                                }
-                                alert.setContentText(msg);
-                                ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
-                                alert.getButtonTypes().setAll(buttonISee);
-                                alert.showAndWait();
-                            } else {
-                                alertError(nt.getMessage());
-                            }
-
-                        }
-                    } catch (Exception e) {
-                        popError(e.toString());
-                        MyBoxLog.debug(e.toString());
-                    }
+                    bottomLabel.setText(nt.getMessage());
+                    alertError(nt.getMessage());
                 }
             });
 
@@ -590,14 +549,14 @@ public class ControlWebview extends BaseController {
         } catch (Exception e) {
             linkAddress = href;
         }
-        String finalAddress = linkAddress;
+        String finalAddress = URLDecoder.decode(linkAddress, charset);
         String name = hname;
         List<MenuItem> items = new ArrayList<>();
         boolean showName = name != null && !name.isBlank() && !name.equalsIgnoreCase(href);
         String title = message("Name") + ": " + (showName ? name + "\n" : "")
                 + message("Link") + ": " + URLDecoder.decode(href, charset)
                 + (!linkAddress.equalsIgnoreCase(href) ? "\n" + message("Address") + ": "
-                + URLDecoder.decode(linkAddress, charset) : "");
+                + finalAddress : "");
         MenuItem menu = new MenuItem(title);
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
@@ -620,6 +579,14 @@ public class ControlWebview extends BaseController {
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
+
+        if (tag.equalsIgnoreCase("img")) {
+            menu = new MenuItem(message("CopyImageToClipboards"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyImage(finalAddress, name);
+            });
+            items.add(menu);
+        }
 
         if (parentController != null && parentController instanceof WebBrowserController) {
             menu = new MenuItem(message("OpenLinkInNewTab"));
@@ -673,7 +640,7 @@ public class ControlWebview extends BaseController {
         menu = new MenuItem(message("DownloadByMyBox"));
         menu.setOnAction((ActionEvent event) -> {
             WebBrowserController controller = WebBrowserController.oneOpen();
-            controller.download(URLDecoder.decode(finalAddress, charset), name);
+            controller.download(finalAddress, name);
         });
         items.add(menu);
 
@@ -738,6 +705,69 @@ public class ControlWebview extends BaseController {
         popMenu.getItems().addAll(items);
         popMenu.show(webView, linkX, linkY);
 
+    }
+
+    protected void copyImage(String address, String name) {
+        if (address == null) {
+            return;
+        }
+        synchronized (this) {
+            SingletonTask copyTask = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        String suffix = null;
+                        if (name != null && !name.isBlank()) {
+                            suffix = FileTools.getFileSuffix(name);
+                        }
+                        String addrSuffix = FileTools.getFileSuffix(address);
+                        if (addrSuffix != null && !addrSuffix.isBlank()) {
+                            if (suffix == null || suffix.isBlank()
+                                    || !addrSuffix.equalsIgnoreCase(suffix)) {
+                                suffix = addrSuffix;
+                            }
+                        }
+                        if (suffix == null || suffix.isBlank()) {
+                            suffix = "jpg";
+                        }
+
+                        File tmpFile = HtmlTools.url2File(address);
+                        if (tmpFile == null) {
+                            return false;
+                        }
+                        File imageFile = new File(tmpFile.getAbsoluteFile() + "." + suffix);
+                        if (FileTools.rename(tmpFile, imageFile)) {
+                            BufferedImage bi = ImageFileReaders.readImage(imageFile);
+                            if (bi == null) {
+                                return false;
+                            }
+                            Image image = SwingFXUtils.toFXImage(bi, null);
+                            if (image == null) {
+                                return false;
+                            }
+                            return ImageClipboard.add(image, ImageClipboard.ImageSource.Copy, true) != null;
+                        } else {
+                            return false;
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(AppVariables.message("ImageSelectionInClipBoard"));
+                    ControlImagesClipboard.updateClipboards();
+                }
+
+            };
+            copyTask.setSelf(copyTask);
+            Thread thread = new Thread(copyTask);
+            thread.setDaemon(false);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1020,13 +1050,21 @@ public class ControlWebview extends BaseController {
     protected void links() {
         doc = webEngine.getDocument();
         if (doc == null) {
-            parentController.popInformation(message("NoData"));
+            if (parentController != null) {
+                parentController.popInformation(message("NoData"));
+            } else {
+                popInformation(message("NoData"));
+            }
             return;
         }
         try {
             NodeList aList = doc.getElementsByTagName("a");
             if (aList == null || aList.getLength() < 1) {
-                parentController.popInformation(message("NoData"));
+                if (parentController != null) {
+                    parentController.popInformation(message("NoData"));
+                } else {
+                    popInformation(message("NoData"));
+                }
                 return;
             }
             List<String> names = new ArrayList<>();
@@ -1068,20 +1106,32 @@ public class ControlWebview extends BaseController {
             }
             table.editHtml();
         } catch (Exception e) {
-            parentController.popError(e.toString());
+            if (parentController != null) {
+                parentController.popError(e.toString());
+            } else {
+                popError(e.toString());
+            }
         }
     }
 
     protected void images() {
         doc = webEngine.getDocument();
         if (doc == null) {
-            parentController.popInformation(message("NoData"));
+            if (parentController != null) {
+                parentController.popInformation(message("NoData"));
+            } else {
+                popInformation(message("NoData"));
+            }
             return;
         }
         try {
             NodeList aList = doc.getElementsByTagName("img");
             if (aList == null || aList.getLength() < 1) {
-                parentController.popInformation(message("NoData"));
+                if (parentController != null) {
+                    parentController.popInformation(message("NoData"));
+                } else {
+                    popInformation(message("NoData"));
+                }
                 return;
             }
             List<String> names = new ArrayList<>();
@@ -1122,18 +1172,30 @@ public class ControlWebview extends BaseController {
             }
             table.editHtml();
         } catch (Exception e) {
-            parentController.popError(e.toString());
+            if (parentController != null) {
+                parentController.popError(e.toString());
+            } else {
+                popError(e.toString());
+            }
         }
     }
 
     protected void toc(String html) {
         if (html == null) {
-            parentController.popInformation(message("NoData"));
+            if (parentController != null) {
+                parentController.popInformation(message("NoData"));
+            } else {
+                popInformation(message("NoData"));
+            }
             return;
         }
         String toc = HtmlTools.toc(html, 8);
         if (toc == null || toc.isBlank()) {
-            parentController.popInformation(message("NoData"));
+            if (parentController != null) {
+                parentController.popInformation(message("NoData"));
+            } else {
+                popInformation(message("NoData"));
+            }
             return;
         }
         TextEditerController c = (TextEditerController) openStage(CommonValues.TextEditerFxml);
@@ -1143,12 +1205,20 @@ public class ControlWebview extends BaseController {
 
     protected void texts(String html) {
         if (html == null) {
-            parentController.popInformation(message("NoData"));
+            if (parentController != null) {
+                parentController.popInformation(message("NoData"));
+            } else {
+                popInformation(message("NoData"));
+            }
             return;
         }
         String texts = Jsoup.parse(html).wholeText();
         if (texts == null || texts.isBlank()) {
-            parentController.popInformation(message("NoData"));
+            if (parentController != null) {
+                parentController.popInformation(message("NoData"));
+            } else {
+                popInformation(message("NoData"));
+            }
             return;
         }
         TextEditerController c = (TextEditerController) openStage(CommonValues.TextEditerFxml);

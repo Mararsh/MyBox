@@ -76,8 +76,6 @@ public class MyBoxPropertiesController extends HtmlViewerController {
                             bounds.getWidth(), bounds.getHeight(),
                             screen.getOutputScaleX(), screen.getOutputScaleY()));
 
-            addData(message("HiDPIDisabled"), AppVariables.disableHiDPI + "");
-
             addData("WebView", new WebView().getEngine().getUserAgent());
 
             addData(message("FileEncoding"), System.getProperty("file.encoding"));

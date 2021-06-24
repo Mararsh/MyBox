@@ -27,11 +27,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
-import mara.mybox.MyBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -186,6 +186,11 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.PdfViewFxml);
         });
 
+        MenuItem PdfPlay = new MenuItem(AppVariables.message("PdfPlay"));
+        PdfPlay.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.ImagesPlayFxml);
+        });
+
         MenuItem PDFAttributes = new MenuItem(AppVariables.message("PDFAttributes"));
         PDFAttributes.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.PdfAttributesFxml);
@@ -223,7 +228,7 @@ public class MyBoxController extends BaseController {
 
         MenuItem imagesCombinePdf = new MenuItem(AppVariables.message("ImagesCombinePdf"));
         imagesCombinePdf.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.ImagesCombinePdfFxml);
+            loadScene(CommonValues.ImagesEditorFxml);
         });
 
         MenuItem pdfCompressImagesBatch = new MenuItem(AppVariables.message("PdfCompressImagesBatch"));
@@ -247,12 +252,14 @@ public class MyBoxController extends BaseController {
         });
 
         pdfMenu.getItems().addAll(
-                pdfView, pdfHtmlViewer, new SeparatorMenuItem(),
+                pdfView, pdfHtmlViewer, PdfPlay, new SeparatorMenuItem(),
                 pdfConvertImagesBatch, PdfImagesConvertBatch, pdfConvertHtmlsBatch, pdfCompressImagesBatch, new SeparatorMenuItem(),
                 pdfExtractImagesBatch, pdfExtractTextsBatch, pdfOcrBatch, new SeparatorMenuItem(),
                 PdfSplitBatch, pdfMerge, imagesCombinePdf, new SeparatorMenuItem(),
                 PDFAttributes, PDFAttributesBatch
         );
+
+        Menu textsMenu = new Menu(message("Texts"));
 
         MenuItem textEditer = new MenuItem(AppVariables.message("TextEditer"));
         textEditer.setOnAction((ActionEvent event1) -> {
@@ -278,6 +285,10 @@ public class MyBoxController extends BaseController {
         TextToHtml.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.TextToHtmlFxml);
         });
+
+        textsMenu.getItems().addAll(
+                textEditer, TextConvert, TextMerge, TextReplaceBatch, TextToHtml
+        );
 
         MenuItem bytesEditer = new MenuItem(AppVariables.message("BytesEditer"));
         bytesEditer.setOnAction((ActionEvent event1) -> {
@@ -321,6 +332,16 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.HtmlSnapFxml);
         });
 
+        MenuItem WebFind = new MenuItem(AppVariables.message("WebFind"));
+        WebFind.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.WebFindFxml);
+        });
+
+        MenuItem WebElements = new MenuItem(AppVariables.message("WebElements"));
+        WebElements.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.WebElementsFxml);
+        });
+
         MenuItem HtmlMergeAsHtml = new MenuItem(AppVariables.message("HtmlMergeAsHtml"));
         HtmlMergeAsHtml.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.HtmlMergeAsHtmlFxml);
@@ -347,7 +368,7 @@ public class MyBoxController extends BaseController {
         });
 
         htmlMenu.getItems().addAll(
-                htmlEditor, HtmlSnap, new SeparatorMenuItem(),
+                htmlEditor, WebFind, WebElements, HtmlSnap, new SeparatorMenuItem(),
                 htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );
@@ -379,10 +400,63 @@ public class MyBoxController extends BaseController {
                 markdownToHtml, MarkdownToText, MarkdownToPdf
         );
 
+        Menu msMenu = new Menu(message("MicrosoftDocumentFormats"));
+
         MenuItem ExtractTextsFromMS = new MenuItem(AppVariables.message("ExtractTextsFromMS"));
         ExtractTextsFromMS.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.ExtractTextsFromMSFxml);
         });
+
+        MenuItem WordView = new MenuItem(AppVariables.message("WordView"));
+        WordView.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.WordViewFxml);
+        });
+
+        MenuItem WordToHtml = new MenuItem(AppVariables.message("WordToHtml"));
+        WordToHtml.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.WordToHtmlFxml);
+        });
+
+        MenuItem PptView = new MenuItem(AppVariables.message("PptView"));
+        PptView.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.PptViewFxml);
+        });
+
+        MenuItem PptToImages = new MenuItem(AppVariables.message("PptToImages"));
+        PptToImages.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.PptToImagesFxml);
+        });
+
+        MenuItem PptExtract = new MenuItem(AppVariables.message("PptExtract"));
+        PptExtract.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.PptExtractFxml);
+        });
+
+        MenuItem PptxMerge = new MenuItem(AppVariables.message("PptxMerge"));
+        PptxMerge.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.PptxMergeFxml);
+        });
+
+        MenuItem PptSplit = new MenuItem(AppVariables.message("PptSplit"));
+        PptSplit.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.PptSplitFxml);
+        });
+
+        MenuItem imagesCombinePPT = new MenuItem(AppVariables.message("ImagesCombinePPT"));
+        imagesCombinePPT.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.ImagesEditorFxml);
+        });
+
+        MenuItem PptPlay = new MenuItem(AppVariables.message("PptPlay"));
+        PptPlay.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.ImagesPlayFxml);
+        });
+
+        msMenu.getItems().addAll(
+                WordView, WordToHtml, new SeparatorMenuItem(),
+                PptView, PptToImages, PptExtract, PptSplit, PptxMerge, imagesCombinePPT, PptPlay, new SeparatorMenuItem(),
+                ExtractTextsFromMS
+        );
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
@@ -391,9 +465,9 @@ public class MyBoxController extends BaseController {
                 pdfMenu, new SeparatorMenuItem(),
                 markdownMenu, new SeparatorMenuItem(),
                 htmlMenu, new SeparatorMenuItem(),
-                textEditer, TextConvert, TextMerge, TextToHtml, TextReplaceBatch, new SeparatorMenuItem(),
-                bytesEditer, new SeparatorMenuItem(),
-                ExtractTextsFromMS
+                textsMenu, new SeparatorMenuItem(),
+                msMenu, new SeparatorMenuItem(),
+                bytesEditer
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
@@ -428,14 +502,24 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.ImagesBrowserFxml);
         });
 
-        MenuItem imageData = new MenuItem(AppVariables.message("ImageAnalyse"));
-        imageData.setOnAction((ActionEvent event1) -> {
+        MenuItem ImageAnalyse = new MenuItem(AppVariables.message("ImageAnalyse"));
+        ImageAnalyse.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.ImageAnalyseFxml);
+        });
+
+        MenuItem ImagesPlay = new MenuItem(AppVariables.message("ImagesPlay"));
+        ImagesPlay.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.ImagesPlayFxml);
         });
 
         MenuItem ImageManufacture = new MenuItem(AppVariables.message("ImageManufacture"));
         ImageManufacture.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.ImageManufactureFxml);
+        });
+
+        MenuItem ImagesEditor = new MenuItem(AppVariables.message("ImagesEditor"));
+        ImagesEditor.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.ImagesEditorFxml);
         });
 
         MenuItem imageConverterBatch = new MenuItem(AppVariables.message("ImageConverterBatch"));
@@ -473,25 +557,34 @@ public class MyBoxController extends BaseController {
             ColorsManageController.oneOpen(null);
         });
 
+        MenuItem ImagesInMyBoxClipboard = new MenuItem(AppVariables.message("ImagesInMyBoxClipboard"));
+        ImagesInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
+            ImagesInMyBoxClipboardController.oneOpen();
+        });
+
+        MenuItem ImagesInSystemClipboard = new MenuItem(AppVariables.message("ImagesInSystemClipboard"));
+        ImagesInSystemClipboard.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.ImagesInSystemClipboardFxml);
+        });
+
         Menu miscellaneousMenu = new Menu(AppVariables.message("Miscellaneous"));
         miscellaneousMenu.getItems().addAll(
                 convolutionKernelManager, pixelsCalculator
         );
 
         Menu manufactureBatchMenu = makeImageBatchToolsMenu();
-        Menu framesMenu = makeImageFramesMenu();
         Menu partMenu = makeImagePartMenu();
         Menu mergeMenu = makeImageMergeMenu();
         Menu csMenu = makeColorSpaceMenu();
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
-        String os = System.getProperty("os.name").toLowerCase();
         popMenu.getItems().addAll(
-                imageViewer, imagesBrowser, imageData, new SeparatorMenuItem(),
-                ImageManufacture, manufactureBatchMenu, framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
-                imageConverterBatch, imageOCR, imageOCRBatch, new SeparatorMenuItem(),
-                ManageColors, csMenu, miscellaneousMenu);
+                imageViewer, imagesBrowser, ImageAnalyse, ImagesPlay, new SeparatorMenuItem(),
+                ImageManufacture, manufactureBatchMenu, ImagesEditor, mergeMenu, partMenu, imageConverterBatch, new SeparatorMenuItem(),
+                imageOCR, imageOCRBatch, new SeparatorMenuItem(),
+                ManageColors, csMenu, new SeparatorMenuItem(),
+                ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu);
 
         popMenu.getItems().add(new SeparatorMenuItem());
         MenuItem closeMenu = new MenuItem(message("PopupClose"));
@@ -523,6 +616,11 @@ public class MyBoxController extends BaseController {
         MenuItem imageCropMenu = new MenuItem(AppVariables.message("Crop"));
         imageCropMenu.setOnAction((ActionEvent event) -> {
             loadScene(CommonValues.ImageManufactureBatchCropFxml);
+        });
+
+        MenuItem imagePasteMenu = new MenuItem(AppVariables.message("Paste"));
+        imagePasteMenu.setOnAction((ActionEvent event) -> {
+            loadScene(CommonValues.ImageManufactureBatchPasteFxml);
         });
 
         MenuItem imageColorMenu = new MenuItem(AppVariables.message("Color"));
@@ -571,41 +669,10 @@ public class MyBoxController extends BaseController {
         });
 
         Menu manufactureBatchMenu = new Menu(AppVariables.message("ImageManufactureBatch"));
-        manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu,
-                imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu, imageTextMenu,
-                imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu);
+        manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
+                imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
+                imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu);
         return manufactureBatchMenu;
-
-    }
-
-    private Menu makeImageFramesMenu() {
-        if (popMenu != null) {
-            popMenu.hide();
-        }
-
-        MenuItem imageGifViewer = new MenuItem(AppVariables.message("ImageGifViewer"));
-        imageGifViewer.setOnAction((ActionEvent event) -> {
-            loadScene(CommonValues.ImageGifViewerFxml);
-        });
-
-        MenuItem imageGifEditer = new MenuItem(AppVariables.message("ImageGifEditer"));
-        imageGifEditer.setOnAction((ActionEvent event) -> {
-            loadScene(CommonValues.ImageGifEditerFxml);
-        });
-
-        MenuItem imageTiffEditer = new MenuItem(AppVariables.message("ImageTiffEditer"));
-        imageTiffEditer.setOnAction((ActionEvent event) -> {
-            loadScene(CommonValues.ImageTiffEditerFxml);
-        });
-
-        MenuItem imageFramesViewer = new MenuItem(AppVariables.message("ImageFramesViewer"));
-        imageFramesViewer.setOnAction((ActionEvent event) -> {
-            loadScene(CommonValues.ImageFramesViewerFxml);
-        });
-
-        Menu manufactureSubMenu = new Menu(AppVariables.message("MultipleFramesImageFile"));
-        manufactureSubMenu.getItems().addAll(imageFramesViewer, imageTiffEditer, imageGifViewer, imageGifEditer);
-        return manufactureSubMenu;
 
     }
 
@@ -640,14 +707,9 @@ public class MyBoxController extends BaseController {
             popMenu.hide();
         }
 
-        MenuItem ImageCombine = new MenuItem(AppVariables.message("ImagesCombine"));
-        ImageCombine.setOnAction((ActionEvent event) -> {
-            loadScene(CommonValues.ImagesCombineFxml);
-        });
-
-        MenuItem imagesCombinePdf = new MenuItem(AppVariables.message("ImagesCombinePdf"));
-        imagesCombinePdf.setOnAction((ActionEvent event) -> {
-            loadScene(CommonValues.ImagesCombinePdfFxml);
+        MenuItem ImagesSplice = new MenuItem(AppVariables.message("ImagesSplice"));
+        ImagesSplice.setOnAction((ActionEvent event) -> {
+            loadScene(CommonValues.ImagesSpliceFxml);
         });
 
         MenuItem imageAlphaAdd = new MenuItem(AppVariables.message("ImageAlphaAdd"));
@@ -656,7 +718,7 @@ public class MyBoxController extends BaseController {
         });
 
         Menu manufactureSubMenu = new Menu(AppVariables.message("MergeImages"));
-        manufactureSubMenu.getItems().addAll(ImageCombine, imagesCombinePdf, imageAlphaAdd);
+        manufactureSubMenu.getItems().addAll(ImagesSplice, imageAlphaAdd);
         return manufactureSubMenu;
 
     }
@@ -740,16 +802,6 @@ public class MyBoxController extends BaseController {
             closeStage();
         });
 
-        MenuItem WebFind = new MenuItem(AppVariables.message("WebFind"));
-        WebFind.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.WebFindFxml);
-        });
-
-        MenuItem WebElements = new MenuItem(AppVariables.message("WebElements"));
-        WebElements.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.WebElementsFxml);
-        });
-
         MenuItem ConvertUrl = new MenuItem(AppVariables.message("ConvertUrl"));
         ConvertUrl.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.NetworkConvertUrlFxml);
@@ -779,7 +831,7 @@ public class MyBoxController extends BaseController {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
-                webBrowserHtml, WebFavorites, WebHistories, WebFind, WebElements, new SeparatorMenuItem(),
+                webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
                 QueryAddress, QueryDNSBatch, ConvertUrl, new SeparatorMenuItem(),
                 SecurityCertificates
         );
@@ -994,31 +1046,6 @@ public class MyBoxController extends BaseController {
             }
         }
 
-        MenuItem ManageLanguages = new MenuItem(AppVariables.message("ManageLanguages"));
-        ManageLanguages.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.MyBoxLanguagesFxml);
-        });
-
-        CheckMenuItem disableHidpi = new CheckMenuItem(message("DisableHiDPI"));
-        disableHidpi.setOnAction((ActionEvent event1) -> {
-            if (isSettingValues) {
-                return;
-            }
-            AppVariables.disableHiDPI = disableHidpi.isSelected();
-            ConfigTools.writeConfigValue("DisableHidpi", AppVariables.disableHiDPI ? "true" : "false");
-            Platform.runLater(() -> {
-                try {
-                    MyBox.restart();
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                }
-            });
-        });
-        isSettingValues = true;
-        AppVariables.disableHiDPI = "true".equals(ConfigTools.readValue("DisableHidpi"));
-        disableHidpi.setSelected(AppVariables.disableHiDPI);
-        isSettingValues = false;
-
         CheckMenuItem derbyServer = new CheckMenuItem(message("DerbyServerMode"));
         derbyServer.setOnAction((ActionEvent event1) -> {
             if (isSettingValues) {
@@ -1061,8 +1088,8 @@ public class MyBoxController extends BaseController {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(langItems);
-        popMenu.getItems().addAll(ManageLanguages, new SeparatorMenuItem(),
-                disableHidpi, derbyServer, new SeparatorMenuItem(),
+        popMenu.getItems().addAll(
+                derbyServer, new SeparatorMenuItem(),
                 mybox, new SeparatorMenuItem(),
                 settings);
 
@@ -1110,12 +1137,6 @@ public class MyBoxController extends BaseController {
     protected void showDataMenu(MouseEvent event) {
         hideMenu(event);
 
-        MenuItem EditCSV = new MenuItem(AppVariables.message("EditCSV"));
-        EditCSV.setOnAction((ActionEvent event1) -> {
-            DataFileCSVController c = (DataFileCSVController) loadScene(CommonValues.DataFileCSVFxml);
-            c.newSheet(3, 3);
-        });
-
         MenuItem EditExcel = new MenuItem(AppVariables.message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
             DataFileExcelController c = (DataFileExcelController) loadScene(CommonValues.DataFileExcelFxml);
@@ -1135,6 +1156,12 @@ public class MyBoxController extends BaseController {
         MenuItem ExcelMerge = new MenuItem(AppVariables.message("ExcelMerge"));
         ExcelMerge.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.DataFileExcelMergeFxml);
+        });
+
+        MenuItem EditCSV = new MenuItem(AppVariables.message("EditCSV"));
+        EditCSV.setOnAction((ActionEvent event1) -> {
+            DataFileCSVController c = (DataFileCSVController) loadScene(CommonValues.DataFileCSVFxml);
+            c.newSheet(3, 3);
         });
 
         MenuItem CsvConvert = new MenuItem(AppVariables.message("CsvConvert"));
@@ -1328,11 +1355,6 @@ public class MyBoxController extends BaseController {
         FFmpegMergeMenu.getItems().addAll(
                 FFmpegMergeImageFiles, FFmpegMergeImages);
 
-        MenuItem recordImages = new MenuItem(AppVariables.message("RecordImagesInSystemClipBoard"));
-        recordImages.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
-        });
-
         MenuItem alarmClock = new MenuItem(AppVariables.message("AlarmClock"));
         alarmClock.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.AlarmClockFxml);
@@ -1355,7 +1377,7 @@ public class MyBoxController extends BaseController {
                 screenRecorder,
                 FFmpegConversionMenu, FFmpegMergeMenu,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
-                recordImages, new SeparatorMenuItem(), alarmClock, new SeparatorMenuItem(),
+                alarmClock, new SeparatorMenuItem(),
                 GameElimniation, GameMine
         );
 
@@ -1381,7 +1403,7 @@ public class MyBoxController extends BaseController {
 
         MenuItem About = new MenuItem(AppVariables.message("About"));
         About.setOnAction((ActionEvent event1) -> {
-            openStage(CommonValues.AboutFxml);
+            FxmlStage.about();
         });
 
         MenuItem FunctionsList = new MenuItem(AppVariables.message("FunctionsList"));

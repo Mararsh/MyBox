@@ -456,7 +456,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -493,7 +493,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -530,7 +530,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -572,7 +572,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -618,7 +618,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -673,7 +673,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -944,7 +944,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 (Color) strokeColorSetController.rect.getFill());
         double x = (backImage.getWidth() - foreImage.getWidth()) / 2;
         double y = (backImage.getHeight() - foreImage.getHeight()) / 2;
-        BaseImageController.blendDemo(imageController, demoButton,
+        FxmlControl.blendDemoFx(imageController, demoButton,
                 foreImage, backImage, (int) x, (int) y, opacity, !blendTopCheck.isSelected());
     }
 

@@ -436,9 +436,6 @@ public abstract class BaseDataTableController<P> extends BaseController {
                         tableData.setAll(data);
                         isSettingValues = false;
                     }
-                    tableView.refresh();
-                    checkSelected();
-                    setPagination();
                     postLoadedTableData();
                 }
             };
@@ -449,12 +446,15 @@ public abstract class BaseDataTableController<P> extends BaseController {
             }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
 
     public void postLoadedTableData() {
+        tableView.refresh();
+        checkSelected();
+        setPagination();
         if (queryConditionsLabel != null) {
             queryConditionsLabel.setText(queryConditionsString);
         }
@@ -570,10 +570,14 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     refreshAction();
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            } else {
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -616,10 +620,14 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     }
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            } else {
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -677,10 +685,14 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     }
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            } else {
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -766,10 +778,14 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     refreshAction();
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            } else {
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -804,10 +820,14 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     FxmlStage.openTextEditer(null, file);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            } else {
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

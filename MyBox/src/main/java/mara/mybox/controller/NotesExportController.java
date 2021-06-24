@@ -414,7 +414,7 @@ public class NotesExportController extends BaseTaskController {
             return;
         }
         try {
-            String bookName = book.getName();
+            String bookName = book.getName() + "_" + book.getNbid();
             FileWriter bookWriter = null, bookNavWriter = null;
             File bookFile = null;
             if (framesetNavWriter != null) {
@@ -432,10 +432,12 @@ public class NotesExportController extends BaseTaskController {
                 for (int i = 1; i < level; i++) {
                     prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
                 }
-                framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + bookName + "</A><BR>\n");
+                framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + book.getName() + "</A><BR>\n");
             }
             if (baseName != null) {
-                bookName = baseName + NotebooksSeparater + bookName;
+                bookName = baseName + NotebooksSeparater + book.getName();
+            } else {
+                bookName = book.getName();
             }
             List<Note> notes = tableNote.notes(conn, book.getNbid());
             if (notes != null) {

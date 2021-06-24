@@ -419,7 +419,7 @@ public class DataExportController extends BaseTaskController {
             };
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

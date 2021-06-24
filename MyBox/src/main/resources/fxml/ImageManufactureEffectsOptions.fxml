@@ -47,7 +47,7 @@
                               <Label text="%Algorithm" />
                                 <ImageView fx:id="quanTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconTips.png" />
+                                        <Image url="@../buttons/Red/iconTips.png" />
                                     </image>
                                 </ImageView>
                      </children>
@@ -125,7 +125,7 @@
                         <CheckBox fx:id="valueCheck" mnemonicParsing="false" text="CheckBox" />
                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconTips.png" />
+                                <Image url="@../buttons/Red/iconTips.png" />
                             </image>
                         </ImageView>
                         <Button fx:id="button" mnemonicParsing="false" text="Button" />

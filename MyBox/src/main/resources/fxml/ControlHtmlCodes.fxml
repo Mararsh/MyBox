@@ -18,11 +18,12 @@ License:    Apache License Version 2.0
     <children>
         <FlowPane alignment="TOP_RIGHT" hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
+            <CheckBox fx:id="wrapCheck" mnemonicParsing="false" text="%Wrap" />
             <Button fx:id="editButton" layoutX="477.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconEdit.png" />
+                        <Image url="@../buttons/Red/iconEdit.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -31,7 +32,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconClear.png" />
+                                <Image url="@../buttons/Red/iconClear.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -40,7 +41,7 @@ License:    Apache License Version 2.0
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconPaste.png" />
+                        <Image url="@../buttons/Red/iconPaste.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -49,7 +50,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconMeta.png" />
+                                <Image url="@../buttons/Red/iconMeta.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -58,7 +59,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconHeader.png" />
+                                <Image url="@../buttons/Red/iconHeader.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -67,7 +68,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconList.png" />
+                                <Image url="@../buttons/Red/iconList.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -76,7 +77,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconSplit.png" />
+                                <Image url="@../buttons/Red/iconSplit.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -85,7 +86,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconPicSmall.png" />
+                                <Image url="@../buttons/Red/iconPicSmall.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -94,7 +95,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconLink.png" />
+                                <Image url="@../buttons/Red/iconLink.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -103,7 +104,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconP.png" />
+                                <Image url="@../buttons/Red/iconP.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -112,7 +113,7 @@ License:    Apache License Version 2.0
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconCharacter.png" />
+                        <Image url="@../buttons/Red/iconCharacter.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -121,14 +122,14 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconBr.png" />
+                                <Image url="@../buttons/Red/iconBr.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
             </children>
         </FlowPane>
-        <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
+        <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" wrapText="true" VBox.vgrow="ALWAYS" />
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

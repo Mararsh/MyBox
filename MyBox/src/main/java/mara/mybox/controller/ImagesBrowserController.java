@@ -46,7 +46,7 @@ import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.fxml.TableImageCell;
+import mara.mybox.fxml.TableImageInfoCell;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
@@ -327,7 +327,7 @@ public class ImagesBrowserController extends ImageViewerController {
                             ImageInformation info = tableData.get(i);
                             ImageInformation newInfo = saveRotation(info, rotateAngle);
                             if (displayMode == DisplayMode.ImagesGrid) {
-                                newInfo.loadImage(thumbWidth);
+                                newInfo.loadThumbnail(thumbWidth);
                             } else if (displayMode == DisplayMode.ThumbnailsList) {
                                 newInfo.loadThumbnail();
                             }
@@ -339,7 +339,7 @@ public class ImagesBrowserController extends ImageViewerController {
                             ImageInformation info = tableData.get(index);
                             ImageInformation newInfo = saveRotation(info, rotateAngle);
                             if (displayMode == DisplayMode.ImagesGrid) {
-                                newInfo.loadImage(thumbWidth);
+                                newInfo.loadThumbnail(thumbWidth);
                             } else if (displayMode == DisplayMode.ThumbnailsList) {
                                 newInfo.loadThumbnail();
                             }
@@ -355,7 +355,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     }
                     try {
                         File file = info.getImageFileInformation().getFile();
-                        BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
+                        BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
                         bufferedImage = ImageManufacture.rotateImage(bufferedImage, (int) rotateAngle);
                         ImageFileWriters.writeImageFile(bufferedImage, file);
                         ImageInformation newInfo = loadImageInfo(file);
@@ -389,14 +389,14 @@ public class ImagesBrowserController extends ImageViewerController {
                             }
                         }
                     }
-                    popInformation(message("Saved"));
+                    popSaved();
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -634,7 +634,7 @@ public class ImagesBrowserController extends ImageViewerController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -690,7 +690,7 @@ public class ImagesBrowserController extends ImageViewerController {
 
             ImageInformation imageInfo = tableData.get(i);
             File file = imageInfo.getImageFileInformation().getFile();
-            iView.setImage(imageInfo.loadImage(thumbWidth));
+            iView.setImage(imageInfo.loadThumbnail(thumbWidth));
 
             String title = file.getName();
             if (imageInfo.isIsMultipleFrames()) {
@@ -711,7 +711,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     return;
                 }
                 currentIndex = index;
-                loadImage(file, 0, loadWidth);
+                loadImageFile(file, 0, loadWidth);
                 if (selectedImages.contains(imageInfo)) {
                     selectedImages.remove(imageInfo);
                     vbox.setStyle(null);
@@ -732,7 +732,7 @@ public class ImagesBrowserController extends ImageViewerController {
                 if (loadOnMousePassCheck.isSelected()) {
                     currentIndex = index;
                     filenameLabel.setText(file.getAbsolutePath());
-                    loadImage(file, 0, loadWidth);
+                    loadImageFile(file, 0, loadWidth);
                 }
             });
 
@@ -988,7 +988,7 @@ public class ImagesBrowserController extends ImageViewerController {
             if (displayMode == DisplayMode.ThumbnailsList) {
                 imageColumn = new TableColumn<>(AppVariables.message("Image"));
                 imageColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
-                imageColumn.setCellFactory(new TableImageCell());
+                imageColumn.setCellFactory(new TableImageInfoCell());
                 imageColumn.setPrefWidth(110);
 
                 loadColumn = new TableColumn<>(AppVariables.message("LoadedSize"));
@@ -1057,7 +1057,7 @@ public class ImagesBrowserController extends ImageViewerController {
                         if (event.getClickCount() > 1) {
                             FxmlStage.openImageViewer(null, file);
                         } else {
-                            loadImage(file, 0, loadWidth);
+                            loadImageFile(file, 0, loadWidth);
                         }
                     }
                 }
@@ -1191,7 +1191,7 @@ public class ImagesBrowserController extends ImageViewerController {
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
         } catch (Exception e) {
@@ -1216,13 +1216,13 @@ public class ImagesBrowserController extends ImageViewerController {
 
     private ImageInformation loadImageInfo(File file) {
         ImageInformation imageInfo;
-        ImageFileInformation finfo = ImageInformation.loadImageFileInformation(file);
+        ImageFileInformation finfo = ImageInformation.readImageFileInformation(file);
         if (finfo == null) {
             return null;
         }
         imageInfo = finfo.getImageInformation();
         if (displayMode != DisplayMode.FilesList) {
-            ImageInformation.loadImage(imageInfo, thumbWidth);
+            imageInfo.loadThumbnail(thumbWidth);
         }
         return imageInfo;
     }
@@ -1532,6 +1532,7 @@ public class ImagesBrowserController extends ImageViewerController {
 
     @Override
     public ImagesBrowserController refresh() {
+        super.refreshInterface();
         makeImagesNevigator(true);
         return this;
     }

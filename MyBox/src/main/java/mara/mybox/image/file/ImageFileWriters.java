@@ -26,7 +26,6 @@ import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
-import static mara.mybox.image.file.ImageTiffFile.getWriterMeta;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.CommonValues;
 import net.sf.image4j.codec.ico.ICOEncoder;
@@ -59,46 +58,46 @@ public class ImageFileWriters {
         }
     }
 
-    public static boolean writeImageFile(BufferedImage image, File outFile) {
+    public static boolean writeImageFile(BufferedImage image, File targetFile) {
         try {
-            return writeImageFile(image, outFile.getAbsolutePath());
+            return writeImageFile(image, targetFile.getAbsolutePath());
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
     }
 
-    public static boolean writeImageFile(BufferedImage image, String outFile) {
+    public static boolean writeImageFile(BufferedImage image, String targetFile) {
         try {
-            return writeImageFile(image, FileTools.getFileSuffix(outFile), outFile);
+            return writeImageFile(image, FileTools.getFileSuffix(targetFile), targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
     }
 
-    public static boolean writeImageFile(BufferedImage image, String format, String outFile) {
-        if (image == null || outFile == null) {
+    public static boolean writeImageFile(BufferedImage image, String format, String targetFile) {
+        if (image == null || targetFile == null) {
             return false;
         }
         try {
             if (format == null || !CommonValues.SupportedImages.contains(format)) {
-                format = "png";
+                format = FileTools.getFileSuffix(targetFile);
             }
             format = format.toLowerCase();
-            ImageAttributes attributes = attributes(image, format);
+            ImageAttributes attributes = new ImageAttributes(image, format);
             switch (format) {
                 case "jpx":
                 case "jpeg2000":
                 case "jpeg 2000":
                 case "jp2":
                 case "jpm":
-                    return ImageIO.write(image, "JPEG2000", new File(outFile));
+                    return ImageIO.write(image, "JPEG2000", new File(targetFile));
                 case "wbmp":
                     image = ImageBinary.byteBinary(image);
                     break;
             }
-            return writeImageFile(image, attributes, outFile);
+            return writeImageFile(image, attributes, targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
@@ -141,48 +140,51 @@ public class ImageFileWriters {
         }
     }
 
-    public static boolean writeImageFile(BufferedImage image, ImageAttributes attributes, String outFile) {
-        if (image == null || attributes == null || outFile == null) {
+    // Not convert color space
+    public static boolean writeImageFile(BufferedImage image, ImageAttributes attributes, String targetFile) {
+        if (image == null || targetFile == null) {
             return false;
+        }
+        if (attributes == null) {
+            return writeImageFile(image, targetFile);
         }
         try {
             String targetFormat = attributes.getImageFormat().toLowerCase();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-                return writeIcon(image, attributes, new File(outFile));
+                return writeIcon(image, attributes.getWidth(), new File(targetFile));
             }
-            BufferedImage checked = ImageManufacture.checkAlpha(image, targetFormat);
+            BufferedImage targetImage = ImageManufacture.checkAlpha(image, targetFormat);
             ImageWriter writer = getWriter(targetFormat);
             ImageWriteParam param = getWriterParam(attributes, writer);
-            IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, checked, writer, param);
+            IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, targetImage, writer, param);
             File tmpFile = FileTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
-                writer.write(metaData, new IIOImage(checked, null, metaData), param);
+                writer.write(metaData, new IIOImage(targetImage, null, metaData), param);
                 out.flush();
                 writer.dispose();
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
                 return false;
             }
-            File file = new File(outFile);
+            File file = new File(targetFile);
             return FileTools.rename(tmpFile, file);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
-
     }
 
-    public static boolean writeIcon(BufferedImage image, ImageAttributes attributes, File targetFile) {
+    public static boolean writeIcon(BufferedImage image, int width, File targetFile) {
         try {
-            if (image == null || targetFile == null || attributes == null) {
+            if (image == null || targetFile == null) {
                 return false;
             }
-            int width = attributes.getWidth();
-            if (width <= 0) {
-                width = Math.min(512, image.getWidth());
+            int targetWidth = width;
+            if (targetWidth <= 0) {
+                targetWidth = Math.min(512, image.getWidth());
             }
-            BufferedImage scaled = ImageManufacture.scaleImageWidthKeep(image, width);
+            BufferedImage scaled = ImageManufacture.scaleImageWidthKeep(image, targetWidth);
             ICOEncoder.write(scaled, targetFile);
             return true;
         } catch (Exception e) {
@@ -191,81 +193,91 @@ public class ImageFileWriters {
         }
     }
 
-    public static String writeFrame(File sourcefile, int targetIndex, BufferedImage image) {
-        return writeFrame(sourcefile, targetIndex, image, sourcefile, FileTools.getFileSuffix(sourcefile));
+    public static String writeFrame(File sourcefile, int frameIndex, BufferedImage frameImage) {
+        return writeFrame(sourcefile, frameIndex, frameImage, sourcefile, null);
     }
 
-    public static String writeFrame(File sourcefile, int targetIndex, BufferedImage image,
-            File targetFile, String targetFormat) {
+    // Convert color space if inAttributes is not null
+    public static String writeFrame(File sourcefile, int frameIndex, BufferedImage frameImage,
+            File targetFile, ImageAttributes inAttributes) {
         try {
-            if (image == null || sourcefile == null || !sourcefile.exists()
-                    || targetFile == null || targetFormat == null || targetIndex < 0) {
+            if (frameImage == null || sourcefile == null || !sourcefile.exists()
+                    || targetFile == null || frameIndex < 0) {
                 return "InvalidParemeters";
             }
+            String targetFormat;
+            ImageAttributes targetAttributes = inAttributes;
+            if (targetAttributes == null) {
+                targetFormat = FileTools.getFileSuffix(targetFile.getName()).toLowerCase();
+                targetAttributes = attributes(frameImage, targetFormat);
+            } else {
+                targetFormat = inAttributes.getImageFormat().toLowerCase();
+            }
             if (!CommonValues.MultiFramesImages.contains(targetFormat)) {
-                return writeImageFile(image, targetFormat, targetFile.getAbsolutePath()) ? null : "Failed";
+                return writeImageFile(frameImage, targetAttributes, targetFile.getAbsolutePath()) ? null : "Failed";
             }
-            String sourceFormat = FileTools.getFileSuffix(sourcefile);
-            if (sourceFormat == null || !CommonValues.SupportedImages.contains(sourceFormat)) {
-                sourceFormat = "png";
-            }
-            List<ImageInformation> imagesInfo = null;
-            boolean targetGif = "gif".equalsIgnoreCase(targetFormat);
-            if (targetGif) {
+            List<ImageInformation> gifInfos = null;
+            if ("gif".equals(targetFormat)) {
                 ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(sourcefile);
                 if (imageFileInformation == null || imageFileInformation.getImagesInformation() == null) {
                     return "InvalidData";
                 }
-                imagesInfo = imageFileInformation.getImagesInformation();
+                gifInfos = imageFileInformation.getImagesInformation();
             }
-            ImageAttributes attributes = attributes(image, targetFormat);
-            ImageReader reader = ImageFileReaders.getReader(sourceFormat);
             File tmpFile = FileTools.getTempFile();
-            try ( BufferedInputStream bin = new BufferedInputStream(new FileInputStream(sourcefile));
-                     ImageInputStream in = ImageIO.createImageInputStream(bin)) {
-                reader.setInput(in, false);
-                try ( BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                         ImageOutputStream out = ImageIO.createImageOutputStream(bout)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(sourcefile)))) {
+                ImageReader reader = ImageFileReaders.getReader(iis);
+                if (reader == null) {
+                    return "InvalidData";
+                }
+                reader.setInput(iis, false);
+                try ( ImageOutputStream out = ImageIO.createImageOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)))) {
                     int readIndex = 0, duration;
                     ImageWriter writer = getWriter(targetFormat);
+                    if (writer == null) {
+                        return "InvalidData";
+                    }
                     writer.setOutput(out);
-                    ImageWriteParam param = getWriterParam(attributes, writer);
+                    ImageWriteParam param = getWriterParam(targetAttributes, writer);
                     writer.prepareWriteSequence(null);
                     while (true) {
-                        BufferedImage frame;
-                        if (readIndex == targetIndex) {
-                            frame = image;
+                        BufferedImage bufferedImage;
+                        if (readIndex == frameIndex) {
+                            bufferedImage = frameImage;
                         } else {
                             try {
-                                frame = reader.read(readIndex);
+                                bufferedImage = reader.read(readIndex);
                             } catch (Exception e) {
                                 if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                                     break;
                                 }
-                                frame = ImageFileReaders.readBrokenImage(e, sourcefile, readIndex);
+                                bufferedImage = ImageFileReaders.readBrokenImage(e, sourcefile.getAbsolutePath(), readIndex, null, -1);
                             }
                         }
-                        if (frame == null) {
+                        if (bufferedImage == null) {
                             break;
                         }
-                        if (targetGif) {
+                        BufferedImage targetFrame = bufferedImage;
+                        IIOMetadata metaData;
+                        if (inAttributes != null) {
+                            targetFrame = ImageConvert.convertColorSpace(targetFrame, inAttributes);
+                        } else {
+                            targetFrame = ImageManufacture.checkAlpha(bufferedImage, targetFormat);
+                        }
+                        metaData = getWriterMetaData(targetFormat, targetAttributes, targetFrame, writer, param);
+                        if (gifInfos != null) {
                             duration = 500;
                             try {
-                                Object d = imagesInfo.get(readIndex).getNativeAttribute("delayTime");
+                                Object d = gifInfos.get(readIndex).getNativeAttribute("delayTime");
                                 if (d != null) {
                                     duration = Integer.valueOf((String) d) * 10;
                                 }
                             } catch (Exception e) {
                             }
-                            GIFImageMetadata metaData = (GIFImageMetadata) writer.getDefaultImageMetadata(
-                                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-                            ImageGifFile.getParaMeta(duration, true, param, metaData);
-                            writer.writeToSequence(new IIOImage(frame, null, metaData), param);
-                        } else {
-                            frame = ImageConvert.convertColorType(frame, attributes);
-                            IIOMetadata metaData = getWriterMeta(attributes, frame, writer, param);
-                            writer.writeToSequence(new IIOImage(frame, null, metaData), param);
+                            GIFImageMetadata gifMetaData = (GIFImageMetadata) metaData;
+                            ImageGifFile.getParaMeta(duration, true, param, gifMetaData);
                         }
+                        writer.writeToSequence(new IIOImage(targetFrame, null, metaData), param);
                         readIndex++;
                     }
                     writer.endWriteSequence();

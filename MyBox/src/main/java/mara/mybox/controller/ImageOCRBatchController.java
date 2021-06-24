@@ -72,7 +72,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     @Override
     public void initOptionsSection() {
         try {
-            ocrOptionsController.setValues(this, true, true);
+            ocrOptionsController.setParameters(this, true, true);
 
             scale = 1.0f;
             scaleSelector.getItems().addAll(Arrays.asList(

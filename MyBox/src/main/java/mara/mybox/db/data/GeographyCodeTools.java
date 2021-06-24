@@ -1194,9 +1194,9 @@ public class GeographyCodeTools {
         }
         try {
             conn.setAutoCommit(false);
-            File file = FxmlControl.getInternalFile("/data/db/Geography_Code_global_internal.csv", "data", "Geography_Code_global_internal.csv", false);
+            File file = FxmlControl.getInternalFile("/data/db/Geography_Code_global_internal.csv", "data", "Geography_Code_global_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_countries_internal.csv", "data", "Geography_Code_countries_internal.csv", false);
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_countries_internal.csv", "data", "Geography_Code_countries_internal.csv");
             importInternalCSV(conn, loading, file, true);
             if (!AppVariables.isChinese()) {
                 try {
@@ -1206,13 +1206,13 @@ public class GeographyCodeTools {
                     MyBoxLog.debug(e.toString());
                 }
             }
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_provinces_internal.csv", "data", "Geography_Code_china_provinces_internal.csv", false);
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_provinces_internal.csv", "data", "Geography_Code_china_provinces_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_cities_internal.csv", "data", "Geography_Code_china_cities_internal.csv", false);
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_cities_internal.csv", "data", "Geography_Code_china_cities_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_counties_internal.csv", "data", "Geography_Code_china_counties_internal.csv", false);
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_counties_internal.csv", "data", "Geography_Code_china_counties_internal.csv");
             importInternalCSV(conn, loading, file, true);
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_special.csv", "data", "Geography_Code_special.csv", false);
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_special.csv", "data", "Geography_Code_special.csv");
             importInternalCSV(conn, loading, file, true);
             conn.commit();
         } catch (Exception e) {

@@ -159,7 +159,11 @@ public class WebBrowserController extends BaseController {
                     }
                 }
             } else {
-                dname = FileTools.getName(address);
+                dname = address;
+            }
+            int pos = dname.lastIndexOf("/");
+            if (pos >= 0) {
+                dname = (pos < dname.length() - 1) ? dname.substring(pos + 1) : "";
             }
             File dnFile = chooseSaveFile(VisitHistory.FileType.All, dname);
             if (dnFile == null) {
@@ -183,7 +187,7 @@ public class WebBrowserController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -262,8 +266,7 @@ public class WebBrowserController extends BaseController {
             controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
-            controller.getMyStage().requestFocus();
+            controller.toFront();
         }
         return controller;
     }

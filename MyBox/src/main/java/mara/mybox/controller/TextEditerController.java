@@ -1,18 +1,13 @@
 package mara.mybox.controller;
 
-import java.nio.charset.Charset;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.Tooltip;
-import javafx.scene.text.Font;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
@@ -33,66 +28,6 @@ public class TextEditerController extends BaseFileEditerController {
     @Override
     public void setFileType() {
         setTextType();
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-            initCharsetTab();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void initCharsetTab() {
-        if (encodePane == null) {
-            return;
-        }
-        encodePane.expandedProperty().addListener(
-                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    AppVariables.setUserConfigValue(baseName + "EncodePane", encodePane.isExpanded());
-                });
-        encodePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "EncodePane", true));
-
-        Tooltip tips = new Tooltip(AppVariables.message("EncodeComments"));
-        tips.setFont(new Font(16));
-        FxmlControl.setTooltip(encodeBox, tips);
-
-        List<String> setNames = TextTools.getCharsetNames();
-        encodeBox.getItems().addAll(setNames);
-        encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                changeCurrentCharset();
-            }
-        });
-
-        if (targetBox != null) {
-            targetBox.getItems().addAll(setNames);
-            targetBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    targetInformation.setCharset(Charset.forName(newValue));
-                    if ("UTF-8".equals(newValue) || "UTF-16BE".equals(newValue)
-                            || "UTF-16LE".equals(newValue) || "UTF-32BE".equals(newValue)
-                            || "UTF-32LE".equals(newValue)) {
-                        targetBomCheck.setDisable(false);
-                    } else {
-                        targetBomCheck.setDisable(true);
-                        if ("UTF-16".equals(newValue) || "UTF-32".equals(newValue)) {
-                            targetBomCheck.setSelected(true);
-                        } else {
-                            targetBomCheck.setSelected(false);
-                        }
-                    }
-                }
-            });
-
-            tips = new Tooltip(AppVariables.message("BOMcomments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setTooltip(targetBomCheck, tips);
-        }
     }
 
     @Override
@@ -128,15 +63,6 @@ public class TextEditerController extends BaseFileEditerController {
             targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    protected void changeCurrentCharset() {
-        sourceInformation.setCharset(Charset.forName(encodeBox.getSelectionModel().getSelectedItem()));
-        charsetByUser = !isSettingValues;
-        if (!isSettingValues && sourceFile != null) {
-            openFile(sourceFile);
         }
     }
 

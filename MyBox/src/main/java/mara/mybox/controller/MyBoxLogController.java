@@ -40,7 +40,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
     @FXML
     protected TableColumn<MyBoxLog, Date> timeColumn;
     @FXML
-    protected CheckBox popCheck;
+    protected CheckBox popCheck, debugSaveCheck, debugDetailedCheck;
 
     public MyBoxLogController() {
         baseTitle = message("MyBoxLogs");
@@ -105,6 +105,24 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     AppVariables.popErrorLogs = popCheck.isSelected();
+                }
+            });
+
+            debugSaveCheck.setSelected(AppVariables.saveDebugLogs);
+            debugSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.saveDebugLogs = debugSaveCheck.isSelected();
+                    AppVariables.setUserConfigValue("SaveDebugLogs", AppVariables.saveDebugLogs);
+                }
+            });
+
+            debugDetailedCheck.setSelected(AppVariables.detailedDebugLogs);
+            debugDetailedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.detailedDebugLogs = debugDetailedCheck.isSelected();
+                    AppVariables.setUserConfigValue("DetailedDebugLogs", AppVariables.detailedDebugLogs);
                 }
             });
 

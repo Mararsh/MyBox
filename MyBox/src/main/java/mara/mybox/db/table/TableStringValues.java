@@ -3,6 +3,7 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -152,30 +153,30 @@ public class TableStringValues extends DerbyBase {
             String sql = " SELECT * FROM String_Values WHERE key_name='"
                     + stringValue(name) + "' ORDER BY create_time DESC";
             int count = 0;
+            List<Timestamp> times = new ArrayList<>();
             try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     if (++count > max) {
                         break;
                     }
                     records.add(results.getString("string_value"));
+                    times.add(results.getTimestamp("create_time"));
                 }
             }
             if (count > max) {
                 conn.setAutoCommit(false);
                 sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name) + "'";
                 statement.executeUpdate(sql);
-                long timeBase = new Date().getTime() - 100000;
                 for (int i = 0; i < records.size(); i++) {
                     sql = "INSERT INTO String_Values(key_name, string_value , create_time) VALUES('"
                             + stringValue(name) + "', '" + stringValue(records.get(i)) + "', '"
-                            + DateTools.datetimeToString(timeBase + i * 1000) + "')";
+                            + DateTools.datetimeToString(times.get(i)) + "')";
                     statement.executeUpdate(sql);
                 }
                 conn.commit();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-
         }
         return records;
     }

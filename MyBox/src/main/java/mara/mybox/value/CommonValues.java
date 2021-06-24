@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.4.4";
-    public static final String AppVersionDate = "2021-5-15";
+    public static final String AppVersion = "6.4.5";
+    public static final String AppVersionDate = "2021-6-24";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -48,11 +48,16 @@ public class CommonValues {
     public static final String PdfImagesConvertBatchFxml = "/fxml/PdfImagesConvertBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
     public static final String PdfOCRBatchFxml = "/fxml/PdfOCRBatch.fxml";
-    public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
     public static final String ExtractTextsFromMSFxml = "/fxml/ExtractTextsFromMS.fxml";
-    public static final String AboutFxml = "/fxml/About.fxml";
+    public static final String WordViewFxml = "/fxml/WordView.fxml";
+    public static final String WordToHtmlFxml = "/fxml/WordToHtml.fxml";
+    public static final String PptViewFxml = "/fxml/PptView.fxml";
+    public static final String PptToImagesFxml = "/fxml/PptToImages.fxml";
+    public static final String PptExtractFxml = "/fxml/PptExtract.fxml";
+    public static final String PptxMergeFxml = "/fxml/PptxMerge.fxml";
+    public static final String PptSplitFxml = "/fxml/PptSplit.fxml";
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String DocumentsFxml = "/fxml/Documents.fxml";
@@ -82,6 +87,7 @@ public class CommonValues {
     public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
     public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
     public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
+    public static final String ImageManufactureBatchPasteFxml = "/fxml/ImageManufactureBatchPaste.fxml";
     public static final String ImageManufactureBatchColorFxml = "/fxml/ImageManufactureBatchColor.fxml";
     public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
     public static final String ImageManufactureBatchEnhancementFxml = "/fxml/ImageManufactureBatchEnhancement.fxml";
@@ -92,15 +98,13 @@ public class CommonValues {
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
     public static final String ImageTextFxml = "/fxml/ImageText.fxml";
-    public static final String ImagesCombineFxml = "/fxml/ImagesCombine.fxml";
+    public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
     public static final String ImageSampleFxml = "/fxml/ImageSample.fxml";
+    public static final String ImagesEditorFxml = "/fxml/ImagesEditor.fxml";
+    public static final String ImagesPlayFxml = "/fxml/ImagesPlay.fxml";
     public static final String ImagesBlendFxml = "/fxml/ImagesBlend.fxml";
-    public static final String ImageGifViewerFxml = "/fxml/ImageGifViewer.fxml";
-    public static final String ImageGifEditerFxml = "/fxml/ImageGifEditer.fxml";
-    public static final String ImageTiffEditerFxml = "/fxml/ImageTiffEditer.fxml";
-    public static final String ImageFramesViewerFxml = "/fxml/ImageFramesViewer.fxml";
     public static final String ImageStatisticFxml = "/fxml/ImageStatistic.fxml";
     public static final String ImageAlphaExtractBatchFxml = "/fxml/ImageAlphaExtractBatch.fxml";
     public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";
@@ -146,7 +150,6 @@ public class CommonValues {
     public static final String TextReplaceBatchFxml = "/fxml/TextReplaceBatch.fxml";
     public static final String TextToHtmlFxml = "/fxml/TextToHtml.fxml";
     public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
-    public static final String FileFilterFxml = "/fxml/FileFilter.fxml";
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
     public static final String FileRenameFxml = "/fxml/FileRename.fxml";
     public static final String FilesMergeFxml = "/fxml/FilesMerge.fxml";
@@ -155,7 +158,8 @@ public class CommonValues {
     public static final String FilesMoveFxml = "/fxml/FilesMove.fxml";
     public static final String FilesFindFxml = "/fxml/FilesFind.fxml";
     public static final String FilesFindBatchFxml = "/fxml/FilesFindBatch.fxml";
-    public static final String RecordImagesInSystemClipboardFxml = "/fxml/RecordImagesInSystemClipboard.fxml";
+    public static final String ImagesInMyBoxClipboardFxml = "/fxml/ImagesInMyBoxClipboard.fxml";
+    public static final String ImagesInSystemClipboardFxml = "/fxml/ImagesInSystemClipboard.fxml";
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
@@ -254,6 +258,7 @@ public class CommonValues {
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
     public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
+    public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEn = new Locale("en");

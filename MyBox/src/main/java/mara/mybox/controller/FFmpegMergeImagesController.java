@@ -184,7 +184,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 };
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
 
@@ -220,7 +220,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                     }
                 }
                 try {
-                    BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
                     if (bufferedImage == null) {
                         continue;
                     }

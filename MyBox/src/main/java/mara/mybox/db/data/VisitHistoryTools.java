@@ -75,6 +75,14 @@ public class VisitHistoryTools {
             return CommonFxValues.SheetExtensionFilter;
         } else if (fileType == VisitHistory.FileType.Cert) {
             return CommonFxValues.CertExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.Word) {
+            return CommonFxValues.WordExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.PPT) {
+            return CommonFxValues.PPTExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.PPTX) {
+            return CommonFxValues.PPTXExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.PPTS) {
+            return CommonFxValues.PPTSExtensionFilter;
         } else {
             return CommonFxValues.AllExtensionFilter;
         }

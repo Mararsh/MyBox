@@ -224,11 +224,9 @@ public class Location extends BaseData implements Cloneable {
     public static void importChinaEarlyCultures() {
         File file;
         if ("zh".equals(AppVariables.getLanguage())) {
-            file = FxmlControl.getInternalFile("/data/db/Location_zh.del",
-                    "AppTemp", "Location_zh.del");
+            file = FxmlControl.getInternalFile("/data/db/Location_zh.del", "AppTemp", "Location_zh.del");
         } else {
-            file = FxmlControl.getInternalFile("/data/db/Location_en.del",
-                    "AppTemp", "Location_en.del");
+            file = FxmlControl.getInternalFile("/data/db/Location_en.del", "AppTemp", "Location_en.del");
         }
         DerbyBase.importData("Location", file.getAbsolutePath(), false);
     }

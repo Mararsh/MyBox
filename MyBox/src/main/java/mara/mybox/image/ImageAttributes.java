@@ -1,6 +1,8 @@
 package mara.mybox.image;
 
 import java.awt.color.ICC_Profile;
+import java.awt.image.BufferedImage;
+import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -19,15 +21,15 @@ public class ImageAttributes {
     public static enum BinaryConversion {
         DEFAULT, BINARY_OTSU, BINARY_THRESHOLD
     }
-    private String imageFormat, compressionType, colorSpaceName;
-    private ImageType colorType;
-    private int density, threshold, quality, ratioAdjustion, width;
-    private Alpha alpha;
-    private BinaryConversion binaryConversion;
-    private boolean embedProfile, keepRatio, isDithering;
-    private int sourceWidth, sourceHeight, targetWidth, targetHeight;
-    private ICC_Profile profile;
-    private String profileName;
+    protected String imageFormat, compressionType, colorSpaceName;
+    protected ImageType colorType;
+    protected int density, threshold, quality, ratioAdjustion, width;
+    protected Alpha alpha;
+    protected BinaryConversion binaryConversion;
+    protected boolean embedProfile, keepRatio, isDithering;
+    protected int sourceWidth, sourceHeight, targetWidth, targetHeight;
+    protected ICC_Profile profile;
+    protected String profileName;
 
     public ImageAttributes() {
         this.quality = 100;
@@ -39,6 +41,42 @@ public class ImageAttributes {
         this.colorType = colorSpace;
         this.density = density;
         this.quality = 100;
+    }
+
+    public ImageAttributes(BufferedImage image, String format) {
+        init(image, format);
+    }
+
+    public ImageAttributes(String format) {
+        init(null, format);
+    }
+
+    private void init(BufferedImage image, String format) {
+        if (format == null || !CommonValues.SupportedImages.contains(format)) {
+            format = "png";
+        }
+        imageFormat = format.toLowerCase();
+        switch (imageFormat) {
+            case "jpg":
+            case "jpeg":
+                compressionType = "JPEG";
+                break;
+            case "gif":
+                compressionType = "LZW";
+                break;
+            case "tif":
+            case "tiff":
+                if (image != null && image.getType() == BufferedImage.TYPE_BYTE_BINARY) {
+                    compressionType = "CCITT T.6";
+                } else {
+                    compressionType = "Deflate";
+                }
+                break;
+            case "bmp":
+                compressionType = "BI_RGB";
+                break;
+        }
+        quality = 100;
     }
 
     public String getImageFormat() {

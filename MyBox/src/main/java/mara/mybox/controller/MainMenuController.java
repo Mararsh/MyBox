@@ -26,12 +26,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.MyBox;
-import mara.mybox.data.BaseTask;
-import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -58,7 +55,6 @@ public class MainMenuController extends BaseController {
     private Label sysMemLabel, myboxMemLabel, sysCpuLabel, myboxCpuLabel;
     private ProgressBar sysMemBar, myboxMemBar, sysCpuBar, myboxCpuBar;
     private long mb;
-    private BaseTask iconTask;
 
     @FXML
     protected Pane mainMenuPane;
@@ -74,7 +70,7 @@ public class MainMenuController extends BaseController {
     @FXML
     protected CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
             newWindowCheck, restoreStagesSizeCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
-            controlTextCheck, hidpiIconsCheck, devCheck;
+            controlTextCheck, hidpiIconsCheck;
     @FXML
     protected Menu settingsMenu, recentMenu, helpMenu;
     @FXML
@@ -94,8 +90,6 @@ public class MainMenuController extends BaseController {
                 recentMenu.getItems().clear();
                 recentMenu.getItems().addAll(getRecentMenu());
             });
-
-            devCheck.setSelected(AppVariables.devMode);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -142,7 +136,7 @@ public class MainMenuController extends BaseController {
                             return;
                         }
                         AppVariables.setLanguage(name);
-                        refresh();
+                        parentController.reload();
                     }
                 });
                 items.add(pos1 + 1 + i, langItem);
@@ -203,7 +197,6 @@ public class MainMenuController extends BaseController {
 
     protected void checkControlColor() {
         switch (AppVariables.ControlColor) {
-            case Default:
             case Red:
                 redMenuItem.setSelected(true);
                 break;
@@ -233,7 +226,7 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void resetWindows(ActionEvent event) {
         AppVariables.resetWindows();
-        refresh();
+        refreshInterface();
     }
 
     @FXML
@@ -268,10 +261,23 @@ public class MainMenuController extends BaseController {
         }
     }
 
+    @Override
+    public BaseController refreshInterface() {
+        parentController.refreshInterface();
+        return super.refreshInterface();
+    }
+
     @FXML
     @Override
     public BaseController refresh() {
-        return parentController.refresh();
+        parentController.refresh();
+        return super.refreshInterface();
+    }
+
+    @FXML
+    @Override
+    public BaseController reload() {
+        return parentController.reload();
     }
 
     @FXML
@@ -315,11 +321,6 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void openPdfConvertHtmlsBatch(ActionEvent event) {
         loadScene(CommonValues.PdfConvertHtmlsBatchFxml);
-    }
-
-    @FXML
-    protected void openImagesCombinePdf(ActionEvent event) {
-        loadScene(CommonValues.ImagesCombinePdfFxml);
     }
 
     @FXML
@@ -472,6 +473,41 @@ public class MainMenuController extends BaseController {
         loadScene(CommonValues.ExtractTextsFromMSFxml);
     }
 
+    @FXML
+    protected void WordView(ActionEvent event) {
+        loadScene(CommonValues.WordViewFxml);
+    }
+
+    @FXML
+    protected void WordToHtml(ActionEvent event) {
+        loadScene(CommonValues.WordToHtmlFxml);
+    }
+
+    @FXML
+    protected void PptView(ActionEvent event) {
+        loadScene(CommonValues.PptViewFxml);
+    }
+
+    @FXML
+    protected void PptToImages(ActionEvent event) {
+        loadScene(CommonValues.PptToImagesFxml);
+    }
+
+    @FXML
+    protected void PptExtract(ActionEvent event) {
+        loadScene(CommonValues.PptExtractFxml);
+    }
+
+    @FXML
+    protected void PptxMerge(ActionEvent event) {
+        loadScene(CommonValues.PptxMergeFxml);
+    }
+
+    @FXML
+    protected void PptSplit(ActionEvent event) {
+        loadScene(CommonValues.PptSplitFxml);
+    }
+
     /*
         image tools menu
      */
@@ -508,6 +544,11 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void openImageManufactureBatchCrop(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchCropFxml);
+    }
+
+    @FXML
+    protected void openImageManufactureBatchPaste(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchPasteFxml);
     }
 
     @FXML
@@ -566,28 +607,18 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void openImagesCombine(ActionEvent event) {
-        loadScene(CommonValues.ImagesCombineFxml);
+    protected void ImagesSplice(ActionEvent event) {
+        loadScene(CommonValues.ImagesSpliceFxml);
     }
 
     @FXML
-    protected void openImageGifViewer(ActionEvent event) {
-        loadScene(CommonValues.ImageGifViewerFxml);
+    protected void ImagesEditor(ActionEvent event) {
+        loadScene(CommonValues.ImagesEditorFxml);
     }
 
     @FXML
-    protected void openImageGifEditer(ActionEvent event) {
-        loadScene(CommonValues.ImageGifEditerFxml);
-    }
-
-    @FXML
-    protected void openImageTiffEditer(ActionEvent event) {
-        loadScene(CommonValues.ImageTiffEditerFxml);
-    }
-
-    @FXML
-    protected void openImageFramesViewer(ActionEvent event) {
-        loadScene(CommonValues.ImageFramesViewerFxml);
+    protected void ImagesPlay(ActionEvent event) {
+        loadScene(CommonValues.ImagesPlayFxml);
     }
 
     @FXML
@@ -990,8 +1021,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void openRecordImages(ActionEvent event) {
-        loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
+    protected void ImagesInMyBoxClipboard(ActionEvent event) {
+        ImagesInMyBoxClipboardController.oneOpen();
+    }
+
+    @FXML
+    protected void ImagesInSystemClipboard(ActionEvent event) {
+        loadScene(CommonValues.ImagesInSystemClipboardFxml);
     }
 
     @FXML
@@ -1017,7 +1053,13 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void setChinese(ActionEvent event) {
         AppVariables.setLanguage("zh");
-        refresh();
+        parentController.reload();
+    }
+
+    @FXML
+    protected void setEnglish(ActionEvent event) {
+        AppVariables.setLanguage("en");
+        parentController.reload();
     }
 
     @FXML
@@ -1026,88 +1068,82 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void setEnglish(ActionEvent event) {
-        AppVariables.setLanguage("en");
-        refresh();
-    }
-
-    @FXML
     protected void setFont12(ActionEvent event) {
         AppVariables.setSceneFontSize(12);
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setFont15(ActionEvent event) {
         AppVariables.setSceneFontSize(15);
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setFont17(ActionEvent event) {
         AppVariables.setSceneFontSize(17);
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void normalIcon(ActionEvent event) {
         AppVariables.setIconSize(20);
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void bigIcon(ActionEvent event) {
         AppVariables.setIconSize(30);
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void smallIcon(ActionEvent event) {
         AppVariables.setIconSize(15);
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setDefaultColor(ActionEvent event) {
-        ControlStyle.setConfigColorStyle("default");
-        refresh();
+        ControlStyle.setConfigColorStyle("red");
+        refreshInterface();
     }
 
     @FXML
     protected void setPink(ActionEvent event) {
         ControlStyle.setConfigColorStyle("pink");
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setRed(ActionEvent event) {
         ControlStyle.setConfigColorStyle("red");
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setBlue(ActionEvent event) {
         ControlStyle.setConfigColorStyle("blue");
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setLightBlue(ActionEvent event) {
         ControlStyle.setConfigColorStyle("lightBlue");
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setOrange(ActionEvent event) {
         ControlStyle.setConfigColorStyle("orange");
-        refresh();
+        refreshInterface();
     }
 
     @FXML
     protected void setControlDisplayText(ActionEvent event) {
         AppVariables.controlDisplayText = controlTextCheck.isSelected();
         AppVariables.setUserConfigValue("ControlDisplayText", controlTextCheck.isSelected());
-        refresh();
+        refreshInterface();
     }
 
     @FXML
@@ -1123,7 +1159,7 @@ public class MainMenuController extends BaseController {
                 parentController.alertInformation(message("HidpiIconsComments"));
             }
         }
-        refresh();
+        refreshInterface();
     }
 
     @FXML
@@ -1235,12 +1271,6 @@ public class MainMenuController extends BaseController {
     /*
         development menus
      */
-    @FXML
-    public void devMode() {
-        AppVariables.devMode = devCheck.isSelected();
-        AppVariables.setUserConfigValue("DevMode", AppVariables.devMode);
-    }
-
     @FXML
     protected void MyBoxProperties(ActionEvent event) {
         openStage(CommonValues.MyBoxPropertiesFxml);
@@ -1463,23 +1493,7 @@ public class MainMenuController extends BaseController {
     // This is for developement to generate Icons automatically in different color style
     @FXML
     public void makeIcons() {
-        synchronized (this) {
-            if (iconTask != null && !iconTask.isQuit()) {
-                return;
-            }
-            if (!FxmlControl.askSure("MyBox", message("MakeIcons"))) {
-                return;
-            }
-            iconTask = DevTools.makeIconsTask(parentController);
-            if (iconTask == null) {
-                return;
-            }
-            parentController.openHandlingStage(iconTask, Modality.WINDOW_MODAL);
-            iconTask.setSelf(iconTask);
-            Thread thread = new Thread(iconTask);
-            thread.setDaemon(true);
-            thread.start();
-        }
+        openStage(CommonValues.MyBoxIconsFxml);
     }
 
     @FXML
@@ -1509,13 +1523,13 @@ public class MainMenuController extends BaseController {
     public void readme(ActionEvent event) {
         MarkdownEditerController c = (MarkdownEditerController) openStage(CommonValues.MarkdownEditorFxml);
         String lang = AppVariables.isChinese() ? "zh" : "en";
-        File file = FxmlControl.getInternalFile("/doc/" + lang + "/README.md", "doc", "README-" + lang + ".md", false);
+        File file = FxmlControl.getInternalFile("/doc/" + lang + "/README.md", "doc", "README-" + lang + ".md");
         c.sourceFileChanged(file);
     }
 
     @FXML
     protected void showAbout(ActionEvent event) {
-        openStage(CommonValues.AboutFxml);
+        FxmlStage.about();
     }
 
     /*

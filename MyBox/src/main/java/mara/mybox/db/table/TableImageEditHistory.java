@@ -2,15 +2,12 @@ package mara.mybox.db.table;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
@@ -44,8 +41,8 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
 
     public final TableImageEditHistory defineColumns() {
         addColumn(new ColumnDefinition("iehid", ColumnType.Long, true, true).setIsID(true));
-        addColumn(new ColumnDefinition("image_location", ColumnType.String, true).setLength(4096));
-        addColumn(new ColumnDefinition("history_location", ColumnType.String, true).setLength(4096));
+        addColumn(new ColumnDefinition("image_location", ColumnType.String, true).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("history_location", ColumnType.String, true).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("operation_time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("update_type", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("object_type", ColumnType.String).setLength(128));

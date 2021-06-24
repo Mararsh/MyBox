@@ -14,7 +14,7 @@ import mara.mybox.dev.MyBoxLog;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchEnhancementController extends ImageManufactureBatchController {
+public class ImageManufactureBatchEnhancementController extends BaseImageManufactureBatchController {
 
     @FXML
     protected ImageManufactureEnhancementOptionsController optionsController;

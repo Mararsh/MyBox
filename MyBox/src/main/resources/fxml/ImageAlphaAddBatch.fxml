@@ -66,7 +66,7 @@ License:    Apache License Version 2.0
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
-                                                                                        <Image url="@../buttons/iconFolderImage.png" />
+                                                                                        <Image url="@../buttons/Red/iconFolderImage.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>
@@ -91,12 +91,11 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </ScrollPane>
-                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction"
-                                                styleClass="halfBig" stylesheets="@../styles/MyBox.css" >
+                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" styleClass="halfBig" stylesheets="@../styles/MyBox.css">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconPreview.png" />
+                                                        <Image url="@../buttons/Red/iconPreview.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -117,7 +116,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconFolderImage.png" />
+                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -126,7 +125,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconBrowse.png" />
+                                                                <Image url="@../buttons/Red/iconBrowse.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -136,12 +135,12 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%FileType" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="png">
+                                                <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="png">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="fileTypeGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton fx:id="tifRadio" mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
                                             </children>
                                         </HBox>
                                         <FlowPane hgap="5.0" vgap="5.0">
@@ -178,7 +177,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconClear.png" />
+                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

@@ -127,10 +127,6 @@ http://43.248.49.97
 http://www.cnsda.org
 
 示例 > 论文和数据 > 中文
-国家科技图书文献中心
-https://www.nstl.gov.cn
-
-示例 > 论文和数据 > 中文
 上海研发公共服务平台
 http://www.sgst.cn
 
@@ -141,10 +137,6 @@ https://ctext.org
 示例 > 论文和数据 > 中文
 全国图书馆论文搜索网
 http://www.ucdrs.superlib.net
-
-示例 > 论文和数据 > 中文
-国家科技图书文献中心
-https://www.nstl.gov.cn
 
 示例 > 论文和数据 > 中文
 浙江大学图书馆
@@ -208,7 +200,7 @@ https://www.bilibili.com/video/BV1pW411J7s8
 https://www.bilibili.com/video/BV1BW411n7gw
 
 示例 > 学习 > 中文
-中国古代史（史前——魏晋南北朝）（阎步克教授/北京大学）
+中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）
 https://www.bilibili.com/video/BV1ux411G7zm
 
 示例 > 学习 > 中文
@@ -290,7 +282,15 @@ https://www.qingting.fm/channels/138236
 
 示例 > 娱乐 > 中文
 牡丹亭（1986年）张继青
-https://www.bilibili.com/video/BV1Px411P761?from=search&seid=8480498709465058923
+https://www.bilibili.com/video/BV1Px411P761
+
+示例 > 娱乐 > 中文
+白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）
+https://www.bilibili.com/video/BV1rs411n7Dd
+
+示例 > 娱乐 > 中文
+梁祝-范瑞娟 傅全香
+https://www.bilibili.com/video/BV11x411j7As
 
 
 示例 > 编程

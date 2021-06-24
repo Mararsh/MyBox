@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconFlower.png" />
+                                        <Image url="@../buttons/Red/iconFlower.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -48,7 +48,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconTop.png" />
+                                        <Image url="@../buttons/Red/iconTop.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconClose.png" />
+                                                <Image url="@../buttons/Red/iconClose.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -68,7 +68,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconOK.png" />
+                                                <Image url="@../buttons/Red/iconOK.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

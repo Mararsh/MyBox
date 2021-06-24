@@ -930,8 +930,11 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage rotateImage(BufferedImage source, int angle) {
-        angle = angle % 360;
+    public static BufferedImage rotateImage(BufferedImage source, int inAngle) {
+        int angle = inAngle % 360;
+        if (angle == 0) {
+            return source;
+        }
         if (angle < 0) {
             angle = 360 + angle;
         }
@@ -1234,6 +1237,20 @@ public class ImageManufacture {
             int width = bufferedImage.getWidth() / realXScale;
             int height = bufferedImage.getHeight() / realYScale;
             bufferedImage = scaleImageBySize(bufferedImage, width, height);
+            return bufferedImage;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int width) {
+        try {
+            if (rectangle == null) {
+                return scaleImageWidthKeep(source, width);
+            }
+            BufferedImage bufferedImage = cropOutside(source, rectangle);
+            bufferedImage = scaleImageWidthKeep(bufferedImage, width);
             return bufferedImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -2275,8 +2292,7 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage premultipliedAlpha(BufferedImage source,
-            boolean removeAlpha) {
+    public static BufferedImage premultipliedAlpha(BufferedImage source, boolean removeAlpha) {
         try {
             if (source == null || !hasAlpha(source)
                     || (source.isAlphaPremultiplied() && !removeAlpha)) {

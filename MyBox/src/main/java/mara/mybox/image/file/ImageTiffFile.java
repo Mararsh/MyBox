@@ -48,8 +48,11 @@ public class ImageTiffFile {
     public static IIOMetadata getTiffIIOMetadata(File file) {
         try {
             IIOMetadata metadata;
-            ImageReader reader = ImageIO.getImageReadersByFormatName("tif").next();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+                ImageReader reader = ImageFileReaders.getReader(iis);
+                if (reader == null) {
+                    return null;
+                }
                 reader.setInput(iis, false);
                 metadata = reader.getImageMetadata(0);
                 reader.dispose();
@@ -184,7 +187,7 @@ public class ImageTiffFile {
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
-                    BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
                     if (bufferedImage != null) {
                         bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
                         IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);

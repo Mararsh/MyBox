@@ -43,7 +43,7 @@ License:    Apache License Version 2.0
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <CheckBox fx:id="copyAllCheck" mnemonicParsing="false" selected="true" text="%CopyOtherPages" wrapText="true" VBox.vgrow="NEVER" />
-                                                        <fx:include fx:id="options" source="ControlImageConverterOptions.fxml" />
+                                                        <fx:include fx:id="format" source="ControlImageFormat.fxml" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -55,7 +55,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconPreview.png" />
+                                                        <Image url="@../buttons/Red/iconPreview.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -76,7 +76,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconFolderImage.png" />
+                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -119,7 +119,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconClear.png" />
+                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

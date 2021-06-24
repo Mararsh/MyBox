@@ -208,7 +208,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                 parentController.openHandlingStage(infoTask, Modality.WINDOW_MODAL, msg);
             });
             Thread thread = new Thread(infoTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -694,7 +694,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                 parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
 
             } catch (Exception e) {

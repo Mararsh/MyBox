@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import javafx.beans.binding.Bindings;
@@ -9,24 +8,18 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -40,11 +33,7 @@ public class ImageSampleController extends ImageViewerController {
     private double x1, y1, x2, y2;
 
     @FXML
-    protected HBox opBox;
-    @FXML
     protected Label infoLabel;
-    @FXML
-    protected CheckBox openSaveCheck;
     @FXML
     protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput;
     @FXML
@@ -72,8 +61,7 @@ public class ImageSampleController extends ImageViewerController {
         try {
             super.initControls();
 
-            opBox.disableProperty().bind(imageView.imageProperty().isNull());
-            splitPane.disableProperty().bind(imageView.imageProperty().isNull());
+            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
 
             List<String> values = Arrays.asList("1", "2", "3", "4", "5", "6", "8", "9", "10", "15", "20",
                     "25", "30", "50", "80", "100", "200", "500", "800", "1000");
@@ -136,7 +124,7 @@ public class ImageSampleController extends ImageViewerController {
                             .or(Bindings.isEmpty(rightBottomYInput.textProperty()))
                             .or(rightBottomYInput.styleProperty().isEqualTo(badStyle))
             );
-            saveAsButton.disableProperty().bind(okButton.disabledProperty());
+            saveButton.disableProperty().bind(okButton.disabledProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -293,64 +281,34 @@ public class ImageSampleController extends ImageViewerController {
         }
     }
 
+    @Override
+    public BufferedImage imageToSave() {
+        if (sourceFile != null && imageInformation != null) {
+            return ImageFileReaders.readFrame(imageInformation.getImageFormat(),
+                    sourceFile.getAbsolutePath(), imageInformation.getIndex(),
+                    (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
+        } else if (image != null) {
+            return ImageManufacture.sample(SwingFXUtils.fromFXImage(image, null),
+                    (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
+        } else {
+            return null;
+        }
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        saveAsAction();
+    }
+
     @FXML
     @Override
     public void saveAsAction() {
         if (image == null || widthScale < 1 || heightScale < 1) {
+            popError(message("InvalidParameters"));
             return;
         }
-        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                null, targetExtensionFilter);
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file);
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private String filename;
-
-                @Override
-                protected boolean handle() {
-                    filename = file.getAbsolutePath();
-                    String format = FileTools.getFileSuffix(filename);
-                    BufferedImage bufferedImage;
-                    if (sourceFile != null && imageInformation != null) {
-                        bufferedImage = ImageFileReaders.readFrame(imageInformation.getImageFormat(),
-                                sourceFile.getAbsolutePath(), imageInformation.getIndex(),
-                                (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
-                    } else if (image != null) {
-                        bufferedImage = ImageManufacture.sample(SwingFXUtils.fromFXImage(image, null),
-                                (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
-                    } else {
-                        return false;
-                    }
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return ImageFileWriters.writeImageFile(bufferedImage, format, filename);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    if (openSaveCheck.isSelected()) {
-                        final ImageViewerController controller
-                                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
-                        controller.loadImage(filename);
-                    }
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
+        super.saveAsAction();
     }
+
 }

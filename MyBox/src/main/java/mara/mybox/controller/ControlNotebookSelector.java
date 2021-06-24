@@ -173,7 +173,7 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
     protected void popImportMenu(MouseEvent mouseEvent) {
         try {
             List<MenuItem> items = new ArrayList<>();
-            MenuItem menu = new MenuItem(message("ImportFiles"));
+            MenuItem menu = new MenuItem(message("ImportNotesFiles"));
             menu.setOnAction((ActionEvent event) -> {
                 NotesImportController c = (NotesImportController) FxmlStage.openStage(CommonValues.NotesImportFxml);
                 c.notesController = notesController;

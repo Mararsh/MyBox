@@ -42,7 +42,7 @@ public class NotesImportController extends BaseBatchFileController {
     protected RadioButton overrideRadio, createRadio, skipRadio;
 
     public NotesImportController() {
-        baseTitle = AppVariables.message("ImportNotesFile");
+        baseTitle = AppVariables.message("ImportNotesFiles");
     }
 
     @Override
@@ -76,7 +76,7 @@ public class NotesImportController extends BaseBatchFileController {
         tableNotebook = notesController.tableNotebook;
         String lang = AppVariables.isChinese() ? "zh" : "en";
         File file = FxmlControl.getInternalFile("/data/db/Notes_Examples_" + lang + ".txt",
-                "data", "Notes_Examples_" + lang + ".txt", true);
+                "data", "Notes_Examples_" + lang + ".txt");
         isSettingValues = true;
         timeCheck.setSelected(false);
         overrideRadio.fire();

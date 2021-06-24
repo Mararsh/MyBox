@@ -44,9 +44,8 @@ public class ImageGifFile {
         try {
 //            ImageReaderSpi readerSpi = new GIFImageReaderSpi();
 //            GIFImageReader gifReader = (GIFImageReader) readerSpi.createReaderInstance();
-
-            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
                 reader.setInput(iis, false);
                 GIFImageMetadata metadata = (GIFImageMetadata) reader.getImageMetadata(0);
                 reader.dispose();
@@ -62,11 +61,11 @@ public class ImageGifFile {
     public static List<BufferedImage> readGifFile(String src) {
         try {
             List<BufferedImage> images = new ArrayList<>();
-            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
+
             boolean broken = false;
-            try ( ImageInputStream in = ImageIO.createImageInputStream(
-                    new BufferedInputStream(new FileInputStream(src)))) {
-                reader.setInput(in, false);
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(src)))) {
+                ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
+                reader.setInput(iis, false);
                 int count = 0;
                 while (true) {
                     try {
@@ -105,10 +104,10 @@ public class ImageGifFile {
 //            MyBoxLog.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                final GifImage gif = GifDecoder.read(in);
-                final int frameCount = gif.getFrameCount();
+                GifImage gif = GifDecoder.read(in);
+                int frameCount = gif.getFrameCount();
                 for (int i = 0; i < frameCount; ++i) {
-                    final BufferedImage img = gif.getFrame(i);
+                    BufferedImage img = gif.getFrame(i);
                     images.add(img);
                 }
             }
@@ -120,30 +119,40 @@ public class ImageGifFile {
     }
 
     public static BufferedImage readBrokenGifFile(String src, int index) {
-        BufferedImage image = null;
-        try {
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-                final GifImage gif = GifDecoder.read(in);
+        BufferedImage bufferedImage = null;
+        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
+            GifImage gif = GifDecoder.read(in);
 //                MyBoxLog.error(gif.getFrameCount());
-                image = gif.getFrame(index);
+            bufferedImage = gif.getFrame(index);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return bufferedImage;
+    }
+
+    public static BufferedImage readBrokenGifFile(String filename, int index, Rectangle region, int xscale, int yscale) {
+        BufferedImage bufferedImage = null;
+        try {
+            bufferedImage = readBrokenGifFile(filename, index);
+            if (region == null) {
+                bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, xscale, yscale);
+            } else {
+                bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(region), xscale, yscale);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        return image;
+        return bufferedImage;
     }
 
-    public static BufferedImage readBrokenGifFile(String src, int index,
-            Rectangle bounds, int xscale, int yscale) {
+    public static BufferedImage readBrokenGifFile(String filename, int index, Rectangle region, int width) {
         BufferedImage bufferedImage = null;
-        try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
-            final GifImage gif = GifDecoder.read(in);
-//                MyBoxLog.error(gif.getFrameCount());
-            bufferedImage = gif.getFrame(index);
-            if (bounds == null) {
-                bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, xscale, yscale);
+        try {
+            bufferedImage = readBrokenGifFile(filename, index);
+            if (region == null) {
+                bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
             } else {
-                bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(bounds), xscale, yscale);
+                bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(region), width);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -171,7 +180,6 @@ public class ImageGifFile {
     }
 
     public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
-//            MyBoxLog.debug("readBrokenGifFile");
         List<BufferedImage> images = new ArrayList<>();
         try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
             final GifImage gif = GifDecoder.read(in);
@@ -232,9 +240,10 @@ public class ImageGifFile {
     }
 
     // 0-based
-    public static List<String> extractGifImages(File source, File target, int from, int to) {
+    public static List<String> extractGifImages(File source, String filePrefix, String format, int from, int to) {
         try {
-            if (source == null || target == null || from < 0 || to < 0 || from > to) {
+            if (source == null || filePrefix == null || format == null
+                    || from < 0 || to < 0 || from > to) {
                 return null;
             }
             List<BufferedImage> images = readGifFile(source.getAbsolutePath());
@@ -245,8 +254,7 @@ public class ImageGifFile {
             if (images.isEmpty() || from >= size || to >= size) {
                 return null;
             }
-            String filePrefix = FileTools.getFilePrefix(target.getAbsolutePath());
-            String format = FileTools.getFileSuffix(target.getAbsolutePath());
+
             String filename;
             int digit = (size + "").length();
             List<String> names = new ArrayList<>();
@@ -376,6 +384,7 @@ public class ImageGifFile {
             if (imagesInfo == null || imagesInfo.isEmpty() || outFile == null) {
                 return "InvalidParameters";
             }
+            System.gc();
             ImageWriter gifWriter = getWriter();
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
@@ -385,7 +394,7 @@ public class ImageGifFile {
                 gifWriter.setOutput(out);
                 gifWriter.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
-                    BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
 //                    bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
                     if (bufferedImage != null) {
                         if (!keepSize) {
@@ -396,9 +405,12 @@ public class ImageGifFile {
                     }
                 }
                 gifWriter.endWriteSequence();
+                gifWriter.dispose();
                 out.flush();
+            } catch (Exception e) {
+                MyBoxLog.error(e.toString());
+                return e.toString();
             }
-            gifWriter.dispose();
             return FileTools.rename(tmpFile, outFile) ? "" : "Failed";
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -270,7 +270,7 @@ public class ControlFFmpegOptions extends BaseController {
 
                 openHandlingStage(muxerTask, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(muxerTask);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
 
                 process.waitFor();
@@ -394,7 +394,7 @@ public class ControlFFmpegOptions extends BaseController {
 
                 openHandlingStage(encoderTask, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(encoderTask);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
 
                 process.waitFor();
@@ -991,7 +991,7 @@ public class ControlFFmpegOptions extends BaseController {
             table.newLinkRow("CapturingDesktopScreenRecording", "http://trac.ffmpeg.org/wiki/Capture/Desktop");
 
             File htmFile = HtmlTools.writeHtml(table.html());
-            openLink(htmFile.toURI().toString());
+            openLink(htmFile);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -244,7 +244,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -414,7 +414,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
         };
         Thread thread = new Thread(demoTask);
-        thread.setDaemon(true);
+        thread.setDaemon(false);
         thread.start();
 
     }

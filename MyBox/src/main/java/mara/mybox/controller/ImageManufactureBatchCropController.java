@@ -20,7 +20,7 @@ import mara.mybox.dev.MyBoxLog;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchCropController extends ImageManufactureBatchController {
+public class ImageManufactureBatchCropController extends BaseImageManufactureBatchController {
 
     private boolean isCenter;
     private int centerWidth, centerHeight, leftX, leftY, rightX, rightY;

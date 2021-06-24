@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -36,7 +37,14 @@ public class HtmlSetCharsetController extends BaseBatchFileController {
 
     @Override
     public void initOptionsSection() {
-        charsetSelector.getItems().addAll(TextTools.getCharsetNames());
+        List<String> names = TextTools.getCharsetNames();
+        charsetSelector.getItems().addAll(names);
+        try {
+            charset = Charset.forName(AppVariables.getUserConfigValue(baseName + "Charset", Charset.defaultCharset().name()));
+        } catch (Exception e) {
+            charset = Charset.defaultCharset();
+        }
+        charsetSelector.setValue(charset.name());
         charsetSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -44,9 +52,6 @@ public class HtmlSetCharsetController extends BaseBatchFileController {
                 AppVariables.setUserConfigValue(baseName + "Charset", charset.name());
             }
         });
-        charsetSelector.getSelectionModel().select(
-                AppVariables.getUserConfigValue(baseName + "Charset", Charset.defaultCharset().name()));
-
     }
 
     @Override

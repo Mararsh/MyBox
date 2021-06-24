@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.ExcelTools;
+import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -70,7 +70,7 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                     }
                     List<String> rowData = new ArrayList<>();
                     for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
-                        rowData.add(ExcelTools.cellString(row.getCell(c)));
+                        rowData.add(MicrosoftDocumentTools.cellString(row.getCell(c)));
                     }
                     if (convertController.names.isEmpty()) {
                         if (withNamesCheck.isSelected()) {

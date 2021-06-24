@@ -89,7 +89,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconPreview.png" />
+                                                        <Image url="@../buttons/Red/iconPreview.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -110,7 +110,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconFolderImage.png" />
+                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -153,7 +153,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconClear.png" />
+                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

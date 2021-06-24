@@ -25,7 +25,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchTransformController extends ImageManufactureBatchController {
+public class ImageManufactureBatchTransformController extends BaseImageManufactureBatchController {
 
     private int transformType, rotateAngle;
     private float shearX;

@@ -998,8 +998,7 @@ public class FileTools {
     }
 
     // 1-based start, that is: from (start - 1) to ( end - 1) actually
-    public static File cutFile(File file,
-            String filename, long startIndex, long endIndex) {
+    public static File cutFile(File file, String filename, long startIndex, long endIndex) {
         try {
             if (file == null || startIndex < 1 || startIndex > endIndex) {
                 return null;
@@ -1054,6 +1053,7 @@ public class FileTools {
         if (files == null || files.isEmpty() || targetFile == null) {
             return false;
         }
+        targetFile.getParentFile().mkdirs();
         try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
             byte[] buf = new byte[CommonValues.IOBufferLength];
             int bufLen;
@@ -1157,6 +1157,7 @@ public class FileTools {
         if (file == null || data == null) {
             return null;
         }
+        file.getParentFile().mkdirs();
         try ( FileWriter writer = new FileWriter(file, charset != null ? charset : Charset.forName("utf-8"))) {
             writer.write(data);
             writer.flush();
@@ -1175,6 +1176,7 @@ public class FileTools {
         if (file == null || data == null) {
             return false;
         }
+        file.getParentFile().mkdirs();
         try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
             outputStream.write(data);
             outputStream.flush();
@@ -1189,6 +1191,7 @@ public class FileTools {
         if (files == null || files.isEmpty() || targetFile == null) {
             return false;
         }
+        targetFile.getParentFile().mkdirs();
         String line;
         try ( FileWriter writer = new FileWriter(targetFile, Charset.forName("utf-8"))) {
             for (File file : files) {

@@ -10,9 +10,9 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageScope;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -129,7 +129,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                             cuttedClip = FxmlImageManufacture.scopeExcludeImage(imageView.getImage(),
                                     scopeController.scope, bgColor, clipMarginsCheck.isSelected());
                         }
-                        ImageClipboard.add(cuttedClip);
+                        ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);
                     }
                     return newImage != null;
                 }
@@ -152,7 +152,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

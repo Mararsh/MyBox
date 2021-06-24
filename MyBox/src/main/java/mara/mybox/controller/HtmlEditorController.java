@@ -257,7 +257,7 @@ public class HtmlEditorController extends BaseHtmlController {
 
     protected void initCodesTab() {
         try {
-            codesController.setValues(this);
+            codesController.setParameters(this);
             codesController.codesArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -526,7 +526,7 @@ public class HtmlEditorController extends BaseHtmlController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -731,7 +731,7 @@ public class HtmlEditorController extends BaseHtmlController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

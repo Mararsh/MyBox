@@ -1474,9 +1474,8 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                                                 loading.setInfo(message("Opening") + ": " + gifFile);
                                             });
                                         }
-                                        ImageGifViewerController controller
-                                                = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-                                        controller.sourceFileChanged(gifFile);
+                                        ImagesEditorController controller = (ImagesEditorController) openStage(CommonValues.ImagesEditorFxml);
+                                        controller.open(gifFile);
                                     }
 
                                 } else {

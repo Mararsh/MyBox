@@ -36,7 +36,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
-import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
@@ -68,7 +67,7 @@ public class MarkdownEditerController extends TextEditerController {
     @FXML
     protected ComboBox<String> emulationSelector, indentSelector, styleSelector;
     @FXML
-    protected CheckBox trimCheck, appendCheck, discardCheck, linesCheck;
+    protected CheckBox trimCheck, appendCheck, discardCheck, linesCheck, wrapCheck;
     @FXML
     protected TextField titleInput;
     @FXML
@@ -125,6 +124,14 @@ public class MarkdownEditerController extends TextEditerController {
         try {
             webviewController.setValues(this);
             webEngine = webviewController.webView.getEngine();
+
+            wrapCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Wrap", true));
+            wrapCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
+                        AppVariables.setUserConfigValue(baseName + "Wrap", wrapCheck.isSelected());
+                        htmlArea.setWrapText(wrapCheck.isSelected());
+                    });
+            htmlArea.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -367,10 +374,9 @@ public class MarkdownEditerController extends TextEditerController {
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

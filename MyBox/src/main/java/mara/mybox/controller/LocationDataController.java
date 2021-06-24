@@ -241,7 +241,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -382,7 +382,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             openHandlingStage(backgroundTask, Modality.WINDOW_MODAL);
             backgroundTask.setSelf(backgroundTask);
             Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -527,7 +527,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
 
                 @Override
                 protected boolean handle() {
-                    File image = FxmlControl.getInternalFile("/img/jade.png", "image", "jade.png", false);
+                    File image = FxmlControl.getInternalFile("/img/jade.png", "image", "jade.png");
                     datasetName = message("ChineseHistoricalCapitals");
                     try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setAutoCommit(true);
@@ -545,7 +545,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     }
                     String lang = AppVariables.isChinese() ? "zh" : "en";
                     file = FxmlControl.getInternalFile("/data/db/Location_Data_ChineseHistoricalCapitals_" + lang + ".csv",
-                            "data", "Location_Data_ChineseHistoricalCapitals_" + lang + ".csv", true);
+                            "data", "Location_Data_ChineseHistoricalCapitals_" + lang + ".csv");
                     return true;
                 }
 
@@ -589,7 +589,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -607,7 +607,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
 
                 @Override
                 protected boolean handle() {
-                    File image = FxmlControl.getInternalFile("/img/Gadwalls.png", "image", "Gadwalls.png", false);
+                    File image = FxmlControl.getInternalFile("/img/Gadwalls.png", "image", "Gadwalls.png");
                     datasetName = message("AutumnMovementPatternsOfEuropeanGadwalls");
                     try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setAutoCommit(true);
@@ -626,7 +626,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     }
                     String lang = AppVariables.isChinese() ? "zh" : "en";
                     file = FxmlControl.getInternalFile("/data/db/Location_Data_EuropeanGadwalls_" + lang + ".csv",
-                            "data", "Location_Data_EuropeanGadwalls_" + lang + ".csv", true);
+                            "data", "Location_Data_EuropeanGadwalls_" + lang + ".csv");
                     return true;
                 }
 
@@ -665,7 +665,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -683,7 +683,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
 
                 @Override
                 protected boolean handle() {
-                    File image = FxmlControl.getInternalFile("/img/SpermWhale.png", "image", "SpermWhale.png", false);
+                    File image = FxmlControl.getInternalFile("/img/SpermWhale.png", "image", "SpermWhale.png");
                     datasetName = message("SpermWhalesGulfOfMexico");
                     try ( Connection conn = DerbyBase.getConnection()) {
                         conn.setAutoCommit(true);
@@ -702,7 +702,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
                     }
                     String lang = AppVariables.isChinese() ? "zh" : "en";
                     file = FxmlControl.getInternalFile("/data/db/Location_Data_SpermWhales_" + lang + ".csv",
-                            "data", "Location_Data_SpermWhales_" + lang + ".csv", true);
+                            "data", "Location_Data_SpermWhales_" + lang + ".csv");
                     return true;
                 }
 
@@ -741,7 +741,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 

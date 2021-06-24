@@ -768,7 +768,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 openHandlingStage(task, Modality.WINDOW_MODAL, inputName + " " + message("Loading..."));
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
         } catch (Exception e) {
@@ -824,7 +824,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL, message("Loading..."));
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1103,7 +1103,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
         return true;
@@ -1697,7 +1697,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1808,7 +1808,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1891,7 +1891,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -2014,7 +2014,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

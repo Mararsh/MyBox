@@ -628,7 +628,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 };
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
 
@@ -1034,6 +1034,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     @Override
     protected void clearLogs() {
         logsTextArea.setText("");
+    }
+
+    @Override
+    public File makeTargetFile(String fileName, File targetPath) {
+        File path = targetPath;
+        if (targetSubdirCheck != null && targetSubdirCheck.isSelected()) {
+            path = new File(targetPath, FileTools.namePrefix(fileName));
+        }
+        return super.makeTargetFile(fileName, path);
     }
 
     @Override

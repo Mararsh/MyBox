@@ -6,12 +6,21 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
@@ -33,7 +42,7 @@ import org.w3c.dom.html.HTMLDocument;
 public class WebElementsController extends ControlWebBrowserBox {
 
     protected int foundCount;
-    protected String loadedHtml;
+    protected HTMLDocument loadedDoc;
 
     @FXML
     protected HBox elementsBox;
@@ -44,7 +53,11 @@ public class WebElementsController extends ControlWebBrowserBox {
     @FXML
     protected ToggleGroup elementGroup;
     @FXML
-    protected Button queryElementButton;
+    protected Button queryElementButton, examplesButton;
+    @FXML
+    protected TextArea codesArea;
+    @FXML
+    protected Label codesLabel;
 
     public WebElementsController() {
         baseTitle = AppVariables.message("WebElements");
@@ -59,14 +72,18 @@ public class WebElementsController extends ControlWebBrowserBox {
             String keyName = baseName + "WebTag";
             try ( Connection conn = DerbyBase.getConnection()) {
                 if (TableStringValues.size(conn, keyName) <= 0) {
-                    List<String> values = Arrays.asList("table", "img", "a", "frame", "div", "li",
-                            "button", "input", "tr", "th");
+                    List<String> values = Arrays.asList(
+                            "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3",
+                            "button", "input", "label", "form", "table", "tr", "th", "td",
+                            "script", "style", "font", "span", "b", "hr", "br", "frame", "pre");
                     TableStringValues.add(conn, keyName, values);
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);
             }
-            elementInputController.init(this, keyName, null, 20);
+
+            elementInputController.init(this, keyName, null, 40);
+
             elementGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
@@ -83,22 +100,28 @@ public class WebElementsController extends ControlWebBrowserBox {
                 }
             });
 
+            FxmlControl.removeTooltip(examplesButton);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     public void elements(String html) {
-        loadedHtml = null;
+        setCodes(html);
         loadContents(html);
+    }
+
+    public void setCodes(String html) {
+        codesArea.setText(html);
+        codesLabel.setText(message("Total") + ":" + codesArea.getLength());
+        loadedDoc = null;
+        foundCount = 0;
     }
 
     @FXML
     @Override
     public void goAction() {
-        foundCount = 0;
-        loadedHtml = null;
+        setCodes("");
         super.goAction();
     }
 
@@ -114,8 +137,11 @@ public class WebElementsController extends ControlWebBrowserBox {
         try {
             super.afterPageLoaded();
             bottomLabel.setText(message("Count") + ": " + foundCount);
-            if (loadedHtml == null) {
-                loadedHtml = FxmlControl.getHtml(webEngine);
+            if (codesArea.getText().isBlank()) {
+                setCodes(FxmlControl.getHtml(webEngine));
+            }
+            if (loadedDoc == null) {
+                loadedDoc = (HTMLDocument) webEngine.getDocument();
             }
             queryElementButton.setDisable(false);
             recoverButton.setDisable(false);
@@ -134,13 +160,7 @@ public class WebElementsController extends ControlWebBrowserBox {
                 return;
             }
             elementInputController.refreshList();
-            HTMLDocument htmlDoc = (HTMLDocument) webEngine.getDocument();
-            if (htmlDoc == null) {
-                popInformation(message("NoData"));
-                return;
-            }
-            loadedHtml = loadedHtml == null ? FxmlControl.getHtml(webEngine) : loadedHtml;
-            if (loadedHtml == null) {
+            if (loadedDoc == null) {
                 popInformation(message("NoData"));
                 return;
             }
@@ -148,11 +168,11 @@ public class WebElementsController extends ControlWebBrowserBox {
             NodeList aList = null;
             Element element = null;
             if (tagRadio.isSelected()) {
-                aList = htmlDoc.getElementsByTagName(value);
+                aList = loadedDoc.getElementsByTagName(value);
             } else if (idRadio.isSelected()) {
-                element = htmlDoc.getElementById(value);
+                element = loadedDoc.getElementById(value);
             } else if (nameRadio.isSelected()) {
-                aList = htmlDoc.getElementsByName(value);
+                aList = loadedDoc.getElementsByName(value);
             }
             List<Element> elements = new ArrayList<>();
             if (aList != null && aList.getLength() > 0) {
@@ -206,10 +226,53 @@ public class WebElementsController extends ControlWebBrowserBox {
     public void recoverAction() {
         if (address != null && !address.isBlank()) {
             loadAddress(address);
-        } else if (loadedHtml != null && !loadedHtml.isBlank()) {
-            webEngine.loadContent(loadedHtml);
+        } else {
+            webEngine.loadContent(codesArea.getText());
         }
 
+    }
+
+    @FXML
+    public void popExamples(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            List<String> values = new ArrayList<>();
+            values.addAll(Arrays.asList(
+                    "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3",
+                    "button", "input", "label", "form", "table", "tr", "th", "td",
+                    "script", "style", "font", "span", "b", "hr", "br", "frame", "pre"
+            ));
+
+            MenuItem menu;
+            for (String value : values) {
+                menu = new MenuItem(value);
+                menu.setOnAction((ActionEvent event) -> {
+                    elementInputController.set(value);
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

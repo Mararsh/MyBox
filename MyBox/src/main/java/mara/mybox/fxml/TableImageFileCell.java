@@ -8,6 +8,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -17,22 +18,22 @@ import mara.mybox.image.file.ImageFileReaders;
 public class TableImageFileCell<T> extends TableCell<T, String>
         implements Callback<TableColumn<T, String>, TableCell<T, String>> {
 
-    protected int imageSize = 100;
+    protected int thumbWidth = AppVariables.getUserConfigInt("ThumbnailWidth", 100);
 
     public TableImageFileCell() {
 
     }
 
     public TableImageFileCell(int imageSize) {
-        this.imageSize = imageSize;
+        this.thumbWidth = imageSize;
     }
 
     @Override
     public TableCell<T, String> call(TableColumn<T, String> param) {
         final ImageView imageview = new ImageView();
         imageview.setPreserveRatio(true);
-        imageview.setFitWidth(imageSize);
-        imageview.setFitHeight(imageSize);
+        imageview.setFitWidth(thumbWidth);
+        imageview.setFitHeight(thumbWidth);
         TableCell<T, String> cell = new TableCell<T, String>() {
             @Override
             public void updateItem(String item, boolean empty) {

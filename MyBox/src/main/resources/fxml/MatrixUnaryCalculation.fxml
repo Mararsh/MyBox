@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconDoubleLeft.png" />
+                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                                     </image>
                                                 </ImageView>
                                                 <Label fx:id="matrixLabel1" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%UnaryCalculation" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
@@ -120,7 +120,7 @@ License:    Apache License Version 2.0
                                                                   <graphic>
                                                                       <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                           <image>
-                                                                              <Image url="@../buttons/iconCalculator.png" />
+                                                                              <Image url="@../buttons/Red/iconCalculator.png" />
                                                                           </image>
                                                                       </ImageView>
                                                                   </graphic>

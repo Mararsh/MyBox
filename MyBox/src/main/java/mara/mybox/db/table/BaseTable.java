@@ -32,6 +32,8 @@ import mara.mybox.value.CommonValues;
  */
 public abstract class BaseTable<D> {
 
+    public final static int FilenameMaxLength = 10240;
+
     protected String tableName, idColumn, orderColumns;
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns;
     protected Era.Format timeFormat;
@@ -136,6 +138,7 @@ public abstract class BaseTable<D> {
         try {
             Object value = getValue(data, column.name);
 //            MyBoxLog.error(index + " " + column.name + " " + column.type + " " + value);
+            // Not check maxValue/minValue.
             switch (column.type) {
                 case String:
                 case Text:
@@ -145,7 +148,11 @@ public abstract class BaseTable<D> {
                     if (value == null) {
                         statement.setNull(index, Types.VARCHAR);
                     } else {
-                        statement.setString(index, (String) value);
+                        String s = (String) value;
+                        if (column.getLength() > 0 && s.length() > column.getLength()) {
+                            s = s.substring(0, column.getLength());
+                        }
+                        statement.setString(index, s);
                     }
                     break;
                 case Double:
@@ -238,7 +245,6 @@ public abstract class BaseTable<D> {
             int index = startIndex;
             for (int i = 0; i < valueColumns.size(); ++i) {
                 ColumnDefinition column = valueColumns.get(i);
-
                 if (!setColumnValue(statement, column, data, index++)) {
                     return -1;
                 }
@@ -293,7 +299,7 @@ public abstract class BaseTable<D> {
     }
 
     public boolean setDeleteStatement(Connection conn, PreparedStatement statement, D data) {
-        if (conn == null || statement == null || !valid(data)) {
+        if (conn == null || statement == null || data == null) {
             return false;
         }
         return setColumnsValues(statement, primaryColumns, data, 1) > 0;
@@ -368,14 +374,12 @@ public abstract class BaseTable<D> {
             switch (column.getType()) {
                 case String:
                 case Text:
+                case File:
+                case Image:
                     sql += "VARCHAR(" + column.getLength() + ")";
                     break;
                 case Color:
                     sql += "VARCHAR(16)";
-                    break;
-                case File:
-                case Image:
-                    sql += "VARCHAR(4096)";
                     break;
                 case Double:
                     sql += "DOUBLE";
@@ -938,14 +942,27 @@ public abstract class BaseTable<D> {
     }
 
     public List<D> queryConditions(String condition, int start, int size) {
+        List<D> dataList = new ArrayList<>();
         if (start < 0 || size <= 0) {
+            return dataList;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return queryConditions(conn, condition, start, size);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return dataList;
+        }
+    }
+
+    public List<D> queryConditions(Connection conn, String condition, int start, int size) {
+        if (conn == null || start < 0 || size <= 0) {
             return new ArrayList<>();
         }
         String sql = "SELECT * FROM " + tableName
                 + (condition == null || condition.isBlank() ? "" : " WHERE " + condition)
-                + (orderColumns != null && (condition != null && !condition.contains("ORDER BY")) ? " ORDER BY " + orderColumns : "")
+                + (orderColumns != null && (condition == null || !condition.contains("ORDER BY")) ? " ORDER BY " + orderColumns : "")
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
-        return readData(sql);
+        return query(conn, sql);
     }
 
     public List<D> query() {
@@ -1039,6 +1056,7 @@ public abstract class BaseTable<D> {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
                                 setValue(data, idColumn, newID);
+
                             }
                         } catch (Exception e) {
                             MyBoxLog.error(e, tableName);
@@ -1219,35 +1237,45 @@ public abstract class BaseTable<D> {
         if (dataList == null || dataList.isEmpty()) {
             return 0;
         }
-        int count = 0;
         try ( Connection conn = DerbyBase.getConnection()) {
+            return deleteData(conn, dataList);
+        } catch (Exception e) {
+            MyBoxLog.error(e, tableName);
+            return -1;
+        }
+    }
+
+    public int deleteData(Connection conn, List<D> dataList) {
+        if (conn == null || dataList == null || dataList.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        try ( PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
             conn.setAutoCommit(false);
-            try ( PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
-                for (int i = 0; i < dataList.size(); ++i) {
-                    D data = dataList.get(i);
-                    if (!setDeleteStatement(conn, statement, data)) {
-                        continue;
-                    }
-                    statement.addBatch();
-                    if (i > 0 && (i % BatchSize == 0)) {
-                        int[] res = statement.executeBatch();
-                        for (int r : res) {
-                            if (r > 0) {
-                                count += r;
-                            }
+            for (int i = 0; i < dataList.size(); ++i) {
+                D data = dataList.get(i);
+                if (!setDeleteStatement(conn, statement, data)) {
+                    continue;
+                }
+                statement.addBatch();
+                if (i > 0 && (i % BatchSize == 0)) {
+                    int[] res = statement.executeBatch();
+                    for (int r : res) {
+                        if (r > 0) {
+                            count += r;
                         }
-                        conn.commit();
-                        statement.clearBatch();
                     }
+                    conn.commit();
+                    statement.clearBatch();
                 }
-                int[] res = statement.executeBatch();
-                for (int r : res) {
-                    if (r > 0) {
-                        count += r;
-                    }
-                }
-                conn.commit();
             }
+            int[] res = statement.executeBatch();
+            for (int r : res) {
+                if (r > 0) {
+                    count += r;
+                }
+            }
+            conn.commit();
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
         }

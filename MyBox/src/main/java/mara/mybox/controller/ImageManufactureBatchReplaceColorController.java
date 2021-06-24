@@ -30,7 +30,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchReplaceColorController extends ImageManufactureBatchController {
+public class ImageManufactureBatchReplaceColorController extends BaseImageManufactureBatchController {
 
     private int distance;
     private boolean isColor;

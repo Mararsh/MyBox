@@ -8,7 +8,9 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,8 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.image.file.ImageFileReaders;
+import static mara.mybox.image.file.ImageFileReaders.getReader;
 import static mara.mybox.image.file.ImageFileReaders.readBrokenImage;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
@@ -33,8 +37,6 @@ import org.apache.pdfbox.rendering.ImageType;
 /**
  * @Author Mara
  * @CreateDate 2019-6-22 9:52:02
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageConvert {
@@ -107,8 +109,7 @@ public class ImageConvert {
         }
     }
 
-    public static BufferedImage convertBinary(BufferedImage bufferedImage,
-            ImageAttributes attributes) {
+    public static BufferedImage convertBinary(BufferedImage bufferedImage, ImageAttributes attributes) {
         try {
             if (bufferedImage == null || attributes == null) {
                 return bufferedImage;
@@ -136,11 +137,14 @@ public class ImageConvert {
         }
     }
 
-    public static BufferedImage convertColorSpace(BufferedImage srcImage,
-            ImageAttributes attributes) {
+    public static BufferedImage convertColorSpace(BufferedImage srcImage, ImageAttributes attributes) {
         try {
             if (srcImage == null || attributes == null) {
                 return srcImage;
+            }
+            String targetFormat = attributes.getImageFormat();
+            if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
+                return convertToIcon(srcImage, attributes);
             }
             BufferedImage tmpImage = srcImage;
             if (null != attributes.getAlpha()) {
@@ -158,8 +162,11 @@ public class ImageConvert {
             }
 
             ICC_Profile targetProfile = attributes.getProfile();
+            String csName = attributes.getColorSpaceName();
             if (targetProfile == null) {
-                String csName = attributes.getColorSpaceName();
+                if (csName == null) {
+                    return tmpImage;
+                }
                 if ("BlackOrWhite".equals(csName) || message("BlackOrWhite").equals(csName)) {
                     return convertBinary(tmpImage, attributes);
                 } else {
@@ -198,12 +205,19 @@ public class ImageConvert {
             }
             boolean supportMultiFrames = CommonValues.MultiFramesImages.contains(targetFormat);
             ImageWriter writer = ImageFileWriters.getWriter(targetFormat);
+            if (writer == null) {
+                return false;
+            }
             ImageWriteParam param = ImageFileWriters.getWriterParam(attributes, writer);
             File tmpFile = FileTools.getTempFile();
-            try ( ImageInputStream in = ImageIO.createImageInputStream(srcFile);
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(srcFile);
                      ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                ImageReader reader = ImageIO.getImageReaders(in).next();
-                reader.setInput(in, false);
+                ImageReader reader = ImageFileReaders.getReader(iis);
+                if (reader == null) {
+                    writer.dispose();
+                    return false;
+                }
+                reader.setInput(iis, false);
                 writer.setOutput(out);
                 if (supportMultiFrames) {
                     writer.prepareWriteSequence(null);
@@ -217,7 +231,7 @@ public class ImageConvert {
                         if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                             break;
                         }
-                        bufferedImage = readBrokenImage(e, srcFile, index, null, 1, 1);
+                        bufferedImage = readBrokenImage(e, srcFile.getAbsolutePath(), index, null, -1);
                     }
                     if (bufferedImage == null) {
                         continue;
@@ -250,15 +264,36 @@ public class ImageConvert {
         }
     }
 
+    public static BufferedImage convertToPNG(BufferedImage srcImage) {
+        try {
+            if (srcImage == null
+                    || srcImage.getType() == BufferedImage.TYPE_4BYTE_ABGR
+                    || srcImage.getType() == BufferedImage.TYPE_4BYTE_ABGR_PRE) {
+                return srcImage;
+            }
+            ICC_Profile targetProfile = ICC_Profile.getInstance(ICC_ColorSpace.CS_sRGB);
+            ICC_ColorSpace targetColorSpace = new ICC_ColorSpace(targetProfile);
+            ColorConvertOp c = new ColorConvertOp(targetColorSpace, null);
+            BufferedImage targetImage = c.filter(srcImage, null);
+            return targetImage;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static boolean convertToIcon(File srcFile, ImageAttributes attributes, File targetFile) {
         try {
             if (srcFile == null || targetFile == null) {
                 return false;
             }
             List<BufferedImage> images = new ArrayList();
-            try ( ImageInputStream in = ImageIO.createImageInputStream(srcFile)) {
-                ImageReader reader = ImageIO.getImageReaders(in).next();
-                reader.setInput(in, false);
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(srcFile)))) {
+                ImageReader reader = getReader(iis);
+                if (reader == null) {
+                    return false;
+                }
+                reader.setInput(iis, false);
                 BufferedImage bufferedImage;
                 int index = 0;
                 while (true) {
@@ -268,7 +303,7 @@ public class ImageConvert {
                         if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                             break;
                         }
-                        bufferedImage = readBrokenImage(e, srcFile, index, null, 1, 1);
+                        bufferedImage = readBrokenImage(e, srcFile.getAbsolutePath(), index, null, -1);
                     }
                     if (bufferedImage != null) {
                         bufferedImage = convertToIcon(bufferedImage, attributes);

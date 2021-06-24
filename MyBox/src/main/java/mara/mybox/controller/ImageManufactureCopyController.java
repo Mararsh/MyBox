@@ -10,9 +10,9 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageScope;
 import mara.mybox.value.AppVariables;
 
@@ -36,14 +36,6 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     public void initPane() {
         try {
             colorSetController.init(this, baseName + "CopyColor");
-
-            copyToSystemClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("CopyToSystemClipboard", copyToSystemClipboardCheck.isSelected());
-                }
-            });
-            copyToSystemClipboardCheck.setSelected(AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
 
             clipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -122,7 +114,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        return ImageClipboard.add(newImage, copyToSystemClipboardCheck.isSelected()) != null;
+                        return ImageClipboard.add(newImage, ImageClipboard.ImageSource.Copy, true) != null;
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                         error = e.toString();
@@ -145,7 +137,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

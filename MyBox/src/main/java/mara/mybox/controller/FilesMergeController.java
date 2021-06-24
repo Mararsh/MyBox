@@ -17,7 +17,6 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-9-21
- * @Description
  * @License Apache License Version 2.0
  */
 public class FilesMergeController extends BaseBatchFileController {
@@ -49,6 +48,7 @@ public class FilesMergeController extends BaseBatchFileController {
                 .or(targetFileInput.styleProperty().isEqualTo(badStyle))
         );
 
+        startButton.disableProperty().unbind();
         startButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
                 .or(targetFileInput.styleProperty().isEqualTo(badStyle))
                 .or(Bindings.isEmpty(tableData))

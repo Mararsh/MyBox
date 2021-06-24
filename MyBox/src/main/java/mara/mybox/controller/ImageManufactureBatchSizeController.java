@@ -26,7 +26,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchSizeController extends ImageManufactureBatchController {
+public class ImageManufactureBatchSizeController extends BaseImageManufactureBatchController {
 
     protected float scale;
     protected int sizeType, customWidth, customHeight, keepWidth, keepHeight;

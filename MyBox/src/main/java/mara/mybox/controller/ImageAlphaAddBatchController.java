@@ -11,12 +11,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -26,7 +27,7 @@ import mara.mybox.value.CommonFxValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAlphaAddBatchController extends ImageManufactureBatchController {
+public class ImageAlphaAddBatchController extends BaseImageManufactureBatchController {
 
     private float opacityValue;
     private boolean useOpacityValue;
@@ -42,7 +43,7 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
     @FXML
     protected HBox alphaFileBox;
     @FXML
-    protected RadioButton opacityRadio;
+    protected RadioButton opacityRadio, tifRadio;
     @FXML
     protected ComboBox<String> opacityBox;
 
@@ -159,6 +160,12 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
         if (!useOpacityValue) {
             alphaImage = ImageFileReaders.readImage(sourceFile);
         }
+        if (tifRadio.isSelected()) {
+            targetFileSuffix = "tif";
+        } else {
+            targetFileSuffix = "png";
+        }
+        attributes = new ImageAttributes(targetFileSuffix);
         return true;
     }
 

@@ -58,7 +58,7 @@
                         <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
                         <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconTips.png" />
+                                <Image url="@../buttons/Red/iconTips.png" />
                             </image>
                         </ImageView>
                     </children>
@@ -69,7 +69,7 @@
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../buttons/iconOK.png" />
+                        <Image url="@../buttons/Red/iconOK.png" />
                     </image>
                 </ImageView>
             </graphic>

@@ -63,7 +63,7 @@ public class FilesDeleteSysTempController extends BaseController {
             };
             countTask.setSelf(countTask);
             Thread thread = new Thread(countTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -130,7 +130,7 @@ public class FilesDeleteSysTempController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

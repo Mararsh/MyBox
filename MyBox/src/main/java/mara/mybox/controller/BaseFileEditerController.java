@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
@@ -57,6 +59,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -74,7 +77,7 @@ public abstract class BaseFileEditerController extends BaseController {
     protected SimpleBooleanProperty fileChanged;
     protected boolean charsetByUser;
     protected FileEditInformation sourceInformation, targetInformation;
-    protected String filterConditions = "";
+    protected String filterConditionsString = "";
     protected StringFilterType filterType;
     protected Line_Break lineBreak;
     protected int defaultPageSize, lineBreakWidth, lastCursor, lastCaret, currentLine;
@@ -91,12 +94,12 @@ public abstract class BaseFileEditerController extends BaseController {
     @FXML
     protected VBox editBox, pairBox, filtersTypeBox, findOptionsBox;
     @FXML
-    protected TitledPane filePane, savePane, saveAsPane, bytesPane, findPane, filterPane,
+    protected TitledPane filePane, savePane, saveAsPane, findPane, filterPane,
             locatePane, encodePane, breakLinePane, paginatePane, backupPane;
     @FXML
     protected TextArea mainArea, lineArea, pairArea;
     @FXML
-    protected ComboBox<String> encodeBox, targetBox, pageSelector;
+    protected ComboBox<String> encodeBox, targetBox, pageSelector, pageSizeSlector;
     @FXML
     protected ToggleGroup filterGroup, lineBreakGroup;
     @FXML
@@ -104,14 +107,13 @@ public abstract class BaseFileEditerController extends BaseController {
     @FXML
     protected ControlTimeLength autoSaveDurationController;
     @FXML
-    protected Label editLabel, bomLabel, numbersLabel,
-            pageLabel, charsetLabel, selectionLabel, filterCommentsLabel, savedLabel;
+    protected Label editLabel, bomLabel, fileLabel, pageLabel, charsetLabel, selectionLabel,
+            filterConditionsLabel;
     @FXML
     protected Button panesMenuButton, charactersButton, linesButton, exampleFilterButton,
-            filterButton, locateObjectButton, locateLineButton;
+            filterButton, locateObjectButton, locateLineButton, okPaginateButton;
     @FXML
-    protected TextField fromInput, toInput, pageSizeInput, filterInput,
-            currentLineBreak, objectNumberInput, lineInput;
+    protected TextField fromInput, toInput, filterInput, currentLineBreak, objectNumberInput, lineInput;
     @FXML
     protected RadioButton crlfRadio, lfRadio, crRadio;
     @FXML
@@ -179,7 +181,7 @@ public abstract class BaseFileEditerController extends BaseController {
             initSaveAsTab();
             initLineBreakTab();
             initLocateTab();
-            initDisplayTab();
+            initCharsetTab();
             initFilterTab();
             initFindTab();
             initPageinateTab();
@@ -197,9 +199,6 @@ public abstract class BaseFileEditerController extends BaseController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        if (okButton != null) {
-            FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
-        }
         if (filtersTypeBox != null) {
             FxmlControl.setTooltip(filtersTypeBox, new Tooltip(message("FilterTypesComments")));
         }
@@ -247,12 +246,15 @@ public abstract class BaseFileEditerController extends BaseController {
                 pageNumber = sourceInformation.getCurrentPage();
             } else {
                 pageNumber = 1;
+                resetCursor();
             }
             sourceFile = file;
             sourceInformation = FileEditInformation.newEditInformation(editType, file);
             sourceInformation.setPageSize(AppVariables.getUserConfigInt(baseName + "PageSize", defaultPageSize));
             sourceInformation.setCurrentPage(pageNumber);
             targetInformation = FileEditInformation.newEditInformation(editType);
+            targetInformation.setPageSize(sourceInformation.getPageSize());
+            targetInformation.setCurrentPage(sourceInformation.getPagesNumber());
 
             if (backupController != null) {
                 backupController.loadBackups(sourceFile);
@@ -264,8 +266,13 @@ public abstract class BaseFileEditerController extends BaseController {
             sourceInformation.setFindReplace(null);
 
             bottomLabel.setText("");
-            numbersLabel.setText("");
+            fileLabel.setText("");
             selectionLabel.setText("");
+            if (filterConditionsLabel != null) {
+                filterConditionsLabel.setText("");
+            }
+            filterConditionsString = "";
+
             if (pageBox != null) {
                 pageBox.setVisible(false);
             }
@@ -318,6 +325,7 @@ public abstract class BaseFileEditerController extends BaseController {
                     }
                 }
             }
+
             isSettingValues = false;
             mainArea.requestFocus();
 
@@ -440,7 +448,7 @@ public abstract class BaseFileEditerController extends BaseController {
             AppVariables.setUserConfigValue(baseName + "AutoSave", autoSaveCheck.isSelected());
             autoSaveDurationController.permitInvalid(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
             if (confirmCheck != null) {
-                confirmCheck.setDisable(!autoSaveCheck.isDisabled() && autoSaveCheck.isSelected());
+                confirmCheck.setVisible(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
             }
             if (autoSaveTimer != null) {
                 autoSaveTimer.cancel();
@@ -483,40 +491,60 @@ public abstract class BaseFileEditerController extends BaseController {
         }
     }
 
-    protected void initDisplayTab() {
+    protected void initCharsetTab() {
         try {
-            if (bytesPane != null) {
-                bytesPane.expandedProperty().addListener(
+            if (encodePane == null) {
+                encodePane.expandedProperty().addListener(
                         (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                            AppVariables.setUserConfigValue(baseName + "BytesPane", bytesPane.isExpanded());
+                            AppVariables.setUserConfigValue(baseName + "EncodePane", encodePane.isExpanded());
                         });
-                bytesPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "BytesPane", false));
+                encodePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "EncodePane", true));
             }
-            if (encodeBox == null) {
-                return;
-            }
-            Tooltip tips = new Tooltip(AppVariables.message("EncodeComments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setTooltip(encodeBox, tips);
+            if (encodeBox != null) {
+                Tooltip tips = new Tooltip(AppVariables.message("EncodeComments"));
+                tips.setFont(new Font(16));
+                FxmlControl.setTooltip(encodeBox, tips);
 
-            List<String> setNames = TextTools.getCharsetNames();
-            encodeBox.getItems().addAll(setNames);
-            encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    changeCurrentCharset();
-                }
-            });
+                encodeBox.getItems().addAll(TextTools.getCharsetNames());
+                encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        sourceInformation.setCharset(Charset.forName(encodeBox.getSelectionModel().getSelectedItem()));
+                        charsetByUser = !isSettingValues;
+                        if (!isSettingValues && sourceFile != null) {
+                            openFile(sourceFile);
+                        };
+                    }
+                });
+            }
+            if (targetBox != null) {
+                targetBox.getItems().addAll(TextTools.getCharsetNames());
+                targetBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        targetInformation.setCharset(Charset.forName(newValue));
+                        if ("UTF-8".equals(newValue) || "UTF-16BE".equals(newValue)
+                                || "UTF-16LE".equals(newValue) || "UTF-32BE".equals(newValue)
+                                || "UTF-32LE".equals(newValue)) {
+                            targetBomCheck.setDisable(false);
+                        } else {
+                            targetBomCheck.setDisable(true);
+                            if ("UTF-16".equals(newValue) || "UTF-32".equals(newValue)) {
+                                targetBomCheck.setSelected(true);
+                            } else {
+                                targetBomCheck.setSelected(false);
+                            }
+                        }
+                    }
+                });
+                Tooltip tips = new Tooltip(AppVariables.message("BOMcomments"));
+                tips.setFont(new Font(16));
+                FxmlControl.setTooltip(targetBomCheck, tips);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
-    }
-
-    protected void changeCurrentCharset() {
-
     }
 
     protected void initFilterTab() {
@@ -710,18 +738,24 @@ public abstract class BaseFileEditerController extends BaseController {
                         });
                 paginatePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "PaginatePane", false));
             }
-            if (pageSizeInput != null) {
-                pageSizeInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        checkPageSize();
-                    }
-                });
+
+            if (pageSizeSlector != null) {
+                List<String> values = new ArrayList();
+                values.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
+                        "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
+                pageSizeSlector.getItems().addAll(values);
                 int pageSize = AppVariables.getUserConfigInt(baseName + "PageSize", defaultPageSize);
                 if (pageSize <= 0) {
                     pageSize = defaultPageSize;
                 }
-                pageSizeInput.setText(pageSize + "");
+                pageSizeSlector.setValue(StringTools.format(pageSize));
+//                pageSizeSlector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+//                    @Override
+//                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+//                        checkPageSize();
+//                    }
+//                });
+
             }
 
         } catch (Exception e) {
@@ -742,10 +776,7 @@ public abstract class BaseFileEditerController extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    String pageText = mainArea.getText();
-                    updateNumbers(pageText, true);
-                    updatePairArea();
-                    updateControls(true);
+                    updateInterface(true);
                 }
 
             });
@@ -755,9 +786,7 @@ public abstract class BaseFileEditerController extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    if (AppVariables.getUserConfigBoolean(baseName + "ScrollSynchronously", false)) {
-                        scrollTopPairArea(newValue.doubleValue());
-                    }
+                    scrollTopPairArea(newValue.doubleValue());
                     isSettingValues = true;
                     lineArea.setScrollTop(newValue.doubleValue());
                     isSettingValues = false;
@@ -766,12 +795,7 @@ public abstract class BaseFileEditerController extends BaseController {
             mainArea.scrollLeftProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (AppVariables.getUserConfigBoolean(baseName + "ScrollSynchronously", false)) {
-                        scrollLeftPairArea(newValue.doubleValue());
-                    }
+                    scrollLeftPairArea(newValue.doubleValue());
                 }
             });
             mainArea.selectionProperty().addListener(new ChangeListener<IndexRange>() {
@@ -787,6 +811,24 @@ public abstract class BaseFileEditerController extends BaseController {
 
     }
 
+    protected void scrollTopPairArea(double value) {
+        if (isSettingValues || pairArea == null || !splitPane.getItems().contains(rightPane)) {
+            return;
+        }
+        isSettingValues = true;
+        pairArea.setScrollTop(value);
+        isSettingValues = false;
+    }
+
+    protected void scrollLeftPairArea(double value) {
+        if (isSettingValues || pairArea == null || !splitPane.getItems().contains(rightPane)) {
+            return;
+        }
+        isSettingValues = true;
+        pairArea.setScrollLeft(value);
+        isSettingValues = false;
+    }
+
     protected void initPairBox() {
         try {
             if (pairArea == null) {
@@ -796,8 +838,7 @@ public abstract class BaseFileEditerController extends BaseController {
             pairArea.setEditable(false);
             pairArea.scrollTopProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue ov, Number oldValue,
-                        Number newValue) {
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -810,8 +851,7 @@ public abstract class BaseFileEditerController extends BaseController {
             });
             pairArea.scrollLeftProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue ov, Number oldValue,
-                        Number newValue) {
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -836,17 +876,10 @@ public abstract class BaseFileEditerController extends BaseController {
         setPairAreaSelection();
         IndexRange currentSelection = mainArea.getSelection();
         long pageStart = 0, pageEnd;
-        long fileStart = 0, fileEnd = 0;
-        if (sourceInformation != null) {
-            fileStart = sourceInformation.getCurrentPageObjectStart();
-            fileEnd = fileStart;
-        }
         // end of range is *excluded* when handled internally, while it is *included* when displayed
         if (editType == Edit_Type.Bytes) {
             pageStart = currentSelection.getStart() / 3 + 1;
             pageEnd = currentSelection.getLength() == 0 ? pageStart : currentSelection.getEnd() / 3;
-            fileStart += pageStart;
-            fileEnd += pageEnd;
 
         } else {
             pageStart = currentSelection.getStart() + 1;
@@ -859,15 +892,17 @@ public abstract class BaseFileEditerController extends BaseController {
                 int linesNumber = FindReplaceString.count(sub, "\n");
                 pageEnd += startLinesNumber + linesNumber;
             }
-            fileStart += pageStart;
-            fileEnd += pageEnd;
         }
-        selectionLabel.setText(AppVariables.message("Selection") + ":"
-                + StringTools.format(pageEnd - pageStart + 1)
-                + "(" + StringTools.format(pageStart) + "-" + StringTools.format(pageEnd) + ")/"
-                + StringTools.format(fileEnd - fileStart + 1)
-                + "(" + StringTools.format(fileStart) + "-" + StringTools.format(fileEnd) + ")");
-
+        String info = AppVariables.message("SelectionInPage") + ": "
+                + StringTools.format(pageStart) + " - " + StringTools.format(pageEnd)
+                + " (" + StringTools.format(pageEnd - pageStart + 1) + ")";
+        if (sourceInformation != null && sourceInformation.getPagesNumber() > 1) {
+            long fileStart = sourceInformation.getCurrentPageObjectStart() + pageStart;
+            long fileEnd = sourceInformation.getCurrentPageObjectStart() + pageEnd;
+            info += "  " + AppVariables.message("SelectionInFile") + ": "
+                    + StringTools.format(fileStart) + " - " + StringTools.format(fileEnd);
+        }
+        selectionLabel.setText(info);
     }
 
     protected void initToolBar() {
@@ -929,19 +964,23 @@ public abstract class BaseFileEditerController extends BaseController {
 
     private int checkPageSize() {
         try {
-            int v = Integer.valueOf(pageSizeInput.getText());
-            if (v > 0) {
-                pageSizeInput.setStyle(null);
-                okButton.setDisable(false);
+            int v = Integer.valueOf(pageSizeSlector.getValue().replaceAll(",", ""));
+            long available = SystemTools.freeBytes() / 4;
+            if (v > available) {
+                popError(message("MayOutOfMemory"));
+                pageSizeSlector.getEditor().setStyle(null);
+                pageSizeSlector.setValue(StringTools.format(available));
+                return -1;
+            } else if (v > 0) {
+                pageSizeSlector.getEditor().setStyle(null);
                 return v;
             } else {
-                pageSizeInput.setStyle(badStyle);
-                okButton.setDisable(true);
+                pageSizeSlector.getEditor().setStyle(badStyle);
             }
         } catch (Exception e) {
-            pageSizeInput.setStyle(badStyle);
-            okButton.setDisable(true);
+            pageSizeSlector.getEditor().setStyle(badStyle);
         }
+        popError(message("InvalidParameters"));
         return -1;
     }
 
@@ -970,7 +1009,7 @@ public abstract class BaseFileEditerController extends BaseController {
             return;
         }
         if (AppVariables.getUserConfigBoolean(baseName + "UpdateSynchronously", false)
-                || (pairArea != null && pairArea.getText().isBlank())) {
+                || (pairArea != null && pairArea.getText().isEmpty())) {
             refreshPairAction();
         }
     }
@@ -1008,24 +1047,6 @@ public abstract class BaseFileEditerController extends BaseController {
         pairArea.clear();
     }
 
-    protected void scrollTopPairArea(double value) {
-        if (isSettingValues || pairArea == null || !splitPane.getItems().contains(rightPane)) {
-            return;
-        }
-        isSettingValues = true;
-        pairArea.setScrollTop(value);
-        isSettingValues = false;
-    }
-
-    protected void scrollLeftPairArea(double value) {
-        if (isSettingValues || pairArea == null || !splitPane.getItems().contains(rightPane)) {
-            return;
-        }
-        isSettingValues = true;
-        pairArea.setScrollLeft(value);
-        isSettingValues = false;
-    }
-
     protected void setMainArea(String text) {
         if (isSettingValues) {
             return;
@@ -1056,8 +1077,7 @@ public abstract class BaseFileEditerController extends BaseController {
     }
 
     @FXML
-    @Override
-    public void okAction() {
+    public void setPageSize() {
         if (!checkBeforeNextAction()) {
             return;
         }
@@ -1066,7 +1086,6 @@ public abstract class BaseFileEditerController extends BaseController {
             return;
         }
         AppVariables.setUserConfigInt(baseName + "PageSize", pageSize);
-        popInformation(AppVariables.message("Saved"));
         sourceInformation.setPageSize(pageSize);
         sourceInformation.setCurrentPage(1);
         if (sourceInformation.getLineBreak() == Line_Break.Width) {
@@ -1088,9 +1107,68 @@ public abstract class BaseFileEditerController extends BaseController {
         }
         sourceInformation.setFilterStrings(filterStrings);
         sourceInformation.setFilterType(filterType);
-        final FileFilterController controller = (FileFilterController) openStage(CommonValues.FileFilterFxml);
+        TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml);
         if (controller != null) {
-            controller.filterFile(sourceInformation, filterConditions, filterLineNumberCheck.isSelected());
+            controller.filterFile(sourceInformation, filterConditionsString, filterLineNumberCheck.isSelected());
+        }
+    }
+
+    public void filterFile(FileEditInformation sourceInfo, String initConditions, boolean recordLineNumber) {
+        if (sourceInfo == null || sourceInfo.getFile() == null
+                || sourceInfo.getFilterStrings() == null
+                || sourceInfo.getFilterStrings().length == 0) {
+            return;
+        }
+        sourceInformation = FileEditInformation.newEditInformation(sourceInfo.getEditType(), sourceInfo.getFile());
+        sourceInformation.setCharset(sourceInfo.getCharset());
+        sourceInformation.setWithBom(sourceInfo.isWithBom());
+        sourceInformation.setFilterStrings(sourceInfo.getFilterStrings());
+        sourceInformation.setFilterType(sourceInfo.getFilterType());
+        sourceInformation.setPageSize(sourceInfo.getPageSize());
+        sourceInformation.setLineBreak(sourceInfo.getLineBreak());
+        sourceInformation.setLineBreakValue(sourceInfo.getLineBreakValue());
+        sourceInformation.setLineBreakWidth(sourceInfo.getLineBreakWidth());
+
+        String conditions = " (" + sourceInformation.filterTypeName() + ": "
+                + Arrays.asList(sourceInformation.getFilterStrings()) + ") ";
+        String finalCondition;
+        if (initConditions.isEmpty()) {
+            finalCondition = sourceInfo.getFile().getAbsolutePath() + "\n" + conditions;
+        } else {
+            finalCondition = initConditions + "\n" + message("And") + conditions;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private File file;
+
+                @Override
+                protected boolean handle() {
+                    file = sourceInformation.filter(recordLineNumber);
+                    return file != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (file.length() == 0) {
+                        popInformation(AppVariables.message("NoData"));
+                    } else {
+                        openTextFile(file);
+                        saveButton.setDisable(true);
+                    }
+                    filterConditionsLabel.setText(finalCondition);
+                    filterConditionsString = finalCondition;
+                    filterPane.setExpanded(true);
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
         }
     }
 
@@ -1219,7 +1297,7 @@ public abstract class BaseFileEditerController extends BaseController {
                     openHandlingStage(task, Modality.WINDOW_MODAL);
                     task.setSelf(task);
                     Thread thread = new Thread(task);
-                    thread.setDaemon(true);
+                    thread.setDaemon(false);
                     thread.start();
                 }
             }
@@ -1354,7 +1432,7 @@ public abstract class BaseFileEditerController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1397,13 +1475,13 @@ public abstract class BaseFileEditerController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    updateNumbers(mainArea.getText(), false);
+                    updateNumbers(false);
                 }
 
             };
             backgroundTask.setSelf(backgroundTask);
             Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1434,15 +1512,16 @@ public abstract class BaseFileEditerController extends BaseController {
                         isSettingValues = true;
                         mainArea.setText(text);
                         isSettingValues = false;
-
+                        formatMainArea();
                         updateInterface(false);
+                        updateCursor();
                         if (!sourceInformation.isTotalNumberRead()) {
                             loadTotalNumbers();
                         }
+
                     } else {
                         popFailed();
                     }
-
                 }
 
                 @Override
@@ -1455,27 +1534,21 @@ public abstract class BaseFileEditerController extends BaseController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
 
     protected void updateInterface(boolean changed) {
-        String pageText = mainArea.getText();
-
-        updateNumbers(pageText, changed);
-
-        updateCursor(pageText);
-
         updateControls(changed);
-
+        updateNumbers(changed);
         updatePairArea();
-
     }
 
     protected void updateControls(boolean changed) {
         fileChanged.set(changed);
         bottomLabel.setText("");
+        selectionLabel.setText("");
         if (getMyStage() == null || sourceInformation == null) {
             return;
         }
@@ -1488,28 +1561,28 @@ public abstract class BaseFileEditerController extends BaseController {
         } else {
             getMyStage().setTitle(t);
         }
-        if (!formatMainArea()) {
+
+        if (changed && !validMainArea()) {
             if (editLabel != null) {
-                editLabel.setText(AppVariables.message("InvalidData"));
+                editLabel.setText(message("InvalidData"));
             }
             mainArea.setStyle(badStyle);
-            return;
+            popError(message("InvalidData"));
         } else if (editLabel != null) {
             editLabel.setText("");
+            mainArea.setStyle(null);
         }
-        mainArea.setStyle(null);
+
         if (okButton != null) {
             okButton.setDisable(changed);
         }
         if (autoSaveCheck != null) {
             autoSaveCheck.setDisable(sourceFile == null);
         }
-        if (!changed && savedLabel != null) {
-            savedLabel.setText(message("Load") + ": " + DateTools.nowString());
-        }
     }
 
-    protected synchronized void updateCursor(String pageText) {
+    protected synchronized void updateCursor() {
+        String pageText = mainArea.getText();
         if (lastCursor >= 0) {
             mainArea.requestFocus();
             mainArea.deselect();
@@ -1561,20 +1634,17 @@ public abstract class BaseFileEditerController extends BaseController {
         recoverCursor();
     }
 
-    protected void updateNumbers(String pageText, boolean changed) {
-        int pageObjectsNumber = pageText.length();
-        int linesNumber = FindReplaceString.count(pageText, "\n") + 1;
-        String objectNumberName, objectName;
+    protected void updateNumbers(boolean changed) {
+        String pageText = mainArea.getText();
+        int pageObjectsNumber;
+        int pageLinesNumber = FindReplaceString.count(pageText, "\n") + 1;
         if (editType == Edit_Type.Bytes) {
-            pageObjectsNumber = pageText.length() / 3;
-            objectName = AppVariables.message("Bytes");
-            objectNumberName = AppVariables.message("BytesNumber");
+            pageObjectsNumber = pageText.replaceAll("\\s+|\n", "").length() / 2;
         } else {
+            pageObjectsNumber = pageText.length();
             if (sourceInformation.getLineBreak().equals(Line_Break.CRLF)) {
-                pageObjectsNumber += linesNumber - 1;
+                pageObjectsNumber += pageLinesNumber - 1;
             }
-            objectName = AppVariables.message("Characters");
-            objectNumberName = AppVariables.message("CharactersNumber");
         }
         saveButton.setDisable(false);
         if (saveAsButton != null) {
@@ -1583,27 +1653,49 @@ public abstract class BaseFileEditerController extends BaseController {
         if (pageBox != null) {
             pageBox.setVisible(false);
         }
+        String fileInfo;
         if (sourceFile == null) {
             if (pageLabel != null) {
                 pageLabel.setText("");
             }
-            setLines(1, linesNumber);
+            setLines(1, pageLinesNumber);
             sourceInformation.setObjectsNumber(pageObjectsNumber);
-            sourceInformation.setLinesNumber(linesNumber);
-            numbersLabel.setText(objectNumberName + ":" + StringTools.format(pageObjectsNumber) + "\n"
-                    + AppVariables.message("LinesNumber") + ":" + StringTools.format(linesNumber));
+            sourceInformation.setLinesNumber(pageLinesNumber);
+            if (editType == Edit_Type.Bytes) {
+                fileInfo = message("BytesNumber");
+            } else {
+                fileInfo = message("CharactersNumber");
+            }
+            fileInfo += ": " + StringTools.format(pageObjectsNumber) + "\n"
+                    + message("LinesNumber") + ": " + StringTools.format(pageLinesNumber) + "\n"
+                    + message("CurrentFileLineBreak") + ": " + sourceInformation.lineBreakName() + "\n";
+            if (editType != Edit_Type.Bytes) {
+                fileInfo += message("CurrentFileCharset") + ": " + sourceInformation.getCharset().name() + "\n";
+            }
         } else {
+            fileInfo = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
+                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
+                    + message("CurrentFileLineBreak") + ": " + sourceInformation.lineBreakName() + "\n";
+            if (editType != Edit_Type.Bytes) {
+                fileInfo += message("CurrentFileCharset") + ": " + sourceInformation.getCharset().name() + "\n";
+            }
+            long lineFrom = sourceInformation.getCurrentPageLineStart();
+            long lineTo = lineFrom + pageLinesNumber - 1;
+            setLines(lineFrom, lineTo);
             if (!sourceInformation.isTotalNumberRead()) {
                 saveButton.setDisable(true);
                 if (saveAsButton != null) {
                     saveAsButton.setDisable(true);
                 }
-                setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
-                numbersLabel.setText(objectName + ":"
-                        + StringTools.format(sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
-                        + StringTools.format(sourceInformation.getCurrentPageObjectStart() + 1)
-                        + "-" + StringTools.format(sourceInformation.getCurrentPageObjectEnd()) + ")  "
-                        + AppVariables.message("CountingTotalNumber"));
+
+                if (editType == Edit_Type.Bytes) {
+                    fileInfo = message("BytesNumber");
+                } else {
+                    fileInfo = message("CharactersNumber");
+                }
+                fileInfo += ": " + StringTools.format(pageObjectsNumber) + "\n"
+                        + message("LinesNumber") + ": " + StringTools.format(pageLinesNumber) + "\n"
+                        + message("CountingTotalNumber") + "\n";
                 if (locateObjectButton != null) {
                     locateObjectButton.setDisable(true);
                     locateLineButton.setDisable(true);
@@ -1614,11 +1706,34 @@ public abstract class BaseFileEditerController extends BaseController {
                     pagesNumber++;
                 }
                 sourceInformation.setPagesNumber(pagesNumber);
+
+                if (editType == Edit_Type.Bytes) {
+                    fileInfo += message("BytesNumberInFile");
+                } else {
+                    fileInfo += message("CharactersNumberInFile");
+                }
+                fileInfo += ": " + StringTools.format(sourceInformation.getObjectsNumber()) + "\n"
+                        + message("TotalLinesNumber") + ": " + StringTools.format(sourceInformation.getLinesNumber()) + "\n"
+                        + message("PageSize") + ": " + StringTools.format(sourceInformation.getPageSize()) + "\n";
+
                 if (pagesNumber > 1) {
+                    long objectFrom = sourceInformation.getCurrentPageObjectStart() + 1;
+                    long objectTo = sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber;
+                    fileInfo += message("CurrentPage") + ": " + StringTools.format(sourceInformation.getCurrentPage())
+                            + " / " + StringTools.format(pagesNumber) + "\n";
+                    if (editType == Edit_Type.Bytes) {
+                        fileInfo += message("BytesNumberInPage") + ": " + StringTools.format(pageObjectsNumber) + "\n"
+                                + message("BytesRangeInPage") + ": " + StringTools.format(objectFrom) + " - " + StringTools.format(objectTo) + "\n";
+                    } else {
+                        fileInfo += message("CharactersNumberInPage") + ": " + StringTools.format(pageObjectsNumber) + "\n"
+                                + message("CharactersRangeInPage") + ": " + StringTools.format(objectFrom) + " - " + StringTools.format(objectTo) + "\n";
+                    }
+                    fileInfo += message("LinesNumberInPage") + ": " + StringTools.format(pageLinesNumber) + "\n"
+                            + message("LinesRangeInPage") + ": " + StringTools.format(lineFrom) + " - " + StringTools.format(lineTo) + "\n";
                     if (filterBox != null) {
                         filterBox.setDisable(changed);
                     }
-                    if (encodeBox != null) {
+                    if (encodeBox != null && editType != Edit_Type.Bytes) {
                         encodeBox.setDisable(changed || sourceInformation.isWithBom());
                     }
                     if (locateObjectButton != null) {
@@ -1642,40 +1757,13 @@ public abstract class BaseFileEditerController extends BaseController {
                         isSettingValues = false;
                     }
                 }
-
-                if (!changed) {
-                    setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
-                    numbersLabel.setText(objectName + ":"
-                            + StringTools.format(sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()) + "("
-                            + StringTools.format(sourceInformation.getCurrentPageObjectStart() + 1)
-                            + "-" + StringTools.format(sourceInformation.getCurrentPageObjectEnd()) + ")/"
-                            + StringTools.format(sourceInformation.getObjectsNumber()) + "\n"
-                            + AppVariables.message("Lines") + ":"
-                            + StringTools.format(sourceInformation.getCurrentPageLineEnd() - sourceInformation.getCurrentPageLineStart() + 1) + "("
-                            + StringTools.format(sourceInformation.getCurrentPageLineStart())
-                            + "-" + StringTools.format(sourceInformation.getCurrentPageLineEnd()) + ")/"
-                            + StringTools.format(sourceInformation.getLinesNumber()));
-                } else {
-                    long charsTo = sourceInformation.getCurrentPageObjectStart() + pageObjectsNumber;
-                    long charsTotal = sourceInformation.getObjectsNumber()
-                            + (pageObjectsNumber - (sourceInformation.getCurrentPageObjectEnd() - sourceInformation.getCurrentPageObjectStart()));
-                    long linesTo = sourceInformation.getCurrentPageLineStart() + linesNumber - 1;
-                    long linesTotal = sourceInformation.getLinesNumber()
-                            + (linesNumber - (sourceInformation.getCurrentPageLineEnd() - sourceInformation.getCurrentPageLineStart() + 1));
-                    setLines(sourceInformation.getCurrentPageLineStart(), linesTo);
-                    numbersLabel.setText(objectName + ":"
-                            + StringTools.format(pageObjectsNumber) + "(" + StringTools.format(sourceInformation.getCurrentPageObjectStart() + 1)
-                            + "-" + StringTools.format(charsTo) + ")/"
-                            + StringTools.format(charsTotal) + "  "
-                            + AppVariables.message("Lines") + ":" + StringTools.format(linesNumber) + "("
-                            + StringTools.format(sourceInformation.getCurrentPageLineStart())
-                            + "-" + StringTools.format(linesTo) + ")/" + StringTools.format(linesTotal));
-                }
             }
         }
+        fileInfo += message("PageModifyTime") + ": " + DateTools.nowString();
+        fileLabel.setText(fileInfo);
     }
 
-    protected boolean formatMainArea() {
+    protected boolean validMainArea() {
         return true;
     }
 
@@ -1712,10 +1800,17 @@ public abstract class BaseFileEditerController extends BaseController {
         }, delay);
     }
 
+    protected boolean formatMainArea() {
+        return true;
+    }
+
     @FXML
     @Override
     public void saveAction() {
         recordCursor();
+        if (!formatMainArea()) {
+            return;
+        }
         if (sourceFile == null) {
             saveNew();
         } else {
@@ -1729,7 +1824,6 @@ public abstract class BaseFileEditerController extends BaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file);
         targetInformation.setFile(file);
         if (targetBomCheck != null) {
             targetInformation.setWithBom(targetBomCheck.isSelected());
@@ -1748,22 +1842,27 @@ public abstract class BaseFileEditerController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessful();
+                    recordFileWritten(file);
+                    popSaved();
                     charsetByUser = false;
-                    openFile(file);
+                    sourceFile = file;
+                    sourceInformation = targetInformation;
+                    sourceInformation.setTotalNumberRead(false);
+                    updateInterface(false);
+                    loadTotalNumbers();
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
 
     protected void saveExisted() {
-        if (!confirmCheck.isDisabled() && confirmCheck.isSelected() && (autoSaveTimer == null)) {
+        if (confirmCheck.isVisible() && confirmCheck.isSelected() && (autoSaveTimer == null)) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVariables.message("SureOverrideFile"));
@@ -1804,21 +1903,24 @@ public abstract class BaseFileEditerController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessful();
-                    openFile(sourceFile);
-                }
-
-                @Override
-                protected void whenFailed() {
-                    updateInterface(false);
-                    super.whenFailed();
+                    recordFileWritten(sourceFile);
+                    popSaved();
+                    if (sourceInformation.getCharset().equals(targetInformation.getCharset())
+                            && sourceInformation.getLineBreak().name().equals(targetInformation.getLineBreak().name())
+                            && sourceInformation.isWithBom() == targetInformation.isWithBom()) {
+                        sourceInformation.setTotalNumberRead(false);
+                        updateInterface(false);
+                        loadTotalNumbers();
+                    } else {
+                        openFile(sourceFile);
+                    }
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1826,17 +1928,21 @@ public abstract class BaseFileEditerController extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
-        String name = null;
+        recordCursor();
+        if (!formatMainArea()) {
+            return;
+        }
+        String name;
         if (sourceFile != null) {
             name = FileTools.getFilePrefix(sourceFile.getName());
+        } else {
+            name = new Date().getTime() + "";
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                 name, targetExtensionFilter);
         if (file == null) {
             return;
         }
-        recordFileWritten(file);
-
         targetInformation.setFile(file);
         if (targetBomCheck != null) {
             targetInformation.setWithBom(targetBomCheck.isSelected());
@@ -1851,26 +1957,26 @@ public abstract class BaseFileEditerController extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    ok = targetInformation.writePage(sourceInformation, mainArea.getText());
-                    return true;
+                    return targetInformation.writePage(sourceInformation, mainArea.getText());
                 }
 
                 @Override
                 protected void whenSucceeded() {
+                    recordFileWritten(file);
                     if (saveAsType == SaveAsType.Load) {
                         openFile(file);
                     } else if (saveAsType == SaveAsType.Open) {
                         BaseFileEditerController controller = openNewStage();
                         controller.openFile(file);
                     }
-                    popSuccessful();
+                    popSaved();
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

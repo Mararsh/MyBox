@@ -3,6 +3,7 @@ package mara.mybox.fxml;
 import java.util.Map;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Labeled;
@@ -24,15 +25,10 @@ import static mara.mybox.value.AppVariables.message;
 public class ControlStyle {
 
     public static Map<String, ControlStyle> ControlsList;
-    public static String DefaultButtonPath = "buttons/";
-    public static String RedButtonPath = "buttons/";
-    public static String LightBlueButtonPath = "buttonsLightBlue/";
-    public static String BlueButtonPath = "buttonsBlue/";
-    public static String PinkButtonPath = "buttonsPink/";
-    public static String OrangeButtonPath = "buttonsOrange/";
+    public static String ButtonsPath = "buttons/";
 
     public static enum ColorStyle {
-        Default, Red, Blue, LightBlue, Pink, Orange
+        Red, Blue, LightBlue, Pink, Orange
     }
 
     private String id, name, comments, shortcut, iconName;
@@ -430,7 +426,7 @@ public class ControlStyle {
                 return new ControlStyle("statisticCheck", "", message("Statistic"), "", "iconStatistic.png");
 
             case "transparentBackgroundCheck":
-                return new ControlStyle("transparentBackgroundCheck", "", message("TransparentBackground"), "", "iconOpacity.png");
+                return new ControlStyle(id, "", message("TransparentBackground"), "", "iconOpacity.png");
 
             case "transparentCheck":
                 return new ControlStyle(id, "", message("CountTransparent"), "", "iconOpacity.png");
@@ -1054,8 +1050,21 @@ public class ControlStyle {
             return new ControlStyle(id, message("Texts"), "", "iconTxt.png");
         }
 
-        switch (id) {
+        if (id.startsWith("clipboard")) {
+            switch (id) {
+                case "clipboardSystemLoadImageButton":
+                    return new ControlStyle(id, message("LoadSystemClipboardImage"), "", "iconClipboard.png");
 
+                default:
+                    return new ControlStyle(id, message("Clipboard"), "", "iconClipboard.png");
+            }
+        }
+
+        if (id.startsWith("openPath")) {
+            return new ControlStyle(id, message("Directory"), "", "iconOpen2.png");
+        }
+
+        switch (id) {
             case "selectButton":
                 return new ControlStyle(id, message("Select"), "", "iconSelect.png");
 
@@ -1157,9 +1166,6 @@ public class ControlStyle {
 
             case "browseButton":
                 return new ControlStyle("browseButton", message("Browse"), "", "iconBrowse.png");
-
-            case "sytemClipboardButton":
-                return new ControlStyle("sytemClipboardButton", "", message("LoadImageInSystemClipboard"), "", "iconPicSmall.png");
 
             case "mirrorHButton":
                 return new ControlStyle("mirrorHButton", message("MirrorHorizontal"), "", "iconHorizontal.png");
@@ -1440,14 +1446,11 @@ public class ControlStyle {
 //            setColorStyle(node, style, AppVariables.ControlColor);
 //        }
 
-        if (AppVariables.controlDisplayText && node instanceof Labeled) {
-            setTextStyle(node, style, AppVariables.ControlColor);
-        }
-
+        setTextStyle(node, style, AppVariables.ControlColor);
     }
 
     public static ColorStyle getConfigColorStyle() {
-        return ControlStyle.getColorStyle(AppVariables.getUserConfigValue("ControlColor", "default"));
+        return ControlStyle.getColorStyle(AppVariables.getUserConfigValue("ControlColor", "red"));
     }
 
     public static ContentDisplay getConfigControlContent() {
@@ -1461,7 +1464,7 @@ public class ControlStyle {
 
     public static ColorStyle getColorStyle(String color) {
         if (color == null) {
-            return ColorStyle.Default;
+            return ColorStyle.Red;
         }
         switch (color.toLowerCase()) {
             case "red":
@@ -1475,7 +1478,7 @@ public class ControlStyle {
             case "orange":
                 return ColorStyle.Orange;
             default:
-                return ColorStyle.Default;
+                return ColorStyle.Red;
         }
     }
 
@@ -1582,37 +1585,23 @@ public class ControlStyle {
 
     public static void setTextStyle(Node node, ControlStyle controlStyle, ColorStyle colorStyle) {
         try {
-            if (node == null
-                    || controlStyle == null
-                    || !(node instanceof Labeled)) {
+            if (node == null || controlStyle == null || !(node instanceof ButtonBase)) {
                 return;
             }
-            Labeled label = ((Labeled) node);
-//            switch (colorStyle) {
-//                case Red:
-//                    label.setTextFill(Color.RED);
-//                    break;
-//                case Pink:
-//                    label.setTextFill(Color.PINK);
-//                    break;
-//                case Blue:
-//                    label.setTextFill(Color.BLUE);
-//                    break;
-//                case Orange:
-//                    label.setTextFill(Color.ORANGE);
-//                    break;
-//                default:
-//                    label.setTextFill(Color.BLUE);
-//                    break;
-//            }
-
-            String name = controlStyle.getName();
-            if (name != null && !name.isEmpty()) {
-                label.setText(name);
-            } else {
-                label.setText(controlStyle.getComments());
+            ButtonBase button = (ButtonBase) node;
+            if (button.getGraphic() == null) {
+                return;
             }
-
+            if (AppVariables.controlDisplayText) {
+                String name = controlStyle.getName();
+                if (name != null && !name.isEmpty()) {
+                    button.setText(name);
+                } else {
+                    button.setText(controlStyle.getComments());
+                }
+            } else {
+                button.setText(null);
+            }
         } catch (Exception e) {
             MyBoxLog.debug(node.getId() + " " + e.toString());
 
@@ -1679,7 +1668,7 @@ public class ControlStyle {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, node.getId());
+            MyBoxLog.error(e, node.getId() + " " + icon);
 
         }
     }
@@ -1702,22 +1691,34 @@ public class ControlStyle {
             return null;
         }
         try {
-            String path = getIconPath(style);
-            String finalName = iconName;
+            String stylePath = getIconPath(style);
             if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
-                finalName = iconName.substring(0, iconName.length() - 4) + "_100.png";
+                String hiName = iconName.substring(0, iconName.length() - 4) + "_100.png";
                 try {
-                    new ImageView(path + finalName);
+                    new ImageView(ButtonsPath + hiName);
+                    return ButtonsPath + hiName;
                 } catch (Exception e) {
-                    finalName = iconName;
+                    try {
+                        new ImageView(stylePath + hiName);
+                        return stylePath + hiName;
+                    } catch (Exception ex) {
+                    }
                 }
             }
-            return path + finalName;
+            try {
+                new ImageView(ButtonsPath + iconName);
+                return ButtonsPath + iconName;
+            } catch (Exception e) {
+                try {
+                    new ImageView(stylePath + iconName);
+                    return stylePath + iconName;
+                } catch (Exception ex) {
+                    return iconName;
+                }
+            }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+            return iconName;
         }
-
     }
 
     public static String getIcon(String iconName) {
@@ -1728,32 +1729,12 @@ public class ControlStyle {
         return getIconPath(AppVariables.ControlColor);
     }
 
-    public static String getIconPath(ColorStyle color) {
+    public static String getIconPath(ColorStyle colorStyle) {
         try {
-            if (color == null) {
-                color = ColorStyle.Default;
+            if (colorStyle == null) {
+                colorStyle = ColorStyle.Red;
             }
-            String path;
-            switch (color) {
-                case Red:
-                    path = RedButtonPath;
-                    break;
-                case Blue:
-                    path = BlueButtonPath;
-                    break;
-                case LightBlue:
-                    path = LightBlueButtonPath;
-                    break;
-                case Pink:
-                    path = PinkButtonPath;
-                    break;
-                case Orange:
-                    path = OrangeButtonPath;
-                    break;
-                default:
-                    path = DefaultButtonPath;
-            }
-            return path;
+            return ButtonsPath + colorStyle.name() + "/";
         } catch (Exception e) {
             return null;
         }

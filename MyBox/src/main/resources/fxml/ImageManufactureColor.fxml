@@ -20,7 +20,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconReplace.png" />
+                                        <Image url="@../buttons/Red/iconReplace.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -29,7 +29,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconDraw.png" />
+                                        <Image url="@../buttons/Red/iconDraw.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -51,7 +51,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconBrightness.png" />
+                                        <Image url="@../buttons/Red/iconBrightness.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -69,7 +69,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconSaturation.png" />
+                                        <Image url="@../buttons/Red/iconSaturation.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -78,7 +78,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconOpacity.png" />
+                                        <Image url="@../buttons/Red/iconOpacity.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -145,7 +145,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconTarget.png" />
+                                        <Image url="@../buttons/Red/iconTarget.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -154,7 +154,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconEqual.png" />
+                                        <Image url="@../buttons/Red/iconEqual.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -163,7 +163,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconPlus.png" />
+                                        <Image url="@../buttons/Red/iconPlus.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -172,7 +172,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconMinus.png" />
+                                        <Image url="@../buttons/Red/iconMinus.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -181,7 +181,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconFilter.png" />
+                                        <Image url="@../buttons/Red/iconFilter.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -190,7 +190,7 @@
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconInvert.png" />
+                                        <Image url="@../buttons/Red/iconInvert.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -202,7 +202,7 @@
                         <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
                         <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconTips.png" />
+                                <Image url="@../buttons/Red/iconTips.png" />
                             </image>
                         </ImageView>
                     </children>
@@ -228,7 +228,7 @@
                                         <Label text="%Distance" />
                                         <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconTips.png" />
+                                                <Image url="@../buttons/Red/iconTips.png" />
                                             </image>
                                         </ImageView>
                                     </children>
@@ -258,7 +258,7 @@
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconOK.png" />
+                                                <Image url="@../buttons/Red/iconOK.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -278,7 +278,7 @@
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../buttons/iconDemo.png" />
+                        <Image url="@../buttons/Red/iconDemo.png" />
                     </image>
                 </ImageView>
             </graphic>

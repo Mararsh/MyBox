@@ -312,7 +312,7 @@ public abstract class BaseSheetController extends ControlSheetData {
         makeSheet(data, true);
     }
 
-    public void makeSheet(String[][] data, boolean changed) {
+    public synchronized void makeSheet(String[][] data, boolean changed) {
         if (isSettingValues) {
             return;
         }
@@ -703,8 +703,7 @@ public abstract class BaseSheetController extends ControlSheetData {
     }
 
     @FXML
-    @Override
-    public void pasteAction() {
+    public void clipboard() {
         DataClipboardController controller = (DataClipboardController) FxmlStage.openStage(CommonValues.DataClipboardFxml);
         controller.setSheet(this);
         controller.toFront();

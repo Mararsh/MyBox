@@ -26,7 +26,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageManufactureBatchArcController extends ImageManufactureBatchController {
+public class ImageManufactureBatchArcController extends BaseImageManufactureBatchController {
 
     private int arc, percent;
     private boolean isPercent;

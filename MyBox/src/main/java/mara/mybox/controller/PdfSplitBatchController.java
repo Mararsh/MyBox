@@ -6,22 +6,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -38,22 +29,11 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
  */
 public class PdfSplitBatchController extends BaseBatchPdfController {
 
-    private int pagesNumber, filesNumber;
-    private List<Integer> startEndList;
-    private PdfSplitType splitType;
-
     @FXML
-    protected ToggleGroup splitGroup;
-    @FXML
-    protected TextField PagesNumberInput, FilesNumberInput, ListInput;
-
-    public enum PdfSplitType {
-        PagesNumber, FilesNumber, StartEndList
-    }
+    protected ControlFileSplit splitWayController;
 
     public PdfSplitBatchController() {
         baseTitle = AppVariables.message("PdfSplitBatch");
-
     }
 
     @Override
@@ -64,138 +44,13 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
+                            .or(splitWayController.valid)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(PagesNumberInput.styleProperty().isEqualTo(badStyle))
-                            .or(FilesNumberInput.styleProperty().isEqualTo(badStyle))
-                            .or(ListInput.styleProperty().isEqualTo(badStyle))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initOptionsSection() {
-        try {
-            splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkSplitType();
-                }
-            });
-            checkSplitType();
-
-            PagesNumberInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkPagesNumber();
-                }
-            });
-
-            FilesNumberInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkFilesNumber();
-                }
-            });
-
-            ListInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkStartEndList();
-                }
-            });
-            FxmlControl.setTooltip(ListInput, new Tooltip(message("StartEndComments")));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    private void checkSplitType() {
-        PagesNumberInput.setDisable(true);
-        FilesNumberInput.setDisable(true);
-        ListInput.setDisable(true);
-        PagesNumberInput.setStyle(null);
-        FilesNumberInput.setStyle(null);
-        ListInput.setStyle(null);
-
-        RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-        if (AppVariables.message("PagesNumberOfEachFile").equals(selected.getText())) {
-            splitType = PdfSplitType.PagesNumber;
-            PagesNumberInput.setDisable(false);
-            checkPagesNumber();
-
-        } else if (AppVariables.message("NumberOfFilesDividedEqually").equals(selected.getText())) {
-            splitType = PdfSplitType.FilesNumber;
-            FilesNumberInput.setDisable(false);
-            checkFilesNumber();
-
-        } else if (AppVariables.message("StartEndList").equals(selected.getText())) {
-            splitType = PdfSplitType.StartEndList;
-            ListInput.setDisable(false);
-            checkStartEndList();
-        }
-    }
-
-    private void checkPagesNumber() {
-        try {
-            int v = Integer.valueOf(PagesNumberInput.getText());
-            if (v > 0) {
-                PagesNumberInput.setStyle(null);
-                pagesNumber = v;
-            } else {
-                PagesNumberInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            PagesNumberInput.setStyle(badStyle);
-        }
-    }
-
-    private void checkFilesNumber() {
-        try {
-            int v = Integer.valueOf(FilesNumberInput.getText());
-            if (v > 0) {
-                FilesNumberInput.setStyle(null);
-                filesNumber = v;
-            } else {
-                FilesNumberInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            FilesNumberInput.setStyle(badStyle);
-        }
-    }
-
-    private void checkStartEndList() {
-        startEndList = new ArrayList<>();
-        try {
-            String[] list = ListInput.getText().split(",");
-            for (String item : list) {
-                String[] values = item.split("-");
-                if (values.length != 2) {
-                    continue;
-                }
-                try {
-                    int start = Integer.valueOf(values[0].trim());
-                    int end = Integer.valueOf(values[1].trim());
-                    if (start > 0 && end >= start) {  // 1-based start
-                        startEndList.add(start);
-                        startEndList.add(end);
-                    }
-                } catch (Exception e) {
-                }
-            }
-            if (startEndList.isEmpty()) {
-                ListInput.setStyle(badStyle);
-            } else {
-                ListInput.setStyle(null);
-            }
-        } catch (Exception e) {
-            ListInput.setStyle(badStyle);
         }
     }
 
@@ -227,8 +82,8 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                         currentParameters.currentTargetPath.mkdirs();
                     }
                 }
-                if (null != splitType) {
-                    switch (splitType) {
+                if (null != splitWayController.splitType) {
+                    switch (splitWayController.splitType) {
                         case PagesNumber:
                             splitByPagesSize(doc);
                             break;
@@ -259,7 +114,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             splitter.setStartPage(currentParameters.fromPage);  // 1-based
             splitter.setEndPage(currentParameters.toPage);
             splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
-            splitter.setSplitAtPage(pagesNumber);
+            splitter.setSplitAtPage(splitWayController.pagesNumber);
             List<PDDocument> docs = splitter.split(source);
             return writeFiles(docs);
         } catch (Exception e) {
@@ -272,10 +127,10 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
         try {
             int total = currentParameters.toPage - currentParameters.fromPage + 1;
             int len;
-            if (total % filesNumber == 0) {
-                len = total / filesNumber;
+            if (total % splitWayController.filesNumber == 0) {
+                len = total / splitWayController.filesNumber;
             } else {
-                len = total / filesNumber + 1;
+                len = total / splitWayController.filesNumber + 1;
             }
             Splitter splitter = new Splitter();
             splitter.setStartPage(currentParameters.fromPage);  // 1-based
@@ -293,9 +148,9 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
     private int splitByList(PDDocument source) {
         try {
             List<PDDocument> docs = new ArrayList<>();
-            for (int i = 0; i < startEndList.size();) {
-                int start = startEndList.get(i++);
-                int end = startEndList.get(i++);
+            for (int i = 0; i < splitWayController.startEndList.size();) {
+                int start = splitWayController.startEndList.get(i++);
+                int end = splitWayController.startEndList.get(i++);
                 if (start < currentParameters.fromPage) {
                     start = currentParameters.fromPage;
                 }

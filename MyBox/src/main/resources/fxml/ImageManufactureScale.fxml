@@ -63,7 +63,7 @@
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconOriginalSize.png" />
+                                                <Image url="@../buttons/Red/iconOriginalSize.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -72,7 +72,7 @@
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconCalculator.png" />
+                                                <Image url="@../buttons/Red/iconCalculator.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -156,7 +156,7 @@
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../buttons/iconOK.png" />
+                        <Image url="@../buttons/Red/iconOK.png" />
                     </image>
                 </ImageView>
             </graphic>

@@ -40,7 +40,7 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
                 @Override
                 public Void call() {
                     ImageFileInformation imageFileInformation
-                            = ImageInformation.loadImageFileInformation(file);
+                            = ImageInformation.readImageFileInformation(file);
                     if (imageFileInformation == null
                             || imageFileInformation.getImageInformation() == null) {
                         return null;
@@ -60,7 +60,7 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

@@ -482,7 +482,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -531,7 +531,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -592,7 +592,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -607,43 +607,40 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             popMenu.setAutoHide(true);
 
             MenuItem menu;
-
-            if (AppVariables.devMode) {
-                menu = new MenuItem(message("MyBoxColors"));
-                menu.setOnAction((ActionEvent event) -> {
-                    String lang = AppVariables.isChinese() ? "zh" : "en";
-                    File file = FxmlControl.getInternalFile("/data/db/ColorsMyBox_" + lang + ".csv", "data",
-                            "ColorsMyBox_" + lang + ".csv", false);
-                    importColors(file, "MyBox", true);
-                });
-                popMenu.getItems().add(menu);
-            }
-
             menu = new MenuItem(message("WebCommonColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxmlControl.getInternalFile("/data/db/ColorsWeb.csv", "data", "ColorsWeb.csv", false);
+                File file = FxmlControl.getInternalFile("/data/db/ColorsWeb.csv", "data", "ColorsWeb.csv");
                 importColors(file, message("WebCommonColors"), true);
             });
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ChineseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxmlControl.getInternalFile("/data/db/ColorsChinese.csv", "data", "ColorsChinese.csv", false);
+                File file = FxmlControl.getInternalFile("/data/db/ColorsChinese.csv", "data", "ColorsChinese.csv");
                 importColors(file, message("ChineseTraditionalColors"), true);
             });
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("JapaneseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxmlControl.getInternalFile("/data/db/ColorsJapanese.csv", "data", "ColorsJapanese.csv", false);
+                File file = FxmlControl.getInternalFile("/data/db/ColorsJapanese.csv", "data", "ColorsJapanese.csv");
                 importColors(file, message("JapaneseTraditionalColors"), true);
             });
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("HexaColors"));
             menu.setOnAction((ActionEvent event) -> {
-                File file = FxmlControl.getInternalFile("/data/db/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv", false);
+                File file = FxmlControl.getInternalFile("/data/db/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv");
                 importColors(file, message("HexaColors"), true);
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("MyBoxColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                String lang = AppVariables.isChinese() ? "zh" : "en";
+                File file = FxmlControl.getInternalFile("/data/db/ColorsMyBox_" + lang + ".csv", "data",
+                        "ColorsMyBox_" + lang + ".csv", false);
+                importColors(file, "MyBox", true);
             });
             popMenu.getItems().add(menu);
 
@@ -709,7 +706,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -872,7 +869,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -929,7 +926,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
                         openHandlingStage(task, Modality.WINDOW_MODAL);
                         task.setSelf(task);
                         Thread thread = new Thread(task);
-                        thread.setDaemon(true);
+                        thread.setDaemon(false);
                         thread.start();
                     }
                 }
@@ -1050,7 +1047,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 task.setSelf(task);
                 Thread thread = new Thread(task);
-                thread.setDaemon(true);
+                thread.setDaemon(false);
                 thread.start();
             }
         }
@@ -1097,7 +1094,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1202,7 +1199,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1259,7 +1256,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             };
             colorsTask.setSelf(colorsTask);
             Thread thread = new Thread(colorsTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1463,7 +1460,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }

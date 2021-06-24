@@ -54,7 +54,7 @@ public class WebFavoritesImportController extends BaseBatchFileController {
         tableWebFavorite = favoritesController.tableWebFavorite;
         String lang = AppVariables.isChinese() ? "zh" : "en";
         File dataFile = FxmlControl.getInternalFile("/data/db/WebFavorites_Examples_" + lang + ".txt",
-                "data", "WebFavorites_Examples_" + lang + ".txt", false);
+                "data", "WebFavorites_Examples_" + lang + ".txt");
         isSettingValues = true;
         overrideRadio.fire();
         iconCheck.setSelected(false);

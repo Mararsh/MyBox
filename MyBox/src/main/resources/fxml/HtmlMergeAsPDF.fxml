@@ -40,12 +40,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <Label minWidth="-Infinity" text="%FontFile" wrapText="true" />
-                                                        <ComboBox fx:id="ttfSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                </HBox>
+                                                <fx:include fx:id="ttf" source="ControlTTFSelector.fxml" />
                                                 <Label minWidth="-Infinity" text="%HtmlToPdfStyle" wrapText="true" VBox.vgrow="NEVER" />
                                                 <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                                 <CheckBox fx:id="deleteCheck" mnemonicParsing="false" text="%DeleteAfterMerge" />
@@ -84,7 +79,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconClear.png" />
+                                                                <Image url="@../buttons/Red/iconClear.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

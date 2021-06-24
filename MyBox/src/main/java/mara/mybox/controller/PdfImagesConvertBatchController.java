@@ -37,7 +37,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
     @FXML
     protected CheckBox copyAllCheck;
     @FXML
-    protected ControlImageConverterOptions optionsController;
+    protected ControlImageFormat formatController;
 
     public PdfImagesConvertBatchController() {
         baseTitle = AppVariables.message("PdfImagesConvertBatch");
@@ -56,18 +56,17 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                 }
             });
 
-            if (optionsController != null) {
-                optionsController.setValues(true);
+            if (formatController != null) {
+                formatController.setParameters(this, true);
 
                 startButton.disableProperty().unbind();
-                startButton.disableProperty().bind(
-                        Bindings.isEmpty(tableView.getItems())
+                startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                                 .or(Bindings.isEmpty(targetPathInput.textProperty()))
                                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                                .or(optionsController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
-                                .or(optionsController.dpiSelector.getEditor().styleProperty().isEqualTo(badStyle))
-                                .or(optionsController.profileInput.styleProperty().isEqualTo(badStyle))
-                                .or(optionsController.thresholdInput.styleProperty().isEqualTo(badStyle))
+                                .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
+                                .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(badStyle))
+                                .or(formatController.profileInput.styleProperty().isEqualTo(badStyle))
+                                .or(formatController.thresholdInput.styleProperty().isEqualTo(badStyle))
                 );
             }
         } catch (Exception e) {
@@ -80,8 +79,8 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
         if (!super.makeActualParameters()) {
             return false;
         }
-        if (optionsController != null) {
-            attributes = optionsController.attributes;
+        if (formatController != null) {
+            attributes = formatController.attributes;
             format = attributes.getImageFormat();
         }
         return true;

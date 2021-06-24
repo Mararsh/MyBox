@@ -155,7 +155,7 @@ public class NotesController extends BaseDataTableController<Note> {
         try {
             notebooksController.setParent(this);
             webviewController.setValues(this);
-            codesController.setValues(this);
+            codesController.setParameters(this);
             timeController.setParent(this, false);
             searchController.init(this, baseName + "Saved", message("Note"), 20);
 
@@ -434,7 +434,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             tagsTask.setSelf(tagsTask);
             Thread thread = new Thread(tagsTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -489,7 +489,7 @@ public class NotesController extends BaseDataTableController<Note> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -537,7 +537,7 @@ public class NotesController extends BaseDataTableController<Note> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -575,7 +575,7 @@ public class NotesController extends BaseDataTableController<Note> {
             openHandlingStage(task, Modality.WINDOW_MODAL);
             task.setSelf(task);
             Thread thread = new Thread(task);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -610,7 +610,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             timesTask.setSelf(timesTask);
             Thread thread = new Thread(timesTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -731,7 +731,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             bookTask.setSelf(bookTask);
             Thread thread = new Thread(bookTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
 
@@ -1004,7 +1004,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             noteTask.setSelf(noteTask);
             Thread thread = new Thread(noteTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1087,7 +1087,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             saveTask.setSelf(saveTask);
             Thread thread = new Thread(saveTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1198,7 +1198,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             noteTagsTask.setSelf(noteTagsTask);
             Thread thread = new Thread(noteTagsTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1268,7 +1268,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             tagTask.setSelf(tagTask);
             Thread thread = new Thread(tagTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1320,7 +1320,7 @@ public class NotesController extends BaseDataTableController<Note> {
             };
             noteTagsTask.setSelf(noteTagsTask);
             Thread thread = new Thread(noteTagsTask);
-            thread.setDaemon(true);
+            thread.setDaemon(false);
             thread.start();
         }
     }
@@ -1342,8 +1342,7 @@ public class NotesController extends BaseDataTableController<Note> {
             controller = (NotesController) FxmlStage.openStage(CommonValues.NotesFxml);
         }
         if (controller != null) {
-            controller.getMyStage().toFront();
-            controller.getMyStage().requestFocus();
+            controller.toFront();
         }
         return controller;
     }
