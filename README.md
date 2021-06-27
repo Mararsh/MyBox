@@ -522,7 +522,7 @@ MyBox v5.3以前的版本均基于Java 8。
  	-  合并为一个PDF文件
  	-  合并为一个PPT文件
 
-![[截屏-editImages](https://mararsh.github.io/MyBox/snap-editImages.jpg)         
+![截屏-editImages](https://mararsh.github.io/MyBox/snap-editImages.jpg)         
 
 
 ### 多图合一<a id="multipleImages" />
