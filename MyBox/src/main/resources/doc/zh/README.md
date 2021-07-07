@@ -4,6 +4,14 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
 ## 新内容
+2021-7-7 版本6.4.6         
+
+* 新增：系统粘贴板中的文本、MyBox粘贴板中的文本、所有文本输入控件的右键菜单、网页的右键菜单。       
+* 改进和修正：文本编辑器、清除窗口残留。          
+* 解决的主要问题：无法打开微软文档（word/excel/ppt）；数据表的页码为空。       
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6)          
+
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。       
 
