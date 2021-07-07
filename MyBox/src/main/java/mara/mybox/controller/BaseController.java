@@ -26,6 +26,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -40,23 +41,30 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import mara.mybox.data.BaseTask;
 import mara.mybox.db.DerbyBase;
@@ -69,7 +77,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -89,7 +97,6 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 17:50:43
- * @Description
  * @License Apache License Version 2.0
  */
 public abstract class BaseController implements Initializable {
@@ -474,6 +481,69 @@ public abstract class BaseController implements Initializable {
                 rightPaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
                 rightPane.setHvalue(0);
             }
+
+            setContentMenu(thisPane);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setContentMenu(Node node) {
+        if (node == null) {
+            return;
+        }
+//        MyBoxLog.console(node.getClass() + "  " + node.getId());
+        if (node instanceof TextInputControl) {
+            TextInputControl textInput = (TextInputControl) node;
+            textInput.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                @Override
+                public void handle(ContextMenuEvent event) {
+                    try {
+                        popup = FxmlWindow.popWindow(myController, event);
+                        if (popup == null) {
+                            return;
+                        }
+                        Object object = popup.getUserData();
+                        if (object == null && !(object instanceof PopNodesController)) {
+                            return;
+                        }
+                        PopNodesController controller = (PopNodesController) object;
+                        makeEditContextMenu(controller, textInput);
+                        controller.setParameters(myController);
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
+                    }
+                }
+            });
+        } else if (node instanceof WebView) {
+            WebView view = (WebView) node;
+            if (view.getUserData() == null || !view.getUserData().equals("initialized")) {
+                new BaseWebViewController().setParameters(this, (WebView) node);
+            }
+        }
+        if (node instanceof SplitPane) {
+            for (Node child : ((SplitPane) node).getItems()) {
+                setContentMenu(child);
+            }
+        } else if (node instanceof ScrollPane) {
+            setContentMenu(((ScrollPane) node).getContent());
+        } else if (node instanceof TitledPane) {
+            setContentMenu(((TitledPane) node).getContent());
+        } else if (node instanceof TabPane) {
+            for (Tab tab : ((TabPane) node).getTabs()) {
+                setContentMenu(tab.getContent());
+            }
+        } else if (node instanceof Parent) {
+            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                setContentMenu(child);
+            }
+        }
+    }
+
+    public void makeEditContextMenu(PopNodesController controller, TextInputControl node) {
+        try {
+            controller.addEditPane(node);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1275,7 +1345,7 @@ public abstract class BaseController implements Initializable {
                 }
                 return;
             case F6:
-                closePopup(event);
+                closePopup();
                 return;
             case F9:
                 closeStage();
@@ -1294,7 +1364,7 @@ public abstract class BaseController implements Initializable {
                 } else if (withdrawButton != null && !withdrawButton.isDisabled() && withdrawButton.isVisible()) {
                     withdrawAction();
                 }
-                closePopup(event);
+                closePopup();
 //                else if (stopButton != null && !stopButton.isDisabled()) {
 //                    stopAction();
 //                }
@@ -2176,23 +2246,6 @@ public abstract class BaseController implements Initializable {
     }
 
     @FXML
-    public void regexHelp() {
-        try {
-            String link;
-            switch (AppVariables.getLanguage()) {
-                case "zh":
-                    link = "https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215";
-                    break;
-                default:
-                    link = "https://en.wikipedia.org/wiki/Regular_expression";
-            }
-            openLink(link);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
     public void derbyHelp() {
         openLink("http://db.apache.org/derby/docs/10.15/ref/index.html");
     }
@@ -2363,16 +2416,6 @@ public abstract class BaseController implements Initializable {
     }
 
     @FXML
-    public void closePopup(KeyEvent event) {
-        if (popMenu != null) {
-            popMenu.hide();
-        }
-        if (popup != null) {
-            popup.hide();
-        }
-    }
-
-    @FXML
     public void mybox(ActionEvent event) {
         openStage(CommonValues.MyboxFxml);
     }
@@ -2435,11 +2478,11 @@ public abstract class BaseController implements Initializable {
     }
 
     public void view(File file) {
-        FxmlStage.openTarget(null, file.getAbsolutePath());
+        FxmlWindow.openTarget(null, file.getAbsolutePath());
     }
 
     public void view(String file) {
-        FxmlStage.openTarget(null, file);
+        FxmlWindow.openTarget(null, file);
     }
 
     public void browse(String url) {
@@ -2451,7 +2494,39 @@ public abstract class BaseController implements Initializable {
     }
 
     public void browseURI(URI uri) {
-        FxmlStage.browseURI(getMyStage(), uri);
+        FxmlWindow.browseURI(getMyStage(), uri);
+    }
+
+    public void copyToSystemClipboard(String text) {
+        BaseController c = parentController != null ? parentController : myController;
+        if (text == null || text.isEmpty()) {
+            c.popError(message("NoData"));
+            return;
+        }
+        if (FxmlControl.copyToSystemClipboard(text)) {
+            String info = text.length() > 200 ? text.substring(0, 200) + "\n..." : text;
+            if (AppVariables.getUserConfigBoolean("MonitorTextClipboard", true)) {
+                c.popInformation(message("CopiedInClipBoards") + "\n\n" + info);
+            } else {
+                c.popInformation(message("CopiedInSystemClipBoard") + "\n\n" + info);
+            }
+        } else {
+            c.popFailed();
+        }
+    }
+
+    public void copyToMyBoxClipboard(String text) {
+        BaseController c = parentController != null ? parentController : myController;
+        if (text == null || text.isEmpty()) {
+            c.popError(message("NoData"));
+            return;
+        }
+        if (FxmlControl.copyToMyBoxClipboard(text)) {
+            String info = text.length() > 200 ? text.substring(0, 200) + "\n..." : text;
+            c.popInformation(message("CopiedInMyBoxClipBoard") + "\n\n" + info);
+        } else {
+            c.popFailed();
+        }
     }
 
     @FXML
@@ -2468,7 +2543,7 @@ public abstract class BaseController implements Initializable {
             if (!leavingScene()) {
                 return null;
             }
-            return FxmlStage.openScene(getMyStage(), newFxml);
+            return FxmlWindow.openScene(getMyStage(), newFxml);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -2480,16 +2555,24 @@ public abstract class BaseController implements Initializable {
     }
 
     public BaseController openStage(String newFxml, boolean isOwned) {
-        return FxmlStage.openStage(getMyStage(), newFxml, isOwned);
+        return FxmlWindow.openStage(getMyStage(), newFxml, isOwned);
     }
 
-    public boolean closeStage() {
+    public Window getWindow() {
+        return thisPane.getScene().getWindow();
+    }
+
+    public boolean close() {
         if (leavingScene()) {
-            FxmlStage.closeStage(getMyStage());
+            FxmlWindow.closeWindow(getWindow());
             return true;
         } else {
             return false;
         }
+    }
+
+    public boolean closeStage() {
+        return close();
     }
 
     public void recordStageStatus() {
@@ -2508,32 +2591,42 @@ public abstract class BaseController implements Initializable {
             if (!checkBeforeNextAction()) {
                 return false;
             }
+            leaveScene();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return false;
+        }
+    }
 
+    public void leaveScene() {
+        try {
             if (mainMenuController != null) {
                 mainMenuController.stopMemoryMonitorTimer();
                 mainMenuController.stopCpuMonitorTimer();
                 mainMenuController = null;
             }
 
-            if (maximizedListener != null) {
+            if (maximizedListener != null && getMyStage() != null) {
                 getMyStage().maximizedProperty().removeListener(maximizedListener);
                 maximizedListener = null;
             }
-            if (fullscreenListener != null) {
+            if (fullscreenListener != null && getMyStage() != null) {
                 getMyStage().fullScreenProperty().removeListener(fullscreenListener);
                 fullscreenListener = null;
             }
 
             recordStageStatus();
 
-            hidePopup();
+            closePopup();
             if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
             if (task != null && !task.isQuit()) {
-                if (!FxmlControl.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
-                    return false;
+                if (getMyStage() != null
+                        && !FxmlControl.askSure(getMyStage().getTitle(), message("TaskRunning"))) {
+                    return;
                 }
                 if (task != null) {
                     task.cancel();
@@ -2559,10 +2652,8 @@ public abstract class BaseController implements Initializable {
             myStage = null;
 
             System.gc();
-            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            return false;
         }
 
     }
@@ -2617,6 +2708,8 @@ public abstract class BaseController implements Initializable {
                         name += "." + suffix;
                     }
                 }
+            } else {
+                name = new Date().getTime() + "";
             }
             if (name != null) {
                 name = FileTools.filenameFilter(name);
@@ -2664,18 +2757,18 @@ public abstract class BaseController implements Initializable {
     }
 
     public void alertError(String information) {
-        FxmlStage.alertError(getMyStage(), information);
+        FxmlWindow.alertError(getMyStage(), information);
     }
 
     public void alertWarning(String information) {
-        FxmlStage.alertError(getMyStage(), information);
+        FxmlWindow.alertError(getMyStage(), information);
     }
 
     public void alertInformation(String information) {
-        FxmlStage.alertInformation(getMyStage(), information);
+        FxmlWindow.alertInformation(getMyStage(), information);
     }
 
-    public Popup getPopup() {
+    public Popup makePopup() {
         if (popup != null) {
             popup.hide();
             popup = null;
@@ -2690,7 +2783,7 @@ public abstract class BaseController implements Initializable {
             if (popup != null) {
                 popup.hide();
             }
-            popup = getPopup();
+            popup = makePopup();
             popup.setAutoFix(true);
             Label popupLabel = new Label(text);
             popupLabel.setStyle("-fx-background-color:" + bgcolor + ";"
@@ -2713,7 +2806,7 @@ public abstract class BaseController implements Initializable {
                     @Override
                     public void run() {
                         Platform.runLater(() -> {
-                            hidePopup();
+                            closePopup();
                         });
                     }
                 }, duration);
@@ -2722,7 +2815,7 @@ public abstract class BaseController implements Initializable {
             if (attach != null) {
                 FxmlControl.locateUp(attach, popup);
             } else {
-                popup.show(getMyStage());
+                popup.show(thisPane.getScene().getWindow());
             }
         } catch (Exception e) {
 
@@ -2777,7 +2870,11 @@ public abstract class BaseController implements Initializable {
         popWarn(text, getPopTextDuration(), getPopTextSize());
     }
 
-    public void hidePopup() {
+    @FXML
+    public void closePopup() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
         if (popup != null) {
             popup.hide();
         }
@@ -2792,7 +2889,7 @@ public abstract class BaseController implements Initializable {
         if (myStage == null) {
             if (thisPane != null) {
                 myScene = thisPane.getScene();
-                if (myScene != null) {
+                if (myScene != null && (myScene.getWindow() instanceof Stage)) {
                     myStage = (Stage) myScene.getWindow();
                     if (myStage.getUserData() == null) {
                         myStage.setUserData(this);
@@ -2810,7 +2907,7 @@ public abstract class BaseController implements Initializable {
     public LoadingController openHandlingStage(Modality block, String info) {
         try {
             final LoadingController controller
-                    = FxmlStage.openLoadingStage(getMyStage(), block, info);
+                    = FxmlWindow.openLoadingStage(getMyStage(), block, info);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -2825,7 +2922,7 @@ public abstract class BaseController implements Initializable {
     public LoadingController openHandlingStage(final Task<?> task, Modality block, String info) {
         try {
             final LoadingController controller
-                    = FxmlStage.openLoadingStage(getMyStage(), block, task, info);
+                    = FxmlWindow.openLoadingStage(getMyStage(), block, task, info);
 //            if (controller == null) {
 //                return null;
 //            }
@@ -2844,6 +2941,36 @@ public abstract class BaseController implements Initializable {
             });
             return controller;
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public Popup popStage(BaseController controller, Pane pane, Node owner, double x, double y) {
+        try {
+            if (controller == null || pane == null) {
+                return null;
+            }
+            controller.parentController = myController;
+            pane.setUserData(controller);
+
+            popup = makePopup();
+            popup.getContent().add(pane);
+            popup.show(owner, x, y);
+
+            task.setOnSucceeded((WorkerStateEvent event) -> {
+                controller.closeStage();
+            });
+            task.setOnCancelled((WorkerStateEvent event) -> {
+                popInformation(AppVariables.message("Canceled"));
+                controller.closeStage();
+            });
+            task.setOnFailed((WorkerStateEvent event) -> {
+                popError(AppVariables.message("Error"));
+                controller.closeStage();
+            });
+            return popup;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -2920,12 +3047,12 @@ public abstract class BaseController implements Initializable {
                 browseURI(new File(path).toURI());
                 recordFileOpened(path);
             } else if (result.get() == buttonBrowse) {
-                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getMyStage());
+                final ImagesBrowserController controller = FxmlWindow.openImagesBrowser(getMyStage());
                 if (controller != null) {
                     controller.loadFiles(fileNames);
                 }
             } else if (result.get() == buttonBrowseNew) {
-                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
+                final ImagesBrowserController controller = FxmlWindow.openImagesBrowser(null);
                 if (controller != null) {
                     controller.loadFiles(fileNames);
                 }
@@ -3085,6 +3212,30 @@ public abstract class BaseController implements Initializable {
 
     public void setTask(SingletonTask<Void> task) {
         this.task = task;
+    }
+
+    public void setPopup(Popup popup) {
+        this.popup = popup;
+    }
+
+    public Popup getPopup() {
+        return popup;
+    }
+
+    public Label getBottomLabel() {
+        return bottomLabel;
+    }
+
+    public void setBottomLabel(Label bottomLabel) {
+        this.bottomLabel = bottomLabel;
+    }
+
+    public File getSourceFile() {
+        return sourceFile;
+    }
+
+    public void setSourceFile(File sourceFile) {
+        this.sourceFile = sourceFile;
     }
 
 }

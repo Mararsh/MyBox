@@ -11,7 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Notebook;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -98,7 +98,7 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
      */
     public static NotesCopyNotesController oneOpen(NotesController notesController) {
         NotesCopyNotesController controller = null;
-        Stage stage = FxmlStage.findStage(message("CopyNotes"));
+        Stage stage = FxmlWindow.findStage(message("CopyNotes"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (NotesCopyNotesController) stage.getUserData();
@@ -106,7 +106,7 @@ public class NotesCopyNotesController extends ControlNotebookSelector {
             }
         }
         if (controller == null) {
-            controller = (NotesCopyNotesController) FxmlStage.openStage(CommonValues.NotesCopyNotesFxml);
+            controller = (NotesCopyNotesController) FxmlWindow.openStage(CommonValues.NotesCopyNotesFxml);
         }
         if (controller != null) {
             controller.setCaller(notesController);

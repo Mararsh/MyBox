@@ -14,7 +14,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -84,9 +83,7 @@ public class NetworkConvertUrlController extends BaseController {
     @FXML
     @Override
     public void copyAction() {
-        if (FxmlControl.copyToSystemClipboard(resultInput.getText())) {
-            popInformation(message("CopiedToSystemClipboard"));
-        }
+        copyToSystemClipboard(resultInput.getText());
     }
 
 }

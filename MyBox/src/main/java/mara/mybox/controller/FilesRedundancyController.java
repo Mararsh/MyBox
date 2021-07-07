@@ -22,7 +22,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -252,7 +252,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
     public void goAction() {
         if (redundancy.size() > 0) {
             FilesRedundancyResultsController controller
-                    = (FilesRedundancyResultsController) FxmlStage.openStage(CommonValues.FilesRedundancyResultsFxml);
+                    = (FilesRedundancyResultsController) FxmlWindow.openStage(CommonValues.FilesRedundancyResultsFxml);
             if (controller != null) {
                 controller.loadRedundancy(redundancy);
             }

@@ -32,7 +32,7 @@ import mara.mybox.MyBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
@@ -282,7 +282,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void exit(ActionEvent event) {
-        FxmlStage.appExit();
+        FxmlWindow.appExit();
     }
 
     /*
@@ -506,6 +506,16 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void PptSplit(ActionEvent event) {
         loadScene(CommonValues.PptSplitFxml);
+    }
+
+    @FXML
+    protected void TextInMyBoxClipboard(ActionEvent event) {
+        TextInMyBoxClipboardController.oneOpen();
+    }
+
+    @FXML
+    protected void TextInSystemClipboard(ActionEvent event) {
+        TextInSystemClipboardController.oneOpen();
     }
 
     /*
@@ -1027,7 +1037,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void ImagesInSystemClipboard(ActionEvent event) {
-        loadScene(CommonValues.ImagesInSystemClipboardFxml);
+        ImagesInSystemClipboardController.oneOpen();
     }
 
     @FXML
@@ -1529,7 +1539,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void showAbout(ActionEvent event) {
-        FxmlStage.about();
+        FxmlWindow.about();
     }
 
     /*

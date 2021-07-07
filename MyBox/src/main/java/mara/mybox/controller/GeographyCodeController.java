@@ -24,7 +24,7 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableCoordinateSystemCell;
 import mara.mybox.fxml.TableLatitudeCell;
 import mara.mybox.fxml.TableLongitudeCell;
@@ -140,7 +140,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @Override
     public void afterSceneLoaded() {
         try {
-            if (FxmlStage.mapFirstRun(this)) {
+            if (FxmlWindow.mapFirstRun(this)) {
                 return;
             }
 
@@ -176,9 +176,6 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
 
     @Override
     public void postLoadedTableData() {
-        if (queryCondition == null) {
-            return;
-        }
         super.postLoadedTableData();
         if (mapCurrentPage()) {
             mapController.drawGeographyCodes(tableData, finalTitle);

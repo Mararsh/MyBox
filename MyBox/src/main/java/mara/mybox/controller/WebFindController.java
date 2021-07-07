@@ -118,7 +118,7 @@ public class WebFindController extends ControlWebBrowserBox {
     }
 
     @Override
-    protected void afterPageLoaded() {
+    public void afterPageLoaded() {
         try {
             super.afterPageLoaded();
             bottomLabel.setText(message("Count") + ": " + foundCount);

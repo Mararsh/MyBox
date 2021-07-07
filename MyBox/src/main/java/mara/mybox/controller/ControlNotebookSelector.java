@@ -16,7 +16,7 @@ import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -145,7 +145,7 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
             return;
         }
         String chainName = chainName(selectedItem);
-        NotesCopyNotebookController controller = (NotesCopyNotebookController) FxmlStage.openStage(CommonValues.NotesCopyNotebookFxml);
+        NotesCopyNotebookController controller = (NotesCopyNotebookController) FxmlWindow.openStage(CommonValues.NotesCopyNotebookFxml);
         controller.setValues(notesController, selectedItem.getValue(), chainName, onlyContents);
     }
 
@@ -157,14 +157,14 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
             return;
         }
         String chainName = chainName(selectedItem);
-        NotesMoveNotebookController controller = (NotesMoveNotebookController) FxmlStage.openStage(CommonValues.NotesMoveNotebookFxml);
+        NotesMoveNotebookController controller = (NotesMoveNotebookController) FxmlWindow.openStage(CommonValues.NotesMoveNotebookFxml);
         controller.setValues(notesController, selectedItem.getValue(), chainName);
     }
 
     @FXML
     @Override
     protected void exportNode() {
-        NotesExportController exportController = (NotesExportController) FxmlStage.openStage(CommonValues.NotesExportFxml);
+        NotesExportController exportController = (NotesExportController) FxmlWindow.openStage(CommonValues.NotesExportFxml);
         exportController.setValues(notesController);
     }
 
@@ -175,7 +175,7 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu = new MenuItem(message("ImportNotesFiles"));
             menu.setOnAction((ActionEvent event) -> {
-                NotesImportController c = (NotesImportController) FxmlStage.openStage(CommonValues.NotesImportFxml);
+                NotesImportController c = (NotesImportController) FxmlWindow.openStage(CommonValues.NotesImportFxml);
                 c.notesController = notesController;
             });
             items.add(menu);
@@ -211,7 +211,7 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
     }
 
     protected void importExamples() {
-        NotesImportController controller = (NotesImportController) FxmlStage.openStage(CommonValues.NotesImportFxml);
+        NotesImportController controller = (NotesImportController) FxmlWindow.openStage(CommonValues.NotesImportFxml);
         controller.importExamples(notesController);
     }
 

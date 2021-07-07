@@ -12,7 +12,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -181,7 +181,7 @@ public class SecurityCertificatesAddController extends BaseController {
                     @Override
                     protected void whenSucceeded() {
                         if (result != null) {
-                            FxmlStage.openHtmlViewer(null, result);
+                            FxmlWindow.openHtmlViewer(null, result);
                         } else {
                             popError(error);
                         }

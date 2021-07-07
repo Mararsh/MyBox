@@ -36,7 +36,7 @@ import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableImageFileCell;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.HtmlTools;
@@ -209,6 +209,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
      */
     @Override
     public void postLoadedTableData() {
+        super.postLoadedTableData();
         makeConditionPane();
     }
 
@@ -629,7 +630,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
      */
     public static WebFavoritesController oneOpen() {
         WebFavoritesController controller = null;
-        Stage stage = FxmlStage.findStage(message("WebFavorites"));
+        Stage stage = FxmlWindow.findStage(message("WebFavorites"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (WebFavoritesController) stage.getUserData();
@@ -637,7 +638,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             }
         }
         if (controller == null) {
-            controller = (WebFavoritesController) FxmlStage.openStage(CommonValues.WebFavoritesFxml);
+            controller = (WebFavoritesController) FxmlWindow.openStage(CommonValues.WebFavoritesFxml);
             controller.loadTree(null);
         }
         controller.toFront();

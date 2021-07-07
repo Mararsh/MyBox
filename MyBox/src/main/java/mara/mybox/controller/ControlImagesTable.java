@@ -20,7 +20,7 @@ import javafx.util.converter.LongStringConverter;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableImageInfoCell;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
@@ -303,7 +303,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null) {
                 return;
             }
-            FxmlStage.openImageViewer(info);
+            FxmlWindow.openImageViewer(info);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -335,7 +335,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         if (info == null) {
             info = tableData.get(0);
         }
-        FxmlStage.openImageInformation(null, info);
+        FxmlWindow.openImageInformation(null, info);
     }
 
     @FXML
@@ -348,11 +348,11 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         if (info == null) {
             info = tableData.get(0);
         }
-        FxmlStage.openImageMetaData(null, info);
+        FxmlWindow.openImageMetaData(null, info);
     }
 
     @FXML
-    public void loadSystemClipboardImage() {
+    public void pasteSystemClipboardImage() {
         Image clip = SystemTools.fetchImageInClipboard(false);
         if (clip == null) {
             popError(message("NoImageInClipboard"));

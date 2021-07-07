@@ -13,7 +13,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableDateCell;
 import mara.mybox.fxml.TableImageFileCell;
 import mara.mybox.tools.StringTools;
@@ -227,7 +227,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
      */
     public static WebHistoriesController oneOpen() {
         WebHistoriesController controller = null;
-        Stage stage = FxmlStage.findStage(message("WebHistories"));
+        Stage stage = FxmlWindow.findStage(message("WebHistories"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (WebHistoriesController) stage.getUserData();
@@ -235,7 +235,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
             }
         }
         if (controller == null) {
-            controller = (WebHistoriesController) FxmlStage.openStage(CommonValues.WebHistoriesFxml);
+            controller = (WebHistoriesController) FxmlWindow.openStage(CommonValues.WebHistoriesFxml);
         }
         controller.getMyStage().toFront();
         controller.getMyStage().requestFocus();

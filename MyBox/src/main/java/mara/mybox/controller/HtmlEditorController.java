@@ -65,7 +65,7 @@ public class HtmlEditorController extends BaseHtmlController {
     protected HtmlRenderer htmlRender;
 
     @FXML
-    protected Button synchronizeMainButton, synchronizePairButton, editMarkdownButton, styleLinksButton;
+    protected Button synchronizeMainButton, synchronizePairButton, editMarkdownButton;
     @FXML
     protected HTMLEditor htmlEditor;
     @FXML
@@ -109,12 +109,12 @@ public class HtmlEditorController extends BaseHtmlController {
                 @Override
                 public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     int intValue = (int) newValue;
-                    if (intValue == ControlWebview.TmpState) {
+                    if (intValue == BaseWebViewController.TmpState) {
                         return;
                     }
-                    if (intValue == ControlWebview.DocLoading) {
+                    if (intValue == BaseWebViewController.DocLoading) {
                         pageIsLoading();
-                    } else if (intValue == ControlWebview.DocLoaded) {
+                    } else if (intValue == BaseWebViewController.DocLoaded) {
                         afterPageLoaded();
                     }
                 }

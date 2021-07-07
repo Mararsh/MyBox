@@ -176,7 +176,7 @@ public abstract class FileEditInformation extends FileInformation {
             }
             String setName;
             withBom = false;
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] header = new byte[4];
                 int bufLen;
                 if ((bufLen = inputStream.read(header, 0, 4)) > 0) {
@@ -204,10 +204,10 @@ public abstract class FileEditInformation extends FileInformation {
                     || targetInfo == null || targetInfo.getFile() == null || targetInfo.getCharset() == null) {
                 return false;
             }
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetInfo.getFile()));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetInfo.getCharset())) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                    InputStreamReader reader = new InputStreamReader(inputStream, charset);
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetInfo.getFile()));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetInfo.getCharset())) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
@@ -523,6 +523,38 @@ public abstract class FileEditInformation extends FileInformation {
 
     public void setObjectUnit(int objectUnit) {
         this.objectUnit = objectUnit;
+    }
+
+    public long getSizeWithSubdir() {
+        return sizeWithSubdir;
+    }
+
+    public void setSizeWithSubdir(long sizeWithSubdir) {
+        this.sizeWithSubdir = sizeWithSubdir;
+    }
+
+    public long getSizeWithoutSubdir() {
+        return sizeWithoutSubdir;
+    }
+
+    public void setSizeWithoutSubdir(long sizeWithoutSubdir) {
+        this.sizeWithoutSubdir = sizeWithoutSubdir;
+    }
+
+    public long getFilesWithSubdir() {
+        return filesWithSubdir;
+    }
+
+    public void setFilesWithSubdir(long filesWithSubdir) {
+        this.filesWithSubdir = filesWithSubdir;
+    }
+
+    public long getFilesWithoutSubdir() {
+        return filesWithoutSubdir;
+    }
+
+    public void setFilesWithoutSubdir(long filesWithoutSubdir) {
+        this.filesWithoutSubdir = filesWithoutSubdir;
     }
 
 }

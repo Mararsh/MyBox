@@ -596,7 +596,8 @@ public class ControlMapOptions extends BaseController {
                     && "EPSG:4326".equals(AppVariables.getUserConfigValue(baseName + "Projection", "EPSG:900913"))) {
                 geodeticRadio.fire();
             }
-            String type = AppVariables.getUserConfigValue(baseName + "MarkerImageType", "Point");
+            String type = AppVariables.getUserConfigValue(baseName + "MarkerImageType",
+                    mapController instanceof LocationDataMapController ? "Dataset" : "Point");
             if ("Circle".equals(type)) {
                 markerCircleRadio.fire();
             } else if ("Image".equals(type)) {

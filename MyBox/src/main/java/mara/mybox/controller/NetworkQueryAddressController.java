@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.cert.Certificate;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -22,7 +23,7 @@ import javax.net.ssl.SSLSocket;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
@@ -148,7 +149,7 @@ public class NetworkQueryAddressController extends HtmlViewerController {
 
                 protected String readCert() {
                     try {
-                        URL url = new URL(HtmlTools.checkURL(address));
+                        URL url = new URL(HtmlTools.checkURL(address, Charset.defaultCharset()));
                         host = url.getHost();
 
                         SSLContext context = SSLContext.getInstance(CommonValues.HttpsProtocal);
@@ -244,7 +245,7 @@ public class NetworkQueryAddressController extends HtmlViewerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    FxmlStage.openTextEditer(null, file);
+                    FxmlWindow.openTextEditer(null, file);
                 }
 
             };

@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.4.5</version>
+    <version>6.4.6</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -259,17 +259,19 @@
                     <mainClass>mara.mybox.MyBox</mainClass>
                 </configuration>
             </plugin>
-
+            
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>15</source>
-                    <target>15</target>
                     <showDeprecation>true</showDeprecation>
                     <debug>false</debug>
-                    <!--<compilerArgument>-Xlint:unchecked</compilerArgument>-->
+                    <compilerArgs>
+                        <!--<arg>-Xlint:unchecked</arg>-->
+
+                    </compilerArgs>
                 </configuration>
             </plugin>
 
@@ -277,7 +279,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -301,6 +303,8 @@
             </plugin>
 
         </plugins>
+        
+
     </build>
 
     <profiles>

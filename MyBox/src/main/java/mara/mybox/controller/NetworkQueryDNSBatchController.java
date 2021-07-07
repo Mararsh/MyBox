@@ -163,9 +163,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
     @FXML
     @Override
     public void copyAction() {
-        if (FxmlControl.copyToSystemClipboard(dnsList.getText())) {
-            popInformation(message("CopiedToSystemClipboard"));
-        }
+        copyToSystemClipboard(dnsList.getText());
     }
 
     @FXML

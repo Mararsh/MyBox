@@ -26,7 +26,7 @@ import mara.mybox.MainApp;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -211,7 +211,7 @@ public class MyBoxSetupController implements Initializable {
 
     @FXML
     protected void openDataPath(ActionEvent event) {
-        FxmlStage.browseURI(getMyStage(), configPath.toURI());
+        FxmlWindow.browseURI(getMyStage(), configPath.toURI());
     }
 
     @FXML
@@ -228,7 +228,7 @@ public class MyBoxSetupController implements Initializable {
                 AppVariables.MyboxDataPath = dataPath.getAbsolutePath();
                 ConfigTools.writeConfigValue("MyBoxDataPath", AppVariables.MyboxDataPath);
             } else {
-                FxmlStage.alertError(getMyStage(),
+                FxmlWindow.alertError(getMyStage(),
                         MessageFormat.format(message(lang, "UserPathFail"), dataPath));
                 return;
             }

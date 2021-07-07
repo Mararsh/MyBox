@@ -28,7 +28,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageCombine;
 import mara.mybox.image.ImageCombine.ArrayType;
 import mara.mybox.image.ImageCombine.CombineSizeType;
@@ -426,7 +426,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     @FXML
     protected void newWindow(ActionEvent event) {
-        FxmlStage.openImageViewer(image);
+        FxmlWindow.openImageViewer(image);
     }
 
     private void combineImages() {
@@ -538,7 +538,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    FxmlStage.openImageViewer(targetFile);
+                    FxmlWindow.openImageViewer(targetFile);
                 }
 
             };

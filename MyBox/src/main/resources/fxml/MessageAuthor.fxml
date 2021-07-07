@@ -6,16 +6,19 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.shape.*?>
-<?import javafx.geometry.*?>
-<?import javafx.collections.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MessageAuthorController">
+<BorderPane fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MessageAuthorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -26,9 +29,8 @@ License:    Apache License Version 2.0
                 <Separator prefWidth="200.0" />
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <CheckBox fx:id="miaowCheck" mnemonicParsing="false" selected="true" text="%Miaow" />
-                        <CheckBox fx:id="usefulCheck" mnemonicParsing="false" text="%MyBoxUseful" />
-                        <CheckBox fx:id="uselessCheck" mnemonicParsing="false" text="%MyBoxUseless" />
+                        <Label text="%Title" />
+                        <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
                 <Label text="%IssueCommentSuggestion" VBox.vgrow="NEVER">
@@ -48,12 +50,11 @@ License:    Apache License Version 2.0
                 <HBox fx:id="closeBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
-                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                        <Button fx:id="messageButton" defaultButton="true" mnemonicParsing="false" onAction="#messageAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconStart.png" />
+                                        <Image url="@../buttons/Red/iconMessage.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

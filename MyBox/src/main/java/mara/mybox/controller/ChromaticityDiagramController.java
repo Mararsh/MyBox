@@ -41,7 +41,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageFileWriters;
@@ -940,7 +940,7 @@ public class ChromaticityDiagramController extends BaseImageController {
 
                 @Override
                 protected void whenSucceeded() {
-                    FxmlStage.openImageViewer(null, file);
+                    FxmlWindow.openImageViewer(null, file);
                 }
 
             };

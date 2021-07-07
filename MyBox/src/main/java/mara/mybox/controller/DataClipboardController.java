@@ -67,10 +67,11 @@ public class DataClipboardController extends BaseSheetController {
     }
 
     @Override
-    public void setControls(String baseName) {
+    public void setControls(BaseController parent, String baseName) {
         try {
+            this.parentController = parent;
             this.baseName = baseName;
-            sheetDataController.setControls(baseName);
+            sheetDataController.setControls(parent, baseName);
             textController = sheetDataController.textController;
             webView = sheetDataController.webView;
             isMatrix = false;
@@ -143,7 +144,7 @@ public class DataClipboardController extends BaseSheetController {
 
             buttonBox.getChildren().removeAll(cancelButton, okButton);
 
-            super.setControls(baseName);
+            super.setControls(parent, baseName);
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -193,7 +194,7 @@ public class DataClipboardController extends BaseSheetController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        setControls(baseName);
+        setControls(this, baseName);
     }
 
     public void setSheet(BaseSheetController sheetController) {

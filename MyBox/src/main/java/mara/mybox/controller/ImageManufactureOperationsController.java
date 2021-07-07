@@ -9,7 +9,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
 
@@ -194,7 +194,7 @@ public class ImageManufactureOperationsController extends BaseImageController {
         try {
             if (titledPane.getContent() == null) {
                 ImageManufactureOperationController controller
-                        = (ImageManufactureOperationController) FxmlStage.setScene(fxml);
+                        = (ImageManufactureOperationController) FxmlWindow.setScene(fxml);
                 titledPane.setContent(controller.getMyScene().getRoot());
                 controller.imageController = imageController;
                 controller.scopeController = imageController.scopeController;

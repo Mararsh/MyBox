@@ -31,7 +31,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -67,6 +67,7 @@ public class MyBoxController extends BaseController {
             super.initControls();
             makeImagePopup();
             initAlocks();
+            AppVariables.checkTextClipboardMonitor();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -452,6 +453,16 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.ImagesPlayFxml);
         });
 
+        MenuItem TextInMyBoxClipboard = new MenuItem(AppVariables.message("TextInMyBoxClipboard"));
+        TextInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
+            TextInMyBoxClipboardController.oneOpen();
+        });
+
+        MenuItem TextInSystemClipboard = new MenuItem(AppVariables.message("TextInSystemClipboard"));
+        TextInSystemClipboard.setOnAction((ActionEvent event1) -> {
+            TextInSystemClipboardController.oneOpen();
+        });
+
         msMenu.getItems().addAll(
                 WordView, WordToHtml, new SeparatorMenuItem(),
                 PptView, PptToImages, PptExtract, PptSplit, PptxMerge, imagesCombinePPT, PptPlay, new SeparatorMenuItem(),
@@ -467,7 +478,8 @@ public class MyBoxController extends BaseController {
                 htmlMenu, new SeparatorMenuItem(),
                 textsMenu, new SeparatorMenuItem(),
                 msMenu, new SeparatorMenuItem(),
-                bytesEditer
+                bytesEditer, new SeparatorMenuItem(),
+                TextInMyBoxClipboard, TextInSystemClipboard
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
@@ -564,7 +576,7 @@ public class MyBoxController extends BaseController {
 
         MenuItem ImagesInSystemClipboard = new MenuItem(AppVariables.message("ImagesInSystemClipboard"));
         ImagesInSystemClipboard.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.ImagesInSystemClipboardFxml);
+            ImagesInSystemClipboardController.oneOpen();
         });
 
         Menu miscellaneousMenu = new Menu(AppVariables.message("Miscellaneous"));
@@ -1403,7 +1415,7 @@ public class MyBoxController extends BaseController {
 
         MenuItem About = new MenuItem(AppVariables.message("About"));
         About.setOnAction((ActionEvent event1) -> {
-            FxmlStage.about();
+            FxmlWindow.about();
         });
 
         MenuItem FunctionsList = new MenuItem(AppVariables.message("FunctionsList"));

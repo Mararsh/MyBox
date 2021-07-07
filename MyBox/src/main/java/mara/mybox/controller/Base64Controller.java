@@ -331,13 +331,7 @@ public class Base64Controller extends BaseController {
     @FXML
     @Override
     public void copyAction() {
-        if (resultArea.getText().isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        if (FxmlControl.copyToSystemClipboard(resultArea.getText())) {
-            popInformation(message("CopiedToSystemClipboard"));
-        }
+        copyToSystemClipboard(resultArea.getText());
     }
 
     @FXML

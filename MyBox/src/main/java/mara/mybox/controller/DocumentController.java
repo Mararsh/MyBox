@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -79,7 +79,7 @@ public class DocumentController extends BaseController {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        FxmlStage.openPdfViewer(null, file);
+                        FxmlWindow.openPdfViewer(null, file);
                     }
                 });
             } else {

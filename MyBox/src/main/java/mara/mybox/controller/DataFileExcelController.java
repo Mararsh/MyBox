@@ -25,7 +25,7 @@ import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
@@ -481,7 +481,7 @@ public class DataFileExcelController extends BaseDataFileController {
                         sourceFileChanged(targetFile);
 
                     } else if (saveAsType == SaveAsType.Open) {
-                        DataFileExcelController controller = (DataFileExcelController) FxmlStage.openStage(CommonValues.DataFileExcelFxml);
+                        DataFileExcelController controller = (DataFileExcelController) FxmlWindow.openStage(CommonValues.DataFileExcelFxml);
                         controller.sourceFileChanged(targetFile);
                     }
 
@@ -1499,7 +1499,7 @@ public class DataFileExcelController extends BaseDataFileController {
 
     public static DataFileExcelController oneOpen() {
         DataFileExcelController controller = null;
-        Stage stage = FxmlStage.findStage(message("EditExcel"));
+        Stage stage = FxmlWindow.findStage(message("EditExcel"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (DataFileExcelController) stage.getUserData();
@@ -1507,7 +1507,7 @@ public class DataFileExcelController extends BaseDataFileController {
             }
         }
         if (controller == null) {
-            controller = (DataFileExcelController) FxmlStage.openStage(CommonValues.DataFileExcelFxml);
+            controller = (DataFileExcelController) FxmlWindow.openStage(CommonValues.DataFileExcelFxml);
         }
         if (controller != null) {
             controller.getMyStage().requestFocus();

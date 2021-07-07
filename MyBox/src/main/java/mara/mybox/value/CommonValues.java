@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.4.5";
-    public static final String AppVersionDate = "2021-6-24";
+    public static final String AppVersion = "6.4.6";
+    public static final String AppVersionDate = "2021-7-7";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -149,6 +149,8 @@ public class CommonValues {
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";
     public static final String TextReplaceBatchFxml = "/fxml/TextReplaceBatch.fxml";
     public static final String TextToHtmlFxml = "/fxml/TextToHtml.fxml";
+    public static final String TextInSystemClipboardFxml = "/fxml/TextInSystemClipboard.fxml";
+    public static final String TextInMyBoxClipboardFxml = "/fxml/TextInMyBoxClipboard.fxml";
     public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
     public static final String FileRenameFxml = "/fxml/FileRename.fxml";
@@ -259,6 +261,8 @@ public class CommonValues {
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
     public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";
     public static final String MyBoxIconsFxml = "/fxml/MyBoxIcons.fxml";
+    public static final String PopNodesFxml = "/fxml/PopNodes.fxml";
+    public static final String PopTextsClipboardFxml = "/fxml/PopTextsClipboard.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEn = new Locale("en");
@@ -322,7 +326,7 @@ public class CommonValues {
             = "\\$|\\(|\\)|\\*|\\?|\\/|\\^|\\{|\\}|\\||\\[|\\]|\"|"
             + "[`~!@#%&_=<>:,;'·！￥…（）—《》？：“”【】、；‘'，。、]";
     public static final String FileNameSpecialChars
-            = "[:<>/&]|\\*|\\?|\\\\|\n|\"|\\s+|\\||&nbsp;|&lt;|&gt;|&amp;|&quot;";
+            = "[:<>/&%]|\\*|\\?|\\\\|\n|\"|\\s+|\\||&nbsp;|&lt;|&gt;|&amp;|&quot;";
 
     public static final String MyBoxStyle = "/styles/MyBox.css";
     public static final String DefaultStyle = "/styles/modena/modena.css";

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.AppVariables;
 
@@ -11,15 +12,16 @@ import mara.mybox.value.AppVariables;
  * @CreateDate 2021-5-22
  * @License Apache License Version 2.0
  */
-public class WordViewController extends ControlWebview {
+public class WordViewController extends BaseWebViewController {
 
     public WordViewController() {
         baseTitle = AppVariables.message("WordView");
+        TipsLabelKey = "WordViewTips";
     }
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Word, VisitHistory.FileType.Html);
+        setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
     }
 
     @Override
@@ -45,7 +47,19 @@ public class WordViewController extends ControlWebview {
 
                 @Override
                 protected boolean handle() {
-                    html = MicrosoftDocumentTools.word2html(sourceFile, charset);
+                    String suffix = FileTools.getFileSuffix(sourceFile);
+                    if ("doc".equalsIgnoreCase(suffix)) {
+                        html = MicrosoftDocumentTools.word2html(sourceFile, charset);
+                    } else if ("docx".equalsIgnoreCase(suffix)) {
+                        String text = MicrosoftDocumentTools.extractText(sourceFile);
+                        if (text == null) {
+                            return false;
+                        }
+                        html = text.replaceAll("\n", "<BR>\n");
+                    } else {
+                        error = AppVariables.message("NotSupport");
+                        return false;
+                    }
                     return html != null;
                 }
 

@@ -16,7 +16,7 @@ import javafx.beans.binding.Bindings;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
@@ -226,7 +226,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
             return;
         }
         if (Arrays.asList(CommonValues.MediaPlayerSupports).contains(FileTools.getFileSuffix(file))) {
-            FxmlStage.openMediaPlayer(null, file);
+            FxmlWindow.openMediaPlayer(null, file);
 
         } else {
             openTarget(null);

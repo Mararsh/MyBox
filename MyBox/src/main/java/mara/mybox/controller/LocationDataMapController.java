@@ -37,7 +37,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DateTools;
@@ -867,7 +867,7 @@ public class LocationDataMapController extends BaseMapController {
                                 frameTimer = null;
                             }
                             if (snapshots.size() == 1) {
-                                FxmlStage.openImageViewer(snapshots.get(0));
+                                FxmlWindow.openImageViewer(snapshots.get(0));
                             } else if (snapshots.size() > 1) {
                                 if (format.equals("gif")) {
                                     File gifFile = new File(filePrefix + ".gif");

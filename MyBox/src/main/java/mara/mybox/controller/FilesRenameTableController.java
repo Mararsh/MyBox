@@ -5,11 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxmlControl;
 
 /**
  * @Author Mara
@@ -57,11 +56,6 @@ public class FilesRenameTableController extends FilesTableController {
             addDirectoryButton.setDisable(false);
             super.checkButtons();
         }
-    }
-
-    @FXML
-    public void popRegexExample(MouseEvent mouseEvent) {
-        popMenu = FxmlControl.popRegexExample(this, popMenu, tableFiltersInput, mouseEvent);
     }
 
     public void setButtonsAfterRenamed() {

@@ -24,7 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
@@ -542,7 +542,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                     recordFileOpened(targetFile);
                     if (openCheck.isSelected()) {
                         MediaPlayerController controller
-                                = (MediaPlayerController) FxmlStage.openStage(CommonValues.MediaPlayerFxml);
+                                = (MediaPlayerController) FxmlWindow.openStage(CommonValues.MediaPlayerFxml);
                         controller.load(targetFile);
                     } else {
                         browseURI(targetFile.getParentFile().toURI());

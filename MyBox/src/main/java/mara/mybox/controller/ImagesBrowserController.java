@@ -45,7 +45,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableImageInfoCell;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
@@ -437,7 +437,7 @@ public class ImagesBrowserController extends ImageViewerController {
             ImageInformation imageInfo = tableData.get(index);
             if (imageInfo != null) {
                 File file = imageInfo.getImageFileInformation().getFile();
-                FxmlStage.openImageViewer(null, file);
+                FxmlWindow.openImageViewer(null, file);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -454,7 +454,7 @@ public class ImagesBrowserController extends ImageViewerController {
                 return;
             }
             File file = info.getImageFileInformation().getFile();
-            FileRenameController controller = (FileRenameController) FxmlStage.openStage(CommonValues.FileRenameFxml);
+            FileRenameController controller = (FileRenameController) FxmlWindow.openStage(CommonValues.FileRenameFxml);
             controller.getMyStage().setOnHiding((WindowEvent event) -> {
                 File newFile = controller.getNewFile();
                 Platform.runLater(() -> {
@@ -554,7 +554,7 @@ public class ImagesBrowserController extends ImageViewerController {
             }
             ImageInformation imageInfo = tableData.get(index);
             if (imageInfo != null) {
-                FxmlStage.showImageInformation(imageInfo);
+                FxmlWindow.showImageInformation(imageInfo);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -568,7 +568,7 @@ public class ImagesBrowserController extends ImageViewerController {
             }
             ImageInformation imageInfo = tableData.get(index);
             if (imageInfo != null) {
-                FxmlStage.showImageMetaData(imageInfo);
+                FxmlWindow.showImageMetaData(imageInfo);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -707,7 +707,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     }
                     return;
                 } else if (event.getClickCount() > 1) {
-                    FxmlStage.openImageViewer(null, file);
+                    FxmlWindow.openImageViewer(null, file);
                     return;
                 }
                 currentIndex = index;
@@ -1055,7 +1055,7 @@ public class ImagesBrowserController extends ImageViewerController {
                         }
                         File file = info.getImageFileInformation().getFile();
                         if (event.getClickCount() > 1) {
-                            FxmlStage.openImageViewer(null, file);
+                            FxmlWindow.openImageViewer(null, file);
                         } else {
                             loadImageFile(file, 0, loadWidth);
                         }

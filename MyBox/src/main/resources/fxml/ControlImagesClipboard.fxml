@@ -28,7 +28,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="clipboardSystemLoadImageButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadSystemClipboard">
+                <Button fx:id="loadContentInSystemClipboardButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadSystemClipboard">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>

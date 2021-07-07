@@ -130,9 +130,8 @@ License:    Apache License Version 2.0
                                                         <Label text="%PoppedMessage" />
                                                         <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="55.0" spacing="10.0">
                                                             <children>
-                                                                <Label text="%FontSize" />
+                                                                <Label text="%FontSizeTimes" />
                                                                 <ComboBox fx:id="popSizeSelector" editable="true" prefWidth="100.0" />
-                                                                <Label text="%Times2" />
                                                                 <Label text="%Duration">
                                                                     <HBox.margin>
                                                                         <Insets left="40.0" />

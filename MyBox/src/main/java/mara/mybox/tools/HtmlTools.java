@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
@@ -12,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,18 +28,13 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.HtmlViewerController;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
@@ -414,7 +409,7 @@ public class HtmlTools {
     public static void editHtml(String html) {
         try {
             File htmFile = writeHtml(html);
-            FxmlStage.openHtmlEditor(null, htmFile);
+            FxmlWindow.openHtmlEditor(null, htmFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -425,7 +420,7 @@ public class HtmlTools {
     }
 
     public static HtmlViewerController viewHtml(String title, String body) {
-        return FxmlStage.openHtmlViewer(null, body);
+        return FxmlWindow.openHtmlViewer(null, body);
     }
 
     public static String html(String title, String body) {
@@ -514,6 +509,7 @@ public class HtmlTools {
                 return null;
             }
             File file = FxmlControl.getInternalFile("/icons/" + host + ".png", "icons", host + ".png");
+
             if (file == null || !file.exists()) {
                 file = FxmlControl.getInternalFile("/icons/" + host + ".ico", "icons", host + ".ico");
                 if ((file == null || !file.exists()) && download) {
@@ -593,7 +589,6 @@ public class HtmlTools {
             File actualTarget = targetFile;
             if (suffix != null && !suffix.isBlank()) {
                 actualTarget = new File(FileTools.replaceFileSuffix(targetFile.getAbsolutePath(), suffix));
-
             }
             FileTools.rename(iconFile, actualTarget);
             return actualTarget;
@@ -1200,23 +1195,6 @@ public class HtmlTools {
         return newIndex;
     }
 
-    public static String doc2html(Document doc, String charset) {
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.METHOD, "html");
-            transformer.setOutputProperty(OutputKeys.ENCODING, charset);
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            transformer.transform(new DOMSource(doc), new StreamResult(baos));
-            baos.flush();
-            baos.close();
-            return baos.toString(charset);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public static List<Link> links(URL baseURL, String html) {
         if (html == null) {
             return null;
@@ -1266,6 +1244,7 @@ public class HtmlTools {
 
     public static File url2File(String urlAddress) {
         try {
+            MyBoxLog.console(urlAddress);
             if (urlAddress == null) {
                 return null;
             }
@@ -1339,7 +1318,7 @@ public class HtmlTools {
             }
             return tmpFile;
         } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+            MyBoxLog.debug(e.toString() + " " + urlAddress);
             return null;
         }
     }
@@ -1378,42 +1357,61 @@ public class HtmlTools {
         }
     }
 
-    public static String checkURL(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        String address = value;
-        String addressS = address.toLowerCase();
-        if (addressS.startsWith("file:/")
-                || addressS.startsWith("http://")
-                || addressS.startsWith("https://")) {
-
-        } else if (address.startsWith("//")) {
-            address = "http:" + value;
-        } else {
-            File file = new File(address);
-            if (file.exists()) {
-                address = file.toURI().toString();
-            } else {
-                address = "http://" + value;
+    public static String checkURL(String value, Charset charset) {
+        try {
+            if (value == null || value.isBlank()) {
+                return null;
             }
+            String address = value;
+            String addressS = address.toLowerCase();
+            if (addressS.startsWith("file:/")
+                    || addressS.startsWith("http://")
+                    || addressS.startsWith("https://")) {
+
+            } else if (address.startsWith("//")) {
+                address = "http:" + value;
+            } else {
+                File file = new File(address);
+                if (file.exists()) {
+                    address = file.toURI().toString();
+                } else {
+                    address = "http://" + value;
+                }
+            }
+            address = decodeURL(address, charset);
+            return address;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return value;
         }
-        address = decodeURL(address);
-        return address;
     }
 
-    public static String decodeURL(String value) {
+    public static String decodeURL(String value, Charset charset) {
         if (value == null) {
             return null;
         }
-        return URLDecoder.decode(value, Charset.forName("UTF-8"));
+        return URLDecoder.decode(value, charset);
     }
 
-    public static String decodeURL(File file) {
+    public static String decodeURL(File file, Charset charset) {
         if (file == null) {
             return null;
         }
-        return decodeURL(file.toURI().toString());
+        return decodeURL(file.toURI().toString(), charset);
+    }
+
+    public static String encodeURL(String value, Charset charset) {
+        if (value == null) {
+            return null;
+        }
+        return URLEncoder.encode(value, charset);
+    }
+
+    public static String encodeURL(File file, Charset charset) {
+        if (file == null) {
+            return null;
+        }
+        return encodeURL(file.toURI().toString(), charset);
     }
 
     public static String encodeEscape(String string) {
@@ -1438,6 +1436,73 @@ public class HtmlTools {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return address;
+        }
+    }
+
+    public static void selectAll(WebEngine webEngine) {
+        try {
+            String js = "window.getSelection().removeAllRanges(); "
+                    + "var selection = window.getSelection();\n"
+                    + "var range = document.createRange();\n"
+                    + "range.selectNode(document.documentElement);\n"
+                    + "selection.addRange(range);";
+            webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public static void selectNone(WebEngine webEngine) {
+        try {
+            String js = "window.getSelection().removeAllRanges(); ";
+            webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public static void selectNode(WebEngine webEngine, String id) {
+        try {
+            String js = "window.getSelection().removeAllRanges(); "
+                    + "var selection = window.getSelection();\n"
+                    + "var range = document.createRange();\n"
+                    + "range.selectNode(document.getElementById('" + id + "'));\n"
+                    + "selection.addRange(range);";
+            webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public static String selectedText(WebEngine webEngine) {
+        try {
+            Object ret = webEngine.executeScript("window.getSelection().toString();");
+            if (ret == null) {
+                return null;
+            }
+            return ((String) ret);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static String selectedHtml(WebEngine webEngine) {
+        try {
+            String js = " 　　　var selectionObj = window.getSelection();\n"
+                    + " 　　　var rangeObj = selectionObj.getRangeAt(0);\n"
+                    + " 　　　var docFragment = rangeObj.cloneContents();\n"
+                    + " 　　　var div = document.createElement(\"div\");\n"
+                    + " 　　　div.appendChild(docFragment);\n"
+                    + " 　　　div.innerHTML;";
+            Object ret = webEngine.executeScript(js);
+            if (ret == null) {
+                return null;
+            }
+            return ((String) ret);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
         }
     }
 

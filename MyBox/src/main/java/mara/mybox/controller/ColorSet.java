@@ -15,7 +15,7 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
 
@@ -125,12 +125,12 @@ public class ColorSet extends BaseController {
     public void showColorPalette() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(
-                    FxmlStage.class.getResource(CommonValues.ColorPalettePopupFxml), AppVariables.currentBundle);
+                    FxmlWindow.class.getResource(CommonValues.ColorPalettePopupFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
             controller.load(this);
 
-            popup = getPopup();
+            popup = makePopup();
             popup.getContent().add(pane);
             FxmlControl.locateCenter(colorButton, popup);
         } catch (Exception e) {

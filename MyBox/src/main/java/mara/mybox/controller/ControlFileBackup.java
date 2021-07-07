@@ -25,7 +25,7 @@ import static mara.mybox.db.table.TableFileBackup.Default_Max_Backups;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -283,7 +283,7 @@ public class ControlFileBackup extends BaseController {
         if (selected == null) {
             return;
         }
-        FxmlStage.openTarget(null, selected.getBackup().getAbsolutePath(), true);
+        FxmlWindow.openTarget(null, selected.getBackup().getAbsolutePath(), true);
     }
 
     @FXML

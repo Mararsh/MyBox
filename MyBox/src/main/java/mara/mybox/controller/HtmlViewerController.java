@@ -12,7 +12,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
@@ -209,7 +209,7 @@ public class HtmlViewerController extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     if (isEdit) {
-                        FxmlStage.openHtmlEditor(null, file);
+                        FxmlWindow.openHtmlEditor(null, file);
                     } else {
                         popSuccessful();
                     }

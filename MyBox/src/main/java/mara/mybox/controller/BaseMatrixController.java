@@ -73,13 +73,13 @@ public class BaseMatrixController extends BaseSheetController {
         this.manager = manager;
         baseName = manager.baseName;
         tableMatrix = manager.tableDefinition;
-        setControls(baseName);
+        setControls(manager, baseName);
     }
 
     @Override
-    public void setControls(String baseName) {
+    public void setControls(BaseController parent, String baseName) {
         try {
-            super.setControls(baseName);
+            super.setControls(parent, baseName);
             colsNumber = AppVariables.getUserConfigInt(baseName + "ColsNumber", 3);
             rowsNumber = AppVariables.getUserConfigInt(baseName + "RowsNumber", 3);
             scale = (short) AppVariables.getUserConfigInt(baseName + "Scale", 2);

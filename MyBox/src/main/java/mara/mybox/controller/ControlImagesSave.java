@@ -33,7 +33,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
@@ -521,7 +521,7 @@ public class ControlImagesSave extends BaseController {
                 protected void whenSucceeded() {
                     parentController.popSuccessful();
                     recordFileWritten(targetFile);
-                    FxmlStage.openPdfViewer(null, targetFile);
+                    FxmlWindow.openPdfViewer(null, targetFile);
                 }
 
             };

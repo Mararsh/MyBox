@@ -112,7 +112,7 @@ License:    Apache License Version 2.0
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                     </VBox.margin>
                 </TabPane>
-                <HBox fx:id="codeBox21" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
                                 styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">

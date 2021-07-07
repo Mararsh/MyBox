@@ -53,7 +53,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -68,7 +67,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
@@ -839,12 +838,8 @@ public class DownloadFirstLevelLinksController extends BaseController {
         if (link == null) {
             return;
         }
-        ClipboardContent content = new ClipboardContent();
-        content.putString(link.getAddress());
-        Clipboard.getSystemClipboard().setContent(content);
-        String txt = message("Copied") + ": " + link.getAddress();
-        popInformation(txt);
-        updateLogs(txt);
+        copyToSystemClipboard(link.getAddress());
+        updateLogs(message("Copied") + ": " + link.getAddress());
     }
 
     @FXML
@@ -917,7 +912,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     table.add(row);
                 }
                 s.append(StringTable.tableDiv(table));
-                FxmlStage.openHtmlViewer(null, s.toString());
+                FxmlWindow.openHtmlViewer(null, s.toString());
             }
 
             @Override
@@ -1074,10 +1069,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         if (link == null) {
             return;
         }
-        ClipboardContent content = new ClipboardContent();
-        content.putString(link.getAddress());
-        Clipboard.getSystemClipboard().setContent(content);
-        popInformation(message("Copied") + ": " + link.getAddress());
+        copyToSystemClipboard(link.getAddress());
     }
 
     @FXML
@@ -1127,10 +1119,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
         if (link == null) {
             return;
         }
-        ClipboardContent content = new ClipboardContent();
-        content.putString(link.getAddress());
-        Clipboard.getSystemClipboard().setContent(content);
-        popInformation(message("Copied") + ": " + link.getAddress());
+        copyToSystemClipboard(link.getAddress());
     }
 
     @FXML

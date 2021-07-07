@@ -30,7 +30,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
@@ -189,7 +189,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             if (targetFiles == null || targetFiles.isEmpty()) {
                 return;
             }
-            final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
+            final ImagesBrowserController controller = FxmlWindow.openImagesBrowser(null);
             if (controller != null) {
                 controller.loadImages(targetFiles.subList(0, Math.min(9, targetFiles.size())), 3);
             }

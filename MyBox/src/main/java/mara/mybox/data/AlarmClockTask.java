@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.db.data.AlarmClock.AlarmType;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.tools.DateTools;
@@ -47,7 +47,7 @@ public class AlarmClockTask extends TimerTask {
                 @Override
                 public void run() {
                     try {
-                        final AlarmClockRunController controller = (AlarmClockRunController) FxmlStage.openStage(
+                        final AlarmClockRunController controller = (AlarmClockRunController) FxmlWindow.openStage(
                                 null, CommonValues.AlarmClockRunFxml, false);
                         controller.runAlarm(alarm);
 

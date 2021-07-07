@@ -46,7 +46,7 @@ License:    Apache License Version 2.0
                 <TextField fx:id="executableInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <HBox fx:id="codeBox21111" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Button fx:id="defaultButton" mnemonicParsing="false" onAction="#defaultAction">
                     <graphic>

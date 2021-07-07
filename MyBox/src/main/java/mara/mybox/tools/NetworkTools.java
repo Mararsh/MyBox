@@ -10,6 +10,7 @@ import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
@@ -382,7 +383,7 @@ public class NetworkTools {
             URL url = new URL(urlString);
             values.put(message("Address"), url.toString());
             values.put(message("ExternalForm"), url.toExternalForm());
-            values.put(message("Decode"), HtmlTools.decodeURL(url.toString()));
+            values.put(message("Decode"), HtmlTools.decodeURL(url.toString(), Charset.defaultCharset()));
             values.put(message("Protocal"), url.getProtocol());
             values.put(message("Host"), url.getHost());
             values.put(message("Path"), url.getPath());

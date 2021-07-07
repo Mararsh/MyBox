@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,15 +43,22 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -79,9 +87,14 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ImagesBrowserController;
+import mara.mybox.controller.PopNodesController;
+import mara.mybox.controller.TextInMyBoxClipboardController;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.TextClipboard;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.image.ImageBlend;
 import mara.mybox.image.PixelBlend;
@@ -110,8 +123,8 @@ public class FxmlControl {
     public static String darkRedText = "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
     public static String badStyle = "-fx-text-box-border: blue;   -fx-text-fill: blue;";
     public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
-    public static String errorData = "-fx-background-color: #e5fbe5";
-    public static String selectedData = "-fx-background-color:  #0096C9; -fx-text-background-color: white";
+    public static String errorData = "-fx-background-color: #e5fbe5;";
+    public static String selectedData = "-fx-background-color:  #0096C9; -fx-text-background-color: white;";
 
     public enum LabelType {
         NotDisplay, NameAndValue, Value, Name, Pop
@@ -187,6 +200,52 @@ public class FxmlControl {
         playClip(file);
     }
 
+    public static List<Node> children(Node node) {
+        List<Node> children = new ArrayList<>();
+        return children(node, children);
+    }
+
+    public static List<Node> children(Node node, List<Node> nodes) {
+        List<Node> children = nodes;
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        if (node == null) {
+            return children;
+        }
+        try {
+            children.add(node);
+            if (node instanceof SplitPane) {
+                for (Node child : ((SplitPane) node).getItems()) {
+                    children.add(child);
+                    children = children(child, children);
+                }
+            } else if (node instanceof ScrollPane) {
+                Node child = ((ScrollPane) node).getContent();
+                children.add(child);
+                children = children(child, children);
+            } else if (node instanceof TitledPane) {
+                Node child = ((TitledPane) node).getContent();
+                children.add(child);
+                children = children(child, children);
+            } else if (node instanceof TabPane) {
+                for (Tab tab : ((TabPane) node).getTabs()) {
+                    Node child = tab.getContent();
+                    children.add(child);
+                    children = children(child, children);
+                }
+            } else if (node instanceof Parent) {
+                for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                    children.add(child);
+                    children = children(child, children);
+                }
+            }
+
+        } catch (Exception e) {
+        }
+        return children;
+    }
+
     public static Node findNode(Pane pane, String nodeId) {
         try {
             Node node = pane.lookup("#" + nodeId);
@@ -233,9 +292,46 @@ public class FxmlControl {
             return;
         }
         ControlStyle.setStyle(node);
-        if (node instanceof Parent) {
-            for (Node c : ((Parent) node).getChildrenUnmodifiable()) {
-                applyStyle(c);
+        if (node instanceof SplitPane) {
+            for (Node child : ((SplitPane) node).getItems()) {
+                applyStyle(child);
+            }
+        } else if (node instanceof ScrollPane) {
+            applyStyle(((ScrollPane) node).getContent());
+        } else if (node instanceof TitledPane) {
+            applyStyle(((TitledPane) node).getContent());
+        } else if (node instanceof TabPane) {
+            for (Tab tab : ((TabPane) node).getTabs()) {
+                applyStyle(tab.getContent());
+            }
+        } else if (node instanceof Parent) {
+            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                applyStyle(child);
+            }
+        }
+    }
+
+    public static void addLabelStyle(Node node, String style) {
+        if (node == null) {
+            return;
+        }
+        if (node instanceof Label) {
+            node.setStyle((node.getStyle() != null ? node.getStyle() : "") + style);
+        } else if (node instanceof SplitPane) {
+            for (Node child : ((SplitPane) node).getItems()) {
+                addLabelStyle(child, style);
+            }
+        } else if (node instanceof ScrollPane) {
+            addLabelStyle(((ScrollPane) node).getContent(), style);
+        } else if (node instanceof TitledPane) {
+            addLabelStyle(((TitledPane) node).getContent(), style);
+        } else if (node instanceof TabPane) {
+            for (Tab tab : ((TabPane) node).getTabs()) {
+                addLabelStyle(tab.getContent(), style);
+            }
+        } else if (node instanceof Parent && !(node instanceof TableView)) {
+            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                addLabelStyle(child, style);
             }
         }
     }
@@ -866,20 +962,8 @@ public class FxmlControl {
         stage.setX(screen.getWidth() - stage.getWidth());
     }
 
-    public static List<Node> traverseNode(Node node, List<Node> children) {
-        if (node == null) {
-            return children;
-        }
-        if (children == null) {
-            children = new ArrayList<>();
-        }
-        children.add(node);
-        if (node instanceof Parent) {
-            for (Node c : ((Parent) node).getChildrenUnmodifiable()) {
-                traverseNode(c, children);
-            }
-        }
-        return children;
+    public static void locateMouse(MouseEvent event, PopupWindow window) {
+        window.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
     }
 
     // https://stackoverflow.com/questions/11552176/generating-a-mouseevent-in-javafx/11567122?r=SearchResults#11567122
@@ -1185,7 +1269,7 @@ public class FxmlControl {
             });
             popMenu.getItems().add(menu);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            FxmlControl.locateMouse(mouseEvent, popMenu);
 
             return popMenu;
         } catch (Exception e) {
@@ -1194,14 +1278,20 @@ public class FxmlControl {
         }
     }
 
-    public static ContextMenu popRegexExample(BaseController parent, ContextMenu inPopMenu,
-            TextInputControl input, MouseEvent mouseEvent) {
+    public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
-            if (inPopMenu != null && inPopMenu.isShowing()) {
-                inPopMenu.hide();
+
+            Popup popup = FxmlWindow.popWindow(parent, mouseEvent);
+            if (popup == null) {
+                return;
             }
-            final ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            Object object = popup.getUserData();
+            if (object == null || !(object instanceof PopNodesController)) {
+                return;
+            }
+            PopNodesController controller = (PopNodesController) object;
+            controller.addEditPane(input);
+            controller.addNode(new Separator());
 
             List<String> values = Arrays.asList(
                     "^      " + message("StartLocation"),
@@ -1233,40 +1323,38 @@ public class FxmlControl {
                     "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP")
             );
 
-            MenuItem menu;
+            List<Node> nodes = new ArrayList<>();
             for (String value : values) {
-                menu = new MenuItem(value);
-                menu.setOnAction((ActionEvent event) -> {
-                    String[] vv = value.split("   ");
-                    input.appendText(vv[0]);
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        String[] vv = value.split("   ");
+                        input.appendText(vv[0]);
+                    }
                 });
-                popMenu.getItems().add(menu);
+                nodes.add(button);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("AboutRegularExpression"));
-            menu.setOnAction((ActionEvent event) -> {
-                parent.regexHelp();
-            });
-            popMenu.getItems().add(menu);
+            controller.addFlowPane(nodes);
+            controller.addNode(new Separator());
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            Hyperlink link = new Hyperlink(message("AboutRegularExpression"));
+            link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    popMenu.hide();
+                    if (AppVariables.isChinese()) {
+                        parent.openLink("https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215");
+                    } else {
+                        parent.openLink("https://en.wikipedia.org/wiki/Regular_expression");
+                    }
                 }
             });
-            popMenu.getItems().add(menu);
+            controller.addNode(link);
+            controller.setParameters(parent);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-            return popMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return null;
         }
     }
 
@@ -1364,6 +1452,49 @@ public class FxmlControl {
             ClipboardContent cc = new ClipboardContent();
             cc.putString(string);
             Clipboard.getSystemClipboard().setContent(cc);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean copyToMyBoxClipboard(String string) {
+        try {
+            if (string == null || string.isBlank()) {
+                return false;
+            }
+            return copyToMyBoxClipboard(null, null, string);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean copyToMyBoxClipboard(TableTextClipboard tableTextClipboard, Connection conn, String string) {
+        try {
+            if (string == null || string.isBlank()) {
+                return false;
+            }
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        TableTextClipboard table = tableTextClipboard;
+                        if (table == null) {
+                            table = new TableTextClipboard();
+                        }
+                        Connection conn1 = conn;
+                        if (conn1 == null || conn1.isClosed()) {
+                            conn1 = DerbyBase.getConnection();
+                        }
+                        table.insertData(conn1, new TextClipboard(string));
+                        TextInMyBoxClipboardController.updateClipboard();
+                    } catch (Exception e) {
+                        MyBoxLog.debug(e.toString());
+                    }
+                }
+            }.start();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1629,7 +1760,7 @@ public class FxmlControl {
                     public void run() {
                         try {
                             ImagesBrowserController controller
-                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
+                                    = (ImagesBrowserController) FxmlWindow.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadImages(files);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());

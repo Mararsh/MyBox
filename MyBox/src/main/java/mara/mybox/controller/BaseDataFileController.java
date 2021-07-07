@@ -219,7 +219,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
 
-        setControls(baseName);
+        setControls(this, baseName);
     }
 
     @Override
@@ -795,11 +795,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (FxmlControl.copyToSystemClipboard(s.toString())) {
-                        popInformation(message("CopiedInSheet"));
-                    } else {
-                        popFailed();
-                    }
+                    copyToSystemClipboard(s.toString());
                 }
 
             };
@@ -1094,13 +1090,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (FxmlControl.copyToSystemClipboard(s.toString())) {
-                        popInformation(message("CopiedToSystemClipboard") + "\n"
-                                + message("RowsNumber") + ":" + copiedLines + "\n"
-                                + message("ColumnsNumber") + ":" + selectedCols);
-                    } else {
-                        popFailed();
-                    }
+                    copyToSystemClipboard(s.toString());
                 }
 
             };

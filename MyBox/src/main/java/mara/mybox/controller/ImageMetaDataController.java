@@ -10,7 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
@@ -134,7 +134,7 @@ public class ImageMetaDataController extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     if (isEdit) {
-                        FxmlStage.openTextEditer(null, file);
+                        FxmlWindow.openTextEditer(null, file);
                     } else {
                         popSuccessful();
                     }

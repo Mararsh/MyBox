@@ -122,6 +122,9 @@ License:    Apache License Version 2.0
                                 </Menu>                                    
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#TextInMyBoxClipboard" text="%TextInMyBoxClipboard" />
+                                <MenuItem mnemonicParsing="false" onAction="#TextInSystemClipboard" text="%TextInSystemClipboard" />
                             </items>
                         </Menu>
                         <Menu fx:id="imageMenu" mnemonicParsing="false" text="%Image">

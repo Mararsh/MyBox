@@ -44,7 +44,7 @@ import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -110,8 +110,9 @@ public abstract class BaseSheetController extends ControlSheetData {
     }
 
     @Override
-    public void setControls(String baseName) {
+    public void setControls(BaseController parent, String baseName) {
         try {
+            this.parentController = parent;
             this.baseName = baseName;
             if (textController != null) {
                 textController.setControls(baseName);
@@ -697,14 +698,12 @@ public abstract class BaseSheetController extends ControlSheetData {
 
     @FXML
     public void copyTextAction() {
-        if (FxmlControl.copyToSystemClipboard(textController.textArea.getText())) {
-            popInformation(message("CopiedToSystemClipboard"));
-        }
+        copyToSystemClipboard(textController.textArea.getText());
     }
 
     @FXML
     public void clipboard() {
-        DataClipboardController controller = (DataClipboardController) FxmlStage.openStage(CommonValues.DataClipboardFxml);
+        DataClipboardController controller = (DataClipboardController) FxmlWindow.openStage(CommonValues.DataClipboardFxml);
         controller.setSheet(this);
         controller.toFront();
     }
@@ -1275,9 +1274,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             s += v + "\n";
             copiedCol.add(v);
         }
-        if (FxmlControl.copyToSystemClipboard(s)) {
-            popInformation(message("CopiedInSheet"));
-        }
+        copyToSystemClipboard(s);
     }
 
     public void pastePageColValues(int col) {
@@ -1367,9 +1364,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                     s += v + p;
                     copiedRow.add(v);
                 }
-                if (FxmlControl.copyToSystemClipboard(s)) {
-                    popInformation(message("CopiedInSheet"));
-                }
+                copyToSystemClipboard(s);
             });
             items.add(menu);
 
@@ -1625,13 +1620,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             }
             lines++;
         }
-        if (s == null) {
-            popError(message("NoData"));
-        } else if (FxmlControl.copyToSystemClipboard(s)) {
-            popInformation(message("CopiedToSystemClipboard") + "\n"
-                    + message("RowsNumber") + ":" + lines + "\n"
-                    + message("ColumnsNumber") + ":" + colsNumber);
-        }
+        copyToSystemClipboard(s);
     }
 
     public void copySelectedCols() {
@@ -1674,13 +1663,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             }
             lines++;
         }
-        if (s == null) {
-            popError(message("NoData"));
-        } else if (FxmlControl.copyToSystemClipboard(s)) {
-            popInformation(message("CopiedToSystemClipboard") + "\n"
-                    + message("RowsNumber") + ":" + lines + "\n"
-                    + message("ColumnsNumber") + ":" + cols);
-        }
+        copyToSystemClipboard(s);
     }
 
     public void copySelectedRowsCols() {
@@ -1726,13 +1709,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             }
             lines++;
         }
-        if (s == null) {
-            popError(message("NoData"));
-        } else if (FxmlControl.copyToSystemClipboard(s)) {
-            popInformation(message("CopiedToSystemClipboard") + "\n"
-                    + message("RowsNumber") + ":" + lines + "\n"
-                    + message("ColumnsNumber") + ":" + cols);
-        }
+        copyToSystemClipboard(s);
     }
 
     @FXML

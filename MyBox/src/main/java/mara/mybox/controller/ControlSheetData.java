@@ -32,8 +32,9 @@ public class ControlSheetData extends BaseController {
     }
 
     // Should always run this after scene loaded and before input data
-    public void setControls(String baseName) {
+    public void setControls(BaseController parent, String baseName) {
         try {
+            this.parentController = parent;
             this.baseName = baseName;
             if (textController != null) {
                 textController.setControls(baseName);
@@ -105,16 +106,12 @@ public class ControlSheetData extends BaseController {
 
     @FXML
     public void copyText() {
-        if (FxmlControl.copyToSystemClipboard(textController.textArea.getText())) {
-            popInformation(message("CopiedToSystemClipboard"));
-        }
+        copyToSystemClipboard(textController.textArea.getText());
     }
 
     @FXML
     public void copyHtml() {
-        if (FxmlControl.copyToSystemClipboard(FxmlControl.getHtml(webView))) {
-            popInformation(message("CopiedToSystemClipboard"));
-        }
+        copyToSystemClipboard(FxmlControl.getHtml(webView));
     }
 
     @FXML

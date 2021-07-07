@@ -18,7 +18,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageConvolution;
@@ -255,7 +255,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             return;
         }
         HtmlViewerController controller
-                = (HtmlViewerController) FxmlStage.openStage(CommonValues.HtmlViewerFxml);
+                = (HtmlViewerController) FxmlWindow.openStage(CommonValues.HtmlViewerFxml);
         controller.loadTable(quanTable);
     }
 
@@ -402,7 +402,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     public void run() {
                         try {
                             ImagesBrowserController controller
-                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
+                                    = (ImagesBrowserController) FxmlWindow.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());

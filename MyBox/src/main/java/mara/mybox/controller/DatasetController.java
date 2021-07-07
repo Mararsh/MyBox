@@ -8,7 +8,7 @@ import mara.mybox.db.data.Dataset;
 import mara.mybox.data.Era;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.fxml.TableColorCell;
 import mara.mybox.fxml.TableTableMessageCell;
@@ -134,7 +134,7 @@ public class DatasetController extends BaseDataManageController<Dataset> {
     @Override
     public void addAction(ActionEvent event) {
         try {
-            DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
+            DatasetEditController controller = (DatasetEditController) FxmlWindow.openStage(CommonValues.DatasetEditFxml);
             controller.initEditor(this, null);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -149,7 +149,7 @@ public class DatasetController extends BaseDataManageController<Dataset> {
             return;
         }
         try {
-            DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
+            DatasetEditController controller = (DatasetEditController) FxmlWindow.openStage(CommonValues.DatasetEditFxml);
             controller.initEditor(this, selected);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

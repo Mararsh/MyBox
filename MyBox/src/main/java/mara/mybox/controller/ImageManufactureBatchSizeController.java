@@ -15,7 +15,7 @@ import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
@@ -244,7 +244,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
     public void pixelsCalculator() {
         try {
             final PixelsCalculationController controller
-                    = (PixelsCalculationController) FxmlStage.openStage(myStage,
+                    = (PixelsCalculationController) FxmlWindow.openStage(myStage,
                             CommonValues.PixelsCalculatorFxml,
                             true, Modality.WINDOW_MODAL, null);
 

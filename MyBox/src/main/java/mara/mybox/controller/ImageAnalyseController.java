@@ -1362,9 +1362,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                     @Override
                     protected void whenSucceeded() {
-
-                        browseURI(file.toURI());
-//                        FxmlStage.openHtmlEditor(null, file);
+                        WebBrowserController.oneOpen(file);
 
                     }
                 };

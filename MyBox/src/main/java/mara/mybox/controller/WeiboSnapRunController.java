@@ -51,7 +51,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -617,7 +617,7 @@ public class WeiboSnapRunController extends BaseController {
             }
 
             loadingController
-                    = (WeiboSnapingInfoController) FxmlStage.openStage(myStage,
+                    = (WeiboSnapingInfoController) FxmlWindow.openStage(myStage,
                             CommonValues.WeiboSnapingInfoFxml,
                             true, Modality.WINDOW_MODAL, StageStyle.TRANSPARENT);
             loadingController.setParent(this);

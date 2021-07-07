@@ -22,10 +22,11 @@ import mara.mybox.MyBox;
 import mara.mybox.db.DataMigration;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -97,7 +98,7 @@ public class MyBoxLoadingController implements Initializable {
                         if (DerbyBase.status != DerbyBase.DerbyStatus.Embedded
                                 && DerbyBase.status != DerbyBase.DerbyStatus.Nerwork) {
                             Platform.runLater(() -> {
-                                FxmlStage.alertWarning(myStage, initDB);
+                                FxmlWindow.alertWarning(myStage, initDB);
                                 MyBoxLog.console(initDB);
                             });
                             AppVariables.initAppVaribles();
@@ -128,6 +129,8 @@ public class MyBoxLoadingController implements Initializable {
                         ImageIO.setUseCache(true);
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
 
+                        MicrosoftDocumentTools.registryFactories();
+
                         MyBoxLog.info(message(lang, "Load") + " " + CommonValues.AppVersion);
                     } catch (Exception e) {
                         Platform.runLater(() -> {
@@ -154,18 +157,18 @@ public class MyBoxLoadingController implements Initializable {
                                     inFile = arg;
                                     break;
                                 } else {
-                                    FxmlStage.alertError(myStage, MessageFormat.format(
+                                    FxmlWindow.alertError(myStage, MessageFormat.format(
                                             message("FilepathNonAscii"), arg));
                                 }
                             }
                         }
                         if (inFile != null) {
-                            BaseController controller = FxmlStage.openTarget(myStage, inFile, false);
+                            BaseController controller = FxmlWindow.openTarget(myStage, inFile, false);
                             if (controller == null) {
-                                FxmlStage.openMyBox(myStage);
+                                FxmlWindow.openMyBox(myStage);
                             }
                         } else {
-                            FxmlStage.openMyBox(myStage);
+                            FxmlWindow.openMyBox(myStage);
                         }
                     });
                 }
@@ -214,7 +217,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!currentDataPath.exists()) {
                 if (!currentDataPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang,
+                        FxmlWindow.alertError(stage, MessageFormat.format(AppVariables.message(lang,
                                 "UserPathFail"), AppVariables.MyboxDataPath));
                     });
                     return false;
@@ -248,7 +251,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!AppVariables.MyBoxLogsPath.exists()) {
                 if (!AppVariables.MyBoxLogsPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                        FxmlWindow.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
                                 AppVariables.MyBoxLogsPath));
                     });
                     return false;
@@ -262,7 +265,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!AppVariables.MyBoxLanguagesPath.exists()) {
                 if (!AppVariables.MyBoxLanguagesPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                        FxmlWindow.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
                                 AppVariables.MyBoxLanguagesPath));
                     });
                     return false;
@@ -273,7 +276,7 @@ public class MyBoxLoadingController implements Initializable {
             if (!AppVariables.MyBoxDownloadsPath.exists()) {
                 if (!AppVariables.MyBoxDownloadsPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                        FxmlWindow.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
                                 AppVariables.MyBoxDownloadsPath));
                     });
                     return false;
@@ -290,7 +293,7 @@ public class MyBoxLoadingController implements Initializable {
             } else {
                 if (!AppVariables.MyBoxTempPath.mkdirs()) {
                     Platform.runLater(() -> {
-                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                        FxmlWindow.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
                                 AppVariables.MyBoxTempPath));
                     });
                     return false;

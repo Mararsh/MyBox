@@ -752,6 +752,9 @@ public class ControlStyle {
                 case "pasteTxtButton":
                     return new ControlStyle(id, message("PasteTexts"), "", "iconPaste.png");
 
+                case "pasteContentInSystemClipboardButton":
+                    return new ControlStyle(id, message("PasteContentInSystemClipboard"), "", "iconPaste.png");
+
                 default:
                     return new ControlStyle(id, message("Paste"), "", "iconPaste.png");
             }
@@ -1051,17 +1054,39 @@ public class ControlStyle {
         }
 
         if (id.startsWith("clipboard")) {
-            switch (id) {
-                case "clipboardSystemLoadImageButton":
-                    return new ControlStyle(id, message("LoadSystemClipboardImage"), "", "iconClipboard.png");
+            return new ControlStyle(id, message("Clipboard"), "", "iconClipboard.png");
+        }
 
-                default:
-                    return new ControlStyle(id, message("Clipboard"), "", "iconClipboard.png");
-            }
+        if (id.startsWith("loadContentInSystemClipboard")) {
+            return new ControlStyle(id, message("LoadContentInSystemClipboard"), "", "iconClipboard.png");
+        }
+
+        if (id.startsWith("number")) {
+            return new ControlStyle(id, "", "", "iconNumber.png");
+        }
+
+        if (id.startsWith("lowerLetter")) {
+            return new ControlStyle(id, "", "", "iconLowerLetter.png");
+        }
+
+        if (id.startsWith("upperLetter")) {
+            return new ControlStyle(id, "", "", "iconUpperLetter.png");
+        }
+
+        if (id.startsWith("character")) {
+            return new ControlStyle(id, "", "", "iconCharacter.png");
         }
 
         if (id.startsWith("openPath")) {
             return new ControlStyle(id, message("Directory"), "", "iconOpen2.png");
+        }
+
+        if (id.startsWith("closePop")) {
+            return new ControlStyle(id, message("Close"), "ESC / F6", "iconCancel.png");
+        }
+
+        if (id.startsWith("message")) {
+            return new ControlStyle(id, message("SendMessage"), "", "iconMessage.png");
         }
 
         switch (id) {

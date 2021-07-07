@@ -29,7 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
 import mara.mybox.image.ImageInformation;
@@ -393,7 +393,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     protected void openForegroundImage(ActionEvent event) {
         if (foreFile != null) {
-            FxmlStage.openImageViewer(foreFile);
+            FxmlWindow.openImageViewer(foreFile);
         }
     }
 
@@ -535,7 +535,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     protected void openBackgroundImage(ActionEvent event) {
         if (backFile != null) {
-            FxmlStage.openImageViewer(backFile);
+            FxmlWindow.openImageViewer(backFile);
         }
     }
 
@@ -598,7 +598,7 @@ public class ImagesBlendController extends ImageViewerController {
                     @Override
                     protected void whenSucceeded() {
                         popInformation(AppVariables.message("Saved"));
-                        FxmlStage.openImageViewer(file);
+                        FxmlWindow.openImageViewer(file);
                     }
 
                 };
@@ -615,7 +615,7 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     protected void newWindow(ActionEvent event) {
-        FxmlStage.openImageViewer(image);
+        FxmlWindow.openImageViewer(image);
     }
 
     @FXML

@@ -237,9 +237,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
 
     @Override
     public void postLoadedTableData() {
-        if (queryCondition == null) {
-            return;
-        }
+        super.postLoadedTableData();
         loadInfo();
     }
 

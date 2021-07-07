@@ -13,7 +13,7 @@ import javafx.scene.layout.Region;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -45,7 +45,7 @@ public class ControlWebFavoriateNodes extends BaseTreeNodeSelector {
         }
         String chainName = chainName(selectedItem);
         WebFavoriteNodeCopyController controller
-                = (WebFavoriteNodeCopyController) FxmlStage.openStage(CommonValues.WebFavoriteNodeCopyFxml);
+                = (WebFavoriteNodeCopyController) FxmlWindow.openStage(CommonValues.WebFavoriteNodeCopyFxml);
         controller.tableWebFavorite = favoritesController.tableWebFavorite;
         controller.setCaller(this, selectedItem.getValue(), chainName, onlyContents);
     }
@@ -54,7 +54,7 @@ public class ControlWebFavoriateNodes extends BaseTreeNodeSelector {
     @Override
     protected void exportNode() {
         WebFavoritesExportController exportController
-                = (WebFavoritesExportController) FxmlStage.openStage(CommonValues.WebFavoritesExportFxml);
+                = (WebFavoritesExportController) FxmlWindow.openStage(CommonValues.WebFavoritesExportFxml);
         exportController.setController(favoritesController);
     }
 
@@ -65,7 +65,7 @@ public class ControlWebFavoriateNodes extends BaseTreeNodeSelector {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu = new MenuItem(message("ImportFiles"));
             menu.setOnAction((ActionEvent event) -> {
-                WebFavoritesImportController controller = (WebFavoritesImportController) FxmlStage.openStage(CommonValues.WebFavoritesImportFxml);
+                WebFavoritesImportController controller = (WebFavoritesImportController) FxmlWindow.openStage(CommonValues.WebFavoritesImportFxml);
                 controller.favoritesController = favoritesController;
             });
             items.add(menu);
@@ -101,7 +101,7 @@ public class ControlWebFavoriateNodes extends BaseTreeNodeSelector {
     }
 
     protected void importExamples() {
-        WebFavoritesImportController controller = (WebFavoritesImportController) FxmlStage.openStage(CommonValues.WebFavoritesImportFxml);
+        WebFavoritesImportController controller = (WebFavoritesImportController) FxmlWindow.openStage(CommonValues.WebFavoritesImportFxml);
         controller.importExamples(favoritesController);
     }
 

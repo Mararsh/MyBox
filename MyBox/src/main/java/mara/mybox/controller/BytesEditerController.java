@@ -10,20 +10,22 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
+import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
@@ -36,6 +38,8 @@ import static mara.mybox.value.AppVariables.message;
  * @License Apache License Version 2.0
  */
 public class BytesEditerController extends BaseFileEditerController {
+
+    protected Popup valuePop;
 
     @FXML
     protected TextField lbWidthInput, lbBytesInput;
@@ -220,17 +224,19 @@ public class BytesEditerController extends BaseFileEditerController {
     @Override
     protected void initCharsetTab() {
         List<String> setNames = TextTools.getCharsetNames();
-        encodeBox.getItems().addAll(setNames);
-        encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+        encodeSelector.getItems().addAll(setNames);
+        encodeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 sourceInformation.setCharset(Charset.forName(newValue));
                 AppVariables.setUserConfigValue(baseName + "Charset", newValue);
                 charsetByUser = true;
                 refreshPairAction();
+                updateNumbers(fileChanged.get());
+
             }
         });
-        encodeBox.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "Charset", "UTF-8"));
+        encodeSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "Charset", "UTF-8"));
     }
 
     @Override
@@ -409,176 +415,117 @@ public class BytesEditerController extends BaseFileEditerController {
     }
 
     @FXML
-    public void popNumber(MouseEvent mouseEvent) {
+    public void popValues(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
+            popup = FxmlWindow.popWindow(myController, mouseEvent);
+            if (popup == null) {
+                return;
             }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            Object object = popup.getUserData();
+            if (object != null && object instanceof PopNodesController) {
+                PopNodesController controller = (PopNodesController) object;
+                controller.setParameters(myController);
+                makeMainAreaContextMenu(controller);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
-            MenuItem menuItem;
+    @Override
+    public void makeMainAreaContextMenu(PopNodesController controller) {
+        try {
+            super.makeMainAreaContextMenu(controller);
+            controller.addNode(new Separator());
+
+            List<Node> number = new ArrayList<>();
             for (int i = 0; i <= 9; ++i) {
-                final String name = i + "";
-                menuItem = new MenuItem(name);
-                menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                String s = i + "";
+                Button button = new Button(s);
+                String value = ByteTools.stringToHexFormat(s);
+                button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(name));
+                        mainArea.insertText(mainArea.getSelection().getStart(), value);
                     }
                 });
-                popMenu.getItems().add(menuItem);
+                FxmlControl.setTooltip(button, value);
+                number.add(button);
             }
-            popMenu.getItems().add(new SeparatorMenuItem());
+            controller.addFlowPane(number);
+            controller.addNode(new Separator());
 
-            menuItem = new MenuItem(message("AsciiTable"));
-            menuItem.setOnAction((ActionEvent event) -> {
-                openLink("https://www.ascii-code.com/");
-//                   openLink("https://en.wikipedia.org/wiki/ASCII"); // this address is unavaliable to someones
-            });
-            popMenu.getItems().add(menuItem);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void popLowerLetter(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menuItem;
-            for (char i = 'a'; i <= 'z'; ++i) {
-                final String name = i + "";
-                menuItem = new MenuItem(name);
-                menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(name));
-                    }
-                });
-                popMenu.getItems().add(menuItem);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void popUpperLetter(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menuItem;
+            List<Node> AZ = new ArrayList<>();
             for (char i = 'A'; i <= 'Z'; ++i) {
-                final String name = i + "";
-                menuItem = new MenuItem(name);
-                menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                String s = i + "";
+                String value = ByteTools.stringToHexFormat(s);
+                Button button = new Button(s);
+                button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(name));
+                        mainArea.insertText(mainArea.getSelection().getStart(), value);
                     }
                 });
-                popMenu.getItems().add(menuItem);
+                FxmlControl.setTooltip(button, value);
+                AZ.add(button);
             }
+            controller.addFlowPane(AZ);
+            controller.addNode(new Separator());
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void popSpecial(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
+            List<Node> az = new ArrayList<>();
+            for (char i = 'a'; i <= 'z'; ++i) {
+                String s = i + "";
+                String value = ByteTools.stringToHexFormat(s);
+                Button button = new Button(s);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        mainArea.insertText(mainArea.getSelection().getStart(), value);
+                    }
+                });
+                FxmlControl.setTooltip(button, value);
+                az.add(button);
             }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            controller.addFlowPane(az);
+            controller.addNode(new Separator());
 
-            MenuItem menuItem;
-
-            List<String> symbolList = Arrays.asList("LF", "CR", AppVariables.message("Space"),
+            List<String> names = Arrays.asList("LF", "CR", AppVariables.message("Space"),
                     "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", "-",
                     ",", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "]", "\\", "^", "_", "`",
                     "{", "}", "|", "~");
-            for (String symbol : symbolList) {
-                menuItem = new MenuItem(symbol);
-                menuItem.setOnAction(new EventHandler<ActionEvent>() {
+            List<Node> special = new ArrayList<>();
+            for (int i = 0; i < names.size(); i++) {
+                String name = names.get(i);
+                Button button = new Button(name);
+                if (name.equals(AppVariables.message("Space"))) {
+                    name = " ";
+                } else if (name.equals("LF")) {
+                    name = "\n";
+                } else if (name.equals("CR")) {
+                    name = "\r";
+                }
+                String value = ByteTools.stringToHexFormat(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        String value = symbol;
-                        if (value.equals(AppVariables.message("Space"))) {
-                            value = " ";
-                        } else if (value.equals("LF")) {
-                            value = "\n";
-                        } else if (value.equals("CR")) {
-                            value = "\r";
-                        }
-                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(value));
+                        mainArea.insertText(mainArea.getSelection().getStart(), value);
                     }
                 });
-                popMenu.getItems().add(menuItem);
+                FxmlControl.setTooltip(button, value);
+                special.add(button);
             }
+            controller.addFlowPane(special);
+            controller.addNode(new Separator());
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            Hyperlink link = new Hyperlink(message("AsciiTable"));
+            link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    popMenu.hide();
+                    openLink("https://www.ascii-code.com/");
                 }
             });
-            popMenu.getItems().add(menu);
+            controller.addNode(link);
 
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

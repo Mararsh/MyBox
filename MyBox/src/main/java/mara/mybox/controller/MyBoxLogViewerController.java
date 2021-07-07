@@ -11,7 +11,7 @@ import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -84,6 +84,12 @@ public class MyBoxLogViewerController extends HtmlViewerController {
     }
 
     @FXML
+    public void messageAction(ActionEvent event) {
+        MessageAuthorController controller = (MessageAuthorController) FxmlWindow.openStage(CommonValues.MessageAuthorFxml);
+        controller.loadMessage("MyBox Logs", html);
+    }
+
+    @FXML
     public void clearAction(ActionEvent event) {
         body = null;
         displayHtml(null);
@@ -105,7 +111,7 @@ public class MyBoxLogViewerController extends HtmlViewerController {
 
     public static MyBoxLogViewerController oneOpen() {
         MyBoxLogViewerController controller = null;
-        Stage stage = FxmlStage.findStage(message("MyBoxLogsViewer"));
+        Stage stage = FxmlWindow.findStage(message("MyBoxLogsViewer"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (MyBoxLogViewerController) stage.getUserData();
@@ -113,7 +119,7 @@ public class MyBoxLogViewerController extends HtmlViewerController {
             }
         }
         if (controller == null) {
-            controller = (MyBoxLogViewerController) FxmlStage.openStage(CommonValues.MyBoxLogViewerFxml);
+            controller = (MyBoxLogViewerController) FxmlWindow.openStage(CommonValues.MyBoxLogViewerFxml);
         }
         if (controller != null) {
             controller.getMyStage().requestFocus();

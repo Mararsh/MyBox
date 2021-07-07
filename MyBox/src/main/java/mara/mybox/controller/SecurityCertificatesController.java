@@ -26,7 +26,7 @@ import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.NetworkTools;
@@ -314,7 +314,7 @@ public class SecurityCertificatesController extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     if (result != null) {
-                        FxmlStage.openHtmlViewer(null, result);
+                        FxmlWindow.openHtmlViewer(null, result);
                     } else {
                         popError(error);
                     }
@@ -453,7 +453,7 @@ public class SecurityCertificatesController extends BaseController {
      */
     public static SecurityCertificatesController oneOpen(File file) {
         SecurityCertificatesController controller = null;
-        Stage stage = FxmlStage.findStage(message("SecurityCertificates"));
+        Stage stage = FxmlWindow.findStage(message("SecurityCertificates"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (SecurityCertificatesController) stage.getUserData();
@@ -461,7 +461,7 @@ public class SecurityCertificatesController extends BaseController {
             }
         }
         if (controller == null) {
-            controller = (SecurityCertificatesController) FxmlStage.openStage(CommonValues.SecurityCertificatesFxml);
+            controller = (SecurityCertificatesController) FxmlWindow.openStage(CommonValues.SecurityCertificatesFxml);
         }
         if (controller != null) {
             if (file != null) {

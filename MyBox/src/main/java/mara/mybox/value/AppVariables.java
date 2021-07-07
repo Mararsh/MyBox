@@ -11,24 +11,30 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import javafx.application.Platform;
+import javafx.scene.input.Clipboard;
 import javafx.scene.paint.Color;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.data.UserLanguage;
 import mara.mybox.data.UserTableLanguage;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableSystemConf;
+import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:59:49
- * @Description
  * @License Apache License Version 2.0
  */
 public class AppVariables {
@@ -49,6 +55,7 @@ public class AppVariables {
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
             hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
     public static ControlStyle.ColorStyle ControlColor;
+    public static Timer textClipboardMonitor;
 
     public AppVariables() {
     }
@@ -609,6 +616,72 @@ public class AppVariables {
         } else {
             return false;
         }
+    }
+
+    public static void checkTextClipboardMonitor() {
+        if (AppVariables.getUserConfigBoolean("MonitorTextClipboard", true)) {
+            startTextClipboardMonitor();
+        } else {
+            stopTextClipboardMonitor();
+        }
+    }
+
+    public static void stopTextClipboardMonitor() {
+        if (textClipboardMonitor != null) {
+            textClipboardMonitor.cancel();
+            textClipboardMonitor = null;
+        }
+        MyBoxLog.debug("Text Clipboard Monitor stopped.");
+    }
+
+    public static void startTextClipboardMonitor() {
+        startTextClipboardMonitor(AppVariables.getUserConfigInt("TextClipboardMonitorInterval", 100));
+    }
+
+    public static void startTextClipboardMonitor(int interval) {
+        if (textClipboardMonitor != null) {
+            textClipboardMonitor.cancel();
+            textClipboardMonitor = null;
+        }
+        if (interval <= 0) {
+            interval = 100;
+        }
+        AppVariables.setUserConfigInt("TextClipboardMonitorInterval", interval);
+        textClipboardMonitor = new Timer();
+        textClipboardMonitor.schedule(new TimerTask() {
+            private final Clipboard clipboard = Clipboard.getSystemClipboard();
+            private final TableTextClipboard tableTextClipboard = new TableTextClipboard();
+            private String lastString = "";
+            private Connection conn = DerbyBase.getConnection();
+
+            @Override
+            public void run() {
+
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public synchronized void run() {
+                        try {
+                            if (!clipboard.hasString()) {
+                                return;
+                            }
+                            String clip = clipboard.getString();
+                            if (clip == null || clip.isEmpty() || clip.equals(lastString)) {
+                                return;
+                            }
+                            lastString = clip;
+                            FxmlControl.copyToMyBoxClipboard(tableTextClipboard, conn, lastString);
+                        } catch (Exception e) {
+                            MyBoxLog.debug(e.toString());
+                        }
+                    }
+                });
+
+            }
+        }, 0, interval);
+
+        MyBoxLog.debug("Text Clipboard Monitor started. Interval:" + interval);
+
     }
 
 }

@@ -17,7 +17,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -103,7 +103,7 @@ public class EpidemicReportsColorsController extends BaseController {
                 String controllerName = "EpidemicReportLocationColor" + locationName;
                 Label label = new Label(locationName);
                 FXMLLoader fxmlLoader = new FXMLLoader(
-                        FxmlStage.class.getResource(CommonValues.ColorSetFxml), AppVariables.currentBundle);
+                        FxmlWindow.class.getResource(CommonValues.ColorSetFxml), AppVariables.currentBundle);
                 Pane pane = fxmlLoader.load();
                 ColorSet controller = (ColorSet) fxmlLoader.getController();
                 controller.init(this, controllerName, Color.web(FxmlColor.randomRGB()));

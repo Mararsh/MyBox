@@ -1,9 +1,13 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -24,6 +28,7 @@ import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlWindow;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -272,33 +277,29 @@ public class ControlDataQuery extends BaseController {
 
     public void popColumn(MouseEvent mouseEvent, TextArea textArea) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
+            List<Node> buttons = new ArrayList<>();
             List<ColumnDefinition> columns = dataController.viewDefinition.getColumns();
             for (ColumnDefinition column : columns) {
-                menu = new MenuItem(column.getLabel());
-                menu.setOnAction((ActionEvent event) -> {
-                    textArea.insertText(textArea.getAnchor(), column.getName());
+                String name = column.getName();
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        textArea.insertText(textArea.getAnchor(), name);
+                    }
                 });
-                popMenu.getItems().add(menu);
+                buttons.add(button);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popup = FxmlWindow.popWindow(myController, mouseEvent);
+            if (popup == null) {
+                return;
+            }
+            Object object = popup.getUserData();
+            if (object != null && object instanceof PopNodesController) {
+                PopNodesController controller = (PopNodesController) object;
+                controller.setFlowPane(this, buttons);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

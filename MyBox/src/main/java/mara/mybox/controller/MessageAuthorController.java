@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.Date;
 import java.util.Properties;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javax.mail.Message;
@@ -11,11 +10,11 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -26,11 +25,9 @@ import static mara.mybox.value.AppVariables.message;
 public class MessageAuthorController extends BaseController {
 
     @FXML
-    protected CheckBox miaowCheck, usefulCheck, uselessCheck;
-    @FXML
     protected TextArea commentsArea;
     @FXML
-    protected TextField nameInput, osInput;
+    protected TextField titleInput, nameInput, osInput;
 
     public MessageAuthorController() {
         baseTitle = AppVariables.message("MessageAuthor");
@@ -41,13 +38,19 @@ public class MessageAuthorController extends BaseController {
         try {
             super.initControls();
             osInput.setText(SystemTools.os());
+            nameInput.setText(System.getProperty("user.name"));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    public void loadMessage(String title, String message) {
+        titleInput.setText(title);
+        commentsArea.setText(message);
+    }
+
     @FXML
-    public void startAction() {
+    public void messageAction() {
         try {
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.163.com");
@@ -56,13 +59,14 @@ public class MessageAuthorController extends BaseController {
             props.put("mail.debug", "false");
             Session session = Session.getDefaultInstance(props, null);
             Message message = new MimeMessage(session);
-            message.setSubject("MyBox message from " + nameInput.getText());
-            String s = (miaowCheck.isSelected() ? "喵    " : "")
-                    + (usefulCheck.isSelected() ? "MyBox有用    " : "")
-                    + (uselessCheck.isSelected() ? "MyBox没用    " : "")
-                    + "<hr>" + commentsArea.getText()
-                    + osInput.getText() + "<br>"
-                    + nameInput.getText() + "<br>"
+            String title = titleInput.getText();
+            if (title.isBlank()) {
+                title = "MyBox message from " + nameInput.getText();
+            }
+            message.setSubject(title);
+            String s = commentsArea.getText() + "<hr><br>"
+                    + "OS: " + osInput.getText() + "<br>"
+                    + "From: " + nameInput.getText() + "<br>"
                     + DateTools.nowString();
             message.setContent(s, "text/html;charset=UTF-8");
             message.setFrom(new InternetAddress("mybox_message@163.com", "MyBox - " + nameInput.getText()));

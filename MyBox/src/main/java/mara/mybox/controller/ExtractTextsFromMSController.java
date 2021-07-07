@@ -10,10 +10,9 @@ import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import org.apache.poi.extractor.ExtractorFactory;
-import org.apache.poi.extractor.POITextExtractor;
 
 /**
  * @Author Mara
@@ -68,14 +67,11 @@ public class ExtractTextsFromMSController extends BaseBatchFileController {
         if (target == null) {
             return AppVariables.message("Skip");
         }
-        try ( POITextExtractor extractor = ExtractorFactory.createExtractor(srcFile)) {
-            String text = extractor.getText();
-            FileTools.writeFile(target, text, charset);
-            targetFileGenerated(target);
-        } catch (Exception e) {
-            updateLogs(e.toString());
-            return e.toString();
+        String text = MicrosoftDocumentTools.extractText(srcFile);
+        if (text == null || FileTools.writeFile(target, text, charset) == null) {
+            return AppVariables.message("Failed");
         }
+        targetFileGenerated(target);
         return AppVariables.message("Successful");
     }
 

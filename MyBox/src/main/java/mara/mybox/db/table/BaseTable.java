@@ -33,6 +33,7 @@ import mara.mybox.value.CommonValues;
 public abstract class BaseTable<D> {
 
     public final static int FilenameMaxLength = 10240;
+    public final static int StringMaxLength = 32672;
 
     protected String tableName, idColumn, orderColumns;
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns;

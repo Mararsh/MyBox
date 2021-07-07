@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="clipboardSystemLoadImageButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadSystemClipboardImage">
+                                                                <Button fx:id="loadContentInSystemClipboardButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loadSystemClipboardImage">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -270,49 +270,49 @@ License:    Apache License Version 2.0
                                             </content>
                                         </TitledPane>
                                         <TitledPane fx:id="saveAsPane" expanded="false" maxWidth="1.7976931348623157E308" text="%SaveAs">
-                                            <content>
-                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1325.0" prefViewportWidth="497.0">
-                                       <content>
-                                                      <VBox fx:id="saveAsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
-                                                          <children>
-                                                              <FlowPane fx:id="saveFramesPane" hgap="5.0" vgap="5.0">
-                                                                  <children>
-                                                                      <RadioButton fx:id="saveAllFramesRadio" mnemonicParsing="false" onAction="#saveAllFramesSelected" selected="true" text="%AllFrames">
-                                                                          <toggleGroup>
-                                                                              <ToggleGroup fx:id="framesSaveGroup" />
-                                                                          </toggleGroup>
-                                                                      </RadioButton>
-                                                                      <RadioButton fx:id="saveCurrentFramesRadio" mnemonicParsing="false" onAction="#saveCurrentFramesSelected" text="%CurrentFrame" toggleGroup="$framesSaveGroup" />
-                                                                  </children>
-                                                              </FlowPane>
-                                                              <fx:include fx:id="format" source="ControlImageFormat.fxml" />
-                                                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                  <children>
-                                                                      <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
-                                                                          <toggleGroup>
-                                                                              <ToggleGroup fx:id="saveAsGroup" />
-                                                                          </toggleGroup>
-                                                                      </RadioButton>
-                                                                      <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
-                                                                      <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
-                                                                  </children>
-                                                                  <VBox.margin>
-                                                                      <Insets bottom="10.0" top="10.0" />
-                                                                  </VBox.margin>
-                                                              </VBox>
-                                                              <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/iconSaveAs.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                          </children>
-                                                      </VBox>
-                                       </content>
-                                    </ScrollPane>
+                                            <content> 
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1325.0" prefViewportWidth="497.0">
+                                                    <content>
+                                                        <VBox fx:id="saveAsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                                                            <children>
+                                                                <FlowPane fx:id="saveFramesPane" hgap="5.0" vgap="5.0">
+                                                                    <children>
+                                                                        <RadioButton fx:id="saveAllFramesRadio" mnemonicParsing="false" onAction="#saveAllFramesSelected" selected="true" text="%AllFrames">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="framesSaveGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <RadioButton fx:id="saveCurrentFramesRadio" mnemonicParsing="false" onAction="#saveCurrentFramesSelected" text="%CurrentFrame" toggleGroup="$framesSaveGroup" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <fx:include fx:id="format" source="ControlImageFormat.fxml" />
+                                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                    <children>
+                                                                        <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="saveAsGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
+                                                                        <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets bottom="10.0" top="10.0" />
+                                                                    </VBox.margin>
+                                                                </VBox>
+                                                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconSaveAs.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </ScrollPane>
                                             </content>
                                         </TitledPane>
                                         <TitledPane fx:id="browsePane" expanded="false" maxWidth="1.7976931348623157E308" text="%Browse">

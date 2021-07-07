@@ -40,8 +40,8 @@ import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.fxml.FxmlStage.openScene;
+import mara.mybox.fxml.FxmlWindow;
+import static mara.mybox.fxml.FxmlWindow.openScene;
 import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.HtmlTools;
@@ -276,7 +276,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     @Override
     public void afterSceneLoaded() {
         try {
-            if (FxmlStage.mapFirstRun(this)) {
+            if (FxmlWindow.mapFirstRun(this)) {
                 return;
             }
 

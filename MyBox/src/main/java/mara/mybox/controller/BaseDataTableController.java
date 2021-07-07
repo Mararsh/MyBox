@@ -28,7 +28,7 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -325,9 +325,13 @@ public abstract class BaseDataTableController<P> extends BaseController {
                         checkCurrentPage();
                     });
 
-            pageSize = 50;
             pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
                     "500", "1000", "2000", "5000", "10000", "20000", "50000"));
+            pageSize = AppVariables.getUserConfigInt(baseName + "PageSize", 50);
+            if (pageSize < 1) {
+                pageSize = 50;
+            }
+            pageSizeSelector.setValue(pageSize + "");
             pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         if (newValue == null) {
@@ -339,7 +343,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                                 pageSizeSelector.getEditor().setStyle(badStyle);
                             } else {
                                 pageSize = v;
-                                AppVariables.setUserConfigValue(baseName + "PageSize", pageSize + "");
+                                AppVariables.setUserConfigInt(baseName + "PageSize", pageSize);
                                 pageSizeSelector.getEditor().setStyle(null);
                                 if (!isSettingValues) {
                                     loadTableData();
@@ -349,10 +353,6 @@ public abstract class BaseDataTableController<P> extends BaseController {
                             pageSizeSelector.getEditor().setStyle(badStyle);
                         }
                     });
-            isSettingValues = true;
-            pageSizeSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "PageSize", "50"));
-            pageSizeSelector.getEditor().setStyle(null);
-            isSettingValues = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -817,7 +817,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    FxmlStage.openTextEditer(null, file);
+                    FxmlWindow.openTextEditer(null, file);
                 }
             };
             if (parentController != null) {

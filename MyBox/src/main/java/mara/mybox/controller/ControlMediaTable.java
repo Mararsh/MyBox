@@ -31,7 +31,7 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.TableDurationCell;
 import mara.mybox.tools.DateTools;
@@ -578,7 +578,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         if (info.getHtml() == null) {
             makeHtml(info, null);
         }
-        FxmlStage.openHtmlViewer(null, info.getHtml());
+        FxmlWindow.openHtmlViewer(null, info.getHtml());
     }
 
     @FXML

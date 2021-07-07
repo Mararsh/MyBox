@@ -29,7 +29,7 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableDateCell;
 import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.tools.FileTools;
@@ -115,9 +115,11 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
         if (use) {
             buttonsBox.getChildren().remove(copyButton);
             copyButton.setVisible(false);
+            useClipButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
         } else {
             buttonsBox.getChildren().remove(useClipButton);
             FxmlControl.setTooltip(copyButton, new Tooltip(message("CopyToSystemClipboard")));
+            copyButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
         }
         loadTableData();
     }
@@ -270,7 +272,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                 @Override
                 protected void whenSucceeded() {
                     final ImageManufactureController controller
-                            = (ImageManufactureController) FxmlStage.openStage(CommonValues.ImageManufactureFxml);
+                            = (ImageManufactureController) FxmlWindow.openStage(CommonValues.ImageManufactureFxml);
                     controller.loadImage(selectedImage);
                 }
             };

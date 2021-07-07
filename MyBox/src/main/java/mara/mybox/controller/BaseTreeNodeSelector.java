@@ -7,7 +7,7 @@ import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableTree;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -145,13 +145,13 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
             return;
         }
         String chainName = chainName(selectedItem);
-        TreeNodeMoveController controller = (TreeNodeMoveController) FxmlStage.openStage(CommonValues.TreeNodeMoveFxml);
+        TreeNodeMoveController controller = (TreeNodeMoveController) FxmlWindow.openStage(CommonValues.TreeNodeMoveFxml);
         controller.setCaller(this, selectedItem.getValue(), chainName);
     }
 
     public BaseTreeNodeSelector oneOpen() {
         BaseTreeNodeSelector controller = null;
-        Stage stage = FxmlStage.findStage(getBaseTitle());
+        Stage stage = FxmlWindow.findStage(getBaseTitle());
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (BaseTreeNodeSelector) stage.getUserData();
@@ -159,7 +159,7 @@ public abstract class BaseTreeNodeSelector extends BaseNodeSelector<TreeNode> {
             }
         }
         if (controller == null) {
-            controller = (BaseTreeNodeSelector) FxmlStage.openStage(myFxml);
+            controller = (BaseTreeNodeSelector) FxmlWindow.openStage(myFxml);
         }
         if (controller != null) {
             controller.getMyStage().toFront();

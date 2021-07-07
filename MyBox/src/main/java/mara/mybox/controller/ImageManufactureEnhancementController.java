@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageContrast;
 import mara.mybox.image.ImageContrast.ContrastAlgorithm;
@@ -299,7 +299,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     public void run() {
                         try {
                             ImagesBrowserController controller
-                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
+                                    = (ImagesBrowserController) FxmlWindow.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());

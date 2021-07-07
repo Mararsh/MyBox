@@ -31,8 +31,8 @@ import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.fxml.FxmlStage.openScene;
+import mara.mybox.fxml.FxmlWindow;
+import static mara.mybox.fxml.FxmlWindow.openScene;
 import mara.mybox.fxml.TableCoordinateSystemCell;
 import mara.mybox.fxml.TableDoubleCell;
 import mara.mybox.fxml.TableLatitudeCell;
@@ -152,7 +152,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
     @Override
     public void afterSceneLoaded() {
         try {
-            if (FxmlStage.mapFirstRun(this)) {
+            if (FxmlWindow.mapFirstRun(this)) {
                 return;
             }
 
@@ -272,7 +272,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             SpermWhales();
         } else {
             try {
-                DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
+                DatasetEditController controller = (DatasetEditController) FxmlWindow.openStage(CommonValues.DatasetEditFxml);
                 controller.initEditor(this, null);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
@@ -306,9 +306,6 @@ public class LocationDataController extends BaseDataManageController<Location> {
 
     @Override
     public void postLoadedTableData() {
-        if (queryCondition == null) {
-            return;
-        }
         super.postLoadedTableData();
         if (mapCurrentPage()) {
             mapController.drawLocationData(tableData, finalTitle);

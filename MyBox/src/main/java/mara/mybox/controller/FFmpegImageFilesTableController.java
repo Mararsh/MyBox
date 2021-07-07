@@ -12,13 +12,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
-import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVariables.message;
 import thridparty.TableAutoCommitCell;
 
@@ -142,11 +140,6 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             MyBoxLog.error(e.toString());
         }
 
-    }
-
-    @FXML
-    public void popRegexExample(MouseEvent mouseEvent) {
-        popMenu = FxmlControl.popRegexExample(this, popMenu, tableFiltersInput, mouseEvent);
     }
 
 }

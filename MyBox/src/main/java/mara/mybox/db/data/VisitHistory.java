@@ -64,6 +64,8 @@ public class VisitHistory {
         public static int PPT = 25;
         public static int PPTX = 26;
         public static int PPTS = 27;
+        public static int WordX = 28;
+        public static int WordS = 29;
 
         public static int None = 100;
     }

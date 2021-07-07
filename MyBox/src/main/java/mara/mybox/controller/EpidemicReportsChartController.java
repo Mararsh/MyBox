@@ -61,7 +61,7 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlControl.ChartCoordinate;
 import mara.mybox.fxml.FxmlControl.LabelType;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.Logarithmic10Coordinate;
 import mara.mybox.fxml.LogarithmicECoordinate;
 import mara.mybox.fxml.SquareRootCoordinate;
@@ -1458,7 +1458,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                                 frameTimer = null;
                             }
                             if (snapshots.size() == 1) {
-                                FxmlStage.openImageViewer(snapshots.get(0));
+                                FxmlWindow.openImageViewer(snapshots.get(0));
                             } else if (snapshots.size() > 1) {
                                 if (format.equals("gif")) {
                                     File gifFile = new File(filePrefix + ".gif");

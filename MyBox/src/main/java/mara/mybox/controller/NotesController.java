@@ -50,7 +50,7 @@ import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableDateCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlTools;
@@ -110,7 +110,7 @@ public class NotesController extends BaseDataTableController<Note> {
     @FXML
     protected HTMLEditor htmlEditor;
     @FXML
-    protected ControlWebview webviewController;
+    protected BaseWebViewController webviewController;
     @FXML
     protected ControlHtmlCodes codesController;
     @FXML
@@ -154,7 +154,7 @@ public class NotesController extends BaseDataTableController<Note> {
     public void initControls() {
         try {
             notebooksController.setParent(this);
-            webviewController.setValues(this);
+            webviewController.setParameters(this);
             codesController.setParameters(this);
             timeController.setParent(this, false);
             searchController.init(this, baseName + "Saved", message("Note"), 20);
@@ -679,6 +679,7 @@ public class NotesController extends BaseDataTableController<Note> {
      */
     @Override
     public void postLoadedTableData() {
+        super.postLoadedTableData();
         makeConditionPane();
     }
 
@@ -725,7 +726,7 @@ public class NotesController extends BaseDataTableController<Note> {
                     label.setMinHeight(Region.USE_PREF_SIZE);
                     nodes.add(label);
                     namesPane.getChildren().setAll(nodes);
-                    notesConditionBox.getChildren().addAll(namesPane, subCheck);
+                    notesConditionBox.getChildren().setAll(namesPane, subCheck);
                     notesConditionBox.applyCss();
                 }
             };
@@ -1331,7 +1332,7 @@ public class NotesController extends BaseDataTableController<Note> {
      */
     public static NotesController oneOpen() {
         NotesController controller = null;
-        Stage stage = FxmlStage.findStage(message("Notes"));
+        Stage stage = FxmlWindow.findStage(message("Notes"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (NotesController) stage.getUserData();
@@ -1339,7 +1340,7 @@ public class NotesController extends BaseDataTableController<Note> {
             }
         }
         if (controller == null) {
-            controller = (NotesController) FxmlStage.openStage(CommonValues.NotesFxml);
+            controller = (NotesController) FxmlWindow.openStage(CommonValues.NotesFxml);
         }
         if (controller != null) {
             controller.toFront();

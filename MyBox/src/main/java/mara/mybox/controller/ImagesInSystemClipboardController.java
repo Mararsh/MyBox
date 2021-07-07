@@ -31,7 +31,7 @@ import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
@@ -51,7 +51,7 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
     private int recordedNumber, checkInterval, scaledWidth;
     private String filePrefix;
     private Image lastImage;
-    private boolean handling;
+    private boolean handling, recording;
     private Connection conn;
     private Clipboard clipboard;
     private TableImageClipboard tableImageClipboard;
@@ -174,12 +174,15 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
 
     @FXML
     public void clearTmp() {
-        FxmlStage.openStage(CommonValues.FilesDeleteSysTempFxml);
+        FxmlWindow.openStage(CommonValues.FilesDeleteSysTempFxml);
     }
 
     @FXML
     protected void myBoxClipBoard() {
-        ImagesInMyBoxClipboardController.oneOpen();
+        ImagesInMyBoxClipboardController controller = ImagesInMyBoxClipboardController.oneOpen();
+        if (controller != null) {
+            controller.toFront();
+        }
     }
 
     @FXML
@@ -196,9 +199,9 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
                 conn.close();
                 conn = null;
             }
-            if (startButton.getUserData() == null) {
+            if (!recording) {
+                recording = true;
                 ControlStyle.setNameIcon(startButton, message("StopRecording"), "iconStop.png");
-                startButton.setUserData("started");
                 startButton.applyCss();
                 getMyStage().setIconified(true);
                 recordedNumber = 0;
@@ -224,16 +227,11 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
                                     return;
                                 }
                                 handling = true;
-                                Image clip = clipboard.getImage();
+                                Image clip = loadClip();
                                 if (clip == null) {
                                     handling = false;
                                     return;
                                 }
-                                if (FxmlImageManufacture.sameImage(lastImage, clip)) {
-                                    handling = false;
-                                    return;
-                                }
-                                lastImage = clip;
                                 recordedNumber++;
                                 recordLabel.setText(MessageFormat.format(AppVariables.message("RecordingImages"), recordedNumber));
 
@@ -286,8 +284,8 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
                     }
                 }, 0, checkInterval);
             } else {
+                recording = false;
                 ControlStyle.setNameIcon(startButton, message("StartRecording"), "iconStart.png");
-                startButton.setUserData(null);
                 startButton.applyCss();
                 recordLabel.setText("");
             }
@@ -303,8 +301,20 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
             popError(message("NoImageInClipboard"));
             return;
         }
-        lastImage = clipboard.getImage();
+        loadClip();
+    }
+
+    public synchronized Image loadClip() {
+        Image clip = clipboard.getImage();
+        if (clip == null) {
+            return null;
+        }
+        if (lastImage != null && FxmlImageManufacture.sameImage(lastImage, clip)) {
+            return null;
+        }
+        lastImage = clip;
         loadImage(lastImage);
+        return lastImage;
     }
 
     @FXML
@@ -320,7 +330,7 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
      */
     public static ImagesInSystemClipboardController oneOpen() {
         ImagesInSystemClipboardController controller = null;
-        Stage stage = FxmlStage.findStage(message("ImagesInSystemClipboard"));
+        Stage stage = FxmlWindow.findStage(message("ImagesInSystemClipboard"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (ImagesInSystemClipboardController) stage.getUserData();
@@ -328,12 +338,22 @@ public class ImagesInSystemClipboardController extends ImageViewerController {
             }
         }
         if (controller == null) {
-            controller = (ImagesInSystemClipboardController) FxmlStage.openStage(CommonValues.ImagesInSystemClipboardFxml);
+            controller = (ImagesInSystemClipboardController) FxmlWindow.openStage(CommonValues.ImagesInSystemClipboardFxml);
         }
         if (controller != null) {
             controller.toFront();
         }
         return controller;
+    }
+
+    public static boolean isRecording() {
+        ImagesInSystemClipboardController controller = oneOpen();
+        return controller != null && controller.recording;
+    }
+
+    public static boolean isRecordingInMyBox() {
+        ImagesInSystemClipboardController controller = oneOpen();
+        return controller != null && controller.recording && controller.clipboardCheck.isSelected();
     }
 
 }

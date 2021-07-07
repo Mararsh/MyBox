@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
@@ -26,7 +27,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class ControlWebBrowserBox extends ControlWebview {
+public class ControlWebBrowserBox extends BaseWebViewController {
 
     protected TableWebHistory tableWebHistory;
     protected Tab tab;
@@ -77,7 +78,7 @@ public class ControlWebBrowserBox extends ControlWebview {
     }
 
     public void initTab(BaseController parent, Tab tab) {
-        setValues(parent);
+        setParameters(parent);
         this.tab = tab;
         fetchIcon = true;
     }
@@ -98,7 +99,7 @@ public class ControlWebBrowserBox extends ControlWebview {
             return;
         }
         sourceFile = file;
-        setAddress(HtmlTools.decodeURL(file));
+        setAddress(HtmlTools.decodeURL(file, Charset.defaultCharset()));
     }
 
     @FXML

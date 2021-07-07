@@ -26,7 +26,8 @@
         <actionName>build-with-dependencies</actionName>
         <goals>
             <goal>clean</goal>
-            <goal>javafx:jlink</goal>
+            <goal>package</goal>
+            <goal>assembly:single</goal>
         </goals>
     </action>
 

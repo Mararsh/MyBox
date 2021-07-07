@@ -39,7 +39,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -221,7 +221,7 @@ public class HtmlSnapController extends BaseHtmlController {
                 loadingController.closeStage();
                 loadingController = null;
             }
-            loadingController = FxmlStage.openLoadingStage(myStage, Modality.WINDOW_MODAL, null);
+            loadingController = FxmlWindow.openLoadingStage(myStage, Modality.WINDOW_MODAL, null);
 
             if (timer != null) {
                 timer.cancel();

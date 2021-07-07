@@ -47,7 +47,7 @@ public abstract class BaseHtmlController extends BaseController {
             if (webviewController == null) {
                 return;
             }
-            webviewController.setValues(this);
+            webviewController.setParameters(this);
             webView = webviewController.webView;
             webEngine = webviewController.webView.getEngine();
             webLabel = webviewController.bottomLabel;

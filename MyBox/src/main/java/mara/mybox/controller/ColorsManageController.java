@@ -58,8 +58,8 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.fxml.FxmlStage.initController;
+import mara.mybox.fxml.FxmlWindow;
+import static mara.mybox.fxml.FxmlWindow.initController;
 import mara.mybox.fxml.TableColorCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -115,7 +115,6 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
 
     public ColorsManageController() {
         baseTitle = AppVariables.message("ManageColors");
-        TipsLabelKey = "ColorsManageTips";
     }
 
     @Override
@@ -315,6 +314,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
         FxmlControl.setTooltip(copyPaletteButton, message("CopyPalette"));
         FxmlControl.setTooltip(addColorsButton, message("AddColors"));
         FxmlControl.setTooltip(trimButton, message("TrimOrderInPalette"));
+        FxmlControl.setTooltip(tipsView, message("ColorsManageTips") + "\n\n" + message("TableTips"));
 
         if (pickMode) {
             paletteTabPane.getSelectionModel().select(colorsTab);
@@ -1122,6 +1122,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
 
     @Override
     public void postLoadedTableData() {
+        super.postLoadedTableData();
         makeColorsPane();
     }
 
@@ -1508,17 +1509,17 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
             if (pickMode) {
                 try {
                     FXMLLoader fxmlLoader
-                            = new FXMLLoader(FxmlStage.class.getResource(CommonValues.ColorsManageFxml), AppVariables.currentBundle);
+                            = new FXMLLoader(FxmlWindow.class.getResource(CommonValues.ColorsManageFxml), AppVariables.currentBundle);
                     Scene scene = new Scene(fxmlLoader.load());
                     controller = (ColorsManageController) fxmlLoader.getController();
                     controller.pickMode = true;
-                    initController(controller, scene, FxmlStage.newStage(), null);
+                    initController(controller, scene, FxmlWindow.newStage(), null);
                 } catch (Exception e) {
                     MyBoxLog.error(e.toString());
                     return null;
                 }
             } else if (parent == null) {
-                controller = (ColorsManageController) FxmlStage.openStage(CommonValues.ColorsManageFxml);
+                controller = (ColorsManageController) FxmlWindow.openStage(CommonValues.ColorsManageFxml);
             } else {
                 controller = (ColorsManageController) parent.loadScene(CommonValues.ColorsManageFxml);
             }
@@ -1545,7 +1546,7 @@ public class ColorsManageController extends BaseDataTableController<ColorData> {
         if (manageController == null) {
             return null;
         }
-        ColorCopyController addController = (ColorCopyController) FxmlStage.openStage(CommonValues.ColorCopyFxml);
+        ColorCopyController addController = (ColorCopyController) FxmlWindow.openStage(CommonValues.ColorCopyFxml);
         addController.setValues(manageController, colors);
         addController.toFront();
         return manageController;

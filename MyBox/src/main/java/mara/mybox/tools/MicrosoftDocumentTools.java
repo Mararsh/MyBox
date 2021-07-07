@@ -1,6 +1,7 @@
 package mara.mybox.tools;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,27 +9,43 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import mara.mybox.dev.MyBoxLog;
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.extractor.MainExtractorFactory;
+import org.apache.poi.extractor.POITextExtractor;
+import org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.converter.WordToHtmlConverter;
+import org.apache.poi.ooxml.extractor.POIXMLExtractorFactory;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xslf.usermodel.XSLFSlideShowFactory;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -126,8 +143,7 @@ public class MicrosoftDocumentTools {
         }
     }
 
-    public static boolean createXLSX(File file, List<String> columns,
-            List<List<String>> rows) {
+    public static boolean createXLSX(File file, List<String> columns, List<List<String>> rows) {
         try {
             if (file == null || columns == null || rows == null || columns.isEmpty()) {
                 return false;
@@ -156,7 +172,7 @@ public class MicrosoftDocumentTools {
             for (int i = 0; i < columns.size(); i++) {
                 sheet.autoSizeColumn(i);
             }
-            try ( OutputStream fileOut = new FileOutputStream(file)) {
+            try (OutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
             }
             return true;
@@ -166,8 +182,7 @@ public class MicrosoftDocumentTools {
         }
     }
 
-    public static boolean createXLS(File file, List<String> columns,
-            List<List<String>> rows) {
+    public static boolean createXLS(File file, List<String> columns, List<List<String>> rows) {
         try {
             if (file == null || columns == null || rows == null || columns.isEmpty()) {
                 return false;
@@ -193,7 +208,7 @@ public class MicrosoftDocumentTools {
                     cell.setCellValue(values.get(j));
                 }
             }
-            try ( OutputStream fileOut = new FileOutputStream(file)) {
+            try (OutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
             }
             return true;
@@ -206,7 +221,7 @@ public class MicrosoftDocumentTools {
 
     public static Document word2Doc(File srcFile) {
         Document doc = null;
-        try ( HWPFDocument wordDocument = new HWPFDocument(new FileInputStream(srcFile))) {
+        try (HWPFDocument wordDocument = new HWPFDocument(new FileInputStream(srcFile))) {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             WordToHtmlConverter converter = new WordToHtmlConverter(doc);
             converter.processDocument(wordDocument);
@@ -218,11 +233,24 @@ public class MicrosoftDocumentTools {
     }
 
     public static String word2html(File srcFile, Charset charset) {
-        Document doc = word2Doc(srcFile);
-        if (doc == null) {
+        try {
+            Document doc = word2Doc(srcFile);
+            if (doc == null) {
+                return null;
+            }
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.METHOD, "html");
+            transformer.setOutputProperty(OutputKeys.ENCODING, charset == null ? "UTF-8" : charset.name());
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            transformer.transform(new DOMSource(doc), new StreamResult(baos));
+            baos.flush();
+            baos.close();
+            return baos.toString(charset);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
-        return HtmlTools.doc2html(doc, charset == null ? "UTF-8" : charset.name());
     }
 
     public static HSLFPictureShape imageShape(HSLFSlideShow ppt, BufferedImage image, String format) {
@@ -249,6 +277,29 @@ public class MicrosoftDocumentTools {
             return null;
         }
 
+    }
+
+    public static String extractText(File srcFile) {
+        String text = null;
+        try (POITextExtractor extractor = ExtractorFactory.createExtractor(srcFile)) {
+            text = extractor.getText();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return text;
+    }
+
+    // https://github.com/Mararsh/MyBox/issues/1100
+    public static void registryFactories() {
+        SlideShowFactory.addProvider(new HSLFSlideShowFactory());
+        SlideShowFactory.addProvider(new XSLFSlideShowFactory());
+
+        ExtractorFactory.addProvider(new MainExtractorFactory());
+        ExtractorFactory.addProvider(new OLE2ScratchpadExtractorFactory());
+        ExtractorFactory.addProvider(new POIXMLExtractorFactory());
+
+        WorkbookFactory.addProvider(new HSSFWorkbookFactory());
+        WorkbookFactory.addProvider(new XSSFWorkbookFactory());
     }
 
 }

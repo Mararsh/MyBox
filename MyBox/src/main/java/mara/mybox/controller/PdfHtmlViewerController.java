@@ -17,7 +17,7 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -90,7 +90,6 @@ public class PdfHtmlViewerController extends PdfViewController {
             domConfig = PDFDomTreeConfig.createDefaultConfig();
             zoomScale = 1.0f;
 
-            webView.setContextMenuEnabled(true);
             // https://stackoverflow.com/questions/51048312/javafx-webview-scrollevent-listener-zooms-in-and-scrolls-only-want-it-to-zoom-i?r=SearchResults
             webView.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
                 @Override
@@ -306,7 +305,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             FileTools.copyWholeDirectory(subPath, new File(path));
 
             if (file.exists()) {
-                FxmlStage.openHtmlEditor(null, file);
+                FxmlWindow.openHtmlEditor(null, file);
             }
 
         } catch (Exception e) {

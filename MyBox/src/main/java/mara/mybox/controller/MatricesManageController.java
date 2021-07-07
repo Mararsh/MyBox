@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -48,7 +48,7 @@ public class MatricesManageController extends BaseController {
 
     public static MatricesManageController oneOpen() {
         MatricesManageController controller = null;
-        Stage stage = FxmlStage.findStage(message("MatricesManage"));
+        Stage stage = FxmlWindow.findStage(message("MatricesManage"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (MatricesManageController) stage.getUserData();
@@ -56,7 +56,7 @@ public class MatricesManageController extends BaseController {
             }
         }
         if (controller == null) {
-            controller = (MatricesManageController) FxmlStage.openStage(CommonValues.MatricesManageFxml);
+            controller = (MatricesManageController) FxmlWindow.openStage(CommonValues.MatricesManageFxml);
         }
         if (controller != null) {
             controller.getMyStage().requestFocus();

@@ -1190,7 +1190,7 @@ public abstract class BaseBatchTableController<P> extends BaseController {
 
     @FXML
     public void popRegexExample(MouseEvent mouseEvent) {
-        popMenu = FxmlControl.popRegexExample(this, popMenu, tableFiltersInput, mouseEvent);
+        FxmlControl.popRegexExample(this, tableFiltersInput, mouseEvent);
     }
 
 

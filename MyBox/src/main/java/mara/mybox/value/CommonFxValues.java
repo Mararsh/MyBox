@@ -238,10 +238,20 @@ public class CommonFxValues {
 
     public static List<FileChooser.ExtensionFilter> WordExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("word", "*.doc", "*.docx"));
+            add(new FileChooser.ExtensionFilter("word", "*.doc"));
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> WordXExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("word", "*.docx"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> WordSExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("word", "*.doc", "*.docx"));
+        }
+    };
     public static List<FileChooser.ExtensionFilter> PPTExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("ppt", "*.ppt"));

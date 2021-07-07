@@ -4,21 +4,21 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## What's New            
-2021-6-24 v6.4.5       
+2021-7-7 v6.4.6         
 
-* Add. View and convert Word files. View/convert/split/merge/extract PPT files. Edit images list. Play images list/PDF/PPT. Images in MyBox Clipboard. Paste image in batch.              
-* Improve and fix. Image in System Clipboard. Text Editor. Bytes Editor.          
-* Solved problems.  Error when merge html as PDF. Error When save splitted images. Chinese can not be inputted in Markdown Editor when update synchronously.      
- 
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.5)        
+* Add. Text in System Clipboard. Text in MyBox Clipboard. Context menu of all text input controls. Context menu of html.       
+* Improve and fix. Text Editor. Clean of closed windows.          
+* Solved problems.  Can not open microsoft documents(word/excel/ppt). Page number is empty in data tables.            
 
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6)        
+   
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. 
 You can find them by clicking `releases` tab in main page of this project.        
 
 
 ### Source Codes
-[MyBox-6.4.5-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.5/MyBox-6.4.5-src.zip)   39M(approximation)        
+[MyBox-6.4.6-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.6/MyBox-6.4.6-src.zip)   39M(approximation)        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://sourceforge.net/projects/mara-mybox/files/documents/MyBox-DevGuide-2.1-en.pdf) and
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)        
@@ -29,9 +29,9 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size(approximation)  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-6.4.5-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.5/MyBox-6.4.5-win10-x64.zip)  | 231MB | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.4.5-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.5/MyBox-6.4.5-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
-| mac | [MyBox-6.4.5-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.5/MyBox-6.4.5-mac.dmg)  | 245MB  |  MyBox-6.4.5.app   |        
+| win10 x64 | [MyBox-6.4.6-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.6/MyBox-6.4.6-win10-x64.zip)  | 231MB | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.4.6-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.4.6/MyBox-6.4.6-CentOS7-x64.tar.gz)  | 242MB  | bin/MyBox  |
+| mac | [MyBox-6.4.6-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.4.6/MyBox-6.4.6-mac.dmg)  | 245MB  |  MyBox-6.4.6.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)        
@@ -41,16 +41,16 @@ When JRE or JDK 16 or higher([Oracle jdk](https://www.oracle.com/technetwork/jav
 
 | Platform | Link | Size(approximation)  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-6.4.5-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.5/MyBox-6.4.5-win-jar.zip)  | 168MB | Java 16 or higher |
-| linux | [MyBox-6.4.5-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.5/MyBox-6.4.5-linux-jar.zip)  | 176MB  | Java 16 or higher |
-| mac | [MyBox-6.4.5-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.5/MyBox-6.4.5-mac-jar.zip)  |  173MB  | Java 16 or higher |        
+| win | [MyBox-6.4.6-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.6/MyBox-6.4.6-win-jar.zip)  | 168MB | Java 16 or higher |
+| linux | [MyBox-6.4.6-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.6/MyBox-6.4.6-linux-jar.zip)  | 176MB  | Java 16 or higher |
+| mac | [MyBox-6.4.6-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.4.6/MyBox-6.4.6-mac-jar.zip)  |  173MB  | Java 16 or higher |        
 
 
 Run following command to launch this program with Jar package:        
-<PRE><CODE>     java   -jar   MyBox-6.4.5.jar</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.6.jar</CODE></PRE>        
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
-<PRE><CODE>     java   -jar   MyBox-6.4.5.jar   /tmp/a1.jpg</CODE></PRE>        
+<PRE><CODE>     java   -jar   MyBox-6.4.6.jar   /tmp/a1.jpg</CODE></PRE>        
 
 ### Other addresses to download
 Download from cloud storage: [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)               
@@ -71,9 +71,9 @@ Configuration file is under "User Home":
 
 | Platform | Path of MyBox Configuration File |        
 | --- | --- |
-| win | `C:\users\UserName\mybox\MyBox_v6.4.5.ini`  |
-| linux | `/home/UserName/mybox/MyBox_v6.4.5.ini` |
-| mac | `/Users/UserName/mybox/MyBox_v6.4.5.ini` |        
+| win | `C:\users\UserName\mybox\MyBox_v6.4.6.ini`  |
+| linux | `/home/UserName/mybox/MyBox_v6.4.6.ini` |
+| mac | `/Users/UserName/mybox/MyBox_v6.4.6.ini` |        
 
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.        
 Function "Settings" can be used to change configuration values.        
@@ -93,7 +93,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.4.5 | 2021-6-24 | [html](#devLog) |
+| Development Logs | 6.4.6 | 2021-7-7 | [html](#devLog) |
 | Shortcuts | 6.3.9 | 2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -113,7 +113,7 @@ MyBox is based on following open sources:
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |
 |  JavaFx | GUI |  https://gluonhq.com/products/javafx/ |
 |   |   |  https://docs.oracle.com/javafx/2/  |
-|   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |
+|   |   |  https://gluonhq.com/products/scene-builder/  |
 | NetBeans | IDE| https://netbeans.org/ |
 | jpackage | pack | https://docs.oracle.com/en/java/javase/16/docs/specs/man/jpackage.html |
 | maven | build | https://maven.apache.org/ |
@@ -163,7 +163,7 @@ MyBox is based on following open sources:
 | jsoup | DOM | https://jsoup.org/ |        
 
 # Current Version        
-Current version is 6.4.5. Its features are mentioned below in summary:          
+Current version is 6.4.6. Its features are mentioned below in summary:          
 
 *  [Cross Platforms](#Cross-platform)         
 *  [Internationalized](#Internationalized)         
@@ -178,6 +178,8 @@ Current version is 6.4.5. Its features are mentioned below in summary:
     -  [HtmlTools](#htmlTools)         
     -  [Microsoft Documents](#msDocuments)          
     -  [Edit Bytes](#editBytes)         
+    -  [Text in MyBox Clipboard](#myboxTextClipboard)
+    -  [Text in System Clipboard](#systemTextClipboard)
 *  [Image Tools](#imageTools)         
     -  [View Image](#viewImage)         
     -  [Browse Images](#browserImage)         
@@ -191,8 +193,8 @@ Current version is 6.4.5. Its features are mentioned below in summary:
     -  [Recognize Texts in Image](#imageOCR)         
     -  [Color Management](#ColorManagement)         
     -  [Color Spaces](#colorSpaces)         
-    -  [Images in MyBox Clipboard](#myboxClipboard)
-    -  [Images in System Clipboard](#systemClipboard)
+    -  [Images in MyBox Clipboard](#myboxImageClipboard)
+    -  [Images in System Clipboard](#systemImageClipboard)
     -  [Others](#imageOthers)         
     -  [Big Image](#bigImage)         
 *  [Data Tools](#dataTools)         
@@ -206,11 +208,7 @@ Current version is 6.4.5. Its features are mentioned below in summary:
     -  [Location Data](#locationData)         
     -  [Location Tools](#locationTools)         
     -  [Epidemic Reports](#epidemicReport)         
-    -  [Matrcies Calculation](#matrixTool)         
-    -  [Create Barcodes](#createBarcodes)         
-    -  [Decode Barcodes](#decodeBarcodes)         
-    -  [Message Digest](#messageDigest)         
-    -  [Encode/Decode Base64](#base64)         
+    -  [Others](#dataOthers)      
  *  [File Tools](#fileTools)         
     -  [Manage Files/Directories](#directoriesArrange)         
     -  [Archive/Compress/Decompress/Unarchive](#archiveCompress)         
@@ -351,6 +349,9 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 3. Convert Markdown as texts in batch.
 4. Convert Markdown as PDFs in batch.
 
+![Snap-markdownEditor](https://mararsh.github.io/MyBox/snap-markdownEditor-en.jpg)        
+
+
 ### Text Tools<a id="textTools" />
 1. Text Editor:
 	-  File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
@@ -370,26 +371,38 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 		-  Edit Html codes. (Support FrameSet)
 		-  Edit Markdown.
 	-  Select frame in frameset to edit.    
-2. Find strings/elements in html.
-3. Snap html page. Dpi can be set. Save as one image or images in PDF.
-4. Convert html as Markdown/text/PDF in batch.
-5. Convert charset/style in html files in batch.
-6. Merge multiple pages as one html/Markdown/texts/PDF.
-7. Generate frameset file for multiple files. 
+2. Find strings in html.
+3. Find elements in html.
+4. Snap html page. Dpi can be set. Save as one image or images in PDF.
+5. Convert html as Markdown/text/PDF in batch.
+6. Convert charset/style in html files in batch.
+7. Merge multiple pages as one html/Markdown/texts/PDF.
+8. Generate frameset file for multiple files. 
 
 ![Snap-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor-en.jpg)        
 
 ### Microsoft Documents <a id="msDocuments"></a>
-1. View Word file in html mode.
-2. Convert Word files as html in batch.
-3. View PPT file in images/OCR mode.
-4. Convert PPT files as images in batch.
-5. Extract objects in PPT files in batch.
-6. Split PPT files in batch.
-7. Merge pptx files.
-8. Combine images as PPT file.
-9. Play PPT file.
-10. Extract texts in Excel/Word/PowerPoint/Publisher/Visio files in batch.
+1. Handle Word file
+	-  View Word file:            
+		-  File ".doc"(Word 97， OLE 2) is converted as html. Most of formats kept.
+		-  File ".docx"(Word 2007, OOXML) is converted as text. Formats lost.
+	-  Convert ".doc"(Word 97) files as html in batch.          
+2. Handle PPT file:
+	-  If no comment, both ".ppt"(PPT 97, OLE 2) and ".pptx"(PPT 2007, OOXML) are suportted. 
+	-  View PPT file. Shown page by page:
+		-  Page is converted as an image
+		-  Slide text and Note text are displayed
+	-  Convert PPT files as images in batch
+	-  Extract objects in PPT file in batch:
+		-  Selections: Slide text, Note text, Master text, Comments text,  image, sound,  OLE(Word/Excel)
+		-  Not support to extract sounds in ".pptx".
+	-  Split PPT files in batch
+	-  Merge ".pptx" files
+	-  Combine images as ".ppt" file.
+	-  Play PPT file
+3. Extract texts in Excel/Word/PowerPoint/Publisher/Visio files in batch.
+
+![Snap-viewPPT](https://mararsh.github.io/MyBox/snap-viewPPT-en.jpg)        
 
 ### Edit Bytes <a id="editBytes"></a>
 1. Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
@@ -398,6 +411,22 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 4. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
 5. Paginate. When break lines by bytes number, crossing pages need not concerned.
 
+
+### Text in MyBox Clipboard<a id="myboxTextClipboard" />
+1. Add/Delete/View texts in MyBox Clipboard.
+2. Add text in System Clipboard.
+3. Paste selected text in System Clipboard.
+4. In context menu of all text input controls, MyBox Clipboard can be popped for selecting text to paste.
+
+### Text in System Clipboard<a id="systemTextClipboard" />
+1. Load/Refresh/Delete text in System Clipboard.
+2. Record texts in System Clipboard:
+	-  After button is clicked, new texts in System Clipboard are monitored and saved in MyBox Clipboard.
+	-  Monitor interval can be set.
+	-  Monitored texts can be accumulated in this interface.
+	-  Status of the monitoring is persistent while MyBox is running:
+		-  After started, it continues recording even when this interface is closed. 
+		-  If it is running when MyBox exits, then it will be started automatically when MyBox starts next time.
 
 ## Image Tools <a id="imageTools"></a>
 
@@ -681,13 +710,13 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 
 ![Snap-colorDiagram](https://mararsh.github.io/MyBox/snap-colorDiagram-en.jpg)        
 
-### Images in MyBox Clipboard<a id="myboxClipboard" />
+### Images in MyBox Clipboard<a id="myboxImageClipboard" />
 1. Add/Delete/View images in MyBox Clipboard.
 2. Examples are provided.
 3. Image in System Clipboard can be added.
 4. Selected image can be copyed in System Clipboard.    
 
-### Images in System Clipboard<a id="systemClipboard" />
+### Images in System Clipboard<a id="systemImageClipboard" />
 1. Load/Refresh/Delete image in System Clipboard.
 2. Record images in System Clipboard:
 	-  After button is clicked, new images in System Clipboard are monitored.
@@ -720,16 +749,16 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 	- To Excel file:
  		- Options include sheet number and whether has first line as field names.
 		- Add/Delete/Rename sheets.
- 		- Tool can only handle base data in Excel file. If file includes format, style, or chart, suggest to save changes as new file to avoid data loss.
+ 		- Tool can only handle base data in Excel file. If file includes format, style, formula, or chart, suggest to save changes as new file to avoid data loss.
 	- Data in file should be in same width. That is all rows have equal number of columns.
 	- Data are loaded in sheet:
  		- Edit values in sheet cells.
  		- Move mouse upon column/row header to pop functions menu of this column/row.
  		- Move mouse upon buttons to pop functions menu of all/selected columns/rows.
  		- Functions include: set column width, select/set/copy/paste/insert/delete/sort columns and rows.
-	- Data are paginated:
- 		- When function is beyond current page, changes of current page should be saved before the function.
- 		- Changing of all pages is written in file directly and can not be recovered.
+	- Data are paginated. When pages number is larger than 1:
+ 		- Changes of current page should be saved before run some functions.
+ 		- Changes are written in file directly and can not be undone. (Can recover if backup)
 	- Data Definition is to describe and constrain data:
  		- Column name should not be null nor duplicate.
  		- Data type and "Not Null" are to validate data value.
@@ -1151,35 +1180,31 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 
 ![Snap-epidemicReport](https://mararsh.github.io/MyBox/snap-epidemicReport-en.jpg)       
 
-
-### Create Barcodes<a id="createBarcodes" />
-1. Supported 1-d barcodes: Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE,
-   Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail       
-2. Supported 2-d barcodes: QR_Code, PDF_417, DataMatrix
-3. Options about 1-d barcodes: Orientation, width/height, dpi, text location, font size, quiet-zone width, etc.
-4. Options about 2-d barcodes: Width/height, margin, error correction level, compact mode, etc.
-5. A picture can be shown in center of QR_Code. Its size can be adjusted automatically according to error correction level.
-6. Examples of parameters and suggested values.
-7. Validate generated barcode at once.
-
-### Decode Barcodes<a id="decodeBarcodes" />
-1. Supported 1-d barcodes: Code39, Code128, Interleaved2Of5, ITF_14,  EAN13, EAN8, EAN_128, UPCA, UPCE
-2. Supported 2-d barcodes: QR_Code, PDF_417, DataMatrix
-3. Display contents of barcodes and its meta data including barcode type and error correction level if any.
-
-
-### Message Digest<a id="messageDigest" />
-1. Create digest for files or inputted texts.
-2. Support MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512.
-3. Ouput: Base64, Hexadecimal, Formatted hexadecimal.
-
-
-### Encode/Decode Base64<a id="base64" />
-1. Encode file or texts as Base64.
-2. Decode Base64 file or Base64 texts.
-3. Set charset for texts.
-4. Output as file or texts.
-
+### Other<a id="dataOthers" />
+1. Create Barcodes
+ 	-  Supported 1-d barcodes: 
+ 	  	- Types: Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE, Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail       
+ 	  	- Options about 1-d barcodes: Orientation, width/height, dpi, text location, font size, quiet-zone width, etc.
+ 	-  Supported 2-d barcodes: 
+	  	- Types: QR_Code, PDF_417, DataMatrix
+	  	- Options about 2-d barcodes: Width/height, margin, error correction level, compact mode, etc.
+	  	- A picture can be shown in center of QR_Code. Its size can be adjusted automatically according to error correction level.
+ 	-  Examples of parameters and suggested values.
+ 	-  Validate generated barcode at once.
+2. Decode Barcodes
+ 	-  Supported 1-d barcodes: Code39, Code128, Interleaved2Of5, ITF_14,  EAN13, EAN8, EAN_128, UPCA, UPCE
+ 	-  Supported 2-d barcodes: QR_Code, PDF_417, DataMatrix
+ 	-  Display contents of barcodes and its meta data including barcode type and error correction level if any.
+3. Message Digest
+ 	-  Create digest for files or inputted texts.
+ 	-  Support MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512.
+ 	-  Ouput: Base64, Hexadecimal, Formatted hexadecimal.
+4. Encode/Decode Base64
+ 	-  Encode file or texts as Base64.
+ 	-  Decode Base64 file or Base64 texts.
+ 	-  Set charset for texts.
+ 	-  Output as file or texts.
+5. Extract ttf files from ttc file.
 
 ## File Tools <a id="fileTools"></a>
 
@@ -1335,8 +1360,6 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 1. Display pages in multiple tabs
 2. Manage web histories
 3. Manage web favorites
-4. Find string in web page
-5. Find elements in web page
 
 ![Snap-webBrowser](https://mararsh.github.io/MyBox/snap-webBrowser-en.jpg)       
 
@@ -1389,7 +1412,7 @@ Decoding does reverse conversion.
 	-  "Callers" is the calling chain. Each line is one node and records: file, class, method, line. Calling chains only include methods of MyBox itself.
 	-  "Error" will cause interface of MyBox Logs Viewer is popped.
 6. Run system commands.
-7. Extract ttf files from ttc file.
+7. Manage languages.
 8. Make icons.
 9. Send message to author
 
@@ -1440,14 +1463,22 @@ Decoding does reverse conversion.
 4. Documents：Help user start download tasks. If MyBox documents are put into data path, MyBox will find them automatically.
 5. About
 
-# Development Logs <a id="devLog"></a>          
+# Development Logs <a id="devLog"></a>         
+2021-7-7 v6.4.6         
+
+* Add. Text in System Clipboard. Text in MyBox Clipboard. Context menu of all text input controls. Context menu of html.       
+* Improve and fix. Text Editor. Clean of closed windows.          
+* Solved problems.  Can not open microsoft documents(word/excel/ppt). Page number is empty in data tables.            
+
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6)        
+    
 2021-6-24 v6.4.5       
 
 * Add. View and convert Word files. View/convert/split/merge/extract PPT files. Edit images list. Play images list/PDF/PPT. Images in MyBox Clipboard. Paste image in batch.              
 * Improve and fix. Image in System Clipboard. Text Editor. Bytes Editor.          
 * Solved problems.  Error when merge html as PDF. Error When save splitted images. Chinese can not be inputted in Markdown Editor when update synchronously.      
  
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.5)        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6)        
 
 2021-5-15 v6.4.4       
 
@@ -1456,7 +1487,7 @@ Decoding does reverse conversion.
 * Upgrade to Java16 and javafx16.       
 * Solved problems. Texts are stuck when input Chinese in Data Clipboard. Wrong results when convert CSV/Excel to PDF. Error interface for exporting data. Frameset is override when save html frame.       
   
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.5)        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6)        
 
 2021-4-16 v6.4.3              
 - Html Editor. Frame can be selected for frameset. Images list. Query elements by tag/id/name. Search string in page.       
@@ -1467,7 +1498,7 @@ Improve interface of picking colors.
 - Add. Query address by host/ip/url. Query DNS in batch. Run system command. Encode/Decode Base64.       
 - Remove. Not install certificates for map and weibo. No bypass of SSL verification. No expired links in Epidemic reports. No invalid links in notes examples.       
 - Solved problems.  New cert entry fails into keystore. Abnormal of some interfaces/functions when run at first time. Should do backup before some operations.       
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.5)       
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.6)       
 
 2021-3-21 v6.4.2       
 - Notes. Set tags of note and query notes by tags. NoteBook can be moved. Edit note in Rich Text. Set note's style.     

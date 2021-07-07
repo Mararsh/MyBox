@@ -9,23 +9,21 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -126,7 +124,7 @@ public class WebElementsController extends ControlWebBrowserBox {
     }
 
     @Override
-    protected void pageIsLoading() {
+    public void pageIsLoading() {
         super.pageIsLoading();
         queryElementButton.setDisable(true);
         recoverButton.setDisable(true);
@@ -235,12 +233,6 @@ public class WebElementsController extends ControlWebBrowserBox {
     @FXML
     public void popExamples(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
             List<String> values = new ArrayList<>();
             values.addAll(Arrays.asList(
                     "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3",
@@ -248,27 +240,29 @@ public class WebElementsController extends ControlWebBrowserBox {
                     "script", "style", "font", "span", "b", "hr", "br", "frame", "pre"
             ));
 
-            MenuItem menu;
+            List<Node> buttons = new ArrayList<>();
             for (String value : values) {
-                menu = new MenuItem(value);
-                menu.setOnAction((ActionEvent event) -> {
-                    elementInputController.set(value);
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        tagRadio.fire();
+                        elementInputController.set(value);
+                        queryElement();
+                    }
                 });
-                popMenu.getItems().add(menu);
+                buttons.add(button);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popup = FxmlWindow.popWindow(myController, mouseEvent);
+            if (popup == null) {
+                return;
+            }
+            Object object = popup.getUserData();
+            if (object != null && object instanceof PopNodesController) {
+                PopNodesController controller = (PopNodesController) object;
+                controller.setFlowPane(this, buttons);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

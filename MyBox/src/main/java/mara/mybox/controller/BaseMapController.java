@@ -38,7 +38,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -253,7 +253,7 @@ public abstract class BaseMapController extends BaseController {
     @Override
     public void afterSceneLoaded() {
         try {
-            if (FxmlStage.mapFirstRun(this)) {
+            if (FxmlWindow.mapFirstRun(this)) {
                 return;
             }
 
@@ -595,7 +595,7 @@ public abstract class BaseMapController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    FxmlStage.openImageViewer(file);
+                    FxmlWindow.openImageViewer(file);
                 }
 
             };

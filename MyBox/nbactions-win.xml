@@ -27,6 +27,7 @@
         <goals>
             <goal>clean</goal>
             <goal>package</goal>
+            <goal>assembly:single</goal>
         </goals>
     </action>
 

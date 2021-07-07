@@ -115,7 +115,7 @@ public class ImagesPlayController extends ImageViewerController {
                             fileVBox.getChildren().add(3, pdfBox);
                         }
                     } else if (pptRadio.isSelected()) {
-                        setFileType(VisitHistory.FileType.PPT);
+                        setFileType(VisitHistory.FileType.PPTS);
                         if (fileVBox.getChildren().contains(pdfBox)) {
                             fileVBox.getChildren().remove(pdfBox);
                         }

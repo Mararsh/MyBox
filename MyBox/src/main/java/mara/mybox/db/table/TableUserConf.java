@@ -197,8 +197,8 @@ public class TableUserConf extends DerbyBase {
             if (exist != null) {
                 if (!stringValue.equals(exist)) {
                     try ( PreparedStatement statement = conn.prepareStatement(UpdateString)) {
-                        statement.setString(1, stringValue);
-                        statement.setString(2, keyName);
+                        statement.setString(1, DerbyBase.stringValue(stringValue));
+                        statement.setString(2, DerbyBase.stringValue(keyName));
                         return statement.executeUpdate();
                     }
                 } else {
@@ -206,8 +206,8 @@ public class TableUserConf extends DerbyBase {
                 }
             } else {
                 try ( PreparedStatement statement = conn.prepareStatement(InsertString)) {
-                    statement.setString(1, keyName);
-                    statement.setString(2, stringValue);
+                    statement.setString(1, DerbyBase.stringValue(keyName));
+                    statement.setString(2, DerbyBase.stringValue(stringValue));
                     return statement.executeUpdate();
                 }
             }

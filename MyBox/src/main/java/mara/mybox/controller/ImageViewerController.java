@@ -48,7 +48,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
@@ -96,7 +96,7 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     protected ControlImageFormat formatController;
     @FXML
-    protected Button clipboardSystemLoadImageButton;
+    protected Button loadContentInSystemClipboardButton;
     @FXML
     protected ControlFileBackup backupController;
 
@@ -652,7 +652,7 @@ public class ImageViewerController extends BaseImageShapesController {
             case V:
                 if (pasteButton != null && !pasteButton.isDisabled() && pasteButton.isVisible()) {
                     pasteAction();
-                } else if (clipboardSystemLoadImageButton != null) {
+                } else if (loadContentInSystemClipboardButton != null) {
                     loadSystemClipboardImage();
                 }
                 return;
@@ -666,7 +666,7 @@ public class ImageViewerController extends BaseImageShapesController {
             super.afterSceneLoaded();
 
             if (pasteButton == null) {
-                FxmlControl.setTooltip(clipboardSystemLoadImageButton, message("LoadSystemClipboardImage") + "\nCTRL+v / ALT+v");
+                FxmlControl.setTooltip(loadContentInSystemClipboardButton, message("LoadContentInSystemClipboard") + "\nCTRL+v / ALT+v");
             }
 
         } catch (Exception e) {
@@ -936,7 +936,7 @@ public class ImageViewerController extends BaseImageShapesController {
         if (imageInformation == null) {
             return;
         }
-        FxmlStage.showImageInformation(imageInformation);
+        FxmlWindow.showImageInformation(imageInformation);
     }
 
     @FXML
@@ -976,12 +976,12 @@ public class ImageViewerController extends BaseImageShapesController {
 
     @FXML
     public void viewImageAction() {
-        FxmlStage.openImageViewer(null, imageFile());
+        FxmlWindow.openImageViewer(null, imageFile());
     }
 
     @FXML
     public void popMetaData() {
-        FxmlStage.showImageMetaData(imageInformation);
+        FxmlWindow.showImageMetaData(imageInformation);
     }
 
     @FXML
@@ -1393,7 +1393,7 @@ public class ImageViewerController extends BaseImageShapesController {
                         sourceFileChanged(targetFile);
 
                     } else if (saveAsType == SaveAsType.Open) {
-                        FxmlStage.openImageViewer(targetFile);
+                        FxmlWindow.openImageViewer(targetFile);
 
                     }
                 }
@@ -1469,7 +1469,7 @@ public class ImageViewerController extends BaseImageShapesController {
             if (sourceFile == null) {
                 return;
             }
-            FileRenameController controller = (FileRenameController) FxmlStage.openStage(CommonValues.FileRenameFxml);
+            FileRenameController controller = (FileRenameController) FxmlWindow.openStage(CommonValues.FileRenameFxml);
             controller.getMyStage().setOnHiding((WindowEvent event) -> {
                 File newFile = controller.getNewFile();
                 Platform.runLater(() -> {
@@ -1502,13 +1502,13 @@ public class ImageViewerController extends BaseImageShapesController {
 
     @FXML
     protected void manufactureAction() {
-        ImageManufactureController controller = (ImageManufactureController) FxmlStage.openStage(CommonValues.ImageManufactureFxml);
+        ImageManufactureController controller = (ImageManufactureController) FxmlWindow.openStage(CommonValues.ImageManufactureFxml);
         operation(controller);
     }
 
     @FXML
     public void browseAction() {
-        ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
+        ImagesBrowserController controller = FxmlWindow.openImagesBrowser(null);
         File file = imageFile();
         if (file != null) {
             controller.loadImages(file.getParentFile(), 9);
@@ -1521,30 +1521,30 @@ public class ImageViewerController extends BaseImageShapesController {
         if (imageView.getImage() == null) {
             return;
         }
-        ImageViewerController controller = (ImageViewerController) FxmlStage.openStage(CommonValues.ImagePopupFxml);
+        ImageViewerController controller = (ImageViewerController) FxmlWindow.openStage(CommonValues.ImagePopupFxml);
         operation(controller);
     }
 
     @FXML
     public void statisticAction() {
-        ImageAnalyseController controller = (ImageAnalyseController) FxmlStage.openStage(CommonValues.ImageAnalyseFxml);
+        ImageAnalyseController controller = (ImageAnalyseController) FxmlWindow.openStage(CommonValues.ImageAnalyseFxml);
         operation(controller);
     }
 
     @FXML
     public void ocrAction() {
-        ImageOCRController controller = (ImageOCRController) FxmlStage.openStage(CommonValues.ImageOCRFxml);
+        ImageOCRController controller = (ImageOCRController) FxmlWindow.openStage(CommonValues.ImageOCRFxml);
         operation(controller);
     }
 
     @FXML
     public void splitAction() {
-        ImageSplitController controller = (ImageSplitController) FxmlStage.openStage(CommonValues.ImageSplitFxml);
+        ImageSplitController controller = (ImageSplitController) FxmlWindow.openStage(CommonValues.ImageSplitFxml);
         operation(controller);
     }
 
     public void sampleAction() {
-        ImageSampleController controller = (ImageSampleController) FxmlStage.openStage(CommonValues.ImageSampleFxml);
+        ImageSampleController controller = (ImageSampleController) FxmlWindow.openStage(CommonValues.ImageSampleFxml);
         operation(controller);
     }
 
@@ -1603,7 +1603,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
     @FXML
     public void convertAction() {
-        ImageConverterBatchController controller = (ImageConverterBatchController) FxmlStage.openStage(CommonValues.ImageConverterBatchFxml);
+        ImageConverterBatchController controller = (ImageConverterBatchController) FxmlWindow.openStage(CommonValues.ImageConverterBatchFxml);
         File file = imageFile();
         if (file != null) {
             controller.tableController.addFile(file);
@@ -1637,7 +1637,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
             menu = new MenuItem(message("View"));
             menu.setOnAction((ActionEvent event) -> {
-                ImageViewerController controller = (ImageViewerController) FxmlStage.openStage(CommonValues.ImageViewerFxml);
+                ImageViewerController controller = (ImageViewerController) FxmlWindow.openStage(CommonValues.ImageViewerFxml);
                 operation(controller);
             });
             popMenu.getItems().add(menu);

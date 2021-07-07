@@ -41,6 +41,7 @@ import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableTag;
+import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
@@ -576,6 +577,9 @@ public class DerbyBase {
             }
             if (!tables.contains("Image_Clipboard".toUpperCase())) {
                 new TableImageClipboard().createTable(conn);
+            }
+            if (!tables.contains("Text_Clipboard".toUpperCase())) {
+                new TableTextClipboard().createTable(conn);
             }
             return true;
         } catch (Exception e) {

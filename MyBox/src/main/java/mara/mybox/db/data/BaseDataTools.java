@@ -26,6 +26,7 @@ import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
+import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.db.table.TableWebHistory;
@@ -111,6 +112,9 @@ public class BaseDataTools {
         } else if (data instanceof ImageClipboard) {
             return new TableImageClipboard();
 
+        } else if (data instanceof TextClipboard) {
+            return new TableTextClipboard();
+
         }
         return null;
     }
@@ -184,6 +188,9 @@ public class BaseDataTools {
 
         } else if (data instanceof ImageClipboard) {
             return ImageClipboard.valid((ImageClipboard) data);
+
+        } else if (data instanceof TextClipboard) {
+            return TextClipboard.valid((TextClipboard) data);
 
         }
 
@@ -260,6 +267,9 @@ public class BaseDataTools {
         } else if (data instanceof ImageClipboard) {
             return ImageClipboard.getValue((ImageClipboard) data, name);
 
+        } else if (data instanceof TextClipboard) {
+            return TextClipboard.getValue((TextClipboard) data, name);
+
         }
 
         return null;
@@ -334,6 +344,9 @@ public class BaseDataTools {
 
         } else if (data instanceof ImageClipboard) {
             return ImageClipboard.setValue((ImageClipboard) data, name, value);
+
+        } else if (data instanceof TextClipboard) {
+            return TextClipboard.setValue((TextClipboard) data, name, value);
 
         }
         return false;

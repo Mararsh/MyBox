@@ -33,7 +33,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageScope;
@@ -653,7 +653,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     public void run() {
                         try {
                             ImagesBrowserController controller
-                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
+                                    = (ImagesBrowserController) FxmlWindow.openStage(CommonValues.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());

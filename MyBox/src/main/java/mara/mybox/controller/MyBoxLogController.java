@@ -15,7 +15,7 @@ import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.fxml.TableDateCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -181,7 +181,17 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        MyBoxLogViewerController controller = (MyBoxLogViewerController) FxmlStage.openStage(CommonValues.MyBoxLogViewerFxml);
+        MyBoxLogViewerController controller = (MyBoxLogViewerController) FxmlWindow.openStage(CommonValues.MyBoxLogViewerFxml);
+        controller.setLogs(selected);
+    }
+
+    @FXML
+    public void messageAction() {
+        List<MyBoxLog> selected = tableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            return;
+        }
+        MyBoxLogViewerController controller = (MyBoxLogViewerController) FxmlWindow.openStage(CommonValues.MyBoxLogViewerFxml);
         controller.setLogs(selected);
     }
 
@@ -196,7 +206,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
 
     public static MyBoxLogController oneOpen() {
         MyBoxLogController controller = null;
-        Stage stage = FxmlStage.findStage(message("MyBoxLogs"));
+        Stage stage = FxmlWindow.findStage(message("MyBoxLogs"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (MyBoxLogController) stage.getUserData();
@@ -204,7 +214,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
             }
         }
         if (controller == null) {
-            controller = (MyBoxLogController) FxmlStage.openStage(CommonValues.MyBoxLogsFxml);
+            controller = (MyBoxLogController) FxmlWindow.openStage(CommonValues.MyBoxLogsFxml);
         }
         if (controller != null) {
             controller.getMyStage().requestFocus();

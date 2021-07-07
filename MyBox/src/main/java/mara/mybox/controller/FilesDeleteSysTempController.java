@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.value.AppVariables;
 import org.apache.commons.io.FileUtils;
 
@@ -76,7 +76,7 @@ public class FilesDeleteSysTempController extends BaseController {
 
     @FXML
     public void openFolder() {
-        FxmlStage.browseURI(getMyStage(), path.toURI());
+        FxmlWindow.browseURI(getMyStage(), path.toURI());
     }
 
     @FXML

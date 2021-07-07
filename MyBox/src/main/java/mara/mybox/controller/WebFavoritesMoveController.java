@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import mara.mybox.db.data.WebFavorite;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableWebFavorite;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -117,7 +117,7 @@ public class WebFavoritesMoveController extends BaseTreeNodeSelector {
      */
     public static WebFavoritesMoveController oneOpen(WebFavoritesController favoriteController) {
         WebFavoritesMoveController controller = null;
-        Stage stage = FxmlStage.findStage(message("MoveFavorites"));
+        Stage stage = FxmlWindow.findStage(message("MoveFavorites"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (WebFavoritesMoveController) stage.getUserData();
@@ -125,7 +125,7 @@ public class WebFavoritesMoveController extends BaseTreeNodeSelector {
             }
         }
         if (controller == null) {
-            controller = (WebFavoritesMoveController) FxmlStage.openStage(CommonValues.WebFavoritesMoveFxml);
+            controller = (WebFavoritesMoveController) FxmlWindow.openStage(CommonValues.WebFavoritesMoveFxml);
         }
         if (controller != null) {
             controller.setController(favoriteController);

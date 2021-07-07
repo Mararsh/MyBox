@@ -13,13 +13,17 @@ import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
@@ -62,11 +66,9 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2019-1-27 21:48:55
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
-public class FxmlStage {
+public class FxmlWindow {
 
     public static BaseController initScene(Stage stage, String newFxml, StageStyle stageStyle) {
         return initScene(stage, newFxml, AppVariables.currentBundle, stageStyle);
@@ -78,7 +80,7 @@ public class FxmlStage {
             if (stage == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), bundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(FxmlWindow.class.getResource(newFxml), bundle);
             return initController(fxmlLoader, stage, stageStyle);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -109,7 +111,7 @@ public class FxmlStage {
             }
             controller.setMyScene(scene);
             controller.setMyStage(stage);
-            scene.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
+            scene.getStylesheets().add(FxmlWindow.class.getResource(AppVariables.getStyle()).toExternalForm());
 
             stage.setUserData(controller);
             stage.getIcons().add(CommonFxValues.AppIcon);
@@ -120,12 +122,17 @@ public class FxmlStage {
             stage.setOnShown((WindowEvent event) -> {
                 controller.afterStageShown();
             });
+            // External request to close
             stage.setOnCloseRequest((WindowEvent event) -> {
                 if (!controller.leavingScene()) {
                     event.consume();
                 } else {
-                    FxmlStage.closeStage(stage);
+                    FxmlWindow.closeWindow(stage);
                 }
+            });
+            // Close anyway
+            stage.setOnHiding((WindowEvent event) -> {
+                FxmlWindow.closeWindow(stage);
             });
 
             stage.setScene(scene);
@@ -154,15 +161,15 @@ public class FxmlStage {
         return initController(controller, scene, newStage(), null);
     }
 
-    public static BaseController setScene(final String newFxml) {
+    public static BaseController setScene(final String fxml) {
         try {
-            if (newFxml == null) {
+            if (fxml == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVariables.currentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(FxmlWindow.class.getResource(fxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             try {
-                pane.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
+                pane.getStylesheets().add(FxmlWindow.class.getResource(AppVariables.getStyle()).toExternalForm());
             } catch (Exception e) {
             }
             Scene scene = new Scene(pane);
@@ -181,7 +188,7 @@ public class FxmlStage {
 
     public static FXMLLoader newFxml(String fxml) {
         try {
-            return new FXMLLoader(FxmlStage.class.getResource(fxml), AppVariables.currentBundle);
+            return new FXMLLoader(FxmlWindow.class.getResource(fxml), AppVariables.currentBundle);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -205,59 +212,59 @@ public class FxmlStage {
         return initController(newFxml(fxml), newStage(), null);
     }
 
-    public static BaseController openStage(Stage myStage, String newFxml, ResourceBundle bundle,
+    public static BaseController openStage(Stage parent, String fxml, ResourceBundle bundle,
             boolean isOwned, Modality modality, StageStyle stageStyle) {
         try {
             Stage stage = new Stage();
             stage.initModality(modality);
-            if (isOwned && myStage != null) {
-                stage.initOwner(myStage);
+            if (isOwned && parent != null) {
+                stage.initOwner(parent);
             } else {
                 stage.initOwner(null);
             }
-            return initScene(stage, newFxml, bundle, stageStyle);
+            return initScene(stage, fxml, bundle, stageStyle);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static BaseController openTableStage(Stage myStage, String newFxml, boolean isOwned, Modality modality,
+    public static BaseController openTableStage(Stage parent, String newFxml, boolean isOwned, Modality modality,
             StageStyle stageStyle) {
-        return openStage(myStage, newFxml, AppVariables.getTableBundle(), isOwned, modality, stageStyle);
+        return openStage(parent, newFxml, AppVariables.getTableBundle(), isOwned, modality, stageStyle);
     }
 
-    public static BaseController openTableStage(String newFxml) {
-        return openTableStage(null, newFxml, false, Modality.NONE, null);
+    public static BaseController openTableStage(String fxml) {
+        return openTableStage(null, fxml, false, Modality.NONE, null);
     }
 
-    public static BaseController openStage(Stage myStage, String newFxml, boolean isOwned, Modality modality,
+    public static BaseController openStage(Stage parent, String newFxml, boolean isOwned, Modality modality,
             StageStyle stageStyle) {
-        return openStage(myStage, newFxml, AppVariables.currentBundle, isOwned, modality, stageStyle);
+        return openStage(parent, newFxml, AppVariables.currentBundle, isOwned, modality, stageStyle);
     }
 
-    public static BaseController openStage(Stage myStage, String newFxml, boolean isOwned, Modality modality) {
-        return openStage(myStage, newFxml, isOwned, modality, null);
+    public static BaseController openStage(Stage parent, String newFxml, boolean isOwned, Modality modality) {
+        return openStage(parent, newFxml, isOwned, modality, null);
 
     }
 
-    public static BaseController openStage(Stage myStage, String newFxml, boolean isOwned) {
-        return openStage(myStage, newFxml, isOwned, Modality.NONE);
+    public static BaseController openStage(Stage parent, String newFxml, boolean isOwned) {
+        return openStage(parent, newFxml, isOwned, Modality.NONE);
     }
 
-    public static BaseController openStage(Stage myStage, String newFxml) {
-        return openStage(myStage, newFxml, false, Modality.NONE);
+    public static BaseController openStage(Stage parent, String newFxml) {
+        return openStage(parent, newFxml, false, Modality.NONE);
     }
 
-    public static BaseController openScene(Stage stage, String newFxml, StageStyle stageStyle) {
+    public static BaseController openScene(Stage parent, String newFxml, StageStyle stageStyle) {
         try {
             Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
             newStage.initModality(Modality.NONE);
             newStage.initStyle(StageStyle.DECORATED);
             newStage.initOwner(null);
             BaseController controller = initScene(newStage, newFxml, stageStyle);
-            if (stage != null) {
-                closeStage(stage);
+            if (parent != null) {
+                closeWindow(parent);
             }
             return controller;
         } catch (Exception e) {
@@ -266,16 +273,89 @@ public class FxmlStage {
         }
     }
 
-    public static BaseController openScene(Stage stage, String newFxml) {
-        return openScene(stage, newFxml, null);
+    public static BaseController openScene(Stage parent, String fxml) {
+        return openScene(parent, fxml, null);
     }
 
-    public static void closeStage(Stage stage) {
+    public static Popup makePopWindow(String fxml) {
+        return makePopWindow(null, fxml);
+    }
+
+    public static Popup makePopWindow(BaseController parent) {
+        return makePopWindow(parent, CommonValues.PopNodesFxml);
+    }
+
+    public static Popup makePopWindow(BaseController parent, String fxml) {
         try {
-            if (stage == null) {
+            BaseController controller = setScene(fxml);
+            if (controller == null) {
+                return null;
+            }
+            controller.setParentController(parent);
+            Popup popup = new Popup();
+            popup.setAutoHide(true);
+
+            popup.getContent().add(controller.getMyScene().getRoot());
+            popup.setUserData(controller);
+
+            if (parent != null) {
+                parent.closePopup();
+                parent.setPopup(popup);
+            }
+            return popup;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static Popup popWindow(BaseController parent, MouseEvent event) {
+        return popWindow(parent, CommonValues.PopNodesFxml, event);
+    }
+
+    public static Popup popWindow(BaseController parent, String fxml, MouseEvent event) {
+        return popWindow(parent, fxml, (Node) event.getSource(), event.getScreenX() + 40, event.getScreenY() + 40);
+    }
+
+    public static Popup popWindow(BaseController parent, ContextMenuEvent event) {
+        return popWindow(parent, CommonValues.PopNodesFxml, event);
+    }
+
+    public static Popup popWindow(BaseController parent, String fxml, ContextMenuEvent event) {
+        return popWindow(parent, fxml, (Node) event.getSource(), event.getScreenX() + 40, event.getScreenY() + 40);
+    }
+
+    public static Popup popWindow(BaseController parent, Node owner, double x, double y) {
+        return popWindow(parent, CommonValues.PopNodesFxml, owner, x, y);
+    }
+
+    public static Popup popWindow(BaseController parent, String fxml, Node owner, double x, double y) {
+        try {
+            Popup popup = makePopWindow(parent, fxml);
+            if (popup == null) {
+                return null;
+            }
+            popup.show(owner, x, y);
+            return popup;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void closeWindow(Window window) {
+        try {
+            if (window == null) {
                 return;
             }
-            stage.close();
+            Object object = window.getUserData();
+            if (object != null && object instanceof BaseController) {
+                try {
+                    ((BaseController) object).leaveScene();
+                } catch (Exception e) {
+                }
+            }
+            window.hide();
             if (Window.getWindows().isEmpty()) {
                 appExit();
             }
@@ -293,6 +373,8 @@ public class FxmlStage {
                     window.hide();
                 }
             }
+            AppVariables.stopTextClipboardMonitor();
+
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (AppVariables.getUserConfigBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVariables.scheduledTasks.keySet()) {
@@ -820,9 +902,7 @@ public class FxmlStage {
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
             openTarget(null, uri.toString());
         } else {
-            if (myStage != null) {
-                alertError(myStage, message("DesktopNotSupportBrowse"));
-            }
+            alertError(myStage, message("DesktopNotSupportBrowse"));
         }
 
     }
@@ -894,16 +974,16 @@ public class FxmlStage {
     }
 
     public static ImageViewerController openImageViewer(File file) {
-        return FxmlStage.openImageViewer(null, file);
+        return FxmlWindow.openImageViewer(null, file);
     }
 
     public static ImageViewerController openImageViewer(String file) {
-        return FxmlStage.openImageViewer(null, new File(file));
+        return FxmlWindow.openImageViewer(null, new File(file));
     }
 
     public static ImageViewerController openImageViewer(Image image) {
         try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(null, null);
+            final ImageViewerController controller = FxmlWindow.openImageViewer(null, null);
             if (controller != null) {
                 controller.loadImage(image);
             }
@@ -916,7 +996,7 @@ public class FxmlStage {
 
     public static ImageViewerController openImageViewer(ImageInformation info) {
         try {
-            ImageViewerController controller = FxmlStage.openImageViewer(null, null);
+            ImageViewerController controller = FxmlWindow.openImageViewer(null, null);
             controller.loadImageInfo(info);
             return controller;
         } catch (Exception e) {
@@ -926,21 +1006,21 @@ public class FxmlStage {
     }
 
     public static void openImageManufacture(String filename) {
-        FxmlStage.openImageManufacture(null, new File(filename));
+        FxmlWindow.openImageManufacture(null, new File(filename));
     }
 
     public static void showImageInformation(ImageInformation info) {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageInformation(null, info);
+        FxmlWindow.openImageInformation(null, info);
     }
 
     public static void showImageMetaData(ImageInformation info) {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageMetaData(null, info);
+        FxmlWindow.openImageMetaData(null, info);
     }
 
     public static LoadingController openLoadingStage(Modality block) {
@@ -958,7 +1038,7 @@ public class FxmlStage {
     public static LoadingController openLoadingStage(Stage stage, Modality block, Task task, String info) {
         try {
             final LoadingController controller
-                    = (LoadingController) FxmlStage.openStage(stage, CommonValues.LoadingFxml,
+                    = (LoadingController) FxmlWindow.openStage(stage, CommonValues.LoadingFxml,
                             true, block, StageStyle.TRANSPARENT);
             controller.init(task);
             if (info != null) {

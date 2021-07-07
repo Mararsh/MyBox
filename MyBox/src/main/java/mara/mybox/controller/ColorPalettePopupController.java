@@ -135,7 +135,7 @@ public class ColorPalettePopupController extends BaseController {
                         try {
                             addColor(data, false);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+//                            MyBoxLog.error(e.toString());
                         }
                     }
                     label.setText(currentPalette.getName() + ": " + colorsPane.getChildren().size());
@@ -176,7 +176,7 @@ public class ColorPalettePopupController extends BaseController {
                         setController.rect.setFill(color);
                         setController.rect.setUserData(data);
                         FxmlControl.setTooltip(setController.rect, data.display());
-                        setController.hidePopup();
+                        setController.closePopup();
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                     }
@@ -281,8 +281,8 @@ public class ColorPalettePopupController extends BaseController {
 
     @FXML
     @Override
-    public void cancelAction() {
-        setController.hidePopup();
+    public void closePopup() {
+        setController.closePopup();
     }
 
     @FXML

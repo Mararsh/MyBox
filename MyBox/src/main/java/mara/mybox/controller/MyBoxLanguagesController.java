@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -86,7 +87,7 @@ public class MyBoxLanguagesController extends BaseController {
                     checkTableSelected();
                 }
             });
-
+            saveButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems()));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -259,7 +260,6 @@ public class MyBoxLanguagesController extends BaseController {
     public void loadLanguage(String name) {
         interfaceData.clear();
         tableData.clear();
-        saveButton.setDisable(true);
         copyEnglishButton.setDisable(true);
         synchronized (this) {
             if (task != null && !task.isQuit()) {
@@ -312,7 +312,6 @@ public class MyBoxLanguagesController extends BaseController {
                     if (error == null) {
                         interfaceView.refresh();
                         tableView.refresh();
-                        saveButton.setDisable(false);
                     } else {
                         popError(error);
                     }

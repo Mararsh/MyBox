@@ -7,7 +7,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -91,7 +91,7 @@ public class ImagesInMyBoxClipboardController extends ImageViewerController {
      */
     public static ImagesInMyBoxClipboardController oneOpen() {
         ImagesInMyBoxClipboardController controller = null;
-        Stage stage = FxmlStage.findStage(message("ImagesInMyBoxClipboard"));
+        Stage stage = FxmlWindow.findStage(message("ImagesInMyBoxClipboard"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (ImagesInMyBoxClipboardController) stage.getUserData();
@@ -99,7 +99,7 @@ public class ImagesInMyBoxClipboardController extends ImageViewerController {
             }
         }
         if (controller == null) {
-            controller = (ImagesInMyBoxClipboardController) FxmlStage.openStage(CommonValues.ImagesInMyBoxClipboardFxml);
+            controller = (ImagesInMyBoxClipboardController) FxmlWindow.openStage(CommonValues.ImagesInMyBoxClipboardFxml);
         }
         return controller;
     }

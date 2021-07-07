@@ -26,7 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
@@ -123,7 +123,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 public void handle(ActionEvent event) {
                     try {
                         final PixelsCalculationController controller
-                                = (PixelsCalculationController) FxmlStage.openStage(myStage,
+                                = (PixelsCalculationController) FxmlWindow.openStage(myStage,
                                         CommonValues.PixelsCalculatorFxml,
                                         true, Modality.WINDOW_MODAL, null);
 

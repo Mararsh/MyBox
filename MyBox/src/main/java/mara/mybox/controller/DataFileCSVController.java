@@ -19,7 +19,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
@@ -332,7 +332,7 @@ public class DataFileCSVController extends BaseDataFileController {
                         sourceFileChanged(targetFile);
 
                     } else if (saveAsType == SaveAsType.Open) {
-                        DataFileCSVController controller = (DataFileCSVController) FxmlStage.openStage(CommonValues.DataFileCSVFxml);
+                        DataFileCSVController controller = (DataFileCSVController) FxmlWindow.openStage(CommonValues.DataFileCSVFxml);
                         controller.sourceFileChanged(targetFile);
                     }
 
@@ -436,7 +436,7 @@ public class DataFileCSVController extends BaseDataFileController {
         if (sourceFile == null) {
             return;
         }
-        TextEditerController controller = (TextEditerController) FxmlStage.openStage(CommonValues.TextEditerFxml);
+        TextEditerController controller = (TextEditerController) FxmlWindow.openStage(CommonValues.TextEditerFxml);
         controller.openTextFile(sourceFile);
         controller.toFront();
     }
@@ -753,7 +753,7 @@ public class DataFileCSVController extends BaseDataFileController {
 
     public static DataFileCSVController oneOpen() {
         DataFileCSVController controller = null;
-        Stage stage = FxmlStage.findStage(message("EditCSV"));
+        Stage stage = FxmlWindow.findStage(message("EditCSV"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (DataFileCSVController) stage.getUserData();
@@ -761,7 +761,7 @@ public class DataFileCSVController extends BaseDataFileController {
             }
         }
         if (controller == null) {
-            controller = (DataFileCSVController) FxmlStage.openStage(CommonValues.DataFileCSVFxml);
+            controller = (DataFileCSVController) FxmlWindow.openStage(CommonValues.DataFileCSVFxml);
         }
         if (controller != null) {
             controller.getMyStage().requestFocus();

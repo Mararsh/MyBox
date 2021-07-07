@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
@@ -82,7 +82,7 @@ public class WebBrowserController extends BaseController {
 
     protected ControlWebBrowserBox newTab(boolean focus) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(
+            FXMLLoader fxmlLoader = new FXMLLoader(FxmlWindow.class.getResource(
                     CommonValues.ControlWebBrowserBoxFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
@@ -117,7 +117,7 @@ public class WebBrowserController extends BaseController {
         }
     }
 
-    protected ControlWebBrowserBox loadAddress(String address, boolean focus) {
+    public ControlWebBrowserBox loadAddress(String address, boolean focus) {
         ControlWebBrowserBox controller = newTab(focus);
         if (address != null) {
             controller.loadAddress(address);
@@ -125,7 +125,7 @@ public class WebBrowserController extends BaseController {
         return controller;
     }
 
-    protected ControlWebBrowserBox loadContents(String contents, boolean focus) {
+    public ControlWebBrowserBox loadContents(String contents, boolean focus) {
         ControlWebBrowserBox controller = newTab(focus);
         if (contents != null) {
             controller.loadContents(contents);
@@ -139,7 +139,7 @@ public class WebBrowserController extends BaseController {
         return controller;
     }
 
-    protected void download(String address, String name) {
+    public void download(String address, String name) {
         if (address == null) {
             return;
         }
@@ -255,7 +255,7 @@ public class WebBrowserController extends BaseController {
      */
     public static WebBrowserController oneOpen() {
         WebBrowserController controller = null;
-        Stage stage = FxmlStage.findStage(message("WebBrowser"));
+        Stage stage = FxmlWindow.findStage(message("WebBrowser"));
         if (stage != null && stage.getUserData() != null) {
             try {
                 controller = (WebBrowserController) stage.getUserData();
@@ -263,7 +263,7 @@ public class WebBrowserController extends BaseController {
             }
         }
         if (controller == null) {
-            controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
+            controller = (WebBrowserController) FxmlWindow.openStage(CommonValues.WebBrowserFxml);
         }
         if (controller != null) {
             controller.toFront();
@@ -288,13 +288,13 @@ public class WebBrowserController extends BaseController {
     }
 
     public static WebBrowserController weiboSnapFirstRun() {
-        WebBrowserController controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
+        WebBrowserController controller = (WebBrowserController) FxmlWindow.openStage(CommonValues.WebBrowserFxml);
         controller.initWeibo();
         return controller;
     }
 
     public static WebBrowserController mapFirstRun() {
-        WebBrowserController controller = (WebBrowserController) FxmlStage.openStage(CommonValues.WebBrowserFxml);
+        WebBrowserController controller = (WebBrowserController) FxmlWindow.openStage(CommonValues.WebBrowserFxml);
         controller.initMap();
         return controller;
     }

@@ -401,13 +401,16 @@ public class ControlFindReplace extends BaseController {
                             error = findReplace.getError();
                         }
                     }
-                    return error == null;
+                    if (error != null) {
+                        return false;
+                    }
+                    lastStringRange = findReplace.getStringRange();
+                    lastFileRange = findReplace.getFileRange();
+                    return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    lastStringRange = findReplace.getStringRange();
-                    lastFileRange = findReplace.getFileRange();
 //                    MyBoxLog.debug("(lastFileRange != null)：" + (lastFileRange != null) + " (lastStringRange != null)：" + (lastStringRange != null));
                     String info = "";
                     switch (operation) {
@@ -439,15 +442,15 @@ public class ControlFindReplace extends BaseController {
                             break;
                         }
                         default:
-                            if (lastFileRange != null) {
-                                info = message("RangeInFile") + ":"
-                                        + (lastFileRange.getStart() + 1) + "-" + (lastFileRange.getEnd());
-                            }
-                            if (lastStringRange != null) {
-                                info = (info.isEmpty() ? "" : info + "\n")
-                                        + message("RangeInPage") + ":"
-                                        + (lastStringRange.getStart() + 1) + "-" + (lastStringRange.getEnd());
-                            }
+//                            if (lastFileRange != null) {
+//                                info = message("RangeInFile") + ":"
+//                                        + (lastFileRange.getStart() + 1) + "-" + (lastFileRange.getEnd());
+//                            }
+//                            if (lastStringRange != null) {
+//                                info = (info.isEmpty() ? "" : info + "\n")
+//                                        + message("RangeInPage") + ":"
+//                                        + (lastStringRange.getStart() + 1) + "-" + (lastStringRange.getEnd());
+//                            }
                             if (lastStringRange != null) {
                                 mainArea.deselect();
                                 editerController.lastCursor = -1;
@@ -458,17 +461,16 @@ public class ControlFindReplace extends BaseController {
                                         mainArea.setText(findReplace.getOutputString());
                                         editerController.isSettingValues = false;
                                         editerController.updateInterface(false);
-                                    } else {
-                                        mainArea.selectRange(lastStringRange.getStart(), lastStringRange.getEnd());
                                     }
+                                    mainArea.selectRange(lastStringRange.getStart(), lastStringRange.getEnd());
                                 } else if (operation == Operation.ReplaceFirst) {
                                     editerController.isSettingValues = true;
                                     if (findReplace.isPageReloaded()) {
                                         mainArea.setText(findReplace.getOutputString());
                                     } else {
                                         mainArea.replaceText(lastStringRange, findReplace.getReplaceString());
-                                        mainArea.selectRange(lastStringRange.getStart(), lastStringRange.getStart() + findReplace.getReplaceString().length());
                                     }
+                                    mainArea.selectRange(lastStringRange.getStart(), lastStringRange.getStart() + findReplace.getReplaceString().length());
                                     editerController.isSettingValues = false;
                                     editerController.updateInterface(true);
                                 }
@@ -477,8 +479,10 @@ public class ControlFindReplace extends BaseController {
                                 info = message("NotFound");
                             }
                     }
-                    findLabel.setText(info);
-                    editerController.popInformation(info);
+                    if (!info.isBlank()) {
+                        findLabel.setText(info);
+                        editerController.popInformation(info);
+                    }
                 }
 
                 @Override
@@ -513,7 +517,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     public void popFindExample(MouseEvent mouseEvent) {
-        popMenu = FxmlControl.popRegexExample(this, popMenu, findArea, mouseEvent);
+        FxmlControl.popRegexExample(this, findArea, mouseEvent);
     }
 
     /*

@@ -38,7 +38,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.FxmlWindow;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -798,7 +798,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         if (ocrArea.getText().isEmpty()) {
             return;
         }
-        TextEditerController controller = (TextEditerController) FxmlStage.openStage(CommonValues.TextEditerFxml);
+        TextEditerController controller = (TextEditerController) FxmlWindow.openStage(CommonValues.TextEditerFxml);
         controller.hideRightPane();
         controller.mainArea.setText(ocrArea.getText());
     }
