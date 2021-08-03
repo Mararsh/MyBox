@@ -1,0 +1,311 @@
+package mara.mybox.controller;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
+
+import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
+
+/**
+ * @Author Mara
+ * @CreateDate 2021-7-29
+ * @License Apache License Version 2.0
+ */
+public abstract class MyBoxController_Image extends MyBoxController_Document {
+
+    @FXML
+    protected void showImageMenu(MouseEvent event) {
+        hideMenu(event);
+
+        MenuItem imageViewer = new MenuItem(Languages.message("ImageViewer"));
+        imageViewer.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageViewerFxml);
+        });
+
+        MenuItem imagesBrowser = new MenuItem(Languages.message("ImagesBrowser"));
+        imagesBrowser.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImagesBrowserFxml);
+        });
+
+        MenuItem ImageAnalyse = new MenuItem(Languages.message("ImageAnalyse"));
+        ImageAnalyse.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageAnalyseFxml);
+        });
+
+        MenuItem ImagesPlay = new MenuItem(Languages.message("ImagesPlay"));
+        ImagesPlay.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImagesPlayFxml);
+        });
+
+        MenuItem ImageManufacture = new MenuItem(Languages.message("ImageManufacture"));
+        ImageManufacture.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageManufactureFxml);
+        });
+
+        MenuItem ImagesEditor = new MenuItem(Languages.message("ImagesEditor"));
+        ImagesEditor.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImagesEditorFxml);
+        });
+
+        MenuItem imageConverterBatch = new MenuItem(Languages.message("ImageConverterBatch"));
+        imageConverterBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageConverterBatchFxml);
+        });
+
+        MenuItem imageStatistic = new MenuItem(Languages.message("ImageStatistic"));
+        imageStatistic.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageStatisticFxml);
+        });
+
+        MenuItem imageOCR = new MenuItem(Languages.message("ImageOCR"));
+        imageOCR.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageOCRFxml);
+        });
+
+        MenuItem imageOCRBatch = new MenuItem(Languages.message("ImageOCRBatch"));
+        imageOCRBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageOCRBatchFxml);
+        });
+
+        MenuItem convolutionKernelManager = new MenuItem(Languages.message("ConvolutionKernelManager"));
+        convolutionKernelManager.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ConvolutionKernelManagerFxml);
+        });
+
+        MenuItem pixelsCalculator = new MenuItem(Languages.message("PixelsCalculator"));
+        pixelsCalculator.setOnAction((ActionEvent event1) -> {
+            openStage(Fxmls.PixelsCalculatorFxml);
+        });
+
+        MenuItem ManageColors = new MenuItem(Languages.message("ManageColors"));
+        ManageColors.setOnAction((ActionEvent event1) -> {
+            ColorsManageController.oneOpen();
+        });
+
+        MenuItem ImagesInMyBoxClipboard = new MenuItem(Languages.message("ImagesInMyBoxClipboard"));
+        ImagesInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
+            ImageInMyBoxClipboardController.oneOpen();
+        });
+
+        MenuItem ImagesInSystemClipboard = new MenuItem(Languages.message("ImagesInSystemClipboard"));
+        ImagesInSystemClipboard.setOnAction((ActionEvent event1) -> {
+            ImageInSystemClipboardController.oneOpen();
+        });
+
+        Menu miscellaneousMenu = new Menu(Languages.message("Miscellaneous"));
+        miscellaneousMenu.getItems().addAll(
+                convolutionKernelManager, pixelsCalculator
+        );
+
+        Menu manufactureBatchMenu = makeImageBatchToolsMenu();
+        Menu partMenu = makeImagePartMenu();
+        Menu mergeMenu = makeImageMergeMenu();
+        Menu csMenu = makeColorSpaceMenu();
+
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(
+                imageViewer, imagesBrowser, ImageAnalyse, ImagesPlay, new SeparatorMenuItem(),
+                ImageManufacture, manufactureBatchMenu, ImagesEditor, mergeMenu, partMenu, imageConverterBatch, new SeparatorMenuItem(),
+                imageOCR, imageOCRBatch, new SeparatorMenuItem(),
+                ManageColors, csMenu, new SeparatorMenuItem(),
+                ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu);
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
+        closeMenu.setStyle("-fx-text-fill: #2e598a;");
+        closeMenu.setOnAction((ActionEvent cevent) -> {
+            popMenu.hide();
+            popMenu = null;
+        });
+        popMenu.getItems().add(closeMenu);
+
+        showMenu(imageBox, event);
+
+        view.setImage(new Image("img/ImageTools.png"));
+        text.setText(Languages.message("ImageToolsImageTips"));
+        locateImage(imageBox, true);
+
+    }
+
+    private Menu makeImageBatchToolsMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
+
+        MenuItem imageSizeMenu = new MenuItem(Languages.message("Size"));
+        imageSizeMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchSizeFxml);
+        });
+
+        MenuItem imageCropMenu = new MenuItem(Languages.message("Crop"));
+        imageCropMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchCropFxml);
+        });
+
+        MenuItem imagePasteMenu = new MenuItem(Languages.message("Paste"));
+        imagePasteMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchPasteFxml);
+        });
+
+        MenuItem imageColorMenu = new MenuItem(Languages.message("Color"));
+        imageColorMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchColorFxml);
+        });
+
+        MenuItem imageEffectsMenu = new MenuItem(Languages.message("Effects"));
+        imageEffectsMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchEffectsFxml);
+        });
+
+        MenuItem imageEnhancementMenu = new MenuItem(Languages.message("Enhancement"));
+        imageEnhancementMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchEnhancementFxml);
+        });
+
+        MenuItem imageReplaceColorMenu = new MenuItem(Languages.message("ReplaceColor"));
+        imageReplaceColorMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchReplaceColorFxml);
+        });
+
+        MenuItem imageTextMenu = new MenuItem(Languages.message("Text"));
+        imageTextMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchTextFxml);
+        });
+
+        MenuItem imageArcMenu = new MenuItem(Languages.message("Arc"));
+        imageArcMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchArcFxml);
+        });
+
+        MenuItem imageShadowMenu = new MenuItem(Languages.message("Shadow"));
+        imageShadowMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchShadowFxml);
+        });
+
+        MenuItem imageTransformMenu = new MenuItem(Languages.message("Transform"));
+        imageTransformMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchTransformFxml);
+        });
+
+        MenuItem imageMarginsMenu = new MenuItem(Languages.message("Margins"));
+        imageMarginsMenu.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageManufactureBatchMarginsFxml);
+        });
+
+        Menu manufactureBatchMenu = new Menu(Languages.message("ImageManufactureBatch"));
+        manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
+                imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
+                imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu);
+        return manufactureBatchMenu;
+
+    }
+
+    private Menu makeImagePartMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
+
+        MenuItem ImageSplit = new MenuItem(Languages.message("ImageSplit"));
+        ImageSplit.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSplitFxml);
+        });
+
+        MenuItem ImageSample = new MenuItem(Languages.message("ImageSubsample"));
+        ImageSample.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageSampleFxml);
+        });
+
+        MenuItem imageAlphaExtract = new MenuItem(Languages.message("ImageAlphaExtract"));
+        imageAlphaExtract.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageAlphaExtractBatchFxml);
+        });
+
+        Menu manufactureSubMenu = new Menu(Languages.message("ImagePart"));
+        manufactureSubMenu.getItems().addAll(ImageSplit, ImageSample, imageAlphaExtract);
+        return manufactureSubMenu;
+
+    }
+
+    private Menu makeImageMergeMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
+
+        MenuItem ImagesSplice = new MenuItem(Languages.message("ImagesSplice"));
+        ImagesSplice.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImagesSpliceFxml);
+        });
+
+        MenuItem imageAlphaAdd = new MenuItem(Languages.message("ImageAlphaAdd"));
+        imageAlphaAdd.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageAlphaAddBatchFxml);
+        });
+
+        Menu manufactureSubMenu = new Menu(Languages.message("MergeImages"));
+        manufactureSubMenu.getItems().addAll(ImagesSplice, imageAlphaAdd);
+        return manufactureSubMenu;
+
+    }
+
+    private Menu makeColorSpaceMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
+        MenuItem IccEditor = new MenuItem(Languages.message("IccProfileEditor"));
+        IccEditor.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.IccProfileEditorFxml);
+        });
+
+        MenuItem ChromaticityDiagram = new MenuItem(Languages.message("DrawChromaticityDiagram"));
+        ChromaticityDiagram.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ChromaticityDiagramFxml);
+        });
+
+        MenuItem ChromaticAdaptationMatrix = new MenuItem(Languages.message("ChromaticAdaptationMatrix"));
+        ChromaticAdaptationMatrix.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ChromaticAdaptationMatrixFxml);
+        });
+
+        MenuItem ColorConversion = new MenuItem(Languages.message("ColorConversion"));
+        ColorConversion.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ColorConversionFxml);
+        });
+
+        MenuItem RGBColorSpaces = new MenuItem(Languages.message("RGBColorSpaces"));
+        RGBColorSpaces.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.RGBColorSpacesFxml);
+        });
+
+        MenuItem RGB2XYZConversionMatrix = new MenuItem(Languages.message("LinearRGB2XYZMatrix"));
+        RGB2XYZConversionMatrix.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.RGB2XYZConversionMatrixFxml);
+        });
+
+        MenuItem RGB2RGBConversionMatrix = new MenuItem(Languages.message("LinearRGB2RGBMatrix"));
+        RGB2RGBConversionMatrix.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.RGB2RGBConversionMatrixFxml);
+        });
+
+        MenuItem Illuminants = new MenuItem(Languages.message("Illuminants"));
+        Illuminants.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.IlluminantsFxml);
+        });
+
+        Menu csMenu = new Menu(Languages.message("ColorSpace"));
+        csMenu.getItems().addAll(ChromaticityDiagram, IccEditor,
+                //                ColorConversion,
+                RGBColorSpaces, RGB2XYZConversionMatrix, RGB2RGBConversionMatrix,
+                Illuminants, ChromaticAdaptationMatrix);
+        return csMenu;
+
+    }
+}

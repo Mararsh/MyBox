@@ -1,0 +1,334 @@
+Examples > Search
+wikipedia
+https://www.wikipedia.org
+
+Examples > Search
+answers
+https://www.answers.com
+
+Examples > Search
+thefreedictionary
+https://www.thefreedictionary.com
+
+Examples > Search
+ipaddress
+https://www.ipaddress.com
+
+Examples > Search
+bing
+https://www.bing.com
+
+Examples > Search
+google
+https://www.google.com
+
+Examples > Search
+yahoo
+https://www.google.com
+
+Examples > Search
+baidu
+https://www.baidu.com
+
+Examples > Life in Chinese
+国家政务服务平台
+http://gjzwfw.www.gov.cn/index.html
+
+Examples > Life in Chinese
+Bank of China
+https://www.boc.cn
+
+Examples > Life in Chinese
+Industrial and Commercial Bank of China
+http://www.icbc.com.cn
+
+Examples > Life in Chinese
+China Merchants Bank Ltd
+http://www.cmbchina.com
+
+Examples > Life in Chinese
+Bank of Communications
+http://www.bankcomm.com
+
+Examples > Articles/Data > English
+iData
+https://www.cn-ki.net
+
+Examples > Articles/Data > English
+sci-hub
+https://sci-hub.se
+
+Examples > Articles/Data > English
+city-Data
+http://www.city-data.com
+
+Examples > Articles/Data > English
+oalib
+https://www.oalib.com
+
+Examples > Articles/Data > English
+jisc
+https://www.jisc.ac.uk
+
+Examples > Articles/Data > English
+findarticles
+http://findarticles.com
+
+Examples > Articles/Data > English
+intechopen
+https://www.intechopen.com
+
+Examples > Articles/Data > English
+openstax
+https://openstax.org
+
+Examples > Articles/Data > English
+Library Genesis
+http://libgen.rs
+
+Examples > Articles/Data > English
+OECD
+http://www.oecd.org
+
+Examples > Articles/Data > English
+Eurostat
+https://ec.europa.eu/eurostat/data/database
+
+Examples > Articles/Data > English
+worldvaluessurvey
+https://www.worldvaluessurvey.org/wvs.jsp
+
+Examples > Articles/Data > English
+IEEE
+https://www.ieee.org
+
+Examples > Articles/Data > Chinese
+国家数据
+http://www.stats.gov.cn
+
+Examples > Articles/Data > Chinese
+中国人民银行数据库
+http://www.pbc.gov.cn/diaochatongjisi/116219/index.html
+
+Examples > Articles/Data > Chinese
+国家地球系统科学数据中心
+http://www.geodata.cn/index.html
+
+Examples > Articles/Data > Chinese
+中国气象数据网
+http://data.cma.cn
+
+Examples > Articles/Data > Chinese
+中国国家数字图书馆
+http://www.nlc.cn
+
+Examples > Articles/Data > Chinese
+海关统计数据在线查询平台
+http://43.248.49.97
+
+Examples > Articles/Data > Chinese
+中国学术调查数据资料库
+http://www.cnsda.org
+
+Examples > Articles/Data > Chinese
+上海研发公共服务平台
+http://www.sgst.cn
+
+Examples > Articles/Data > Chinese
+中国哲学书电子化计划
+https://ctext.org
+
+Examples > Articles/Data > Chinese
+全国图书馆论文搜索网
+http://www.ucdrs.superlib.net
+
+
+Examples > Articles/Data > Chinese
+浙江大学图书馆
+http://libweb.zju.edu.cn
+
+Examples > Articles/Data > Chinese
+杭州图书馆
+https://www.hzlib.net
+
+Examples > Articles/Data > Chinese
+贵州数字图书馆
+http://www.gzlib.org
+
+Examples > Articles/Data > Chinese
+绍兴图书馆
+https://www.sxlib.com
+
+Examples > Articles/Data > Chinese
+广西图书馆
+http://www.gxlib.org.cn
+
+Examples > Articles/Data > Chinese
+中国知网
+https://www.cnki.net
+
+Examples > Articles/Data > Chinese
+万方数据
+http://www.wanfangdata.com.cn/index.html
+
+Examples > Articles/Data > Chinese
+故宫博物院藏品
+https://zm-digicol.dpm.org.cn
+
+
+Examples > Study > English
+MIT 18.06 Linear Algebra
+https://www.bilibili.com/video/BV1zx411g7gq
+
+Examples > Study > English
+MIT 18.01 Calculus
+https://www.bilibili.com/video/BV1Js411n7z
+
+Examples > Study > English
+MIT 6.042J Discrete Mathematics
+https://www.bilibili.com/video/BV1es411H7YH
+
+Examples > Study > English
+Learning From Data
+https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ
+
+Examples > Study > Chinese
+数值分析
+http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html
+
+Examples > Study > Chinese
+形象展示傅里叶变换
+https://www.bilibili.com/video/BV1pW411J7s8
+
+Examples > Study > Chinese
+北京大学 离散数学
+https://www.bilibili.com/video/BV1BW411n7gw
+
+Examples > Study > Chinese
+中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）
+https://www.bilibili.com/video/BV1ux411G7zm
+
+Examples > Study > Chinese
+高中语文-文言文全套精讲
+https://www.bilibili.com/video/BV1Dt411p7ce
+
+Examples > Novels > Chinese
+鲲弩小说
+https://www.kunnu.com
+
+Examples > Novels > Chinese
+晋江文学城
+https://www.jjwxc.net
+
+Examples > Novels > Chinese
+云起书院
+http://yunqi.qq.com
+
+Examples > Novels > Chinese
+起点中文网
+https://www.qidian.com
+
+Examples > Novels > Chinese
+创世中文网
+http://chuangshi.qq.com
+
+Examples > Novels > Chinese
+逐浪网
+http://www.zhulang.com
+
+Examples > Novels > Chinese
+掌阅小说网
+http://yc.ireader.com.cn
+
+Examples > Novels > Chinese
+17k小说网
+https://www.17k.com
+
+Examples > Novels > Chinese
+潇湘书院
+https://www.xxsy.net
+
+
+Examples > Entertainment > Chinese
+蜻蜓FM
+https://www.qingting.fm
+
+Examples > Entertainment > Chinese
+哔哩哔哩
+https://www.bilibili.com
+
+Examples > Entertainment > Chinese
+优酷
+https://www.youku.com
+
+Examples > Entertainment > Chinese
+猫耳
+https://www.missevan.com
+
+Examples > Entertainment > Chinese
+NGA
+http://nga.178.com
+
+Examples > Entertainment > Chinese
+微博
+https://weibo.com
+
+Examples > Entertainment > Chinese
+天涯
+https://bbs.tianya.cn
+
+Examples > Entertainment > Chinese
+lofter
+https://www.lofter.com
+
+Examples > Entertainment > Chinese
+小喇叭
+https://www.qingting.fm/channels/138236
+
+Examples > Entertainment > Chinese
+牡丹亭（1986年）张继青
+https://www.bilibili.com/video/BV1Px411P761
+
+Examples > Entertainment > Chinese
+白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）
+https://www.bilibili.com/video/BV1rs411n7Dd
+
+Examples > Entertainment > Chinese
+梁祝-范瑞娟 傅全香
+https://www.bilibili.com/video/BV11x411j7As
+
+Examples > Coding 
+sourceforge
+https://sourceforge.net
+
+Examples > Coding 
+stackoverflow
+https://stackoverflow.com
+
+Examples > Coding 
+github
+https://github.com
+
+Examples > Coding 
+Java API
+https://docs.oracle.com/en/java/javase/15/docs/api/index.html
+
+Examples > Coding 
+JavaFx API
+https://openjfx.io/javadoc/15
+
+Examples > Coding 
+JavaFX CSS Reference Guide
+https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
+
+Examples > Coding 
+Getting Started with JavaFX
+https://docs.oracle.com/javafx/2/get_started/css.htm
+
+Examples > Coding 
+icons8
+https://icons8.com
+
+Examples > Coding 
+mvnrepository
+https://mvnrepository.com

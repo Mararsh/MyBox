@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" 
+            xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WebFindController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox >
+            <children>
+                <HBox fx:id="addressBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconOpen.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <ComboBox fx:id="urlSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="goButton" defaultButton="true" mnemonicParsing="false" onAction="#goAction">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconGo.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconFunction.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <HBox fx:id="findBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
+                        <fx:include fx:id="findColor" source="ColorSet.fxml" />
+                        <Label layoutX="10.0" layoutY="19.0" minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
+                        <fx:include fx:id="findBgColor" source="ColorSet.fxml" />
+                        <Label layoutX="250.0" layoutY="19.0" minHeight="-Infinity" text="%Font" wrapText="true" />
+                        <ComboBox fx:id="findFontSelector" editable="true" prefWidth="120.0" />
+                        <CheckBox fx:id="regCheck" layoutX="565.0" layoutY="18.0" mnemonicParsing="false" text="%RegularExpression" />
+                        <CheckBox fx:id="caseCheck" mnemonicParsing="false" text="%CaseInsensitive" />
+                        <fx:include fx:id="findInput" source="ControlStringSelector.fxml" />
+                        <Button fx:id="querySearchButton" mnemonicParsing="false" onAction="#findString">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconQuery.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <WebView fx:id="webView" minHeight="200.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
+                <HBox fx:id="findResultsBox" alignment="CENTER_RIGHT" minWidth="-Infinity" spacing="5.0">
+                    <children>
+                        <CheckBox fx:id="wrapCheck" mnemonicParsing="false" text="%WrapAround">
+                            <HBox.margin>
+                                <Insets right="30.0" />
+                            </HBox.margin>
+                        </CheckBox>
+                        <Label minWidth="-Infinity" text="%Item" />
+                        <ComboBox fx:id="foundItemSelector" prefWidth="80" HBox.hgrow="NEVER" />
+                        <Label fx:id="foundLabel" />
+                        <Button fx:id="goItemButton" mnemonicParsing="false" onAction="#goItem">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconGo.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconFirst.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconPrevious.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconNext.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconLast.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>
+
+

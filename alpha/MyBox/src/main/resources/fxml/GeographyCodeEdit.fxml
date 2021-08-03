@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.GeographyCodeEditController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="TOP_LEFT">
+            <children>
+                <SplitPane fx:id="splitPane" dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                        <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox fx:id="treeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%Subordinate" />
+                                            </children>
+                                        </HBox>
+                                        <fx:include fx:id="location" source="GeographyCodeSelector.fxml" />
+                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ClickNodePickValue" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconTips.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClose.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconRecover.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconCopy.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction"
+                                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconSave.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="200.0" prefViewportWidth="1506.0" VBox.vgrow="ALWAYS">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" minWidth="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%Dataid" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="gcidInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <CheckBox fx:id="predefinedCheck" minWidth="-Infinity" mnemonicParsing="false" text="%Predefined" HBox.hgrow="NEVER" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%Subordinate" />
+                                                                <TextField fx:id="subordinateInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <FlowPane fx:id="levelPane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%Level" />
+                                                                <RadioButton fx:id="globalRadio" mnemonicParsing="false" text="%Global">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="levelGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="continentRadio" mnemonicParsing="false" text="%Continent" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="countryRadio" mnemonicParsing="false" text="%Country" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="provinceRadio" mnemonicParsing="false" text="%Province" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="cityRadio" mnemonicParsing="false" text="%City" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="countyRadio" mnemonicParsing="false" text="%County" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="townRadio" mnemonicParsing="false" text="%Town" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="villageRadio" mnemonicParsing="false" text="%Village" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="buildingRadio" mnemonicParsing="false" text="%Building" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="pointOfInterestRadio" layoutX="620.0" layoutY="51.0" mnemonicParsing="false" selected="true" text="%PointOfInterest" toggleGroup="$levelGroup" />
+                                                                <!--<RadioButton fx:id="pointOfInterestRadio" mnemonicParsing="false" text="%PointOfInterest" toggleGroup="$levelGroup" />-->
+                                                            </children>
+                                                        </FlowPane>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label minWidth="-Infinity" text="%Longitude" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="longitudeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Label minWidth="-Infinity" text="%Latitude" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="latitudeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="locationButton" mnemonicParsing="false" onAction="#locationAction" HBox.hgrow="NEVER">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconLocation.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="218.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label minWidth="-Infinity" text="%Altitude" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="altitudeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Label minWidth="-Infinity" text="%Precision" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="precisionInput" prefWidth="200.0" />
+                                                                <Label layoutX="386.0" layoutY="19.0" minWidth="-Infinity" text="%CoordinateSystem" />
+                                                                <ComboBox fx:id="coordinateSystemSelector" prefWidth="200.0" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="300.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label text="%ChineseName" />
+                                                                <TextField fx:id="chineseInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="126.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label text="%EnglishName" />
+                                                                <TextField fx:id="englishInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1011.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Alias" />
+                                                                <TextField fx:id="alias1Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1032.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Alias" />
+                                                                <TextField fx:id="alias2Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="300.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Alias" />
+                                                                <TextField fx:id="alias3Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="895.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Alias" />
+                                                                <TextField fx:id="alias5Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1037.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Alias" />
+                                                                <TextField fx:id="alias4Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="242.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Code" />
+                                                                <TextField fx:id="code1Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1027.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Code" />
+                                                                <TextField fx:id="code2Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1032.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Code" />
+                                                                <TextField fx:id="code3Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="242.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Code" />
+                                                                <TextField fx:id="code4Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1027.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Code" />
+                                                                <TextField fx:id="code5Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="416.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" minWidth="-Infinity" text="%SquareMeters" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="areaInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1042.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" text="%Population" />
+                                                                <TextField fx:id="populationInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <Label alignment="CENTER_RIGHT" text="%Comments" />
+                                                        <TextArea fx:id="commentsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="200.0" prefWidth="600.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </padding>
+                                                </VBox>
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </items>
+                </SplitPane>
+
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

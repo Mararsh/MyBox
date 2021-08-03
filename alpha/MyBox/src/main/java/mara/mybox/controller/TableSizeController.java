@@ -1,0 +1,100 @@
+package mara.mybox.controller;
+
+import java.util.Arrays;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.value.AppVariables;
+import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
+
+/**
+ * @Author Mara
+ * @CreateDate 2021-3-19
+ * @License Apache License Version 2.0
+ */
+public class TableSizeController extends BaseController {
+
+    protected SimpleBooleanProperty notify;
+    protected int colsNumber, rowsNumber;
+
+    @FXML
+    protected ComboBox<String> colsSelector, rowsSelector;
+
+    public TableSizeController() {
+        baseTitle = Languages.message("Table");
+    }
+
+    public void setParameters(BaseController parent) {
+        try {
+            parentController = parent;
+            if (parent != null) {
+                baseName = parent.baseName;
+            }
+            getMyStage().centerOnScreen();
+            notify = new SimpleBooleanProperty();
+
+            colsSelector.getItems().addAll(Arrays.asList(
+                    "3", "5", "4", "6", "2", "1", "10", "8", "9", "7", "15", "20", "30"
+            ));
+            colsNumber = UserConfig.getUserConfigInt(baseName + "ColsNumber", 3);
+            colsNumber = colsNumber <= 0 ? 3 : colsNumber;
+            colsSelector.setValue(colsNumber + "");
+            colsSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            int v = Integer.parseInt(newValue.trim());
+                            if (v <= 0) {
+                                colsSelector.getEditor().setStyle(badStyle);
+                            } else {
+                                colsNumber = v;
+                                UserConfig.setUserConfigInt(baseName + "ColsNumber", colsNumber);
+                                colsSelector.getEditor().setStyle(null);
+                            }
+                        } catch (Exception e) {
+                            colsSelector.getEditor().setStyle(badStyle);
+                        }
+                    });
+
+            rowsSelector.getItems().addAll(Arrays.asList(
+                    "3", "5", "4", "6", "2", "1", "10", "8", "9", "7", "15", "20", "30", "50"
+            ));
+            rowsNumber = UserConfig.getUserConfigInt(baseName + "RowsNumber", 3);
+            rowsNumber = rowsNumber <= 0 ? 3 : rowsNumber;
+            rowsSelector.setValue(rowsNumber + "");
+            rowsSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            int v = Integer.parseInt(newValue.trim());
+                            if (v <= 0) {
+                                rowsSelector.getEditor().setStyle(badStyle);
+                            } else {
+                                rowsNumber = v;
+                                UserConfig.setUserConfigInt(baseName + "RowsNumber", rowsNumber);
+                                rowsSelector.getEditor().setStyle(null);
+                            }
+                        } catch (Exception e) {
+                            rowsSelector.getEditor().setStyle(badStyle);
+                        }
+                    });
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+
+        }
+    }
+
+    @FXML
+    @Override
+    public void okAction() {
+        notify.set(!notify.get());
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        closeStage();
+    }
+
+}

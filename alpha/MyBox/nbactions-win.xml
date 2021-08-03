@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>run</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>clean</goal>
+            <goal>javafx:run</goal>
+        </goals>
+    </action>
+
+    <!--This makes jar which contains all dependency, inluding javafx -->
+
+    <action>
+        <actionName>build</actionName>
+        <goals>
+            <goal>clean</goal>
+            <goal>package</goal>
+        </goals>
+    </action>
+
+
+    <action>
+        <actionName>build-with-dependencies</actionName>
+        <goals>
+            <goal>clean</goal>
+            <goal>package</goal>
+            <goal>assembly:single</goal>
+        </goals>
+    </action>
+
+
+</actions>

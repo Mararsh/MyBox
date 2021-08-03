@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WebBrowserController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+               <tabs>
+                  <Tab fx:id="addTab" closable="false">
+                     <graphic>
+                        <Button fx:id="addTabButton" mnemonicParsing="false" onAction="#newTabAction">
+                           <graphic>
+                                      <ImageView fx:id="addIcon" fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconAdd.png" />
+                                          </image>
+                                      </ImageView>
+                           </graphic>
+                        </Button>
+                     </graphic>
+                  </Tab>
+               </tabs></TabPane>
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>
