@@ -1,11 +1,11 @@
-## MyBox Note 
+##MyBox#
 Notebook > Notebook
 Notebook Cover
 Notes are information pieces in html format.<br>
 Notebook is collection of notes and notebooks.<br>
 Notebooks are organized as a tree.
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Search
 <a href="https://www.wikipedia.org/">wikipedia</a><br>
@@ -17,7 +17,7 @@ Search
 <a href="https://www.yahoo.com/">yahoo</a><br>
 <a href="https://www.baidu.com/">baidu</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Life in Chinese
 <a href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
@@ -26,7 +26,7 @@ Life in Chinese
 <a href="http://www.cmbchina.com">China Merchants Bank Ltd</a><br>
 <a href="http://www.bankcomm.com">Bank of Communications</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Articles/Data in English
 <a href="https://www.cn-ki.net/">iData</a><br>
@@ -43,7 +43,7 @@ Articles/Data in English
 <a href="https://www.worldvaluessurvey.org/wvs.jsp">worldvaluessurvey</a><br>
 <a href="https://www.ieee.org/">IEEE</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Articles/Data in Chinese
 <a href="http://www.stats.gov.cn">国家数据</a><br>
@@ -65,7 +65,7 @@ Articles/Data in Chinese
 <a href="http://www.wanfangdata.com.cn/index.html">万方数据</a><br>
 <a href="https://zm-digicol.dpm.org.cn">故宫博物院藏品</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Study in English
 <a href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
@@ -73,7 +73,7 @@ Study in English
 <a href="https://www.bilibili.com/video/BV1es411H7YH">MIT 6.042J Discrete Mathematics</a><br>
 <a href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Study in Chinese
 <a href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
@@ -82,7 +82,7 @@ Study in Chinese
 <a href="https://www.bilibili.com/video/BV1ux411G7zm">中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）</a><br>
 <a href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Novels in Chinese
 <a href="https://www.kunnu.com">鲲弩小说</a><br>
@@ -95,7 +95,7 @@ Novels in Chinese
 <a href="https://www.17k.com">17k小说网</a><br>
 <a href="https://www.xxsy.net">潇湘书院</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Web Address
 Entertainment in Chinese
 <a href="https://www.qingting.fm">蜻蜓FM</a><br>
@@ -111,7 +111,7 @@ Entertainment in Chinese
 <a href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br>
 <a href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > My Data
 My eyes
 <p>Radian: 84</p>
@@ -122,7 +122,7 @@ My eyes
     <tr><td> 2018.5 </td><td> 300 </td><td> 350 </td></tr>
 </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > My Data
 My weight
 <table>
@@ -132,7 +132,7 @@ My weight
     <tr><td> 2018.6 </td><td> 54.5 </td></tr>
 </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > My Data
 My height
 <table>
@@ -142,7 +142,7 @@ My height
     <tr><td> 2018.6 </td><td> 164 </td></tr>
 </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > My Data
 My menstruation
             <table>
@@ -153,7 +153,7 @@ My menstruation
             </tbody>
 </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > My Data
 My money
 <table>
@@ -163,7 +163,7 @@ My money
     <tr><td> 2018.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
 </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Common knowledge
 Size of coat
             <table>
@@ -179,7 +179,7 @@ Size of coat
                 <tr><td>170/104A(16)</td><td>75</td><td>43</td><td>86</td><td>112</td><td>110</td></tr>
             </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Contacts
 Relative
 <table>
@@ -189,7 +189,7 @@ Relative
     <tr><td> sister </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1984.3.8 </td><td> </td></tr>
 </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Contacts
 Work
 <table>
@@ -199,7 +199,7 @@ Work
     <tr><td> colleague </td><td> C </td><td> 123456789 </td><td> 123@aa.com </td><td> Hidden Peak </td><td> </td></tr>
 </table>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding
 Coding Address
 <a href="https://sourceforge.net">sourceforge</a><br>
@@ -212,7 +212,7 @@ Coding Address
 <a href="https://icons8.com/">icons8</a><br>
 <a href="https://mvnrepository.com/">mvnrepository</a><br>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding
 sftp to sourceforge (to upload large files)
 <PRE><CODE>
@@ -226,7 +226,7 @@ sftp> lcd  D:\releases\Mybox\2021-03-21-v6.4.2
 sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
 </CODE></PRE>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > javafx
 Items in one sentence about javafx
 <ol>
@@ -252,7 +252,7 @@ Items in one sentence about javafx
     <li>When double click mouse, single-click event is tiggerred at first and then double-click event is triggerred. So need avoid duplicated or conflicted handlings against same event.</li>
 </ol>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > javafx > Examples
 ChangeListener<String>
 <PRE><CODE>
@@ -264,7 +264,7 @@ input.textProperty().addListener(new ChangeListener<String>() {
 });
 </CODE></PRE>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > javafx > Examples
 setOnMouseClicked
 <PRE><CODE>
@@ -276,7 +276,7 @@ control.setOnMouseClicked(new EventHandler<MouseEvent>() {
 });
 </CODE></PRE>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > javafx > Examples
 disableProperty().bind
 <PRE><CODE>
@@ -287,7 +287,7 @@ startButton.disableProperty().bind(
 );
 </CODE></PRE>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > java
 Items in one sentence about java
 <ol>
@@ -312,7 +312,7 @@ Items in one sentence about java
     <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
     <li>To determine value's broken, write if (abs(x - 7.3) < TOLERANCE) instead of if (x == 7.3).</li></ol>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > MyBox
 Packing Steps of MyBox on windows
 		<p>On Windows:</p>
@@ -325,7 +325,7 @@ Packing Steps of MyBox on windows
 				<li>Generated launcher is "MyBox/pack/win/app/MyBox/MyBox.exe".</li>
 			</ol>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > MyBox
 Packing Steps of MyBox on linux
 		<p>On Linux:</p>
@@ -343,7 +343,7 @@ Packing Steps of MyBox on linux
 				<li>Generated launcher is "MyBox/pack/linux/app/MyBox/bin/MyBox".</li>
 			</ul>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > MyBox
 Packing Steps of MyBox on mac
 		<p>On Mac:</p>
@@ -361,7 +361,7 @@ Packing Steps of MyBox on mac
 				<li>Generated launcher is "MyBox/pack/mac/app/MyBox-$version.dmg".</li>
 			</ul>
 
-## MyBox Note 
+##MyBox#
 Notebook > Note Examples > Coding > MyBox
 Colors of MyBox icons
             <table>

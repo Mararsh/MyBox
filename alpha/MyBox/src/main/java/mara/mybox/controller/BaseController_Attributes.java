@@ -84,7 +84,7 @@ public abstract class BaseController_Attributes {
             clearButton, createButton, cancelButton, addButton, recoverButton, viewButton, popButton,
             copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
-            myBoxClipboardButton, systemClipboardButton,
+            myBoxClipboardButton, systemClipboardButton, selectButton,
             selectAllButton, selectNoneButton, renameButton, tipsButton, setButton, allButton, refButton,
             firstButton, lastButton, previousButton, nextButton, pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
             infoButton, metaButton, transparentButton, whiteButton, blackButton, withdrawButton;

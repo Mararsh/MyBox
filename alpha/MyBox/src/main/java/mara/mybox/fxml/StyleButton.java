@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**

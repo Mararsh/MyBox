@@ -34,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-27
  * @License Apache License Version 2.0
  */
-public class PopController extends BaseController {
+public class MenuController extends BaseController {
 
     protected Node node;
     protected String baseStyle;
@@ -49,7 +49,7 @@ public class PopController extends BaseController {
     @FXML
     protected Button functionsButton;
 
-    public PopController() {
+    public MenuController() {
     }
 
     @Override
@@ -216,21 +216,21 @@ public class PopController extends BaseController {
     /*
         static methods
      */
-    public static PopController open(BaseController parent, Node node, double x, double y) {
+    public static MenuController open(BaseController parent, Node node, double x, double y) {
         try {
             try {
                 if (parent == null) {
                     return null;
                 }
-                Popup popup = PopTools.popWindow(parent, Fxmls.PopFxml, node, x, y);
+                Popup popup = PopTools.popWindow(parent, Fxmls.MenuFxml, node, x, y);
                 if (popup == null) {
                     return null;
                 }
                 Object object = popup.getUserData();
-                if (object == null && !(object instanceof PopController)) {
+                if (object == null && !(object instanceof MenuController)) {
                     return null;
                 }
-                PopController controller = (PopController) object;
+                MenuController controller = (MenuController) object;
                 controller.setParameters(parent, node, x, y);
                 return controller;
             } catch (Exception e) {

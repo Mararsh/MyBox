@@ -218,8 +218,8 @@ public class ControlHtmlEditor extends ControlWebBrowserBox {
                 @Override
                 public void handle(ContextMenuEvent event) {
                     try {
-                        PopTextEditController controller
-                                = PopTextEditController.open(myController, markdownArea, event.getScreenX() + 40, event.getScreenY() + 40);
+                        MenuTextEditController controller
+                                = MenuTextEditController.open(myController, markdownArea, event.getScreenX() + 40, event.getScreenY() + 40);
 
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
@@ -520,7 +520,7 @@ public class ControlHtmlEditor extends ControlWebBrowserBox {
 
     public void popCodesMenu(javafx.scene.Node owner, double x, double y) {
         try {
-            PopTextEditController controller = PopTextEditController.open(myController, codesArea, x, y);
+            MenuTextEditController controller = MenuTextEditController.open(myController, codesArea, x, y);
 
             controller.addNode(new Separator());
 
@@ -902,7 +902,7 @@ public class ControlHtmlEditor extends ControlWebBrowserBox {
     @FXML
     public void popEditorMenu(MouseEvent mouseEvent) { // ****
         try {
-            PopTextEditController controller = PopTextEditController.open(myController, markdownArea, mouseEvent);
+            MenuTextEditController controller = MenuTextEditController.open(myController, markdownArea, mouseEvent);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1000,7 +1000,7 @@ public class ControlHtmlEditor extends ControlWebBrowserBox {
     @FXML
     public void popMarkdownMenu(MouseEvent mouseEvent) {
         try {
-            PopMarkdownEditController controller = PopMarkdownEditController.open(myController, markdownArea, mouseEvent);
+            MenuMarkdownEditController controller = MenuMarkdownEditController.open(myController, markdownArea, mouseEvent);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1027,7 +1027,7 @@ public class ControlHtmlEditor extends ControlWebBrowserBox {
     @FXML
     public void popTextsMenu(MouseEvent mouseEvent) {
         try {
-            PopTextEditController controller = PopTextEditController.open(myController, markdownArea, mouseEvent);
+            MenuTextEditController controller = MenuTextEditController.open(myController, markdownArea, mouseEvent);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

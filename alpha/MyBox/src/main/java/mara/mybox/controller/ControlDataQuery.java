@@ -291,7 +291,7 @@ public class ControlDataQuery extends BaseController {
                 buttons.add(button);
             }
 
-            PopController controller = PopController.open(this, textArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(this, textArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addFlowPane(buttons);
 
         } catch (Exception e) {

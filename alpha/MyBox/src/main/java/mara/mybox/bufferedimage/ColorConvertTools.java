@@ -1,7 +1,6 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -32,6 +31,11 @@ public class ColorConvertTools {
             return 0;
         }
         return color.getRGB();
+    }
+
+    public static int setAlpha(int pixel, int a) {
+        Color c = new Color(pixel);
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), a).getRGB();
     }
 
     /*

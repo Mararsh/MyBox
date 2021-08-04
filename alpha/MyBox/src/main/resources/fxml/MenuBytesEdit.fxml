@@ -15,7 +15,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefWidth="500.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PopMarkdownEditController">
+<VBox fx:id="thisPane" prefWidth="500.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="mara.mybox.controller.MenuBytesEditController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -40,7 +41,7 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-      <Separator prefWidth="200.0" />
+        <Separator prefWidth="200.0" />
         <VBox fx:id="nodesBox" maxHeight="-Infinity" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -232,7 +233,7 @@ License:    Apache License Version 2.0
                 </HBox>
             </children>
         </VBox>
-      <Separator prefWidth="200.0" />
+        <Separator prefWidth="200.0" />
         <HBox fx:id="bottomBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />

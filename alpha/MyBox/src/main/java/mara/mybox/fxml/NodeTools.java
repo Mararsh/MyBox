@@ -64,8 +64,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -285,8 +283,7 @@ public class NodeTools {
         setNonnegativeValidation(input, Integer.MAX_VALUE);
     }
 
-    public static void setNonnegativeValidation(final TextField input,
-            final int max) {
+    public static void setNonnegativeValidation(final TextField input, final int max) {
         input.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -309,8 +306,7 @@ public class NodeTools {
         setPositiveValidation(input, Integer.MAX_VALUE);
     }
 
-    public static void setPositiveValidation(final TextField input,
-            final int max) {
+    public static void setPositiveValidation(final TextField input, final int max) {
         input.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -367,19 +363,19 @@ public class NodeTools {
         }
         input.setStyle(badStyle);
         input.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                    String v = input.getText();
-                    if (v == null || v.isEmpty()) {
-                        input.setStyle(badStyle);
-                        return;
-                    }
-                    final File file = new File(newValue);
-                    if (!file.exists() || !file.isFile()) {
-                        input.setStyle(badStyle);
-                        return;
-                    }
-                    input.setStyle(null);
-                    UserConfig.setUserConfigString(key, file.getParent());
-                });
+            String v = input.getText();
+            if (v == null || v.isEmpty()) {
+                input.setStyle(badStyle);
+                return;
+            }
+            final File file = new File(newValue);
+            if (!file.exists() || !file.isFile()) {
+                input.setStyle(badStyle);
+                return;
+            }
+            input.setStyle(null);
+            UserConfig.setUserConfigString(key, file.getParent());
+        });
     }
 
     public static void setPathValidation(final TextField input) {
@@ -553,7 +549,6 @@ public class NodeTools {
         moveXCenter(node);
         moveYCenter(node);
     }
-
 
     // https://stackoverflow.com/questions/38599588/javafx-stage-setmaximized-only-works-once-on-mac-osx-10-9-5
     public static void setMaximized(Stage stage, boolean max) {

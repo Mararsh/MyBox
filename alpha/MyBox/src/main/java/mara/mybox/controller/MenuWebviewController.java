@@ -1,21 +1,24 @@
 package mara.mybox.controller;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
+import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Element;
 
 /**
@@ -23,20 +26,21 @@ import org.w3c.dom.Element;
  * @CreateDate 2021-7-22
  * @License Apache License Version 2.0
  */
-public class PopWebviewEditController extends PopTextBaseController {
+public class MenuWebviewController extends MenuTextBaseController {
 
+    protected HTMLEditor editor;
     protected WebView webView;
     protected Element element;
     protected BaseWebViewController webViewController;
 
     @FXML
-    protected Button selectButton, copyToMyBoxClipboardTextButton, copyToMyBoxClipboardHtmlButton,
+    protected Button copyToMyBoxClipboardTextButton, copyToMyBoxClipboardHtmlButton,
             copyToSystemClipboardTextButton, copyToSystemClipboardHtmlButton;
     @FXML
     protected Label tagLabel, htmlLabel, textLabel;
 
-    public PopWebviewEditController() {
-        baseTitle = Languages.message("Edit");
+    public MenuWebviewController() {
+        baseTitle = message("Edit");
     }
 
     public void setParameters(BaseWebViewController webViewController, Element element) {
@@ -50,14 +54,13 @@ public class PopWebviewEditController extends PopTextBaseController {
             if (webView == null) {
                 return;
             }
-            titleLabel.setText(webView.getId());
-            String tag;
-            if (element != null) {
-                tag = element.getTagName();
-                tagLabel.setText(Languages.message("Tag") + ": " + tag);
+            if (webView.getId() == null) {
+                editor = NodeTools.editor(webView);
+                if (editor != null) {
+                    titleLabel.setText(editor.getId());
+                }
             } else {
-                tag = null;
-                tagLabel.setText("");
+                titleLabel.setText(webView.getId());
             }
 
             webView.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -79,45 +82,51 @@ public class PopWebviewEditController extends PopTextBaseController {
         if (webView == null) {
             return;
         }
-        if (TextClipboardTools.isMonitoring()) {
-            NodeTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
-            NodeTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+        String tag;
+        if (element != null) {
+            tag = element.getTagName();
+            tagLabel.setText(message("Tag") + ": " + tag);
         } else {
-            NodeTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
-            NodeTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+            tag = null;
+            tagLabel.setText("");
         }
-        NodeTools.setTooltip(selectButton, new Tooltip(Languages.message("SelectNode")));
+        if (TextClipboardTools.isMonitoring()) {
+            NodeTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+            NodeTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
+        } else {
+            NodeTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+            NodeTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+h / ALT+h"));
+        }
+        NodeTools.setTooltip(selectButton, new Tooltip(message("SelectNode") + "\nCTRL+u / ALT+u"));
         selectButton.setDisable(element == null);
 
         String html = WebViewTools.getHtml(webView);
-        bottomLabel.setText(Languages.message("Length") + ": " + (html == null ? "0" : html.length()));
+        bottomLabel.setText(message("Length") + ": " + (html == null ? "0" : html.length()));
 
         String htmlSelection = WebViewTools.selectedHtml(webView.getEngine());
-        htmlLabel.setText(Languages.message("Selection") + ": " + (htmlSelection == null ? "0" : htmlSelection.length()));
+        htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : htmlSelection.length()));
         copyToSystemClipboardHtmlButton.setDisable(htmlSelection == null || htmlSelection.isBlank());
         copyToMyBoxClipboardHtmlButton.setDisable(copyToSystemClipboardHtmlButton.isDisable());
 
         String textSelection = WebViewTools.selectedText(webView.getEngine());
-        textLabel.setText(Languages.message("Selection") + ": " + (textSelection == null ? "0" : textSelection.length()));
+        textLabel.setText(message("Selection") + ": " + (textSelection == null ? "0" : textSelection.length()));
         copyToSystemClipboardTextButton.setDisable(textSelection == null || textSelection.isBlank());
         copyToMyBoxClipboardTextButton.setDisable(copyToSystemClipboardTextButton.isDisable());
 
     }
 
+    public void setElement(Element element) {
+        this.element = element;
+        checkWebviewPane();
+    }
+
     @FXML
+    @Override
     public void selectAction() {
         if (webView == null || element == null) {
             return;
         }
-        String id = element.getAttribute("id");
-        String newid = new Date().getTime() + "";
-        element.setAttribute("id", newid);
-        WebViewTools.selectNode(webView.getEngine(), newid);
-        if (id != null) {
-            element.setAttribute("id", id);
-        } else {
-            element.removeAttribute("id");
-        }
+        WebViewTools.selectElement(webView, element);
         checkWebviewPane();
     }
 
@@ -141,14 +150,20 @@ public class PopWebviewEditController extends PopTextBaseController {
         checkWebviewPane();
     }
 
+    @Override
+    public boolean controlAltT() {
+        copyTextToSystemClipboard();
+        return true;
+    }
+
     @FXML
-    public void copyTextClip() {
+    public void copyTextToSystemClipboard() {
         if (webView == null) {
             return;
         }
         String text = WebViewTools.selectedText(webView.getEngine());
         if (text == null || text.isEmpty()) {
-            popError(Languages.message("SelectedNone"));
+            popError(message("SelectedNone"));
             return;
         }
         TextClipboardTools.copyToSystemClipboard(myController, text);
@@ -156,27 +171,33 @@ public class PopWebviewEditController extends PopTextBaseController {
     }
 
     @FXML
-    public void copyTextMybox() {
+    public void copyTextToMyboxClipboard() {
         if (webView == null) {
             return;
         }
         String text = WebViewTools.selectedText(webView.getEngine());
         if (text == null || text.isEmpty()) {
-            popError(Languages.message("SelectedNone"));
+            popError(message("SelectedNone"));
             return;
         }
         TextClipboardTools.copyToMyBoxClipboard(myController, text);
         checkWebviewPane();
     }
 
+    @Override
+    public boolean controlAltH() {
+        copyHtmlToSystemClipboard();
+        return true;
+    }
+
     @FXML
-    public void copyHtmlClip() {
+    public void copyHtmlToSystemClipboard() {
         if (webView == null) {
             return;
         }
         String html = WebViewTools.selectedHtml(webView.getEngine());
         if (html == null || html.isEmpty()) {
-            popError(Languages.message("SelectedNone"));
+            popError(message("SelectedNone"));
             return;
         }
         TextClipboardTools.copyToSystemClipboard(myController, html);
@@ -184,13 +205,13 @@ public class PopWebviewEditController extends PopTextBaseController {
     }
 
     @FXML
-    public void copyHtmlMybox() {
+    public void copyHtmlToMyboxClipboard() {
         if (webView == null) {
             return;
         }
         String html = WebViewTools.selectedHtml(webView.getEngine());
         if (html == null || html.isEmpty()) {
-            popError(Languages.message("SelectedNone"));
+            popError(message("SelectedNone"));
             return;
         }
         TextClipboardTools.copyToMyBoxClipboard(myController, html);
@@ -235,20 +256,20 @@ public class PopWebviewEditController extends PopTextBaseController {
     /*
         static methods
      */
-    public static PopWebviewEditController open(BaseWebViewController parent, Element element, double x, double y) {
+    public static MenuWebviewController open(BaseWebViewController parent, Element element, double x, double y) {
         try {
             if (parent == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.PopWebviewEditFxml, parent.webView, x, y);
+            Popup popup = PopTools.popWindow(parent, Fxmls.MenuWebviewFxml, parent.webView, x, y);
             if (popup == null) {
                 return null;
             }
             Object object = popup.getUserData();
-            if (object == null && !(object instanceof PopWebviewEditController)) {
+            if (object == null && !(object instanceof MenuWebviewController)) {
                 return null;
             }
-            PopWebviewEditController controller = (PopWebviewEditController) object;
+            MenuWebviewController controller = (MenuWebviewController) object;
             controller.setParameters(parent, element);
             return controller;
         } catch (Exception e) {
@@ -256,4 +277,20 @@ public class PopWebviewEditController extends PopTextBaseController {
             return null;
         }
     }
+
+    public static MenuWebviewController running(WebView webview) {
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof MenuWebviewController) {
+                MenuWebviewController controller = (MenuWebviewController) object;
+                if (webview == controller.webView) {
+                    return controller;
+                }
+            }
+        }
+        return null;
+    }
+
 }

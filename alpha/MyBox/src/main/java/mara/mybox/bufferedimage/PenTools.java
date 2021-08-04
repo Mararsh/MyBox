@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.shape.Line;
+import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLines;
@@ -16,9 +17,6 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 
 /**
@@ -68,10 +66,11 @@ public class PenTools {
                 if (strokeColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
                                 target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
@@ -97,12 +96,13 @@ public class PenTools {
                 if (fillColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
-                                target.setRGB(i, j, backImage.getRGB(i, j));
+                                target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
                         }
                     }
@@ -156,10 +156,11 @@ public class PenTools {
                 if (strokeColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
                                 target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
@@ -185,12 +186,13 @@ public class PenTools {
                 if (fillColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
-                                target.setRGB(i, j, backImage.getRGB(i, j));
+                                target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
                         }
                     }
@@ -240,10 +242,11 @@ public class PenTools {
             if (strokeColor.getRGB() == 0) {
                 BufferedImage target = new BufferedImage(width, height, imageType);
                 int black = Color.BLACK.getRGB();
+                int alpha = 255 - (int) (opacity * 255);
                 for (int j = 0; j < height; ++j) {
                     for (int i = 0; i < width; ++i) {
                         if (foreImage.getRGB(i, j) == black) {
-                            target.setRGB(i, j, 0);
+                            target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                         } else {
                             target.setRGB(i, j, srcImage.getRGB(i, j));
                         }
@@ -348,15 +351,17 @@ public class PenTools {
                 if (strokeColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
                                 target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
                         }
                     }
+
                 } else {
                     target = ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
                 }
@@ -377,12 +382,13 @@ public class PenTools {
                 if (fillColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
-                                target.setRGB(i, j, backImage.getRGB(i, j));
+                                target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
                         }
                     }
@@ -442,10 +448,11 @@ public class PenTools {
                 if (strokeColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
                                 target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
@@ -476,15 +483,17 @@ public class PenTools {
                 if (fillColor.getRGB() == 0) {
                     target = new BufferedImage(width, height, imageType);
                     int black = Color.BLACK.getRGB();
+                    int alpha = 255 - (int) (opacity * 255);
                     for (int j = 0; j < height; ++j) {
                         for (int i = 0; i < width; ++i) {
                             if (foreImage.getRGB(i, j) == black) {
-                                target.setRGB(i, j, 0);
+                                target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                             } else {
-                                target.setRGB(i, j, backImage.getRGB(i, j));
+                                target.setRGB(i, j, srcImage.getRGB(i, j));
                             }
                         }
                     }
+
                 } else {
                     target = ImageBlend.blend(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
                 }
@@ -542,15 +551,17 @@ public class PenTools {
             if (strokeColor.getRGB() == 0) {
                 BufferedImage target = new BufferedImage(width, height, imageType);
                 int black = Color.BLACK.getRGB();
+                int alpha = 255 - (int) (opacity * 255);
                 for (int j = 0; j < height; ++j) {
                     for (int i = 0; i < width; ++i) {
                         if (foreImage.getRGB(i, j) == black) {
-                            target.setRGB(i, j, 0);
+                            target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                         } else {
                             target.setRGB(i, j, srcImage.getRGB(i, j));
                         }
                     }
                 }
+
                 return target;
             } else {
                 return ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
@@ -610,10 +621,11 @@ public class PenTools {
             if (strokeColor.getRGB() == 0) {
                 BufferedImage target = new BufferedImage(width, height, imageType);
                 int black = Color.BLACK.getRGB();
+                int alpha = 255 - (int) (opacity * 255);
                 for (int j = 0; j < height; ++j) {
                     for (int i = 0; i < width; ++i) {
                         if (foreImage.getRGB(i, j) == black) {
-                            target.setRGB(i, j, 0);
+                            target.setRGB(i, j, ColorConvertTools.setAlpha(srcImage.getRGB(i, j), alpha));
                         } else {
                             target.setRGB(i, j, srcImage.getRGB(i, j));
                         }
@@ -637,28 +649,6 @@ public class PenTools {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            //            BufferedImage mask = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            //            Graphics2D g = mask.createGraphics();
-            //            g.setColor(CommonImageValues.TRANSPARENT);
-            //            g.fillRect(0, 0, width, height);
-            //            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-            //            g.setComposite(ac);
-            //            g.setColor(Color.BLACK);
-            //            g.setStroke(new BasicStroke(strokeWidth));
-            //            int lastx, lasty = -1, thisx, thisy;
-            //            for (List<DoublePoint> lineData : penData.getLines()) {
-            //                lastx = -1;
-            //                for (DoublePoint p : lineData) {
-            //                    thisx = (int) Math.round(p.getX());
-            //                    thisy = (int) Math.round(p.getY());
-            //                    if (lastx >= 0) {
-            //                        g.drawLine(lastx, lasty, thisx, thisy);
-            //                    }
-            //                    lastx = thisx;
-            //                    lasty = thisy;
-            //                }
-            //            }
-            //            g.dispose();
             int imageType = source.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
@@ -717,17 +707,6 @@ public class PenTools {
                     }
                 }
             }
-            //            int pixel, white = Color.BLACK.getRGB();
-            //            for (int j = 0; j < height; ++j) {
-            //                for (int i = 0; i < width; ++i) {
-            //                    pixel = source.getRGB(i, j);
-            //                    if (pixel == 0 || mask.getRGB(i, j) == 0) {
-            //                        continue;
-            //                    }
-            ////                    pixel = mosaic(source, width, height, i, j, mosaicType, strokeWidth);
-            //                    target.setRGB(i, j, pixel);
-            //                }
-            //            }
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

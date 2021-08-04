@@ -26,14 +26,14 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-7-22
  * @License Apache License Version 2.0
  */
-public class PopTextEditController extends PopTextBaseController {
+public class MenuTextEditController extends MenuTextBaseController {
 
     @FXML
     protected HBox fileBox;
     @FXML
     protected Button findButton, replaceButton;
 
-    public PopTextEditController() {
+    public MenuTextEditController() {
         baseTitle = Languages.message("Texts");
     }
 
@@ -309,20 +309,20 @@ public class PopTextEditController extends PopTextBaseController {
     /*
         static methods
      */
-    public static PopTextEditController open(BaseController parent, Node node, double x, double y) {
+    public static MenuTextEditController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.PopTextEditFxml, node, x, y);
+            Popup popup = PopTools.popWindow(parent, Fxmls.MenuTextEditFxml, node, x, y);
             if (popup == null) {
                 return null;
             }
             Object object = popup.getUserData();
-            if (object == null && !(object instanceof PopTextEditController)) {
+            if (object == null && !(object instanceof MenuTextEditController)) {
                 return null;
             }
-            PopTextEditController controller = (PopTextEditController) object;
+            MenuTextEditController controller = (MenuTextEditController) object;
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
@@ -331,11 +331,11 @@ public class PopTextEditController extends PopTextBaseController {
         }
     }
 
-    public static PopTextEditController open(BaseController parent, Node node, MouseEvent event) {
+    public static MenuTextEditController open(BaseController parent, Node node, MouseEvent event) {
         return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
-    public static PopTextEditController open(BaseController parent, Node node, ContextMenuEvent event) {
+    public static MenuTextEditController open(BaseController parent, Node node, ContextMenuEvent event) {
         return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 }

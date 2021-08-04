@@ -17,14 +17,14 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-7-4
  * @License Apache License Version 2.0
  */
-public class PopTextClipboardController extends PopTextBaseController {
+public class TextClipboardPopController extends MenuTextBaseController {
 
     protected String lastSystemClip;
 
     @FXML
     protected ControlTextClipboard clipboardController;
 
-    public PopTextClipboardController() {
+    public TextClipboardPopController() {
         baseTitle = Languages.message("MyBoxClipboard");
     }
 
@@ -56,7 +56,7 @@ public class PopTextClipboardController extends PopTextBaseController {
     /*
         static methods
      */
-    public static PopTextClipboardController open(BaseController parent, Node node, double x, double y) {
+    public static TextClipboardPopController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;
@@ -65,12 +65,12 @@ public class PopTextClipboardController extends PopTextBaseController {
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
                 Object object = window.getUserData();
-                if (object != null && object instanceof PopTextClipboardController) {
-                    ((PopTextClipboardController) object).close();
+                if (object != null && object instanceof TextClipboardPopController) {
+                    ((TextClipboardPopController) object).close();
                 }
             }
-            PopTextClipboardController controller
-                    = (PopTextClipboardController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.PopTextClipboardFxml, false);
+            TextClipboardPopController controller
+                    = (TextClipboardPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.TextClipboardPopFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class PopTextClipboardController extends PopTextBaseController {
         }
     }
 
-    public static PopTextClipboardController open(BaseController parent, Node node) {
+    public static TextClipboardPopController open(BaseController parent, Node node) {
         if (parent == null || node == null) {
             return null;
         }

@@ -8,109 +8,50 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Popup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
-
 import mara.mybox.tools.UrlTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2021-3-5
+ * @CreateDate 2021-8-4
  * @License Apache License Version 2.0
  */
-public class ControlHtmlCodes extends BaseController {
+public class MenuHtmlCodesController extends MenuTextEditController {
 
-    @FXML
-    protected TextArea codesArea;
-    @FXML
-    protected Button pasteTxtButton;
-    @FXML
-    protected CheckBox wrapCheck;
-
-    public ControlHtmlCodes() {
-        baseTitle = Languages.message("Html");
+    public MenuHtmlCodesController() {
+        baseTitle = "HtmlCodes";
     }
 
     @Override
-    public void setControlsStyle() {
+    public void setParameters(BaseController parent, Node node, double x, double y) {
         try {
-            super.setControlsStyle();
-            NodeTools.setTooltip(pasteTxtButton, new Tooltip(Languages.message("PasteTexts")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    public void setParameters(BaseController parent) {
-        try {
-            this.parentController = parent;
-            this.baseName = parent.baseName;
-
-            wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Wrap", true));
-            wrapCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Wrap", wrapCheck.isSelected());
-                        codesArea.setWrapText(wrapCheck.isSelected());
-                    });
-            codesArea.setWrapText(wrapCheck.isSelected());
-            codesArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                @Override
-                public void handle(ContextMenuEvent event) {
-                    popCodesMenu((Node) event.getSource(), event.getScreenX() + 40, event.getScreenY() + 40);
-                }
-            });
+            super.setParameters(parent, node, x, y);
+            addHtmlButtons();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void load(String codes) {
-        codesArea.setText(codes);
-    }
-
-    public String codes() {
-        return codesArea.getText();
-    }
-
-    protected void insertText(String string) {
-        IndexRange range = codesArea.getSelection();
-        codesArea.insertText(range.getStart(), string);
-        codesArea.requestFocus();
-    }
-
-    @FXML
-    public void popCodesMenu(MouseEvent event) {
-        popCodesMenu((Node) event.getSource(), event.getScreenX() + 40, event.getScreenY() + 40);
-    }
-
-    public void popCodesMenu(Node owner, double x, double y) {
+    public void addHtmlButtons() {
         try {
-            MenuTextEditController controller = MenuTextEditController.open(myController, codesArea, x, y);
-            controller.setWidth(500);
-
-            controller.addNode(new Separator());
+            if (textInput == null) {
+                return;
+            }
+            addNode(new Separator());
 
             List<Node> aNodes = new ArrayList<>();
 
@@ -142,7 +83,7 @@ public class ControlHtmlCodes extends BaseController {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                             addTable(controller.rowsNumber, controller.colsNumber);
-                            controller.closeStage();
+                            closeStage();
                         }
                     });
                 }
@@ -194,8 +135,7 @@ public class ControlHtmlCodes extends BaseController {
             });
             aNodes.add(link);
 
-            controller.addFlowPane(aNodes);
-            controller.addNode(new Separator());
+            addFlowPane(aNodes);
 
             List<Node> headNodes = new ArrayList<>();
             for (int i = 1; i <= 6; i++) {
@@ -211,8 +151,7 @@ public class ControlHtmlCodes extends BaseController {
                 headNodes.add(head);
             }
 
-            controller.addFlowPane(headNodes);
-            controller.addNode(new Separator());
+            addFlowPane(headNodes);
 
             List<Node> listNodes = new ArrayList<>();
             Button numberedList = new Button(Languages.message("NumberedList"));
@@ -247,8 +186,7 @@ public class ControlHtmlCodes extends BaseController {
             });
             listNodes.add(bulletedList);
 
-            controller.addFlowPane(listNodes);
-            controller.addNode(new Separator());
+            addFlowPane(listNodes);
 
             List<Node> codeNodes = new ArrayList<>();
             Button block = new Button(Languages.message("Block"));
@@ -322,8 +260,7 @@ public class ControlHtmlCodes extends BaseController {
             });
             codeNodes.add(bold);
 
-            controller.addFlowPane(codeNodes);
-            controller.addNode(new Separator());
+            addFlowPane(codeNodes);
 
             List<Node> charNodes = new ArrayList<>();
 
@@ -399,8 +336,7 @@ public class ControlHtmlCodes extends BaseController {
             });
             charNodes.add(trademark);
 
-            controller.addFlowPane(charNodes);
-            controller.addNode(new Separator());
+            addFlowPane(charNodes);
 
             Hyperlink about = new Hyperlink(Languages.message("AboutHtml"));
             about.setOnAction(new EventHandler<ActionEvent>() {
@@ -413,11 +349,17 @@ public class ControlHtmlCodes extends BaseController {
                     }
                 }
             });
-            controller.addNode(about);
+            addNode(about);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    protected void insertText(String string) {
+        IndexRange range = textInput.getSelection();
+        textInput.insertText(range.getStart(), string);
+        textInput.requestFocus();
     }
 
     public void addTable(int rowsNumber, int colsNumber) {
@@ -437,28 +379,37 @@ public class ControlHtmlCodes extends BaseController {
         insertText(s);
     }
 
-    @FXML
-    public void pasteTxt() {
-        String string = TextClipboardTools.getSystemClipboardString();
-        if (string == null || string.isBlank()) {
-            popError(Languages.message("NoData"));
-            return;
+    /*
+        static methods
+     */
+    public static MenuHtmlCodesController open(BaseController parent, Node node, double x, double y) {
+        try {
+            if (parent == null || node == null) {
+                return null;
+            }
+            Popup popup = PopTools.popWindow(parent, Fxmls.MenuHtmlCodesFxml, node, x, y);
+            if (popup == null) {
+                return null;
+            }
+            Object object = popup.getUserData();
+            if (object == null && !(object instanceof MenuHtmlCodesController)) {
+                return null;
+            }
+            MenuHtmlCodesController controller = (MenuHtmlCodesController) object;
+            controller.setParameters(parent, node, x, y);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
-        string = UrlTools.encodeEscape(string);
-        insertText(string);
     }
 
-    @FXML
-    @Override
-    public void clearAction() {
-        codesArea.clear();
+    public static MenuHtmlCodesController open(BaseController parent, Node node, MouseEvent event) {
+        return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
-    @FXML
-    public void editAction() {
-        TextEditerController controller = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
-        controller.loadContexts(codesArea.getText());
-        controller.toFront();
+    public static MenuHtmlCodesController open(BaseController parent, Node node, ContextMenuEvent event) {
+        return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
 }

@@ -16,7 +16,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="-Infinity" minHeight="-Infinity" prefWidth="400.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PopWebviewEditController">
+<VBox fx:id="thisPane" maxHeight="-Infinity" minHeight="-Infinity" prefWidth="400.0" spacing="5.0" 
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuWebviewController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -108,7 +109,7 @@ License:    Apache License Version 2.0
                         <FlowPane fx:id="editPane" hgap="5.0" prefWrapLength="600.0" vgap="5.0">
                             <children>
                                 <Label text="Html" />
-                                <Button fx:id="copyToSystemClipboardHtmlButton" mnemonicParsing="false" onAction="#copyHtmlClip">
+                                <Button fx:id="copyToSystemClipboardHtmlButton" mnemonicParsing="false" onAction="#copyHtmlToSystemClipboard">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -117,7 +118,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="copyToMyBoxClipboardHtmlButton" mnemonicParsing="false" onAction="#copyHtmlMybox">
+                                <Button fx:id="copyToMyBoxClipboardHtmlButton" mnemonicParsing="false" onAction="#copyHtmlToMyboxClipboard">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -126,13 +127,13 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                        <Label fx:id="htmlLabel" maxWidth="1.7976931348623157E308" />
+                                <Label fx:id="htmlLabel" maxWidth="1.7976931348623157E308" />
                             </children>
                         </FlowPane>
                         <FlowPane fx:id="editPane1" hgap="5.0" layoutX="10.0" layoutY="43.0" prefWrapLength="600.0" vgap="5.0">
                             <children>
                                 <Label text="%Text" />
-                                <Button fx:id="copyToSystemClipboardTextButton" mnemonicParsing="false" onAction="#copyTextClip">
+                                <Button fx:id="copyToSystemClipboardTextButton" mnemonicParsing="false" onAction="#copyTextToSystemClipboard">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -141,7 +142,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="copyToMyBoxClipboardTextButton" mnemonicParsing="false" onAction="#copyTextMybox">
+                                <Button fx:id="copyToMyBoxClipboardTextButton" mnemonicParsing="false" onAction="#copyTextToMyboxClipboard">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -150,7 +151,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                        <Label fx:id="textLabel" maxWidth="1.7976931348623157E308" />
+                                <Label fx:id="textLabel" maxWidth="1.7976931348623157E308" />
                             </children>
                         </FlowPane>
                         <FlowPane hgap="5.0" prefWrapLength="600.0" vgap="5.0">

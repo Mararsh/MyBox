@@ -15,15 +15,10 @@ import mara.mybox.db.data.Notebook;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.SoundTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -99,7 +94,7 @@ public class NotesImportController extends BaseBatchFileController {
             String line;
             while ((line = reader.readLine()) != null && line.isBlank()) {
             }
-            if (line.equals(AppValues.MyBoxSeparator)) {
+            if (line.startsWith(AppValues.MyBoxSeparator)) {
                 return importNotes(conn, reader);
             } else {
                 return importNotesOfOldVersions(conn, reader, line);
@@ -150,11 +145,13 @@ public class NotesImportController extends BaseBatchFileController {
                 if (line != null) {
                     if (line.startsWith(Note.NoteTimePrefix)) {
                         time = DateTools.stringToDatetime(line.substring(Note.NoteTimePrefix.length()));
+                    } else {
+                        time = DateTools.stringToDatetime(line);
                     }
                     if (time == null) {
                         html = line;
                     }
-                    while ((line = reader.readLine()) != null && !line.equals(AppValues.MyBoxSeparator)) {
+                    while ((line = reader.readLine()) != null && !line.startsWith(AppValues.MyBoxSeparator)) {
                         if (html == null) {
                             html = line;
                         } else {

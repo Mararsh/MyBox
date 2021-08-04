@@ -82,6 +82,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
     protected TableWebHistory tableWebHistory;
+    protected Element element;
 
     public static final int TmpState = -9;
     public static final int NoDoc = -3;
@@ -175,10 +176,8 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
                 @Override
                 public void handleEvent(org.w3c.dom.events.Event ev) {
                     try {
-
                         String domEventType = ev.getType();
                         String tag = null, href = null;
-                        Element element;
                         if (ev.getTarget() != null) {
                             element = (Element) ev.getTarget();
                             tag = element.getTagName();
@@ -234,6 +233,10 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
                                 }
                             }, 100);
                         }
+                        MenuWebviewController menu = MenuWebviewController.running(webView);
+                        if (menu != null) {
+                            menu.setElement(element);
+                        }
                     } catch (Exception e) {
                         MyBoxLog.error(e);
                     }
@@ -277,7 +280,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
             webEngine.setPromptHandler(new Callback< PromptData, String>() {
                 @Override
                 public String call(PromptData p) {
-                    MyBoxLog.console("here:" + p.getMessage());
+//                    MyBoxLog.console("here:" + p.getMessage());
                     if (parentController != null) {
                         String value = PopTools.askValue(parentController.getBaseTitle(), null, p.getMessage(), p.getDefaultValue());
                         return value;
@@ -294,7 +297,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
                         if (parentController == null) {
                             return false;
                         }
-                        MyBoxLog.console("here:" + message);
+//                        MyBoxLog.console("here:" + message);
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle(parentController.getBaseTitle());
                         alert.setHeaderText(null);
@@ -529,7 +532,6 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
                 backwardButton.setDisable(hisSize < 2);
                 forwardButton.setDisable(hisSize < 2);
             }
-            MyBoxLog.console(webView.getId());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -597,7 +599,6 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
             href = element.getAttribute("src");
             hname = element.getAttribute("alt");
         }
-        MyBoxLog.console(tag + " " + href + " " + hname);
         if (href == null) {
             return;
         }
@@ -769,7 +770,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
             if (linkX < 0 || linkY < 0) {
                 return;
             }
-            PopWebviewEditController.open((BaseWebViewController) this, element, linkX, linkY);
+            MenuWebviewController.open((BaseWebViewController) this, element, linkX, linkY);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

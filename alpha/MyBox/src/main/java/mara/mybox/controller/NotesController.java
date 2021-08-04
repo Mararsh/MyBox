@@ -1324,7 +1324,7 @@ public class NotesController extends BaseDataTableController<Note> {
 
     @FXML
     public void popMarkdownValues(MouseEvent mouseEvent) {
-        PopMarkdownEditController.open(myController, markdownArea, mouseEvent);
+        MenuMarkdownEditController.open(myController, markdownArea, mouseEvent);
     }
 
     protected String md2html(String md) {

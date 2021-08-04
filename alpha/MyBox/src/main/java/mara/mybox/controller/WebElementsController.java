@@ -252,7 +252,7 @@ public class WebElementsController extends BaseWebViewController {
                 buttons.add(button);
             }
 
-            PopController controller = PopController.open(this, elementInputController.selector, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(this, elementInputController.selector, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addFlowPane(buttons);
 
         } catch (Exception e) {

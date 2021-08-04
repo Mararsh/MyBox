@@ -13,9 +13,9 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-7-22
  * @License Apache License Version 2.0
  */
-public class PopColorsController extends ColorsManageController {
+public class ColorsPopController extends ColorsManageController {
 
-    public PopColorsController() {
+    public ColorsPopController() {
         baseTitle = Languages.message("PickingColorsNow");
     }
 
@@ -60,16 +60,16 @@ public class PopColorsController extends ColorsManageController {
     /*
         static methods
      */
-    public static PopColorsController oneOpen(BaseController parent) {
+    public static ColorsPopController oneOpen(BaseController parent) {
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof PopColorsController) {
-                ((PopColorsController) object).close();
+            if (object != null && object instanceof ColorsPopController) {
+                ((ColorsPopController) object).close();
             }
         }
-        PopColorsController controller = (PopColorsController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.PopColorsFxml, false);
+        ColorsPopController controller = (ColorsPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.ColorsPopFxml, false);
         controller.setParameters(parent);
         return controller;
     }

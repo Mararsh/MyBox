@@ -22,8 +22,6 @@ import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -232,6 +230,11 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void selectNoneAction() {
+
+    }
+
+    @FXML
+    public void selectAction() {
 
     }
 

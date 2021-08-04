@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -20,86 +19,86 @@ import mara.mybox.value.Languages;
 public class PixelsBlendFactory {
 
     public static List<String> blendModes() {
-        return Arrays.asList(Languages.message("NormalMode"),
-                Languages.message("DissolveMode"), Languages.message("MultiplyMode"), Languages.message("ScreenMode"),
-                Languages.message("OverlayMode"), Languages.message("HardLightMode"), Languages.message("SoftLightMode"),
-                Languages.message("ColorDodgeMode"), Languages.message("LinearDodgeMode"), Languages.message("DivideMode"),
-                Languages.message("ColorBurnMode"), Languages.message("LinearBurnMode"), Languages.message("VividLightMode"),
-                Languages.message("LinearLightMode"), Languages.message("SubtractMode"), Languages.message("DifferenceMode"),
-                Languages.message("ExclusionMode"), Languages.message("DarkenMode"), Languages.message("LightenMode"),
-                Languages.message("HueMode"), Languages.message("SaturationMode"), Languages.message("ColorMode"),
-                Languages.message("LuminosityMode"));
+        return Arrays.asList(message("NormalMode"),
+                message("DissolveMode"), message("MultiplyMode"), message("ScreenMode"),
+                message("OverlayMode"), message("HardLightMode"), message("SoftLightMode"),
+                message("ColorDodgeMode"), message("LinearDodgeMode"), message("DivideMode"),
+                message("ColorBurnMode"), message("LinearBurnMode"), message("VividLightMode"),
+                message("LinearLightMode"), message("SubtractMode"), message("DifferenceMode"),
+                message("ExclusionMode"), message("DarkenMode"), message("LightenMode"),
+                message("HueMode"), message("SaturationMode"), message("ColorMode"),
+                message("LuminosityMode"));
     }
 
     public static ImagesBlendMode blendMode(String mode) {
 
-        if (Languages.message("NormalMode").equals(mode)) {
+        if (message("NormalMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.NORMAL;
 
-        } else if (Languages.message("DissolveMode").equals(mode)) {
+        } else if (message("DissolveMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.DISSOLVE;
 
-        } else if (Languages.message("MultiplyMode").equals(mode)) {
+        } else if (message("MultiplyMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.MULTIPLY;
 
-        } else if (Languages.message("ScreenMode").equals(mode)) {
+        } else if (message("ScreenMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.SCREEN;
 
-        } else if (Languages.message("OverlayMode").equals(mode)) {
+        } else if (message("OverlayMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.OVERLAY;
 
-        } else if (Languages.message("HardLightMode").equals(mode)) {
+        } else if (message("HardLightMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.HARD_LIGHT;
 
-        } else if (Languages.message("SoftLightMode").equals(mode)) {
+        } else if (message("SoftLightMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.SOFT_LIGHT;
 
-        } else if (Languages.message("ColorDodgeMode").equals(mode)) {
+        } else if (message("ColorDodgeMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.COLOR_DODGE;
 
-        } else if (Languages.message("LinearDodgeMode").equals(mode)) {
+        } else if (message("LinearDodgeMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.LINEAR_DODGE;
 
-        } else if (Languages.message("DivideMode").equals(mode)) {
+        } else if (message("DivideMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.DIVIDE;
 
-        } else if (Languages.message("ColorBurnMode").equals(mode)) {
+        } else if (message("ColorBurnMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.COLOR_BURN;
 
-        } else if (Languages.message("LinearBurnMode").equals(mode)) {
+        } else if (message("LinearBurnMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.LINEAR_BURN;
 
-        } else if (Languages.message("VividLightMode").equals(mode)) {
+        } else if (message("VividLightMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.VIVID_LIGHT;
 
-        } else if (Languages.message("LinearLightMode").equals(mode)) {
+        } else if (message("LinearLightMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.LINEAR_LIGHT;
 
-        } else if (Languages.message("SubtractMode").equals(mode)) {
+        } else if (message("SubtractMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.SUBTRACT;
 
-        } else if (Languages.message("DifferenceMode").equals(mode)) {
+        } else if (message("DifferenceMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.DIFFERENCE;
 
-        } else if (Languages.message("ExclusionMode").equals(mode)) {
+        } else if (message("ExclusionMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.EXCLUSION;
 
-        } else if (Languages.message("DarkenMode").equals(mode)) {
+        } else if (message("DarkenMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.DARKEN;
 
-        } else if (Languages.message("LightenMode").equals(mode)) {
+        } else if (message("LightenMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.LIGHTEN;
 
-        } else if (Languages.message("HueMode").equals(mode)) {
+        } else if (message("HueMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.HUE;
 
-        } else if (Languages.message("SaturationMode").equals(mode)) {
+        } else if (message("SaturationMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.SATURATION;
 
-        } else if (Languages.message("ColorMode").equals(mode)) {
+        } else if (message("ColorMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.COLOR;
 
-        } else if (Languages.message("LuminosityMode").equals(mode)) {
+        } else if (message("LuminosityMode").equals(mode)) {
             return PixelsBlend.ImagesBlendMode.LUMINOSITY;
 
         } else {

@@ -162,6 +162,13 @@ public class HtmlEditorController extends BaseWebViewController {
                 }
             });
 
+            codesArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                @Override
+                public void handle(ContextMenuEvent event) {
+                    MenuHtmlCodesController.open(myController, codesArea, event);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -182,7 +189,7 @@ public class HtmlEditorController extends BaseWebViewController {
             markdownArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
-                    PopMarkdownEditController.open(myController, markdownArea, event);
+                    MenuMarkdownEditController.open(myController, markdownArea, event);
                 }
             });
 
@@ -490,7 +497,7 @@ public class HtmlEditorController extends BaseWebViewController {
 
     public void popCodesMenu(javafx.scene.Node owner, double x, double y) {
         try {
-            PopTextEditController controller = PopTextEditController.open(myController, codesArea, x, y);
+            MenuTextEditController controller = MenuTextEditController.open(myController, codesArea, x, y);
             controller.setWidth(500);
 
             controller.addNode(new Separator());
@@ -874,7 +881,7 @@ public class HtmlEditorController extends BaseWebViewController {
     @FXML
     public void popEditorMenu(MouseEvent mouseEvent) { // ****
         try {
-            PopTextEditController controller = PopTextEditController.open(myController, markdownArea, mouseEvent);
+            MenuTextEditController controller = MenuTextEditController.open(myController, markdownArea, mouseEvent);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -971,7 +978,7 @@ public class HtmlEditorController extends BaseWebViewController {
 
     @FXML
     public void popMarkdownMenu(MouseEvent mouseEvent) {
-        PopMarkdownEditController.open(myController, markdownArea, mouseEvent);
+        MenuMarkdownEditController.open(myController, markdownArea, mouseEvent);
     }
 
     @FXML
@@ -993,7 +1000,7 @@ public class HtmlEditorController extends BaseWebViewController {
 
     @FXML
     public void popTextsMenu(MouseEvent mouseEvent) {
-        PopTextEditController.open(myController, markdownArea, mouseEvent);
+        MenuTextEditController.open(myController, markdownArea, mouseEvent);
     }
 
     @FXML

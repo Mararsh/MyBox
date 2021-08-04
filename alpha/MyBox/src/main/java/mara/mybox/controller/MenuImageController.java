@@ -6,19 +6,18 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
- * @CreateDate 2021-6-27
+ * @CreateDate 2021-8-4
  * @License Apache License Version 2.0
  */
-public class PopTextBaseController extends PopController {
+public class MenuImageController extends MenuController {
 
     protected TextInputControl textInput;
 
-    public PopTextBaseController() {
+    public MenuImageController() {
         baseTitle = Languages.message("Value");
     }
 
@@ -48,7 +47,7 @@ public class PopTextBaseController extends PopController {
         if (textInput == null) {
             super.myBoxClipBoard();
         } else {
-            PopTextClipboardController.open(parentController, node);
+            TextClipboardPopController.open(parentController, node);
         }
     }
 
@@ -57,7 +56,7 @@ public class PopTextBaseController extends PopController {
         if (parentController == null || node == null) {
             return;
         }
-        PopTextEditController.open(parentController, node, initX, initY);
+        MenuTextEditController.open(parentController, node, initX, initY);
     }
 
     @FXML
@@ -67,7 +66,7 @@ public class PopTextBaseController extends PopController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        PopFindController.open(parentController, node, window.getX(), window.getY());
+        FindPopController.open(parentController, node, window.getX(), window.getY());
         window.hide();
     }
 
@@ -78,7 +77,7 @@ public class PopTextBaseController extends PopController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        PopFindReplaceController.open(parentController, node, window.getX(), window.getY());
+        FindReplacePopController.open(parentController, node, window.getX(), window.getY());
         window.hide();
     }
 

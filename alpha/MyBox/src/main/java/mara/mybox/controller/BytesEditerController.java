@@ -344,7 +344,7 @@ public class BytesEditerController extends BaseFileEditerController {
     @FXML
     @Override
     public void popButtons(MouseEvent mouseEvent) {
-        PopBytesEditController.open(myController, mainArea, mouseEvent);
+        MenuBytesEditController.open(myController, mainArea, mouseEvent);
     }
 
     @Override
@@ -354,7 +354,7 @@ public class BytesEditerController extends BaseFileEditerController {
                 node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                     @Override
                     public void handle(ContextMenuEvent event) {
-                        PopBytesEditController.open(myController, node, event);
+                        MenuBytesEditController.open(myController, node, event);
                     }
                 });
             } else {

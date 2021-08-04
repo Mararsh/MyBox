@@ -7,8 +7,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.AppVariables;
 
@@ -190,6 +190,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
             case K:
                 return controlAltK();
+
+            case U:
+                return controlAltU();
 
             case MINUS:
                 setSceneFontSize(AppVariables.sceneFontSize - 1);
@@ -499,13 +502,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         EventTarget target = keyEvent.getTarget();
         if (target != null) {
             if (target instanceof TextInputControl) {
-                PopTextClipboardController.open(myController, (TextInputControl) target);
+                TextClipboardPopController.open(myController, (TextInputControl) target);
                 return true;
             }
             if (target instanceof ComboBox) {
                 ComboBox cb = (ComboBox) target;
                 if (cb.isEditable()) {
-                    PopTextClipboardController.open(myController, cb);
+                    TextClipboardPopController.open(myController, cb);
                     return true;
                 }
             }
@@ -524,6 +527,16 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltK() {
+        return false;
+    }
+
+    public boolean controlAltU() {
+        if (selectButton != null) {
+            if (!selectButton.isDisabled() && selectButton.isVisible()) {
+                selectAction();
+            }
+            return true;
+        }
         return false;
     }
 

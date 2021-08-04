@@ -22,6 +22,7 @@ import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
@@ -604,6 +605,65 @@ public class BaseWebViewController extends BaseWebViewController_Attributes {
         TextEditerController c = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
         c.loadContexts(texts);
         c.toFront();
+    }
+
+    @Override
+    public boolean controlAltO() {
+        selectNoneAction();
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void selectNoneAction() {
+        WebViewTools.selectNone(webView.getEngine());
+    }
+
+    @Override
+    public boolean controlAltU() {
+        selectAction();
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        WebViewTools.selectElement(webView, element);
+    }
+
+    @Override
+    public boolean controlAltT() {
+        copyTextToSystemClipboard();
+        return true;
+    }
+
+    @FXML
+    public void copyTextToSystemClipboard() {
+        if (webView == null) {
+            return;
+        }
+        String text = WebViewTools.selectedText(webView.getEngine());
+        if (text == null || text.isEmpty()) {
+            popError(message("SelectedNone"));
+            return;
+        }
+        TextClipboardTools.copyToSystemClipboard(myController, text);
+    }
+
+    @Override
+    public boolean controlAltH() {
+        copyHtmlToSystemClipboard();
+        return true;
+    }
+
+    @FXML
+    public void copyHtmlToSystemClipboard() {
+        String html = WebViewTools.selectedHtml(webView.getEngine());
+        if (html == null || html.isEmpty()) {
+            popError(message("SelectedNone"));
+            return;
+        }
+        TextClipboardTools.copyToSystemClipboard(myController, html);
     }
 
 }

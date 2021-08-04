@@ -336,7 +336,7 @@ public class MarkdownEditerController extends TextEditerController {
                 node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                     @Override
                     public void handle(ContextMenuEvent event) {
-                        PopMarkdownEditController.open(myController, node, event);
+                        MenuMarkdownEditController.open(myController, node, event);
                     }
                 });
             } else {
@@ -350,7 +350,7 @@ public class MarkdownEditerController extends TextEditerController {
     @FXML
     @Override
     public void popButtons(MouseEvent mouseEvent) {
-        PopMarkdownEditController.open(myController, mainArea, mouseEvent);
+        MenuMarkdownEditController.open(myController, mainArea, mouseEvent);
     }
 
     @FXML

@@ -320,15 +320,18 @@ public class Fxmls {
 
     public static final String TableSizeFxml = "/fxml/TableSize.fxml";
 
-    public static final String PopFxml = "/fxml/Pop.fxml";
-    public static final String PopTextEditFxml = "/fxml/PopTextEdit.fxml";
-    public static final String PopBytesEditFxml = "/fxml/PopBytesEdit.fxml";
-    public static final String PopMarkdownEditFxml = "/fxml/PopMarkdownEdit.fxml";
-    public static final String PopWebviewEditFxml = "/fxml/PopWebviewEdit.fxml";
-    public static final String PopTextClipboardFxml = "/fxml/PopTextClipboard.fxml";
-    public static final String PopFindReplaceFxml = "/fxml/PopFindReplace.fxml";
-    public static final String PopFindFxml = "/fxml/PopFind.fxml";
-    public static final String PopColorsFxml = "/fxml/PopColors.fxml";
+    public static final String MenuFxml = "/fxml/Menu.fxml";
+    public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";
+    public static final String MenuBytesEditFxml = "/fxml/MenuBytesEdit.fxml";
+    public static final String MenuMarkdownEditFxml = "/fxml/MenuMarkdownEdit.fxml";
+    public static final String MenuHtmlCodesFxml = "/fxml/MenuHtmlCodes.fxml";
+    public static final String MenuWebviewFxml = "/fxml/MenuWebview.fxml";
+    public static final String MenuImageFxml = "/fxml/MenuImage.fxml";
+
+    public static final String TextClipboardPopFxml = "/fxml/TextClipboardPop.fxml";
+    public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";
+    public static final String FindPopFxml = "/fxml/FindPop.fxml";
+    public static final String ColorsPopFxml = "/fxml/ColorsPop.fxml";
 
     public static final String TreeNodeMoveFxml = "/fxml/TreeNodeMove.fxml";
     public static final String TreeNodeCopyFxml = "/fxml/TreeNodeCopy.fxml";

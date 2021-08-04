@@ -63,7 +63,8 @@ public class PenTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawLines(source, polyline, toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed, ignoreTransparent);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawLines(source, polyline,
+                toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed, ignoreTransparent);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -75,7 +76,8 @@ public class PenTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawLines(source, penData, toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed, ignoreTransparent);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawLines(source, penData,
+                toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed, ignoreTransparent);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -87,7 +89,8 @@ public class PenTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolyline(source, polyline, toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed, ignoreTransparent);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolyline(source, polyline,
+                toAwtColor(strokeColor), strokeWidth, dotted, blendMode, opacity, orderReversed, ignoreTransparent);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -99,7 +102,8 @@ public class PenTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawRectangle(source, rect, toAwtColor(strokeColor), strokeWidth, arcWidth, dotted, isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed, ignoreTransparent);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawRectangle(source, rect,
+                toAwtColor(strokeColor), strokeWidth, arcWidth, dotted, isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed, ignoreTransparent);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -111,7 +115,8 @@ public class PenTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawEllipse(source, ellipse, toAwtColor(strokeColor), strokeWidth, dotted, isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed, ignoreTransparent);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawEllipse(source, ellipse,
+                toAwtColor(strokeColor), strokeWidth, dotted, isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed, ignoreTransparent);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -123,7 +128,8 @@ public class PenTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolygon(source, polygon, toAwtColor(strokeColor), strokeWidth, dotted, isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed, ignoreTransparent);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolygon(source, polygon,
+                toAwtColor(strokeColor), strokeWidth, dotted, isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed, ignoreTransparent);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

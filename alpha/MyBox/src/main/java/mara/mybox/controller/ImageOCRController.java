@@ -1215,7 +1215,7 @@ public class ImageOCRController extends ImageViewerController {
 
     @FXML
     public void popTextEditPane(MouseEvent mouseEvent) {
-        PopTextEditController.open(myController, textArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
+        MenuTextEditController.open(myController, textArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 
     @Override

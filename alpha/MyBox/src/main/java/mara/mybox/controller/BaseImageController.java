@@ -1116,7 +1116,7 @@ public abstract class BaseImageController extends BaseController {
 
     protected void startPickingColor() {
         if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = PopColorsController.oneOpen(this);
+            paletteController = ColorsPopController.oneOpen(this);
             if (imageLabel != null) {
                 imageLabelOriginal = new Label(imageLabel.getText());
                 imageLabelOriginal.setStyle(imageLabel.getStyle());

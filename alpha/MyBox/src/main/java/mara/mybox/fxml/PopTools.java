@@ -30,7 +30,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.PopController;
+import mara.mybox.controller.MenuController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -320,7 +320,7 @@ public class PopTools {
 
     public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
-            PopController controller = PopController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             List<String> values = Arrays.asList("^      " + Languages.message("StartLocation"), "$      " + Languages.message("EndLocation"), "*      " + Languages.message("ZeroOrNTimes"), "+      " + Languages.message("OneOrNTimes"), "?      " + Languages.message("ZeroOrOneTimes"), "{n}      " + Languages.message("NTimes"), "{n,}      " + Languages.message("N+Times"), "{n,m}      " + Languages.message("NMTimes"), "|      " + Languages.message("Or"), "[abc]      " + Languages.message("MatchOneCharacters"), "[A-Z]      " + Languages.message("A-Z"), "\\x20      " + Languages.message("Blank"), "\\s      " + Languages.message("NonprintableCharacter"), "\\S      " + Languages.message("PrintableCharacter"), "\\n      " + Languages.message("LineBreak"), "\\r      " + Languages.message("CarriageReturn"), "\\t      " + Languages.message("Tab"), "[0-9]{n}      " + Languages.message("NNumber"), "[A-Z]{n}      " + Languages.message("NUppercase"), "[a-z]{n}      " + Languages.message("NLowercase"), "[\\u4e00-\\u9fa5]      " + Languages.message("Chinese"), "[^\\x00-\\xff]      " + Languages.message("DoubleByteCharacter"), "[A-Za-z0-9]+      " + Languages.message("EnglishAndNumber"), "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      " + Languages.message("Email"), "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + Languages.message("PhoneNumber"), "[a-zA-z]+://[^\\s]*       " + Languages.message("URL"), "^(\\s*)\\n       " + Languages.message("BlankLine"), "\\d+\\.\\d+\\.\\d+\\.\\d+      " + Languages.message("IP"));
             List<Node> nodes = new ArrayList<>();
             for (String value : values) {

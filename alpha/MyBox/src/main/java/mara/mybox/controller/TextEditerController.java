@@ -115,7 +115,7 @@ public class TextEditerController extends BaseFileEditerController {
 
     @FXML
     public void popButtons(MouseEvent mouseEvent) {
-        PopTextEditController.open(myController, mainArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
+        MenuTextEditController.open(myController, mainArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 
 }

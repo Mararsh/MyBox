@@ -17,13 +17,13 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-7-23
  * @License Apache License Version 2.0
  */
-public class PopFindController extends PopTextBaseController {
+public class FindReplacePopController extends MenuTextBaseController {
 
     @FXML
-    protected ControlFindReplace findController;
+    protected ControlFindReplace findReplaceController;
 
-    public PopFindController() {
-        baseTitle = Languages.message("Find");
+    public FindReplacePopController() {
+        baseTitle = Languages.message("FindReplace");
     }
 
     @Override
@@ -31,7 +31,7 @@ public class PopFindController extends PopTextBaseController {
         try {
             super.setParameters(parent, node, x, y);
 
-            findController.setEditInput(parent, textInput);
+            findReplaceController.setEditInput(parent, textInput);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -42,7 +42,7 @@ public class PopFindController extends PopTextBaseController {
     /*
         static methods
      */
-    public static PopFindController open(BaseController parent, Node node, double x, double y) {
+    public static FindReplacePopController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;
@@ -51,12 +51,12 @@ public class PopFindController extends PopTextBaseController {
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
                 Object object = window.getUserData();
-                if (object != null && object instanceof PopFindController) {
-                    ((PopFindController) object).close();
+                if (object != null && object instanceof FindReplacePopController) {
+                    ((FindReplacePopController) object).close();
                 }
             }
-            PopFindController controller
-                    = (PopFindController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.PopFindFxml, false);
+            FindReplacePopController controller
+                    = (FindReplacePopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.FindReplacePopFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

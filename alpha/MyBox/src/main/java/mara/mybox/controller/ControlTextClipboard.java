@@ -226,8 +226,8 @@ public class ControlTextClipboard extends BaseDataTableController<TextClipboard>
                 if (object == null) {
                     continue;
                 }
-                if (object instanceof PopTextClipboardController) {
-                    ((PopTextClipboardController) object).clipboardController.refreshAction();
+                if (object instanceof TextClipboardPopController) {
+                    ((TextClipboardPopController) object).clipboardController.refreshAction();
                 }
                 if (object instanceof TextInMyBoxClipboardController) {
                     ((TextInMyBoxClipboardController) object).clipboardController.refreshAction();

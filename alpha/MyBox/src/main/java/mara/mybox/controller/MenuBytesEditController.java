@@ -28,9 +28,9 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-7-24
  * @License Apache License Version 2.0
  */
-public class PopBytesEditController extends PopTextEditController {
+public class MenuBytesEditController extends MenuTextEditController {
 
-    public PopBytesEditController() {
+    public MenuBytesEditController() {
         baseTitle = Languages.message("Bytes");
     }
 
@@ -148,20 +148,20 @@ public class PopBytesEditController extends PopTextEditController {
     /*
         static methods
      */
-    public static PopBytesEditController open(BaseController parent, Node node, double x, double y) {
+    public static MenuBytesEditController open(BaseController parent, Node node, double x, double y) {
         try {
             if (parent == null || node == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.PopBytesEditFxml, node, x, y);
+            Popup popup = PopTools.popWindow(parent, Fxmls.MenuBytesEditFxml, node, x, y);
             if (popup == null) {
                 return null;
             }
             Object object = popup.getUserData();
-            if (object == null && !(object instanceof PopBytesEditController)) {
+            if (object == null && !(object instanceof MenuBytesEditController)) {
                 return null;
             }
-            PopBytesEditController controller = (PopBytesEditController) object;
+            MenuBytesEditController controller = (MenuBytesEditController) object;
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
@@ -170,11 +170,11 @@ public class PopBytesEditController extends PopTextEditController {
         }
     }
 
-    public static PopBytesEditController open(BaseController parent, Node node, MouseEvent event) {
+    public static MenuBytesEditController open(BaseController parent, Node node, MouseEvent event) {
         return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 
-    public static PopBytesEditController open(BaseController parent, Node node, ContextMenuEvent event) {
+    public static MenuBytesEditController open(BaseController parent, Node node, ContextMenuEvent event) {
         return open(parent, node, event.getScreenX() + 40, event.getScreenY() + 40);
     }
 

@@ -754,7 +754,7 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
 
     @FXML
     public void popButtons(MouseEvent mouseEvent) {
-        PopTextEditController.open(myController, mainArea, mouseEvent);
+        MenuTextEditController.open(myController, mainArea, mouseEvent);
     }
 
     @Override

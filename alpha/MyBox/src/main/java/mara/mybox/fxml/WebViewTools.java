@@ -1,11 +1,13 @@
 package mara.mybox.fxml;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * @Author Mara
@@ -69,6 +71,25 @@ public class WebViewTools {
                     + "range.selectNode(document.getElementById('" + id + "'));\n"
                     + "selection.addRange(range);";
             webEngine.executeScript(js);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public static void selectElement(WebView webView, Element element) {
+        try {
+            if (webView == null || element == null) {
+                return;
+            }
+            String id = element.getAttribute("id");
+            String newid = new Date().getTime() + "";
+            element.setAttribute("id", newid);
+            selectNode(webView.getEngine(), newid);
+            if (id != null) {
+                element.setAttribute("id", id);
+            } else {
+                element.removeAttribute("id");
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
