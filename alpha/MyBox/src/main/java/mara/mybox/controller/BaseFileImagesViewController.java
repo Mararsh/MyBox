@@ -37,10 +37,12 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -155,13 +157,13 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                                 percent = v;
                                 UserConfig.setUserConfigInt(baseName + "Percent", percent);
                                 setPercent(percent);
-                                NodeTools.setEditorNormal(percentBox);
+                                ValidationTools.setEditorNormal(percentBox);
                             } else {
-                                NodeTools.setEditorBadStyle(percentBox);
+                                ValidationTools.setEditorBadStyle(percentBox);
                             }
 
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(percentBox);
+                            ValidationTools.setEditorBadStyle(percentBox);
                         }
                     }
                 });
@@ -186,12 +188,12 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                                 dpi = v;
                                 UserConfig.setUserConfigInt(baseName + "DPI", dpi);
                                 loadPage();
-                                NodeTools.setEditorNormal(dpiBox);
+                                ValidationTools.setEditorNormal(dpiBox);
                             } else {
-                                NodeTools.setEditorBadStyle(dpiBox);
+                                ValidationTools.setEditorBadStyle(dpiBox);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(dpiBox);
+                            ValidationTools.setEditorBadStyle(dpiBox);
                         }
                     }
                 });
@@ -284,11 +286,11 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 pageSelector.getEditor().setStyle(null);
                 return true;
             } else {
-                pageSelector.getEditor().setStyle(badStyle);
+                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 return false;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(badStyle);
+            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return false;
         }
     }
@@ -600,7 +602,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         File dataPath = ocrOptionsController.dataPathController.file;
         if (!dataPath.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.dataPathController.fileInput.setStyle(badStyle);
+            ocrOptionsController.dataPathController.fileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         if (ocrOptionsController.embedRadio.isSelected()) {
@@ -617,7 +619,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         File tesseract = ocrOptionsController.tesseractPathController.file;
         if (!tesseract.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.tesseractPathController.fileInput.setStyle(badStyle);
+            ocrOptionsController.tesseractPathController.fileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         if (parentController != null) {
@@ -806,7 +808,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         if (ocrArea.getText().isEmpty()) {
             return;
         }
-        TextEditerController controller = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.hideRightPane();
         controller.mainArea.setText(ocrArea.getText());
     }

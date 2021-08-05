@@ -16,13 +16,11 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
@@ -33,8 +31,7 @@ import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -195,15 +192,15 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
                             UserConfig.setUserConfigInt("ImageClipOpacity", (int) (f * 100));
-                            NodeTools.setEditorNormal(opacityBox);
+                            ValidationTools.setEditorNormal(opacityBox);
                             if (imageController != null) {
                                 pasteClip(0);
                             }
                         } else {
-                            NodeTools.setEditorBadStyle(opacityBox);
+                            ValidationTools.setEditorBadStyle(opacityBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(opacityBox);
+                        ValidationTools.setEditorBadStyle(opacityBox);
                     }
                 }
             });
@@ -225,11 +222,11 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         rotateAngle = Integer.valueOf(newValue);
                         rotateLeftButton.setDisable(false);
                         rotateRightButton.setDisable(false);
-                        NodeTools.setEditorNormal(angleBox);
+                        ValidationTools.setEditorNormal(angleBox);
                     } catch (Exception e) {
                         rotateLeftButton.setDisable(true);
                         rotateRightButton.setDisable(true);
-                        NodeTools.setEditorBadStyle(angleBox);
+                        ValidationTools.setEditorBadStyle(angleBox);
                     }
                 }
             });
@@ -444,7 +441,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     @FXML
     protected void demo() {
-        NodeTools.blendDemoFx(imageController, demoButton, finalClip, bgImage,
+        FxImageTools.blendDemoFx(imageController, demoButton, finalClip, bgImage,
                 (int) imageController.scope.getRectangle().getSmallX(),
                 (int) imageController.scope.getRectangle().getSmallY(),
                 opacity, !clipTopCheck.isSelected(), ignoreTransparentCheck.isSelected());

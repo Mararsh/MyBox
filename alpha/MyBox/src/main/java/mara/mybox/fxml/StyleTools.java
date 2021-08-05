@@ -284,7 +284,7 @@ public class StyleTools {
         if (tips == null || tips.isEmpty()) {
             return;
         }
-        NodeTools.setTooltip(node, new Tooltip(tips));
+        NodeStyleTools.setTooltip(node, new Tooltip(tips));
     }
 
     public static void setTips(Node node, StyleData style) {

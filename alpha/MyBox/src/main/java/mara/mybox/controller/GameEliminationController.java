@@ -68,6 +68,8 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -302,9 +304,9 @@ public class GameEliminationController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / N");
-            NodeTools.setTooltip(helpMeButton, Languages.message("HelpMeFindExchange") + "\nh / H");
-            NodeTools.setTooltip(catButton, Languages.message("AutoPlayGame") + "\na / A");
+            NodeStyleTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / N");
+            NodeStyleTools.setTooltip(helpMeButton, Languages.message("HelpMeFindExchange") + "\nh / H");
+            NodeStyleTools.setTooltip(catButton, Languages.message("AutoPlayGame") + "\na / A");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1494,7 +1496,7 @@ public class GameEliminationController extends BaseController {
                     scorePopup.setAutoFix(true);
                     scorePopup.setAutoHide(true);
                     scorePopup.getContent().add(popupLabel);
-                    NodeTools.locateUp(scoreLabel, scorePopup);
+                    LocateTools.locateUp(scoreLabel, scorePopup);
 
                     Timer stimer = new Timer();
                     stimer.schedule(new TimerTask() {

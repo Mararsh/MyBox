@@ -9,7 +9,8 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
@@ -50,7 +51,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                     Bindings.isEmpty(tableView.getItems())
                             .or(splitWayController.valid)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {

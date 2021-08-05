@@ -3,6 +3,10 @@ package mara.mybox.fxml;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
@@ -214,6 +218,23 @@ public class WebViewTools {
             MyBoxLog.debug(e.toString());
             return null;
         }
+    }
+
+    // https://stackoverflow.com/questions/31264847/how-to-set-remember-scrollbar-thumb-position-in-javafx-8-webview?r=SearchResults
+    public static ScrollBar getVScrollBar(WebView webView) {
+        try {
+            Set<Node> scrolls = webView.lookupAll(".scroll-bar");
+            for (Node scrollNode : scrolls) {
+                if (ScrollBar.class.isInstance(scrollNode)) {
+                    ScrollBar scroll = (ScrollBar) scrollNode;
+                    if (scroll.getOrientation() == Orientation.VERTICAL) {
+                        return scroll;
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
 }

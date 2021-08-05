@@ -7,7 +7,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -106,7 +105,7 @@ public abstract class BaseHtmlController extends BaseController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         if (timer != null) {
             timer.cancel();
         }
@@ -114,7 +113,7 @@ public abstract class BaseHtmlController extends BaseController {
             webEngine.getLoadWorker().cancel();
         }
         webEngine = null;
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

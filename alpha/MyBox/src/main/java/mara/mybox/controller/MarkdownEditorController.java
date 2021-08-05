@@ -14,12 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
@@ -31,8 +29,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
@@ -43,7 +42,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class MarkdownEditerController extends TextEditerController {
+public class MarkdownEditorController extends TextEditorController {
 
     protected WebEngine webEngine;
     protected MutableDataSet htmlOptions;
@@ -56,7 +55,7 @@ public class MarkdownEditerController extends TextEditerController {
     @FXML
     protected Tab markdownTab, htmlTab, codesTab;
     @FXML
-    protected TextArea htmlArea;
+    protected TextArea codesArea;
     @FXML
     protected ComboBox<String> emulationSelector, indentSelector, styleSelector;
     @FXML
@@ -65,10 +64,8 @@ public class MarkdownEditerController extends TextEditerController {
     protected TextField titleInput;
     @FXML
     protected WebView webView;
-    @FXML
-    protected Button editHtmlButton;
 
-    public MarkdownEditerController() {
+    public MarkdownEditorController() {
         baseTitle = Languages.message("MarkdownEditer");
         TipsLabelKey = "MarkdownEditerTips";
     }
@@ -76,6 +73,24 @@ public class MarkdownEditerController extends TextEditerController {
     @Override
     public void setFileType() {
         setMarkdownType();
+    }
+
+    @Override
+    public void makeEditContextMenu(javafx.scene.Node node) {
+        try {
+            if (node == mainArea) {
+                node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                    @Override
+                    public void handle(ContextMenuEvent event) {
+                        MenuMarkdownEditController.open(myController, node, event);
+                    }
+                });
+            } else {
+                super.makeEditContextMenu(node);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -92,14 +107,20 @@ public class MarkdownEditerController extends TextEditerController {
             });
 
             webEngine = webView.getEngine();
-            editHtmlButton.disableProperty().bind(Bindings.isEmpty(htmlArea.textProperty()));
 
             wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Wrap", true));
             wrapCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
                 UserConfig.setUserConfigBoolean(baseName + "Wrap", wrapCheck.isSelected());
-                htmlArea.setWrapText(wrapCheck.isSelected());
+                codesArea.setWrapText(wrapCheck.isSelected());
             });
-            htmlArea.setWrapText(wrapCheck.isSelected());
+            codesArea.setWrapText(wrapCheck.isSelected());
+
+            codesArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                @Override
+                public void handle(ContextMenuEvent event) {
+                    MenuHtmlCodesController.open(myController, codesArea, event);
+                }
+            });
 
             initConversionOptionsPane();
 
@@ -192,8 +213,6 @@ public class MarkdownEditerController extends TextEditerController {
                 }
             });
 
-            editHtmlButton.disableProperty().bind(Bindings.isEmpty(htmlArea.textProperty()));
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -215,7 +234,7 @@ public class MarkdownEditerController extends TextEditerController {
 
     @Override
     protected void clearPairArea() {
-        htmlArea.setText("");
+        codesArea.setText("");
         if (webEngine != null) {
             webEngine.loadContent("");
         }
@@ -263,7 +282,7 @@ public class MarkdownEditerController extends TextEditerController {
     protected void markdown2html() {
         webEngine.getLoadWorker().cancel();
         webEngine.loadContent("");
-        htmlArea.clear();
+        codesArea.clear();
         if (mainArea.getText().isEmpty()) {
             return;
         }
@@ -271,10 +290,10 @@ public class MarkdownEditerController extends TextEditerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            double htmlScrollLeft = htmlArea.getScrollLeft();
-            double htmlScrollTop = htmlArea.getScrollTop();
-            int htmlAnchor = htmlArea.getAnchor();
-            int htmlCaretPosition = htmlArea.getCaretPosition();
+            double htmlScrollLeft = codesArea.getScrollLeft();
+            double htmlScrollTop = codesArea.getScrollTop();
+            int htmlAnchor = codesArea.getAnchor();
+            int htmlCaretPosition = codesArea.getCaretPosition();
             double htmlWidth = (Integer) webEngine.executeScript("document.documentElement.scrollWidth || document.body.scrollWidth;");
             double htmlHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
 
@@ -304,10 +323,10 @@ public class MarkdownEditerController extends TextEditerController {
                 protected void whenSucceeded() {
                     try {
                         Platform.runLater(() -> {
-                            htmlArea.setText(html);
-                            htmlArea.setScrollLeft(htmlScrollLeft);
-                            htmlArea.setScrollTop(htmlScrollTop);
-                            htmlArea.selectRange(htmlAnchor, htmlCaretPosition);
+                            codesArea.setText(html);
+                            codesArea.setScrollLeft(htmlScrollLeft);
+                            codesArea.setScrollTop(htmlScrollTop);
+                            codesArea.selectRange(htmlAnchor, htmlCaretPosition);
                         });
                         Platform.runLater(() -> {
                             webEngine.loadContent(html);
@@ -329,38 +348,35 @@ public class MarkdownEditerController extends TextEditerController {
         }
     }
 
-    @Override
-    public void makeEditContextMenu(javafx.scene.Node node) {
-        try {
-            if (node == mainArea) {
-                node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                    @Override
-                    public void handle(ContextMenuEvent event) {
-                        MenuMarkdownEditController.open(myController, node, event);
-                    }
-                });
-            } else {
-                super.makeEditContextMenu(node);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     @FXML
     @Override
-    public void popButtons(MouseEvent mouseEvent) {
+    public void popMenu(MouseEvent mouseEvent) {
         MenuMarkdownEditController.open(myController, mainArea, mouseEvent);
     }
 
     @FXML
-    protected void editHtml() {
-        String text = htmlArea.getText();
-        if (text.isEmpty()) {
-            return;
-        }
-        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(text);
+    protected void popHtml() {
+        HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
+        controller.setAsPopup(baseName + "HtmlPop");
+        controller.loadContents(WebViewTools.getHtml(webEngine));
+    }
+
+    @FXML
+    public void popHtmlMenu(MouseEvent mouseEvent) {
+        MenuWebviewController.pop((BaseWebViewController) (webView.getUserData()), null,
+                mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
+    }
+
+    @FXML
+    protected void popCodes() {
+        HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
+        controller.setAsPopup(baseName + "HtmlPop");
+        controller.loadContents(codesArea.getText());
+    }
+
+    @FXML
+    public void popCodesMenu(MouseEvent mouseEvent) {
+        MenuHtmlCodesController.open(myController, codesArea, mouseEvent);
     }
 
     @FXML

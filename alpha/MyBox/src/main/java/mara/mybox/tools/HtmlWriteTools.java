@@ -16,6 +16,7 @@ import mara.mybox.fxml.ControllerTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
+import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -117,6 +118,38 @@ public class HtmlWriteTools {
     /*
         convert html
      */
+    public static String stringToHtml(String string) {
+        if (string == null) {
+            return null;
+        }
+        return string.replaceAll("&", "&amp;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll("\\x20", "&nbsp;")
+                .replaceAll("©", "&copy;")
+                .replaceAll("®", "&reg;")
+                .replaceAll("™", "&trade;")
+                .replaceAll("\n", "<BR>\n");
+    }
+
+    public static String textToHtml(String text) {
+        if (text == null) {
+            return null;
+        }
+        String body = stringToHtml(text);
+        return html(null, text);
+    }
+
+    public static String htmlToText(String html) {
+        try {
+            return Jsoup.parse(html).wholeText();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static String setCharset(File htmlFile, Charset charset, boolean must) {
         try {
             if (htmlFile == null || charset == null) {
@@ -151,11 +184,10 @@ public class HtmlWriteTools {
         }
     }
 
-    public static String textToHtml(String text) {
-        String body = "" + FindReplaceString.replaceAll(text, "\n", "</br>");
-        return html(null, body);
-    }
-
+//    public static String textToHtml(String text) {
+//        String body = "" + FindReplaceString.replaceAll(text, "\n", "</br>");
+//        return html(null, body);
+//    }
     public static String toUTF8(File htmlFile, boolean must) {
         return setCharset(htmlFile, Charset.forName("utf-8"), must);
     }

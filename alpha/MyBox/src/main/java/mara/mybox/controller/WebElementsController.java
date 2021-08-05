@@ -22,6 +22,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -97,7 +98,7 @@ public class WebElementsController extends BaseWebViewController {
                 }
             });
 
-            NodeTools.removeTooltip(examplesButton);
+            NodeStyleTools.removeTooltip(examplesButton);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

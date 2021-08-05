@@ -18,8 +18,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileEditInformation.StringFilterType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
@@ -91,7 +92,7 @@ public class ControlTextFilter extends BaseController {
                 }
             });
 
-            NodeTools.setTooltip(filtersTypeBox, new Tooltip(Languages.message("FilterTypesComments")));
+            NodeStyleTools.setTooltip(filtersTypeBox, new Tooltip(Languages.message("FilterTypesComments")));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -106,9 +107,9 @@ public class ControlTextFilter extends BaseController {
                     || filterType == StringFilterType.NotMatchRegularExpression
                     || filterType == StringFilterType.IncludeRegularExpression
                     || filterType == StringFilterType.NotIncludeRegularExpression) {
-                NodeTools.removeTooltip(filterInput);
+                NodeStyleTools.removeTooltip(filterInput);
             } else {
-                NodeTools.setTooltip(filterInput, new Tooltip(Languages.message("SeparateByCommaBlanksInvolved")));
+                NodeStyleTools.setTooltip(filterInput, new Tooltip(Languages.message("SeparateByCommaBlanksInvolved")));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -174,12 +175,12 @@ public class ControlTextFilter extends BaseController {
         for (String s : strings) {
             String v = ByteTools.validateTextHex(s);
             if (v == null) {
-                filterInput.setStyle(badStyle);
+                filterInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             if (v.length() >= maxLen * 3) {
                 popError(Languages.message("FindStringLimitation"));
-                filterInput.setStyle(badStyle);
+                filterInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             vs.add(v);

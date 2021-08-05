@@ -120,7 +120,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         MenuItem textEditer = new MenuItem(Languages.message("TextEditer"));
         textEditer.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.TextEditerFxml);
+            loadScene(Fxmls.TextEditorFxml);
         });
 
         MenuItem TextConvert = new MenuItem(Languages.message("TextConvertSplit"));
@@ -154,7 +154,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         MenuItem bytesEditer = new MenuItem(Languages.message("BytesEditer"));
         bytesEditer.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.BytesEditerFxml);
+            loadScene(Fxmls.BytesEditorFxml);
         });
 
         Menu htmlMenu = new Menu(Languages.message("Html"));

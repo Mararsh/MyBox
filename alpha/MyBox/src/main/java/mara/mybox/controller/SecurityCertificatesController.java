@@ -27,6 +27,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.cell.TableTimeCell;
@@ -120,7 +121,7 @@ public class SecurityCertificatesController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(recoverButton, Languages.message("RecoverKeyStore"));
+            NodeStyleTools.setTooltip(recoverButton, Languages.message("RecoverKeyStore"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

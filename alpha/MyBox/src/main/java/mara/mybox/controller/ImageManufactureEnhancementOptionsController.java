@@ -27,13 +27,15 @@ import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.StyleData;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution.SharpenAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution.SmoothAlgorithm;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
@@ -248,12 +250,12 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara1 = v;
-                            NodeTools.setEditorNormal(intSelector);
+                            ValidationTools.setEditorNormal(intSelector);
                         } else {
-                            NodeTools.setEditorBadStyle(intSelector);
+                            ValidationTools.setEditorBadStyle(intSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intSelector);
+                        ValidationTools.setEditorBadStyle(intSelector);
                     }
                 }
             };
@@ -264,7 +266,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             setBox.getChildren().addAll(blurABox, intSelectorPane);
 
             if (okButton != null) {
-                okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(badStyle));
+                okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
             }
 
             checkSmoothAlgorithm();
@@ -285,12 +287,12 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara1 = v;
-                            NodeTools.setEditorNormal(intSelector);
+                            ValidationTools.setEditorNormal(intSelector);
                         } else {
-                            NodeTools.setEditorBadStyle(intSelector);
+                            ValidationTools.setEditorBadStyle(intSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intSelector);
+                        ValidationTools.setEditorBadStyle(intSelector);
                     }
                 }
             };
@@ -300,7 +302,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
             setBox.getChildren().addAll(sharpenABox, intSelectorPane);
             if (okButton != null) {
-                okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(badStyle));
+                okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
             }
 
             checkSharpenAlgorithm();
@@ -347,11 +349,11 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                                 int index = newValue.intValue();
                                 if (index < 0 || index >= kernels.size()) {
                                     kernel = null;
-                                    NodeTools.setEditorBadStyle(stringSelector);
+                                    ValidationTools.setEditorBadStyle(stringSelector);
                                     return;
                                 }
                                 kernel = kernels.get(index);
-                                NodeTools.setEditorNormal(stringSelector);
+                                ValidationTools.setEditorNormal(stringSelector);
                             }
                         };
                         stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
@@ -361,7 +363,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                         manageView.setFitHeight(20);
                         button.setGraphic(manageView);
                         button.setText("");
-                        NodeTools.setTooltip(button, new Tooltip(Languages.message("ManageDot")));
+                        NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("ManageDot")));
                         button.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent event) {
@@ -373,7 +375,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
                         setBox.getChildren().addAll(stringSelectorPane, button);
                         if (okButton != null) {
-                            okButton.disableProperty().bind(stringSelector.getEditor().styleProperty().isEqualTo(badStyle));
+                            okButton.disableProperty().bind(stringSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
                         }
 
                         if (loadedKernel != null) {
@@ -460,10 +462,10 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                                 intPara1 = v;
                                 intInput1.setStyle(null);
                             } else {
-                                intInput1.setStyle(badStyle);
+                                intInput1.setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            intInput1.setStyle(badStyle);
+                            intInput1.setStyle(NodeStyleTools.badStyle);
                         }
                     }
                 });
@@ -481,10 +483,10 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                                 intPara2 = v;
                                 intInput2.setStyle(null);
                             } else {
-                                intInput2.setStyle(badStyle);
+                                intInput2.setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            intInput2.setStyle(badStyle);
+                            intInput2.setStyle(NodeStyleTools.badStyle);
                         }
                     }
                 });
@@ -493,8 +495,8 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
                 setBox.getChildren().addAll(intInput1Pane, intInput2Pane);
                 if (okButton != null) {
-                    okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(badStyle)
-                            .or(intInput2.styleProperty().isEqualTo(badStyle))
+                    okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                            .or(intInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     );
                 }
 
@@ -512,20 +514,20 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                                 intPara1 = v;
                                 intInput1.setStyle(null);
                             } else {
-                                intInput1.setStyle(badStyle);
+                                intInput1.setStyle(NodeStyleTools.badStyle);
                                 popError("-255 ~ 255");
                             }
                         } catch (Exception e) {
-                            intInput1.setStyle(badStyle);
+                            intInput1.setStyle(NodeStyleTools.badStyle);
                             popError("-255 ~ 255");
                         }
                     }
                 });
                 intInput1.setText("10");
-                NodeTools.setTooltip(intInput1, new Tooltip("-255 ~ 255"));
+                NodeStyleTools.setTooltip(intInput1, new Tooltip("-255 ~ 255"));
                 setBox.getChildren().addAll(intInput1Pane);
                 if (okButton != null) {
-                    okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(badStyle));
+                    okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(NodeStyleTools.badStyle));
                 }
 
             } else if (Languages.message("HSBHistogramEqualization").equals(name)) {
@@ -558,9 +560,9 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             }
             stringSelector.getItems().addAll(names);
             stringSelector.getSelectionModel().select(0);
-            NodeTools.setEditorNormal(stringSelector);
+            ValidationTools.setEditorNormal(stringSelector);
         } else {
-            NodeTools.setEditorBadStyle(stringSelector);
+            ValidationTools.setEditorBadStyle(stringSelector);
         }
     }
 

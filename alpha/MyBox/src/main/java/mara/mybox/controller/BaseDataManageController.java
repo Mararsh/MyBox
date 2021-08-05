@@ -15,7 +15,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.QueryCondition.DataOperation;
@@ -23,13 +22,11 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.HtmlWriteTools;
-
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -358,27 +355,27 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             super.setControlsStyle();
 
             if (clearButton != null) {
-                NodeTools.removeTooltip(clearButton);
+                NodeStyleTools.removeTooltip(clearButton);
             }
             if (deleteButton != null) {
-                NodeTools.setTooltip(deleteButton, Languages.message("Delete") + "\nDELETE / CTRL+d / ALT+d\n\n"
+                NodeStyleTools.setTooltip(deleteButton, Languages.message("Delete") + "\nDELETE / CTRL+d / ALT+d\n\n"
                         + Languages.message("DataDeletedComments"));
             }
             if (setButton != null) {
-                NodeTools.removeTooltip(setButton);
+                NodeStyleTools.removeTooltip(setButton);
             }
             if (importButton != null) {
-                NodeTools.removeTooltip(importButton);
+                NodeStyleTools.removeTooltip(importButton);
             }
             if (exportButton != null) {
-                NodeTools.removeTooltip(exportButton);
+                NodeStyleTools.removeTooltip(exportButton);
             }
             if (queryButton != null) {
-                NodeTools.removeTooltip(queryButton);
+                NodeStyleTools.removeTooltip(queryButton);
             }
 
             if (csvEditController != null) {
-                NodeTools.removeTooltip(csvEditController.inputButton);
+                NodeStyleTools.removeTooltip(csvEditController.inputButton);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -598,7 +595,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -677,7 +674,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -897,7 +894,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -938,18 +935,18 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
             if (geoController != null) {
-                geoController.leavingScene();
+                geoController.cleanPane();
             }
         } catch (Exception e) {
         }
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

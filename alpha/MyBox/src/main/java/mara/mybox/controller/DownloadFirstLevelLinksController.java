@@ -66,8 +66,10 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
@@ -247,11 +249,11 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
 
             goButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(badStyle)
+                    targetPathController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
                             .or(urlSelector.getSelectionModel().selectedItemProperty().isNull())
             );
             downloadButton.disableProperty().bind(
-                    targetPathController.fileInput.styleProperty().isEqualTo(badStyle)
+                    targetPathController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
                             .or(linksTableView.getSelectionModel().selectedItemProperty().isNull())
             );
             copyButton.disableProperty().bind(linksTableView.getSelectionModel().selectedItemProperty().isNull());
@@ -388,10 +390,10 @@ public class DownloadFirstLevelLinksController extends BaseController {
                                 threadsSelector.getEditor().setStyle(null);
                                 checkThreads();
                             } else {
-                                threadsSelector.getEditor().setStyle(badStyle);
+                                threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            threadsSelector.getEditor().setStyle(badStyle);
+                            threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
             threadsSelector.getSelectionModel().select(maxThreadsNumber + "");
@@ -409,10 +411,10 @@ public class DownloadFirstLevelLinksController extends BaseController {
                                 UserConfig.setUserConfigInt(baseName + "MaxRetries", v);
                                 retriesSelector.getEditor().setStyle(null);
                             } else {
-                                retriesSelector.getEditor().setStyle(badStyle);
+                                retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            retriesSelector.getEditor().setStyle(badStyle);
+                            retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
             retriesSelector.getSelectionModel().select(maxRetries + "");
@@ -464,11 +466,11 @@ public class DownloadFirstLevelLinksController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(copyButton, Languages.message("CopyLink") + "\nCTRL+c");
-            NodeTools.setTooltip(copyDownloadingButton, Languages.message("CopyLink"));
-            NodeTools.setTooltip(linkFailedButton, Languages.message("CopyLink"));
-            NodeTools.setTooltip(htmlButton, Languages.message("AddressHtml"));
-            NodeTools.removeTooltip(equalButton);
+            NodeStyleTools.setTooltip(copyButton, Languages.message("CopyLink") + "\nCTRL+c");
+            NodeStyleTools.setTooltip(copyDownloadingButton, Languages.message("CopyLink"));
+            NodeStyleTools.setTooltip(linkFailedButton, Languages.message("CopyLink"));
+            NodeStyleTools.setTooltip(htmlButton, Languages.message("AddressHtml"));
+            NodeStyleTools.removeTooltip(equalButton);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -737,7 +739,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -1188,11 +1190,11 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 connValue = v;
                 webConnectTimeoutInput.setStyle(null);
             } else {
-                webConnectTimeoutInput.setStyle(badStyle);
+                webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
         } catch (Exception e) {
-            webConnectTimeoutInput.setStyle(badStyle);
+            webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         try {
@@ -1201,11 +1203,11 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 readValue = v;
                 webReadTimeoutInput.setStyle(null);
             } else {
-                webReadTimeoutInput.setStyle(badStyle);
+                webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
         } catch (Exception e) {
-            webReadTimeoutInput.setStyle(badStyle);
+            webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         UserConfig.setUserConfigInt("WebConnectTimeout", connValue);
@@ -1644,10 +1646,10 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 maxLogsinput.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "MaxLogs", maxLogs);
             } else {
-                maxLogsinput.setStyle(badStyle);
+                maxLogsinput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            maxLogsinput.setStyle(badStyle);
+            maxLogsinput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

@@ -57,6 +57,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.value.AppVariables;
@@ -326,13 +328,13 @@ public class ControlColors extends BaseDataTableController<ColorData> {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(deletePaletteButton, Languages.message("DeletePalette"));
-            NodeTools.setTooltip(renamePaletteButton, Languages.message("RenamePalette"));
-            NodeTools.setTooltip(addPaletteButton, Languages.message("AddPalette"));
-            NodeTools.setTooltip(copyPaletteButton, Languages.message("CopyPalette"));
-            NodeTools.setTooltip(addColorsButton, Languages.message("AddColors"));
-            NodeTools.setTooltip(trimButton, Languages.message("TrimOrderInPalette"));
-            NodeTools.setTooltip(tipsView, Languages.message("ColorsManageTips") + "\n\n" + Languages.message("TableTips"));
+            NodeStyleTools.setTooltip(deletePaletteButton, Languages.message("DeletePalette"));
+            NodeStyleTools.setTooltip(renamePaletteButton, Languages.message("RenamePalette"));
+            NodeStyleTools.setTooltip(addPaletteButton, Languages.message("AddPalette"));
+            NodeStyleTools.setTooltip(copyPaletteButton, Languages.message("CopyPalette"));
+            NodeStyleTools.setTooltip(addColorsButton, Languages.message("AddColors"));
+            NodeStyleTools.setTooltip(trimButton, Languages.message("TrimOrderInPalette"));
+            NodeStyleTools.setTooltip(tipsView, Languages.message("ColorsManageTips") + "\n\n" + Languages.message("TableTips"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -626,7 +628,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -821,7 +823,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1303,7 +1305,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
             }
             Rectangle rect = new Rectangle(rectSize, rectSize);
             rect.setUserData(data);
-            NodeTools.setTooltip(rect, new Tooltip(data.display()));
+            NodeStyleTools.setTooltip(rect, new Tooltip(data.display()));
             Color color = data.getColor();
             rect.setFill(color);
             rect.setStroke(Color.BLACK);

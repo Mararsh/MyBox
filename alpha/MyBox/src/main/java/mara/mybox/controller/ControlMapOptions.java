@@ -24,9 +24,11 @@ import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -212,10 +214,10 @@ public class ControlMapOptions extends BaseController {
                                 }
                             }
                         } else {
-                            dataMaximumSelector.getEditor().setStyle(badStyle);
+                            dataMaximumSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        dataMaximumSelector.getEditor().setStyle(badStyle);
+                        dataMaximumSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 });
             }
@@ -289,10 +291,10 @@ public class ControlMapOptions extends BaseController {
                                 drawPoints();
                             }
                         } else {
-                            markerSizeSelector.getEditor().setStyle(badStyle);
+                            markerSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        markerSizeSelector.getEditor().setStyle(badStyle);
+                        markerSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 });
             }
@@ -329,10 +331,10 @@ public class ControlMapOptions extends BaseController {
                                 drawPoints();
                             }
                         } else {
-                            textSizeSelector.getEditor().setStyle(badStyle);
+                            textSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        textSizeSelector.getEditor().setStyle(badStyle);
+                        textSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 });
             }
@@ -810,9 +812,9 @@ public class ControlMapOptions extends BaseController {
                 float opacity = Float.valueOf(standardOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     webEngine.executeScript("setStandardLayerOpacity(" + opacity + ");");
-                    NodeTools.setEditorNormal(standardOpacitySelector);
+                    ValidationTools.setEditorNormal(standardOpacitySelector);
                 } else {
-                    NodeTools.setEditorBadStyle(standardOpacitySelector);
+                    ValidationTools.setEditorBadStyle(standardOpacitySelector);
                 }
             }
         } catch (Exception e) {
@@ -832,9 +834,9 @@ public class ControlMapOptions extends BaseController {
                 float opacity = Float.valueOf(satelliteOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     webEngine.executeScript("setSatelliteLayerOpacity(" + opacity + ");");
-                    NodeTools.setEditorNormal(satelliteOpacitySelector);
+                    ValidationTools.setEditorNormal(satelliteOpacitySelector);
                 } else {
-                    NodeTools.setEditorBadStyle(satelliteOpacitySelector);
+                    ValidationTools.setEditorBadStyle(satelliteOpacitySelector);
                 }
             }
         } catch (Exception e) {
@@ -854,9 +856,9 @@ public class ControlMapOptions extends BaseController {
                 float opacity = Float.valueOf(roadOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     webEngine.executeScript("setRoadLayerOpacity(" + opacity + ");");
-                    NodeTools.setEditorNormal(roadOpacitySelector);
+                    ValidationTools.setEditorNormal(roadOpacitySelector);
                 } else {
-                    NodeTools.setEditorBadStyle(roadOpacitySelector);
+                    ValidationTools.setEditorBadStyle(roadOpacitySelector);
                 }
             }
         } catch (Exception e) {
@@ -876,9 +878,9 @@ public class ControlMapOptions extends BaseController {
                 float opacity = Float.valueOf(trafficOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     webEngine.executeScript("setTrafficLayerOpacity(" + opacity + ");");
-                    NodeTools.setEditorNormal(trafficOpacitySelector);
+                    ValidationTools.setEditorNormal(trafficOpacitySelector);
                 } else {
-                    NodeTools.setEditorBadStyle(trafficOpacitySelector);
+                    ValidationTools.setEditorBadStyle(trafficOpacitySelector);
                 }
             }
 

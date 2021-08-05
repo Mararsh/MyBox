@@ -15,7 +15,8 @@ import javafx.stage.FileChooser;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
@@ -132,28 +133,28 @@ public class ControlFileSelecter extends BaseController {
                 fileInput.setStyle(null);
                 notify.set(!notify.get());
             } else {
-                fileInput.setStyle(badStyle);
+                fileInput.setStyle(NodeStyleTools.badStyle);
             }
             return;
         }
         File inputfile = new File(v);
         if (mustExist && !inputfile.exists()) {
             if (fileInput != null) {
-                fileInput.setStyle(badStyle);
+                fileInput.setStyle(NodeStyleTools.badStyle);
             }
             return;
         }
         if (isDirectory) {
             if (mustExist && !inputfile.isDirectory()) {
                 if (fileInput != null) {
-                    fileInput.setStyle(badStyle);
+                    fileInput.setStyle(NodeStyleTools.badStyle);
                 }
                 return;
             }
         } else {
             if (mustExist && !inputfile.isFile()) {
                 if (fileInput != null) {
-                    fileInput.setStyle(badStyle);
+                    fileInput.setStyle(NodeStyleTools.badStyle);
                 }
                 return;
             }

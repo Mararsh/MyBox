@@ -29,7 +29,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.EpidemicReport;
@@ -39,20 +38,17 @@ import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
-
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -233,23 +229,23 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     "20", "30", "50", "8", "15", "25", "60", "5", "100", "200", "360"
             ));
             chartMaxSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            if (Languages.message("EpidemicReportsTopUnlimit").equals(newValue)) {
-                                topNumber = -1;
-                                NodeTools.setEditorNormal(chartMaxSelector);
-                                UserConfig.setUserConfigString("EpidemicReportMaxChart", newValue);
-                                adjustOrderList();
-                                return;
-                            }
-                            int v = Integer.valueOf(chartMaxSelector.getValue());
-                            topNumber = v;
-                            UserConfig.setUserConfigString("EpidemicReportMaxChart", topNumber + "");
-                            NodeTools.setEditorNormal(chartMaxSelector);
-                            adjustOrderList();
-                        } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
-                        }
-                    });
+                try {
+                    if (Languages.message("EpidemicReportsTopUnlimit").equals(newValue)) {
+                        topNumber = -1;
+                        ValidationTools.setEditorNormal(chartMaxSelector);
+                        UserConfig.setUserConfigString("EpidemicReportMaxChart", newValue);
+                        adjustOrderList();
+                        return;
+                    }
+                    int v = Integer.valueOf(chartMaxSelector.getValue());
+                    topNumber = v;
+                    UserConfig.setUserConfigString("EpidemicReportMaxChart", topNumber + "");
+                    ValidationTools.setEditorNormal(chartMaxSelector);
+                    adjustOrderList();
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                }
+            });
 
             isSettingValues = true;
             chartMaxSelector.getSelectionModel().select(UserConfig.getUserConfigString("EpidemicReportMaxChart", "10"));
@@ -303,8 +299,8 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         try {
             super.setControlsStyle();
 
-            NodeTools.setTooltip(chinaButton, Languages.message("ChineseProvincesEpidemicReports"));
-            NodeTools.setTooltip(globalButton, Languages.message("GlobalEpidemicReports"));
+            NodeStyleTools.setTooltip(chinaButton, Languages.message("ChineseProvincesEpidemicReports"));
+            NodeStyleTools.setTooltip(globalButton, Languages.message("GlobalEpidemicReports"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -830,7 +826,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -946,7 +942,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -964,21 +960,21 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
-            geoController.leavingScene();
-            sourceController.leavingScene();
-            timeController.leavingScene();
-            chartController.leavingScene();
-            colorsController.leavingScene();
+            geoController.cleanPane();
+            sourceController.cleanPane();
+            timeController.cleanPane();
+            chartController.cleanPane();
+            colorsController.cleanPane();
 
         } catch (Exception e) {
         }
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

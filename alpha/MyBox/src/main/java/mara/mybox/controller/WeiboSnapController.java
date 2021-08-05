@@ -25,8 +25,10 @@ import javafx.stage.Stage;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppValues;
@@ -102,8 +104,8 @@ public class WeiboSnapController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(startMonthInput, new Tooltip(Languages.message("WeiboEarlestMonth")));
-            NodeTools.setTooltip(keepPageCheck, new Tooltip(Languages.message("MergePDFComments")));
+            NodeStyleTools.setTooltip(startMonthInput, new Tooltip(Languages.message("WeiboEarlestMonth")));
+            NodeStyleTools.setTooltip(keepPageCheck, new Tooltip(Languages.message("MergePDFComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -145,7 +147,7 @@ public class WeiboSnapController extends BaseController {
                                     && !s.startsWith("http://www.weibo.com/")
                                     && !s.startsWith("www.weibo.com/")
                                     && !s.startsWith("weibo.com/"))) {
-                                addressBox.getEditor().setStyle(badStyle);
+                                addressBox.getEditor().setStyle(NodeStyleTools.badStyle);
                                 webAddress = "";
                             } else {
                                 webAddress = s;
@@ -164,7 +166,7 @@ public class WeiboSnapController extends BaseController {
                                 }
                             }
                         } catch (Exception e) {
-                            addressBox.getEditor().setStyle(badStyle);
+                            addressBox.getEditor().setStyle(NodeStyleTools.badStyle);
                             webAddress = "";
                         }
                     }
@@ -201,10 +203,10 @@ public class WeiboSnapController extends BaseController {
                         startPageInput.setStyle(null);
                         startPage = v;
                     } else {
-                        startPageInput.setStyle(badStyle);
+                        startPageInput.setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    startPageInput.setStyle(badStyle);
+                    startPageInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -225,10 +227,10 @@ public class WeiboSnapController extends BaseController {
                         likeStartPageInput.setStyle(null);
                         likeStartPage = v;
                     } else {
-                        likeStartPageInput.setStyle(badStyle);
+                        likeStartPageInput.setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    likeStartPageInput.setStyle(badStyle);
+                    likeStartPageInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -278,11 +280,11 @@ public class WeiboSnapController extends BaseController {
             } else {
                 startMonth = DateTools.parseMonth(start);
                 if (startMonth.getTime() > thisMonth.getTime()) {
-                    startMonthInput.setStyle(badStyle);
+                    startMonthInput.setStyle(NodeStyleTools.badStyle);
                     return;
                 } else if (startMonth.getTime() < DateTools.parseMonth("2009-08").getTime()) {
 //                    startInput.setText("2009-08");
-                    startMonthInput.setStyle(badStyle);
+                    startMonthInput.setStyle(NodeStyleTools.badStyle);
                     return;
                 } else {
                     startMonthInput.setStyle(null);
@@ -290,7 +292,7 @@ public class WeiboSnapController extends BaseController {
             }
             UserConfig.setUserConfigString("WeiboLastStartMonthKey", startMonthInput.getText());
         } catch (Exception e) {
-            startMonthInput.setStyle(badStyle);
+            startMonthInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
 
@@ -307,13 +309,13 @@ public class WeiboSnapController extends BaseController {
                 endMonthInput.setStyle(null);
             }
         } catch (Exception e) {
-            endMonthInput.setStyle(badStyle);
+            endMonthInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
 
         if (startMonth.getTime() > endMonth.getTime()) {
-            startMonthInput.setStyle(badStyle);
-            endMonthInput.setStyle(badStyle);
+            startMonthInput.setStyle(NodeStyleTools.badStyle);
+            endMonthInput.setStyle(NodeStyleTools.badStyle);
         }
 
     }
@@ -332,15 +334,15 @@ public class WeiboSnapController extends BaseController {
                         if (zoomScale > 2) {
                             popInformation(Languages.message("TooLargerScale"));
                         }
-                        NodeTools.setEditorNormal(zoomBox);
+                        ValidationTools.setEditorNormal(zoomBox);
                     } else {
                         zoomScale = 1.0f;
-                        NodeTools.setEditorBadStyle(zoomBox);
+                        ValidationTools.setEditorBadStyle(zoomBox);
                     }
 
                 } catch (Exception e) {
                     zoomScale = 1.0f;
-                    NodeTools.setEditorBadStyle(zoomBox);
+                    ValidationTools.setEditorBadStyle(zoomBox);
                 }
             }
         });
@@ -355,20 +357,20 @@ public class WeiboSnapController extends BaseController {
                 try {
                     if (newValue.equals(Languages.message("ScreenWidth"))) {
                         webWidth = -1;
-                        NodeTools.setEditorNormal(widthBox);
+                        ValidationTools.setEditorNormal(widthBox);
                         return;
                     }
                     webWidth = Integer.valueOf(newValue);
                     if (webWidth > 0) {
-                        NodeTools.setEditorNormal(widthBox);
+                        ValidationTools.setEditorNormal(widthBox);
                     } else {
                         webWidth = 700;
-                        NodeTools.setEditorBadStyle(widthBox);
+                        ValidationTools.setEditorBadStyle(widthBox);
                     }
 
                 } catch (Exception e) {
                     webWidth = 700;
-                    NodeTools.setEditorBadStyle(widthBox);
+                    ValidationTools.setEditorBadStyle(widthBox);
                 }
             }
         });
@@ -415,10 +417,10 @@ public class WeiboSnapController extends BaseController {
                         snapInterval = v;
                         UserConfig.setUserConfigInt("WeiBoSnapInterval", v);
                     } else {
-                        snapIntervalInput.setStyle(badStyle);
+                        snapIntervalInput.setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    snapIntervalInput.setStyle(badStyle);
+                    snapIntervalInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -453,10 +455,10 @@ public class WeiboSnapController extends BaseController {
             if (jpegQuality >= 0 && jpegQuality <= 100) {
                 jpegBox.setStyle(null);
             } else {
-                jpegBox.setStyle(badStyle);
+                jpegBox.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            jpegBox.setStyle(badStyle);
+            jpegBox.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -472,11 +474,11 @@ public class WeiboSnapController extends BaseController {
                 thresholdInput.setStyle(null);
             } else {
                 threshold = -1;
-                thresholdInput.setStyle(badStyle);
+                thresholdInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             threshold = -1;
-            thresholdInput.setStyle(badStyle);
+            thresholdInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -539,15 +541,15 @@ public class WeiboSnapController extends BaseController {
                 try {
                     marginSize = Integer.valueOf(newValue);
                     if (marginSize >= 0) {
-                        NodeTools.setEditorNormal(MarginsBox);
+                        ValidationTools.setEditorNormal(MarginsBox);
                     } else {
                         marginSize = 0;
-                        NodeTools.setEditorBadStyle(MarginsBox);
+                        ValidationTools.setEditorBadStyle(MarginsBox);
                     }
 
                 } catch (Exception e) {
                     marginSize = 0;
-                    NodeTools.setEditorBadStyle(MarginsBox);
+                    ValidationTools.setEditorBadStyle(MarginsBox);
                 }
             }
         });
@@ -561,15 +563,15 @@ public class WeiboSnapController extends BaseController {
                 try {
                     pdfScale = Integer.valueOf(newValue);
                     if (pdfScale >= 0) {
-                        NodeTools.setEditorNormal(pdfScaleBox);
+                        ValidationTools.setEditorNormal(pdfScaleBox);
                     } else {
                         pdfScale = 60;
-                        NodeTools.setEditorBadStyle(pdfScaleBox);
+                        ValidationTools.setEditorBadStyle(pdfScaleBox);
                     }
 
                 } catch (Exception e) {
                     pdfScale = 60;
-                    NodeTools.setEditorBadStyle(pdfScaleBox);
+                    ValidationTools.setEditorBadStyle(pdfScaleBox);
                 }
             }
         });
@@ -713,11 +715,11 @@ public class WeiboSnapController extends BaseController {
                 customWidthInput.setStyle(null);
             } else {
                 pageWidth = 0;
-                customWidthInput.setStyle(badStyle);
+                customWidthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             pageWidth = 0;
-            customWidthInput.setStyle(badStyle);
+            customWidthInput.setStyle(NodeStyleTools.badStyle);
         }
 
         try {
@@ -726,11 +728,11 @@ public class WeiboSnapController extends BaseController {
                 customHeightInput.setStyle(null);
             } else {
                 pageHeight = 0;
-                customHeightInput.setStyle(badStyle);
+                customHeightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             pageHeight = 0;
-            customHeightInput.setStyle(badStyle);
+            customHeightInput.setStyle(NodeStyleTools.badStyle);
         }
 
     }
@@ -768,10 +770,10 @@ public class WeiboSnapController extends BaseController {
                         accessInterval = v;
                         UserConfig.setUserConfigInt("WeiBoAccessInterval", v);
                     } else {
-                        accessIntervalInput.setStyle(badStyle);
+                        accessIntervalInput.setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    accessIntervalInput.setStyle(badStyle);
+                    accessIntervalInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -782,7 +784,7 @@ public class WeiboSnapController extends BaseController {
     private void checkTargetFiles() {
         if (!pdfCheck.isSelected() && !htmlCheck.isSelected() && !pixCheck.isSelected()) {
             popError(Languages.message("NothingSave"));
-            pdfCheck.setStyle(badStyle);
+            pdfCheck.setStyle(NodeStyleTools.badStyle);
         } else {
             pdfCheck.setStyle(null);
         }
@@ -862,14 +864,14 @@ public class WeiboSnapController extends BaseController {
         checkCategory();
 
         startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                .or(startMonthInput.styleProperty().isEqualTo(badStyle))
-                .or(endMonthInput.styleProperty().isEqualTo(badStyle))
-                .or(zoomBox.getEditor().styleProperty().isEqualTo(badStyle))
-                .or(addressBox.getEditor().styleProperty().isEqualTo(badStyle))
+                .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(startMonthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(endMonthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(zoomBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(addressBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(addressBox.getSelectionModel().selectedItemProperty().isNull())
-                .or(widthBox.getEditor().styleProperty().isEqualTo(badStyle))
-                .or(pdfCheck.styleProperty().isEqualTo(badStyle))
+                .or(widthBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(pdfCheck.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
     }

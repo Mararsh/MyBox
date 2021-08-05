@@ -9,9 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -165,9 +163,9 @@ public class MainMenuController extends MainMenuController_Help {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         stopMemoryMonitorTimer();
         stopCpuMonitorTimer();
-        return super.leavingScene();
+        super.cleanPane();
     }
 }

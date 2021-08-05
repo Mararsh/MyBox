@@ -24,13 +24,15 @@ import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.StyleData;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.BufferedImageTools.Direction;
 import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -128,7 +130,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(quanTipsView, new Tooltip(Languages.message("QuantizationComments")));
+            NodeStyleTools.setTooltip(quanTipsView, new Tooltip(Languages.message("QuantizationComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -236,12 +238,12 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         if (v > 0) {
                             quanColors = v;
                             UserConfig.setUserConfigInt(baseName + "QuanColorsNumber", quanColors);
-                            NodeTools.setEditorNormal(intBox);
+                            ValidationTools.setEditorNormal(intBox);
                         } else {
-                            NodeTools.setEditorBadStyle(intBox);
+                            ValidationTools.setEditorBadStyle(intBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intBox);
+                        ValidationTools.setEditorBadStyle(intBox);
                     }
                 }
             });
@@ -260,10 +262,10 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                             UserConfig.setUserConfigInt(baseName + "RegionSize", regionSize);
                             regionSizeSelector.getEditor().setStyle(null);
                         } else {
-                            regionSizeSelector.getEditor().setStyle(badStyle);
+                            regionSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        regionSizeSelector.getEditor().setStyle(badStyle);
+                        regionSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -280,7 +282,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v2 = Integer.parseInt(values[1]);
                         int v3 = Integer.parseInt(values[2]);
                         if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            weightSelector.getEditor().setStyle(badStyle);
+                            weightSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             return;
                         }
                         weight1 = v1;
@@ -289,7 +291,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         weightSelector.getEditor().setStyle(null);
                         UserConfig.setUserConfigString(baseName + (hsbQuanRadio.isSelected() ? "HSBWeights" : "RGBWeights"), newValue);
                     } catch (Exception e) {
-                        weightSelector.getEditor().setStyle(badStyle);
+                        weightSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -307,12 +309,12 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         if (v > 0) {
                             kmeansLoop = v;
                             UserConfig.setUserConfigInt(baseName + "KmeansLoop", kmeansLoop);
-                            NodeTools.setEditorNormal(kmeansLoopSelector);
+                            ValidationTools.setEditorNormal(kmeansLoopSelector);
                         } else {
-                            NodeTools.setEditorBadStyle(kmeansLoopSelector);
+                            ValidationTools.setEditorBadStyle(kmeansLoopSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(kmeansLoopSelector);
+                        ValidationTools.setEditorBadStyle(kmeansLoopSelector);
                     }
                 }
             });
@@ -523,12 +525,12 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara2 = v;
-                            NodeTools.setEditorNormal(intBox);
+                            ValidationTools.setEditorNormal(intBox);
                         } else {
-                            NodeTools.setEditorBadStyle(intBox);
+                            ValidationTools.setEditorBadStyle(intBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intBox);
+                        ValidationTools.setEditorBadStyle(intBox);
                     }
                 }
             };
@@ -542,8 +544,8 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             setBox.getChildren().addAll(stringBoxPane, intBoxPane, valueCheck);
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        intBox.getEditor().styleProperty().isEqualTo(badStyle)
-                                .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+                        intBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                                .or(stringBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 );
             }
 
@@ -557,7 +559,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             setBox.getChildren().addAll(quanBox);
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        quanColorsSelector.getEditor().styleProperty().isEqualTo(badStyle));
+                        quanColorsSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
             }
 
             checkPosterizingAlgorithm();
@@ -583,18 +585,18 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                             intInput.setStyle(null);
                         } else {
                             popError("0~255");
-                            intInput.setStyle(badStyle);
+                            intInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
                         popError("0~255");
-                        intInput.setStyle(badStyle);
+                        intInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             };
             intInput.textProperty().addListener(intInputListener);
 
             intInput.setText("128");
-            NodeTools.setTooltip(intInput, new Tooltip("0~255"));
+            NodeStyleTools.setTooltip(intInput, new Tooltip("0~255"));
 
             intPara2 = 0;
             intLabel2.setText(Languages.message("SmallValue"));
@@ -609,17 +611,17 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                             intInput2.setStyle(null);
                         } else {
                             popError("0~255");
-                            intInput2.setStyle(badStyle);
+                            intInput2.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
                         popError("0~255");
-                        intInput2.setStyle(badStyle);
+                        intInput2.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             };
             intInput2.textProperty().addListener(intInput2Listener);
             intInput2.setText("0");
-            NodeTools.setTooltip(intInput2, new Tooltip("0~255"));
+            NodeStyleTools.setTooltip(intInput2, new Tooltip("0~255"));
 
             intPara3 = 255;
             intLabel3.setText(Languages.message("BigValue"));
@@ -634,26 +636,26 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                             intInput3.setStyle(null);
                         } else {
                             popError("0~255");
-                            intInput3.setStyle(badStyle);
+                            intInput3.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
                         popError("0~255");
-                        intInput3.setStyle(badStyle);
+                        intInput3.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             };
             intInput3.textProperty().addListener(intInput3Listener);
             intInput3.setText("255");
-            NodeTools.setTooltip(intInput3, new Tooltip("0~255"));
+            NodeStyleTools.setTooltip(intInput3, new Tooltip("0~255"));
 
-            NodeTools.setTooltip(tipsView, new Tooltip(Languages.message("ThresholdingComments")));
+            NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("ThresholdingComments")));
 
             setBox.getChildren().addAll(intInputPane, intInputPane2, intInputPane3, tipsView);
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        intInput.styleProperty().isEqualTo(badStyle)
-                                .or(intInput3.styleProperty().isEqualTo(badStyle))
-                                .or(intInput2.styleProperty().isEqualTo(badStyle))
+                        intInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                                .or(intInput3.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                                .or(intInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 );
             }
 
@@ -682,16 +684,16 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                             intPara2 = v;
                             intInput.setStyle(null);
                         } else {
-                            intInput.setStyle(badStyle);
+                            intInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        intInput.setStyle(badStyle);
+                        intInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             };
             intInput.textProperty().addListener(intInputListener);
             intInput.setText("128");
-            NodeTools.setTooltip(intInput, new Tooltip("0~255"));
+            NodeStyleTools.setTooltip(intInput, new Tooltip("0~255"));
 
             if (imageView != null) {
                 calculatorView.setImage(new Image(StyleTools.getIcon("iconCalculator.png")));
@@ -699,7 +701,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 calculatorView.setFitHeight(20);
                 button.setGraphic(calculatorView);
                 button.setText("");
-                NodeTools.setTooltip(button, new Tooltip(Languages.message("Calculate")));
+                NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("Calculate")));
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -722,7 +724,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 valueCheck.setDisable(false);
             }
 
-            NodeTools.setTooltip(tipsView, new Tooltip(Languages.message("BWThresholdComments")));
+            NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("BWThresholdComments")));
 
             if (imageView != null) {
                 othersPane.getChildren().addAll(tipsView, button, valueCheck);
@@ -732,7 +734,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             setBox.getChildren().addAll(bwBox, intInputPane, othersPane);
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        intInput.styleProperty().isEqualTo(badStyle)
+                        intInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
                 );
             }
 
@@ -753,14 +755,14 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v >= 0 && v <= 255) {
                             intPara1 = v;
-                            NodeTools.setEditorNormal(intBox);
+                            ValidationTools.setEditorNormal(intBox);
                             UserConfig.setUserConfigInt("ImageSepiaIntensity", v);
                         } else {
-                            NodeTools.setEditorBadStyle(intBox);
+                            ValidationTools.setEditorBadStyle(intBox);
                             popError("0~255");
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intBox);
+                        ValidationTools.setEditorBadStyle(intBox);
                         popError("0~255");
                     }
                 }
@@ -773,7 +775,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             setBox.getChildren().addAll(intBoxPane);
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        intBox.getEditor().styleProperty().isEqualTo(badStyle)
+                        intBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
                 );
             }
 
@@ -794,13 +796,13 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara1 = v;
-                            NodeTools.setEditorNormal(intBox);
+                            ValidationTools.setEditorNormal(intBox);
                             UserConfig.setUserConfigInt("ImageMosaicIntensity", v);
                         } else {
-                            NodeTools.setEditorBadStyle(intBox);
+                            ValidationTools.setEditorBadStyle(intBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intBox);
+                        ValidationTools.setEditorBadStyle(intBox);
                     }
                 }
             };
@@ -812,7 +814,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             setBox.getChildren().addAll(intBoxPane);
             if (okButton != null) {
                 okButton.disableProperty().bind(
-                        intBox.getEditor().styleProperty().isEqualTo(badStyle)
+                        intBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
                 );
             }
 

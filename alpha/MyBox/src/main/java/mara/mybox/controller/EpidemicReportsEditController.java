@@ -21,8 +21,9 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -71,7 +72,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                         checkTime();
                     });
 
-            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(badStyle));
+            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -82,7 +83,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(timeInput, Languages.message("TimeComments"));
+            NodeStyleTools.setTooltip(timeInput, Languages.message("TimeComments"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -293,10 +294,10 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                 time = v.getTime();
                 timeInput.setStyle(null);
             } else {
-                timeInput.setStyle(badStyle);
+                timeInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            timeInput.setStyle(badStyle);
+            timeInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

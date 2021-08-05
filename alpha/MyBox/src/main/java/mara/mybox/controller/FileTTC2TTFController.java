@@ -9,7 +9,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -55,7 +56,7 @@ public class FileTTC2TTFController extends HtmlViewerController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(ttcController.fileInput.textProperty())
-                            .or(ttcController.fileInput.styleProperty().isEqualTo(badStyle))
+                            .or(ttcController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {

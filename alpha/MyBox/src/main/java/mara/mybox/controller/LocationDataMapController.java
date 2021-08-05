@@ -36,17 +36,13 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -88,41 +84,41 @@ public class LocationDataMapController extends BaseMapController {
             super.initControls();
 
             displayGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean(baseName + "Sequence", sequenceRadio.isSelected());
-                        drawPoints();
-                    }
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean(baseName + "Sequence", sequenceRadio.isSelected());
+                drawPoints();
+            }
             );
             overlayCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean(baseName + "Overlay", overlayCheck.isSelected());
-                        drawPoints();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean(baseName + "Overlay", overlayCheck.isSelected());
+                drawPoints();
+            });
             accumulateCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean(baseName + "Accumulate", accumulateCheck.isSelected());
-                        drawPoints();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean(baseName + "Accumulate", accumulateCheck.isSelected());
+                drawPoints();
+            });
             linkCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean(baseName + "Link", linkCheck.isSelected());
-                        drawPoints();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean(baseName + "Link", linkCheck.isSelected());
+                drawPoints();
+            });
             centerCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean(baseName + "Center", centerCheck.isSelected());
-                        centered = !centerCheck.isSelected();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean(baseName + "Center", centerCheck.isSelected());
+                centered = !centerCheck.isSelected();
+            });
 
             isSettingValues = true;
             if (UserConfig.getUserConfigBoolean(baseName + "Sequence", true)) {
@@ -145,7 +141,7 @@ public class LocationDataMapController extends BaseMapController {
         parentController = dataController;
 
         initSplitPanes();
-        NodeTools.removeTooltip(snapshotButton);
+        NodeStyleTools.removeTooltip(snapshotButton);
     }
 
     protected void drawLocationData(List<Location> data, String title) {
@@ -913,7 +909,7 @@ public class LocationDataMapController extends BaseMapController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (loading != null) {
                 loading.closeStage();
@@ -921,7 +917,7 @@ public class LocationDataMapController extends BaseMapController {
             }
         } catch (Exception e) {
         }
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

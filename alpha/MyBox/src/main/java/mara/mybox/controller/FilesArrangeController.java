@@ -20,7 +20,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -85,8 +86,8 @@ public class FilesArrangeController extends BaseBatchFileController {
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(sourcePathInput.styleProperty().isEqualTo(badStyle))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(sourcePathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             operationBarController.openTargetButton.disableProperty().bind(

@@ -38,9 +38,11 @@ import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextTools;
@@ -120,10 +122,10 @@ public abstract class BaseSheetController extends ControlSheetData {
         try {
             super.setControlsStyle();
 
-            NodeTools.removeTooltip(sizeSheetButton);
-            NodeTools.removeTooltip(copySheetButton);
-            NodeTools.removeTooltip(equalSheetButton);
-            NodeTools.removeTooltip(deleteSheetButton);
+            NodeStyleTools.removeTooltip(sizeSheetButton);
+            NodeStyleTools.removeTooltip(copySheetButton);
+            NodeStyleTools.removeTooltip(equalSheetButton);
+            NodeStyleTools.removeTooltip(deleteSheetButton);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -444,7 +446,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                                 isSettingValues = true;
                                 valueInput.setText(v);
                                 isSettingValues = false;
-                                valueInput.setStyle(inputStyle + (dataValid(col, v) ? "" : badStyle));
+                                valueInput.setStyle(inputStyle + (dataValid(col, v) ? "" : NodeStyleTools.badStyle));
                                 valueInput.setPrefWidth(columns.get(col).getWidth());
                                 inputs[row][col] = valueInput;
                             }
@@ -514,7 +516,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             if (dataValid(col, value)) {
                 input.setStyle(inputStyle);
             } else {
-                input.setStyle(inputStyle + badStyle);
+                input.setStyle(inputStyle + NodeStyleTools.badStyle);
                 popError(Languages.message("Row") + " " + (row + 1) + " " + Languages.message("Column") + " " + (col + 1)
                         + " " + (value == null || value.isBlank() ? Languages.message("Null") : Languages.message("InvalidValue")));
             }
@@ -687,7 +689,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter(label, popMenu);
+            LocateTools.locateCenter(label, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -723,7 +725,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter(label, popMenu);
+            LocateTools.locateCenter(label, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1074,7 +1076,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter(label, popMenu);
+            LocateTools.locateCenter(label, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1265,7 +1267,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1489,7 +1491,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1643,7 +1645,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1835,7 +1837,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
-import mara.mybox.tools.UrlTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -152,7 +152,7 @@ public class WebFindController extends BaseWebViewController {
             previousButton.setDisable(true);
             nextButton.setDisable(true);
             lastButton.setDisable(true);
-            String findString = UrlTools.encodeEscape(value);
+            String findString = HtmlWriteTools.textToHtml(value);
 
             String font = findFontSelector.getValue();
             UserConfig.setUserConfigString(baseName + "Font", font);

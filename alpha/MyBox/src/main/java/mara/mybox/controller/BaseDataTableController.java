@@ -28,7 +28,8 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -340,7 +341,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 try {
                     int v = Integer.parseInt(newValue.trim());
                     if (v <= 0) {
-                        pageSizeSelector.getEditor().setStyle(badStyle);
+                        pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     } else {
                         pageSize = v;
                         UserConfig.setUserConfigInt(baseName + "PageSize", pageSize);
@@ -350,7 +351,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                         }
                     }
                 } catch (Exception e) {
-                    pageSizeSelector.getEditor().setStyle(badStyle);
+                    pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 }
             });
 
@@ -367,7 +368,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
         try {
             int v = Integer.parseInt(value);
             if (v < 0) {
-                pageSelector.getEditor().setStyle(badStyle);
+                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 return false;
             } else {
                 currentPage = v;
@@ -376,7 +377,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 return true;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(badStyle);
+            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return false;
         }
     }

@@ -28,8 +28,10 @@ import static mara.mybox.db.data.Notebook.NotebookNameSeparater;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
@@ -139,7 +141,7 @@ public class NotesExportController extends BaseTaskController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                             .or(treeView.getSelectionModel().selectedItemProperty().isNull())
             );
 
@@ -224,7 +226,7 @@ public class NotesExportController extends BaseTaskController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -555,7 +557,7 @@ public class NotesExportController extends BaseTaskController {
             return;
         }
         if (textsFile != null && textsFile.exists()) {
-            TextEditerController controller = (TextEditerController) openStage(Fxmls.TextEditerFxml);
+            TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
             controller.sourceFileChanged(textsFile);
         }
         popInformation(Languages.message("Count") + ": " + count);

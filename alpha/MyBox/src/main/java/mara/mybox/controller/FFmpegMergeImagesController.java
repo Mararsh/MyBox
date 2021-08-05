@@ -19,10 +19,11 @@ import javafx.scene.control.Tab;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -103,8 +104,8 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetFileController.fileInput.textProperty())
-                            .or(targetFileController.fileInput.styleProperty().isEqualTo(badStyle))
-                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetFileController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {

@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -20,11 +21,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
-
 import mara.mybox.tools.UrlTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -40,10 +37,17 @@ public class MenuMarkdownEditController extends MenuTextEditController {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Markdown);
+    }
+
+    @Override
     public void setParameters(BaseController parent, Node node, double x, double y) {
         try {
             super.setParameters(parent, node, x, y);
-            addMarkdownButtons();
+            if (textInput != null && textInput.isEditable()) {
+                addMarkdownButtons();
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -374,6 +378,32 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             textInput.insertText(range.getEnd() + prefix.length(), suffix);
         }
         textInput.requestFocus();
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        MarkdownEditorController controller = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
+        controller.loadContents(textInput.getText());
+    }
+
+    @FXML
+    @Override
+    public void popAction() {
+        if (textInput == null) {
+            return;
+        }
+        if (parentController instanceof BaseFileEditorController) {
+            BaseFileEditorController e = (BaseFileEditorController) parentController;
+            if (textInput != null && textInput == e.mainArea) {
+                e.popAction();
+                return;
+            }
+        }
+        MarkdownEditorController controller = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
+        controller.setAsPopup(baseName + "Pop");
+        controller.autoSaveCheck.setSelected(false);
+        controller.loadContents(textInput.getText());
     }
 
     /*

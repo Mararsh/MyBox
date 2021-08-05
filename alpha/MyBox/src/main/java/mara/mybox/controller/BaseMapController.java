@@ -36,8 +36,9 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -121,13 +122,13 @@ public abstract class BaseMapController extends BaseController {
                         if (v > 0) {
                             interval = v;
                             UserConfig.setUserConfigInt(baseName + "Interval", interval);
-                            NodeTools.setEditorNormal(intervalSelector);
+                            ValidationTools.setEditorNormal(intervalSelector);
                             if (isSettingValues) {
                                 return;
                             }
                             drawFrames();
                         } else {
-                            NodeTools.setEditorBadStyle(intervalSelector);
+                            ValidationTools.setEditorBadStyle(intervalSelector);
                         }
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
@@ -509,7 +510,7 @@ public abstract class BaseMapController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -705,7 +706,7 @@ public abstract class BaseMapController extends BaseController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (timer != null) {
                 timer.cancel();
@@ -715,11 +716,11 @@ public abstract class BaseMapController extends BaseController {
                 webEngine.getLoadWorker().cancel();
                 webEngine = null;
             }
-            mapOptionsController.leavingScene();
+            mapOptionsController.cleanPane();
 
         } catch (Exception e) {
         }
-        return super.leavingScene();
+        super.cleanPane();
 
     }
 

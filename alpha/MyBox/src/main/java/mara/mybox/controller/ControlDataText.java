@@ -9,7 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
@@ -83,7 +84,7 @@ public class ControlDataText extends BaseController {
                     if (stringRadio.isSelected()) {
                         String v = delimiterInput.getText();
                         if (v == null || v.isBlank()) {
-                            delimiterInput.setStyle(badStyle);
+                            delimiterInput.setStyle(NodeStyleTools.badStyle);
                             return;
                         }
                         delimiter = v;
@@ -118,7 +119,7 @@ public class ControlDataText extends BaseController {
                         return;
                     }
                     if (newValue == null || newValue.isBlank()) {
-                        delimiterInput.setStyle(badStyle);
+                        delimiterInput.setStyle(NodeStyleTools.badStyle);
                         return;
                     }
                     delimiter = newValue;

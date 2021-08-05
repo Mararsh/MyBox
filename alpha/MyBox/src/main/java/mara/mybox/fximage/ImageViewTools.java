@@ -3,8 +3,11 @@ package mara.mybox.fximage;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 
 /**
@@ -13,6 +16,21 @@ import mara.mybox.fxml.NodeTools;
  * @License Apache License Version 2.0
  */
 public class ImageViewTools {
+
+    public static void imageSize(ScrollPane sPane, ImageView iView) {
+        try {
+            if (iView == null || iView.getImage() == null || sPane == null) {
+                return;
+            }
+            iView.setFitWidth(iView.getImage().getWidth());
+            iView.setFitHeight(iView.getImage().getHeight());
+            LocateTools.moveCenter(sPane, iView);
+            //            MyBoxLog.console(iView.getImage().getWidth() + " " + iView.getImage().getHeight());
+            //            iView.setLayoutY(10);
+        } catch (Exception e) {
+            //            MyBoxLog.error(e.toString());
+        }
+    }
 
     public static void paneSize(ScrollPane sPane, ImageView iView) {
         try {
@@ -31,7 +49,7 @@ public class ImageViewTools {
                 iView.setFitWidth(iView.getImage().getWidth() * h / iView.getImage().getHeight());
                 iView.setFitHeight(h);
             }
-            NodeTools.moveCenter(sPane, iView);
+            LocateTools.moveCenter(sPane, iView);
         } catch (Exception e) {
             //            MyBoxLog.error(e.toString());
         }
@@ -48,7 +66,7 @@ public class ImageViewTools {
             currentHeight = iView.getImage().getHeight();
         }
         iView.setFitHeight(currentHeight + yZoomStep);
-        NodeTools.moveCenter(sPane, iView);
+        LocateTools.moveCenter(sPane, iView);
     }
 
     public static void zoomOut(ScrollPane sPane, ImageView iView, int xZoomStep, int yZoomStep) {
@@ -68,22 +86,7 @@ public class ImageViewTools {
             return;
         }
         iView.setFitHeight(currentHeight - yZoomStep);
-        NodeTools.moveCenter(sPane, iView);
-    }
-
-    public static void imageSize(ScrollPane sPane, ImageView iView) {
-        try {
-            if (iView == null || iView.getImage() == null || sPane == null) {
-                return;
-            }
-            iView.setFitWidth(iView.getImage().getWidth());
-            iView.setFitHeight(iView.getImage().getHeight());
-            NodeTools.moveCenter(sPane, iView);
-            //            MyBoxLog.console(iView.getImage().getWidth() + " " + iView.getImage().getHeight());
-            //            iView.setLayoutY(10);
-        } catch (Exception e) {
-            //            MyBoxLog.error(e.toString());
-        }
+        LocateTools.moveCenter(sPane, iView);
     }
 
     public static DoublePoint getImageXY(MouseEvent event, ImageView view) {
@@ -99,6 +102,22 @@ public class ImageViewTools {
         double x = offsetX * view.getImage().getWidth() / view.getBoundsInParent().getWidth();
         double y = offsetY * view.getImage().getHeight() / view.getBoundsInParent().getHeight();
         return new DoublePoint(x, y);
+    }
+
+    public static Color imagePixel(MouseEvent event, ImageView view) {
+        DoublePoint p = ImageViewTools.getImageXY(event, view);
+        if (p == null) {
+            return null;
+        }
+        return imagePixel(p, view);
+    }
+
+    public static Color imagePixel(DoublePoint p, ImageView view) {
+        if (p == null || view == null) {
+            return null;
+        }
+        PixelReader pixelReader = view.getImage().getPixelReader();
+        return pixelReader.getColor((int) p.getX(), (int) p.getY());
     }
 
 }

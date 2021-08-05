@@ -6,9 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import mara.mybox.color.ColorConversion.SpaceType;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
@@ -36,15 +37,15 @@ public class ColorConversionController extends ChromaticityBaseController {
         try {
             super.initControls();
             calculateButton.disableProperty().bind(Bindings.isEmpty(scaleInput.textProperty())
-                    .or(scaleInput.styleProperty().isEqualTo(badStyle))
+                    .or(scaleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(sourceController.vInput1.textProperty()))
-                    .or(sourceController.vInput1.styleProperty().isEqualTo(badStyle))
+                    .or(sourceController.vInput1.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(sourceController.vInput2.textProperty()))
-                    .or(sourceController.vInput2.styleProperty().isEqualTo(badStyle))
+                    .or(sourceController.vInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(sourceController.vInput3.textProperty()))
-                    .or(sourceController.vInput3.styleProperty().isEqualTo(badStyle))
+                    .or(sourceController.vInput3.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(sourceController.vInput4.textProperty()))
-                    .or(sourceController.vInput4.styleProperty().isEqualTo(badStyle))
+                    .or(sourceController.vInput4.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {

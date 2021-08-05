@@ -24,10 +24,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -95,7 +97,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 }
             });
 
-            NodeTools.setNonnegativeValidation(maxLinesinput);
+            ValidationTools.setNonnegativeValidation(maxLinesinput);
 
             checkIsConditional();
             copyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -109,8 +111,8 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(sourcePathInput.styleProperty().isEqualTo(badStyle))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(sourcePathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             operationBarController.openTargetButton.disableProperty().bind(

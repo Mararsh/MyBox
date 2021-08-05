@@ -5,11 +5,9 @@ import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
-import org.jsoup.Jsoup;
 
 /**
  * @Author Mara
@@ -44,8 +42,7 @@ public class HtmlToTextController extends BaseBatchFileController {
             if (target == null) {
                 return Languages.message("Skip");
             }
-
-            String text = Jsoup.parse(TextFileTools.readTexts(srcFile)).wholeText();
+            String text = HtmlWriteTools.htmlToText(TextFileTools.readTexts(srcFile));
 
             TextFileTools.writeFile(target, text, Charset.forName("utf-8"));
             targetFileGenerated(target);

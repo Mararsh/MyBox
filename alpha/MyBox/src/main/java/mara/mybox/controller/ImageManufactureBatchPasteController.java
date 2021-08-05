@@ -13,20 +13,18 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageBlend;
 import mara.mybox.bufferedimage.MargionTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.TransformTools;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-import mara.mybox.value.FileFilters;
-import mara.mybox.color.ColorBase;
 import mara.mybox.value.Colors;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -76,13 +74,13 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(Bindings.isEmpty(sourceFileInput.textProperty()))
-                    .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
-                    .or(xInput.styleProperty().isEqualTo(badStyle))
-                    .or(yInput.styleProperty().isEqualTo(badStyle))
-                    .or(marginInput.styleProperty().isEqualTo(badStyle))
+                    .or(sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(marginInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -144,12 +142,12 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
                             UserConfig.setUserConfigInt(baseName + "Opacity", (int) (f * 100));
-                            NodeTools.setEditorNormal(opacitySelector);
+                            ValidationTools.setEditorNormal(opacitySelector);
                         } else {
-                            NodeTools.setEditorBadStyle(opacitySelector);
+                            ValidationTools.setEditorBadStyle(opacitySelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(opacitySelector);
+                        ValidationTools.setEditorBadStyle(opacitySelector);
                     }
                 }
             });
@@ -162,9 +160,9 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         rotateAngle = Integer.valueOf(newValue);
-                        NodeTools.setEditorNormal(angleSelector);
+                        ValidationTools.setEditorNormal(angleSelector);
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(angleSelector);
+                        ValidationTools.setEditorBadStyle(angleSelector);
                     }
                 }
             });
@@ -247,10 +245,10 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 UserConfig.setUserConfigInt(baseName + "Margin", margin);
                 marginInput.setStyle(null);
             } else {
-                marginInput.setStyle(badStyle);
+                marginInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            marginInput.setStyle(badStyle);
+            marginInput.setStyle(NodeStyleTools.badStyle);
         }
 
     }
@@ -262,10 +260,10 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 posX = v;
                 xInput.setStyle(null);
             } else {
-                xInput.setStyle(badStyle);
+                xInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            xInput.setStyle(badStyle);
+            xInput.setStyle(NodeStyleTools.badStyle);
         }
 
         try {
@@ -274,10 +272,10 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 posY = v;
                 yInput.setStyle(null);
             } else {
-                yInput.setStyle(badStyle);
+                yInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            yInput.setStyle(badStyle);
+            yInput.setStyle(NodeStyleTools.badStyle);
         }
 
     }
@@ -352,7 +350,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
 
     @FXML
     protected void demo() {
-        NodeTools.blendDemo(this, demoButton, null, null, 20, 20, opacity, !clipTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+        FxImageTools.blendDemo(this, demoButton, null, null, 20, 20, opacity, !clipTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
     }
 
 }

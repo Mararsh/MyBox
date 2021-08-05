@@ -21,7 +21,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageContrast;
@@ -30,6 +30,7 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -99,10 +100,10 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
                         } else {
-                            scaleSelector.getEditor().setStyle(badStyle);
+                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        scaleSelector.getEditor().setStyle(badStyle);
+                        scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -125,10 +126,10 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
                         } else {
-                            binarySelector.getEditor().setStyle(badStyle);
+                            binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        binarySelector.getEditor().setStyle(badStyle);
+                        binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -228,13 +229,13 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 File tesseract = ocrOptionsController.tesseractPathController.file;
                 if (!tesseract.exists()) {
                     popError(Languages.message("InvalidParameters"));
-                    ocrOptionsController.tesseractPathController.fileInput.setStyle(badStyle);
+                    ocrOptionsController.tesseractPathController.fileInput.setStyle(NodeStyleTools.badStyle);
                     return false;
                 }
                 File dataPath = ocrOptionsController.dataPathController.file;
                 if (!dataPath.exists()) {
                     popError(Languages.message("InvalidParameters"));
-                    ocrOptionsController.dataPathController.fileInput.setStyle(badStyle);
+                    ocrOptionsController.dataPathController.fileInput.setStyle(NodeStyleTools.badStyle);
                     return false;
                 }
                 configFile = TmpFileTools.getTempFile();

@@ -28,6 +28,7 @@ import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -361,12 +362,12 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             int v = Integer.valueOf(durationSelector.getValue());
             if (v > 0) {
                 duration = v;
-                NodeTools.setEditorNormal(durationSelector);
+                ValidationTools.setEditorNormal(durationSelector);
             } else {
-                NodeTools.setEditorBadStyle(durationSelector);
+                ValidationTools.setEditorBadStyle(durationSelector);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(durationSelector);
+            ValidationTools.setEditorBadStyle(durationSelector);
         }
     }
 

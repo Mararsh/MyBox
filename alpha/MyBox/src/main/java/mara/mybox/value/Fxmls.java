@@ -58,7 +58,7 @@ public class Fxmls {
     public static final String MarkdownToTextFxml = "/fxml/MarkdownToText.fxml";
     public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
 
-    public static final String TextEditerFxml = "/fxml/TextEditer.fxml";
+    public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";
     public static final String TextReplaceBatchFxml = "/fxml/TextReplaceBatch.fxml";
@@ -67,7 +67,7 @@ public class Fxmls {
     public static final String TextInSystemClipboardFxml = "/fxml/TextInSystemClipboard.fxml";
     public static final String TextInMyBoxClipboardFxml = "/fxml/TextInMyBoxClipboard.fxml";
 
-    public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
+    public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
 
     public static final String WordViewFxml = "/fxml/WordView.fxml";
     public static final String WordToHtmlFxml = "/fxml/WordToHtml.fxml";

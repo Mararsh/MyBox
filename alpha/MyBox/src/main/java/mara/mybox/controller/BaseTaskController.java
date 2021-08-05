@@ -11,10 +11,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleData;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -175,10 +173,10 @@ public class BaseTaskController extends BaseController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         cancelAction();
         cancelled = true;
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

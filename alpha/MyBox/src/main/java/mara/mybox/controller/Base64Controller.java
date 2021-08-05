@@ -20,8 +20,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -145,7 +146,7 @@ public class Base64Controller extends BaseController {
                     popError(Languages.message("NoData"));
                     return;
                 }
-            } else if (sourceFile == null || badStyle.equals(sourceFileInput.getStyle())) {
+            } else if (sourceFile == null || NodeStyleTools.badStyle.equals(sourceFileInput.getStyle())) {
                 popError(Languages.message("NoData"));
                 return;
             }
@@ -225,7 +226,7 @@ public class Base64Controller extends BaseController {
                     popError(Languages.message("NoData"));
                     return;
                 }
-            } else if (sourceFile == null || badStyle.equals(sourceFileInput.getStyle())) {
+            } else if (sourceFile == null || NodeStyleTools.badStyle.equals(sourceFileInput.getStyle())) {
                 popError(Languages.message("NoData"));
                 return;
             }
@@ -310,8 +311,8 @@ public class Base64Controller extends BaseController {
                     bottomLabel.setText(s);
                     popSuccessful();
                     if (textRadio.isSelected() || fileRadio.isSelected()) {
-                        TextEditerController controller
-                                = (TextEditerController) openStage(Fxmls.TextEditerFxml);
+                        TextEditorController controller
+                                = (TextEditorController) openStage(Fxmls.TextEditorFxml);
                         controller.sourceFileChanged(file);
                     } else {
                         browseURI(file.getParentFile().toURI());

@@ -56,14 +56,18 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
-import static mara.mybox.fxml.NodeTools.blueText;
-import static mara.mybox.fxml.NodeTools.darkRedText;
-import static mara.mybox.fxml.NodeTools.redText;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.blueText;
+import static mara.mybox.fxml.NodeStyleTools.darkRedText;
+import static mara.mybox.fxml.NodeStyleTools.redText;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.cell.ListImageCell;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -138,7 +142,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(eightNeighborCheck, new Tooltip(Languages.message("EightNeighborCheckComments")));
+            NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(Languages.message("EightNeighborCheckComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -215,9 +219,9 @@ public class ImageManufactureScopeController extends ImageViewerController {
                     int size = pointsList.getItems().size();
                     pointsSizeLabel.setText(Languages.message("Count") + ": " + size);
                     if (size > 100) {
-                        pointsSizeLabel.setStyle(redText);
+                        pointsSizeLabel.setStyle(NodeStyleTools.redText);
                     } else {
-                        pointsSizeLabel.setStyle(blueText);
+                        pointsSizeLabel.setStyle(NodeStyleTools.blueText);
                     }
                     clearPointsButton.setDisable(size == 0);
                 }
@@ -260,9 +264,9 @@ public class ImageManufactureScopeController extends ImageViewerController {
                     int size = colorsList.getItems().size();
                     colorsSizeLabel.setText(Languages.message("Count") + ": " + size);
                     if (size > 100) {
-                        colorsSizeLabel.setStyle(redText);
+                        colorsSizeLabel.setStyle(NodeStyleTools.redText);
                     } else {
-                        colorsSizeLabel.setStyle(blueText);
+                        colorsSizeLabel.setStyle(NodeStyleTools.blueText);
                     }
                     clearColorsButton.setDisable(size == 0);
                 }
@@ -411,13 +415,13 @@ public class ImageManufactureScopeController extends ImageViewerController {
                         if (f >= 0 && f <= 1.0) {
                             opacity = 1 - f;
                             scopeView.setOpacity(opacity);
-                            NodeTools.setEditorNormal(opacitySelector);
+                            ValidationTools.setEditorNormal(opacitySelector);
                             UserConfig.setUserConfigString(baseName + "ScopeTransparency", newVal);
                         } else {
-                            NodeTools.setEditorBadStyle(opacitySelector);
+                            ValidationTools.setEditorBadStyle(opacitySelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(opacitySelector);
+                        ValidationTools.setEditorBadStyle(opacitySelector);
                     }
                 }
             });
@@ -487,7 +491,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         if (isPickingColor) {
-            Color color = NodeTools.imagePixel(p, imageView);
+            Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {
                 addColor(color);
             }
@@ -644,7 +648,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
                     }
 
-                    NodeTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
+                    NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
                     String value = scopeDistanceSelector.getValue();
                     List<String> vList = new ArrayList<>();
                     for (int i = 0; i <= max; i += step) {
@@ -711,9 +715,9 @@ public class ImageManufactureScopeController extends ImageViewerController {
             valid = false;
         }
         if (valid) {
-            NodeTools.setEditorNormal(scopeDistanceSelector);
+            ValidationTools.setEditorNormal(scopeDistanceSelector);
         } else {
-            NodeTools.setEditorBadStyle(scopeDistanceSelector);
+            ValidationTools.setEditorBadStyle(scopeDistanceSelector);
         }
         return valid;
     }
@@ -990,28 +994,28 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 x1 = Double.parseDouble(rectLeftTopXInput.getText());
                 rectLeftTopXInput.setStyle(null);
             } catch (Exception e) {
-                rectLeftTopXInput.setStyle(badStyle);
+                rectLeftTopXInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             try {
                 y1 = Double.parseDouble(rectLeftTopYInput.getText());
                 rectLeftTopYInput.setStyle(null);
             } catch (Exception e) {
-                rectLeftTopYInput.setStyle(badStyle);
+                rectLeftTopYInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             try {
                 x2 = Double.parseDouble(rightBottomXInput.getText());
                 rightBottomXInput.setStyle(null);
             } catch (Exception e) {
-                rightBottomXInput.setStyle(badStyle);
+                rightBottomXInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             try {
                 y2 = Double.parseDouble(rightBottomYInput.getText());
                 rightBottomYInput.setStyle(null);
             } catch (Exception e) {
-                rightBottomYInput.setStyle(badStyle);
+                rightBottomYInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             DoubleRectangle rect = new DoubleRectangle(x1, y1, x2, y2);
@@ -1054,21 +1058,21 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 x = Double.parseDouble(circleCenterXInput.getText());
                 circleCenterXInput.setStyle(null);
             } catch (Exception e) {
-                circleCenterXInput.setStyle(badStyle);
+                circleCenterXInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             try {
                 y = Double.parseDouble(circleCenterYInput.getText());
                 circleCenterYInput.setStyle(null);
             } catch (Exception e) {
-                circleCenterYInput.setStyle(badStyle);
+                circleCenterYInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             try {
                 r = Double.parseDouble(circleRadiusInput.getText());
                 circleRadiusInput.setStyle(null);
             } catch (Exception e) {
-                circleRadiusInput.setStyle(badStyle);
+                circleRadiusInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             DoubleCircle circle = new DoubleCircle(x, y, r);
@@ -1196,9 +1200,9 @@ public class ImageManufactureScopeController extends ImageViewerController {
     @Override
     protected void startPickingColor() {
         popInformation(Languages.message("PickingColorsForScope"));
-        imageController.scopeLabel.setStyle(darkRedText);
+        imageController.scopeLabel.setStyle(NodeStyleTools.darkRedText);
         imageController.scopeLabel.setText(Languages.message("PickingColorsForScope"));
-        imageController.imageLabel.setStyle(darkRedText);
+        imageController.imageLabel.setStyle(NodeStyleTools.darkRedText);
         imageController.imageLabel.setText(Languages.message("PickingColorsForScope"));
 
     }
@@ -1213,7 +1217,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
     @Override
     protected Color pickColor(DoublePoint p, ImageView view) {
-        Color color = NodeTools.imagePixel(p, imageView);
+        Color color = ImageViewTools.imagePixel(p, imageView);
         return color;
     }
 
@@ -1296,7 +1300,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1467,7 +1471,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
         try {
             saveScopeButton.disableProperty().bind(scopeNameInput.textProperty().isEmpty()
                     .or(scopeDistanceSelector.visibleProperty()
-                            .and(scopeDistanceSelector.getEditor().styleProperty().isEqualTo(badStyle)))
+                            .and(scopeDistanceSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)))
             );
 
         } catch (Exception e) {
@@ -1844,7 +1848,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 default:
                     distance = scope.getColorDistance();
             }
-            NodeTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
+            NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
             List<String> vList = new ArrayList<>();
             for (int i = 0; i <= max; i += 10) {
                 vList.add(i + "");

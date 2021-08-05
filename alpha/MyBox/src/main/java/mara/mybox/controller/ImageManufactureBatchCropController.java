@@ -9,11 +9,12 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.CropTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -45,14 +46,14 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             super.initControls();
 
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(leftXInput.styleProperty().isEqualTo(badStyle))
-                    .or(leftYInput.styleProperty().isEqualTo(badStyle))
-                    .or(rightXInput.styleProperty().isEqualTo(badStyle))
-                    .or(rightYInput.styleProperty().isEqualTo(badStyle))
-                    .or(centerWidthInput.styleProperty().isEqualTo(badStyle))
-                    .or(centerHeightInput.styleProperty().isEqualTo(badStyle))
+                    .or(leftXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(leftYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(rightXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(rightYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(centerWidthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(centerHeightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -168,10 +169,10 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             if (centerWidth > 0) {
                 centerWidthInput.setStyle(null);
             } else {
-                centerWidthInput.setStyle(badStyle);
+                centerWidthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            centerWidthInput.setStyle(badStyle);
+            centerWidthInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -181,10 +182,10 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             if (centerHeight > 0) {
                 centerHeightInput.setStyle(null);
             } else {
-                centerHeightInput.setStyle(badStyle);
+                centerHeightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            centerHeightInput.setStyle(badStyle);
+            centerHeightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -194,10 +195,10 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             if (leftX > 0) {
                 leftXInput.setStyle(null);
             } else {
-                leftXInput.setStyle(badStyle);
+                leftXInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            leftXInput.setStyle(badStyle);
+            leftXInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -207,10 +208,10 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             if (leftX > 0) {
                 leftXInput.setStyle(null);
             } else {
-                leftXInput.setStyle(badStyle);
+                leftXInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            leftXInput.setStyle(badStyle);
+            leftXInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -220,10 +221,10 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             if (rightX > 0 && rightX > leftX) {
                 rightXInput.setStyle(null);
             } else {
-                rightXInput.setStyle(badStyle);
+                rightXInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            rightXInput.setStyle(badStyle);
+            rightXInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -233,10 +234,10 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             if (rightY > 0 && rightY > leftY) {
                 rightYInput.setStyle(null);
             } else {
-                rightYInput.setStyle(badStyle);
+                rightYInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            rightYInput.setStyle(badStyle);
+            rightYInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

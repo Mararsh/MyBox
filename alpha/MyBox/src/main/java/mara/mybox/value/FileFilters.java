@@ -181,13 +181,13 @@ public class FileFilters {
 
     public static List<FileChooser.ExtensionFilter> CertificateExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("DER", "*.cer", "*.crt", "*.rsa"));
             add(new FileChooser.ExtensionFilter("PKCS7", "*.p7b", "*.p7r"));
             add(new FileChooser.ExtensionFilter("CMS", "*.p7c", "*.p7m", "*.p7s"));
             add(new FileChooser.ExtensionFilter("PEM", "*.pem"));
             add(new FileChooser.ExtensionFilter("PKCS10", "*.p10", "*.csr"));
             add(new FileChooser.ExtensionFilter("SPC", "*.pvk", "*.spc"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
 

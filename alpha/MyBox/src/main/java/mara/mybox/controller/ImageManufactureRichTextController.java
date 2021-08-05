@@ -28,9 +28,12 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
@@ -78,7 +81,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             marginsWidth = v;
-                            NodeTools.setEditorNormal(marginsWidthBox);
+                            ValidationTools.setEditorNormal(marginsWidthBox);
                             UserConfig.setUserConfigInt("ImageTextMarginsWidth", v);
                             if (webView != null) {
                                 webView.setPrefWidth(imageController.maskRectangleLine.getWidth() - 2 * marginsWidth);
@@ -87,11 +90,11 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                                 webView.setLayoutY(imageController.maskRectangleLine.getLayoutY() + marginsWidth);
                             }
                         } else {
-                            NodeTools.setEditorBadStyle(marginsWidthBox);
+                            ValidationTools.setEditorBadStyle(marginsWidthBox);
                         }
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
-                        NodeTools.setEditorBadStyle(marginsWidthBox);
+                        ValidationTools.setEditorBadStyle(marginsWidthBox);
                     }
                 }
             });
@@ -114,15 +117,15 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             arc = v;
-                            NodeTools.setEditorNormal(arcBox);
+                            ValidationTools.setEditorNormal(arcBox);
                             UserConfig.setUserConfigInt("ImageTextArc", v);
                             imageController.maskRectangleLine.setArcWidth(v);
                             imageController.maskRectangleLine.setArcHeight(v);
                         } else {
-                            NodeTools.setEditorBadStyle(arcBox);
+                            ValidationTools.setEditorBadStyle(arcBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(arcBox);
+                        ValidationTools.setEditorBadStyle(arcBox);
                     }
                 }
             });
@@ -137,13 +140,13 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
                             UserConfig.setUserConfigInt("ImageTextOpacity", (int) (f * 100));
-                            NodeTools.setEditorNormal(opacityBox);
+                            ValidationTools.setEditorNormal(opacityBox);
                             imageController.maskRectangleLine.setOpacity(opacity);
                         } else {
-                            NodeTools.setEditorBadStyle(opacityBox);
+                            ValidationTools.setEditorBadStyle(opacityBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(opacityBox);
+                        ValidationTools.setEditorBadStyle(opacityBox);
                     }
                 }
             });
@@ -163,19 +166,19 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         rotateAngle = Integer.valueOf(newValue);
-                        NodeTools.setEditorNormal(angleBox);
+                        ValidationTools.setEditorNormal(angleBox);
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(angleBox);
+                        ValidationTools.setEditorBadStyle(angleBox);
                     }
                 }
             });
             angleBox.getSelectionModel().select(0);
 
             rotateLeftButton.disableProperty().bind(
-                    angleBox.getEditor().styleProperty().isEqualTo(badStyle)
+                    angleBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
             );
             rotateLeftButton.disableProperty().bind(
-                    angleBox.getEditor().styleProperty().isEqualTo(badStyle)
+                    angleBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
             );
 
             editAction(null);
@@ -242,7 +245,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
         initWebview();
         if (editor == null || !editor.getMyStage().isShowing()) {
             editor = (ImageTextController) openStage(Fxmls.ImageTextFxml);
-            NodeTools.locateRight(editor.getMyStage());
+            LocateTools.locateRight(editor.getMyStage());
             editor.init(this);
         } else {
             editor.toFront();

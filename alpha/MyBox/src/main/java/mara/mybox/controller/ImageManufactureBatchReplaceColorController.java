@@ -17,11 +17,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -60,9 +61,9 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(distanceSelector.getEditor().styleProperty().isEqualTo(badStyle))
+                    .or(distanceSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -129,7 +130,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
                     max = 360;
                     squareRootCheck.setDisable(true);
                 }
-                NodeTools.setTooltip(distanceSelector, new Tooltip("0 ~ " + max));
+                NodeStyleTools.setTooltip(distanceSelector, new Tooltip("0 ~ " + max));
                 String value = distanceSelector.getValue();
                 List<String> vList = new ArrayList<>();
                 for (int i = 0; i <= max; i += step) {
@@ -152,10 +153,10 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
                         UserConfig.setUserConfigInt(baseName + "Distance", distance);
                         distanceSelector.getEditor().setStyle(null);
                     } else {
-                        distanceSelector.getEditor().setStyle(badStyle);
+                        distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    distanceSelector.getEditor().setStyle(badStyle);
+                    distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 }
             }
         });

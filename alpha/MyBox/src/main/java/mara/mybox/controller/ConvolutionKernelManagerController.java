@@ -39,9 +39,11 @@ import mara.mybox.db.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
@@ -300,26 +302,26 @@ public class ConvolutionKernelManagerController extends BaseController {
         try {
             width = Integer.valueOf(widthBox.getSelectionModel().getSelectedItem());
             if (width > 2 && width % 2 != 0) {
-                NodeTools.setEditorNormal(widthBox);
+                ValidationTools.setEditorNormal(widthBox);
             } else {
                 width = 0;
-                NodeTools.setEditorBadStyle(widthBox);
+                ValidationTools.setEditorBadStyle(widthBox);
             }
         } catch (Exception e) {
             width = 0;
-            NodeTools.setEditorBadStyle(widthBox);
+            ValidationTools.setEditorBadStyle(widthBox);
         }
 
         try {
             height = Integer.valueOf(heightBox.getSelectionModel().getSelectedItem());
             if (height > 2 && height % 2 != 0) {
-                NodeTools.setEditorNormal(heightBox);
+                ValidationTools.setEditorNormal(heightBox);
             } else {
-                NodeTools.setEditorBadStyle(heightBox);
+                ValidationTools.setEditorBadStyle(heightBox);
             }
         } catch (Exception e) {
             height = 0;
-            NodeTools.setEditorBadStyle(heightBox);
+            ValidationTools.setEditorBadStyle(heightBox);
         }
         if (isSettingValues) {
             return;
@@ -410,7 +412,7 @@ public class ConvolutionKernelManagerController extends BaseController {
                     valueInput.setStyle(null);
                 } catch (Exception e) {
                     matrixValid = false;
-                    valueInput.setStyle(badStyle);
+                    valueInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         }

@@ -7,8 +7,9 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -48,11 +49,11 @@ public class PptToImagesController extends BaseBatchFileController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(formatController.profileInput.styleProperty().isEqualTo(badStyle))
-                            .or(formatController.thresholdInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(formatController.profileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(formatController.thresholdInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {

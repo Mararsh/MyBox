@@ -13,7 +13,8 @@ import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.color.Illuminant;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -62,25 +63,25 @@ public class IlluminantsController extends ChromaticityBaseController {
         initOptions();
 
         calculateButton.disableProperty().bind(Bindings.isEmpty(scaleInput.textProperty())
-                .or(scaleInput.styleProperty().isEqualTo(badStyle))
+                .or(scaleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceColorController.xInput.textProperty()))
-                .or(sourceColorController.xInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceColorController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceColorController.yInput.textProperty()))
-                .or(sourceColorController.yInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceColorController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceColorController.zInput.textProperty()))
-                .or(sourceColorController.zInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceColorController.zInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceWPController.xInput.textProperty()))
-                .or(sourceWPController.xInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceWPController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceWPController.yInput.textProperty()))
-                .or(sourceWPController.yInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceWPController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceWPController.zInput.textProperty()))
-                .or(sourceWPController.zInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceWPController.zInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetWPController.xInput.textProperty()))
-                .or(targetWPController.xInput.styleProperty().isEqualTo(badStyle))
+                .or(targetWPController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetWPController.yInput.textProperty()))
-                .or(targetWPController.yInput.styleProperty().isEqualTo(badStyle))
+                .or(targetWPController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetWPController.zInput.textProperty()))
-                .or(targetWPController.zInput.styleProperty().isEqualTo(badStyle))
+                .or(targetWPController.zInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
     }

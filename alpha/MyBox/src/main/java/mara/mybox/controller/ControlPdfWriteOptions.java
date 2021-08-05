@@ -15,8 +15,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -133,13 +135,13 @@ public class ControlPdfWriteOptions extends BaseController {
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             marginSize = v;
-                            NodeTools.setEditorNormal(marginSelector);
+                            ValidationTools.setEditorNormal(marginSelector);
                             UserConfig.setUserConfigInt(baseName + "PdfMarginSize", v);
                         } else {
-                            NodeTools.setEditorBadStyle(marginSelector);
+                            ValidationTools.setEditorBadStyle(marginSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(marginSelector);
+                        ValidationTools.setEditorBadStyle(marginSelector);
                     }
                 }
             });
@@ -158,12 +160,12 @@ public class ControlPdfWriteOptions extends BaseController {
                         if (v > 0) {
                             fontSize = v;
                             UserConfig.setUserConfigInt(baseName + "PdfFontSize", v);
-                            NodeTools.setEditorNormal(fontSizeSelector);
+                            ValidationTools.setEditorNormal(fontSizeSelector);
                         } else {
-                            NodeTools.setEditorBadStyle(fontSizeSelector);
+                            ValidationTools.setEditorBadStyle(fontSizeSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(fontSizeSelector);
+                        ValidationTools.setEditorBadStyle(fontSizeSelector);
                     }
                 }
             });
@@ -179,14 +181,14 @@ public class ControlPdfWriteOptions extends BaseController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             zoom = v;
-                            NodeTools.setEditorNormal(zoomSelector);
+                            ValidationTools.setEditorNormal(zoomSelector);
                             UserConfig.setUserConfigInt(baseName + "PdfZoom", v);
                         } else {
-                            NodeTools.setEditorBadStyle(zoomSelector);
+                            ValidationTools.setEditorBadStyle(zoomSelector);
                         }
 
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(zoomSelector);
+                        ValidationTools.setEditorBadStyle(zoomSelector);
                     }
                 }
             });
@@ -361,10 +363,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 pageWidth = v;
                 customWidthInput.setStyle(null);
             } else {
-                customWidthInput.setStyle(badStyle);
+                customWidthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            customWidthInput.setStyle(badStyle);
+            customWidthInput.setStyle(NodeStyleTools.badStyle);
         }
         try {
             int v = Integer.valueOf(customHeightInput.getText());
@@ -372,10 +374,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 pageHeight = v;
                 customHeightInput.setStyle(null);
             } else {
-                customHeightInput.setStyle(badStyle);
+                customHeightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            customHeightInput.setStyle(badStyle);
+            customHeightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -441,10 +443,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 jpegQualitySelector.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "PdfJpegQuality", jpegQuality);
             } else {
-                jpegQualitySelector.setStyle(badStyle);
+                jpegQualitySelector.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            jpegQualitySelector.setStyle(badStyle);
+            jpegQualitySelector.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -480,10 +482,10 @@ public class ControlPdfWriteOptions extends BaseController {
                 threshold = v;
                 thresholdInput.setStyle(null);
             } else {
-                thresholdInput.setStyle(badStyle);
+                thresholdInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            thresholdInput.setStyle(badStyle);
+            thresholdInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

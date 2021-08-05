@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 
@@ -189,7 +190,7 @@ public class MenuController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateMouse(mouseEvent, popMenu);
+            LocateTools.locateMouse(mouseEvent, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

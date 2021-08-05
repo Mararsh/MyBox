@@ -24,8 +24,9 @@ import mara.mybox.db.table.TableFileBackup;
 import static mara.mybox.db.table.TableFileBackup.Default_Max_Backups;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -96,11 +97,11 @@ public class ControlFileBackup extends BaseController {
                             maxBackupsInput.setStyle(null);
                             okMaxButton.setDisable(false);
                         } else {
-                            maxBackupsInput.setStyle(badStyle);
+                            maxBackupsInput.setStyle(NodeStyleTools.badStyle);
                             okMaxButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        maxBackupsInput.setStyle(badStyle);
+                        maxBackupsInput.setStyle(NodeStyleTools.badStyle);
                         okMaxButton.setDisable(true);
                     }
                 }

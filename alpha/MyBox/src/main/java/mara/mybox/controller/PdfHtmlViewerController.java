@@ -18,6 +18,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.FileCopyTools;
@@ -167,7 +168,7 @@ public class PdfHtmlViewerController extends PdfViewController {
         try {
             super.setControlsStyle();
             if (tipsView != null) {
-                NodeTools.setTooltip(tipsView,
+                NodeStyleTools.setTooltip(tipsView,
                         new Tooltip(Languages.message("PDFComments") + "\n\n" + Languages.message("PdfHtmlViewerTips")));
             }
         } catch (Exception e) {

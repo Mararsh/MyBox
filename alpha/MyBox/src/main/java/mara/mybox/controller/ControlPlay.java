@@ -15,9 +15,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.StyleData;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -74,13 +75,13 @@ public class ControlPlay extends BaseController {
                     try {
                         double v = Double.valueOf(newValue);
                         if (v <= 0) {
-                            speedSelector.getEditor().setStyle(badStyle);
+                            speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         } else {
                             speed = v;
                             speedSelector.getEditor().setStyle(null);
                         }
                     } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(badStyle);
+                        speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -99,7 +100,7 @@ public class ControlPlay extends BaseController {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v <= 0) {
-                            intervalSelector.getEditor().setStyle(badStyle);
+                            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         } else {
                             interval = v;
                             intervalSelector.getEditor().setStyle(null);
@@ -115,7 +116,7 @@ public class ControlPlay extends BaseController {
 
                         }
                     } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(badStyle);
+                        speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });

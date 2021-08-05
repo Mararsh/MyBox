@@ -18,8 +18,10 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.ValidationTools;
 
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.HtmlStyles;
@@ -178,19 +180,19 @@ public class ControlDataConvert extends BaseController {
                         UserConfig.setUserConfigString(baseName + "ExportMaxLines", newValue);
                         if (Languages.message("NotSplit").equals(newValue)) {
                             maxLines = -1;
-                            NodeTools.setEditorNormal(maxLinesSelector);
+                            ValidationTools.setEditorNormal(maxLinesSelector);
                             return;
                         }
                         try {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 maxLines = v;
-                                NodeTools.setEditorNormal(maxLinesSelector);
+                                ValidationTools.setEditorNormal(maxLinesSelector);
                             } else {
-                                NodeTools.setEditorBadStyle(maxLinesSelector);
+                                ValidationTools.setEditorBadStyle(maxLinesSelector);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(maxLinesSelector);
+                            ValidationTools.setEditorBadStyle(maxLinesSelector);
                         }
                     });
             maxLinesSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "ExportMaxLines", Languages.message("NotSplit")));
@@ -251,7 +253,7 @@ public class ControlDataConvert extends BaseController {
             if (toHtml && htmlCheck.isSelected()) {
                 UserConfig.setUserConfigString(baseName + "Css", cssArea.getText());
             }
-            if (toCsv && csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(badStyle)) {
+            if (toCsv && csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)) {
                 return false;
             }
             return true;

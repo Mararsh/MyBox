@@ -44,9 +44,11 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.StringValues;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleData;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -190,10 +192,10 @@ public class GameMineController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(undoButton, Languages.message("Undo") + "\nz / Z");
-            NodeTools.setTooltip(recoverButton, Languages.message("Replay") + "\nr / R");
-            NodeTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / N");
-            NodeTools.setTooltip(helpMeButton, Languages.message("HelpMe") + "\nh / H");
+            NodeStyleTools.setTooltip(undoButton, Languages.message("Undo") + "\nz / Z");
+            NodeStyleTools.setTooltip(recoverButton, Languages.message("Replay") + "\nr / R");
+            NodeStyleTools.setTooltip(createButton, Languages.message("NewGame") + "\nn / N");
+            NodeStyleTools.setTooltip(helpMeButton, Languages.message("HelpMe") + "\nh / H");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -715,7 +717,7 @@ public class GameMineController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -727,53 +729,53 @@ public class GameMineController extends BaseController {
         try {
             int v = Integer.parseInt(chessSizeSelector.getValue());
             if (v < 10) {
-                chessSizeSelector.getEditor().setStyle(badStyle);
+                chessSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 popError(Languages.message("TooSmall"));
                 return;
             }
             chessSize = v;
             chessSizeSelector.getEditor().setStyle(null);
         } catch (Exception e) {
-            chessSizeSelector.getEditor().setStyle(badStyle);
+            chessSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return;
         }
         try {
             int v = Integer.parseInt(boardWidthInput.getText());
             if (v < 2) {
                 popError(Languages.message("TooSmall"));
-                boardWidthInput.setStyle(badStyle);
+                boardWidthInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             hNumber = v;
             boardWidthInput.setStyle(null);
         } catch (Exception e) {
-            boardWidthInput.setStyle(badStyle);
+            boardWidthInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         try {
             int v = Integer.parseInt(boardHeightInput.getText());
             if (v < 2) {
                 popError(Languages.message("TooSmall"));
-                boardHeightInput.setStyle(badStyle);
+                boardHeightInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             vNumber = v;
             boardHeightInput.setStyle(null);
         } catch (Exception e) {
-            boardHeightInput.setStyle(badStyle);
+            boardHeightInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         try {
             int v = Integer.parseInt(boardMinesInput.getText());
             if (v <= 0 || v >= hNumber * vNumber) {
                 popError(Languages.message("InvalidData"));
-                boardMinesInput.setStyle(badStyle);
+                boardMinesInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             minesNumber = v;
             boardMinesInput.setStyle(null);
         } catch (Exception e) {
-            boardMinesInput.setStyle(badStyle);
+            boardMinesInput.setStyle(NodeStyleTools.badStyle);
         }
         UserConfig.setUserConfigInt(baseName + "ChessSize", chessSize);
         UserConfig.setUserConfigInt(baseName + "BoardHeight", vNumber);
@@ -788,7 +790,7 @@ public class GameMineController extends BaseController {
         try {
             int v = Integer.parseInt(historiesNumberSelector.getValue());
             if (v < 1) {
-                historiesNumberSelector.getEditor().setStyle(badStyle);
+                historiesNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 popError(Languages.message("TooSmall"));
                 return;
             }
@@ -796,7 +798,7 @@ public class GameMineController extends BaseController {
             historiesNumberSelector.getEditor().setStyle(null);
             UserConfig.setUserConfigInt(baseName + "HistoriesNumber", historiesNumber);
         } catch (Exception e) {
-            historiesNumberSelector.getEditor().setStyle(badStyle);
+            historiesNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return;
         }
         synchronized (this) {

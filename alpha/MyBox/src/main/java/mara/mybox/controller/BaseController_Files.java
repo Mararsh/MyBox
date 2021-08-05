@@ -19,7 +19,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
@@ -40,12 +41,12 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     public void checkSourceFileInput() {
         String v = sourceFileInput.getText();
         if (v == null || v.isEmpty()) {
-            sourceFileInput.setStyle(badStyle);
+            sourceFileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         final File file = new File(v);
         if (!file.exists()) {
-            sourceFileInput.setStyle(badStyle);
+            sourceFileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         UserConfig.setUserConfigString(baseName + "SourceFile", file.getAbsolutePath());
@@ -64,7 +65,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try {
             final File file = new File(targetPathInput.getText());
             if (!file.exists() || !file.isDirectory()) {
-                targetPathInput.setStyle(badStyle);
+                targetPathInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             targetPath = file;
@@ -78,7 +79,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try {
             final File file = new File(sourcePathInput.getText());
             if (!file.exists() || !file.isDirectory()) {
-                sourcePathInput.setStyle(badStyle);
+                sourcePathInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             sourcePath = file;
@@ -96,7 +97,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             UserConfig.setUserConfigString(baseName + "TargetFile", targetFile.getAbsolutePath());
         } catch (Exception e) {
             targetFile = null;
-            targetFileInput.setStyle(badStyle);
+            targetFileInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -116,7 +117,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             targetExistType = BaseController.TargetExistType.Rename;
             if (targetAppendInput != null) {
                 if (targetAppendInput.getText() == null || targetAppendInput.getText().trim().isEmpty()) {
-                    targetAppendInput.setStyle(badStyle);
+                    targetAppendInput.setStyle(NodeStyleTools.badStyle);
                 } else {
                     UserConfig.setUserConfigString(baseName + "TargetExistAppend", targetAppendInput.getText().trim());
                 }
@@ -795,6 +796,11 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     public File chooseSaveFile(String defaultName) {
         return chooseSaveFile(TargetFileType, defaultName);
+    }
+
+    public File chooseSaveFile(int type) {
+        return chooseSaveFile(VisitHistoryTools.getSavedPath(type), null,
+                VisitHistoryTools.getExtensionFilter(type));
     }
 
     public File chooseSaveFile(int type, String defaultName) {

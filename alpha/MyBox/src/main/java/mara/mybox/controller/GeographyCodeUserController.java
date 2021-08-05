@@ -50,9 +50,9 @@ public class GeographyCodeUserController extends BaseController {
     }
 
     @Override
-    public boolean leavingScene() {
-        locationController.leavingScene();
-        return super.leavingScene();
+    public void cleanPane() {
+        locationController.cleanPane();
+        super.cleanPane();
     }
 
 }

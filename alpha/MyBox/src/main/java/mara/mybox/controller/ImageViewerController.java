@@ -48,12 +48,13 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fximage.TransformTools;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
@@ -128,10 +129,10 @@ public class ImageViewerController extends BaseImageShapesController {
         try {
             super.setControlsStyle();
             if (loadWidthBox != null) {
-                NodeTools.setTooltip(loadWidthBox, new Tooltip(Languages.message("ImageLoadWidthCommnets")));
+                NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(Languages.message("ImageLoadWidthCommnets")));
             }
             if (selectAreaCheck != null) {
-                NodeTools.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
+                NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
             }
 
         } catch (Exception e) {
@@ -169,9 +170,9 @@ public class ImageViewerController extends BaseImageShapesController {
                         } else {
                             try {
                                 loadWidth = Integer.valueOf(newValue);
-                                NodeTools.setEditorNormal(loadWidthBox);
+                                ValidationTools.setEditorNormal(loadWidthBox);
                             } catch (Exception e) {
-                                NodeTools.setEditorBadStyle(loadWidthBox);
+                                ValidationTools.setEditorBadStyle(loadWidthBox);
                                 return;
                             }
                         }
@@ -224,13 +225,13 @@ public class ImageViewerController extends BaseImageShapesController {
                             }
                             int v = Integer.parseInt(frameSelector.getValue());
                             if (v < 1 || v > framesNumber) {
-                                frameSelector.getEditor().setStyle(badStyle);
+                                frameSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             } else {
                                 frameSelector.getEditor().setStyle(null);
                                 loadFrame(v - 1);
                             }
                         } catch (Exception e) {
-                            frameSelector.getEditor().setStyle(badStyle);
+                            frameSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     }
                 });
@@ -750,7 +751,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
             if (sampledView != null) {
                 if (imageInformation != null && imageInformation.isIsSampled()) {
-                    NodeTools.setTooltip(sampledView, imageInformation.sampleInformation(image));
+                    NodeStyleTools.setTooltip(sampledView, imageInformation.sampleInformation(image));
                     sampledView.setVisible(true);
                 } else {
                     sampledView.setVisible(false);
@@ -1780,14 +1781,14 @@ public class ImageViewerController extends BaseImageShapesController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
-    public void popButtons(MouseEvent mouseEvent) {
+    public void popMenu(MouseEvent mouseEvent) {
 //        MenuTextEditController.open(myController, mainArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 

@@ -15,7 +15,8 @@ import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -64,37 +65,37 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
         initOptions();
 
         calculateButton.disableProperty().bind(Bindings.isEmpty(scaleInput.textProperty())
-                .or(scaleInput.styleProperty().isEqualTo(badStyle))
+                .or(scaleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.redXInput.textProperty()))
-                .or(rgbController.redXInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.redXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.redYInput.textProperty()))
-                .or(rgbController.redYInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.redYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.redZInput.textProperty()))
-                .or(rgbController.redZInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.redZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.greenXInput.textProperty()))
-                .or(rgbController.greenXInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.greenXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.greenYInput.textProperty()))
-                .or(rgbController.greenYInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.greenYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.greenZInput.textProperty()))
-                .or(rgbController.greenZInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.greenZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.blueXInput.textProperty()))
-                .or(rgbController.blueXInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.blueXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.blueYInput.textProperty()))
-                .or(rgbController.blueYInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.blueYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.blueZInput.textProperty()))
-                .or(rgbController.blueZInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.blueZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.whiteXInput.textProperty()))
-                .or(rgbController.whiteXInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.whiteXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.whiteYInput.textProperty()))
-                .or(rgbController.whiteYInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.whiteYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(rgbController.whiteZInput.textProperty()))
-                .or(rgbController.whiteZInput.styleProperty().isEqualTo(badStyle))
+                .or(rgbController.whiteZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(whiteController.xInput.textProperty()))
-                .or(whiteController.xInput.styleProperty().isEqualTo(badStyle))
+                .or(whiteController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(whiteController.yInput.textProperty()))
-                .or(whiteController.yInput.styleProperty().isEqualTo(badStyle))
+                .or(whiteController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(whiteController.zInput.textProperty()))
-                .or(whiteController.zInput.styleProperty().isEqualTo(badStyle))
+                .or(whiteController.zInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
     }

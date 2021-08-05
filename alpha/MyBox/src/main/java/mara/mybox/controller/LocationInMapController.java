@@ -24,6 +24,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
@@ -92,18 +93,18 @@ public class LocationInMapController extends GeographyCodeMapController {
             return;
         }
         if (coordinateRadio.isSelected()) {
-            NodeTools.setTooltip(locateInput, Languages.message("InputCoordinateComments"));
+            NodeStyleTools.setTooltip(locateInput, Languages.message("InputCoordinateComments"));
             locateInput.setText("117.0983,36.25551");
             locateInput.setEditable(true);
             startButton.setDisable(false);
         } else if (addressRadio.isSelected()) {
-            NodeTools.setTooltip(locateInput, Languages.message("MapAddressComments"));
+            NodeStyleTools.setTooltip(locateInput, Languages.message("MapAddressComments"));
             locateInput.setText(Languages.isChinese() ? "拙政园"
                     : (mapOptionsController.mapName == ControlMapOptions.MapName.TianDiTu ? "Paris" : "巴黎"));
             locateInput.setEditable(true);
             startButton.setDisable(false);
         } else {
-            NodeTools.setTooltip(locateInput, Languages.message("PickCoordinateComments"));
+            NodeStyleTools.setTooltip(locateInput, Languages.message("PickCoordinateComments"));
             locateInput.setStyle(null);
             locateInput.setText("");
             locateInput.setEditable(false);

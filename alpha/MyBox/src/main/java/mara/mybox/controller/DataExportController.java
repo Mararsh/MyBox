@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -18,9 +17,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.EpidemicReport;
@@ -32,11 +28,8 @@ import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleData;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -124,7 +117,7 @@ public class DataExportController extends BaseTaskController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -500,9 +493,9 @@ public class DataExportController extends BaseTaskController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         cancelled = true;
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

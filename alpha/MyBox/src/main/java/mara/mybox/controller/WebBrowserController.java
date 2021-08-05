@@ -20,12 +20,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
-
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -72,7 +71,7 @@ public class WebBrowserController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(addIcon, new Tooltip(Languages.message("Add")));
+            NodeStyleTools.setTooltip(addIcon, new Tooltip(Languages.message("Add")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -207,10 +206,10 @@ public class WebBrowserController extends BaseController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         tabControllers.clear();
         tabControllers = null;
-        return super.leavingScene();
+        super.cleanPane();
     }
 
     protected void initWeibo() {

@@ -47,13 +47,14 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -163,8 +164,8 @@ public class ImageManufactureController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(imagePaneControl, new Tooltip("F7"));
-            NodeTools.setTooltip(scopePaneControl, new Tooltip("F8"));
+            NodeStyleTools.setTooltip(imagePaneControl, new Tooltip("F7"));
+            NodeStyleTools.setTooltip(scopePaneControl, new Tooltip("F8"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -185,10 +186,10 @@ public class ImageManufactureController extends ImageViewerController {
                                 newWidth = v;
                                 newWidthInput.setStyle(null);
                             } else {
-                                newWidthInput.setStyle(badStyle);
+                                newWidthInput.setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            newWidthInput.setStyle(badStyle);
+                            newWidthInput.setStyle(NodeStyleTools.badStyle);
                         }
                     });
             newHeightInput.textProperty().addListener(
@@ -199,10 +200,10 @@ public class ImageManufactureController extends ImageViewerController {
                                 newHeight = v;
                                 newHeightInput.setStyle(null);
                             } else {
-                                newHeightInput.setStyle(badStyle);
+                                newHeightInput.setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            newHeightInput.setStyle(badStyle);
+                            newHeightInput.setStyle(NodeStyleTools.badStyle);
                         }
                     });
             colorSetController.init(this, baseName + "NewBackgroundColor");
@@ -211,8 +212,8 @@ public class ImageManufactureController extends ImageViewerController {
             newHeightInput.setText("500");
 
             createButton.disableProperty().bind(
-                    newWidthInput.styleProperty().isEqualTo(badStyle)
-                            .or(newHeightInput.styleProperty().isEqualTo(badStyle))
+                    newWidthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                            .or(newHeightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -254,11 +255,11 @@ public class ImageManufactureController extends ImageViewerController {
                             maxHistoriesInput.setStyle(null);
                             okHistoriesSizeButton.setDisable(false);
                         } else {
-                            maxHistoriesInput.setStyle(badStyle);
+                            maxHistoriesInput.setStyle(NodeStyleTools.badStyle);
                             okHistoriesSizeButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        maxHistoriesInput.setStyle(badStyle);
+                        maxHistoriesInput.setStyle(NodeStyleTools.badStyle);
                         okHistoriesSizeButton.setDisable(true);
                     }
                 }

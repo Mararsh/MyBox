@@ -53,6 +53,8 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.TransformTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -154,15 +156,15 @@ public class ImagesBrowserController extends ImageViewerController {
                             displayMode = DisplayMode.ImagesGrid;
                             colsNum = Integer.valueOf(newValue);
                             if (colsNum >= 0) {
-                                NodeTools.setEditorNormal(colsnumBox);
+                                ValidationTools.setEditorNormal(colsnumBox);
                             } else {
-                                NodeTools.setEditorBadStyle(colsnumBox);
+                                ValidationTools.setEditorBadStyle(colsnumBox);
                                 return;
                             }
                         }
                         makeImagesPane();
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(colsnumBox);
+                        ValidationTools.setEditorBadStyle(colsnumBox);
                     }
                 }
             });
@@ -177,14 +179,14 @@ public class ImagesBrowserController extends ImageViewerController {
                         }
                         filesNumber = Integer.valueOf(newValue);
                         if (filesNumber > 0) {
-                            NodeTools.setEditorNormal(filesBox);
+                            ValidationTools.setEditorNormal(filesBox);
                             makeImagesNevigator(true);
 
                         } else {
-                            NodeTools.setEditorBadStyle(filesBox);
+                            ValidationTools.setEditorBadStyle(filesBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(filesBox);
+                        ValidationTools.setEditorBadStyle(filesBox);
                     }
                 }
             });
@@ -200,15 +202,15 @@ public class ImagesBrowserController extends ImageViewerController {
                         }
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
-                            NodeTools.setEditorNormal(thumbWidthSelector);
+                            ValidationTools.setEditorNormal(thumbWidthSelector);
                             thumbWidth = v;
                             UserConfig.setUserConfigInt("ThumbnailWidth", thumbWidth);
                             loadImages();
                         } else {
-                            NodeTools.setEditorBadStyle(thumbWidthSelector);
+                            ValidationTools.setEditorBadStyle(thumbWidthSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(thumbWidthSelector);
+                        ValidationTools.setEditorBadStyle(thumbWidthSelector);
                     }
                 }
             });
@@ -237,7 +239,7 @@ public class ImagesBrowserController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(selectFileButton, new Tooltip(Languages.message("SelectMultipleFilesBrowse")));
+            NodeStyleTools.setTooltip(selectFileButton, new Tooltip(Languages.message("SelectMultipleFilesBrowse")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

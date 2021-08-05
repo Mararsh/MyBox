@@ -31,9 +31,10 @@ import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleData;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -511,7 +512,7 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
                             fileSelectorSize = v;
                             tableFiltersInput.setStyle(null);
                         } else {
-                            tableFiltersInput.setStyle(badStyle);
+                            tableFiltersInput.setStyle(NodeStyleTools.badStyle);
                             popError(Languages.message("FileSizeComments"));
                         }
 
@@ -648,16 +649,16 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
                     case FileSizeLargerThan:
                     case FileSizeSmallerThan:
                         tableFiltersInput.setPromptText(Languages.message("FileSizeComments"));
-                        NodeTools.setTooltip(tableFiltersInput, new Tooltip(Languages.message("FileSizeComments")));
+                        NodeStyleTools.setTooltip(tableFiltersInput, new Tooltip(Languages.message("FileSizeComments")));
                         break;
                     case ModifiedTimeEarlierThan:
                     case ModifiedTimeLaterThan:
                         tableFiltersInput.setText("2019-10-24 10:10:10");
-                        NodeTools.setTooltip(tableFiltersInput, new Tooltip("2019-10-24 10:10:10"));
+                        NodeStyleTools.setTooltip(tableFiltersInput, new Tooltip("2019-10-24 10:10:10"));
                         break;
                     default:
                         tableFiltersInput.setPromptText(Languages.message("SeparateBySpace"));
-                        NodeTools.setTooltip(tableFiltersInput, new Tooltip(Languages.message("SeparateBySpace")));
+                        NodeStyleTools.setTooltip(tableFiltersInput, new Tooltip(Languages.message("SeparateBySpace")));
                         break;
                 }
             }

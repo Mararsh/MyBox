@@ -1,11 +1,15 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
 /**
@@ -19,6 +23,11 @@ public class MenuTextBaseController extends MenuController {
 
     public MenuTextBaseController() {
         baseTitle = Languages.message("Value");
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override
@@ -52,7 +61,7 @@ public class MenuTextBaseController extends MenuController {
     }
 
     @FXML
-    public void popButtons() {
+    public void popMenu() {
         if (parentController == null || node == null) {
             return;
         }
@@ -79,6 +88,60 @@ public class MenuTextBaseController extends MenuController {
         Window window = thisPane.getScene().getWindow();
         FindReplacePopController.open(parentController, node, window.getX(), window.getY());
         window.hide();
+    }
+
+    @FXML
+    public void editAction() {
+        if (textInput == null) {
+            return;
+        }
+        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(textInput.getText());
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        if (textInput == null) {
+            return;
+        }
+        String text = textInput.getText();
+        if (text == null || text.isEmpty()) {
+            popError(Languages.message("DoData"));
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            final File file = chooseSaveFile(TargetFileType);
+            if (file == null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    return TextFileTools.writeFile(file, text) != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSaved();
+                    recordFileWritten(file);
+                }
+
+            };
+            if (parentController != null) {
+                parentController.handling(task);
+            } else {
+                handling(task);
+            }
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
     }
 
 }

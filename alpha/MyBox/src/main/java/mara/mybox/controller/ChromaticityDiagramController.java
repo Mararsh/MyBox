@@ -40,13 +40,14 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileNameTools;
@@ -127,7 +128,7 @@ public class ChromaticityDiagramController extends BaseImageController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(YInput, new Tooltip(Languages.message("1-based")));
+            NodeStyleTools.setTooltip(YInput, new Tooltip(Languages.message("1-based")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -347,7 +348,7 @@ public class ChromaticityDiagramController extends BaseImageController {
                         X = Double.parseDouble(newValue);
                         XInput.setStyle(null);
                     } catch (Exception e) {
-                        XInput.setStyle(badStyle);
+                        XInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -357,12 +358,12 @@ public class ChromaticityDiagramController extends BaseImageController {
                     try {
                         Y = Double.parseDouble(newValue);
                         if (Y == 0) {
-                            YInput.setStyle(badStyle);
+                            YInput.setStyle(NodeStyleTools.badStyle);
                         } else {
                             YInput.setStyle(null);
                         }
                     } catch (Exception e) {
-                        YInput.setStyle(badStyle);
+                        YInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -373,7 +374,7 @@ public class ChromaticityDiagramController extends BaseImageController {
                         Z = Double.parseDouble(newValue);
                         ZInput.setStyle(null);
                     } catch (Exception e) {
-                        ZInput.setStyle(badStyle);
+                        ZInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -386,12 +387,12 @@ public class ChromaticityDiagramController extends BaseImageController {
                         x = Double.parseDouble(newValue);
                         double z = 1 - x - y;
                         if (x > 1 || x < 0 || z < 0 || z > 1) {
-                            xInput.setStyle(badStyle);
+                            xInput.setStyle(NodeStyleTools.badStyle);
                         } else {
                             xInput.setStyle(null);
                         }
                     } catch (Exception e) {
-                        xInput.setStyle(badStyle);
+                        xInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -403,28 +404,28 @@ public class ChromaticityDiagramController extends BaseImageController {
                         y = Double.parseDouble(newValue);
                         double z = 1 - x - y;
                         if (y > 1 || y <= 0 || z < 0 || z > 1) {
-                            yInput.setStyle(badStyle);
+                            yInput.setStyle(NodeStyleTools.badStyle);
                         } else {
                             yInput.setStyle(null);
                         }
                     } catch (Exception e) {
-                        yInput.setStyle(badStyle);
+                        yInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
 
             calculateXYZButton.disableProperty().bind(Bindings.isEmpty(XInput.textProperty())
-                    .or(XInput.styleProperty().isEqualTo(badStyle))
+                    .or(XInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(YInput.textProperty()))
-                    .or(YInput.styleProperty().isEqualTo(badStyle))
+                    .or(YInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(ZInput.textProperty()))
-                    .or(ZInput.styleProperty().isEqualTo(badStyle))
+                    .or(ZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             calculateXYButton.disableProperty().bind(Bindings.isEmpty(xInput.textProperty())
-                    .or(xInput.styleProperty().isEqualTo(badStyle))
+                    .or(xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(yInput.textProperty()))
-                    .or(yInput.styleProperty().isEqualTo(badStyle))
+                    .or(yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             displayDataButton.disableProperty().bind(Bindings.isEmpty(sourceDataArea.textProperty())
@@ -529,10 +530,10 @@ public class ChromaticityDiagramController extends BaseImageController {
                     displayChromaticityDiagram();
                 }
             } else {
-                fontSelector.getEditor().setStyle(badStyle);
+                fontSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            fontSelector.getEditor().setStyle(badStyle);
+            fontSelector.getEditor().setStyle(NodeStyleTools.badStyle);
         }
     }
 

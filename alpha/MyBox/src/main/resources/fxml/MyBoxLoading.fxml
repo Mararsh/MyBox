@@ -13,7 +13,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLoadingController">
+<VBox fx:id="thisPane" alignment="CENTER"  prefHeight="650.0" prefWidth="650.0" spacing="10.0" 
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxLoadingController">
     <children>
         <ImageView fx:id="imageView" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -22,15 +23,13 @@ License:    Apache License Version 2.0
         </ImageView>
         <ProgressIndicator fx:id="progressIndicator" VBox.vgrow="NEVER">
             <VBox.margin>
-                <Insets bottom="20.0" top="20.0" />
+                <Insets bottom="20.0" top="10.0" />
             </VBox.margin>
         </ProgressIndicator>
         <Label fx:id="infoLabel" minHeight="-Infinity" text="Loading..." wrapText="true" VBox.vgrow="NEVER">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin></Label>
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </Label>
     </children>
-   <padding>
-      <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-   </padding>
 </VBox>

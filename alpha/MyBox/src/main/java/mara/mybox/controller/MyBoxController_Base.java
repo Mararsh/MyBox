@@ -10,6 +10,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 
 /**
@@ -33,7 +34,7 @@ public abstract class MyBoxController_Base extends BaseController {
         if (popMenu == null || popMenu.isShowing()) {
             return;
         }
-        NodeTools.locateCenter(box, popMenu);
+        LocateTools.locateCenter(box, popMenu);
     }
 
     protected void locateImage(Node region, boolean right) {

@@ -36,11 +36,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="buttonsButton" mnemonicParsing="false" onAction="#popButtons">
+                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#popMenu">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconButtons.png" />
+                                <Image url="@../buttons/Red/iconMenu.png" />
                             </image>
                         </ImageView>
                     </graphic>

@@ -472,8 +472,8 @@ public class StyleButton {
         if (id.startsWith("character")) {
             return new StyleData(id, "", "", "iconCharacter.png");
         }
-        if (id.startsWith("buttons")) {
-            return new StyleData(id, Languages.message("Buttons"), "", "iconButtons.png");
+        if (id.startsWith("menu")) {
+            return new StyleData(id, Languages.message("Menu"), "", "iconMenu.png");
         }
         if (id.startsWith("openPath")) {
             return new StyleData(id, Languages.message("Directory"), "", "iconOpen2.png");

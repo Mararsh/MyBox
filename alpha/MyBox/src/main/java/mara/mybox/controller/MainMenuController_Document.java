@@ -170,7 +170,7 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
 
     @FXML
     protected void openTextEditer(ActionEvent event) {
-        loadScene(Fxmls.TextEditerFxml);
+        loadScene(Fxmls.TextEditorFxml);
     }
 
     @FXML
@@ -200,7 +200,7 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
 
     @FXML
     protected void openBytesEditer(ActionEvent event) {
-        loadScene(Fxmls.BytesEditerFxml);
+        loadScene(Fxmls.BytesEditorFxml);
     }
 
     @FXML

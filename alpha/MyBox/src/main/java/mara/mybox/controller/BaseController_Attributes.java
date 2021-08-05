@@ -30,6 +30,7 @@ import javafx.stage.Window;
 import mara.mybox.data.BaseTask;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Languages;
@@ -403,9 +404,9 @@ public abstract class BaseController_Attributes {
                 }, duration);
             }
             if (attach != null) {
-                NodeTools.locateUp(attach, popup);
+                LocateTools.locateUp(attach, popup);
             } else if (thisPane != null) {
-                NodeTools.locateCenter(thisPane, popup);
+                LocateTools.locateCenter(thisPane, popup);
             } else {
                 popup.show(getMyWindow());
             }

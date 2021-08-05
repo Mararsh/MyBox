@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import java.util.Date;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,10 +12,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -42,10 +40,14 @@ public class MenuTextEditController extends MenuTextBaseController {
         try {
             super.setParameters(parent, node, x, y);
 
-            if (!(parent instanceof BaseFileEditerController)) {
-                fileBox.getChildren().remove(0, 3);
+            if (parent instanceof BaseFileEditorController) {
+                BaseFileEditorController e = (BaseFileEditorController) parent;
+                if (textInput == null || textInput != e.mainArea) {
+                    fileBox.getChildren().remove(0, 2);
+                }
+            } else {
+                fileBox.getChildren().remove(0, 2);
             }
-
             if (textInput != null) {
                 textInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -127,9 +129,9 @@ public class MenuTextEditController extends MenuTextBaseController {
             replaceButton.setDisable(empty || !textInput.isEditable() || textInput.isDisable());
         }
         if (TextClipboardTools.isMonitoring()) {
-            NodeTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
         } else {
-            NodeTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
         }
     }
 
@@ -226,63 +228,9 @@ public class MenuTextEditController extends MenuTextBaseController {
     }
 
     @FXML
-    public void editAction() {
-        if (textInput == null) {
-            return;
-        }
-        TextEditerController controller = (TextEditerController) openStage(Fxmls.TextEditerFxml);
-        controller.loadContexts(textInput.getText());
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        if (textInput == null) {
-            return;
-        }
-        String text = textInput.getText();
-        if (text == null || text.isEmpty()) {
-            popError(Languages.message("DoData"));
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            final File file = chooseSaveFile((new Date().getTime() + ".txt"));
-            if (file == null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    return TextFileTools.writeFile(file, text) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(file);
-                }
-
-            };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
     @Override
     public void saveAction() {
-        if (textInput == null || !(parentController instanceof BaseFileEditerController)) {
+        if (textInput == null || !(parentController instanceof BaseFileEditorController)) {
             return;
         }
         parentController.saveAction();
@@ -291,7 +239,7 @@ public class MenuTextEditController extends MenuTextBaseController {
     @FXML
     @Override
     public void recoverAction() {
-        if (textInput == null || !(parentController instanceof BaseFileEditerController)) {
+        if (textInput == null || !(parentController instanceof BaseFileEditorController)) {
             return;
         }
         parentController.recoverAction();
@@ -300,10 +248,20 @@ public class MenuTextEditController extends MenuTextBaseController {
     @FXML
     @Override
     public void popAction() {
-        if (textInput == null || !(parentController instanceof BaseFileEditerController)) {
+        if (textInput == null) {
             return;
         }
-        parentController.popAction();
+        if (parentController instanceof BaseFileEditorController) {
+            BaseFileEditorController e = (BaseFileEditorController) parentController;
+            if (textInput != null && textInput == e.mainArea) {
+                e.popAction();
+                return;
+            }
+        }
+        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
+        controller.setAsPopup(baseName + "Pop");
+        controller.autoSaveCheck.setSelected(false);
+        controller.loadContents(textInput.getText());
     }
 
     /*

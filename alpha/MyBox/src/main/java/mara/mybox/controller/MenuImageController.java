@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
 
@@ -19,6 +20,11 @@ public class MenuImageController extends MenuController {
 
     public MenuImageController() {
         baseTitle = Languages.message("Value");
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     @Override
@@ -52,7 +58,7 @@ public class MenuImageController extends MenuController {
     }
 
     @FXML
-    public void popButtons() {
+    public void popMenu() {
         if (parentController == null || node == null) {
             return;
         }

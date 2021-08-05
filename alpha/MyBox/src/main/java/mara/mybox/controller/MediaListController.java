@@ -22,6 +22,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -91,7 +92,7 @@ public class MediaListController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(supportTipsView, new Tooltip(Languages.message("MediaPlayerSupports")));
+            NodeStyleTools.setTooltip(supportTipsView, new Tooltip(Languages.message("MediaPlayerSupports")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

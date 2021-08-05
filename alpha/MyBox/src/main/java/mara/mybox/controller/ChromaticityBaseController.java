@@ -16,7 +16,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 
@@ -117,14 +118,14 @@ public class ChromaticityBaseController extends BaseController {
         try {
             int p = Integer.parseInt(scaleInput.getText());
             if (p < 0) {
-                scaleInput.setStyle(badStyle);
+                scaleInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 scale = p;
                 scaleInput.setStyle(null);
                 UserConfig.setUserConfigInt("MatrixDecimalScale", scale);
             }
         } catch (Exception e) {
-            scaleInput.setStyle(badStyle);
+            scaleInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

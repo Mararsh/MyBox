@@ -47,7 +47,7 @@ import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
@@ -238,11 +238,11 @@ public class HtmlEditorController extends BaseWebViewController {
             super.setControlsStyle();
 
             String syn = Languages.message("SynchronizeChangesToOtherPanes") + "\nF1";
-            NodeTools.setTooltip(synchronizeCodesButton, new Tooltip(syn));
-            NodeTools.setTooltip(synchronizeEditorButton, new Tooltip(syn));
-            NodeTools.setTooltip(synchronizeMarkdownButton, new Tooltip(syn));
-            NodeTools.setTooltip(synchronizeTextsButton, new Tooltip(syn));
-            NodeTools.setTooltip(pasteTxtButton, new Tooltip(Languages.message("PasteTexts")));
+            NodeStyleTools.setTooltip(synchronizeCodesButton, new Tooltip(syn));
+            NodeStyleTools.setTooltip(synchronizeEditorButton, new Tooltip(syn));
+            NodeStyleTools.setTooltip(synchronizeMarkdownButton, new Tooltip(syn));
+            NodeStyleTools.setTooltip(synchronizeTextsButton, new Tooltip(syn));
+            NodeStyleTools.setTooltip(pasteTxtButton, new Tooltip(Languages.message("PasteTexts")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -313,8 +313,7 @@ public class HtmlEditorController extends BaseWebViewController {
     @FXML
     public void synchronizeMain() {
         try {
-            String html = WebViewTools.getHtml(webEngine);
-            synchronizePair(html, false);
+            synchronizePair(htmlInWebview(), false);
             Platform.runLater(() -> {
                 backupController.loadBackups(sourceFile);
             });
@@ -339,20 +338,42 @@ public class HtmlEditorController extends BaseWebViewController {
         try {
             if (framesDoc.isEmpty()) {
                 Tab tab = tabPane.getSelectionModel().getSelectedItem();
+
                 if (tab == editorTab) {
-                    return htmlEditor.getHtmlText();
+                    return htmlByEditor();
 
                 } else if (tab == markdownTab) {
-                    Node document = htmlParser.parse(markdownArea.getText());
-                    return HtmlWriteTools.html(null, htmlRender.render(document));
+                    return htmlByMarkdown();
+
                 } else if (tab == textsTab) {
-                    return textsArea.getText(); /// ******
+                    return htmlByText();
                 }
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return htmlByCodes();
+    }
+
+    public String htmlInWebview() {
+        return WebViewTools.getHtml(webEngine);
+    }
+
+    public String htmlByCodes() {
         return codesArea.getText();
+    }
+
+    public String htmlByEditor() {
+        return htmlEditor.getHtmlText();
+    }
+
+    public String htmlByMarkdown() {
+        Node document = htmlParser.parse(markdownArea.getText());
+        return HtmlWriteTools.html(null, htmlRender.render(document));
+    }
+
+    public String htmlByText() {
+        return HtmlWriteTools.textToHtml(textsArea.getText());
     }
 
     @FXML
@@ -385,14 +406,20 @@ public class HtmlEditorController extends BaseWebViewController {
             Platform.runLater(() -> {
                 markdown(html, updated);
             });
-            Platform.runLater(() -> {  // *******
+            Platform.runLater(() -> {
                 textsArea.setEditable(false);
-                textsArea.setText(html);
+                textsArea.setText(HtmlWriteTools.htmlToText(html));
                 if (pageLoaded) {
                     textsArea.setEditable(true);
                 }
                 textsChanged(updated);
             });
+            if (updated) {
+                Platform.runLater(() -> {
+                    webEngine.getLoadWorker().cancel();
+                    webEngine.loadContent(html);
+                });
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -461,6 +488,7 @@ public class HtmlEditorController extends BaseWebViewController {
             if (!checkBeforeNextAction()) {
                 return;
             }
+            address = null;
             sourceFile = null;
             urlSelector.getEditor().setText("");
             webEngine.loadContent(HtmlWriteTools.emptyHmtl());
@@ -840,7 +868,7 @@ public class HtmlEditorController extends BaseWebViewController {
             popError(Languages.message("NoData"));
             return;
         }
-        string = UrlTools.encodeEscape(string);
+        string = HtmlWriteTools.textToHtml(string);
         insertCodesText(string);
     }
 
@@ -851,14 +879,14 @@ public class HtmlEditorController extends BaseWebViewController {
 
     @FXML
     public void editCodes() {
-        TextEditerController controller = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
-        controller.loadContexts(codesArea.getText());
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(codesArea.getText());
         controller.toFront();
     }
 
     @FXML
     public void synchronizeCodes() {
-        synchronizePair(codesArea.getText(), true);
+        synchronizePair(htmlByCodes(), true);
     }
 
     /*
@@ -867,10 +895,10 @@ public class HtmlEditorController extends BaseWebViewController {
     protected void richTextChanged(boolean changed) {
         heChanged = changed;
         editorTab.setText(Languages.message("RichText") + (changed ? " *" : ""));
-        String c = htmlEditor.getHtmlText();
+        String c = htmlByEditor();
         int len = 0;
         if (c != null && !c.isEmpty()) {
-            len = htmlEditor.getHtmlText().length();
+            len = c.length();
         }
         editorLabel.setText(Languages.message("Total") + ": " + StringTools.format(len));
         if (changed) {
@@ -889,8 +917,8 @@ public class HtmlEditorController extends BaseWebViewController {
     }
 
     @FXML
-    public void synchronizeEditor() { // ****
-        synchronizePair(codesArea.getText(), true);
+    public void synchronizeEditor() {
+        synchronizePair(htmlByEditor(), true);
     }
 
     @FXML
@@ -966,8 +994,8 @@ public class HtmlEditorController extends BaseWebViewController {
 
     @FXML
     protected void editMarkdown() {
-        MarkdownEditerController controller
-                = (MarkdownEditerController) openStage(Fxmls.MarkdownEditorFxml);
+        MarkdownEditorController controller
+                = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
         controller.loadMarkdown(markdownArea.getText());
     }
 
@@ -982,8 +1010,8 @@ public class HtmlEditorController extends BaseWebViewController {
     }
 
     @FXML
-    public void synchronizeMarkdown() { // ****
-        synchronizePair(codesArea.getText(), true);
+    public void synchronizeMarkdown() {
+        synchronizePair(htmlByMarkdown(), true);
     }
 
     /*
@@ -1004,14 +1032,14 @@ public class HtmlEditorController extends BaseWebViewController {
     }
 
     @FXML
-    public void synchronizeTexts() { // ****
-        synchronizePair(codesArea.getText(), true);
+    public void synchronizeTexts() {
+        synchronizePair(htmlByText(), true);
     }
 
     @FXML
     protected void editTexts() {
-        MarkdownEditerController controller
-                = (MarkdownEditerController) openStage(Fxmls.MarkdownEditorFxml);
+        MarkdownEditorController controller
+                = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
         controller.loadMarkdown(markdownArea.getText());
     }
 
@@ -1022,7 +1050,7 @@ public class HtmlEditorController extends BaseWebViewController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (!fileChanged) {
+        if (isPop || !fileChanged) {
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

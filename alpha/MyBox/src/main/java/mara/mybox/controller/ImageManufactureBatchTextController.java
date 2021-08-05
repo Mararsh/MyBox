@@ -21,11 +21,13 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -79,12 +81,12 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
                     .or(Bindings.isEmpty(waterInput.textProperty()))
-                    .or(waterXInput.styleProperty().isEqualTo(badStyle))
-                    .or(waterYInput.styleProperty().isEqualTo(badStyle))
-                    .or(marginInput.styleProperty().isEqualTo(badStyle))
+                    .or(waterXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(waterYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(marginInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -124,12 +126,12 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         if (v > 0) {
                             fontSize = v;
                             UserConfig.setUserConfigInt(baseName + "FontSize", fontSize);
-                            NodeTools.setEditorNormal(waterSizeBox);
+                            ValidationTools.setEditorNormal(waterSizeBox);
                         } else {
-                            NodeTools.setEditorBadStyle(waterSizeBox);
+                            ValidationTools.setEditorBadStyle(waterSizeBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(waterSizeBox);
+                        ValidationTools.setEditorBadStyle(waterSizeBox);
                     }
                 }
             });
@@ -167,12 +169,12 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
                             UserConfig.setUserConfigInt(baseName + "TextOpacity", (int) (f * 100));
-                            NodeTools.setEditorNormal(opacitySelector);
+                            ValidationTools.setEditorNormal(opacitySelector);
                         } else {
-                            NodeTools.setEditorBadStyle(opacitySelector);
+                            ValidationTools.setEditorBadStyle(opacitySelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(opacitySelector);
+                        ValidationTools.setEditorBadStyle(opacitySelector);
                     }
                 }
             });
@@ -205,12 +207,12 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         if (v >= 0) {
                             shadow = v;
                             UserConfig.setUserConfigInt(baseName + "Shadow", shadow);
-                            NodeTools.setEditorNormal(waterShadowBox);
+                            ValidationTools.setEditorNormal(waterShadowBox);
                         } else {
-                            NodeTools.setEditorBadStyle(waterShadowBox);
+                            ValidationTools.setEditorBadStyle(waterShadowBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(waterShadowBox);
+                        ValidationTools.setEditorBadStyle(waterShadowBox);
                     }
                 }
             });
@@ -247,12 +249,12 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         if (v >= 0) {
                             angle = v;
                             UserConfig.setUserConfigInt(baseName + "Angle", angle);
-                            NodeTools.setEditorNormal(waterAngleBox);
+                            ValidationTools.setEditorNormal(waterAngleBox);
                         } else {
-                            NodeTools.setEditorBadStyle(waterAngleBox);
+                            ValidationTools.setEditorBadStyle(waterAngleBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(waterAngleBox);
+                        ValidationTools.setEditorBadStyle(waterAngleBox);
                     }
                 }
             });
@@ -321,10 +323,10 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 UserConfig.setUserConfigInt(baseName + "Margin", margin);
                 marginInput.setStyle(null);
             } else {
-                marginInput.setStyle(badStyle);
+                marginInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            marginInput.setStyle(badStyle);
+            marginInput.setStyle(NodeStyleTools.badStyle);
         }
 
     }
@@ -336,10 +338,10 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 waterX = v;
                 waterXInput.setStyle(null);
             } else {
-                waterXInput.setStyle(badStyle);
+                waterXInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            waterXInput.setStyle(badStyle);
+            waterXInput.setStyle(NodeStyleTools.badStyle);
         }
 
         try {
@@ -348,10 +350,10 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 waterY = v;
                 waterYInput.setStyle(null);
             } else {
-                waterYInput.setStyle(badStyle);
+                waterYInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            waterYInput.setStyle(badStyle);
+            waterYInput.setStyle(NodeStyleTools.badStyle);
         }
 
     }

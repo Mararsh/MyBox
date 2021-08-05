@@ -17,8 +17,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
@@ -49,7 +50,6 @@ public class TextInSystemClipboardController extends BaseController {
 
     public TextInSystemClipboardController() {
         baseTitle = message("TextInSystemClipboard");
-        TipsLabelKey = "RecordTextTips";
     }
 
     @Override
@@ -69,10 +69,10 @@ public class TextInSystemClipboardController extends BaseController {
                             intervalSelector.getEditor().setStyle(null);
                             TextClipboardTools.setMonitorInterval(v);
                         } else {
-                            intervalSelector.getEditor().setStyle(badStyle);
+                            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        intervalSelector.getEditor().setStyle(badStyle);
+                        intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -142,7 +142,7 @@ public class TextInSystemClipboardController extends BaseController {
                 separateLine = select + "\n";
             }
         } catch (Exception e) {
-            intervalSelector.getEditor().setStyle(badStyle);
+            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -163,12 +163,12 @@ public class TextInSystemClipboardController extends BaseController {
                 StyleTools.setNameIcon(startButton, message("StopRecording"), "iconStop.png");
                 startButton.applyCss();
                 recordLabel.setText(message("MonitoringTextInSystemClipboardAndNotice"));
-                NodeTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
             } else {
                 StyleTools.setNameIcon(startButton, message("StartRecording"), "iconStart.png");
                 startButton.applyCss();
                 recordLabel.setText(message("NotMonitoringTextInSystemClipboard"));
-                NodeTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -204,8 +204,8 @@ public class TextInSystemClipboardController extends BaseController {
 
     @FXML
     public void editAction() {
-        TextEditerController controller = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
-        controller.loadContexts(textArea.getText());
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(textArea.getText());
         controller.toFront();
     }
 

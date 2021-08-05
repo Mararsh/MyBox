@@ -78,6 +78,11 @@ License:    Apache License Version 2.0
                                             </graphic>
                                         </Button>
                                         <CheckBox fx:id="noDupCheck" mnemonicParsing="false" selected="true" text="%NoDuplication" />
+                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconTips.png" />
+                                 </image>
+                              </ImageView>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>

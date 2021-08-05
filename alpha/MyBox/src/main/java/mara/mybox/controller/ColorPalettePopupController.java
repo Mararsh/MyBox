@@ -30,6 +30,8 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -88,7 +90,7 @@ public class ColorPalettePopupController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(cancelButton, Languages.message("PopupClose"));
+            NodeStyleTools.setTooltip(cancelButton, Languages.message("PopupClose"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -184,7 +186,7 @@ public class ColorPalettePopupController extends BaseController {
             }
             Rectangle rect = new Rectangle(rectSize, rectSize);
             rect.setUserData(data);
-            NodeTools.setTooltip(rect, new Tooltip(data.display()));
+            NodeStyleTools.setTooltip(rect, new Tooltip(data.display()));
             Color color = data.getColor();
             rect.setFill(color);
             rect.setStroke(Color.BLACK);
@@ -196,7 +198,7 @@ public class ColorPalettePopupController extends BaseController {
                     try {
                         setController.rect.setFill(color);
                         setController.rect.setUserData(data);
-                        NodeTools.setTooltip(setController.rect, data.display());
+                        NodeStyleTools.setTooltip(setController.rect, data.display());
                         setController.closePopup();
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
@@ -287,7 +289,7 @@ public class ColorPalettePopupController extends BaseController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
             popMenu.getItems().addAll(items);
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

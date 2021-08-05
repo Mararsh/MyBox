@@ -21,9 +21,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleData;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -106,13 +107,13 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetFileController.fileInput.textProperty())
-                            .or(targetFileController.fileInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.executableInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.titleInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.xInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.yInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.widthInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsController.heightInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetFileController.fileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(optionsController.executableInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(optionsController.titleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(optionsController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(optionsController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(optionsController.widthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(optionsController.heightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                             .or(stopping)
             );
 

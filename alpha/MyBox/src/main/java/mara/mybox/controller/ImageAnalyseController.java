@@ -43,7 +43,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.bufferedimage.ColorComponentTools;
@@ -56,6 +56,8 @@ import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.K
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantization;
 import mara.mybox.bufferedimage.ImageStatistic;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -169,9 +171,9 @@ public class ImageAnalyseController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(palette1Button, Languages.message("AddInColorPalette"));
-            NodeTools.setTooltip(palette2Button, Languages.message("AddInColorPalette"));
-            NodeTools.setTooltip(tipsView, new Tooltip(
+            NodeStyleTools.setTooltip(palette1Button, Languages.message("AddInColorPalette"));
+            NodeStyleTools.setTooltip(palette2Button, Languages.message("AddInColorPalette"));
+            NodeStyleTools.setTooltip(tipsView, new Tooltip(
                     Languages.message("ImageAnalyseTips") + "\n\n-------------------------\n"
                     + Languages.message("QuantizationComments")));
 
@@ -333,13 +335,13 @@ public class ImageAnalyseController extends ImageViewerController {
                         if (v > 0) {
                             colorNumber1 = v;
                             UserConfig.setUserConfigInt(baseName + "ColorNumber1", colorNumber1);
-                            NodeTools.setEditorNormal(colorsNumberSelectors1);
+                            ValidationTools.setEditorNormal(colorsNumberSelectors1);
                             loadData(false, true, false);
                         } else {
-                            NodeTools.setEditorBadStyle(colorsNumberSelectors1);
+                            ValidationTools.setEditorBadStyle(colorsNumberSelectors1);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(colorsNumberSelectors1);
+                        ValidationTools.setEditorBadStyle(colorsNumberSelectors1);
                     }
                 }
             });
@@ -359,10 +361,10 @@ public class ImageAnalyseController extends ImageViewerController {
                             regionSizeSelector1.getEditor().setStyle(null);
                             loadData(false, true, false);
                         } else {
-                            regionSizeSelector1.getEditor().setStyle(badStyle);
+                            regionSizeSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        regionSizeSelector1.getEditor().setStyle(badStyle);
+                        regionSizeSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -384,7 +386,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v2 = Integer.parseInt(values[1]);
                         int v3 = Integer.parseInt(values[2]);
                         if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            weightSelector1.getEditor().setStyle(badStyle);
+                            weightSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
                             return;
                         }
                         weight11 = v1;
@@ -394,7 +396,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         UserConfig.setUserConfigString(baseName + "RGBWeights1", newValue);
                         loadData(false, true, false);
                     } catch (Exception e) {
-                        weightSelector1.getEditor().setStyle(badStyle);
+                        weightSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -409,13 +411,13 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             kmeansLoop = v;
-                            NodeTools.setEditorNormal(kmeansLoopSelector);
+                            ValidationTools.setEditorNormal(kmeansLoopSelector);
                             loadData(false, true, false);
                         } else {
-                            NodeTools.setEditorBadStyle(kmeansLoopSelector);
+                            ValidationTools.setEditorBadStyle(kmeansLoopSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(kmeansLoopSelector);
+                        ValidationTools.setEditorBadStyle(kmeansLoopSelector);
                     }
                 }
             });
@@ -434,13 +436,13 @@ public class ImageAnalyseController extends ImageViewerController {
                         if (v > 0) {
                             colorNumber2 = v;
                             UserConfig.setUserConfigInt(baseName + "ColorNumber2", colorNumber2);
-                            NodeTools.setEditorNormal(colorsNumberSelectors2);
+                            ValidationTools.setEditorNormal(colorsNumberSelectors2);
                             loadData(false, false, true);
                         } else {
-                            NodeTools.setEditorBadStyle(colorsNumberSelectors2);
+                            ValidationTools.setEditorBadStyle(colorsNumberSelectors2);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(colorsNumberSelectors2);
+                        ValidationTools.setEditorBadStyle(colorsNumberSelectors2);
                     }
                 }
             });
@@ -460,10 +462,10 @@ public class ImageAnalyseController extends ImageViewerController {
                             regionSizeSelector2.getEditor().setStyle(null);
                             loadData(false, false, true);
                         } else {
-                            regionSizeSelector2.getEditor().setStyle(badStyle);
+                            regionSizeSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        regionSizeSelector2.getEditor().setStyle(badStyle);
+                        regionSizeSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -485,7 +487,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v2 = Integer.parseInt(values[1]);
                         int v3 = Integer.parseInt(values[2]);
                         if (v1 <= 0 || v2 <= 0 || v3 <= 0) {
-                            weightSelector2.getEditor().setStyle(badStyle);
+                            weightSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
                             return;
                         }
                         weight21 = v1;
@@ -495,7 +497,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         UserConfig.setUserConfigString(baseName + "RGBWeights2", newValue);
                         loadData(false, false, true);
                     } catch (Exception e) {
-                        weightSelector2.getEditor().setStyle(badStyle);
+                        weightSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });

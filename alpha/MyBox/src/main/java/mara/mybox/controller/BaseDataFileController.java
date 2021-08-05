@@ -20,8 +20,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -169,7 +170,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                         try {
                             int v = Integer.parseInt(newValue.trim());
                             if (v <= 0) {
-                                pageSizeSelector.getEditor().setStyle(badStyle);
+                                pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             } else {
                                 pageSize = v;
                                 UserConfig.setUserConfigInt(baseName + "PageSize", pageSize);
@@ -179,7 +180,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                                 }
                             }
                         } catch (Exception e) {
-                            pageSizeSelector.getEditor().setStyle(badStyle);
+                            pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -196,7 +197,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
         try {
             int v = Integer.parseInt(value);
             if (v < 0) {
-                pageSelector.getEditor().setStyle(badStyle);
+                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 return false;
             } else {
                 pageSelector.getEditor().setStyle(null);
@@ -204,7 +205,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                 return true;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(badStyle);
+            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return false;
         }
     }

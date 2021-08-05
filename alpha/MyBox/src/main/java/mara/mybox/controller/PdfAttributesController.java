@@ -19,8 +19,9 @@ import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
@@ -87,10 +88,10 @@ public class PdfAttributesController extends BaseController {
                         versionInput.setStyle(null);
                         version = f;
                     } else {
-                        versionInput.setStyle(badStyle);
+                        versionInput.setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    versionInput.setStyle(badStyle);
+                    versionInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -109,10 +110,10 @@ public class PdfAttributesController extends BaseController {
                         createTimeInput.setStyle(null);
                         createTime = d;
                     } else {
-                        createTimeInput.setStyle(badStyle);
+                        createTimeInput.setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    createTimeInput.setStyle(badStyle);
+                    createTimeInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -131,10 +132,10 @@ public class PdfAttributesController extends BaseController {
                         modifyTimeInput.setStyle(null);
                         modifyTime = d;
                     } else {
-                        modifyTimeInput.setStyle(badStyle);
+                        modifyTimeInput.setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    modifyTimeInput.setStyle(badStyle);
+                    modifyTimeInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -189,12 +190,12 @@ public class PdfAttributesController extends BaseController {
         authorInput.setText(UserConfig.getUserConfigString("AuthorKey", System.getProperty("user.name")));
 
         saveButton.disableProperty().bind(
-                sourceFileInput.styleProperty().isEqualTo(badStyle)
-                        .or(versionInput.styleProperty().isEqualTo(badStyle))
-                        .or(createTimeInput.styleProperty().isEqualTo(badStyle))
-                        .or(modifyTimeInput.styleProperty().isEqualTo(badStyle))
-                        .or(userPasswordInput2.styleProperty().isEqualTo(badStyle))
-                        .or(ownerPasswordInput2.styleProperty().isEqualTo(badStyle))
+                sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                        .or(versionInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(createTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(modifyTimeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(userPasswordInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                        .or(ownerPasswordInput2.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
     }
@@ -203,7 +204,7 @@ public class PdfAttributesController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(versionInput, Languages.message("PdfVersionComments"));
+            NodeStyleTools.setTooltip(versionInput, Languages.message("PdfVersionComments"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -212,7 +213,7 @@ public class PdfAttributesController extends BaseController {
 
     @Override
     public void sourceFileChanged(final File file) {
-        sourceFileInput.setStyle(badStyle);
+        sourceFileInput.setStyle(NodeStyleTools.badStyle);
         if (!PdfTools.isPDF(file.getAbsolutePath())) {
             return;
         }
@@ -233,7 +234,7 @@ public class PdfAttributesController extends BaseController {
             userPasswordInput.setStyle(null);
             userPasswordInput2.setStyle(null);
         } else {
-            userPasswordInput2.setStyle(badStyle);
+            userPasswordInput2.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -250,7 +251,7 @@ public class PdfAttributesController extends BaseController {
             ownerPasswordInput.setStyle(null);
             ownerPasswordInput2.setStyle(null);
         } else {
-            ownerPasswordInput2.setStyle(badStyle);
+            ownerPasswordInput2.setStyle(NodeStyleTools.badStyle);
         }
     }
 

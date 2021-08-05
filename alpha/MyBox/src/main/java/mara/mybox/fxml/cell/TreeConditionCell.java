@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import mara.mybox.fxml.ConditionNode;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 
 /**
@@ -31,9 +32,9 @@ public class TreeConditionCell extends CheckBoxTreeCell<ConditionNode> {
         if (node != null && node instanceof CheckBox) {
             CheckBox checkBox = (CheckBox) node;
             if (item.getCondition() != null && !item.getCondition().isBlank()) {
-                NodeTools.setTooltip(checkBox, item.getCondition());
+                NodeStyleTools.setTooltip(checkBox, item.getCondition());
             } else {
-                NodeTools.removeTooltip(checkBox);
+                NodeStyleTools.removeTooltip(checkBox);
             }
         }
     }

@@ -26,7 +26,8 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -124,10 +125,10 @@ public class BaseMatrixController extends BaseSheetController {
                                 }
                                 resizeSheet(rowsNumber, colsNumber);
                             } else {
-                                columnsNumberSelector.getEditor().setStyle(badStyle);
+                                columnsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            columnsNumberSelector.getEditor().setStyle(badStyle);
+                            columnsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -150,10 +151,10 @@ public class BaseMatrixController extends BaseSheetController {
                                 }
                                 resizeSheet(rowsNumber, colsNumber);
                             } else {
-                                rowsNumberSelector.getEditor().setStyle(badStyle);
+                                rowsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            rowsNumberSelector.getEditor().setStyle(badStyle);
+                            rowsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -173,10 +174,10 @@ public class BaseMatrixController extends BaseSheetController {
                                 scaleSelector.getEditor().setStyle(null);
                                 scaleMatrix();
                             } else {
-                                scaleSelector.getEditor().setStyle(badStyle);
+                                scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            scaleSelector.getEditor().setStyle(badStyle);
+                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -195,10 +196,10 @@ public class BaseMatrixController extends BaseSheetController {
                                 UserConfig.setUserConfigInt(baseName + "MaxRandom", v);
                                 randomSelector.getEditor().setStyle(null);
                             } else {
-                                randomSelector.getEditor().setStyle(badStyle);
+                                randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            randomSelector.getEditor().setStyle(badStyle);
+                            randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -627,7 +628,7 @@ public class BaseMatrixController extends BaseSheetController {
                     for (int i = 0; i < colsNumber; ++i) {
                         double d = dvalue(j, i);
                         if (d == AppValues.InvalidDouble) {
-                            inputs[j][i].setStyle(badStyle);
+                            inputs[j][i].setStyle(NodeStyleTools.badStyle);
                             popError(Languages.message("InvalidData"));
                             return;
                         }

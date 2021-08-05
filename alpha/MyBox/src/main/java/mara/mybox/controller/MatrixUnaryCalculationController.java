@@ -15,7 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppValues;
@@ -94,7 +95,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                             numberInput.setStyle(null);
                             UserConfig.setUserConfigString(baseName + "Number", number + "");
                         } catch (Exception e) {
-                            numberInput.setStyle(badStyle);
+                            numberInput.setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -112,10 +113,10 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                                 powerInput.setStyle(null);
                                 UserConfig.setUserConfigInt(baseName + "Power", power);
                             } else {
-                                powerInput.setStyle(badStyle);
+                                powerInput.setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            powerInput.setStyle(badStyle);
+                            powerInput.setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -144,11 +145,11 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 rowInput.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "Row", v);
             } else {
-                rowInput.setStyle(badStyle);
+                rowInput.setStyle(NodeStyleTools.badStyle);
                 valid = false;
             }
         } catch (Exception e) {
-            rowInput.setStyle(badStyle);
+            rowInput.setStyle(NodeStyleTools.badStyle);
             valid = false;
         }
         try {
@@ -158,11 +159,11 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 columnInput.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "Column", v);
             } else {
-                columnInput.setStyle(badStyle);
+                columnInput.setStyle(NodeStyleTools.badStyle);
                 valid = false;
             }
         } catch (Exception e) {
-            columnInput.setStyle(badStyle);
+            columnInput.setStyle(NodeStyleTools.badStyle);
             valid = false;
         }
         return valid;
@@ -176,14 +177,14 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             }
             number = Double.parseDouble(numberInput.getText().trim());
             if (divideRadio.isSelected() && number == 0) {
-                numberInput.setStyle(badStyle);
+                numberInput.setStyle(NodeStyleTools.badStyle);
                 return false;
             }
             numberInput.setStyle(null);
             UserConfig.setUserConfigString(baseName + "Number", number + "");
             return true;
         } catch (Exception e) {
-            numberInput.setStyle(badStyle);
+            numberInput.setStyle(NodeStyleTools.badStyle);
             return false;
         }
     }
@@ -201,11 +202,11 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 UserConfig.setUserConfigInt(baseName + "Power", power);
                 return true;
             } else {
-                powerInput.setStyle(badStyle);
+                powerInput.setStyle(NodeStyleTools.badStyle);
                 return false;
             }
         } catch (Exception e) {
-            powerInput.setStyle(badStyle);
+            powerInput.setStyle(NodeStyleTools.badStyle);
             return false;
         }
     }

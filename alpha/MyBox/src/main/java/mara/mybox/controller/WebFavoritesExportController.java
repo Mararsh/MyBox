@@ -27,8 +27,10 @@ import mara.mybox.db.data.WebFavorite;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableWebFavorite;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextTools;
@@ -145,7 +147,7 @@ public class WebFavoritesExportController extends BaseTaskController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                             .or(treeView.getSelectionModel().selectedItemProperty().isNull())
             );
 
@@ -230,7 +232,7 @@ public class WebFavoritesExportController extends BaseTaskController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -620,7 +622,7 @@ public class WebFavoritesExportController extends BaseTaskController {
             return;
         }
         if (textsFile != null && textsFile.exists()) {
-            TextEditerController controller = (TextEditerController) openStage(Fxmls.TextEditerFxml);
+            TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
             controller.sourceFileChanged(textsFile);
         }
         popInformation(Languages.message("Count") + ": " + count);

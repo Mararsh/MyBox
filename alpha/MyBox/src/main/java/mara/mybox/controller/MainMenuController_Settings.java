@@ -239,7 +239,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
 
     @FXML
     public void editConfigFile(ActionEvent event) {
-        TextEditerController controller = (TextEditerController) openStage(Fxmls.TextEditerFxml);
+        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.hideLeftPane();
         controller.hideRightPane();
         controller.openTextFile(AppVariables.MyboxConfigFile);

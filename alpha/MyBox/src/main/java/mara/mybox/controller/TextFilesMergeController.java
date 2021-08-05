@@ -23,6 +23,7 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.bomBytes;
@@ -64,7 +65,7 @@ public class TextFilesMergeController extends FilesMergeController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
+            NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

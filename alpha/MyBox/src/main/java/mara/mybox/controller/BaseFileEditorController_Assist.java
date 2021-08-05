@@ -37,7 +37,8 @@ import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -57,7 +58,7 @@ import mara.mybox.value.UserConfig;
  *
  * Attributes and methods about file
  */
-public abstract class BaseFileEditerController_Assist extends BaseController {
+public abstract class BaseFileEditorController_Assist extends BaseController {
 
     protected Edit_Type editType;
     protected long lineLocation, objectLocation;
@@ -108,7 +109,7 @@ public abstract class BaseFileEditerController_Assist extends BaseController {
     @FXML
     protected ControlFileBackup backupController;
 
-    public BaseFileEditerController_Assist() {
+    public BaseFileEditorController_Assist() {
         defaultPageSize = 50000;
     }
 
@@ -435,11 +436,11 @@ public abstract class BaseFileEditerController_Assist extends BaseController {
                 loadPage();
                 return true;
             } else {
-                pageSelector.getEditor().setStyle(badStyle);
+                pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 return false;
             }
         } catch (Exception e) {
-            pageSelector.getEditor().setStyle(badStyle);
+            pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return false;
         }
     }
@@ -471,7 +472,7 @@ public abstract class BaseFileEditerController_Assist extends BaseController {
             if (editLabel != null) {
                 editLabel.setText(Languages.message("InvalidData"));
             }
-            mainArea.setStyle(badStyle);
+            mainArea.setStyle(NodeStyleTools.badStyle);
 //            popError(message("InvalidData"));
         } else if (editLabel != null) {
             editLabel.setText("");
@@ -993,7 +994,7 @@ public abstract class BaseFileEditerController_Assist extends BaseController {
                     if (saveAsType == SaveAsType.Load) {
                         openFile(file);
                     } else if (saveAsType == SaveAsType.Open) {
-                        BaseFileEditerController controller = openNewStage();
+                        BaseFileEditorController controller = openNewStage();
                         controller.openFile(file);
                     }
                     popSaved();
@@ -1008,17 +1009,17 @@ public abstract class BaseFileEditerController_Assist extends BaseController {
         }
     }
 
-    public BaseFileEditerController openNewStage() {
+    public BaseFileEditorController openNewStage() {
         if (null == editType) {
             return null;
         } else {
             switch (editType) {
                 case Text:
-                    return (BaseFileEditerController) openStage(Fxmls.TextEditerFxml);
+                    return (BaseFileEditorController) openStage(Fxmls.TextEditorFxml);
                 case Bytes:
-                    return (BaseFileEditerController) openStage(Fxmls.BytesEditerFxml);
+                    return (BaseFileEditorController) openStage(Fxmls.BytesEditorFxml);
                 case Markdown:
-                    return (MarkdownEditerController) openStage(Fxmls.MarkdownEditorFxml);
+                    return (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
                 default:
                     return null;
             }
@@ -1181,7 +1182,7 @@ public abstract class BaseFileEditerController_Assist extends BaseController {
                         popInformation(Languages.message("NoData"));
                         return;
                     }
-                    TextEditerController controller = (TextEditerController) openStage(Fxmls.TextEditerFxml);
+                    TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
                     controller.openTextFile(filteredFile);
                     controller.filterConditionsLabel.setText(finalCondition);
                     controller.filterConditionsString = finalCondition;
@@ -1205,7 +1206,7 @@ public abstract class BaseFileEditerController_Assist extends BaseController {
         updateInterface(false);
     }
 
-    public void loadContexts(String contents) {
+    public void loadContents(String contents) {
         createAction();
         mainArea.setText(contents);
         updateInterface(true);

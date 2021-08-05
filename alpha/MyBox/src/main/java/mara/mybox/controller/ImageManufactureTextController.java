@@ -25,10 +25,12 @@ import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -135,12 +137,12 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                             fontSize = v;
                             UserConfig.setUserConfigInt(baseName + "TextFontSize", v);
                             write(true);
-                            NodeTools.setEditorNormal(sizeBox);
+                            ValidationTools.setEditorNormal(sizeBox);
                         } else {
-                            NodeTools.setEditorBadStyle(sizeBox);
+                            ValidationTools.setEditorBadStyle(sizeBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(sizeBox);
+                        ValidationTools.setEditorBadStyle(sizeBox);
                     }
                 }
             });
@@ -172,13 +174,13 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
                             UserConfig.setUserConfigInt(baseName + "TextOpacity", (int) (f * 100));
-                            NodeTools.setEditorNormal(opacitySelector);
+                            ValidationTools.setEditorNormal(opacitySelector);
                             write(true);
                         } else {
-                            NodeTools.setEditorBadStyle(opacitySelector);
+                            ValidationTools.setEditorBadStyle(opacitySelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(opacitySelector);
+                        ValidationTools.setEditorBadStyle(opacitySelector);
                     }
                 }
             });
@@ -211,13 +213,13 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         if (v >= 0) {
                             shadow = v;
                             UserConfig.setUserConfigInt(baseName + "TextShadow", v);
-                            NodeTools.setEditorNormal(shadowBox);
+                            ValidationTools.setEditorNormal(shadowBox);
                             write(true);
                         } else {
-                            NodeTools.setEditorBadStyle(shadowBox);
+                            ValidationTools.setEditorBadStyle(shadowBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(shadowBox);
+                        ValidationTools.setEditorBadStyle(shadowBox);
                     }
                 }
             });
@@ -233,13 +235,13 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         if (v >= 0) {
                             angle = v;
                             UserConfig.setUserConfigInt(baseName + "TextAngle", v);
-                            NodeTools.setEditorNormal(angleBox);
+                            ValidationTools.setEditorNormal(angleBox);
                             write(true);
                         } else {
-                            NodeTools.setEditorBadStyle(angleBox);
+                            ValidationTools.setEditorBadStyle(angleBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(angleBox);
+                        ValidationTools.setEditorBadStyle(angleBox);
                     }
                 }
             });
@@ -372,31 +374,31 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         try {
             int v = Integer.parseInt(xInput.getText().trim());
             if (v < 0 || v >= imageView.getImage().getWidth()) {
-                xInput.setStyle(badStyle);
+                xInput.setStyle(NodeStyleTools.badStyle);
                 return false;
             } else {
                 x = v;
                 xInput.setStyle(null);
             }
         } catch (Exception e) {
-            xInput.setStyle(badStyle);
+            xInput.setStyle(NodeStyleTools.badStyle);
             return false;
         }
         try {
             int v = Integer.parseInt(yInput.getText().trim());
             if (v < 0 || v >= imageView.getImage().getHeight()) {
-                yInput.setStyle(badStyle);
+                yInput.setStyle(NodeStyleTools.badStyle);
                 return false;
             } else {
                 y = v;
                 yInput.setStyle(null);
             }
         } catch (Exception e) {
-            yInput.setStyle(badStyle);
+            yInput.setStyle(NodeStyleTools.badStyle);
             return false;
         }
         if (textInput.getText().isBlank()) {
-            textInput.setStyle(badStyle);
+            textInput.setStyle(NodeStyleTools.badStyle);
             return false;
         } else {
             textInput.setStyle(null);

@@ -21,6 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.Matrix;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -96,13 +97,13 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(plusRadio, new Tooltip(Languages.message("MatricesPlusComments")));
-            NodeTools.setTooltip(minusRadio, new Tooltip(Languages.message("MatricesMinusComments")));
-            NodeTools.setTooltip(multiplyRadio, new Tooltip(Languages.message("MatricesMultiplyComments")));
-            NodeTools.setTooltip(hadamardProductRadio, new Tooltip(Languages.message("HadamardProductComments")));
-            NodeTools.setTooltip(kroneckerProductRadio, new Tooltip(Languages.message("KroneckerProductComments")));
-            NodeTools.setTooltip(verticalMergeRadio, new Tooltip(Languages.message("VerticalMergeComments")));
-            NodeTools.setTooltip(horizontalMergeRadio, new Tooltip(Languages.message("HorizontalMergeComments")));
+            NodeStyleTools.setTooltip(plusRadio, new Tooltip(Languages.message("MatricesPlusComments")));
+            NodeStyleTools.setTooltip(minusRadio, new Tooltip(Languages.message("MatricesMinusComments")));
+            NodeStyleTools.setTooltip(multiplyRadio, new Tooltip(Languages.message("MatricesMultiplyComments")));
+            NodeStyleTools.setTooltip(hadamardProductRadio, new Tooltip(Languages.message("HadamardProductComments")));
+            NodeStyleTools.setTooltip(kroneckerProductRadio, new Tooltip(Languages.message("KroneckerProductComments")));
+            NodeStyleTools.setTooltip(verticalMergeRadio, new Tooltip(Languages.message("VerticalMergeComments")));
+            NodeStyleTools.setTooltip(horizontalMergeRadio, new Tooltip(Languages.message("HorizontalMergeComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

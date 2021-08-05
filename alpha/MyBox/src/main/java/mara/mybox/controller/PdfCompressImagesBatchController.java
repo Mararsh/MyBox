@@ -13,11 +13,12 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -61,9 +62,9 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(jpegBox.styleProperty().isEqualTo(badStyle))
-                            .or(thresholdInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(jpegBox.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(thresholdInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                             .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
@@ -137,10 +138,10 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             if (jpegQuality >= 0 && jpegQuality <= 100) {
                 jpegBox.setStyle(null);
             } else {
-                jpegBox.setStyle(badStyle);
+                jpegBox.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            jpegBox.setStyle(badStyle);
+            jpegBox.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -156,11 +157,11 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
                 thresholdInput.setStyle(null);
             } else {
                 threshold = -1;
-                thresholdInput.setStyle(badStyle);
+                thresholdInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             threshold = -1;
-            thresholdInput.setStyle(badStyle);
+            thresholdInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

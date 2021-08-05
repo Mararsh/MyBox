@@ -28,10 +28,12 @@ import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
@@ -252,13 +254,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
             if (acumFromInput != null) {
-                NodeTools.setNonnegativeValidation(acumFromInput);
+                ValidationTools.setNonnegativeValidation(acumFromInput);
                 acumFromInput.setText("1");
             }
 
             if (previewInput != null) {
                 previewInput.setText(UserConfig.getUserConfigString(previewKey, "1"));
-                NodeTools.setPositiveValidation(previewInput);
+                ValidationTools.setPositiveValidation(previewInput);
                 previewInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(
@@ -294,13 +296,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(tableView.getItems())
                                         .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                                        .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                        .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                                         .or(optionsValid.not())
                         );
                     } else {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(targetPathInput.textProperty())
-                                        .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                        .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                                         .or(optionsValid.not())
                         );
                     }
@@ -310,13 +312,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(tableView.getItems())
                                         .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                                        .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                                        .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                                         .or(optionsValid.not())
                         );
                     } else {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(targetFileInput.textProperty())
-                                        .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                                        .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                                         .or(optionsValid.not())
                         );
                     }

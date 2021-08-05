@@ -26,8 +26,10 @@ import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
@@ -158,9 +160,9 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             });
             scaleSelector.getSelectionModel().select(0);
 
-            okButton.disableProperty().bind(widthInput.styleProperty().isEqualTo(badStyle)
-                    .or(heightInput.styleProperty().isEqualTo(badStyle))
-                    .or(scaleSelector.getEditor().styleProperty().isEqualTo(badStyle))
+            okButton.disableProperty().bind(widthInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    .or(heightInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(scaleSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             checkScaleType();
@@ -277,10 +279,10 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 widthInput.setStyle(null);
                 checkRatio();
             } else {
-                widthInput.setStyle(badStyle);
+                widthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            widthInput.setStyle(badStyle);
+            widthInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -295,10 +297,10 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 heightInput.setStyle(null);
                 checkRatio();
             } else {
-                heightInput.setStyle(badStyle);
+                heightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            heightInput.setStyle(badStyle);
+            heightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -344,14 +346,14 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 height = Math.round(imageView.getImage().getHeight() * scale);
                 widthInput.setText(width + "");
                 heightInput.setText(height + "");
-                NodeTools.setEditorNormal(scaleSelector);
+                ValidationTools.setEditorNormal(scaleSelector);
 
                 labelSize();
             } else {
-                NodeTools.setEditorBadStyle(scaleSelector);
+                ValidationTools.setEditorBadStyle(scaleSelector);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(scaleSelector);
+            ValidationTools.setEditorBadStyle(scaleSelector);
         }
     }
 

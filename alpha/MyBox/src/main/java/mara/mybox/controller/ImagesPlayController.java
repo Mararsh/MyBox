@@ -29,12 +29,13 @@ import mara.mybox.data.BaseTask;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -170,8 +171,8 @@ public class ImagesPlayController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(toInput, new Tooltip(Languages.message("ToPageComments")));
-            NodeTools.setTooltip(thumbsListButton, new Tooltip(Languages.message("ImagesEditor")));
+            NodeStyleTools.setTooltip(toInput, new Tooltip(Languages.message("ToPageComments")));
+            NodeStyleTools.setTooltip(thumbsListButton, new Tooltip(Languages.message("ImagesEditor")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -612,13 +613,13 @@ public class ImagesPlayController extends ImageViewerController {
             try {
                 int v = Integer.valueOf(value);
                 if (v < 0) {
-                    fromInput.setStyle(badStyle);
+                    fromInput.setStyle(NodeStyleTools.badStyle);
                 } else {
                     f = v - 1;
                     fromInput.setStyle(null);
                 }
             } catch (Exception e) {
-                fromInput.setStyle(badStyle);
+                fromInput.setStyle(NodeStyleTools.badStyle);
             }
         }
         int t = AppValues.InvalidInteger;
@@ -637,7 +638,7 @@ public class ImagesPlayController extends ImageViewerController {
                     toInput.setStyle(null);
                 }
             } catch (Exception e) {
-                toInput.setStyle(badStyle);
+                toInput.setStyle(NodeStyleTools.badStyle);
             }
         }
         if (f == AppValues.InvalidInteger || t == AppValues.InvalidInteger

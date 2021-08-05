@@ -17,8 +17,10 @@ import javafx.scene.control.Tooltip;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -56,7 +58,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
             super.initControls();
 
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
@@ -68,7 +70,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
+            NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -152,7 +154,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
             }
             if (Languages.message("NotSplit").equals(newValue)) {
                 maxLines = -1;
-                NodeTools.setEditorNormal(splitSelector);
+                ValidationTools.setEditorNormal(splitSelector);
                 UserConfig.setUserConfigInt(baseName + "LinesNumber", -1);
                 return;
             }
@@ -160,13 +162,13 @@ public class TextFilesConvertController extends BaseBatchFileController {
                 int v = Integer.parseInt(newValue);
                 if (v > 0) {
                     maxLines = v;
-                    NodeTools.setEditorNormal(splitSelector);
+                    ValidationTools.setEditorNormal(splitSelector);
                     UserConfig.setUserConfigInt(baseName + "LinesNumber", maxLines);
                 } else {
-                    NodeTools.setEditorBadStyle(splitSelector);
+                    ValidationTools.setEditorBadStyle(splitSelector);
                 }
             } catch (Exception e) {
-                NodeTools.setEditorBadStyle(splitSelector);
+                ValidationTools.setEditorBadStyle(splitSelector);
             }
         });
     }

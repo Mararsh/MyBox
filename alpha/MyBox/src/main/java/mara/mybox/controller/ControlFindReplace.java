@@ -24,8 +24,9 @@ import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.data.LongIndex;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.AppVariables;
@@ -40,7 +41,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlFindReplace extends BaseController {
 
-    protected BaseFileEditerController editerController;
+    protected BaseFileEditorController editerController;
     protected FileEditInformation sourceInformation;
     protected LongIndex lastFileRange;   // whole file
     protected IndexRange lastStringRange;  // currentPage
@@ -65,7 +66,7 @@ public class ControlFindReplace extends BaseController {
         TipsLabelKey = Languages.message("FindReplaceTips");
     }
 
-    public void setEditor(BaseFileEditerController parent) {
+    public void setEditor(BaseFileEditorController parent) {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
@@ -216,12 +217,12 @@ public class ControlFindReplace extends BaseController {
         }
         final String v = ByteTools.validateTextHex(string);
         if (v == null) {
-            findArea.setStyle(badStyle);
+            findArea.setStyle(NodeStyleTools.badStyle);
             return false;
         } else {
             if (sourceInformation != null && v.length() >= sourceInformation.getFile().length() * 3) {
                 popError(Languages.message("FindStringLimitation"));
-                findArea.setStyle(badStyle);
+                findArea.setStyle(NodeStyleTools.badStyle);
                 return false;
             }
             findArea.setStyle(null);
@@ -268,7 +269,7 @@ public class ControlFindReplace extends BaseController {
         }
         final String v = ByteTools.validateTextHex(string);
         if (v == null) {
-            replaceArea.setStyle(badStyle);
+            replaceArea.setStyle(NodeStyleTools.badStyle);
             return false;
         } else {
             return true;

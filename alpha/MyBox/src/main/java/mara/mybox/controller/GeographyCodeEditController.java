@@ -16,8 +16,9 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -115,10 +116,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                         checkPopulation();
                     });
 
-            saveButton.disableProperty().bind(longitudeInput.styleProperty().isEqualTo(badStyle)
-                    .or(latitudeInput.styleProperty().isEqualTo(badStyle))
-                    .or(areaInput.styleProperty().isEqualTo(badStyle))
-                    .or(populationInput.styleProperty().isEqualTo(badStyle))
+            saveButton.disableProperty().bind(longitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    .or(latitudeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(areaInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(populationInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -140,9 +141,9 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(locationButton, Languages.message("CoordinateOnMap"));
-            NodeTools.setTooltip(gcidInput, Languages.message("AssignedByMyBox"));
-            NodeTools.setTooltip(subordinateInput, Languages.message("ClickNodePickValue"));
+            NodeStyleTools.setTooltip(locationButton, Languages.message("CoordinateOnMap"));
+            NodeStyleTools.setTooltip(gcidInput, Languages.message("AssignedByMyBox"));
+            NodeStyleTools.setTooltip(subordinateInput, Languages.message("ClickNodePickValue"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -162,10 +163,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 longitude = v;
                 longitudeInput.setStyle(null);
             } else {
-                longitudeInput.setStyle(badStyle);
+                longitudeInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            longitudeInput.setStyle(badStyle);
+            longitudeInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -182,10 +183,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 latitude = v;
                 latitudeInput.setStyle(null);
             } else {
-                latitudeInput.setStyle(badStyle);
+                latitudeInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            latitudeInput.setStyle(badStyle);
+            latitudeInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -200,7 +201,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             altitude = Double.valueOf(s);
             altitudeInput.setStyle(null);
         } catch (Exception e) {
-            altitudeInput.setStyle(badStyle);
+            altitudeInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -215,7 +216,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             precision = Double.valueOf(s);
             precisionInput.setStyle(null);
         } catch (Exception e) {
-            precisionInput.setStyle(badStyle);
+            precisionInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -226,10 +227,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 area = v;
                 areaInput.setStyle(null);
             } else {
-                areaInput.setStyle(badStyle);
+                areaInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            areaInput.setStyle(badStyle);
+            areaInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -240,10 +241,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 population = v;
                 populationInput.setStyle(null);
             } else {
-                populationInput.setStyle(badStyle);
+                populationInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            populationInput.setStyle(badStyle);
+            populationInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

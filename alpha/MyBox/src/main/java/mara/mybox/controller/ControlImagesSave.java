@@ -32,13 +32,14 @@ import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
@@ -212,10 +213,10 @@ public class ControlImagesSave extends BaseController {
                 gifWidthInput.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "GifWidth", v);
             } else {
-                gifWidthInput.setStyle(badStyle);
+                gifWidthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            gifWidthInput.setStyle(badStyle);
+            gifWidthInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -258,10 +259,10 @@ public class ControlImagesSave extends BaseController {
                 pptWidthInput.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "PptWidth", v);
             } else {
-                pptWidthInput.setStyle(badStyle);
+                pptWidthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            pptWidthInput.setStyle(badStyle);
+            pptWidthInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -273,10 +274,10 @@ public class ControlImagesSave extends BaseController {
                 pptHeightInput.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "PptHeight", v);
             } else {
-                pptHeightInput.setStyle(badStyle);
+                pptHeightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            pptHeightInput.setStyle(badStyle);
+            pptHeightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -288,10 +289,10 @@ public class ControlImagesSave extends BaseController {
                 pptMarginInput.setStyle(null);
                 UserConfig.setUserConfigInt(baseName + "PptMargin", v);
             } else {
-                pptMarginInput.setStyle(badStyle);
+                pptMarginInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            pptMarginInput.setStyle(badStyle);
+            pptMarginInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

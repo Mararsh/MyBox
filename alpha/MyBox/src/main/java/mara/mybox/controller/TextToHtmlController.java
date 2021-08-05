@@ -4,13 +4,11 @@ import java.io.File;
 import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
-import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -61,7 +59,7 @@ public class TextToHtmlController extends BaseBatchFileController {
                 return Languages.message("Skip");
             }
             String text = TextFileTools.readTexts(srcFile);
-            String body = "" + FindReplaceString.replaceAll(text, "\n", "</br>");
+            String body = HtmlWriteTools.textToHtml(text);;
             String filePrefix = FileNameTools.getFilePrefix(target);
             String html = "<!DOCTYPE html><html>\n"
                     + headArea.getText().replace("####title####", filePrefix) + "\n"

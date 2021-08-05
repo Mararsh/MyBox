@@ -35,6 +35,7 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -62,8 +63,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(paletteAddButton, Languages.message("AddInColorPalette"));
-            NodeTools.setTooltip(htmlButton, Languages.message("ShowData"));
+            NodeStyleTools.setTooltip(paletteAddButton, Languages.message("AddInColorPalette"));
+            NodeStyleTools.setTooltip(htmlButton, Languages.message("ShowData"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

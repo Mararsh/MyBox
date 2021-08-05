@@ -12,7 +12,9 @@ import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.Window;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
@@ -26,7 +28,7 @@ import org.w3c.dom.Element;
  * @CreateDate 2021-7-22
  * @License Apache License Version 2.0
  */
-public class MenuWebviewController extends MenuTextBaseController {
+public class MenuWebviewController extends MenuController {
 
     protected HTMLEditor editor;
     protected WebView webView;
@@ -41,6 +43,11 @@ public class MenuWebviewController extends MenuTextBaseController {
 
     public MenuWebviewController() {
         baseTitle = message("Edit");
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
     public void setParameters(BaseWebViewController webViewController, Element element) {
@@ -87,17 +94,16 @@ public class MenuWebviewController extends MenuTextBaseController {
             tag = element.getTagName();
             tagLabel.setText(message("Tag") + ": " + tag);
         } else {
-            tag = null;
             tagLabel.setText("");
         }
         if (TextClipboardTools.isMonitoring()) {
-            NodeTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
-            NodeTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
         } else {
-            NodeTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
-            NodeTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+h / ALT+h"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+h / ALT+h"));
         }
-        NodeTools.setTooltip(selectButton, new Tooltip(message("SelectNode") + "\nCTRL+u / ALT+u"));
+        NodeStyleTools.setTooltip(selectButton, new Tooltip(message("SelectNode") + "\nCTRL+u / ALT+u"));
         selectButton.setDisable(element == null);
 
         String html = WebViewTools.getHtml(webView);
@@ -253,10 +259,19 @@ public class MenuWebviewController extends MenuTextBaseController {
         webViewController.editAction();
     }
 
+    @FXML
+    @Override
+    public void popAction() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.popAction();
+    }
+
     /*
         static methods
      */
-    public static MenuWebviewController open(BaseWebViewController parent, Element element, double x, double y) {
+    public static MenuWebviewController pop(BaseWebViewController parent, Element element, double x, double y) {
         try {
             if (parent == null) {
                 return null;

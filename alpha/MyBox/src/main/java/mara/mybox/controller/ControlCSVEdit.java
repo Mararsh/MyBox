@@ -12,6 +12,7 @@ import javafx.scene.layout.Region;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
 import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
@@ -70,7 +71,7 @@ public class ControlCSVEdit extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -78,8 +79,8 @@ public class ControlCSVEdit extends BaseController {
     }
 
     protected void editCSVFile(List<String> fields) {
-        TextEditerController controller
-                = (TextEditerController) openStage(Fxmls.TextEditerFxml);
+        TextEditorController controller
+                = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.hideLeftPane();
         controller.hideRightPane();
         if (fields == null || fields.isEmpty()) {

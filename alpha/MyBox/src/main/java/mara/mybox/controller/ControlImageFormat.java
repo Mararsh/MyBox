@@ -23,10 +23,12 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageColorSpace;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -92,7 +94,7 @@ public class ControlImageFormat extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(pcxRadio, Languages.message("PcxComments"));
+            NodeStyleTools.setTooltip(pcxRadio, Languages.message("PcxComments"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -199,9 +201,9 @@ public class ControlImageFormat extends BaseController {
         attributes.setImageFormat(format);
         UserConfig.setUserConfigString(baseName + "Format", format);
 
-        NodeTools.setEditorNormal(dpiSelector);
-        NodeTools.setEditorNormal(qualitySelector);
-        NodeTools.setEditorNormal(icoWidthSelector);
+        ValidationTools.setEditorNormal(dpiSelector);
+        ValidationTools.setEditorNormal(qualitySelector);
+        ValidationTools.setEditorNormal(icoWidthSelector);
         if ("ico".equals(format)) {
             thisPane.getChildren().remove(1, thisPane.getChildren().size());
             thisPane.getChildren().addAll(icoPane);
@@ -347,7 +349,7 @@ public class ControlImageFormat extends BaseController {
             File file = new File(profileInput.getText());
             ICC_Profile profile = ImageColorSpace.iccProfile(file.getAbsolutePath());
             if (profile == null) {
-                profileInput.setStyle(badStyle);
+                profileInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 profileInput.setStyle(null);
                 attributes.setProfile(profile);
@@ -423,7 +425,7 @@ public class ControlImageFormat extends BaseController {
             checkQuality();
         } else {
             isSettingValues = true;
-            NodeTools.setEditorNormal(qualitySelector);
+            ValidationTools.setEditorNormal(qualitySelector);
             if (thisPane.getChildren().contains(compressBox)) {
                 thisPane.getChildren().remove(compressBox);
             }
@@ -441,14 +443,14 @@ public class ControlImageFormat extends BaseController {
             int v = Integer.valueOf(qualitySelector.getValue());
             if (v > 0 && v <= 100) {
                 attributes.setQuality(v);
-                NodeTools.setEditorNormal(qualitySelector);
+                ValidationTools.setEditorNormal(qualitySelector);
                 UserConfig.setUserConfigString(baseName + "Quality", v + "");
             } else {
-                NodeTools.setEditorBadStyle(qualitySelector);
+                ValidationTools.setEditorBadStyle(qualitySelector);
             }
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
-            NodeTools.setEditorBadStyle(qualitySelector);
+            ValidationTools.setEditorBadStyle(qualitySelector);
         }
     }
 
@@ -460,14 +462,14 @@ public class ControlImageFormat extends BaseController {
             int v = Integer.valueOf(icoWidthSelector.getValue());
             if (v > 0) {
                 attributes.setWidth(v);
-                NodeTools.setEditorNormal(icoWidthSelector);
+                ValidationTools.setEditorNormal(icoWidthSelector);
                 UserConfig.setUserConfigString(baseName + "IcoWidth", v + "");
             } else {
-                NodeTools.setEditorBadStyle(icoWidthSelector);
+                ValidationTools.setEditorBadStyle(icoWidthSelector);
             }
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
-            NodeTools.setEditorBadStyle(icoWidthSelector);
+            ValidationTools.setEditorBadStyle(icoWidthSelector);
         }
     }
 
@@ -511,10 +513,10 @@ public class ControlImageFormat extends BaseController {
                 thresholdInput.setStyle(null);
                 UserConfig.setUserConfigString(baseName + "Threashold", inputValue + "");
             } else {
-                thresholdInput.setStyle(badStyle);
+                thresholdInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            thresholdInput.setStyle(badStyle);
+            thresholdInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

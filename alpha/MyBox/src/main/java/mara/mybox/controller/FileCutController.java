@@ -14,8 +14,9 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileSplitTools;
 import mara.mybox.tools.FileTools;
@@ -87,7 +88,7 @@ public class FileCutController extends BaseBatchFileController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(listInput, new Tooltip(Languages.message("StartEndByteComments")));
+            NodeStyleTools.setTooltip(listInput, new Tooltip(Languages.message("StartEndByteComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -126,11 +127,11 @@ public class FileCutController extends BaseBatchFileController {
                 filesNumber = v;
                 filesNumberInput.setStyle(null);
             } else {
-                filesNumberInput.setStyle(badStyle);
+                filesNumberInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             filesNumber = 0;
-            filesNumberInput.setStyle(badStyle);
+            filesNumberInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -141,10 +142,10 @@ public class FileCutController extends BaseBatchFileController {
                 bytesNumber = v;
                 bytesNumberInput.setStyle(null);
             } else {
-                bytesNumberInput.setStyle(badStyle);
+                bytesNumberInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            bytesNumberInput.setStyle(badStyle);
+            bytesNumberInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -171,12 +172,12 @@ public class FileCutController extends BaseBatchFileController {
                 }
             }
             if (startEndList.isEmpty()) {
-                listInput.setStyle(badStyle);
+                listInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 listInput.setStyle(null);
             }
         } catch (Exception e) {
-            listInput.setStyle(badStyle);
+            listInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -184,11 +185,11 @@ public class FileCutController extends BaseBatchFileController {
     public void initTargetSection() {
 
         startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(tableData))
-                .or(filesNumberInput.styleProperty().isEqualTo(badStyle))
-                .or(bytesNumberInput.styleProperty().isEqualTo(badStyle))
-                .or(listInput.styleProperty().isEqualTo(badStyle))
+                .or(filesNumberInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(bytesNumberInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                .or(listInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
     }

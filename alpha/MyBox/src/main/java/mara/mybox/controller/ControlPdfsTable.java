@@ -19,8 +19,9 @@ import javafx.util.converter.IntegerStringConverter;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -63,8 +64,8 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(passwordInput, new Tooltip(Languages.message("UserPassword")));
-            NodeTools.setTooltip(toInput, new Tooltip(Languages.message("ToPageComments")));
+            NodeStyleTools.setTooltip(passwordInput, new Tooltip(Languages.message("UserPassword")));
+            NodeStyleTools.setTooltip(toInput, new Tooltip(Languages.message("ToPageComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -83,7 +84,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                         Integer.parseInt(newValue);
                         fromInput.setStyle(null);
                     } catch (Exception e) {
-                        fromInput.setStyle(badStyle);
+                        fromInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -100,13 +101,13 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                         Integer.parseInt(newValue);
                         toInput.setStyle(null);
                     } catch (Exception e) {
-                        toInput.setStyle(badStyle);
+                        toInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
 
-            setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(badStyle)
-                    .or(toInput.styleProperty().isEqualTo(badStyle))
+            setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    .or(toInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             tableSubdirCheck.setSelected(UserConfig.getUserConfigBoolean("PDFTableSubDir", true));
@@ -217,7 +218,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                 fromPage = 1;
             }
         } catch (Exception e) {
-            fromInput.setStyle(badStyle);
+            fromInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
 
@@ -234,7 +235,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                 }
             }
         } catch (Exception e) {
-            toInput.setStyle(badStyle);
+            toInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         boolean userPassword = tableView.getColumns().contains(userPasswordColumn);

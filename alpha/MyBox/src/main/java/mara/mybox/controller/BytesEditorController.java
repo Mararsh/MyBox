@@ -17,11 +17,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -30,7 +29,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-12-09
  * @License Apache License Version 2.0
  */
-public class BytesEditerController extends BaseFileEditerController {
+public class BytesEditorController extends BaseFileEditorController {
 
     protected Popup valuePop;
 
@@ -39,7 +38,7 @@ public class BytesEditerController extends BaseFileEditerController {
     @FXML
     protected RadioButton lbWidthRadio, bytesRadio, lbLFRadio, lbCRRadio, lbCRLFRsadio;
 
-    public BytesEditerController() {
+    public BytesEditorController() {
         baseTitle = Languages.message("BytesEditer");
         TipsLabelKey = "BytesEditerTips";
 
@@ -154,7 +153,7 @@ public class BytesEditerController extends BaseFileEditerController {
             }
             final String v = ByteTools.validateTextHex(lbBytesInput.getText());
             if (v == null || v.isEmpty()) {
-                lbBytesInput.setStyle(badStyle);
+                lbBytesInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 lineBreakValue = v;
                 lbBytesInput.setStyle(null);
@@ -180,7 +179,7 @@ public class BytesEditerController extends BaseFileEditerController {
             }
 
         } catch (Exception e) {
-            lbBytesInput.setStyle(badStyle);
+            lbBytesInput.setStyle(NodeStyleTools.badStyle);
         }
 
     }
@@ -206,11 +205,11 @@ public class BytesEditerController extends BaseFileEditerController {
                     }
                 }
             } else {
-                lbWidthInput.setStyle(badStyle);
+                lbWidthInput.setStyle(NodeStyleTools.badStyle);
             }
 
         } catch (Exception e) {
-            lbWidthInput.setStyle(badStyle);
+            lbWidthInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -253,6 +252,24 @@ public class BytesEditerController extends BaseFileEditerController {
         } else {
             popError(Languages.message("InvalidData"));
             return false;
+        }
+    }
+
+    @Override
+    public void makeEditContextMenu(Node node) {
+        try {
+            if (node == mainArea) {
+                node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                    @Override
+                    public void handle(ContextMenuEvent event) {
+                        MenuBytesEditController.open(myController, node, event);
+                    }
+                });
+            } else {
+                super.makeEditContextMenu(node);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -343,26 +360,8 @@ public class BytesEditerController extends BaseFileEditerController {
 
     @FXML
     @Override
-    public void popButtons(MouseEvent mouseEvent) {
+    public void popMenu(MouseEvent mouseEvent) {
         MenuBytesEditController.open(myController, mainArea, mouseEvent);
-    }
-
-    @Override
-    public void makeEditContextMenu(Node node) {
-        try {
-            if (node == mainArea) {
-                node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                    @Override
-                    public void handle(ContextMenuEvent event) {
-                        MenuBytesEditController.open(myController, node, event);
-                    }
-                });
-            } else {
-                super.makeEditContextMenu(node);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
 }

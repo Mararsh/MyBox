@@ -15,8 +15,10 @@ import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -52,10 +54,10 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(arcBox.getEditor().styleProperty().isEqualTo(badStyle))
-                    .or(perBox.getEditor().styleProperty().isEqualTo(badStyle))
+                    .or(arcBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(perBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -67,7 +69,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(perBox, new Tooltip("1~100"));
+            NodeStyleTools.setTooltip(perBox, new Tooltip("1~100"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -140,12 +142,12 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             if (v > 0 && v <= 100) {
                 percent = v;
                 UserConfig.setUserConfigInt(baseName + "Percent", percent);
-                NodeTools.setEditorNormal(perBox);
+                ValidationTools.setEditorNormal(perBox);
             } else {
-                NodeTools.setEditorBadStyle(perBox);
+                ValidationTools.setEditorBadStyle(perBox);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(perBox);
+            ValidationTools.setEditorBadStyle(perBox);
         }
     }
 
@@ -155,12 +157,12 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             if (v > 0) {
                 arc = v;
                 UserConfig.setUserConfigInt(baseName + "Arc", arc);
-                NodeTools.setEditorNormal(arcBox);
+                ValidationTools.setEditorNormal(arcBox);
             } else {
-                NodeTools.setEditorBadStyle(arcBox);
+                ValidationTools.setEditorBadStyle(arcBox);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(arcBox);
+            ValidationTools.setEditorBadStyle(arcBox);
         }
     }
 

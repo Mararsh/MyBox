@@ -32,7 +32,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
@@ -42,6 +42,9 @@ import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -101,7 +104,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 }
             });
 
-            setButton.disableProperty().bind(valueSelector.getEditor().styleProperty().isEqualTo(badStyle));
+            setButton.disableProperty().bind(valueSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
             colorIncreaseButton.disableProperty().bind(setButton.disableProperty());
             colorDecreaseButton.disableProperty().bind(setButton.disableProperty());
             colorInvertButton.disableProperty().bind(setButton.disableProperty());
@@ -169,7 +172,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 } else {
                     max = 360;
                 }
-                NodeTools.setTooltip(distanceSelector, new Tooltip("0 ~ " + max));
+                NodeStyleTools.setTooltip(distanceSelector, new Tooltip("0 ~ " + max));
                 String value = distanceSelector.getValue();
                 List<String> vList = new ArrayList<>();
                 for (int i = 0; i <= max; i += step) {
@@ -192,10 +195,10 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         UserConfig.setUserConfigInt(baseName + "ColorDistance", colorDistance);
                         distanceSelector.getEditor().setStyle(null);
                     } else {
-                        distanceSelector.getEditor().setStyle(badStyle);
+                        distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 } catch (Exception e) {
-                    distanceSelector.getEditor().setStyle(badStyle);
+                    distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -214,7 +217,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             opBox.getChildren().clear();
             valueBox.getChildren().clear();
             valueSelector.getItems().clear();
-            NodeTools.setEditorNormal(valueSelector);
+            ValidationTools.setEditorNormal(valueSelector);
             okButton.disableProperty().unbind();
             commentsLabel.setText("");
 
@@ -224,7 +227,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             if (colorReplaceRadio.isSelected()) {
                 imageController.hideScopePane();
                 imageController.showImagePane();
-                okButton.disableProperty().bind(distanceSelector.getEditor().styleProperty().isEqualTo(badStyle));
+                okButton.disableProperty().bind(distanceSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(replaceBox);
                 commentsLabel.setText(Languages.message("ManufactureWholeImage"));
@@ -357,12 +360,12 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         int v = Integer.valueOf(newValue);
                         if (v >= min && v <= max) {
                             colorValue = v;
-                            NodeTools.setEditorNormal(valueSelector);
+                            ValidationTools.setEditorNormal(valueSelector);
                         } else {
-                            NodeTools.setEditorBadStyle(valueSelector);
+                            ValidationTools.setEditorBadStyle(valueSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(valueSelector);
+                        ValidationTools.setEditorBadStyle(valueSelector);
                     }
                 }
             });
@@ -376,7 +379,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @Override
     public void imageClicked(MouseEvent event, DoublePoint p) {
         if (imageController.isPickingColor) {
-            Color color = NodeTools.imagePixel(p, imageView);
+            Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {
                 originalColorSetController.setColor(color);
                 valueColorSetController.setColor(color);

@@ -22,8 +22,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.BarcodeTools;
 import mara.mybox.tools.BarcodeTools.BarcodeType;
@@ -265,12 +267,12 @@ public class BarcodeCreatorController extends ImageViewerController {
                         if (v > 0) {
                             fontSize = v;
                             UserConfig.setUserConfigInt("BarcodeFontSize", v);
-                            NodeTools.setEditorNormal(sizeSelector);
+                            ValidationTools.setEditorNormal(sizeSelector);
                         } else {
-                            NodeTools.setEditorBadStyle(sizeSelector);
+                            ValidationTools.setEditorBadStyle(sizeSelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(sizeSelector);
+                        ValidationTools.setEditorBadStyle(sizeSelector);
                     }
                 }
             });
@@ -287,10 +289,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigString("BarcodeNarrowWdith", newValue);
                             narrowWidthInput.setStyle(null);
                         } else {
-                            narrowWidthInput.setStyle(badStyle);
+                            narrowWidthInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        narrowWidthInput.setStyle(badStyle);
+                        narrowWidthInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -308,12 +310,12 @@ public class BarcodeCreatorController extends ImageViewerController {
                         if (v > 0) {
                             barRatio = v;
                             UserConfig.setUserConfigString("BarcodeBarRatio", newV);
-                            NodeTools.setEditorNormal(barRatioSelecor);
+                            ValidationTools.setEditorNormal(barRatioSelecor);
                         } else {
-                            NodeTools.setEditorBadStyle(barRatioSelecor);
+                            ValidationTools.setEditorBadStyle(barRatioSelecor);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(barRatioSelecor);
+                        ValidationTools.setEditorBadStyle(barRatioSelecor);
                     }
                 }
             });
@@ -330,10 +332,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("BarcodeHeight", v);
                             height1Input.setStyle(null);
                         } else {
-                            height1Input.setStyle(badStyle);
+                            height1Input.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        height1Input.setStyle(badStyle);
+                        height1Input.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -350,10 +352,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigString("BarcodeQuietWdith", newValue);
                             quietWidthInput.setStyle(null);
                         } else {
-                            quietWidthInput.setStyle(badStyle);
+                            quietWidthInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        quietWidthInput.setStyle(badStyle);
+                        quietWidthInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -379,10 +381,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("BarcodeWdith2", v);
                             qrWidthInput.setStyle(null);
                         } else {
-                            qrWidthInput.setStyle(badStyle);
+                            qrWidthInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        qrWidthInput.setStyle(badStyle);
+                        qrWidthInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -399,10 +401,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("BarcodeHeight2", v);
                             qrHeightInput.setStyle(null);
                         } else {
-                            qrHeightInput.setStyle(badStyle);
+                            qrHeightInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        qrHeightInput.setStyle(badStyle);
+                        qrHeightInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -419,10 +421,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("BarcodeMargin", v);
                             qrMarginInput.setStyle(null);
                         } else {
-                            qrMarginInput.setStyle(badStyle);
+                            qrMarginInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        qrMarginInput.setStyle(badStyle);
+                        qrMarginInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -472,10 +474,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("PDF417Width", v);
                             pdf417WidthInput.setStyle(null);
                         } else {
-                            pdf417WidthInput.setStyle(badStyle);
+                            pdf417WidthInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        pdf417WidthInput.setStyle(badStyle);
+                        pdf417WidthInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -492,10 +494,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("PDF417Height", v);
                             pdf417HeightInput.setStyle(null);
                         } else {
-                            pdf417HeightInput.setStyle(badStyle);
+                            pdf417HeightInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        pdf417HeightInput.setStyle(badStyle);
+                        pdf417HeightInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -512,10 +514,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("PDF417Margin", v);
                             pdf417MarginInput.setStyle(null);
                         } else {
-                            pdf417MarginInput.setStyle(badStyle);
+                            pdf417MarginInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        pdf417MarginInput.setStyle(badStyle);
+                        pdf417MarginInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -580,10 +582,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("DataMatrixWidth", v);
                             dmWidthInput.setStyle(null);
                         } else {
-                            dmWidthInput.setStyle(badStyle);
+                            dmWidthInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        dmWidthInput.setStyle(badStyle);
+                        dmWidthInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -600,10 +602,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                             UserConfig.setUserConfigInt("DataMatrixHeight", v);
                             dmHeightInput.setStyle(null);
                         } else {
-                            dmHeightInput.setStyle(badStyle);
+                            dmHeightInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        dmHeightInput.setStyle(badStyle);
+                        dmHeightInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -618,17 +620,17 @@ public class BarcodeCreatorController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(narrowWidthInput, Languages.message("Millimeters"));
-            NodeTools.setTooltip(height1Input, Languages.message("Millimeters"));
-            NodeTools.setTooltip(quietWidthInput, Languages.message("Millimeters"));
-            NodeTools.setTooltip(qrMarginInput, Languages.message("BarcodeMarginTips"));
-            NodeTools.setTooltip(qrHeightInput, Languages.message("Pixels"));
-            NodeTools.setTooltip(qrWidthInput, Languages.message("Pixels"));
-            NodeTools.setTooltip(pdf417HeightInput, Languages.message("Pixels"));
-            NodeTools.setTooltip(pdf417WidthInput, Languages.message("Pixels"));
-            NodeTools.setTooltip(pdf417MarginInput, Languages.message("Pixels"));
-            NodeTools.setTooltip(dmHeightInput, Languages.message("Pixels"));
-            NodeTools.setTooltip(dmWidthInput, Languages.message("Pixels"));
+            NodeStyleTools.setTooltip(narrowWidthInput, Languages.message("Millimeters"));
+            NodeStyleTools.setTooltip(height1Input, Languages.message("Millimeters"));
+            NodeStyleTools.setTooltip(quietWidthInput, Languages.message("Millimeters"));
+            NodeStyleTools.setTooltip(qrMarginInput, Languages.message("BarcodeMarginTips"));
+            NodeStyleTools.setTooltip(qrHeightInput, Languages.message("Pixels"));
+            NodeStyleTools.setTooltip(qrWidthInput, Languages.message("Pixels"));
+            NodeStyleTools.setTooltip(pdf417HeightInput, Languages.message("Pixels"));
+            NodeStyleTools.setTooltip(pdf417WidthInput, Languages.message("Pixels"));
+            NodeStyleTools.setTooltip(pdf417MarginInput, Languages.message("Pixels"));
+            NodeStyleTools.setTooltip(dmHeightInput, Languages.message("Pixels"));
+            NodeStyleTools.setTooltip(dmWidthInput, Languages.message("Pixels"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

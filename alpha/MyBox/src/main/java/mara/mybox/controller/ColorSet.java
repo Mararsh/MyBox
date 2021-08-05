@@ -14,6 +14,8 @@ import javafx.scene.shape.Rectangle;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
@@ -109,7 +111,7 @@ public class ColorSet extends BaseController {
     public void resetRect() {
         Color color = Color.web(UserConfig.getUserConfigString(thisName, FxColorTools.color2rgba(defaultColor)));
         rect.setFill(color);
-        NodeTools.setTooltip(rect, FxColorTools.colorNameDisplay(tableColor, color));
+        NodeStyleTools.setTooltip(rect, FxColorTools.colorNameDisplay(tableColor, color));
     }
 
     @FXML
@@ -134,7 +136,7 @@ public class ColorSet extends BaseController {
 
             popup = makePopup();
             popup.getContent().add(pane);
-            NodeTools.locateCenter(colorButton, popup);
+            LocateTools.locateCenter(colorButton, popup);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

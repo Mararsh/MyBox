@@ -17,6 +17,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -73,7 +74,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
         try {
             super.afterSceneLoaded();
             if (csvEditController != null) {
-                NodeTools.removeTooltip(csvEditController.inputButton);
+                NodeStyleTools.removeTooltip(csvEditController.inputButton);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

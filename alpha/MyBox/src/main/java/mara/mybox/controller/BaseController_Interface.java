@@ -35,8 +35,9 @@ import javafx.stage.Screen;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppValues;
@@ -133,11 +134,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 if (operationBarController.openTargetButton != null) {
                     if (targetFileInput != null) {
                         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                                .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                         );
                     } else if (targetPathInput != null) {
                         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                                .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                         );
                     }
                 }
@@ -366,10 +367,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 UserConfig.setUserConfigInt(baseName + "DPI", dpi);
                 dpiSelector.getEditor().setStyle(null);
             } else {
-                dpiSelector.getEditor().setStyle(badStyle);
+                dpiSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            dpiSelector.getEditor().setStyle(badStyle);
+            dpiSelector.getEditor().setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -487,12 +488,14 @@ public abstract class BaseController_Interface extends BaseController_Files {
         isPop = true;
         this.baseName = baseName;
         setStageStatus(interfaceKeysPrefix(), 200, 0, 0, 600, 500);
-        if (topCheck != null) {
-            topCheck.setVisible(true);
-        }
         hideLeftPane();
         hideRightPane();
-        checkAlwaysTop();
+        if (topCheck != null) {
+            topCheck.setVisible(true);
+            checkAlwaysTop();
+        } else {
+            myStage.setAlwaysOnTop(true);
+        }
     }
 
     public void refreshStyle() {
@@ -504,7 +507,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public void refreshStyle(Parent node) {
-        NodeTools.refreshStyle(node);
+        NodeStyleTools.refreshStyle(node);
         setControlsStyle();
     }
 
@@ -525,7 +528,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                             thisPane.requestFocus();
                         }
                         if (mainMenuController != null) {
-                            NodeTools.mouseCenter(myStage);
+                            LocateTools.mouseCenter(myStage);
                         }
                         if (leftPane != null) {
                             leftPane.setHvalue(0);
@@ -565,34 +568,34 @@ public abstract class BaseController_Interface extends BaseController_Files {
     public void setControlsStyle() {
         try {
             if (leftPaneControl != null) {
-                NodeTools.setTooltip(leftPaneControl, new Tooltip("F4"));
+                NodeStyleTools.setTooltip(leftPaneControl, new Tooltip("F4"));
             }
             if (rightPaneControl != null) {
-                NodeTools.setTooltip(rightPaneControl, new Tooltip("F5"));
+                NodeStyleTools.setTooltip(rightPaneControl, new Tooltip("F5"));
             }
             if (tipsLabel != null && TipsLabelKey != null) {
-                NodeTools.setTooltip(tipsLabel, new Tooltip(Languages.message(TipsLabelKey)));
+                NodeStyleTools.setTooltip(tipsLabel, new Tooltip(Languages.message(TipsLabelKey)));
             }
             if (tipsView != null && TipsLabelKey != null) {
-                NodeTools.setTooltip(tipsView, new Tooltip(Languages.message(TipsLabelKey)));
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message(TipsLabelKey)));
             }
             if (rightTipsView != null && TipsLabelKey != null) {
-                NodeTools.setTooltip(rightTipsView, new Tooltip(Languages.message(TipsLabelKey)));
+                NodeStyleTools.setTooltip(rightTipsView, new Tooltip(Languages.message(TipsLabelKey)));
             }
 
             if (copyButton == null) {
                 if (copyToSystemClipboardButton != null) {
-                    NodeTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
                 } else if (copyToMyBoxClipboardButton != null) {
-                    NodeTools.setTooltip(copyToMyBoxClipboardButton, new Tooltip(Languages.message("CopyToMyBoxClipboard") + "\nCTRL+c / ALT+c"));
+                    NodeStyleTools.setTooltip(copyToMyBoxClipboardButton, new Tooltip(Languages.message("CopyToMyBoxClipboard") + "\nCTRL+c / ALT+c"));
                 }
             }
 
             if (pasteButton == null) {
                 if (pasteContentInSystemClipboardButton != null) {
-                    NodeTools.setTooltip(pasteContentInSystemClipboardButton, new Tooltip(Languages.message("PasteContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
+                    NodeStyleTools.setTooltip(pasteContentInSystemClipboardButton, new Tooltip(Languages.message("PasteContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
                 } else if (loadContentInSystemClipboardButton != null) {
-                    NodeTools.setTooltip(loadContentInSystemClipboardButton, new Tooltip(Languages.message("LoadContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
+                    NodeStyleTools.setTooltip(loadContentInSystemClipboardButton, new Tooltip(Languages.message("LoadContentInSystemClipboard") + "\nCTRL+v / ALT+v"));
                 }
             }
 

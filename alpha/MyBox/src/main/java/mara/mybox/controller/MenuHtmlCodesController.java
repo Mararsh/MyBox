@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -36,11 +37,17 @@ public class MenuHtmlCodesController extends MenuTextEditController {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
+    }
+
+    @Override
     public void setParameters(BaseController parent, Node node, double x, double y) {
         try {
             super.setParameters(parent, node, x, y);
-            addHtmlButtons();
-
+            if (textInput != null && textInput.isEditable()) {
+                addHtmlButtons();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -377,6 +384,24 @@ public class MenuHtmlCodesController extends MenuTextEditController {
         }
         s += "</table>\n";
         insertText(s);
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
+        controller.loadContents(textInput.getText());
+    }
+
+    @FXML
+    @Override
+    public void popAction() {
+        if (textInput == null) {
+            return;
+        }
+        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
+        controller.setAsPopup(baseName + "Pop");
+        controller.loadContents(textInput.getText());
     }
 
     /*

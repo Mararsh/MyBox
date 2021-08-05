@@ -41,9 +41,9 @@ public class ConditionTreeView extends TreeView {
                 if (node != null && node instanceof CheckBox) {
                     CheckBox checkBox = (CheckBox) node;
                     if (item.getCondition() != null && !item.getCondition().isBlank()) {
-                        NodeTools.setTooltip(checkBox, item.getTitle() + "\n" + item.getCondition());
+                        NodeStyleTools.setTooltip(checkBox, item.getTitle() + "\n" + item.getCondition());
                     } else {
-                        NodeTools.removeTooltip(checkBox);
+                        NodeStyleTools.removeTooltip(checkBox);
                     }
                 }
             }

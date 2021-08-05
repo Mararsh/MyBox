@@ -28,8 +28,9 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.NodeStyleTools;
 
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.OCRTools;
@@ -278,7 +279,7 @@ public class ControlOCROptions extends BaseController {
                 isSettingValues = false;
             } else {
                 currentOCRFilesLabel.setText(MessageFormat.format(Languages.message("CurrentDataFiles"), Languages.message("NoData")));
-                currentOCRFilesLabel.setStyle(badStyle);
+                currentOCRFilesLabel.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -409,7 +410,7 @@ public class ControlOCROptions extends BaseController {
                 currentOCRFilesLabel.setStyle(null);
             } else {
                 currentOCRFilesLabel.setText(MessageFormat.format(Languages.message("CurrentDataFiles"), Languages.message("NoData")));
-                currentOCRFilesLabel.setStyle(badStyle);
+                currentOCRFilesLabel.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -549,7 +550,7 @@ public class ControlOCROptions extends BaseController {
     public void helpMe() {
         File help = FxFileTools.getInternalFile(
                 "/data/tessdata/tesseract-parameters.txt", "doc", "tesseract-parameters.txt");
-        TextEditerController controller = (TextEditerController) openStage(Fxmls.TextEditerFxml);
+        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.hideLeftPane();
         controller.hideRightPane();
         controller.openTextFile(help);

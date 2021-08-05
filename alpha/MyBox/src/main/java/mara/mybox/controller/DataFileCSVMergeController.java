@@ -16,7 +16,8 @@ import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
@@ -59,9 +60,9 @@ public class DataFileCSVMergeController extends FilesMergeController {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
                     .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                    .or(targetFileInput.styleProperty().isEqualTo(badStyle))
-                    .or(csvSourceController.delimiterInput.styleProperty().isEqualTo(badStyle))
-                    .or(csvTargetController.delimiterInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(csvSourceController.delimiterInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(csvTargetController.delimiterInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -84,7 +85,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
     @Override
     protected boolean openWriter() {
         try {
-            if (csvSourceController.delimiterInput.getStyle().equals(badStyle)
+            if (csvSourceController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)
                     || (!csvSourceController.autoDetermine && csvSourceController.charset == null)) {
                 return false;
             }

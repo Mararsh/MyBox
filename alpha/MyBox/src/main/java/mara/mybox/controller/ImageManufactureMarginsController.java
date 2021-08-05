@@ -24,9 +24,11 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
@@ -125,8 +127,8 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             });
 
             okButton.disableProperty().bind(
-                    marginWidthBox.getEditor().styleProperty().isEqualTo(badStyle)
-                            .or(distanceInput.styleProperty().isEqualTo(badStyle))
+                    marginWidthBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                            .or(distanceInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -146,7 +148,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
         imageController.hideScopePane();
         imageController.showImagePane();
         setBox.getChildren().clear();
-        NodeTools.setEditorNormal(marginWidthBox);
+        ValidationTools.setEditorNormal(marginWidthBox);
         distanceInput.setStyle(null);
         commentsLabel.setText("");
 
@@ -205,12 +207,12 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             if (v > 0) {
                 addedWidth = v;
                 UserConfig.setUserConfigInt("ImageMarginsWidth", v);
-                NodeTools.setEditorNormal(marginWidthBox);
+                ValidationTools.setEditorNormal(marginWidthBox);
             } else {
-                NodeTools.setEditorBadStyle(marginWidthBox);
+                ValidationTools.setEditorBadStyle(marginWidthBox);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(marginWidthBox);
+            ValidationTools.setEditorBadStyle(marginWidthBox);
         }
     }
 
@@ -222,10 +224,10 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
                 distanceInput.setStyle(null);
                 UserConfig.setUserConfigInt("ImageMarginsColorDistance", v);
             } else {
-                distanceInput.setStyle(badStyle);
+                distanceInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            distanceInput.setStyle(badStyle);
+            distanceInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

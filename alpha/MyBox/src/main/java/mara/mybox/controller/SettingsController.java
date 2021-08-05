@@ -33,10 +33,12 @@ import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import static mara.mybox.fxml.WindowTools.reloadAll;
 import static mara.mybox.fxml.WindowTools.styleAll;
@@ -129,14 +131,14 @@ public class SettingsController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(hidpiIconsCheck, new Tooltip(Languages.message("HidpiIconsComments")));
-            NodeTools.setTooltip(redRadio, new Tooltip(Languages.message("MyBoxDarkRed")));
-            NodeTools.setTooltip(pinkRadio, new Tooltip(Languages.message("MyBoxDarkPink")));
-            NodeTools.setTooltip(orangeRadio, new Tooltip(Languages.message("MyBoxOrange")));
-            NodeTools.setTooltip(lightBlueRadio, new Tooltip(Languages.message("MyBoxDarkGreyBlue")));
-            NodeTools.setTooltip(blueRadio, new Tooltip(Languages.message("MyBoxDarkBlue")));
-            NodeTools.setTooltip(darkGreenRadio, new Tooltip(Languages.message("MyBoxDarkGreen")));
-            NodeTools.setTooltip(imageHisBox, new Tooltip(Languages.message("ImageHisComments")));
+            NodeStyleTools.setTooltip(hidpiIconsCheck, new Tooltip(Languages.message("HidpiIconsComments")));
+            NodeStyleTools.setTooltip(redRadio, new Tooltip(Languages.message("MyBoxDarkRed")));
+            NodeStyleTools.setTooltip(pinkRadio, new Tooltip(Languages.message("MyBoxDarkPink")));
+            NodeStyleTools.setTooltip(orangeRadio, new Tooltip(Languages.message("MyBoxOrange")));
+            NodeStyleTools.setTooltip(lightBlueRadio, new Tooltip(Languages.message("MyBoxDarkGreyBlue")));
+            NodeStyleTools.setTooltip(blueRadio, new Tooltip(Languages.message("MyBoxDarkBlue")));
+            NodeStyleTools.setTooltip(darkGreenRadio, new Tooltip(Languages.message("MyBoxDarkGreen")));
+            NodeStyleTools.setTooltip(imageHisBox, new Tooltip(Languages.message("ImageHisComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -250,12 +252,12 @@ public class SettingsController extends BaseController {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 setSceneFontSize(v);
-                                NodeTools.setEditorNormal(fontSizeBox);
+                                ValidationTools.setEditorNormal(fontSizeBox);
                             } else {
-                                NodeTools.setEditorBadStyle(fontSizeBox);
+                                ValidationTools.setEditorBadStyle(fontSizeBox);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(fontSizeBox);
+                            ValidationTools.setEditorBadStyle(fontSizeBox);
                         }
                     }
                 }
@@ -273,12 +275,12 @@ public class SettingsController extends BaseController {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 setIconSize(v);
-                                NodeTools.setEditorNormal(iconSizeBox);
+                                ValidationTools.setEditorNormal(iconSizeBox);
                             } else {
-                                NodeTools.setEditorBadStyle(iconSizeBox);
+                                ValidationTools.setEditorBadStyle(iconSizeBox);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(iconSizeBox);
+                            ValidationTools.setEditorBadStyle(iconSizeBox);
                         }
                     }
                 }
@@ -356,13 +358,13 @@ public class SettingsController extends BaseController {
                             float f = Float.parseFloat(newValue);
                             if (f > 0) {
                                 UserConfig.setUserConfigString("PopTextSize", newValue);
-                                NodeTools.setEditorNormal(popSizeSelector);
+                                ValidationTools.setEditorNormal(popSizeSelector);
                                 popSuccessful();
                             } else {
-                                NodeTools.setEditorBadStyle(popSizeSelector);
+                                ValidationTools.setEditorBadStyle(popSizeSelector);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(popSizeSelector);
+                            ValidationTools.setEditorBadStyle(popSizeSelector);
                         }
                     }
                 }
@@ -380,13 +382,13 @@ public class SettingsController extends BaseController {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 UserConfig.setUserConfigInt("PopTextDuration", v);
-                                NodeTools.setEditorNormal(popDurationSelector);
+                                ValidationTools.setEditorNormal(popDurationSelector);
                                 popSuccessful();
                             } else {
-                                NodeTools.setEditorBadStyle(popDurationSelector);
+                                ValidationTools.setEditorBadStyle(popDurationSelector);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(popDurationSelector);
+                            ValidationTools.setEditorBadStyle(popDurationSelector);
                         }
                     }
                 }
@@ -560,11 +562,11 @@ public class SettingsController extends BaseController {
                             newJVM = v;
                             settingsJVMButton.setDisable(false);
                         } else {
-                            jvmInput.setStyle(badStyle);
+                            jvmInput.setStyle(NodeStyleTools.badStyle);
                             settingsJVMButton.setDisable(true);
                         }
                     } catch (Exception e) {
-                        jvmInput.setStyle(badStyle);
+                        jvmInput.setStyle(NodeStyleTools.badStyle);
                         settingsJVMButton.setDisable(true);
                     }
                 }
@@ -656,12 +658,12 @@ public class SettingsController extends BaseController {
                 MyBox.restart();
             } else {
                 popFailed();
-                dataDirInput.setStyle(badStyle);
+                dataDirInput.setStyle(NodeStyleTools.badStyle);
             }
 
         } catch (Exception e) {
             popFailed();
-            dataDirInput.setStyle(badStyle);
+            dataDirInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -674,10 +676,10 @@ public class SettingsController extends BaseController {
                 webConnectTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
-                webConnectTimeoutInput.setStyle(badStyle);
+                webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            webConnectTimeoutInput.setStyle(badStyle);
+            webConnectTimeoutInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -690,10 +692,10 @@ public class SettingsController extends BaseController {
                 webReadTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
-                webReadTimeoutInput.setStyle(badStyle);
+                webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            webReadTimeoutInput.setStyle(badStyle);
+            webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -891,17 +893,17 @@ public class SettingsController extends BaseController {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 UserConfig.setUserConfigInt("StrokeWidth", v);
-                                NodeTools.setEditorNormal(strokeWidthBox);
+                                ValidationTools.setEditorNormal(strokeWidthBox);
                                 if (parentController instanceof BaseImageShapesController) {
                                     ((BaseImageShapesController) parentController).setMaskStroke();
                                 } else if (parentController instanceof BaseImageController) {
                                     ((BaseImageController) parentController).setMaskStroke();
                                 }
                             } else {
-                                NodeTools.setEditorBadStyle(strokeWidthBox);
+                                ValidationTools.setEditorBadStyle(strokeWidthBox);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(strokeWidthBox);
+                            ValidationTools.setEditorBadStyle(strokeWidthBox);
                         }
                     }
                 }
@@ -934,17 +936,17 @@ public class SettingsController extends BaseController {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 UserConfig.setUserConfigInt("AnchorWidth", v);
-                                NodeTools.setEditorNormal(anchorWidthBox);
+                                ValidationTools.setEditorNormal(anchorWidthBox);
                                 if (parentController instanceof BaseImageShapesController) {
                                     ((BaseImageShapesController) parentController).setMaskStroke();
                                 } else if (parentController instanceof BaseImageController) {
                                     ((BaseImageController) parentController).setMaskStroke();
                                 }
                             } else {
-                                NodeTools.setEditorBadStyle(anchorWidthBox);
+                                ValidationTools.setEditorBadStyle(anchorWidthBox);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(anchorWidthBox);
+                            ValidationTools.setEditorBadStyle(anchorWidthBox);
                         }
                     }
                 }
@@ -986,7 +988,7 @@ public class SettingsController extends BaseController {
                         Paint oldValue, Paint newValue) {
                     if (!Color.WHITE.equals((Color) newValue)) {
                         alphaLabel.setText(Languages.message("AlphaReplaceComments"));
-                        alphaLabel.setStyle(NodeTools.darkRedText);
+                        alphaLabel.setStyle(NodeStyleTools.darkRedText);
                     } else {
                         alphaLabel.setText("");
                         popSuccessful();
@@ -1004,10 +1006,10 @@ public class SettingsController extends BaseController {
                             thumbnailWidthInput.setStyle(null);
                             popSuccessful();
                         } else {
-                            thumbnailWidthInput.setStyle(badStyle);
+                            thumbnailWidthInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        thumbnailWidthInput.setStyle(badStyle);
+                        thumbnailWidthInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -1022,12 +1024,12 @@ public class SettingsController extends BaseController {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 UserConfig.setUserConfigInt("MaxImageSampleWidth", v);
-                                NodeTools.setEditorNormal(imageWidthBox);
+                                ValidationTools.setEditorNormal(imageWidthBox);
                             } else {
-                                NodeTools.setEditorBadStyle(imageWidthBox);
+                                ValidationTools.setEditorBadStyle(imageWidthBox);
                             }
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(imageWidthBox);
+                            ValidationTools.setEditorBadStyle(imageWidthBox);
                         }
                     }
                 }
@@ -1047,11 +1049,11 @@ public class SettingsController extends BaseController {
                 fileRecentInput.setStyle(null);
                 settingsRecentOKButton.setDisable(false);
             } else {
-                fileRecentInput.setStyle(badStyle);
+                fileRecentInput.setStyle(NodeStyleTools.badStyle);
                 settingsRecentOKButton.setDisable(true);
             }
         } catch (Exception e) {
-            fileRecentInput.setStyle(badStyle);
+            fileRecentInput.setStyle(NodeStyleTools.badStyle);
             settingsRecentOKButton.setDisable(true);
         }
     }

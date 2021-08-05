@@ -25,8 +25,9 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 
@@ -231,7 +232,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                     }
                 } catch (Exception e) {
                     targetFile = null;
-                    targetFileInput.setStyle(badStyle);
+                    targetFileInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -239,13 +240,13 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
         openTargetButton.disableProperty().unbind();
         openTargetButton.disableProperty().bind(Bindings.
                 isEmpty(targetFileInput.textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
         startButton.disableProperty().unbind();
         startButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.
                 textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(tableData))
         );
 

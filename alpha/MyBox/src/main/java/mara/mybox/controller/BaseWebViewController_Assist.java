@@ -43,11 +43,12 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import mara.mybox.data.BaseTask;
 import mara.mybox.db.data.ImageClipboard;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
@@ -70,7 +71,7 @@ import org.w3c.dom.events.EventTarget;
  * @CreateDate 2021-8-3
  * @License Apache License Version 2.0
  */
-public abstract class BaseWebViewController_Attributes extends BaseController {
+public abstract class BaseWebViewController_Assist extends BaseController {
 
     protected WebEngine webEngine;
     protected final SimpleIntegerProperty stateNotify;
@@ -96,7 +97,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
     @FXML
     protected Button backwardButton, forwardButton;
 
-    public BaseWebViewController_Attributes() {
+    public BaseWebViewController_Assist() {
         linkX = linkY = -1;
         zoomScale = 1.0f;
         framesDoc = new HashMap<>();
@@ -115,6 +116,11 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
     @Override
@@ -174,7 +180,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
             // http://blogs.kiyut.com/tonny/2013/07/30/javafx-webview-addhyperlinklistener/
             docListener = new EventListener() {
                 @Override
-                public void handleEvent(org.w3c.dom.events.Event ev) {
+                public synchronized void handleEvent(org.w3c.dom.events.Event ev) {
                     try {
                         String domEventType = ev.getType();
                         String tag = null, href = null;
@@ -479,7 +485,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
         } catch (Exception e) {
             popError(message("InvalidLink"));
             if (urlSelector != null) {
-                urlSelector.getEditor().setStyle(badStyle);
+                urlSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             }
             return;
         }
@@ -770,7 +776,7 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
             if (linkX < 0 || linkY < 0) {
                 return;
             }
-            MenuWebviewController.open((BaseWebViewController) this, element, linkX, linkY);
+            MenuWebviewController.pop((BaseWebViewController) this, element, linkX, linkY);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -837,6 +843,19 @@ public abstract class BaseWebViewController_Attributes extends BaseController {
             thread.setDaemon(false);
             thread.start();
         }
+    }
+
+    @Override
+    public void cleanPane() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        if (webEngine != null && webEngine.getLoadWorker() != null) {
+            webEngine.getLoadWorker().cancel();
+        }
+        webEngine = null;
+        webView.setUserData(null);
+        super.cleanPane();
     }
 
 }

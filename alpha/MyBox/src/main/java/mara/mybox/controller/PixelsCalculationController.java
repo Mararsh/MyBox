@@ -23,12 +23,14 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -331,7 +333,7 @@ public class PixelsCalculationController extends BaseController {
                 }
             }
         });
-        NodeTools.setNonnegativeValidation(source_width);
+        ValidationTools.setNonnegativeValidation(source_width);
 
         source_height.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -350,7 +352,7 @@ public class PixelsCalculationController extends BaseController {
                 }
             }
         });
-        NodeTools.setNonnegativeValidation(source_height);
+        ValidationTools.setNonnegativeValidation(source_height);
 
     }
 
@@ -372,7 +374,7 @@ public class PixelsCalculationController extends BaseController {
             }
         });
 //        cp_densityInput.setText(AppVariables.getUserConfigString("densityInput", null));
-        NodeTools.setNonnegativeValidation(cp_densityInput);
+        ValidationTools.setNonnegativeValidation(cp_densityInput);
 
         cp_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -417,7 +419,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cp_inchX = 0;
-                    cp_widthInches.setStyle(badStyle);
+                    cp_widthInches.setStyle(NodeStyleTools.badStyle);
                 }
                 cp_calculateValues();
             }
@@ -438,7 +440,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cp_inchY = 0;
-                    cp_heightInches.setStyle(badStyle);
+                    cp_heightInches.setStyle(NodeStyleTools.badStyle);
                 }
                 cp_calculateValues();
             }
@@ -459,7 +461,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cp_cmX = 0;
-                    cp_widthCM.setStyle(badStyle);
+                    cp_widthCM.setStyle(NodeStyleTools.badStyle);
                 }
                 cp_calculateValues();
             }
@@ -480,7 +482,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cp_cmY = 0;
-                    cp_heightCM.setStyle(badStyle);
+                    cp_heightCM.setStyle(NodeStyleTools.badStyle);
                 }
                 cp_calculateValues();
             }
@@ -501,7 +503,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_calculateValues();
             }
         });
-        NodeTools.setNonnegativeValidation(cs_width);
+        ValidationTools.setNonnegativeValidation(cs_width);
 
         cs_height.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -515,7 +517,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_calculateValues();
             }
         });
-        NodeTools.setNonnegativeValidation(cs_height);
+        ValidationTools.setNonnegativeValidation(cs_height);
 
         cs_DensityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -534,7 +536,7 @@ public class PixelsCalculationController extends BaseController {
             }
         });
 //        cp_densityInput.setText(AppVariables.getUserConfigString("densityInput", null));
-        NodeTools.setNonnegativeValidation(cs_densityInput);
+        ValidationTools.setNonnegativeValidation(cs_densityInput);
 
     }
 
@@ -551,7 +553,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-        NodeTools.setNonnegativeValidation(cs_width);
+        ValidationTools.setNonnegativeValidation(cs_width);
 
         cd_height.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -565,7 +567,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-        NodeTools.setNonnegativeValidation(cs_height);
+        ValidationTools.setNonnegativeValidation(cs_height);
 
         cd_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -610,7 +612,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cd_inchX = 0;
-                    cd_widthInches.setStyle(badStyle);
+                    cd_widthInches.setStyle(NodeStyleTools.badStyle);
                 }
                 cd_calculateValues();
             }
@@ -631,7 +633,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cd_inchY = 0;
-                    cd_heightInches.setStyle(badStyle);
+                    cd_heightInches.setStyle(NodeStyleTools.badStyle);
                 }
                 cd_calculateValues();
             }
@@ -652,7 +654,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cd_cmX = 0;
-                    cd_widthCM.setStyle(badStyle);
+                    cd_widthCM.setStyle(NodeStyleTools.badStyle);
                 }
                 cd_calculateValues();
             }
@@ -673,7 +675,7 @@ public class PixelsCalculationController extends BaseController {
                     }
                 } catch (Exception e) {
                     cd_cmY = 0;
-                    cd_heightCM.setStyle(badStyle);
+                    cd_heightCM.setStyle(NodeStyleTools.badStyle);
                 }
                 cd_calculateValues();
             }
@@ -811,7 +813,7 @@ public class PixelsCalculationController extends BaseController {
                     UserConfig.setUserConfigString("density", s);
                 } else {
                     cp_density = 0;
-                    cp_densityInput.setStyle(NodeTools.badStyle);
+                    cp_densityInput.setStyle(NodeStyleTools.badStyle);
                 }
 
             } else {
@@ -866,7 +868,7 @@ public class PixelsCalculationController extends BaseController {
                     UserConfig.setUserConfigString("density", s);
                 } else {
                     cs_density = 0;
-                    cs_densityInput.setStyle(NodeTools.badStyle);
+                    cs_densityInput.setStyle(NodeStyleTools.badStyle);
                 }
 
             } else {

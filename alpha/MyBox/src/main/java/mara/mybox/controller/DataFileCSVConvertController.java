@@ -7,7 +7,8 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -51,7 +52,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @Override
     public boolean makeMoreParameters() {
-        if (csvReadController.delimiterInput.getStyle().equals(badStyle)
+        if (csvReadController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)
                 || (!csvReadController.autoDetermine && csvReadController.charset == null)) {
             return false;
         }

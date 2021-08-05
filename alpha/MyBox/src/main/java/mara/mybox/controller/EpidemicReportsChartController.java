@@ -43,8 +43,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
 import javafx.stage.Screen;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.EpidemicReport;
@@ -57,25 +57,18 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.Logarithmic10Coordinate;
-import mara.mybox.fxml.LogarithmicECoordinate;
-import mara.mybox.fxml.SquareRootCoordinate;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.fxml.ChartTools;
 import mara.mybox.fxml.ChartTools.ChartCoordinate;
 import mara.mybox.fxml.ChartTools.LabelType;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.fxml.Logarithmic10Coordinate;
+import mara.mybox.fxml.LogarithmicECoordinate;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.SquareRootCoordinate;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -215,22 +208,22 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     "12", "14", "10", "15", "16", "18", "9", "8", "18", "20", "24"
             ));
             labelSizeSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                mapOptionsController.textSize = v;
-                                labelSizeSelector.getEditor().setStyle(null);
-                                UserConfig.setUserConfigInt("EpidemicReportChartTextSize", mapOptionsController.textSize);
-                                if (!isSettingValues) {
-                                    drawChart();
-                                }
-                            } else {
-                                labelSizeSelector.getEditor().setStyle(badStyle);
-                            }
-                        } catch (Exception e) {
-                            labelSizeSelector.getEditor().setStyle(badStyle);
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        mapOptionsController.textSize = v;
+                        labelSizeSelector.getEditor().setStyle(null);
+                        UserConfig.setUserConfigInt("EpidemicReportChartTextSize", mapOptionsController.textSize);
+                        if (!isSettingValues) {
+                            drawChart();
                         }
-                    });
+                    } else {
+                        labelSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    labelSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
             legendSide = null;
             legendGroup.selectedToggleProperty().addListener(
@@ -254,36 +247,36 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     });
 
             categoryAxisCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean("EpidemicReportDisplayCategoryAxis", newValue);
-                        drawChart();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean("EpidemicReportDisplayCategoryAxis", newValue);
+                drawChart();
+            });
 
             loopCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean("EpidemicReportChartLoop", newValue);
-                        drawChart();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean("EpidemicReportChartLoop", newValue);
+                drawChart();
+            });
 
             hlinesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean("EpidemicReportDisplayHlines", newValue);
-                        drawChart();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean("EpidemicReportDisplayHlines", newValue);
+                drawChart();
+            });
 
             vlinesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        UserConfig.setUserConfigBoolean("EpidemicReportDisplayVlines", newValue);
-                        drawChart();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                UserConfig.setUserConfigBoolean("EpidemicReportDisplayVlines", newValue);
+                drawChart();
+            });
 
             isSettingValues = true;
             labelSizeSelector.getSelectionModel().select(UserConfig.getUserConfigString("EpidemicReportChartTextSize", "12"));
@@ -306,15 +299,15 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             gifWidthSelector.getItems().addAll(widthValues);
             gifWidthSelector.setValue(snapWidth + "");
             gifWidthSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                snapWidth = v;
-                                UserConfig.setUserConfigInt(baseName + "SnapWidth", snapWidth);
-                            }
-                        } catch (Exception e) {
-                        }
-                    });
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        snapWidth = v;
+                        UserConfig.setUserConfigInt(baseName + "SnapWidth", snapWidth);
+                    }
+                } catch (Exception e) {
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -816,7 +809,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 PieChart.Data item = new PieChart.Data(label, d);
                 pieData.add(item);
                 if (labelType == LabelType.Pop) {
-                    NodeTools.setTooltip(item.getNode(), name + " " + percent + "% " + labelValue);
+                    NodeStyleTools.setTooltip(item.getNode(), name + " " + percent + "% " + labelValue);
                 }
                 palette.add(colorsController.locationColor(report.getLocationFullName()));
             }
@@ -894,7 +887,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             Label text = new Label("");
             text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptionsController.textSize + "px; -fx-font-weight: bolder;");
             data.setNode(text);
-            NodeTools.setTooltip(text, finalLabel + " " + finalValue);
+            NodeStyleTools.setTooltip(text, finalLabel + " " + finalValue);
         } else {
             String valueLabel;
             switch (labelType) {
@@ -1098,7 +1091,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     XYChart.Data item = new XYChart.Data(label, coordinateValue);
                     series.getData().add(item);
                     if (labelType == LabelType.Pop) {
-                        NodeTools.setTooltip(item.getNode(), label + " " + value);
+                        NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
                     }
                 }
             }
@@ -1139,7 +1132,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     XYChart.Data item = new XYChart.Data(coordinateValue, label);
                     series.getData().add(item);
                     if (labelType == LabelType.Pop) {
-                        NodeTools.setTooltip(item.getNode(), label + " " + value);
+                        NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
                     }
                 }
             }
@@ -1175,7 +1168,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             series.getData().add(item);
             barChart.getData().add(series);
             if (labelType == LabelType.Pop) {
-                NodeTools.setTooltip(item.getNode(), label + " " + value);
+                NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
             }
         }
         ChartTools.setBarChartColors(barChart, palette, legendSide != null);
@@ -1205,7 +1198,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             series.getData().add(item);
             barChart.getData().add(series);
             if (labelType == LabelType.Pop) {
-                NodeTools.setTooltip(item.getNode(), label + " " + value);
+                NodeStyleTools.setTooltip(item.getNode(), label + " " + value);
             }
         }
         ChartTools.setBarChartColors(barChart, palette, legendSide != null);
@@ -1539,7 +1532,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (loading != null) {
                 loading.closeStage();
@@ -1547,7 +1540,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             }
         } catch (Exception e) {
         }
-        return super.leavingScene();
+        super.cleanPane();
     }
 
     /*

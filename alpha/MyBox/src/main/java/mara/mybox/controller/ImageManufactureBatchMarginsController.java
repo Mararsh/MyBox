@@ -19,8 +19,10 @@ import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.MargionTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -68,10 +70,10 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(marginWidthBox.getEditor().styleProperty().isEqualTo(badStyle))
-                    .or(marginsTopCheck.styleProperty().isEqualTo(badStyle))
+                    .or(marginWidthBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(marginsTopCheck.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -170,12 +172,12 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             if (v > 0) {
                 width = v;
                 UserConfig.setUserConfigInt(baseName + "Width", width);
-                NodeTools.setEditorNormal(marginWidthBox);
+                ValidationTools.setEditorNormal(marginWidthBox);
             } else {
-                NodeTools.setEditorBadStyle(marginWidthBox);
+                ValidationTools.setEditorBadStyle(marginWidthBox);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(marginWidthBox);
+            ValidationTools.setEditorBadStyle(marginWidthBox);
         }
     }
 
@@ -187,10 +189,10 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
                 UserConfig.setUserConfigInt(baseName + "Distance", distance);
                 distanceInput.setStyle(null);
             } else {
-                distanceInput.setStyle(badStyle);
+                distanceInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            distanceInput.setStyle(badStyle);
+            distanceInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

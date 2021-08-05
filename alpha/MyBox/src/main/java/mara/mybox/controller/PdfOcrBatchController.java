@@ -28,7 +28,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ImageBinary;
@@ -38,6 +38,7 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -110,7 +111,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(separatorInput, Languages.message("InsertPageSeparatorComments"));
+            NodeStyleTools.setTooltip(separatorInput, Languages.message("InsertPageSeparatorComments"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -154,10 +155,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
                         } else {
-                            scaleSelector.getEditor().setStyle(badStyle);
+                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        scaleSelector.getEditor().setStyle(badStyle);
+                        scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -180,10 +181,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
                         } else {
-                            binarySelector.getEditor().setStyle(badStyle);
+                            binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        binarySelector.getEditor().setStyle(badStyle);
+                        binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -300,13 +301,13 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 File tesseract = ocrOptionsController.tesseractPathController.file;
                 if (!tesseract.exists()) {
                     popError(Languages.message("InvalidParameters"));
-                    ocrOptionsController.tesseractPathController.fileInput.setStyle(badStyle);
+                    ocrOptionsController.tesseractPathController.fileInput.setStyle(NodeStyleTools.badStyle);
                     return false;
                 }
                 File dataPath = ocrOptionsController.dataPathController.file;
                 if (!dataPath.exists()) {
                     popError(Languages.message("InvalidParameters"));
-                    ocrOptionsController.dataPathController.fileInput.setStyle(badStyle);
+                    ocrOptionsController.dataPathController.fileInput.setStyle(NodeStyleTools.badStyle);
                     return false;
                 }
                 configFile = TmpFileTools.getTempFile();

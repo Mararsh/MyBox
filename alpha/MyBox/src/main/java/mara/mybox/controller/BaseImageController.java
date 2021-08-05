@@ -41,9 +41,11 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
-import static mara.mybox.fxml.NodeTools.darkRedText;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.darkRedText;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -189,7 +191,7 @@ public abstract class BaseImageController extends BaseController {
         try {
             super.setControlsStyle();
             if (zoomStepSelector != null) {
-                NodeTools.setTooltip(zoomStepSelector, new Tooltip(Languages.message("ZoomStep")));
+                NodeStyleTools.setTooltip(zoomStepSelector, new Tooltip(Languages.message("ZoomStep")));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -356,10 +358,10 @@ public abstract class BaseImageController extends BaseController {
                                 yZoomStep = zoomStep;
                                 zoomStepChanged();
                             } else {
-                                zoomStepSelector.getEditor().setStyle(badStyle);
+                                zoomStepSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         } catch (Exception e) {
-                            zoomStepSelector.getEditor().setStyle(badStyle);
+                            zoomStepSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     }
                 });
@@ -598,7 +600,7 @@ public abstract class BaseImageController extends BaseController {
         if (scrollPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
-        NodeTools.moveCenter(scrollPane, imageView);
+        LocateTools.moveCenter(scrollPane, imageView);
         scrollPane.setVvalue(scrollPane.getVmin());
         updateLabelsTitle();
     }
@@ -1104,7 +1106,7 @@ public abstract class BaseImageController extends BaseController {
     }
 
     protected Color pickColor(DoublePoint p, ImageView view) {
-        Color color = NodeTools.imagePixel(p, view);
+        Color color = ImageViewTools.imagePixel(p, view);
         if (color != null) {
             startPickingColor();
             if (paletteController != null && paletteController.getMyStage().isShowing()) {
@@ -1121,7 +1123,7 @@ public abstract class BaseImageController extends BaseController {
                 imageLabelOriginal = new Label(imageLabel.getText());
                 imageLabelOriginal.setStyle(imageLabel.getStyle());
                 imageLabel.setText(Languages.message("PickingColorsNow"));
-                imageLabel.setStyle(darkRedText);
+                imageLabel.setStyle(NodeStyleTools.darkRedText);
             }
         }
     }

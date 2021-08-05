@@ -15,6 +15,7 @@ import javafx.stage.Window;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
@@ -91,9 +92,9 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
                 return;
             }
             if (this.isSelected()) {
-                setStyle(NodeTools.selectedData);
+                setStyle(NodeStyleTools.selectedData);
             } else if (item.getLogType() == LogType.Error) {
-                setStyle(NodeTools.errorData);
+                setStyle(NodeStyleTools.errorData);
             } else {
                 setStyle(null);
             }

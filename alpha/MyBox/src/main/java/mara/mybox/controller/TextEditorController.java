@@ -2,16 +2,16 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -19,9 +19,9 @@ import mara.mybox.value.Languages;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class TextEditerController extends BaseFileEditerController {
+public class TextEditorController extends BaseFileEditorController {
 
-    public TextEditerController() {
+    public TextEditorController() {
         baseTitle = Languages.message("TextEditer");
         TipsLabelKey = "TextEditerTips";
     }
@@ -29,6 +29,25 @@ public class TextEditerController extends BaseFileEditerController {
     @Override
     public void setFileType() {
         setTextType();
+    }
+
+    @Override
+    protected void initPairBox() {
+        try {
+            super.initPairBox();
+            if (pairArea == null) {
+                return;
+            }
+            pairArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                @Override
+                public void handle(ContextMenuEvent event) {
+                    MenuBytesEditController.open(myController, pairArea, event);
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override
@@ -111,11 +130,6 @@ public class TextEditerController extends BaseFileEditerController {
             pairArea.setScrollTop(mainArea.getScrollTop());
         }
         isSettingValues = false;
-    }
-
-    @FXML
-    public void popButtons(MouseEvent mouseEvent) {
-        MenuTextEditController.open(myController, mainArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 
 }

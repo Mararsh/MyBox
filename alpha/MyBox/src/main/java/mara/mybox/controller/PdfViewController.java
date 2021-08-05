@@ -32,6 +32,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -128,7 +129,7 @@ public class PdfViewController extends BaseFileImagesViewController {
         try {
             super.setControlsStyle();
             if (tipsView != null) {
-                NodeTools.setTooltip(tipsView, new Tooltip(Languages.message("PDFComments") + "\n\n" + Languages.message("PdfViewTips")));
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("PDFComments") + "\n\n" + Languages.message("PdfViewTips")));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -143,7 +143,7 @@ public abstract class RecentVisitMenu {
         });
         popMenu.getItems().add(menu);
 
-        NodeTools.locateBelow((Region) event.getSource(), popMenu);
+        LocateTools.locateBelow((Region) event.getSource(), popMenu);
 
     }
 

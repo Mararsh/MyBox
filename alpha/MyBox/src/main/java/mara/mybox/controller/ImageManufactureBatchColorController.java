@@ -14,11 +14,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -62,9 +63,9 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(colorInput.styleProperty().isEqualTo(badStyle))
+                    .or(colorInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -250,10 +251,10 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
                 colorInput.setStyle(null);
                 colorSlider.setValue(colorValue);
             } else {
-                colorInput.setStyle(badStyle);
+                colorInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            colorInput.setStyle(badStyle);
+            colorInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

@@ -15,6 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.TransformTools;
+import mara.mybox.fxml.ValidationTools;
 
 /**
  * @Author Mara
@@ -47,11 +48,11 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                     try {
                         shearX = Float.valueOf(newValue);
                         shearButton.setDisable(false);
-                        NodeTools.setEditorNormal(shearBox);
+                        ValidationTools.setEditorNormal(shearBox);
                     } catch (Exception e) {
                         shearX = 0;
                         shearButton.setDisable(true);
-                        NodeTools.setEditorBadStyle(shearBox);
+                        ValidationTools.setEditorBadStyle(shearBox);
                     }
                 }
             });
@@ -73,11 +74,11 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                         rotateAngle = Integer.valueOf(newValue);
                         rotateLeftButton.setDisable(false);
                         rotateRightButton.setDisable(false);
-                        NodeTools.setEditorNormal(angleBox);
+                        ValidationTools.setEditorNormal(angleBox);
                     } catch (Exception e) {
                         rotateLeftButton.setDisable(true);
                         rotateRightButton.setDisable(true);
-                        NodeTools.setEditorBadStyle(angleBox);
+                        ValidationTools.setEditorBadStyle(angleBox);
                     }
                 }
             });

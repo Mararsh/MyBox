@@ -25,6 +25,8 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
@@ -56,7 +58,7 @@ public class ColorInputController extends BaseController {
     public void setParameters(ColorsManageController colorsManager) {
         try {
             this.colorsManager = colorsManager;
-            NodeTools.removeTooltip(examplesButton);
+            NodeStyleTools.removeTooltip(examplesButton);
 
             colorPicker.valueProperty().addListener((ObservableValue<? extends Color> ov, Color oldVal, Color newVal) -> {
                 if (isSettingValues || newVal == null) {
@@ -108,7 +110,7 @@ public class ColorInputController extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

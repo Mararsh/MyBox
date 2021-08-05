@@ -20,8 +20,9 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -293,8 +294,8 @@ public class ControlSheetData extends BaseController {
         if (textController == null) {
             return;
         }
-        TextEditerController controller = (TextEditerController) openStage(Fxmls.TextEditerFxml);
-        controller.loadContexts(textController.textArea.getText());
+        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(textController.textArea.getText());
     }
 
     /*
@@ -422,7 +423,7 @@ public class ControlSheetData extends BaseController {
 
             TextField nameInput = (TextField) (line.getChildren().get(1));
             if (nameInput.getText().isBlank()) {
-                nameInput.setStyle(badStyle);
+                nameInput.setStyle(NodeStyleTools.badStyle);
                 ok = false;
             } else {
                 column.setName(nameInput.getText().trim());
@@ -437,11 +438,11 @@ public class ControlSheetData extends BaseController {
                     widthInput.setStyle(null);
                 } else {
                     ok = false;
-                    widthInput.setStyle(badStyle);
+                    widthInput.setStyle(NodeStyleTools.badStyle);
                 }
             } catch (Exception e) {
                 ok = false;
-                widthInput.setStyle(badStyle);
+                widthInput.setStyle(NodeStyleTools.badStyle);
             }
 
             if (ok) {

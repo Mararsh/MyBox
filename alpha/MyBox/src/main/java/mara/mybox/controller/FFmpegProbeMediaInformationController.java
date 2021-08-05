@@ -33,8 +33,10 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -89,7 +91,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
 
             tabPane.getTabs().clear();
 
-            functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(badStyle));
+            functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(NodeStyleTools.badStyle));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -100,10 +102,10 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(framesStreamsInput, Languages.message("FFmpegStreamsSpecifierComments"));
-            NodeTools.setTooltip(framesIntervalInput, Languages.message("FFmpegIntervalComments"));
-            NodeTools.setTooltip(packetsStreamsInput, Languages.message("FFmpegStreamsSpecifierComments"));
-            NodeTools.setTooltip(packetsIntervalInput, Languages.message("FFmpegIntervalComments"));
+            NodeStyleTools.setTooltip(framesStreamsInput, Languages.message("FFmpegStreamsSpecifierComments"));
+            NodeStyleTools.setTooltip(framesIntervalInput, Languages.message("FFmpegIntervalComments"));
+            NodeStyleTools.setTooltip(packetsStreamsInput, Languages.message("FFmpegStreamsSpecifierComments"));
+            NodeStyleTools.setTooltip(packetsIntervalInput, Languages.message("FFmpegIntervalComments"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -113,7 +115,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
     public void checkSourceFileInput() {
         String v = sourceFileInput.getText();
         if (v == null || v.isEmpty()) {
-            sourceFileInput.setStyle(badStyle);
+            sourceFileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         sourceFileInput.setStyle(null);
@@ -263,7 +265,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 });
                 popMenu.getItems().add(menu);
 
-                NodeTools.locateBelow((Region) event.getSource(), popMenu);
+                LocateTools.locateBelow((Region) event.getSource(), popMenu);
 
             }
 
@@ -279,7 +281,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             }
             final String address = sourceFileInput.getText();
             if (address == null || address.isEmpty()) {
-                sourceFileInput.setStyle(badStyle);
+                sourceFileInput.setStyle(NodeStyleTools.badStyle);
                 return;
             }
             formatView.getEngine().loadContent​("");

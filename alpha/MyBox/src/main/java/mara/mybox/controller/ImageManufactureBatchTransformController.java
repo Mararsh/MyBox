@@ -14,9 +14,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.TransformTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -60,10 +62,10 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(shearBox.getEditor().styleProperty().isEqualTo(badStyle))
-                    .or(angleBox.getEditor().styleProperty().isEqualTo(badStyle))
+                    .or(shearBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(angleBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -164,9 +166,9 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
         try {
             shearX = Float.valueOf(shearBox.getValue());
             UserConfig.setUserConfigString(baseName + "Shear", shearX + "");
-            NodeTools.setEditorNormal(shearBox);
+            ValidationTools.setEditorNormal(shearBox);
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(shearBox);
+            ValidationTools.setEditorBadStyle(shearBox);
         }
     }
 
@@ -175,10 +177,10 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
             rotateAngle = Integer.valueOf(angleBox.getValue());
             angleSlider.setValue(rotateAngle);
             UserConfig.setUserConfigInt(baseName + "Rotate", rotateAngle);
-            NodeTools.setEditorNormal(angleBox);
+            ValidationTools.setEditorNormal(angleBox);
         } catch (Exception e) {
             rotateAngle = 0;
-            NodeTools.setEditorBadStyle(angleBox);
+            ValidationTools.setEditorBadStyle(angleBox);
         }
     }
 

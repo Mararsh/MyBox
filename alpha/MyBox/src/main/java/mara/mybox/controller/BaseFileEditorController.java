@@ -30,8 +30,8 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextTools;
@@ -43,13 +43,13 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-12-09
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileEditerController extends BaseFileEditerController_Assist {
+public abstract class BaseFileEditorController extends BaseFileEditorController_Assist {
 
-    public BaseFileEditerController() {
+    public BaseFileEditorController() {
         baseTitle = Languages.message("FileEditer");
     }
 
-    public BaseFileEditerController(Edit_Type editType) {
+    public BaseFileEditorController(Edit_Type editType) {
         baseTitle = Languages.message("FileEditer");
         if (null != editType) {
             switch (editType) {
@@ -123,17 +123,17 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
 
             if (findReplaceController != null) {
                 if (sourceInformation != null && sourceInformation.getEditType() == Edit_Type.Bytes) {
-                    NodeTools.setTooltip(findReplaceController.tipsView, new Tooltip(Languages.message("FindReplaceBytesTips")));
+                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(Languages.message("FindReplaceBytesTips")));
                 } else {
-                    NodeTools.setTooltip(findReplaceController.tipsView, new Tooltip(Languages.message("FindReplaceTextsTips")));
+                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(Languages.message("FindReplaceTextsTips")));
                 }
             }
 
             if (encodeSelector != null) {
-                NodeTools.setTooltip(encodeSelector, new Tooltip(Languages.message("EncodeComments")));
+                NodeStyleTools.setTooltip(encodeSelector, new Tooltip(Languages.message("EncodeComments")));
             }
             if (targetBomCheck != null) {
-                NodeTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
+                NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
             }
 
         } catch (Exception e) {
@@ -395,11 +395,11 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
                                 lineInput.setStyle(null);
                                 locateLineButton.setDisable(false);
                             } else {
-                                lineInput.setStyle(badStyle);
+                                lineInput.setStyle(NodeStyleTools.badStyle);
                                 locateLineButton.setDisable(true);
                             }
                         } catch (Exception e) {
-                            lineInput.setStyle(badStyle);
+                            lineInput.setStyle(NodeStyleTools.badStyle);
                             locateLineButton.setDisable(true);
                         }
                     }
@@ -417,11 +417,11 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
                                 objectNumberInput.setStyle(null);
                                 locateObjectButton.setDisable(false);
                             } else {
-                                objectNumberInput.setStyle(badStyle);
+                                objectNumberInput.setStyle(NodeStyleTools.badStyle);
                                 locateObjectButton.setDisable(true);
                             }
                         } catch (Exception e) {
-                            objectNumberInput.setStyle(badStyle);
+                            objectNumberInput.setStyle(NodeStyleTools.badStyle);
                             locateObjectButton.setDisable(true);
                         }
                     }
@@ -551,7 +551,6 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
     }
 
     protected void checkMainAreaSelection() {
@@ -644,7 +643,7 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
                 popError(Languages.message("MayOutOfMemory"));
                 v = available;
             } else if (v <= 0) {
-                pageSizeSelector.getEditor().setStyle(badStyle);
+                pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                 popError(Languages.message("InvalidParameters"));
                 return;
             }
@@ -659,7 +658,7 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
                 loadPage();
             }
         } catch (Exception e) {
-            pageSizeSelector.getEditor().setStyle(badStyle);
+            pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             popError(Languages.message("InvalidParameters"));
         }
     }
@@ -689,7 +688,7 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
     @FXML
     @Override
     public void popAction() {
-        BaseFileEditerController controller = openNewStage();
+        BaseFileEditorController controller = openNewStage();
         controller.setAsPopup(baseName + "Pop");
         autoSaveCheck.setSelected(false);
         if (sourceFile != null) {
@@ -746,20 +745,20 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
-    public void popButtons(MouseEvent mouseEvent) {
+    public void popMenu(MouseEvent mouseEvent) {
         MenuTextEditController.open(myController, mainArea, mouseEvent);
     }
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (fileChanged == null || !fileChanged.getValue()) {
+        if (isPop || fileChanged == null || !fileChanged.getValue()) {
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -785,7 +784,7 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (autoSaveTimer != null) {
                 autoSaveTimer.cancel();
@@ -794,7 +793,7 @@ public abstract class BaseFileEditerController extends BaseFileEditerController_
 
         } catch (Exception e) {
         }
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

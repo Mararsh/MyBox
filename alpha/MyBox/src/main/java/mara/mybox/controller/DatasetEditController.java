@@ -18,6 +18,7 @@ import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import static mara.mybox.value.Languages.message;
 import static mara.mybox.value.Languages.tableMessage;
@@ -79,7 +80,7 @@ public class DatasetEditController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(idInput, Languages.message("AssignedByMyBox"));
+            NodeStyleTools.setTooltip(idInput, Languages.message("AssignedByMyBox"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

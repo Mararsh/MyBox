@@ -19,7 +19,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Era;
@@ -30,9 +29,9 @@ import mara.mybox.db.data.Location;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
@@ -41,11 +40,6 @@ import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
-
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-import static mara.mybox.value.Languages.tableMessage;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -509,7 +503,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -749,19 +743,18 @@ public class LocationDataController extends BaseDataManageController<Location> {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
-            sourceController.leavingScene();
-            timeController.leavingScene();
-            mapController.leavingScene();
+            sourceController.cleanPane();
+            timeController.cleanPane();
+            mapController.cleanPane();
         } catch (Exception e) {
         }
-        return super.leavingScene();
-
+        super.cleanPane();
     }
 
 }

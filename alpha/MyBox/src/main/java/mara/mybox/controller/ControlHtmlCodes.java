@@ -21,16 +21,13 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
-
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.UrlTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -57,7 +54,7 @@ public class ControlHtmlCodes extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(pasteTxtButton, new Tooltip(Languages.message("PasteTexts")));
+            NodeStyleTools.setTooltip(pasteTxtButton, new Tooltip(Languages.message("PasteTexts")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -70,9 +67,9 @@ public class ControlHtmlCodes extends BaseController {
 
             wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Wrap", true));
             wrapCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Wrap", wrapCheck.isSelected());
-                        codesArea.setWrapText(wrapCheck.isSelected());
-                    });
+                UserConfig.setUserConfigBoolean(baseName + "Wrap", wrapCheck.isSelected());
+                codesArea.setWrapText(wrapCheck.isSelected());
+            });
             codesArea.setWrapText(wrapCheck.isSelected());
             codesArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
@@ -444,7 +441,7 @@ public class ControlHtmlCodes extends BaseController {
             popError(Languages.message("NoData"));
             return;
         }
-        string = UrlTools.encodeEscape(string);
+        string = HtmlWriteTools.textToHtml(string);
         insertText(string);
     }
 
@@ -456,8 +453,8 @@ public class ControlHtmlCodes extends BaseController {
 
     @FXML
     public void editAction() {
-        TextEditerController controller = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
-        controller.loadContexts(codesArea.getText());
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(codesArea.getText());
         controller.toFront();
     }
 

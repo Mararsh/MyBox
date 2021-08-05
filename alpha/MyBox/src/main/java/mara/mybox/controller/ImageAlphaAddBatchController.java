@@ -13,10 +13,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -63,9 +65,9 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
             super.initControls();
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
-                    .or(opacityBox.getEditor().styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(opacityBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
 
@@ -115,7 +117,7 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
         alphaFileBox.setDisable(true);
         sourceFileInput.setStyle(null);
         opacityBox.setDisable(true);
-        NodeTools.setEditorNormal(opacityBox);
+        ValidationTools.setEditorNormal(opacityBox);
 
         useOpacityValue = opacityRadio.isSelected();
         if (useOpacityValue) {
@@ -134,12 +136,12 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
             int v = Integer.valueOf(opacityBox.getValue());
             if (v >= 0 && v <= 100) {
                 opacityValue = v / 100f;
-                NodeTools.setEditorNormal(opacityBox);
+                ValidationTools.setEditorNormal(opacityBox);
             } else {
-                NodeTools.setEditorBadStyle(opacityBox);
+                ValidationTools.setEditorBadStyle(opacityBox);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(opacityBox);
+            ValidationTools.setEditorBadStyle(opacityBox);
         }
     }
 

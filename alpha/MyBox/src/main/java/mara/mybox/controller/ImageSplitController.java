@@ -25,8 +25,9 @@ import javafx.scene.text.Text;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -149,8 +150,8 @@ public class ImageSplitController extends ImageViewerController {
                 }
             });
 
-            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(badStyle)
-                    .or(colsInput.styleProperty().isEqualTo(badStyle))
+            okButton.disableProperty().bind(rowsInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    .or(colsInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -242,10 +243,10 @@ public class ImageSplitController extends ImageViewerController {
                 if (rowsNumber > 0) {
                     rowsInput.setStyle(null);
                 } else {
-                    rowsInput.setStyle(badStyle);
+                    rowsInput.setStyle(NodeStyleTools.badStyle);
                 }
             } catch (Exception e) {
-                rowsInput.setStyle(badStyle);
+                rowsInput.setStyle(NodeStyleTools.badStyle);
             }
         }
 
@@ -259,10 +260,10 @@ public class ImageSplitController extends ImageViewerController {
                 if (colsNumber > 0) {
                     colsInput.setStyle(null);
                 } else {
-                    colsInput.setStyle(badStyle);
+                    colsInput.setStyle(NodeStyleTools.badStyle);
                 }
             } catch (Exception e) {
-                colsInput.setStyle(badStyle);
+                colsInput.setStyle(NodeStyleTools.badStyle);
             }
         }
     }
@@ -277,10 +278,10 @@ public class ImageSplitController extends ImageViewerController {
                 widthInput.setStyle(null);
                 width = v;
             } else {
-                widthInput.setStyle(badStyle);
+                widthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            widthInput.setStyle(badStyle);
+            widthInput.setStyle(NodeStyleTools.badStyle);
         }
         try {
             int v = Integer.valueOf(heightInput.getText());
@@ -288,10 +289,10 @@ public class ImageSplitController extends ImageViewerController {
                 heightInput.setStyle(null);
                 height = v;
             } else {
-                heightInput.setStyle(badStyle);
+                heightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            heightInput.setStyle(badStyle);
+            heightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -315,7 +316,7 @@ public class ImageSplitController extends ImageViewerController {
                 try {
                     int value = Integer.valueOf(row.trim());
                     if (value < 0 || value > getOperationHeight() - 1) {
-                        customizedRowsInput.setStyle(badStyle);
+                        customizedRowsInput.setStyle(NodeStyleTools.badStyle);
                         isValidRows = false;
                         break;
                     }
@@ -323,7 +324,7 @@ public class ImageSplitController extends ImageViewerController {
                         rows.add(value);
                     }
                 } catch (Exception e) {
-                    customizedRowsInput.setStyle(badStyle);
+                    customizedRowsInput.setStyle(NodeStyleTools.badStyle);
                     isValidRows = false;
                     break;
                 }
@@ -336,7 +337,7 @@ public class ImageSplitController extends ImageViewerController {
                 try {
                     int value = Integer.valueOf(col.trim());
                     if (value <= 0 || value >= getOperationWidth() - 1) {
-                        customizedColsInput.setStyle(badStyle);
+                        customizedColsInput.setStyle(NodeStyleTools.badStyle);
                         isValidcols = false;
                         break;
                     }
@@ -344,7 +345,7 @@ public class ImageSplitController extends ImageViewerController {
                         cols.add(value);
                     }
                 } catch (Exception e) {
-                    customizedColsInput.setStyle(badStyle);
+                    customizedColsInput.setStyle(NodeStyleTools.badStyle);
                     isValidcols = false;
                     break;
                 }

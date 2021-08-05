@@ -39,6 +39,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -120,12 +121,12 @@ public class HtmlSnapController extends BaseHtmlController {
                         if (v > 0) {
                             delay = v * 1000;
                             UserConfig.setUserConfigInt(baseName + "Delay", v);
-                            NodeTools.setEditorNormal(delayBox);
+                            ValidationTools.setEditorNormal(delayBox);
                         } else {
-                            NodeTools.setEditorBadStyle(delayBox);
+                            ValidationTools.setEditorBadStyle(delayBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(delayBox);
+                        ValidationTools.setEditorBadStyle(delayBox);
                     }
                 }
             });

@@ -26,8 +26,10 @@ import mara.mybox.db.data.QueryCondition.DataOperation;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
@@ -88,7 +90,7 @@ public class ControlDataQuery extends BaseController {
                 titleInput.textProperty().addListener(
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             if (newValue == null || newValue.isBlank()) {
-                                titleInput.setStyle(badStyle);
+                                titleInput.setStyle(NodeStyleTools.badStyle);
                             } else {
                                 titleInput.setStyle(null);
                             }
@@ -99,7 +101,7 @@ public class ControlDataQuery extends BaseController {
                 prefixInput.textProperty().addListener(
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             if (newValue == null || newValue.isBlank()) {
-                                prefixInput.setStyle(badStyle);
+                                prefixInput.setStyle(NodeStyleTools.badStyle);
                             } else {
                                 prefixInput.setStyle(null);
                             }
@@ -137,7 +139,7 @@ public class ControlDataQuery extends BaseController {
             if (!supportTop) {
                 conditionBox.getChildren().remove(topBox);
             } else {
-                NodeTools.setTooltip(topInput, Languages.message("TopNumberComments"));
+                NodeStyleTools.setTooltip(topInput, Languages.message("TopNumberComments"));
                 topInput.setText(initCondition.getTop() + "");
             }
             titleInput.requestFocus();
@@ -198,14 +200,14 @@ public class ControlDataQuery extends BaseController {
         }
         String title = titleInput.getText() == null ? null : titleInput.getText().trim();
         if (title == null || title.isEmpty()) {
-            titleInput.setStyle(badStyle);
+            titleInput.setStyle(NodeStyleTools.badStyle);
             return null;
         }
         titleInput.setStyle(null);
 
         String prefix = prefixInput.getText() == null ? null : prefixInput.getText().trim();
         if (prefix == null || prefix.isEmpty()) {
-            prefixInput.setStyle(badStyle);
+            prefixInput.setStyle(NodeStyleTools.badStyle);
             return null;
         }
         prefixInput.setStyle(null);
@@ -215,7 +217,7 @@ public class ControlDataQuery extends BaseController {
             try {
                 top = Integer.parseInt(topInput.getText().trim());
             } catch (Exception e) {
-                topInput.setStyle(badStyle);
+                topInput.setStyle(NodeStyleTools.badStyle);
                 return null;
             }
         }
@@ -410,7 +412,7 @@ public class ControlDataQuery extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -461,7 +463,7 @@ public class ControlDataQuery extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

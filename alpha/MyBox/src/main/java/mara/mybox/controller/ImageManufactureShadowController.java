@@ -13,6 +13,7 @@ import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 
 import mara.mybox.value.FileExtensions;
@@ -63,12 +64,12 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
                         if (v >= 0) {
                             shadow = v;
                             UserConfig.setUserConfigString("ImageShadowSize", newValue);
-                            NodeTools.setEditorNormal(shadowBox);
+                            ValidationTools.setEditorNormal(shadowBox);
                         } else {
-                            NodeTools.setEditorBadStyle(shadowBox);
+                            ValidationTools.setEditorBadStyle(shadowBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(shadowBox);
+                        ValidationTools.setEditorBadStyle(shadowBox);
                     }
                 }
             });

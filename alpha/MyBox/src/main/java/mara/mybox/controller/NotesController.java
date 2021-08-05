@@ -66,6 +66,8 @@ import mara.mybox.db.table.TableNoteTag;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
@@ -403,11 +405,11 @@ public class NotesController extends BaseDataTableController<Note> {
         try {
             super.setControlsStyle();
 
-            NodeTools.setTooltip(clearNotesButton, new Tooltip(Languages.message("ClearNotes")));
-            NodeTools.setTooltip(deleteNotesButton, new Tooltip(Languages.message("DeleteNotes")));
-            NodeTools.setTooltip(moveDataNotesButton, new Tooltip(Languages.message("MoveNotes")));
-            NodeTools.setTooltip(copyNotesButton, new Tooltip(Languages.message("CopyNotes")));
-            NodeTools.setTooltip(synchronizeButton, Languages.message("SynchronizeChangesToOtherPanes") + "\nF1");
+            NodeStyleTools.setTooltip(clearNotesButton, new Tooltip(Languages.message("ClearNotes")));
+            NodeStyleTools.setTooltip(deleteNotesButton, new Tooltip(Languages.message("DeleteNotes")));
+            NodeStyleTools.setTooltip(moveDataNotesButton, new Tooltip(Languages.message("MoveNotes")));
+            NodeStyleTools.setTooltip(copyNotesButton, new Tooltip(Languages.message("CopyNotes")));
+            NodeStyleTools.setTooltip(synchronizeButton, Languages.message("SynchronizeChangesToOtherPanes") + "\nF1");
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -1312,8 +1314,8 @@ public class NotesController extends BaseDataTableController<Note> {
 
     @FXML
     protected void editMarkdown() {
-        MarkdownEditerController controller
-                = (MarkdownEditerController) openStage(Fxmls.MarkdownEditorFxml);
+        MarkdownEditorController controller
+                = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
         controller.loadMarkdown(markdownArea.getText());
     }
 
@@ -1434,7 +1436,7 @@ public class NotesController extends BaseDataTableController<Note> {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -45,9 +45,10 @@ import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.StyleData;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
@@ -142,7 +143,7 @@ public class MediaPlayerController extends BaseController {
                         }
                         repeatSelector.getEditor().setStyle(null);
                     } catch (Exception e) {
-                        repeatSelector.getEditor().setStyle(badStyle);
+                        repeatSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -158,7 +159,7 @@ public class MediaPlayerController extends BaseController {
                     try {
                         double v = Double.valueOf(newValue);
                         if (v <= 0 || v > 8) {
-                            speedSelector.getEditor().setStyle(badStyle);
+                            speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         } else {
                             speed = v;
                             speedSelector.getEditor().setStyle(null);
@@ -169,7 +170,7 @@ public class MediaPlayerController extends BaseController {
                             }
                         }
                     } catch (Exception e) {
-                        speedSelector.getEditor().setStyle(badStyle);
+                        speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -227,13 +228,13 @@ public class MediaPlayerController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(stopButton, new Tooltip(Languages.message("Stop") + "\nq / Q"));
-            NodeTools.setTooltip(fullScreenButton, new Tooltip(Languages.message("FullScreen") + "\nf / F"));
-            NodeTools.setTooltip(soundButton, new Tooltip(Languages.message("Mute") + "\nm / M"));
-            NodeTools.setTooltip(dataButton, new Tooltip(Languages.message("ManageMediaLists")));
-            NodeTools.setTooltip(supportTipsView, new Tooltip(Languages.message("MediaPlayerSupports")));
-            NodeTools.setTooltip(catButton, new Tooltip(Languages.message("MiaoSounds")));
-            NodeTools.setTooltip(speedSelector, new Tooltip("0~8"));
+            NodeStyleTools.setTooltip(stopButton, new Tooltip(Languages.message("Stop") + "\nq / Q"));
+            NodeStyleTools.setTooltip(fullScreenButton, new Tooltip(Languages.message("FullScreen") + "\nf / F"));
+            NodeStyleTools.setTooltip(soundButton, new Tooltip(Languages.message("Mute") + "\nm / M"));
+            NodeStyleTools.setTooltip(dataButton, new Tooltip(Languages.message("ManageMediaLists")));
+            NodeStyleTools.setTooltip(supportTipsView, new Tooltip(Languages.message("MediaPlayerSupports")));
+            NodeStyleTools.setTooltip(catButton, new Tooltip(Languages.message("MiaoSounds")));
+            NodeStyleTools.setTooltip(speedSelector, new Tooltip("0~8"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -336,7 +337,7 @@ public class MediaPlayerController extends BaseController {
             timeSlider.setValue(0);
             elapsedTimeLabel.setText("");
             leftTimeLabel.setText("");
-            NodeTools.removeTooltip(infoButton);
+            NodeStyleTools.removeTooltip(infoButton);
 
             mediaView.setMediaPlayer(null);
             mediaView.setFitHeight(50);
@@ -863,7 +864,7 @@ public class MediaPlayerController extends BaseController {
                 playButton.setUserData("Playing");
                 playButton.applyCss();
 
-                NodeTools.setTooltip(infoButton, currentMedia.getInfo());
+                NodeStyleTools.setTooltip(infoButton, currentMedia.getInfo());
 
                 duration = player.getMedia().getDuration();
                 updateStatus();

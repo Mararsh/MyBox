@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BytesEditerController;
+import mara.mybox.controller.BytesEditorController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
@@ -20,11 +20,11 @@ import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.controller.ImageMetaDataController;
 import mara.mybox.controller.ImageViewerController;
 import mara.mybox.controller.ImagesBrowserController;
-import mara.mybox.controller.MarkdownEditerController;
+import mara.mybox.controller.MarkdownEditorController;
 import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.PptViewController;
-import mara.mybox.controller.TextEditerController;
+import mara.mybox.controller.TextEditorController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.controller.WordViewController;
 import mara.mybox.data.StringTable;
@@ -260,9 +260,9 @@ public class ControllerTools {
         }
     }
 
-    public static TextEditerController openTextEditer(Stage stage, File file) {
+    public static TextEditorController openTextEditer(Stage stage, File file) {
         try {
-            final TextEditerController controller = (TextEditerController) openScene(stage, Fxmls.TextEditerFxml);
+            final TextEditorController controller = (TextEditorController) openScene(stage, Fxmls.TextEditorFxml);
             controller.openFile(file);
             controller.toFront();
             return controller;
@@ -272,9 +272,9 @@ public class ControllerTools {
         }
     }
 
-    public static MarkdownEditerController openMarkdownEditer(Stage stage, File file) {
+    public static MarkdownEditorController openMarkdownEditer(Stage stage, File file) {
         try {
-            final MarkdownEditerController controller = (MarkdownEditerController) openScene(stage, Fxmls.MarkdownEditorFxml);
+            final MarkdownEditorController controller = (MarkdownEditorController) openScene(stage, Fxmls.MarkdownEditorFxml);
             controller.openFile(file);
             controller.toFront();
             return controller;
@@ -296,9 +296,9 @@ public class ControllerTools {
         }
     }
 
-    public static BytesEditerController openBytesEditer(Stage stage, File file) {
+    public static BytesEditorController openBytesEditer(Stage stage, File file) {
         try {
-            final BytesEditerController controller = (BytesEditerController) openScene(stage, Fxmls.BytesEditerFxml);
+            final BytesEditorController controller = (BytesEditorController) openScene(stage, Fxmls.BytesEditorFxml);
             controller.openFile(file);
             controller.toFront();
             return controller;

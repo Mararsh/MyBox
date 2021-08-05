@@ -14,7 +14,8 @@ import javafx.stage.Modality;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -64,19 +65,19 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
             initOptions();
 
             calculateButton.disableProperty().bind(Bindings.isEmpty(scaleInput.textProperty())
-                    .or(scaleInput.styleProperty().isEqualTo(badStyle))
+                    .or(scaleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(sourceWPController.xInput.textProperty()))
-                    .or(sourceWPController.xInput.styleProperty().isEqualTo(badStyle))
+                    .or(sourceWPController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(sourceWPController.yInput.textProperty()))
-                    .or(sourceWPController.yInput.styleProperty().isEqualTo(badStyle))
+                    .or(sourceWPController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(sourceWPController.zInput.textProperty()))
-                    .or(sourceWPController.zInput.styleProperty().isEqualTo(badStyle))
+                    .or(sourceWPController.zInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(targetWPController.xInput.textProperty()))
-                    .or(targetWPController.xInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetWPController.xInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(targetWPController.yInput.textProperty()))
-                    .or(targetWPController.yInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetWPController.yInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(targetWPController.zInput.textProperty()))
-                    .or(targetWPController.zInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetWPController.zInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -92,14 +93,14 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
                     try {
                         int p = Integer.parseInt(scaleMatricesInput.getText());
                         if (p <= 0) {
-                            scaleMatricesInput.setStyle(badStyle);
+                            scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
                         } else {
                             scale = p;
                             scaleMatricesInput.setStyle(null);
                             UserConfig.setUserConfigInt("MatrixDecimalScale", scale);
                         }
                     } catch (Exception e) {
-                        scaleMatricesInput.setStyle(badStyle);
+                        scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -107,7 +108,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
             scaleMatricesInput.setText(p + "");
 
             calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()
-                    .or(scaleMatricesInput.styleProperty().isEqualTo(badStyle))
+                    .or(scaleMatricesInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             exportButton.disableProperty().bind(allArea.textProperty().isEmpty()

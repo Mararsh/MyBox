@@ -72,21 +72,6 @@ public class UrlTools {
         return encodeURL(file.toURI().toString(), charset);
     }
 
-    public static String encodeEscape(String string) {
-        if (string == null) {
-            return null;
-        }
-        return string.replaceAll("&", "&amp;")
-                .replaceAll("\"", "&quot;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll("\\x20", "&nbsp;")
-                .replaceAll("©", "&copy;")
-                .replaceAll("®", "&reg;")
-                .replaceAll("™", "&trade;")
-                .replaceAll("\n", "<BR>\n");
-    }
-
     public static String fullAddress(String baseAddress, String address) {
         try {
             URL baseURL = new URL(baseAddress);

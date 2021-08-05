@@ -9,7 +9,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -41,18 +42,18 @@ public class FilesMergeController extends BaseBatchFileController {
                     recordFileWritten(targetFile.getParent());
                 } catch (Exception e) {
                     targetFile = null;
-                    targetFileInput.setStyle(badStyle);
+                    targetFileInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
 
         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
         startButton.disableProperty().unbind();
         startButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
-                .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                .or(targetFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(tableData))
         );
 

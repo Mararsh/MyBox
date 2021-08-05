@@ -6,7 +6,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -47,14 +48,14 @@ public class TableSizeController extends BaseController {
                         try {
                             int v = Integer.parseInt(newValue.trim());
                             if (v <= 0) {
-                                colsSelector.getEditor().setStyle(badStyle);
+                                colsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             } else {
                                 colsNumber = v;
                                 UserConfig.setUserConfigInt(baseName + "ColsNumber", colsNumber);
                                 colsSelector.getEditor().setStyle(null);
                             }
                         } catch (Exception e) {
-                            colsSelector.getEditor().setStyle(badStyle);
+                            colsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
@@ -68,14 +69,14 @@ public class TableSizeController extends BaseController {
                         try {
                             int v = Integer.parseInt(newValue.trim());
                             if (v <= 0) {
-                                rowsSelector.getEditor().setStyle(badStyle);
+                                rowsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             } else {
                                 rowsNumber = v;
                                 UserConfig.setUserConfigInt(baseName + "RowsNumber", rowsNumber);
                                 rowsSelector.getEditor().setStyle(null);
                             }
                         } catch (Exception e) {
-                            rowsSelector.getEditor().setStyle(badStyle);
+                            rowsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     });
 

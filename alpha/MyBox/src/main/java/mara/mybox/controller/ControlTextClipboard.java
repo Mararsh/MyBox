@@ -60,6 +60,7 @@ public class ControlTextClipboard extends BaseDataTableController<TextClipboard>
 
     public ControlTextClipboard() {
         baseTitle = Languages.message("MyBoxClipboard");
+        TipsLabelKey = "TextInMyBoxClipboardTips";
     }
 
     @Override
@@ -198,8 +199,8 @@ public class ControlTextClipboard extends BaseDataTableController<TextClipboard>
             popError(Languages.message("NoData"));
             return;
         }
-        TextEditerController controller = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
-        controller.loadContexts(s);
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(s);
         controller.toFront();
     }
 

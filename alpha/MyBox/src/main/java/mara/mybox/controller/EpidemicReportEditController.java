@@ -13,8 +13,9 @@ import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -79,10 +80,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                     });
             timeInput.setText(DateTools.nowString());
 
-            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(badStyle)
-                    .or(confirmedInput.styleProperty().isEqualTo(badStyle))
-                    .or(healedInput.styleProperty().isEqualTo(badStyle))
-                    .or(deadInput.styleProperty().isEqualTo(badStyle))
+            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    .or(confirmedInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(healedInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(deadInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -108,10 +109,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(timeInput, Languages.message("TimeComments"));
-            NodeTools.setTooltip(epidInput, Languages.message("AssignedByMyBox"));
-            NodeTools.setTooltip(locationInput, Languages.message("ClickNodePickValue"));
-            NodeTools.setTooltip(clearButton, Languages.message("Reset"));
+            NodeStyleTools.setTooltip(timeInput, Languages.message("TimeComments"));
+            NodeStyleTools.setTooltip(epidInput, Languages.message("AssignedByMyBox"));
+            NodeStyleTools.setTooltip(locationInput, Languages.message("ClickNodePickValue"));
+            NodeStyleTools.setTooltip(clearButton, Languages.message("Reset"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -167,10 +168,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 confirmed = v;
                 confirmedInput.setStyle(null);
             } else {
-                confirmedInput.setStyle(badStyle);
+                confirmedInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            confirmedInput.setStyle(badStyle);
+            confirmedInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -187,10 +188,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 healed = v;
                 healedInput.setStyle(null);
             } else {
-                healedInput.setStyle(badStyle);
+                healedInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            healedInput.setStyle(badStyle);
+            healedInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -207,10 +208,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 dead = v;
                 deadInput.setStyle(null);
             } else {
-                deadInput.setStyle(badStyle);
+                deadInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            deadInput.setStyle(badStyle);
+            deadInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -227,10 +228,10 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 time = v.getTime();
                 timeInput.setStyle(null);
             } else {
-                timeInput.setStyle(badStyle);
+                timeInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            timeInput.setStyle(badStyle);
+            timeInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

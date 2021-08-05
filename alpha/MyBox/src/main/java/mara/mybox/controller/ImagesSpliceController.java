@@ -26,7 +26,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.WindowTools;
@@ -36,6 +36,8 @@ import mara.mybox.bufferedimage.ImageCombine.CombineSizeType;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.CombineTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -113,15 +115,15 @@ public class ImagesSpliceController extends ImageViewerController {
                             imageCombine.setColumnsValue(columnsValue);
                             UserConfig.setUserConfigString(baseName + "Columns", columnsValue + "");
                             combineImages();
-                            NodeTools.setEditorNormal(columnsBox);
+                            ValidationTools.setEditorNormal(columnsBox);
                         } else {
                             imageCombine.setColumnsValue(-1);
-                            NodeTools.setEditorBadStyle(columnsBox);
+                            ValidationTools.setEditorBadStyle(columnsBox);
                         }
 
                     } catch (Exception e) {
                         imageCombine.setColumnsValue(-1);
-                        NodeTools.setEditorBadStyle(columnsBox);
+                        ValidationTools.setEditorBadStyle(columnsBox);
                     }
                 }
             });
@@ -137,14 +139,14 @@ public class ImagesSpliceController extends ImageViewerController {
                         if (intervalValue >= 0) {
                             imageCombine.setIntervalValue(intervalValue);
                             UserConfig.setUserConfigString(baseName + "Interval", intervalValue + "");
-                            NodeTools.setEditorNormal(intervalBox);
+                            ValidationTools.setEditorNormal(intervalBox);
                             combineImages();
                         } else {
-                            NodeTools.setEditorBadStyle(intervalBox);
+                            ValidationTools.setEditorBadStyle(intervalBox);
                         }
 
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intervalBox);
+                        ValidationTools.setEditorBadStyle(intervalBox);
                     }
                 }
             });
@@ -160,14 +162,14 @@ public class ImagesSpliceController extends ImageViewerController {
                         if (MarginsValue >= 0) {
                             imageCombine.setMarginsValue(MarginsValue);
                             UserConfig.setUserConfigString(baseName + "Margin", MarginsValue + "");
-                            NodeTools.setEditorNormal(MarginsBox);
+                            ValidationTools.setEditorNormal(MarginsBox);
                             combineImages();
                         } else {
-                            NodeTools.setEditorBadStyle(MarginsBox);
+                            ValidationTools.setEditorBadStyle(MarginsBox);
                         }
 
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(MarginsBox);
+                        ValidationTools.setEditorBadStyle(MarginsBox);
                     }
                 }
             });
@@ -348,11 +350,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setEachWidthValue(-1);
-                eachWidthInput.setStyle(badStyle);
+                eachWidthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             imageCombine.setEachWidthValue(-1);
-            eachWidthInput.setStyle(badStyle);
+            eachWidthInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -366,11 +368,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setEachHeightValue(-1);
-                eachHeightInput.setStyle(badStyle);
+                eachHeightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             imageCombine.setEachHeightValue(-1);
-            eachHeightInput.setStyle(badStyle);
+            eachHeightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -384,11 +386,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setTotalWidthValue(-1);
-                totalWidthInput.setStyle(badStyle);
+                totalWidthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             imageCombine.setTotalWidthValue(-1);
-            totalWidthInput.setStyle(badStyle);
+            totalWidthInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -402,11 +404,11 @@ public class ImagesSpliceController extends ImageViewerController {
                 combineImages();
             } else {
                 imageCombine.setTotalHeightValue(-1);
-                totalHeightInput.setStyle(badStyle);
+                totalHeightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
             imageCombine.setTotalHeightValue(-1);
-            totalHeightInput.setStyle(badStyle);
+            totalHeightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -436,10 +438,10 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void combineImages() {
         if (tableData == null || tableData.isEmpty()
-                || totalWidthInput.getStyle().equals(badStyle)
-                || totalHeightInput.getStyle().equals(badStyle)
-                || eachWidthInput.getStyle().equals(badStyle)
-                || eachHeightInput.getStyle().equals(badStyle)) {
+                || totalWidthInput.getStyle().equals(NodeStyleTools.badStyle)
+                || totalHeightInput.getStyle().equals(NodeStyleTools.badStyle)
+                || eachWidthInput.getStyle().equals(NodeStyleTools.badStyle)
+                || eachHeightInput.getStyle().equals(NodeStyleTools.badStyle)) {
             image = null;
             imageView.setImage(null);
             imageLabel.setText("");

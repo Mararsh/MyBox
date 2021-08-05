@@ -15,7 +15,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.GeographyCode;
@@ -23,18 +22,14 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.tools.HtmlReadTools;
-
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -393,7 +388,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -486,7 +481,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -532,16 +527,16 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
-            mapController.leavingScene();
+            mapController.cleanPane();
             if (loading != null) {
                 loading.cancelAction();
                 loading = null;
             }
         } catch (Exception e) {
         }
-        return super.leavingScene();
+        super.cleanPane();
     }
 
 }

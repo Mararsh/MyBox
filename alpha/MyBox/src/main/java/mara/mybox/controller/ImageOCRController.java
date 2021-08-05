@@ -50,8 +50,10 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -191,7 +193,7 @@ public class ImageOCRController extends ImageViewerController {
         if (originalScrollPane == null || originalView == null || originalView.getImage() == null) {
             return;
         }
-        NodeTools.moveXCenter(originalScrollPane, originalView);
+        LocateTools.moveXCenter(originalScrollPane, originalView);
         originalScrollPane.setVvalue(originalScrollPane.getVmin());
     }
 
@@ -280,10 +282,10 @@ public class ImageOCRController extends ImageViewerController {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
                         } else {
-                            scaleSelector.getEditor().setStyle(badStyle);
+                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        scaleSelector.getEditor().setStyle(badStyle);
+                        scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -305,10 +307,10 @@ public class ImageOCRController extends ImageViewerController {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
                         } else {
-                            binarySelector.getEditor().setStyle(badStyle);
+                            binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        binarySelector.getEditor().setStyle(badStyle);
+                        binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -506,7 +508,7 @@ public class ImageOCRController extends ImageViewerController {
             });
             popMenu.getItems().add(menu);
 
-            NodeTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -935,7 +937,7 @@ public class ImageOCRController extends ImageViewerController {
         File dataPath = ocrOptionsController.dataPathController.file;
         if (!dataPath.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.dataPathController.fileInput.setStyle(badStyle);
+            ocrOptionsController.dataPathController.fileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         if (ocrOptionsController.embedRadio.isSelected()) {
@@ -953,7 +955,7 @@ public class ImageOCRController extends ImageViewerController {
         File tesseract = ocrOptionsController.tesseractPathController.file;
         if (!tesseract.exists()) {
             popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.tesseractPathController.fileInput.setStyle(badStyle);
+            ocrOptionsController.tesseractPathController.fileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         loading = handling();

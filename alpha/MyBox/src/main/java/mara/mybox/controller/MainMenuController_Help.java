@@ -36,7 +36,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     public void readme(ActionEvent event) {
-        MarkdownEditerController c = (MarkdownEditerController) openStage(Fxmls.MarkdownEditorFxml);
+        MarkdownEditorController c = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
         String lang = Languages.isChinese() ? "zh" : "en";
         File file = FxFileTools.getInternalFile("/doc/" + lang + "/README.md", "doc", "README-" + lang + ".md");
         c.sourceFileChanged(file);

@@ -12,6 +12,7 @@ import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
@@ -48,12 +49,12 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
                         if (v >= 0) {
                             arc = v;
                             UserConfig.setUserConfigInt(baseName + "Arc", arc);
-                            NodeTools.setEditorNormal(arcBox);
+                            ValidationTools.setEditorNormal(arcBox);
                         } else {
-                            NodeTools.setEditorBadStyle(arcBox);
+                            ValidationTools.setEditorBadStyle(arcBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(arcBox);
+                        ValidationTools.setEditorBadStyle(arcBox);
                     }
                 }
             });

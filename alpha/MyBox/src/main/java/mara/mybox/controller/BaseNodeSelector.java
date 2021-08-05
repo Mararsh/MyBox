@@ -24,6 +24,8 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
@@ -141,7 +143,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
             popMenu.getItems().addAll(items);
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -200,7 +202,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 setText(display(item));
                 String tips = tooltip(item);
                 if (tips != null) {
-                    NodeTools.setTooltip(this, tips);
+                    NodeStyleTools.setTooltip(this, tips);
                 }
             }
         });

@@ -22,7 +22,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoublePoint;
@@ -36,8 +35,7 @@ import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fximage.PenTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -120,12 +118,12 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                             strokeWidth = v;
                             UserConfig.setUserConfigInt(strokeWidthKey, strokeWidth);
                             updateMask();
-                            NodeTools.setEditorNormal(strokeWidthBox);
+                            ValidationTools.setEditorNormal(strokeWidthBox);
                         } else {
-                            NodeTools.setEditorBadStyle(strokeWidthBox);
+                            ValidationTools.setEditorBadStyle(strokeWidthBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(strokeWidthBox);
+                        ValidationTools.setEditorBadStyle(strokeWidthBox);
                     }
                 }
             });
@@ -151,12 +149,12 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                             arcWidth = v;
                             UserConfig.setUserConfigInt("ImagePenArcWidth", arcWidth);
                             updateMask();
-                            NodeTools.setEditorNormal(arcBox);
+                            ValidationTools.setEditorNormal(arcBox);
                         } else {
-                            NodeTools.setEditorBadStyle(arcBox);
+                            ValidationTools.setEditorBadStyle(arcBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(arcBox);
+                        ValidationTools.setEditorBadStyle(arcBox);
                     }
                 }
             });
@@ -235,13 +233,13 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
                             UserConfig.setUserConfigInt("ImagePenOpacity", (int) (f * 100));
-                            NodeTools.setEditorNormal(opacitySelector);
+                            ValidationTools.setEditorNormal(opacitySelector);
                             updateMask();
                         } else {
-                            NodeTools.setEditorBadStyle(opacitySelector);
+                            ValidationTools.setEditorBadStyle(opacitySelector);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(opacitySelector);
+                        ValidationTools.setEditorBadStyle(opacitySelector);
                     }
                 }
             });
@@ -276,13 +274,13 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intensity = v;
-                            NodeTools.setEditorNormal(intensityBox);
+                            ValidationTools.setEditorNormal(intensityBox);
                             UserConfig.setUserConfigInt("ImageMosaicIntensity", v);
                         } else {
-                            NodeTools.setEditorBadStyle(intensityBox);
+                            ValidationTools.setEditorBadStyle(intensityBox);
                         }
                     } catch (Exception e) {
-                        NodeTools.setEditorBadStyle(intensityBox);
+                        ValidationTools.setEditorBadStyle(intensityBox);
                     }
                 }
             });
@@ -771,7 +769,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         if (imageController.isPickingColor) {
-            Color color = NodeTools.imagePixel(p, imageView);
+            Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {
                 strokeColorSetController.setColor(color);
             }
@@ -955,7 +953,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 (Color) strokeColorSetController.rect.getFill());
         double x = (backImage.getWidth() - foreImage.getWidth()) / 2;
         double y = (backImage.getHeight() - foreImage.getHeight()) / 2;
-        NodeTools.blendDemoFx(imageController, demoButton,
+        FxImageTools.blendDemoFx(imageController, demoButton,
                 foreImage, backImage, (int) x, (int) y, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
     }
 

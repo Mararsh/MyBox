@@ -15,10 +15,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ShadowTools;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -56,10 +58,10 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
-                    .or(shadowBox.getEditor().styleProperty().isEqualTo(badStyle))
-                    .or(perBox.getEditor().styleProperty().isEqualTo(badStyle))
+                    .or(shadowBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(perBox.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -71,7 +73,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(perBox, new Tooltip("1~100"));
+            NodeStyleTools.setTooltip(perBox, new Tooltip("1~100"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -146,12 +148,12 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             if (v > 0 && v <= 100) {
                 percent = v;
                 UserConfig.setUserConfigInt(baseName + "Percent", percent);
-                NodeTools.setEditorNormal(perBox);
+                ValidationTools.setEditorNormal(perBox);
             } else {
-                NodeTools.setEditorBadStyle(perBox);
+                ValidationTools.setEditorBadStyle(perBox);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(perBox);
+            ValidationTools.setEditorBadStyle(perBox);
         }
     }
 
@@ -161,12 +163,12 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             if (v > 0) {
                 shadow = v;
                 UserConfig.setUserConfigInt(baseName + "Shadow", shadow);
-                NodeTools.setEditorNormal(shadowBox);
+                ValidationTools.setEditorNormal(shadowBox);
             } else {
-                NodeTools.setEditorBadStyle(shadowBox);
+                ValidationTools.setEditorBadStyle(shadowBox);
             }
         } catch (Exception e) {
-            NodeTools.setEditorBadStyle(shadowBox);
+            ValidationTools.setEditorBadStyle(shadowBox);
         }
     }
 

@@ -15,6 +15,8 @@ import mara.mybox.db.data.Notebook;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableNotebook;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.Languages.message;
@@ -43,7 +45,7 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
         this.tableNote = notesController.tableNote;
         super.setParent(notesController, true);
         if (importButton != null) {
-            NodeTools.removeTooltip(importButton);
+            NodeStyleTools.removeTooltip(importButton);
         }
     }
 
@@ -205,7 +207,7 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
             popMenu.getItems().addAll(items);
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

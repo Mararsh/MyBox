@@ -25,7 +25,8 @@ import javafx.stage.Stage;
 import mara.mybox.MainApp;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -163,10 +164,10 @@ public class MyBoxSetupController implements Initializable {
                             jvmInput.setStyle(null);
                             newJVM = v;
                         } else {
-                            jvmInput.setStyle(badStyle);
+                            jvmInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        jvmInput.setStyle(badStyle);
+                        jvmInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -174,7 +175,7 @@ public class MyBoxSetupController implements Initializable {
             okButton.disableProperty().bind(
                     dataDirInput.textProperty().isEmpty()
                             .or(jvmInput.textProperty().isEmpty())
-                            .or(jvmInput.styleProperty().isEqualTo(badStyle))
+                            .or(jvmInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {

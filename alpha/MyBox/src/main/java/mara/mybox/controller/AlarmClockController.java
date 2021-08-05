@@ -25,8 +25,9 @@ import javafx.stage.Window;
 import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
@@ -98,7 +99,7 @@ public class AlarmClockController extends BaseController {
                         String oldValue, String newValue) {
                     Date d = DateTools.stringToDatetime(startInput.getText());
                     if (d == null) {
-                        startInput.setStyle(badStyle);
+                        startInput.setStyle(NodeStyleTools.badStyle);
                         startTime = -1;
                     } else {
                         startInput.setStyle(null);
@@ -175,12 +176,12 @@ public class AlarmClockController extends BaseController {
             checkLoop();
 
             saveButton.disableProperty().bind(
-                    sysInput.styleProperty().isEqualTo(badStyle)
-                            .or(localInput.styleProperty().isEqualTo(badStyle))
-                            .or(everyInput.styleProperty().isEqualTo(badStyle))
-                            .or(startInput.styleProperty().isEqualTo(badStyle))
-                            .or(loopInput.styleProperty().isEqualTo(badStyle))
-                            .or(urlInput.styleProperty().isEqualTo(badStyle))
+                    sysInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                            .or(localInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(everyInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(startInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(loopInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                            .or(urlInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
             volumeValue = 1.0f;
@@ -211,7 +212,7 @@ public class AlarmClockController extends BaseController {
         try {
             super.setControlsStyle();
 
-            NodeTools.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
+            NodeStyleTools.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -226,7 +227,7 @@ public class AlarmClockController extends BaseController {
         if (Languages.message("LocalMusic").equals(selected.getText())) {
             final File file = new File(localInput.getText());
             if (!file.exists() || !file.isFile()) {
-                localInput.setStyle(badStyle);
+                localInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 currentSound = file.getAbsolutePath();
             }
@@ -235,13 +236,13 @@ public class AlarmClockController extends BaseController {
             try {
                 currentSound = urlInput.getText();
             } catch (Exception e) {
-                urlInput.setStyle(badStyle);
+                urlInput.setStyle(NodeStyleTools.badStyle);
             }
 
         } else if (Languages.message("SystemSounds").equals(selected.getText())) {
             final File file = new File(sysInput.getText());
             if (!file.exists() || !file.isFile()) {
-                sysInput.setStyle(badStyle);
+                sysInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 currentSound = file.getAbsolutePath();
             }
@@ -279,10 +280,10 @@ public class AlarmClockController extends BaseController {
             try {
                 everyValue = Integer.valueOf(everyInput.getText());
                 if (everyValue <= 0) {
-                    everyInput.setStyle(badStyle);
+                    everyInput.setStyle(NodeStyleTools.badStyle);
                 }
             } catch (Exception e) {
-                everyInput.setStyle(badStyle);
+                everyInput.setStyle(NodeStyleTools.badStyle);
             }
         }
     }
@@ -293,7 +294,7 @@ public class AlarmClockController extends BaseController {
             loopInput.setStyle(null);
         } catch (Exception e) {
             loopValue = 0;
-            loopInput.setStyle(badStyle);
+            loopInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

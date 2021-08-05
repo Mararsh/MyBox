@@ -267,7 +267,7 @@ public class PopTools {
                 }
             });
             popMenu.getItems().add(menu);
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
             return popMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -310,7 +310,7 @@ public class PopTools {
                 }
             });
             popMenu.getItems().add(menu);
-            NodeTools.locateMouse(mouseEvent, popMenu);
+            LocateTools.locateMouse(mouseEvent, popMenu);
             return popMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -332,7 +332,7 @@ public class PopTools {
                         input.appendText(vv[0]);
                     }
                 });
-                NodeTools.setTooltip(button, new Tooltip(vv[0]));
+                NodeStyleTools.setTooltip(button, new Tooltip(vv[0]));
                 nodes.add(button);
             }
             controller.addFlowPane(nodes);

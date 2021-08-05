@@ -21,8 +21,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.tools.StringTools;
@@ -119,7 +120,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
 
             queryArea.setStyle("-fx-font-family: monospace");
 
-            startButton.disableProperty().bind(executableInput.styleProperty().isEqualTo(badStyle));
+            startButton.disableProperty().bind(executableInput.styleProperty().isEqualTo(NodeStyleTools.badStyle));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -21,7 +21,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
@@ -42,7 +42,7 @@ import org.w3c.dom.NodeList;
  * @CreateDate 2021-7-6
  * @License Apache License Version 2.0
  */
-public class BaseWebViewController extends BaseWebViewController_Attributes {
+public class BaseWebViewController extends BaseWebViewController_Assist {
 
     public BaseWebViewController() {
     }
@@ -59,6 +59,8 @@ public class BaseWebViewController extends BaseWebViewController_Attributes {
     public void setParameters(BaseController parent, WebView webView) {
         setParameters(parent);
         this.webView = webView;
+        webView.setUserData(this);
+        this.setFileType();
         initWebView();
     }
 
@@ -100,7 +102,7 @@ public class BaseWebViewController extends BaseWebViewController_Attributes {
         if (sourceFile != null) {
             name = FileNameTools.appendName(sourceFile.getName(), "m");
         } else {
-            name = new Date().getTime() + "";
+            name = new Date().getTime() + ".htm";
         }
         final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
                 name, targetExtensionFilter);
@@ -416,7 +418,7 @@ public class BaseWebViewController extends BaseWebViewController_Attributes {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
             popMenu.getItems().addAll(items);
-            NodeTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -436,13 +438,14 @@ public class BaseWebViewController extends BaseWebViewController_Attributes {
         find(WebViewTools.getHtml(webEngine));
     }
 
-    public void edit(String html) {
+    public HtmlEditorController edit(String html) {
         HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
         if (address != null && !address.isBlank()) {
             controller.loadAddress(address);
         } else if (html != null && !html.isBlank()) {
             controller.loadContents(html);
         }
+        return controller;
     }
 
     @FXML
@@ -583,8 +586,8 @@ public class BaseWebViewController extends BaseWebViewController_Attributes {
             }
             return;
         }
-        TextEditerController c = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
-        c.loadContexts(toc);
+        TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        c.loadContents(toc);
         c.toFront();
     }
 
@@ -602,9 +605,16 @@ public class BaseWebViewController extends BaseWebViewController_Attributes {
             }
             return;
         }
-        TextEditerController c = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
-        c.loadContexts(texts);
+        TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        c.loadContents(texts);
         c.toFront();
+    }
+
+    @FXML
+    @Override
+    public void popAction() {
+        HtmlEditorController controller = edit(WebViewTools.getHtml(webEngine));
+        controller.setAsPopup(baseName + "Pop");
     }
 
     @Override

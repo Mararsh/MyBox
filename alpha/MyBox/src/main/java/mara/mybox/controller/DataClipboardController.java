@@ -17,9 +17,10 @@ import javafx.scene.layout.HBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -90,7 +91,7 @@ public class DataClipboardController extends BaseSheetController {
                     if (stringSourceRadio.isSelected()) {
                         String v = delimiterSourceInput.getText();
                         if (v == null || v.isBlank()) {
-                            delimiterSourceInput.setStyle(badStyle);
+                            delimiterSourceInput.setStyle(NodeStyleTools.badStyle);
                             return;
                         }
                         sourceDelimiter = v;
@@ -125,7 +126,7 @@ public class DataClipboardController extends BaseSheetController {
                         return;
                     }
                     if (newValue == null || newValue.isBlank()) {
-                        delimiterSourceInput.setStyle(badStyle);
+                        delimiterSourceInput.setStyle(NodeStyleTools.badStyle);
                         return;
                     }
                     sourceDelimiter = newValue;
@@ -205,9 +206,9 @@ public class DataClipboardController extends BaseSheetController {
         try {
             super.setControlsStyle();
             if (isMatrix) {
-                NodeTools.setTooltip(tipsView, new Tooltip(Languages.message("MatrixInputComments")));
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("MatrixInputComments")));
             } else {
-                NodeTools.setTooltip(tipsView, new Tooltip(Languages.message("DataInputComments")));
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("DataInputComments")));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

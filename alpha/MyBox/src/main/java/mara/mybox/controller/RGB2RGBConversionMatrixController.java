@@ -18,7 +18,8 @@ import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import mara.mybox.fxml.NodeStyleTools;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -67,55 +68,55 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
         initOptions();
 
         calculateButton.disableProperty().bind(Bindings.isEmpty(scaleInput.textProperty())
-                .or(scaleInput.styleProperty().isEqualTo(badStyle))
+                .or(scaleInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.redXInput.textProperty()))
-                .or(sourceController.redXInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.redXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.redYInput.textProperty()))
-                .or(sourceController.redYInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.redYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.redZInput.textProperty()))
-                .or(sourceController.redZInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.redZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.greenXInput.textProperty()))
-                .or(sourceController.greenXInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.greenXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.greenYInput.textProperty()))
-                .or(sourceController.greenYInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.greenYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.greenZInput.textProperty()))
-                .or(sourceController.greenZInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.greenZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.blueXInput.textProperty()))
-                .or(sourceController.blueXInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.blueXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.blueYInput.textProperty()))
-                .or(sourceController.blueYInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.blueYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.blueZInput.textProperty()))
-                .or(sourceController.blueZInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.blueZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.whiteXInput.textProperty()))
-                .or(sourceController.whiteXInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.whiteXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.whiteYInput.textProperty()))
-                .or(sourceController.whiteYInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.whiteYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(sourceController.whiteZInput.textProperty()))
-                .or(sourceController.whiteZInput.styleProperty().isEqualTo(badStyle))
+                .or(sourceController.whiteZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.redXInput.textProperty()))
-                .or(targetController.redXInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.redXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.redYInput.textProperty()))
-                .or(targetController.redYInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.redYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.redZInput.textProperty()))
-                .or(targetController.redZInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.redZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.greenXInput.textProperty()))
-                .or(targetController.greenXInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.greenXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.greenYInput.textProperty()))
-                .or(targetController.greenYInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.greenYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.greenZInput.textProperty()))
-                .or(targetController.greenZInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.greenZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.blueXInput.textProperty()))
-                .or(targetController.blueXInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.blueXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.blueYInput.textProperty()))
-                .or(targetController.blueYInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.blueYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.blueZInput.textProperty()))
-                .or(targetController.blueZInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.blueZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.whiteXInput.textProperty()))
-                .or(targetController.whiteXInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.whiteXInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.whiteYInput.textProperty()))
-                .or(targetController.whiteYInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.whiteYInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
                 .or(Bindings.isEmpty(targetController.whiteZInput.textProperty()))
-                .or(targetController.whiteZInput.styleProperty().isEqualTo(badStyle))
+                .or(targetController.whiteZInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
     }
@@ -141,14 +142,14 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                 try {
                     int p = Integer.parseInt(scaleMatricesInput.getText());
                     if (p <= 0) {
-                        scaleMatricesInput.setStyle(badStyle);
+                        scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
                     } else {
                         scale = p;
                         scaleMatricesInput.setStyle(null);
                         UserConfig.setUserConfigInt("MatrixDecimalScale", scale);
                     }
                 } catch (Exception e) {
-                    scaleMatricesInput.setStyle(badStyle);
+                    scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
@@ -156,7 +157,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
         scaleMatricesInput.setText(p + "");
 
         calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()
-                .or(scaleMatricesInput.styleProperty().isEqualTo(badStyle))
+                .or(scaleMatricesInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
         );
 
         exportButton.disableProperty().bind(textsArea.textProperty().isEmpty());

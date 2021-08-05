@@ -23,8 +23,9 @@ import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.NodeStyleTools;
 
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
@@ -123,7 +124,7 @@ public class ControlFFmpegOptions extends BaseController {
             executableInput.setText(UserConfig.getUserConfigString(executableName, executableDefault));
 
             if (functionBox != null) {
-                functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(badStyle));
+                functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(NodeStyleTools.badStyle));
             }
 
         } catch (Exception e) {
@@ -135,18 +136,18 @@ public class ControlFFmpegOptions extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(executableInput, Languages.message("FFmpegExeComments"));
+            NodeStyleTools.setTooltip(executableInput, Languages.message("FFmpegExeComments"));
             if (moreInput != null) {
-                NodeTools.setTooltip(moreInput, Languages.message("SeparateBySpace"));
+                NodeStyleTools.setTooltip(moreInput, Languages.message("SeparateBySpace"));
             }
             if (tipsArea != null) {
                 tipsArea.setText(Languages.message("FFmpegArgumentsTips"));
             }
             if (crfSelector != null) {
-                NodeTools.setTooltip(crfSelector, Languages.message("CRFComments"));
+                NodeStyleTools.setTooltip(crfSelector, Languages.message("CRFComments"));
             }
             if (x264presetSelector != null) {
-                NodeTools.setTooltip(x264presetSelector, Languages.message("X264PresetComments"));
+                NodeStyleTools.setTooltip(x264presetSelector, Languages.message("X264PresetComments"));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -173,12 +174,12 @@ public class ControlFFmpegOptions extends BaseController {
         }
         String v = executableInput.getText();
         if (v == null || v.isEmpty()) {
-            executableInput.setStyle(badStyle);
+            executableInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         final File file = new File(v);
         if (!file.exists()) {
-            executableInput.setStyle(badStyle);
+            executableInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
         executable = file;
@@ -486,10 +487,10 @@ public class ControlFFmpegOptions extends BaseController {
                                     audioBitrate = v;
                                     audioBitrateSelector.getEditor().setStyle(null);
                                 } else {
-                                    audioBitrateSelector.getEditor().setStyle(badStyle);
+                                    audioBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                                 }
                             } catch (Exception e) {
-                                audioBitrateSelector.getEditor().setStyle(badStyle);
+                                audioBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         });
                 audioBitrateSelector.getSelectionModel().select(UserConfig.getUserConfigString("ffmpegDefaultAudioBitrate", "192kbps"));
@@ -523,10 +524,10 @@ public class ControlFFmpegOptions extends BaseController {
                                     audioSampleRate = v;
                                     audioSampleRateSelector.getEditor().setStyle(null);
                                 } else {
-                                    audioSampleRateSelector.getEditor().setStyle(badStyle);
+                                    audioSampleRateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                                 }
                             } catch (Exception e) {
-                                audioSampleRateSelector.getEditor().setStyle(badStyle);
+                                audioSampleRateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         });
                 audioSampleRateSelector.getSelectionModel().select(UserConfig.getUserConfigString("ffmpegDefaultAudioSampleRate", Languages.message("44100Hz")));
@@ -675,14 +676,14 @@ public class ControlFFmpegOptions extends BaseController {
                                 if (pos < 0) {
                                     pos = newValue.indexOf("mbps");
                                     if (pos < 0) {
-                                        videoBitrateSelector.getEditor().setStyle(badStyle);
+                                        videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                                     } else {
                                         float f = Float.parseFloat(newValue.substring(0, pos).trim());
                                         if (f > 0) {
                                             videoBitrate = f * 1000;
                                             videoBitrateSelector.getEditor().setStyle(null);
                                         } else {
-                                            videoBitrateSelector.getEditor().setStyle(badStyle);
+                                            videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                                         }
                                     }
                                 } else {
@@ -691,11 +692,11 @@ public class ControlFFmpegOptions extends BaseController {
                                         videoBitrate = f;
                                         videoBitrateSelector.getEditor().setStyle(null);
                                     } else {
-                                        videoBitrateSelector.getEditor().setStyle(badStyle);
+                                        videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                                     }
                                 }
                             } catch (Exception e) {
-                                videoBitrateSelector.getEditor().setStyle(badStyle);
+                                videoBitrateSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             }
                         });
                 videoBitrateSelector.getSelectionModel().select(UserConfig.getUserConfigString("ffmpegDefaultVideoBitrate", "5mbps"));

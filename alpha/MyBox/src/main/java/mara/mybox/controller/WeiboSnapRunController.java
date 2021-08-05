@@ -59,8 +59,6 @@ import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.io.MemoryUsageSetting;
@@ -1478,7 +1476,7 @@ public class WeiboSnapRunController extends BaseController {
     }
 
     @Override
-    public boolean leavingScene() {
+    public void cleanPane() {
         try {
             if (loadTimer != null) {
                 loadTimer.cancel();
@@ -1489,7 +1487,6 @@ public class WeiboSnapRunController extends BaseController {
             if (loadingController != null) {
                 loadingController.closeStage();
             }
-
             if (webEngine != null) {
                 webEngine.getLoadWorker().cancel();
                 webEngine = null;
@@ -1497,9 +1494,7 @@ public class WeiboSnapRunController extends BaseController {
         } catch (Exception e) {
 
         }
-
-        return super.leavingScene();
-
+        super.cleanPane();
     }
 
     public void openPath() {

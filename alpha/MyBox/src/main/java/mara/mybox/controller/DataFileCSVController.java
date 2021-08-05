@@ -442,7 +442,7 @@ public class DataFileCSVController extends BaseDataFileController {
         if (sourceFile == null) {
             return;
         }
-        TextEditerController controller = (TextEditerController) WindowTools.openStage(Fxmls.TextEditerFxml);
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.openTextFile(sourceFile);
         controller.toFront();
     }

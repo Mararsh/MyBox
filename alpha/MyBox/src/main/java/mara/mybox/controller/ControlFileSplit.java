@@ -12,8 +12,9 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
@@ -49,9 +50,9 @@ public class ControlFileSplit extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            valid.bind(pagesNumberInput.styleProperty().isEqualTo(badStyle)
-                    .or(filesNumberInput.styleProperty().isEqualTo(badStyle))
-                    .or(listInput.styleProperty().isEqualTo(badStyle)));
+            valid.bind(pagesNumberInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)
+                    .or(filesNumberInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
+                    .or(listInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)));
 
             splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -96,7 +97,7 @@ public class ControlFileSplit extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(listInput, new Tooltip(Languages.message("StartEndComments")));
+            NodeStyleTools.setTooltip(listInput, new Tooltip(Languages.message("StartEndComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -136,10 +137,10 @@ public class ControlFileSplit extends BaseController {
                 pagesNumber = v;
                 UserConfig.setUserConfigString(baseName + "PagesNumber", pagesNumber + "");
             } else {
-                pagesNumberInput.setStyle(badStyle);
+                pagesNumberInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            pagesNumberInput.setStyle(badStyle);
+            pagesNumberInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -151,10 +152,10 @@ public class ControlFileSplit extends BaseController {
                 filesNumber = v;
                 UserConfig.setUserConfigString(baseName + "FilesNumber", filesNumber + "");
             } else {
-                filesNumberInput.setStyle(badStyle);
+                filesNumberInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            filesNumberInput.setStyle(badStyle);
+            filesNumberInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -178,13 +179,13 @@ public class ControlFileSplit extends BaseController {
                 }
             }
             if (startEndList.isEmpty()) {
-                listInput.setStyle(badStyle);
+                listInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 listInput.setStyle(null);
                 UserConfig.setUserConfigString(baseName + "List", listInput.getText());
             }
         } catch (Exception e) {
-            listInput.setStyle(badStyle);
+            listInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 

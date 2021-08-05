@@ -21,9 +21,11 @@ import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
 import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import mara.mybox.value.Fxmls;
@@ -97,9 +99,9 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                     } else {
                         try {
                             scaledWidth = Integer.valueOf(newValue);
-                            NodeTools.setEditorNormal(widthSelector);
+                            ValidationTools.setEditorNormal(widthSelector);
                         } catch (Exception e) {
-                            NodeTools.setEditorBadStyle(widthSelector);
+                            ValidationTools.setEditorBadStyle(widthSelector);
                             return;
                         }
                     }
@@ -118,16 +120,16 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                             intervalSelector.getEditor().setStyle(null);
                             ImageClipboardTools.setMonitorInterval(v);
                         } else {
-                            intervalSelector.getEditor().setStyle(badStyle);
+                            intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
-                        intervalSelector.getEditor().setStyle(badStyle);
+                        intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
 
             openPathButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(targetPathInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
         } catch (Exception e) {
@@ -147,8 +149,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(clearButton, new Tooltip(Languages.message("DeleteSysTemporaryPathFiles")));
-            NodeTools.setTooltip(clearBoardButton, new Tooltip(Languages.message("ClearSystemClipboard")));
+            NodeStyleTools.setTooltip(clearButton, new Tooltip(Languages.message("DeleteSysTemporaryPathFiles")));
+            NodeStyleTools.setTooltip(clearBoardButton, new Tooltip(Languages.message("ClearSystemClipboard")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -203,12 +205,12 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 StyleTools.setNameIcon(startButton, Languages.message("StopRecording"), "iconStop.png");
                 startButton.applyCss();
                 recordLabel.setText(Languages.message("MonitoringImageInSystemClipboardAndNotice"));
-                NodeTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
             } else {
                 StyleTools.setNameIcon(startButton, Languages.message("StartRecording"), "iconStart.png");
                 startButton.applyCss();
                 recordLabel.setText(Languages.message("NotMonitoringImageInSystemClipboard"));
-                NodeTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

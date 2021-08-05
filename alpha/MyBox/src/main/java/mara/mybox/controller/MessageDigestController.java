@@ -18,8 +18,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MessageDigestTools;
@@ -195,7 +196,7 @@ public class MessageDigestController extends BaseController {
     @Override
     public void startAction() {
         if (inputType == InputType.File) {
-            if (sourceFile == null || badStyle.equals(sourceFileInput.getStyle())) {
+            if (sourceFile == null || NodeStyleTools.badStyle.equals(sourceFileInput.getStyle())) {
                 resultArea.clear();
                 popError(Languages.message("InvalidData"));
                 return;

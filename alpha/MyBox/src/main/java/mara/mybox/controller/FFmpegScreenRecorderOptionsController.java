@@ -19,8 +19,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeTools.badStyle;
+import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -181,7 +182,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeTools.setTooltip(tipsView, new Tooltip(Languages.message("FFmpegOptionsTips")
+            NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("FFmpegOptionsTips")
                     + "\n" + Languages.message("FFmpegScreenRecorderComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -303,11 +304,11 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             audioThreadQueueSizeInput.setStyle(null);
                             UserConfig.setUserConfigString("FFmpegScreenRecorderAudio", newValue);
                         } else {
-                            audioThreadQueueSizeInput.setStyle(badStyle);
+                            audioThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
-                        audioThreadQueueSizeInput.setStyle(badStyle);
+                        audioThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                     }
 
                 }
@@ -325,11 +326,11 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             videoThreadQueueSizeInput.setStyle(null);
                             UserConfig.setUserConfigString("FFmpegScreenRecorderAudio", newValue);
                         } else {
-                            videoThreadQueueSizeInput.setStyle(badStyle);
+                            videoThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                         }
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
-                        videoThreadQueueSizeInput.setStyle(badStyle);
+                        videoThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
@@ -367,10 +368,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 xInput.setStyle(null);
                 UserConfig.setUserConfigString("FFmpegScreenRecorderX", v + "");
             } else {
-                xInput.setStyle(badStyle);
+                xInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            xInput.setStyle(badStyle);
+            xInput.setStyle(NodeStyleTools.badStyle);
         }
         try {
             int v = Integer.parseInt(yInput.getText().trim());
@@ -379,10 +380,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 yInput.setStyle(null);
                 UserConfig.setUserConfigString("FFmpegScreenRecorderY", v + "");
             } else {
-                yInput.setStyle(badStyle);
+                yInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            yInput.setStyle(badStyle);
+            yInput.setStyle(NodeStyleTools.badStyle);
         }
 
         try {
@@ -392,10 +393,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 widthInput.setStyle(null);
                 UserConfig.setUserConfigString("FFmpegScreenRecorderWidth", v + "");
             } else {
-                widthInput.setStyle(badStyle);
+                widthInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            widthInput.setStyle(badStyle);
+            widthInput.setStyle(NodeStyleTools.badStyle);
         }
         try {
             int v = Integer.parseInt(heightInput.getText().trim());
@@ -404,16 +405,16 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 heightInput.setStyle(null);
                 UserConfig.setUserConfigString("FFmpegScreenRecorderHeight", v + "");
             } else {
-                heightInput.setStyle(badStyle);
+                heightInput.setStyle(NodeStyleTools.badStyle);
             }
         } catch (Exception e) {
-            heightInput.setStyle(badStyle);
+            heightInput.setStyle(NodeStyleTools.badStyle);
         }
     }
 
     protected void checkWindow() {
         if (titleInput.getText().trim().isBlank()) {
-            titleInput.setStyle(badStyle);
+            titleInput.setStyle(NodeStyleTools.badStyle);
         } else {
             titleInput.setStyle(null);
         }
