@@ -292,22 +292,22 @@ public abstract class BaseImageController extends BaseController {
     protected void initViewControls() {
         try {
             if (rulerXCheck != null) {
-                rulerXCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "RulerX", false));
+                rulerXCheck.setSelected(UserConfig.getBoolean(baseName + "RulerX", false));
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "RulerX", rulerXCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "RulerX", rulerXCheck.isSelected());
                         checkRulerX();
                     }
                 });
                 checkRulerX();
             }
             if (rulerYCheck != null) {
-                rulerYCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "RulerY", false));
+                rulerYCheck.setSelected(UserConfig.getBoolean(baseName + "RulerY", false));
                 rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "RulerY", rulerYCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "RulerY", rulerYCheck.isSelected());
                         checkRulerY();
                     }
                 });
@@ -315,11 +315,11 @@ public abstract class BaseImageController extends BaseController {
             }
 
             if (coordinateCheck != null) {
-                coordinateCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "PopCooridnate", false));
+                coordinateCheck.setSelected(UserConfig.getBoolean(baseName + "PopCooridnate", false));
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "PopCooridnate", coordinateCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "PopCooridnate", coordinateCheck.isSelected());
                         checkCoordinate();
                     }
                 });
@@ -327,16 +327,16 @@ public abstract class BaseImageController extends BaseController {
             }
 
             if (contextMenuCheck != null) {
-                contextMenuCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ContextMenu", true));
+                contextMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ContextMenu", true));
                 contextMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "ContextMenu", contextMenuCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ContextMenu", contextMenuCheck.isSelected());
                     }
                 });
             }
 
-            zoomStep = UserConfig.getUserConfigInt(baseName + "ZoomStep", 40);
+            zoomStep = UserConfig.getInt(baseName + "ZoomStep", 40);
             zoomStep = zoomStep <= 0 ? 40 : zoomStep;
             xZoomStep = zoomStep;
             yZoomStep = zoomStep;
@@ -352,7 +352,7 @@ public abstract class BaseImageController extends BaseController {
                             int v = Integer.valueOf(newVal);
                             if (v > 0) {
                                 zoomStep = v;
-                                UserConfig.setUserConfigInt(baseName + "ZoomStep", zoomStep);
+                                UserConfig.setInt(baseName + "ZoomStep", zoomStep);
                                 zoomStepSelector.getEditor().setStyle(null);
                                 xZoomStep = zoomStep;
                                 yZoomStep = zoomStep;
@@ -472,8 +472,8 @@ public abstract class BaseImageController extends BaseController {
             return;
         }
         clearMaskRulerX();
-        if (UserConfig.getUserConfigBoolean(baseName + "RulerX", false)) {
-            Color strokeColor = Color.web(UserConfig.getUserConfigString("StrokeColor", "#FF0000"));
+        if (UserConfig.getBoolean(baseName + "RulerX", false)) {
+            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
             double imageWidth = getImageWidth() / widthRatio();
             double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
             int step = getRulerStep(imageWidth);
@@ -528,8 +528,8 @@ public abstract class BaseImageController extends BaseController {
             return;
         }
         clearMaskRulerY();
-        if (UserConfig.getUserConfigBoolean(baseName + "RulerY", false)) {
-            Color strokeColor = Color.web(UserConfig.getUserConfigString("StrokeColor", "#FF0000"));
+        if (UserConfig.getBoolean(baseName + "RulerY", false)) {
+            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
             double imageHeight = getImageHeight() / heightRatio();
             double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
             int step = getRulerStep(imageHeight);
@@ -584,7 +584,7 @@ public abstract class BaseImageController extends BaseController {
                 return;
             }
             if (xyText != null) {
-                Color strokeColor = Color.web(UserConfig.getUserConfigString("StrokeColor", DefaultStrokeColor));
+                Color strokeColor = Color.web(UserConfig.getString("StrokeColor", DefaultStrokeColor));
                 xyText.setFill(strokeColor);
                 xyText.setText("");
             }
@@ -998,7 +998,7 @@ public abstract class BaseImageController extends BaseController {
             return null;
         }
         if (!isPickingColor
-                && (needNotCoordinates || !UserConfig.getUserConfigBoolean(baseName + "PopCooridnate", false))) {
+                && (needNotCoordinates || !UserConfig.getBoolean(baseName + "PopCooridnate", false))) {
             xyText.setText("");
             return null;
         }
@@ -1073,7 +1073,7 @@ public abstract class BaseImageController extends BaseController {
     }
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        if (needNotContextMenu || !UserConfig.getUserConfigBoolean(baseName + "ContextMenu", true)
+        if (needNotContextMenu || !UserConfig.getBoolean(baseName + "ContextMenu", true)
                 || imageView == null || imageView.getImage() == null
                 || event == null || event.getButton() != MouseButton.SECONDARY) {
             return;
@@ -1146,7 +1146,7 @@ public abstract class BaseImageController extends BaseController {
     }
 
     protected void popImageMenu(Node node, MouseEvent event) {
-        if (needNotContextMenu || !UserConfig.getUserConfigBoolean(baseName + "ContextMenu", true)
+        if (needNotContextMenu || !UserConfig.getBoolean(baseName + "ContextMenu", true)
                 || node == null || imageView == null || imageView.getImage() == null) {
             return;
         }

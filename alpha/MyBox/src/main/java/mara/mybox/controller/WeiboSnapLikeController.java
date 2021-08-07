@@ -45,7 +45,7 @@ public class WeiboSnapLikeController extends WeiboSnapRunController {
         }
         currentAddress += "like?mod=like"
                 + "&page=" + currentPage + "&mmts=" + new Date().getTime();
-        UserConfig.setUserConfigString("WeiboLikeLastPage", currentPage + "");
+        UserConfig.setString("WeiboLikeLastPage", currentPage + "");
 
         if (parameters.isCreatePDF()) {
             pdfPath = new File(rootPath.getAbsolutePath() + File.separator

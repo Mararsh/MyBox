@@ -206,18 +206,18 @@ public class MediaPlayerController extends BaseController {
             autoplayCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("MediaPlayerAutoPlay", autoplayCheck.isSelected());
+                    UserConfig.setBoolean("MediaPlayerAutoPlay", autoplayCheck.isSelected());
                 }
             });
-            autoplayCheck.setSelected(UserConfig.getUserConfigBoolean("MediaPlayerAutoPlay", true));
+            autoplayCheck.setSelected(UserConfig.getBoolean("MediaPlayerAutoPlay", true));
 
             msCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("MediaPlayerShowMS", msCheck.isSelected());
+                    UserConfig.setBoolean("MediaPlayerShowMS", msCheck.isSelected());
                 }
             });
-            msCheck.setSelected(UserConfig.getUserConfigBoolean("MediaPlayerShowMS", true));
+            msCheck.setSelected(UserConfig.getBoolean("MediaPlayerShowMS", true));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -15,7 +15,7 @@ import java.util.zip.GZIPInputStream;
 import javafx.scene.control.IndexRange;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import mara.mybox.controller.HtmlViewerController;
+import mara.mybox.controller.HtmlTableController;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.dev.MyBoxLog;
@@ -54,8 +54,8 @@ public class HtmlReadTools {
                 SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
                 sc.init(null, null, null);
                 connection.setSSLSocketFactory(sc.getSocketFactory());
-                connection.setConnectTimeout(UserConfig.getUserConfigInt("WebConnectTimeout", 10000));
-                connection.setReadTimeout(UserConfig.getUserConfigInt("WebReadTimeout", 10000));
+                connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
+                connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
                 connection.setRequestProperty("User-Agent", WebViewTools.HttpUserAgent);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
@@ -81,8 +81,8 @@ public class HtmlReadTools {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 //                connection.setRequestMethod("GET");
                 connection.setRequestProperty("User-Agent", WebViewTools.HttpUserAgent);
-                connection.setConnectTimeout(UserConfig.getUserConfigInt("WebConnectTimeout", 10000));
-                connection.setReadTimeout(UserConfig.getUserConfigInt("WebReadTimeout", 10000));
+                connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
+                connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
                 connection.setUseCaches(false);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
@@ -174,8 +174,8 @@ public class HtmlReadTools {
         }
     }
 
-    public static HtmlViewerController viewHtml(String title, String body) {
-        return ControllerTools.openHtmlViewer(null, body);
+    public static HtmlTableController htmlTable(String title, String body) {
+        return ControllerTools.openHtmlTable(null, body);
     }
 
     /*

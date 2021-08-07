@@ -233,13 +233,13 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
                     if (Languages.message("EpidemicReportsTopUnlimit").equals(newValue)) {
                         topNumber = -1;
                         ValidationTools.setEditorNormal(chartMaxSelector);
-                        UserConfig.setUserConfigString("EpidemicReportMaxChart", newValue);
+                        UserConfig.setString("EpidemicReportMaxChart", newValue);
                         adjustOrderList();
                         return;
                     }
                     int v = Integer.valueOf(chartMaxSelector.getValue());
                     topNumber = v;
-                    UserConfig.setUserConfigString("EpidemicReportMaxChart", topNumber + "");
+                    UserConfig.setString("EpidemicReportMaxChart", topNumber + "");
                     ValidationTools.setEditorNormal(chartMaxSelector);
                     adjustOrderList();
                 } catch (Exception e) {
@@ -248,7 +248,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
             });
 
             isSettingValues = true;
-            chartMaxSelector.getSelectionModel().select(UserConfig.getUserConfigString("EpidemicReportMaxChart", "10"));
+            chartMaxSelector.getSelectionModel().select(UserConfig.getString("EpidemicReportMaxChart", "10"));
             isSettingValues = false;
             adjustOrderList();
         } catch (Exception e) {
@@ -722,7 +722,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         if (selected == null) {
             return;
         }
-        HtmlReadTools.viewHtml(baseTitle, BaseDataTools.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(baseTitle, BaseDataTools.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

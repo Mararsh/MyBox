@@ -128,7 +128,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
 
             List<String> setNames = TextTools.getCharsetNames();
             encodeBox.getItems().addAll(setNames);
-            encodeBox.getSelectionModel().select(UserConfig.getUserConfigString("FilesUnarchiveEncoding", Charset.defaultCharset().name()));
+            encodeBox.getSelectionModel().select(UserConfig.getString("FilesUnarchiveEncoding", Charset.defaultCharset().name()));
 
         } catch (Exception e) {
 

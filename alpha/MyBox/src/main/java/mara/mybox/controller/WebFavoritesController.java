@@ -132,7 +132,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                 }
             });
 
-            subCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IncludeSub", false));
+            subCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
             subCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {

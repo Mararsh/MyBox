@@ -562,6 +562,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return false;
         }
         switch (code) {
+            case ENTER:
+                return keyEnter();
+
             case DELETE:
                 return keyDelete();
 
@@ -620,6 +623,10 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         if (NodeTools.textInputFocus(getMyScene()) == null) {
             return controlAltFilter(event);
         }
+        return false;
+    }
+
+    public boolean keyEnter() {
         return false;
     }
 

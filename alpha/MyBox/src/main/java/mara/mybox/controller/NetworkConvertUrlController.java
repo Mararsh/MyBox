@@ -45,11 +45,11 @@ public class NetworkConvertUrlController extends BaseController {
 
             List<String> setNames = TextTools.getCharsetNames();
             charsetsSelector.getItems().addAll(setNames);
-            charsetsSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Charset", "UTF-8"));
+            charsetsSelector.getSelectionModel().select(UserConfig.getString(baseName + "Charset", "UTF-8"));
             charsetsSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "Charset", newValue);
+                    UserConfig.setString(baseName + "Charset", newValue);
                 }
             });
 

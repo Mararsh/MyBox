@@ -87,7 +87,7 @@ public class LocationDataMapController extends BaseMapController {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean(baseName + "Sequence", sequenceRadio.isSelected());
+                UserConfig.setBoolean(baseName + "Sequence", sequenceRadio.isSelected());
                 drawPoints();
             }
             );
@@ -95,41 +95,41 @@ public class LocationDataMapController extends BaseMapController {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean(baseName + "Overlay", overlayCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Overlay", overlayCheck.isSelected());
                 drawPoints();
             });
             accumulateCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean(baseName + "Accumulate", accumulateCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Accumulate", accumulateCheck.isSelected());
                 drawPoints();
             });
             linkCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean(baseName + "Link", linkCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Link", linkCheck.isSelected());
                 drawPoints();
             });
             centerCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean(baseName + "Center", centerCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Center", centerCheck.isSelected());
                 centered = !centerCheck.isSelected();
             });
 
             isSettingValues = true;
-            if (UserConfig.getUserConfigBoolean(baseName + "Sequence", true)) {
+            if (UserConfig.getBoolean(baseName + "Sequence", true)) {
                 sequenceRadio.fire();
             } else {
                 distributionRadio.fire();
             }
-            overlayCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Overlay", false));
-            accumulateCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Accumulate", false));
-            linkCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Link", false));
-            centerCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Center", false));
+            overlayCheck.setSelected(UserConfig.getBoolean(baseName + "Overlay", false));
+            accumulateCheck.setSelected(UserConfig.getBoolean(baseName + "Accumulate", false));
+            linkCheck.setSelected(UserConfig.getBoolean(baseName + "Link", false));
+            centerCheck.setSelected(UserConfig.getBoolean(baseName + "Center", false));
             isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -748,7 +748,7 @@ public class LocationDataMapController extends BaseMapController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image));
+            File path = UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image));
             if (path != null) {
                 chooser.setInitialDirectory(path);
             }

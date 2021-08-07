@@ -61,7 +61,7 @@ public class MenuController extends BaseController {
             if (baseStyle == null) {
                 baseStyle = "";
             }
-            String style = UserConfig.getUserConfigString(baseName + "WindowStyle", "");
+            String style = UserConfig.getString(baseName + "WindowStyle", "");
             setLabelsStyle(baseStyle + style);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -171,7 +171,7 @@ public class MenuController extends BaseController {
                     @Override
                     public void handle(ActionEvent event) {
                         String style = styles.get(name);
-                        UserConfig.setUserConfigString(baseName + "WindowStyle", style);
+                        UserConfig.setString(baseName + "WindowStyle", style);
                         setLabelsStyle(baseStyle + style);
                     }
                 });

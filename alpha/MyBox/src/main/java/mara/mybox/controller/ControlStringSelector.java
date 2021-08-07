@@ -63,7 +63,7 @@ public class ControlStringSelector extends BaseController {
                             }
                             try {
                                 max = Integer.parseInt(value);
-                                UserConfig.setUserConfigInt(getName() + "MaxSaved", max);
+                                UserConfig.setInt(getName() + "MaxSaved", max);
                                 refreshList();
                             } catch (Exception e) {
                                 popError(Languages.message("InvalidData"));
@@ -99,12 +99,12 @@ public class ControlStringSelector extends BaseController {
                         if (value != null && !value.isBlank() && !value.equals(setting)) {
                             TableStringValues.add(conn, getName(), value);
                         }
-                        max = UserConfig.getUserConfigInt(getName() + "MaxSaved", defaultMax);
+                        max = UserConfig.getInt(getName() + "MaxSaved", defaultMax);
                         if (max <= 0) {
                             if (defaultMax <= 0) {
                                 defaultMax = 20;
                             }
-                            UserConfig.setUserConfigInt(getName() + "MaxSaved", defaultMax);
+                            UserConfig.setInt(getName() + "MaxSaved", defaultMax);
                             max = 20;
                         }
                         if (isCancelled()) {

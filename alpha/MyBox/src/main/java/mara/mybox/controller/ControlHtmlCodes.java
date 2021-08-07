@@ -65,9 +65,9 @@ public class ControlHtmlCodes extends BaseController {
             this.parentController = parent;
             this.baseName = parent.baseName;
 
-            wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Wrap", true));
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             wrapCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                UserConfig.setUserConfigBoolean(baseName + "Wrap", wrapCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Wrap", wrapCheck.isSelected());
                 codesArea.setWrapText(wrapCheck.isSelected());
             });
             codesArea.setWrapText(wrapCheck.isSelected());
@@ -441,7 +441,7 @@ public class ControlHtmlCodes extends BaseController {
             popError(Languages.message("NoData"));
             return;
         }
-        string = HtmlWriteTools.textToHtml(string);
+        string = HtmlWriteTools.stringToHtml(string);
         insertText(string);
     }
 

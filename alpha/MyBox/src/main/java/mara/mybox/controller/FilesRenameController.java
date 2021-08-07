@@ -100,10 +100,10 @@ public class FilesRenameController extends BaseBatchFileController {
             fillZeroCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("FileRenameFillZero", fillZeroCheck.isSelected());
+                    UserConfig.setBoolean("FileRenameFillZero", fillZeroCheck.isSelected());
                 }
             });
-            fillZeroCheck.setSelected(UserConfig.getUserConfigBoolean("FileRenameFillZero", true));
+            fillZeroCheck.setSelected(UserConfig.getBoolean("FileRenameFillZero", true));
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(

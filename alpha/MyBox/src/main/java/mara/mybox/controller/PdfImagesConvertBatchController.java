@@ -54,11 +54,11 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
         try {
             super.initControls();
 
-            copyAllCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CopyAll", false));
+            copyAllCheck.setSelected(UserConfig.getBoolean(baseName + "CopyAll", false));
             copyAllCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "CopyAll", false);
+                    UserConfig.setBoolean(baseName + "CopyAll", false);
                 }
             });
 

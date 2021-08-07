@@ -43,27 +43,27 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
         try {
             colorSetController.init(this, baseName + "CropColor");
 
-            clipboardCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CropPutClipboard", false));
+            clipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CropPutClipboard", false));
             clipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "CropPutClipboard", clipboardCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CropPutClipboard", clipboardCheck.isSelected());
                 }
             });
 
-            imageMarginsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CropCutImageMargins", true));
+            imageMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "CropCutImageMargins", true));
             imageMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "CropCutImageMargins", imageMarginsCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CropCutImageMargins", imageMarginsCheck.isSelected());
                 }
             });
 
-            clipMarginsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CropCutClipMargins", true));
+            clipMarginsCheck.setSelected(UserConfig.getBoolean(baseName + "CropCutClipMargins", true));
             clipMarginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "CropCutClipMargins", clipMarginsCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CropCutClipMargins", clipMarginsCheck.isSelected());
                 }
             });
 
@@ -123,7 +123,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                     if (task == null || isCancelled()) {
                         return false;
                     }
-                    if (UserConfig.getUserConfigBoolean(baseName + "CropPutClipboard", false)) {
+                    if (UserConfig.getBoolean(baseName + "CropPutClipboard", false)) {
                         if (includeRadio.isSelected()) {
                             cuttedClip = ScopeTools.scopeImage(imageView.getImage(),
                                     scopeController.scope, bgColor, clipMarginsCheck.isSelected());

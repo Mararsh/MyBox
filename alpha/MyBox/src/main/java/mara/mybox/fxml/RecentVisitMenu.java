@@ -175,7 +175,7 @@ public abstract class RecentVisitMenu {
         if (defaultPath != null && !paths.contains(defaultPath)) {
             paths.add(defaultPath);
         }
-        File lastPath = UserConfig.getUserConfigPath(baseName + "LastPath");
+        File lastPath = UserConfig.getPath(baseName + "LastPath");
         if (lastPath != null) {
             String lastPathString = lastPath.getAbsolutePath();
             if (!paths.contains(lastPathString)) {
@@ -224,7 +224,7 @@ public abstract class RecentVisitMenu {
             handleSelect();
             return;
         }
-        UserConfig.setUserConfigString(baseName + "SourcePath", fname);
+        UserConfig.setString(baseName + "SourcePath", fname);
         handleSelect();
     }
 
@@ -234,7 +234,7 @@ public abstract class RecentVisitMenu {
             handleSelect();
             return;
         }
-        UserConfig.setUserConfigString(baseName + "TargetPath", fname);
+        UserConfig.setString(baseName + "TargetPath", fname);
         handleSelect();
     }
 

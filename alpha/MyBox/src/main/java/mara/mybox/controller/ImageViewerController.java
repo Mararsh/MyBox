@@ -154,7 +154,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 List<String> values = Arrays.asList(Languages.message("OriginalSize"),
                         "512", "1024", "256", "128", "2048", "100", "80", "4096");
                 loadWidthBox.getItems().addAll(values);
-                int v = UserConfig.getUserConfigInt(baseName + "LoadWidth", defaultLoadWidth);
+                int v = UserConfig.getInt(baseName + "LoadWidth", defaultLoadWidth);
                 if (v <= 0) {
                     loadWidth = -1;
                     loadWidthBox.getSelectionModel().select(0);
@@ -176,7 +176,7 @@ public class ImageViewerController extends BaseImageShapesController {
                                 return;
                             }
                         }
-                        UserConfig.setUserConfigInt(baseName + "LoadWidth", loadWidth);
+                        UserConfig.setInt(baseName + "LoadWidth", loadWidth);
                         setLoadWidth();
                     }
                 });
@@ -186,20 +186,20 @@ public class ImageViewerController extends BaseImageShapesController {
                 deleteConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "ConfirmDelete", deleteConfirmCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ConfirmDelete", deleteConfirmCheck.isSelected());
                     }
                 });
-                deleteConfirmCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ConfirmDelete", true));
+                deleteConfirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmDelete", true));
             }
 
             if (saveConfirmCheck != null) {
                 saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "ConfirmSave", saveConfirmCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ConfirmSave", saveConfirmCheck.isSelected());
                     }
                 });
-                saveConfirmCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ConfirmSave", true));
+                saveConfirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmSave", true));
             }
 
         } catch (Exception e) {
@@ -248,9 +248,9 @@ public class ImageViewerController extends BaseImageShapesController {
                 if (imageView != null) {
                     viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 }
-                viewPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "ViewPane", false));
+                viewPane.setExpanded(UserConfig.getBoolean(baseName + "ViewPane", false));
                 viewPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "ViewPane", viewPane.isExpanded());
+                    UserConfig.setBoolean(baseName + "ViewPane", viewPane.isExpanded());
                 });
             }
 
@@ -285,12 +285,12 @@ public class ImageViewerController extends BaseImageShapesController {
             if (!needNotCoordinates) {
                 CheckMenuItem checkMenu = new CheckMenuItem(Languages.message("Coordinate"));
                 checkMenu.setSelected(coordinateCheck != null ? coordinateCheck.isSelected()
-                        : UserConfig.getUserConfigBoolean(baseName + "PopCooridnate", false));
+                        : UserConfig.getBoolean(baseName + "PopCooridnate", false));
                 checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
                     if (coordinateCheck != null) {
                         coordinateCheck.setSelected(checkMenu.isSelected());
                     } else {
-                        UserConfig.setUserConfigBoolean(baseName + "PopCooridnate", checkMenu.isSelected());
+                        UserConfig.setBoolean(baseName + "PopCooridnate", checkMenu.isSelected());
                         checkCoordinate();
                     }
                 });
@@ -300,12 +300,12 @@ public class ImageViewerController extends BaseImageShapesController {
             if (!needNotRulers) {
                 CheckMenuItem checkMenuX = new CheckMenuItem(Languages.message("RulerX"));
                 checkMenuX.setSelected(rulerXCheck != null ? rulerXCheck.isSelected()
-                        : UserConfig.getUserConfigBoolean(baseName + "RulerX", false));
+                        : UserConfig.getBoolean(baseName + "RulerX", false));
                 checkMenuX.setOnAction((ActionEvent menuItemEvent) -> {
                     if (rulerXCheck != null) {
                         rulerXCheck.setSelected(checkMenuX.isSelected());
                     } else {
-                        UserConfig.setUserConfigBoolean(baseName + "RulerX", checkMenuX.isSelected());
+                        UserConfig.setBoolean(baseName + "RulerX", checkMenuX.isSelected());
                         checkRulerX();
                     }
                 });
@@ -313,12 +313,12 @@ public class ImageViewerController extends BaseImageShapesController {
 
                 CheckMenuItem checkMenuY = new CheckMenuItem(Languages.message("RulerY"));
                 checkMenuY.setSelected(rulerYCheck != null ? rulerYCheck.isSelected()
-                        : UserConfig.getUserConfigBoolean(baseName + "RulerY", false));
+                        : UserConfig.getBoolean(baseName + "RulerY", false));
                 checkMenuY.setOnAction((ActionEvent menuItemEvent) -> {
                     if (rulerYCheck != null) {
                         rulerYCheck.setSelected(checkMenuY.isSelected());
                     } else {
-                        UserConfig.setUserConfigBoolean(baseName + "RulerY", checkMenuY.isSelected());
+                        UserConfig.setBoolean(baseName + "RulerY", checkMenuY.isSelected());
                         checkRulerY();
                     }
                 });
@@ -540,9 +540,9 @@ public class ImageViewerController extends BaseImageShapesController {
                 if (imageView != null) {
                     saveAsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 }
-                saveAsPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "SaveAsPane", false));
+                saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", false));
                 saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                    UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
                 });
             }
 
@@ -562,9 +562,9 @@ public class ImageViewerController extends BaseImageShapesController {
                     browsePane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 }
                 browsePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "BrowsePane", browsePane.isExpanded());
+                    UserConfig.setBoolean(baseName + "BrowsePane", browsePane.isExpanded());
                 });
-                browsePane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "BrowsePane", false));
+                browsePane.setExpanded(UserConfig.getBoolean(baseName + "BrowsePane", false));
             }
 
             if (previousButton != null) {
@@ -574,7 +574,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 nextButton.setDisable(imageFile() == null);
             }
 
-            String saveMode = UserConfig.getUserConfigString(baseName + "SortMode",
+            String saveMode = UserConfig.getString(baseName + "SortMode",
                     FileSortMode.NameAsc.name());
             sortMode = FileSortTools.sortMode(saveMode);
             if (sortGroup != null) {
@@ -589,7 +589,7 @@ public class ImageViewerController extends BaseImageShapesController {
                             break;
                         }
                     }
-                    UserConfig.setUserConfigString(baseName + "SortMode", sortMode.name());
+                    UserConfig.setString(baseName + "SortMode", sortMode.name());
                     makeImageNevigator();
                 });
                 for (Toggle toggle : sortGroup.getToggles()) {
@@ -612,9 +612,9 @@ public class ImageViewerController extends BaseImageShapesController {
             if (editPane != null) {
                 editPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 editPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "EditPane", editPane.isExpanded());
+                    UserConfig.setBoolean(baseName + "EditPane", editPane.isExpanded());
                 });
-                editPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "EditPane", false));
+                editPane.setExpanded(UserConfig.getBoolean(baseName + "EditPane", false));
             }
 
         } catch (Exception e) {
@@ -640,11 +640,11 @@ public class ImageViewerController extends BaseImageShapesController {
                 selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "SelectArea", selectAreaCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "SelectArea", selectAreaCheck.isSelected());
                         checkSelect();
                     }
                 });
-                selectAreaCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "SelectArea", false));
+                selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
                 checkSelect();
 
             }
@@ -1380,7 +1380,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 || (saveAsButton != null && saveAsButton.isDisabled())) {
             return;
         }
-        targetFile = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        targetFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 saveAsPrefix(), formatController == null ? FileFilters.ImageExtensionFilter : null);
         if (targetFile == null) {
             return;

@@ -69,14 +69,14 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             resultTableController.setManager(listController);
             resultBox.getChildren().clear();
 
-            row = UserConfig.getUserConfigInt(baseName + "Row", 1);
+            row = UserConfig.getInt(baseName + "Row", 1);
             rowInput.setText(row + "");
             rowInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         checkXY();
                     });
 
-            column = UserConfig.getUserConfigInt(baseName + "Column", 1);
+            column = UserConfig.getInt(baseName + "Column", 1);
             columnInput.setText(column + "");
             columnInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -84,7 +84,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     });
 
             try {
-                number = Double.parseDouble(UserConfig.getUserConfigString(baseName + "Number", "2"));
+                number = Double.parseDouble(UserConfig.getString(baseName + "Number", "2"));
             } catch (Exception e) {
                 number = 2d;
             }
@@ -93,14 +93,14 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         try {
                             number = Double.parseDouble(newValue);
                             numberInput.setStyle(null);
-                            UserConfig.setUserConfigString(baseName + "Number", number + "");
+                            UserConfig.setString(baseName + "Number", number + "");
                         } catch (Exception e) {
                             numberInput.setStyle(NodeStyleTools.badStyle);
                         }
                     });
 
             try {
-                power = UserConfig.getUserConfigInt(baseName + "Power", 2);
+                power = UserConfig.getInt(baseName + "Power", 2);
             } catch (Exception e) {
                 power = 2;
             }
@@ -111,7 +111,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                             if (v > 1) {
                                 power = v;
                                 powerInput.setStyle(null);
-                                UserConfig.setUserConfigInt(baseName + "Power", power);
+                                UserConfig.setInt(baseName + "Power", power);
                             } else {
                                 powerInput.setStyle(NodeStyleTools.badStyle);
                             }
@@ -143,7 +143,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             if (v > 0 && v <= editController.matrix().length) {
                 row = v;
                 rowInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "Row", v);
+                UserConfig.setInt(baseName + "Row", v);
             } else {
                 rowInput.setStyle(NodeStyleTools.badStyle);
                 valid = false;
@@ -157,7 +157,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             if (v > 0 && v <= editController.matrix().length) {
                 column = v;
                 columnInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "Column", v);
+                UserConfig.setInt(baseName + "Column", v);
             } else {
                 columnInput.setStyle(NodeStyleTools.badStyle);
                 valid = false;
@@ -181,7 +181,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 return false;
             }
             numberInput.setStyle(null);
-            UserConfig.setUserConfigString(baseName + "Number", number + "");
+            UserConfig.setString(baseName + "Number", number + "");
             return true;
         } catch (Exception e) {
             numberInput.setStyle(NodeStyleTools.badStyle);
@@ -199,7 +199,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             if (v > 1) {
                 power = v;
                 powerInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "Power", power);
+                UserConfig.setInt(baseName + "Power", power);
                 return true;
             } else {
                 powerInput.setStyle(NodeStyleTools.badStyle);

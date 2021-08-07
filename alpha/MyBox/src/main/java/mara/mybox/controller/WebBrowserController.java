@@ -28,7 +28,7 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
 
 /**
@@ -38,7 +38,7 @@ import mara.mybox.value.SystemConfig;
  */
 public class WebBrowserController extends BaseController {
 
-    protected Map<Tab, ControlWebBrowserBox> tabControllers;
+    protected Map<Tab, ControlTabWebView> tabControllers;
     protected Tab hisTab, favoriteTab;
 
     @FXML
@@ -49,7 +49,7 @@ public class WebBrowserController extends BaseController {
     protected ImageView addIcon;
 
     public WebBrowserController() {
-        baseTitle = Languages.message("WebBrowser");
+        baseTitle = message("WebBrowser");
     }
 
     @Override
@@ -71,7 +71,7 @@ public class WebBrowserController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(addIcon, new Tooltip(Languages.message("Add")));
+            NodeStyleTools.setTooltip(addIcon, new Tooltip(message("Add")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -93,10 +93,10 @@ public class WebBrowserController extends BaseController {
         newTab(true);
     }
 
-    protected ControlWebBrowserBox newTab(boolean focus) {
+    protected ControlTabWebView newTab(boolean focus) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(WindowTools.class.getResource(
-                    Fxmls.ControlWebBrowserBoxFxml), AppVariables.currentBundle);
+                    Fxmls.ControlTabWebViewFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
             ImageView tabImage = new ImageView("img/MyBox.png");
@@ -111,7 +111,7 @@ public class WebBrowserController extends BaseController {
             }
             refreshStyle(pane);
 
-            ControlWebBrowserBox controller = (ControlWebBrowserBox) fxmlLoader.getController();
+            ControlTabWebView controller = (ControlTabWebView) fxmlLoader.getController();
             controller.initTab(this, tab);
             if (tabControllers == null) {
                 tabControllers = new HashMap();
@@ -130,24 +130,24 @@ public class WebBrowserController extends BaseController {
         }
     }
 
-    public ControlWebBrowserBox loadAddress(String address, boolean focus) {
-        ControlWebBrowserBox controller = newTab(focus);
+    public ControlTabWebView loadAddress(String address, boolean focus) {
+        ControlTabWebView controller = newTab(focus);
         if (address != null) {
             controller.loadAddress(address);
         }
         return controller;
     }
 
-    public ControlWebBrowserBox loadContents(String contents, boolean focus) {
-        ControlWebBrowserBox controller = newTab(focus);
+    public ControlTabWebView loadContents(String contents, boolean focus) {
+        ControlTabWebView controller = newTab(focus);
         if (contents != null) {
             controller.loadContents(contents);
         }
         return controller;
     }
 
-    public ControlWebBrowserBox loadFile(File file) {
-        ControlWebBrowserBox controller = newTab(true);
+    public ControlTabWebView loadFile(File file) {
+        ControlTabWebView controller = newTab(true);
         controller.loadFile(file);
         return controller;
     }
@@ -215,7 +215,7 @@ public class WebBrowserController extends BaseController {
     protected void initWeibo() {
         try {
             getMyStage().toBack();
-            LoadingController c = handling(Languages.message("FirstRunInfo"));
+            LoadingController c = handling(message("FirstRunInfo"));
             c.cancelButton.setDisable(true);
             loadAddress("https://weibo.com", true);
             new Timer().schedule(new TimerTask() {
@@ -231,7 +231,7 @@ public class WebBrowserController extends BaseController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        SystemConfig.setSystemConfigBoolean("WeiboRunFirstTime", false);
+                        SystemConfig.setBoolean("WeiboRunFirstTime", false);
                         closeStage();
                     });
                 }
@@ -244,7 +244,7 @@ public class WebBrowserController extends BaseController {
     protected void initMap() {
         try {
             getMyStage().toBack();
-            LoadingController c = handling(Languages.message("FirstRunInfo"));
+            LoadingController c = handling(message("FirstRunInfo"));
             c.cancelButton.setDisable(true);
             loadContents(LocationTools.gaodeMap(), false);
             loadAddress(LocationTools.tiandituFile(true).toURI().toString(), true);
@@ -253,7 +253,7 @@ public class WebBrowserController extends BaseController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        SystemConfig.setSystemConfigBoolean("MapRunFirstTime", false);
+                        SystemConfig.setBoolean("MapRunFirstTime", false);
                         closeStage();
                     });
                 }

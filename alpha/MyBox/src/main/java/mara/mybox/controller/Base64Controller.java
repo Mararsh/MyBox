@@ -81,7 +81,7 @@ public class Base64Controller extends BaseController {
             List<String> setNames = TextTools.getCharsetNames();
             charsetSelector.getItems().addAll(setNames);
             try {
-                charset = Charset.forName(UserConfig.getUserConfigString(baseName + "Charset", Charset.defaultCharset().name()));
+                charset = Charset.forName(UserConfig.getString(baseName + "Charset", Charset.defaultCharset().name()));
             } catch (Exception e) {
                 charset = Charset.defaultCharset();
             }
@@ -90,7 +90,7 @@ public class Base64Controller extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
-                    UserConfig.setUserConfigString(baseName + "Charset", charset.name());
+                    UserConfig.setString(baseName + "Charset", charset.name());
                 }
             });
 

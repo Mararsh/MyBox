@@ -72,7 +72,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                     });
             checkMatrices();
 
-            if (UserConfig.getUserConfigBoolean("ControlSplitPanesEntered", true)) {
+            if (UserConfig.getBoolean("ControlSplitPanesEntered", true)) {
                 leftPaneListControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -86,7 +86,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
                     controlListPane();
                 }
             });
-            leftPaneListControl.setPickOnBounds(UserConfig.getUserConfigBoolean("ControlSplitPanesSensitive", false));
+            leftPaneListControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

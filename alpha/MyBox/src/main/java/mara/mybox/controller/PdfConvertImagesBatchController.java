@@ -21,9 +21,9 @@ import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import static mara.mybox.value.UserConfig.setUserConfigString;
-import static mara.mybox.value.UserConfig.setUserConfigString;
-import static mara.mybox.value.UserConfig.setUserConfigBoolean;
+import static mara.mybox.value.UserConfig.setString;
+import static mara.mybox.value.UserConfig.setString;
+import static mara.mybox.value.UserConfig.setBoolean;
 
 /**
  * @Author Mara
@@ -78,37 +78,37 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v,
                         Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("PdfConverterAppendColor", appendColorCheck.isSelected());
+                    UserConfig.setBoolean("PdfConverterAppendColor", appendColorCheck.isSelected());
                 }
             });
-            appendColorCheck.setSelected(UserConfig.getUserConfigBoolean("PdfConverterAppendColor"));
+            appendColorCheck.setSelected(UserConfig.getBoolean("PdfConverterAppendColor"));
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v,
                         Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("PdfConverterAppendCompression", appendCompressionCheck.isSelected());
+                    UserConfig.setBoolean("PdfConverterAppendCompression", appendCompressionCheck.isSelected());
                 }
             });
-            appendCompressionCheck.setSelected(UserConfig.getUserConfigBoolean("PdfConverterAppendCompression"));
+            appendCompressionCheck.setSelected(UserConfig.getBoolean("PdfConverterAppendCompression"));
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v,
                         Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("PdfConverterAppendQuality", appendQualityCheck.isSelected());
+                    UserConfig.setBoolean("PdfConverterAppendQuality", appendQualityCheck.isSelected());
                 }
             });
-            appendQualityCheck.setSelected(UserConfig.getUserConfigBoolean("PdfConverterAppendQuality"));
+            appendQualityCheck.setSelected(UserConfig.getBoolean("PdfConverterAppendQuality"));
 
             appendDensityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v,
                         Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("PdfConverterAppendDensity", appendDensityCheck.isSelected());
+                    UserConfig.setBoolean("PdfConverterAppendDensity", appendDensityCheck.isSelected());
                 }
             });
-            appendDensityCheck.setSelected(UserConfig.getUserConfigBoolean("PdfConverterAppendDensity"));
+            appendDensityCheck.setSelected(UserConfig.getBoolean("PdfConverterAppendDensity"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -166,16 +166,16 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             deskewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("ImageOCRDeskew", newValue);
+                    UserConfig.setBoolean("ImageOCRDeskew", newValue);
                 }
             });
-            deskewCheck.setSelected(UserConfig.getUserConfigBoolean("ImageOCRDeskew", false));
+            deskewCheck.setSelected(UserConfig.getBoolean("ImageOCRDeskew", false));
 
-            mergeCheck.setSelected(UserConfig.getUserConfigBoolean("ImageOCRmerge", false));
+            mergeCheck.setSelected(UserConfig.getBoolean("ImageOCRmerge", false));
             mergeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("ImageOCRmerge", mergeCheck.isSelected());
+                    UserConfig.setBoolean("ImageOCRmerge", mergeCheck.isSelected());
                 }
             });
 
@@ -217,7 +217,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                         OCRinstance.setTessVariable(key, p.get(key));
                     }
                 }
-                String path = UserConfig.getUserConfigString(OCRTools.TessDataPath, null);
+                String path = UserConfig.getString(OCRTools.TessDataPath, null);
                 if (path != null) {
                     OCRinstance.setDatapath(path);
                 }

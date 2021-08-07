@@ -51,10 +51,10 @@ public class HtmlSetStyleController extends BaseBatchFileController {
         ignoreCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "IgnoreOriginal", ignoreCheck.isSelected());
+                UserConfig.setBoolean(baseName + "IgnoreOriginal", ignoreCheck.isSelected());
             }
         });
-        ignoreCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IgnoreOriginal", false));
+        ignoreCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreOriginal", false));
     }
 
     @Override

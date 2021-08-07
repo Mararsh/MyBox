@@ -198,7 +198,7 @@ public class NotesController extends BaseDataTableController<Note> {
                 }
             });
 
-            subCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IncludeSub", false));
+            subCheck.setSelected(UserConfig.getBoolean(baseName + "IncludeSub", false));
             subCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
@@ -214,7 +214,7 @@ public class NotesController extends BaseDataTableController<Note> {
                 public void changed(ObservableValue ov, Tab oldTab, Tab newTab) {
                     synchronizeButton.setDisable(newTab != noteCodesTab && newTab != noteEditorTab && newTab != noteMarkdownTab);
                     if (oldTab == noteStyleTab) {
-                        String style = UserConfig.getUserConfigString(baseName + "Style", null);
+                        String style = UserConfig.getString(baseName + "Style", null);
                         if (style != null && !style.isBlank()) {
                             style = "<style type=\"text/css\">\n" + style + "\n</style>";
                         } else {
@@ -228,7 +228,7 @@ public class NotesController extends BaseDataTableController<Note> {
             });
 
             titleInput.setText(Languages.message("Note"));
-            styleInput.setText(UserConfig.getUserConfigString(baseName + "Style", HtmlStyles.DefaultStyle));
+            styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle));
 
             timeController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -1119,7 +1119,7 @@ public class NotesController extends BaseDataTableController<Note> {
     }
 
     public void setContents(String html, String md) {
-        String style = UserConfig.getUserConfigString(baseName + "Style", HtmlStyles.DefaultStyle);
+        String style = UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle);
         if (style != null && !style.isBlank()) {
             style = "<!DOCTYPE html><html><head><style type=\"text/css\">\n" + style + "\n</style></head></html>";
         } else {
@@ -1419,7 +1419,7 @@ public class NotesController extends BaseDataTableController<Note> {
                     @Override
                     public void handle(ActionEvent event) {
                         styleInput.setText(HtmlStyles.styleValue(style));
-                        UserConfig.setUserConfigString(baseName + "Style", styleInput.getText());
+                        UserConfig.setString(baseName + "Style", styleInput.getText());
                     }
                 });
                 popMenu.getItems().add(menu);
@@ -1444,7 +1444,7 @@ public class NotesController extends BaseDataTableController<Note> {
 
     @FXML
     public void setStyle() {
-        UserConfig.setUserConfigString(baseName + "Style", styleInput.getText());
+        UserConfig.setString(baseName + "Style", styleInput.getText());
     }
 
     @FXML

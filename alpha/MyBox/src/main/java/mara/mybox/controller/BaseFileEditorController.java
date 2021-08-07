@@ -179,17 +179,17 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         try {
             if (savePane != null) {
                 savePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "SavePane", savePane.isExpanded());
+                    UserConfig.setBoolean(baseName + "SavePane", savePane.isExpanded());
                 });
-                savePane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "SavePane", false));
+                savePane.setExpanded(UserConfig.getBoolean(baseName + "SavePane", false));
             }
             if (confirmCheck != null) {
-                confirmCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ConfirmSave", true));
+                confirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmSave", true));
                 confirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov,
                             Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "ConfirmSave", newValue);
+                        UserConfig.setBoolean(baseName + "ConfirmSave", newValue);
                     }
                 });
             }
@@ -203,7 +203,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                         checkAutoSave();
                     }
                 });
-                autoSaveCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "AutoSave", true));
+                autoSaveCheck.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
                 autoSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov,
@@ -233,9 +233,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             if (backupPane == null) {
                 return;
             }
-            backupPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "BackupPane", false));
+            backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
             backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setUserConfigBoolean(baseName + "BackupPane", backupPane.isExpanded());
+                UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
             });
 
             backupController.setControls(this, baseName);
@@ -249,9 +249,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         try {
             if (saveAsPane != null) {
                 saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                    UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
                 });
-                saveAsPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "SaveAsPane", false));
+                saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", false));
             }
 
         } catch (Exception e) {
@@ -264,7 +264,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             if (autoSaveCheck == null) {
                 return;
             }
-            UserConfig.setUserConfigBoolean(baseName + "AutoSave", autoSaveCheck.isSelected());
+            UserConfig.setBoolean(baseName + "AutoSave", autoSaveCheck.isSelected());
             autoSaveDurationController.permitInvalid(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
             if (confirmCheck != null) {
                 confirmCheck.setVisible(autoSaveCheck.isDisabled() || !autoSaveCheck.isSelected());
@@ -301,9 +301,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                 return;
             }
             breakLinePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setUserConfigBoolean(baseName + "BreakLinePane", breakLinePane.isExpanded());
+                UserConfig.setBoolean(baseName + "BreakLinePane", breakLinePane.isExpanded());
             });
-            breakLinePane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "BreakLinePane", false));
+            breakLinePane.setExpanded(UserConfig.getBoolean(baseName + "BreakLinePane", false));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -313,9 +313,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         try {
             if (encodePane == null) {
                 encodePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "EncodePane", encodePane.isExpanded());
+                    UserConfig.setBoolean(baseName + "EncodePane", encodePane.isExpanded());
                 });
-                encodePane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "EncodePane", true));
+                encodePane.setExpanded(UserConfig.getBoolean(baseName + "EncodePane", true));
             }
             if (encodeSelector != null) {
                 encodeSelector.getItems().addAll(TextTools.getCharsetNames());
@@ -361,9 +361,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         try {
             if (filterPane != null) {
                 filterPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "FilterPane", filterPane.isExpanded());
+                    UserConfig.setBoolean(baseName + "FilterPane", filterPane.isExpanded());
                 });
-                filterPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "FilterPane", false));
+                filterPane.setExpanded(UserConfig.getBoolean(baseName + "FilterPane", false));
             }
 
             if (filterButton != null && filterController != null) {
@@ -379,9 +379,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
     protected void initLocateTab() {
         try {
             if (locatePane != null) {
-                locatePane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "LocatePane", false));
+                locatePane.setExpanded(UserConfig.getBoolean(baseName + "LocatePane", false));
                 locatePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "LocatePane", locatePane.isExpanded());
+                    UserConfig.setBoolean(baseName + "LocatePane", locatePane.isExpanded());
                 });
             }
             if (lineInput != null) {
@@ -439,9 +439,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             if (findReplaceController == null) {
                 return;
             }
-            findPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "FindPane", false));
+            findPane.setExpanded(UserConfig.getBoolean(baseName + "FindPane", false));
             findPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                UserConfig.setUserConfigBoolean(baseName + "FindPane", findPane.isExpanded());
+                UserConfig.setBoolean(baseName + "FindPane", findPane.isExpanded());
             });
 
         } catch (Exception e) {
@@ -527,7 +527,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                     if (isSettingValues) {
                         return;
                     }
-                    if (UserConfig.getUserConfigBoolean(baseName + "ScrollSynchronously", false)) {
+                    if (UserConfig.getBoolean(baseName + "ScrollSynchronously", false)) {
                         isSettingValues = true;
                         mainArea.setScrollTop(newValue.doubleValue());
                         isSettingValues = false;
@@ -540,7 +540,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                     if (isSettingValues) {
                         return;
                     }
-                    if (UserConfig.getUserConfigBoolean(baseName + "ScrollSynchronously", false)) {
+                    if (UserConfig.getBoolean(baseName + "ScrollSynchronously", false)) {
                         isSettingValues = true;
                         mainArea.setScrollLeft(newValue.doubleValue());
                         isSettingValues = false;
@@ -594,7 +594,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         try {
             if (topCheck != null) {
                 topCheck.setVisible(false);
-                topCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Top", true));
+                topCheck.setSelected(UserConfig.getBoolean(baseName + "Top", true));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -607,7 +607,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             values.addAll(Arrays.asList("100,000", "500,000", "50,000", "10,000", "20,000",
                     "200,000", "1,000,000", "2,000,000", "20,000,000", "200,000,000"));
             pageSizeSelector.getItems().addAll(values);
-            int pageSize = UserConfig.getUserConfigInt(baseName + "PageSize", defaultPageSize);
+            int pageSize = UserConfig.getInt(baseName + "PageSize", defaultPageSize);
             if (pageSize <= 0) {
                 pageSize = defaultPageSize;
             }
@@ -648,7 +648,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                 return;
             }
             pageSizeSelector.getEditor().setStyle(null);
-            UserConfig.setUserConfigInt(baseName + "PageSize", v);
+            UserConfig.setInt(baseName + "PageSize", v);
             sourceInformation.setPageSize(v);
             sourceInformation.setCurrentPage(1);
             if (sourceInformation.getLineBreak() == Line_Break.Width) {
@@ -699,6 +699,12 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
     }
 
     @FXML
+    @Override
+    public void myBoxClipBoard() {
+        TextClipboardPopController.open(this, mainArea);
+    }
+
+    @FXML
     public void popPanesMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
@@ -708,11 +714,11 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             popMenu.setAutoHide(true);
 
             CheckMenuItem updateMenu = new CheckMenuItem(Languages.message("UpdateSynchronously"));
-            updateMenu.setSelected(UserConfig.getUserConfigBoolean(baseName + "UpdateSynchronously", false));
+            updateMenu.setSelected(UserConfig.getBoolean(baseName + "UpdateSynchronously", false));
             updateMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setUserConfigBoolean(baseName + "UpdateSynchronously", updateMenu.isSelected());
+                    UserConfig.setBoolean(baseName + "UpdateSynchronously", updateMenu.isSelected());
                     if (updateMenu.isSelected()) {
                         updatePairArea();
                     }
@@ -721,11 +727,11 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             popMenu.getItems().add(updateMenu);
 
             CheckMenuItem scrollMenu = new CheckMenuItem(Languages.message("ScrollSynchronously"));
-            scrollMenu.setSelected(UserConfig.getUserConfigBoolean(baseName + "ScrollSynchronously", false));
+            scrollMenu.setSelected(UserConfig.getBoolean(baseName + "ScrollSynchronously", false));
             scrollMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setUserConfigBoolean(baseName + "ScrollSynchronously", scrollMenu.isSelected());
+                    UserConfig.setBoolean(baseName + "ScrollSynchronously", scrollMenu.isSelected());
                     if (scrollMenu.isSelected()) {
                         pairArea.setScrollLeft(mainArea.getScrollLeft());
                         pairArea.setScrollTop(mainArea.getScrollTop());

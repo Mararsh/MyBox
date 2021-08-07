@@ -71,7 +71,7 @@ public class ControlFileBackup extends BaseController {
 
             tableFileBackup = new TableFileBackup();
 
-            backupCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Backup", true));
+            backupCheck.setSelected(UserConfig.getBoolean(baseName + "Backup", true));
             checkStatus();
             backupCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -80,10 +80,10 @@ public class ControlFileBackup extends BaseController {
                 }
             });
 
-            maxBackups = UserConfig.getUserConfigInt("MaxFileBackups", Default_Max_Backups);
+            maxBackups = UserConfig.getInt("MaxFileBackups", Default_Max_Backups);
             if (maxBackups <= 0) {
                 maxBackups = Default_Max_Backups;
-                UserConfig.setUserConfigInt("MaxFileBackups", Default_Max_Backups);
+                UserConfig.setInt("MaxFileBackups", Default_Max_Backups);
             }
             maxBackupsInput.setText(maxBackups + "");
             maxBackupsInput.textProperty().addListener(new ChangeListener<String>() {
@@ -93,7 +93,7 @@ public class ControlFileBackup extends BaseController {
                         int v = Integer.valueOf(maxBackupsInput.getText());
                         if (v >= 0) {
                             maxBackups = v;
-                            UserConfig.setUserConfigInt("MaxFileBackups", v);
+                            UserConfig.setInt("MaxFileBackups", v);
                             maxBackupsInput.setStyle(null);
                             okMaxButton.setDisable(false);
                         } else {
@@ -131,7 +131,7 @@ public class ControlFileBackup extends BaseController {
                             setText(DateTools.datetimeToString(item.getRecordTime()) + "  "
                                     + FileTools.showFileSize(item.getBackup().length()));
                             if (parentController instanceof ImageManufactureController) {
-                                int width = UserConfig.getUserConfigInt("ThumbnailWidth", 100);
+                                int width = UserConfig.getInt("ThumbnailWidth", 100);
                                 BufferedImage bufferedImage = ImageFileReaders.readImageByWidth(item.getBackup().getAbsolutePath(), width);
                                 if (bufferedImage != null) {
                                     view.setFitWidth(width);
@@ -173,7 +173,7 @@ public class ControlFileBackup extends BaseController {
             backupsList.getItems().clear();
         }
         thisPane.applyCss();
-        UserConfig.setUserConfigBoolean(baseName + "Backup", backupCheck.isSelected());
+        UserConfig.setBoolean(baseName + "Backup", backupCheck.isSelected());
     }
 
     public void loadBackups(File file) {
@@ -324,7 +324,7 @@ public class ControlFileBackup extends BaseController {
     @FXML
     public void okMax() {
         try {
-            UserConfig.setUserConfigInt("MaxFileBackups", maxBackups);
+            UserConfig.setInt("MaxFileBackups", maxBackups);
             popSuccessful();
             loadBackups();
         } catch (Exception e) {

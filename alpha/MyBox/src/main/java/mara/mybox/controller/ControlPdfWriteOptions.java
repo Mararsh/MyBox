@@ -95,11 +95,11 @@ public class ControlPdfWriteOptions extends BaseController {
             standardSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "PdfStandardSize", newValue);
+                    UserConfig.setString(baseName + "PdfStandardSize", newValue);
                     checkStandardValues();
                 }
             });
-            standardSizeSelector.setValue(UserConfig.getUserConfigString(baseName + "PdfStandardSize", "A4 (16k)  21.0cm x 29.7cm"));
+            standardSizeSelector.setValue(UserConfig.getString(baseName + "PdfStandardSize", "A4 (16k)  21.0cm x 29.7cm"));
 
             dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -111,22 +111,22 @@ public class ControlPdfWriteOptions extends BaseController {
             customWidthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "PdfCustomWidth", newValue);
+                    UserConfig.setString(baseName + "PdfCustomWidth", newValue);
                     checkCustomValues();
                 }
             });
-            customWidthInput.setText(UserConfig.getUserConfigString(baseName + "PdfCustomWidth", ""));
+            customWidthInput.setText(UserConfig.getString(baseName + "PdfCustomWidth", ""));
             customHeightInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "PdfCustomHeight", newValue);
+                    UserConfig.setString(baseName + "PdfCustomHeight", newValue);
                     checkCustomValues();
                 }
             });
-            customHeightInput.setText(UserConfig.getUserConfigString(baseName + "PdfCustomHeight", ""));
+            customHeightInput.setText(UserConfig.getString(baseName + "PdfCustomHeight", ""));
 
             marginSelector.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30", "40"));
-            marginSize = UserConfig.getUserConfigInt(baseName + "PdfMarginSize", 20);
+            marginSize = UserConfig.getInt(baseName + "PdfMarginSize", 20);
             marginSelector.setValue(marginSize + "");
             marginSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -136,7 +136,7 @@ public class ControlPdfWriteOptions extends BaseController {
                         if (v >= 0) {
                             marginSize = v;
                             ValidationTools.setEditorNormal(marginSelector);
-                            UserConfig.setUserConfigInt(baseName + "PdfMarginSize", v);
+                            UserConfig.setInt(baseName + "PdfMarginSize", v);
                         } else {
                             ValidationTools.setEditorBadStyle(marginSelector);
                         }
@@ -150,7 +150,7 @@ public class ControlPdfWriteOptions extends BaseController {
 
             fontSizeSelector.getItems().addAll(Arrays.asList(
                     "20", "14", "18", "15", "9", "10", "12", "17", "24", "36", "48", "64", "72", "96"));
-            fontSize = UserConfig.getUserConfigInt(baseName + "PdfFontSize", 20);
+            fontSize = UserConfig.getInt(baseName + "PdfFontSize", 20);
             fontSizeSelector.getSelectionModel().select(fontSize + "");
             fontSizeSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -159,7 +159,7 @@ public class ControlPdfWriteOptions extends BaseController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             fontSize = v;
-                            UserConfig.setUserConfigInt(baseName + "PdfFontSize", v);
+                            UserConfig.setInt(baseName + "PdfFontSize", v);
                             ValidationTools.setEditorNormal(fontSizeSelector);
                         } else {
                             ValidationTools.setEditorBadStyle(fontSizeSelector);
@@ -171,7 +171,7 @@ public class ControlPdfWriteOptions extends BaseController {
             });
 
             zoomSelector.getItems().addAll(Arrays.asList("60", "100", "75", "50", "125", "30", "45", "200"));
-            zoom = UserConfig.getUserConfigInt(baseName + "PdfZoom", 60);
+            zoom = UserConfig.getInt(baseName + "PdfZoom", 60);
             zoomSelector.getSelectionModel().select(zoom + "");
             zoomSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -182,7 +182,7 @@ public class ControlPdfWriteOptions extends BaseController {
                         if (v > 0) {
                             zoom = v;
                             ValidationTools.setEditorNormal(zoomSelector);
-                            UserConfig.setUserConfigInt(baseName + "PdfZoom", v);
+                            UserConfig.setInt(baseName + "PdfZoom", v);
                         } else {
                             ValidationTools.setEditorBadStyle(zoomSelector);
                         }
@@ -193,42 +193,42 @@ public class ControlPdfWriteOptions extends BaseController {
                 }
             });
 
-            authorInput.setText(UserConfig.getUserConfigString(baseName + "PdfAuthor", System.getProperty("user.name")));
+            authorInput.setText(UserConfig.getString(baseName + "PdfAuthor", System.getProperty("user.name")));
             authorInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "PdfAuthor", newValue);
+                    UserConfig.setString(baseName + "PdfAuthor", newValue);
                 }
             });
 
-            headerInput.setText(UserConfig.getUserConfigString(baseName + "PdfHeader", ""));
+            headerInput.setText(UserConfig.getString(baseName + "PdfHeader", ""));
             headerInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "PdfHeader", newValue);
+                    UserConfig.setString(baseName + "PdfHeader", newValue);
                 }
             });
 
-            showPageNumber = UserConfig.getUserConfigBoolean(baseName + "PdfShowPageNumber", true);
+            showPageNumber = UserConfig.getBoolean(baseName + "PdfShowPageNumber", true);
             pageNumberCheck.setSelected(showPageNumber);
             pageNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     showPageNumber = newValue;
-                    UserConfig.setUserConfigBoolean(baseName + "PdfShowPageNumber", newValue);
+                    UserConfig.setBoolean(baseName + "PdfShowPageNumber", newValue);
                 }
             });
 
-            landscapeCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "PdfPageHorizontal", false));
+            landscapeCheck.setSelected(UserConfig.getBoolean(baseName + "PdfPageHorizontal", false));
             landscapeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "PdfPageHorizontal", newValue);
+                    UserConfig.setBoolean(baseName + "PdfPageHorizontal", newValue);
                     checkStandardValues();
                 }
             });
 
-            String pm = UserConfig.getUserConfigString("PdfMemDefault", "1GB");
+            String pm = UserConfig.getString("PdfMemDefault", "1GB");
             isSettingValues = true;
             switch (pm) {
                 case "1GB":
@@ -397,7 +397,7 @@ public class ControlPdfWriteOptions extends BaseController {
             });
 
             jpegQualitySelector.getItems().addAll(Arrays.asList("100", "75", "90", "50", "60", "80", "30", "10"));
-            jpegQuality = UserConfig.getUserConfigInt(baseName + "PdfJpegQuality", 100);
+            jpegQuality = UserConfig.getInt(baseName + "PdfJpegQuality", 100);
             jpegQualitySelector.setValue(jpegQuality + "");
             jpegQualitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -406,7 +406,7 @@ public class ControlPdfWriteOptions extends BaseController {
                 }
             });
 
-            threshold = UserConfig.getUserConfigInt(baseName + "PdfThreshold", -1);
+            threshold = UserConfig.getInt(baseName + "PdfThreshold", -1);
             if (threshold > 0 && threshold < 100) {
                 thresholdInput.setText(threshold + "");
             }
@@ -414,17 +414,17 @@ public class ControlPdfWriteOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkThreshold();
-                    UserConfig.setUserConfigString(baseName + "PdfThreshold", newValue);
+                    UserConfig.setString(baseName + "PdfThreshold", newValue);
                 }
             });
 
-            dithering = UserConfig.getUserConfigBoolean(baseName + "PdfImageDithering", true);
+            dithering = UserConfig.getBoolean(baseName + "PdfImageDithering", true);
             ditherCheck.setSelected(dithering);
             ditherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     dithering = newValue;
-                    UserConfig.setUserConfigBoolean(baseName + "PdfImageDithering", newValue);
+                    UserConfig.setBoolean(baseName + "PdfImageDithering", newValue);
                 }
             });
 
@@ -441,7 +441,7 @@ public class ControlPdfWriteOptions extends BaseController {
             if (v >= 0 && v <= 100) {
                 jpegQuality = v;
                 jpegQualitySelector.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "PdfJpegQuality", jpegQuality);
+                UserConfig.setInt(baseName + "PdfJpegQuality", jpegQuality);
             } else {
                 jpegQualitySelector.setStyle(NodeStyleTools.badStyle);
             }

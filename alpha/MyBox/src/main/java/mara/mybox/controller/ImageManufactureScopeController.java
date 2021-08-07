@@ -174,11 +174,11 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
     protected void initSplitPane() {
         try {
-            String mv = UserConfig.getUserConfigString(baseName + "ScopePanePosition", "0.5");
+            String mv = UserConfig.getString(baseName + "ScopePanePosition", "0.5");
             splitPane.setDividerPositions(Double.parseDouble(mv));
 
             splitPane.getDividers().get(0).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                UserConfig.setUserConfigString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
+                UserConfig.setString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
             });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -320,7 +320,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             });
 
-            int colorDistance = UserConfig.getUserConfigInt(baseName + "ColorDistance", 20);
+            int colorDistance = UserConfig.getInt(baseName + "ColorDistance", 20);
             colorDistance = colorDistance <= 0 ? 20 : colorDistance;
             scopeDistanceSelector.setValue(colorDistance + "");
             scopeDistanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -346,7 +346,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             });
 
-            squareRootCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ColorDistanceSquare", false));
+            squareRootCheck.setSelected(UserConfig.getBoolean(baseName + "ColorDistanceSquare", false));
             squareRootCheck.disableProperty().bind(colorRGBRadio.selectedProperty().not());
             squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -416,7 +416,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                             opacity = 1 - f;
                             scopeView.setOpacity(opacity);
                             ValidationTools.setEditorNormal(opacitySelector);
-                            UserConfig.setUserConfigString(baseName + "ScopeTransparency", newVal);
+                            UserConfig.setString(baseName + "ScopeTransparency", newVal);
                         } else {
                             ValidationTools.setEditorBadStyle(opacitySelector);
                         }
@@ -426,7 +426,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             });
 
-            opacitySelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "ScopeTransparency", Languages.message("ScopeTransparency0.5")));
+            opacitySelector.getSelectionModel().select(UserConfig.getString(baseName + "ScopeTransparency", Languages.message("ScopeTransparency0.5")));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1868,7 +1868,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
     public void selectOutlineFile() {
         try {
             File file = FxFileTools.selectFile(this,
-                    UserConfig.getUserConfigPath(baseName + "SourcePath"),
+                    UserConfig.getPath(baseName + "SourcePath"),
                     FileFilters.AlphaImageExtensionFilter);
             if (file == null) {
                 return;

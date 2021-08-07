@@ -152,7 +152,7 @@ public class WeiboSnapController extends BaseController {
                             } else {
                                 webAddress = s;
                                 addressBox.getEditor().setStyle(null);
-                                UserConfig.setUserConfigString(baseName + "WeiboLastAddress", s);
+                                UserConfig.setString(baseName + "WeiboLastAddress", s);
                                 boolean in = false;
                                 for (String addr : addressList) {
                                     if (addr.contains(webAddress)) {
@@ -186,7 +186,7 @@ public class WeiboSnapController extends BaseController {
                 checkTimes();
             }
         });
-        startMonthInput.setText(UserConfig.getUserConfigString("WeiboPostsLastMonth", "2014-09"));
+        startMonthInput.setText(UserConfig.getString("WeiboPostsLastMonth", "2014-09"));
 
         startPage = 1;
         startPageInput.textProperty().addListener(new ChangeListener<String>() {
@@ -210,7 +210,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        startPageInput.setText(UserConfig.getUserConfigString("WeiboPostsLastPage", "1"));
+        startPageInput.setText(UserConfig.getString("WeiboPostsLastPage", "1"));
 
         likeStartPage = 1;
         likeStartPageInput.textProperty().addListener(new ChangeListener<String>() {
@@ -234,7 +234,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        likeStartPageInput.setText(UserConfig.getUserConfigString("WeiboLikeLastPage", "1"));
+        likeStartPageInput.setText(UserConfig.getString("WeiboLikeLastPage", "1"));
 
         endMonthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -248,19 +248,19 @@ public class WeiboSnapController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboExpandComments", newValue);
+                UserConfig.setBoolean(baseName + "WeiboExpandComments", newValue);
             }
         });
-        expandCommentsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboExpandComments"));
+        expandCommentsCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboExpandComments"));
 
         expandPicturesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboExpandPictures", newValue);
+                UserConfig.setBoolean(baseName + "WeiboExpandPictures", newValue);
             }
         });
-        expandPicturesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboExpandPictures"));
+        expandPicturesCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboExpandPictures"));
 
     }
 
@@ -290,7 +290,7 @@ public class WeiboSnapController extends BaseController {
                     startMonthInput.setStyle(null);
                 }
             }
-            UserConfig.setUserConfigString("WeiboLastStartMonthKey", startMonthInput.getText());
+            UserConfig.setString("WeiboLastStartMonthKey", startMonthInput.getText());
         } catch (Exception e) {
             startMonthInput.setStyle(NodeStyleTools.badStyle);
             return;
@@ -330,7 +330,7 @@ public class WeiboSnapController extends BaseController {
                 try {
                     zoomScale = Float.valueOf(newValue);
                     if (zoomScale > 0) {
-                        UserConfig.setUserConfigString(baseName + "Zoom", zoomScale + "");
+                        UserConfig.setString(baseName + "Zoom", zoomScale + "");
                         if (zoomScale > 2) {
                             popInformation(Languages.message("TooLargerScale"));
                         }
@@ -415,7 +415,7 @@ public class WeiboSnapController extends BaseController {
                     if (v > 0) {
                         snapIntervalInput.setStyle(null);
                         snapInterval = v;
-                        UserConfig.setUserConfigInt("WeiBoSnapInterval", v);
+                        UserConfig.setInt("WeiBoSnapInterval", v);
                     } else {
                         snapIntervalInput.setStyle(NodeStyleTools.badStyle);
                     }
@@ -424,7 +424,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        snapIntervalInput.setText(UserConfig.getUserConfigInt("WeiBoSnapInterval", 2000) + "");
+        snapIntervalInput.setText(UserConfig.getInt("WeiBoSnapInterval", 2000) + "");
 
     }
 
@@ -581,14 +581,14 @@ public class WeiboSnapController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
-                UserConfig.setUserConfigString(baseName + "Author", newValue);
+                UserConfig.setString(baseName + "Author", newValue);
             }
         });
-        authorInput.setText(UserConfig.getUserConfigString(baseName + "Author", System.getProperty("user.name")));
+        authorInput.setText(UserConfig.getString(baseName + "Author", System.getProperty("user.name")));
 
         ttfController.name(baseName);
 
-        String pdfSize = UserConfig.getUserConfigString("WeiBoSnapPdfSize", "500M");
+        String pdfSize = UserConfig.getString("WeiBoSnapPdfSize", "500M");
         if ("1G".equals(pdfSize)) {
             pdfSize1GRadio.fire();
         } else if ("2G".equals(pdfSize)) {
@@ -600,7 +600,7 @@ public class WeiboSnapController extends BaseController {
         }
 
         pdfSizeGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) -> {
-            UserConfig.setUserConfigString("WeiBoSnapPdfSize",
+            UserConfig.setString("WeiBoSnapPdfSize",
                     ((RadioButton) pdfSizeGroup.getSelectedToggle()).getText());
         });
 
@@ -747,7 +747,7 @@ public class WeiboSnapController extends BaseController {
                 try {
                     retry = Integer.valueOf(newValue);
                     if (retry > 0) {
-                        UserConfig.setUserConfigString(baseName + "Retry", retry + "");
+                        UserConfig.setString(baseName + "Retry", retry + "");
                     } else {
                         retry = 3;
                     }
@@ -756,7 +756,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        retryBox.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Retry", "3"));
+        retryBox.getSelectionModel().select(UserConfig.getString(baseName + "Retry", "3"));
 
         accessInterval = 2000;
         accessIntervalInput.textProperty().addListener(new ChangeListener<String>() {
@@ -768,7 +768,7 @@ public class WeiboSnapController extends BaseController {
                     if (v > 0) {
                         accessIntervalInput.setStyle(null);
                         accessInterval = v;
-                        UserConfig.setUserConfigInt("WeiBoAccessInterval", v);
+                        UserConfig.setInt("WeiBoAccessInterval", v);
                     } else {
                         accessIntervalInput.setStyle(NodeStyleTools.badStyle);
                     }
@@ -777,7 +777,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        accessIntervalInput.setText(UserConfig.getUserConfigInt("WeiBoAccessInterval", 2000) + "");
+        accessIntervalInput.setText(UserConfig.getInt("WeiBoAccessInterval", 2000) + "");
 
     }
 
@@ -792,66 +792,66 @@ public class WeiboSnapController extends BaseController {
 
     private void initTargetOptions() {
 
-        pdfCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboPdf"));
+        pdfCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboPdf"));
         pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboPdf", newValue);
+                UserConfig.setBoolean(baseName + "WeiboPdf", newValue);
                 checkTargetFiles();
             }
         });
 
-        htmlCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboHtm"));
+        htmlCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboHtm"));
         htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboHtm", newValue);
+                UserConfig.setBoolean(baseName + "WeiboHtm", newValue);
                 checkTargetFiles();
             }
         });
 
-        pixCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboPix"));
+        pixCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboPix"));
         pixCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboPix", newValue);
+                UserConfig.setBoolean(baseName + "WeiboPix", newValue);
                 checkTargetFiles();
             }
         });
         checkTargetFiles();
 
-        keepPageCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboKeepPage"));
+        keepPageCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboKeepPage"));
         keepPageCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboKeepPage", newValue);
+                UserConfig.setBoolean(baseName + "WeiboKeepPage", newValue);
             }
         });
 
-        miaoCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboMiao"));
+        miaoCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboMiao"));
         miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboMiao", newValue);
+                UserConfig.setBoolean(baseName + "WeiboMiao", newValue);
             }
         });
 
-        openPathCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboOpenPath"));
+        openPathCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboOpenPath"));
         openPathCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboOpenPath", newValue);
+                UserConfig.setBoolean(baseName + "WeiboOpenPath", newValue);
             }
         });
 
-        closeWindowCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WeiboColseWindow", false));
+        closeWindowCheck.setSelected(UserConfig.getBoolean(baseName + "WeiboColseWindow", false));
         closeWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean(baseName + "WeiboColseWindow", newValue);
+                UserConfig.setBoolean(baseName + "WeiboColseWindow", newValue);
             }
         });
 
@@ -890,7 +890,7 @@ public class WeiboSnapController extends BaseController {
     }
 
     protected void checkPdfMem() {
-        String pm = UserConfig.getUserConfigString("PdfMemDefault", "1GB");
+        String pm = UserConfig.getString("PdfMemDefault", "1GB");
         switch (pm) {
             case "1GB":
                 pdfMem1GRadio.setSelected(true);
@@ -938,7 +938,7 @@ public class WeiboSnapController extends BaseController {
             super.afterSceneLoaded();
 
             // Webview need be initialized for weibo.com.
-            if (SystemConfig.getSystemConfigBoolean("WeiboRunFirstTime" + AppValues.AppVersion, true)) {
+            if (SystemConfig.getBoolean("WeiboRunFirstTime" + AppValues.AppVersion, true)) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -954,7 +954,7 @@ public class WeiboSnapController extends BaseController {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == buttonSSL) {
                     initWebview();
-                    SystemConfig.setSystemConfigBoolean("WeiboRunFirstTime" + AppValues.AppVersion, false);
+                    SystemConfig.setBoolean("WeiboRunFirstTime" + AppValues.AppVersion, false);
                 }
             }
 

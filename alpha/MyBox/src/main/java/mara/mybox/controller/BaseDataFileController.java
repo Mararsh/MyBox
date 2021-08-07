@@ -121,9 +121,9 @@ public abstract class BaseDataFileController extends BaseSheetController {
             if (backupPane == null) {
                 return;
             }
-            backupPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "BackupPane", false));
+            backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
             backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "BackupPane", backupPane.isExpanded());
+                        UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
                     });
 
             backupController.setControls(this, baseName);
@@ -138,9 +138,9 @@ public abstract class BaseDataFileController extends BaseSheetController {
             if (saveAsPane == null) {
                 return;
             }
-            saveAsPane.setExpanded(UserConfig.getUserConfigBoolean(baseName + "SaveAsPane", true));
+            saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", true));
             saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                        UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
                     });
 
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                         checkCurrentPage();
                     });
 
-            pageSize = UserConfig.getUserConfigInt(baseName + "PageSize", 50);
+            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
             pageSize = pageSize < 1 ? 50 : pageSize;
             pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
                     "500", "1000", "2000", "5000", "10000"));
@@ -173,7 +173,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
                                 pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             } else {
                                 pageSize = v;
-                                UserConfig.setUserConfigInt(baseName + "PageSize", pageSize);
+                                UserConfig.setInt(baseName + "PageSize", pageSize);
                                 pageSizeSelector.getEditor().setStyle(null);
                                 if (!isSettingValues) {
                                     loadPage(currentPage);

@@ -109,7 +109,7 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected ImageView originalView;
     @FXML
-    protected HtmlViewerController regionsTableController, wordsTableController, htmlController;
+    protected HtmlTableController regionsTableController, wordsTableController, htmlController;
     @FXML
     protected ControlOCROptions ocrOptionsController;
     @FXML
@@ -333,19 +333,19 @@ public class ImageOCRController extends ImageViewerController {
                 }
             });
 
-            startCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Start", true));
+            startCheck.setSelected(UserConfig.getBoolean(baseName + "Start", true));
             startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean(baseName + "Start", startCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Start", startCheck.isSelected());
                 }
             });
 
-            LoadCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Start", true));
+            LoadCheck.setSelected(UserConfig.getBoolean(baseName + "Start", true));
             LoadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean(baseName + "Load", LoadCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Load", LoadCheck.isSelected());
                 }
             });
 
@@ -877,7 +877,7 @@ public class ImageOCRController extends ImageViewerController {
                     handleSelect();
                     return;
                 }
-                UserConfig.setUserConfigString(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), fname);
+                UserConfig.setString(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), fname);
                 handleSelect();
             }
 
@@ -895,7 +895,7 @@ public class ImageOCRController extends ImageViewerController {
             }
 
             String name = (sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) : "") + "_preprocessed";
-            final File file = chooseSaveFile(UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
+            final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
                     name, FileFilters.ImageExtensionFilter);
             if (file == null) {
                 return;

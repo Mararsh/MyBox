@@ -34,7 +34,8 @@ public class HtmlWriteTools {
     public static File writeHtml(String html) {
         try {
             File htmFile = TmpFileTools.getTempFile(".htm");
-            TextFileTools.writeFile(htmFile, html);
+            Charset charset = HtmlReadTools.htmlCharset(html);
+            TextFileTools.writeFile(htmFile, html, charset);
             return htmFile;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -138,7 +139,7 @@ public class HtmlWriteTools {
             return null;
         }
         String body = stringToHtml(text);
-        return html(null, text);
+        return html(null, body);
     }
 
     public static String htmlToText(String html) {

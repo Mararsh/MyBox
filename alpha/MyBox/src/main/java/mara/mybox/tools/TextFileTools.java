@@ -1,6 +1,7 @@
 package mara.mybox.tools;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -38,11 +39,6 @@ public class TextFileTools {
 
     public static File writeFile(File file, String data) {
         return writeFile(file, data, Charset.forName("utf-8"));
-        //        if (file.exists()) {
-        //            return writeFile(file, data, charset(file));
-        //        } else {
-        //            return writeFile(file, data, Charset.forName("utf-8"));
-        //        }
     }
 
     public static File writeFile(File file, String data, Charset charset) {
@@ -50,9 +46,10 @@ public class TextFileTools {
             return null;
         }
         file.getParentFile().mkdirs();
-        try (final FileWriter writer = new FileWriter(file, charset != null ? charset : Charset.forName("utf-8"))) {
-            writer.write(data);
-            writer.flush();
+        Charset fileCharset = charset != null ? charset : Charset.forName("utf-8");
+        try ( BufferedWriter out = new BufferedWriter(new FileWriter(file, fileCharset, false))) {
+            out.write(data);
+            out.flush();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

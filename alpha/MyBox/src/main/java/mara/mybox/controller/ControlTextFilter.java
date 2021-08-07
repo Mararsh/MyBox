@@ -84,11 +84,11 @@ public class ControlTextFilter extends BaseController {
             });
             checkFilterStrings();
 
-            filterLineNumberCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "FilterRecordLineNumber", true));
+            filterLineNumberCheck.setSelected(UserConfig.getBoolean(baseName + "FilterRecordLineNumber", true));
             filterLineNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "FilterRecordLineNumber", filterLineNumberCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FilterRecordLineNumber", filterLineNumberCheck.isSelected());
                 }
             });
 

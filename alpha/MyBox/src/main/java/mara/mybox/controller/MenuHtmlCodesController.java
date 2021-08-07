@@ -14,16 +14,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -62,7 +67,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
 
             List<Node> aNodes = new ArrayList<>();
 
-            Button br = new Button(Languages.message("BreakLine"));
+            Button br = new Button(message("BreakLine"));
             br.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -71,16 +76,16 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             aNodes.add(br);
 
-            Button p = new Button(Languages.message("Paragraph"));
+            Button p = new Button(message("Paragraph"));
             p.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("\n<p>" + Languages.message("Paragraph") + "</p>\n");
+                    insertText("\n<p>" + message("Paragraph") + "</p>\n");
                 }
             });
             aNodes.add(p);
 
-            Button table = new Button(Languages.message("Table"));
+            Button table = new Button(message("Table"));
             table.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -97,11 +102,11 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             aNodes.add(table);
 
-            Button tableRow = new Button(Languages.message("TableRow"));
+            Button tableRow = new Button(message("TableRow"));
             tableRow.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    String value = PopTools.askValue(baseTitle, "", Languages.message("ColumnsNumber"), "3");
+                    String value = PopTools.askValue(baseTitle, "", message("ColumnsNumber"), "3");
                     if (value == null) {
                         return;
                     }
@@ -115,16 +120,16 @@ public class MenuHtmlCodesController extends MenuTextEditController {
                             s += "</tr>\n";
                             insertText(s);
                         } else {
-                            popError(Languages.message("InvalidData"));
+                            popError(message("InvalidData"));
                         }
                     } catch (Exception e) {
-                        popError(Languages.message("InvalidData"));
+                        popError(message("InvalidData"));
                     }
                 }
             });
             aNodes.add(tableRow);
 
-            Button image = new Button(Languages.message("Image"));
+            Button image = new Button(message("Image"));
             image.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -133,7 +138,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             aNodes.add(image);
 
-            Button link = new Button(Languages.message("Link"));
+            Button link = new Button(message("Link"));
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -146,7 +151,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
 
             List<Node> headNodes = new ArrayList<>();
             for (int i = 1; i <= 6; i++) {
-                String name = Languages.message("Headings") + " " + i;
+                String name = message("Headings") + " " + i;
                 int level = i;
                 Button head = new Button(name);
                 head.setOnAction(new EventHandler<ActionEvent>() {
@@ -161,7 +166,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             addFlowPane(headNodes);
 
             List<Node> listNodes = new ArrayList<>();
-            Button numberedList = new Button(Languages.message("NumberedList"));
+            Button numberedList = new Button(message("NumberedList"));
             numberedList.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -177,7 +182,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             listNodes.add(numberedList);
 
-            Button bulletedList = new Button(Languages.message("BulletedList"));
+            Button bulletedList = new Button(message("BulletedList"));
             bulletedList.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -196,25 +201,35 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             addFlowPane(listNodes);
 
             List<Node> codeNodes = new ArrayList<>();
-            Button block = new Button(Languages.message("Block"));
+
+            Button separatorLine = new Button(message("SeparateLine"));
+            separatorLine.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    insertText("\n<hr>\n");
+                }
+            });
+            codeNodes.add(separatorLine);
+
+            Button block = new Button(message("Block"));
             block.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("\n<div>\n" + Languages.message("Block") + "\n</div>\n");
+                    insertText("\n<div>\n" + message("Block") + "\n</div>\n");
                 }
             });
             codeNodes.add(block);
 
-            Button codes = new Button(Languages.message("Codes"));
+            Button codes = new Button(message("Codes"));
             codes.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("\n<PRE><CODE> \n" + Languages.message("Codes") + "\n</CODE></PRE>\n");
+                    insertText("\n<PRE><CODE> \n" + message("Codes") + "\n</CODE></PRE>\n");
                 }
             });
             codeNodes.add(codes);
 
-            Button local = new Button(Languages.message("ReferLocalFile"));
+            Button local = new Button(message("ReferLocalFile"));
             local.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -226,7 +241,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             codeNodes.add(local);
 
-            Button style = new Button(Languages.message("Style"));
+            Button style = new Button(message("Style"));
             style.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -240,38 +255,48 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             codeNodes.add(style);
 
-            Button separatorLine = new Button(Languages.message("SeparateLine"));
-            separatorLine.setOnAction(new EventHandler<ActionEvent>() {
+            Button text = new Button(message("Texts"));
+            text.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    insertText("\n<hr>\n");
+                    String string = TextClipboardTools.getSystemClipboardString();
+                    if (string == null || string.isBlank()) {
+                        popError(Languages.message("NoData"));
+                        return;
+                    }
+                    insertText(HtmlWriteTools.stringToHtml(string));
                 }
             });
-            codeNodes.add(separatorLine);
-
-            Button font = new Button(Languages.message("Font"));
-            font.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    insertText("<font size=\"3\" color=\"red\">" + Languages.message("Font") + "</font>");
-                }
-            });
-            codeNodes.add(font);
-
-            Button bold = new Button(Languages.message("Bold"));
-            bold.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    insertText("<b>" + Languages.message("Bold") + "</b>");
-                }
-            });
-            codeNodes.add(bold);
+            NodeStyleTools.setTooltip(text, new Tooltip(message("PasteTextAsHtml")));
+            codeNodes.add(text);
 
             addFlowPane(codeNodes);
 
+            List<Node> othersNodes = new ArrayList<>();
+
+            Button font = new Button(message("Font"));
+            font.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    insertText("<font size=\"3\" color=\"red\">" + message("Font") + "</font>");
+                }
+            });
+            othersNodes.add(font);
+
+            Button bold = new Button(message("Bold"));
+            bold.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    insertText("<b>" + message("Bold") + "</b>");
+                }
+            });
+            othersNodes.add(bold);
+
+            addFlowPane(othersNodes);
+
             List<Node> charNodes = new ArrayList<>();
 
-            Button blank = new Button(Languages.message("Blank"));
+            Button blank = new Button(message("Blank"));
             blank.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -280,7 +305,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             charNodes.add(blank);
 
-            Button lt = new Button(Languages.message("<"));
+            Button lt = new Button(message("<"));
             lt.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -289,7 +314,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             charNodes.add(lt);
 
-            Button gt = new Button(Languages.message(">"));
+            Button gt = new Button(message(">"));
             gt.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -298,7 +323,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             charNodes.add(gt);
 
-            Button and = new Button(Languages.message("&"));
+            Button and = new Button(message("&"));
             and.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -307,7 +332,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             charNodes.add(and);
 
-            Button quot = new Button(Languages.message("\""));
+            Button quot = new Button(message("\""));
             quot.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -316,7 +341,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             charNodes.add(quot);
 
-            Button registered = new Button(Languages.message("Registered"));
+            Button registered = new Button(message("Registered"));
             registered.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -325,7 +350,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             charNodes.add(registered);
 
-            Button copyright = new Button(Languages.message("Copyright"));
+            Button copyright = new Button(message("Copyright"));
             copyright.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -334,7 +359,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             });
             charNodes.add(copyright);
 
-            Button trademark = new Button(Languages.message("Trademark"));
+            Button trademark = new Button(message("Trademark"));
             trademark.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -345,7 +370,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
 
             addFlowPane(charNodes);
 
-            Hyperlink about = new Hyperlink(Languages.message("AboutHtml"));
+            Hyperlink about = new Hyperlink(message("AboutHtml"));
             about.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {

@@ -74,7 +74,7 @@ public class ControlFileSelecter extends BaseController {
     public ControlFileSelecter name(String name, boolean init) {
         this.name = name;
         if (name != null && init) {
-            String saved = UserConfig.getUserConfigString(name, defaultValue);
+            String saved = UserConfig.getString(name, defaultValue);
             if (saved != null) {
                 if (fileInput != null) {
                     fileInput.setText(saved);
@@ -169,7 +169,7 @@ public class ControlFileSelecter extends BaseController {
         }
         this.file = file;
         if (name != null) {
-            UserConfig.setUserConfigString(name, file.getAbsolutePath());
+            UserConfig.setString(name, file.getAbsolutePath());
         }
         if (isSource) {
             recordFileOpened(file);
@@ -183,7 +183,7 @@ public class ControlFileSelecter extends BaseController {
     public void selectFile() {
         try {
             File selectedfile;
-            File path = UserConfig.getUserConfigPath(
+            File path = UserConfig.getPath(
                     isSource ? baseName + "SourcePath" : baseName + "TargetPath");
             if (isDirectory) {
                 DirectoryChooser chooser = new DirectoryChooser();
@@ -284,7 +284,7 @@ public class ControlFileSelecter extends BaseController {
                         setFile(selectedfile);
                     }
                 } else {
-                    UserConfig.setUserConfigString(isSource ? baseName + "SourcePath" : baseName + "TargetPath", fname);
+                    UserConfig.setString(isSource ? baseName + "SourcePath" : baseName + "TargetPath", fname);
                     selectFile();
                 }
             }

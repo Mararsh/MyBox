@@ -40,7 +40,7 @@ public class VisitHistoryTools {
     }
 
     public static File getSavedPath(int type) {
-        return UserConfig.getUserConfigPath(getPathKey(type));
+        return UserConfig.getPath(getPathKey(type));
     }
 
     public static List<FileChooser.ExtensionFilter> getExtensionFilter(int fileType) {

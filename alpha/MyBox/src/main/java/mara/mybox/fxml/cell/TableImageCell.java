@@ -18,7 +18,7 @@ import mara.mybox.value.UserConfig;
 public class TableImageCell<T> extends TableCell<T, Image>
         implements Callback<TableColumn<T, Image>, TableCell<T, Image>> {
 
-    protected int thumbWidth = UserConfig.getUserConfigInt("ThumbnailWidth", 100);
+    protected int thumbWidth = UserConfig.getInt("ThumbnailWidth", 100);
 
     @Override
     public TableCell<T, Image> call(TableColumn<T, Image> param) {

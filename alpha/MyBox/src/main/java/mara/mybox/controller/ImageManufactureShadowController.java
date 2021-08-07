@@ -63,7 +63,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             shadow = v;
-                            UserConfig.setUserConfigString("ImageShadowSize", newValue);
+                            UserConfig.setString("ImageShadowSize", newValue);
                             ValidationTools.setEditorNormal(shadowBox);
                         } else {
                             ValidationTools.setEditorBadStyle(shadowBox);
@@ -73,7 +73,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
                     }
                 }
             });
-            shadowBox.getSelectionModel().select(UserConfig.getUserConfigInt("ImageShadowSize", 10) + "");
+            shadowBox.getSelectionModel().select(UserConfig.getInt("ImageShadowSize", 10) + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -79,7 +79,7 @@ public class OCRTools {
     // Make sure supported language files are under defined data path
     public static boolean initDataFiles() {
         try {
-            String pathname = UserConfig.getUserConfigString(TessDataPath, null);
+            String pathname = UserConfig.getString(TessDataPath, null);
             if (pathname == null) {
                 pathname = MyboxDataPath + File.separator + "tessdata";
             }
@@ -123,7 +123,7 @@ public class OCRTools {
                 File tmp = mara.mybox.fxml.FxFileTools.getInternalFile("/tessdata/osd.traineddata");
                 FileCopyTools.copyFile(tmp, osd);
             }
-            UserConfig.setUserConfigString(TessDataPath, path.getAbsolutePath());
+            UserConfig.setString(TessDataPath, path.getAbsolutePath());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -137,7 +137,7 @@ public class OCRTools {
             if (copyFiles) {
                 initDataFiles();
             }
-            String dataPath = UserConfig.getUserConfigString(TessDataPath, null);
+            String dataPath = UserConfig.getString(TessDataPath, null);
             if (dataPath == null) {
                 return data;
             }

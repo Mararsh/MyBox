@@ -72,13 +72,13 @@ public class FxFileTools {
 
     public static File selectFile(BaseController_Files controller) {
         return selectFile(controller,
-                UserConfig.getUserConfigPath(controller.getBaseName() + "SourcePath"),
+                UserConfig.getPath(controller.getBaseName() + "SourcePath"),
                 controller.getSourceExtensionFilter());
     }
 
     public static File selectFile(BaseController_Files controller, int fileType) {
         return selectFile(controller,
-                UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(fileType)),
+                UserConfig.getPath(VisitHistoryTools.getPathKey(fileType)),
                 VisitHistoryTools.getExtensionFilter(fileType));
     }
 

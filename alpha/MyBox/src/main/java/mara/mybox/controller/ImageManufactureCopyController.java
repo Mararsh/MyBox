@@ -42,18 +42,18 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
             clipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "CopyOpenClipboard", clipboardCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CopyOpenClipboard", clipboardCheck.isSelected());
                 }
             });
-            clipboardCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CopyOpenClipboard", true));
+            clipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CopyOpenClipboard", true));
 
             marginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "CopyCutMargins", marginsCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CopyCutMargins", marginsCheck.isSelected());
                 }
             });
-            marginsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CopyCutMargins", true));
+            marginsCheck.setSelected(UserConfig.getBoolean(baseName + "CopyCutMargins", true));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

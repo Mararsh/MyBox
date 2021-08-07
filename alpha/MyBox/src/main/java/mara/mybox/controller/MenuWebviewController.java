@@ -15,7 +15,6 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
@@ -62,7 +61,7 @@ public class MenuWebviewController extends MenuController {
                 return;
             }
             if (webView.getId() == null) {
-                editor = NodeTools.editor(webView);
+                editor = WebViewTools.editor(webView);
                 if (editor != null) {
                     titleLabel.setText(editor.getId());
                 }

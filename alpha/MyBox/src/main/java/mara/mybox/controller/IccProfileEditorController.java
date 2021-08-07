@@ -184,10 +184,10 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("IccEditerConfirmSave", newValue);
+                    UserConfig.setBoolean("IccEditerConfirmSave", newValue);
                 }
             });
-            saveConfirmCheck.setSelected(UserConfig.getUserConfigBoolean("IccEditerConfirmSave", true));
+            saveConfirmCheck.setSelected(UserConfig.getBoolean("IccEditerConfirmSave", true));
 
 //            saveButton.disableProperty().bind(profileVersionInput.styleProperty().isEqualTo(badStyle)
 //                    .or(createTimeInput.styleProperty().isEqualTo(badStyle))
@@ -587,15 +587,15 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 checkMaxDecode();
             }
         });
-        maxDecodeInput.setText(UserConfig.getUserConfigInt("ICCMaxDecodeNumber", 500) + "");
+        maxDecodeInput.setText(UserConfig.getInt("ICCMaxDecodeNumber", 500) + "");
 
         lutNormalizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setUserConfigBoolean("LutNormalize", newValue);
+                UserConfig.setBoolean("LutNormalize", newValue);
             }
         });
-        lutNormalizeCheck.setSelected(UserConfig.getUserConfigBoolean("LutNormalize", true));
+        lutNormalizeCheck.setSelected(UserConfig.getBoolean("LutNormalize", true));
     }
 
     private void checkMaxDecode() {
@@ -603,12 +603,12 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             String s = maxDecodeInput.getText().trim();
             if (s.isEmpty()) {
                 xInput.setStyle(null);
-                UserConfig.setUserConfigInt("ICCMaxDecodeNumber", Integer.MAX_VALUE);
+                UserConfig.setInt("ICCMaxDecodeNumber", Integer.MAX_VALUE);
                 return;
             }
             int v = Integer.parseInt(s);
             if (v > 0) {
-                UserConfig.setUserConfigInt("ICCMaxDecodeNumber", v);
+                UserConfig.setInt("ICCMaxDecodeNumber", v);
                 xInput.setStyle(null);
             } else {
                 xInput.setStyle(NodeStyleTools.badStyle);
@@ -1875,7 +1875,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             name = embedICCName;
         }
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Xml)),
+        final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Xml)),
                 name, FileFilters.XmlExtensionFilter);
         if (file == null) {
             return;
@@ -2061,7 +2061,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             name = embedICCName;
         }
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 name, targetExtensionFilter);
         if (file == null) {
             return;

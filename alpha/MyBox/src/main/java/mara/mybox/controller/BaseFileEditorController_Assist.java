@@ -256,7 +256,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
             }
             sourceFile = file;
             sourceInformation = FileEditInformation.newEditInformation(editType, file);
-            sourceInformation.setPageSize(UserConfig.getUserConfigInt(baseName + "PageSize", defaultPageSize));
+            sourceInformation.setPageSize(UserConfig.getInt(baseName + "PageSize", defaultPageSize));
             sourceInformation.setCurrentPage(pageNumber);
             targetInformation = FileEditInformation.newEditInformation(editType);
             targetInformation.setPageSize(sourceInformation.getPageSize());
@@ -734,7 +734,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
         if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
             return;
         }
-        if (UserConfig.getUserConfigBoolean(baseName + "UpdateSynchronously", false)
+        if (UserConfig.getBoolean(baseName + "UpdateSynchronously", false)
                 || (pairArea != null && pairArea.getText().isEmpty())) {
             refreshPairAction();
         }
@@ -847,7 +847,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
     }
 
     protected void saveNew() {
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 null, targetExtensionFilter);
         if (file == null) {
             return;
@@ -966,7 +966,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
         } else {
             name = new Date().getTime() + "";
         }
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 name, targetExtensionFilter);
         if (file == null) {
             return;

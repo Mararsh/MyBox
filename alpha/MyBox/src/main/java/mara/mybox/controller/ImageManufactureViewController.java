@@ -31,11 +31,11 @@ public class ImageManufactureViewController extends ImageManufactureOperationCon
             imageController.initViewControls();
             imageController.setZoomStep(image);
 
-            fitSizeCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "FitSize", false));
+            fitSizeCheck.setSelected(UserConfig.getBoolean(baseName + "FitSize", false));
             fitSizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "FitSize", fitSizeCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FitSize", fitSizeCheck.isSelected());
                 }
             });
 

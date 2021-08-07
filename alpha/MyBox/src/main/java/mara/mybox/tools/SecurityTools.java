@@ -81,7 +81,7 @@ public class SecurityTools {
             SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
             context.init(null, null, null);
             SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
-            socket.setSoTimeout(UserConfig.getUserConfigInt("WebConnectTimeout", 10000));
+            socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
             try {
                 socket.startHandshake();
                 socket.close();
@@ -294,7 +294,7 @@ public class SecurityTools {
             SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
             context.init(null, null, null);
             SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
-            socket.setSoTimeout(UserConfig.getUserConfigInt("WebConnectTimeout", 10000));
+            socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
             try {
                 socket.startHandshake();
                 socket.close();
@@ -311,7 +311,7 @@ public class SecurityTools {
             SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
             context.init(null, null, null);
             SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
-            socket.setSoTimeout(UserConfig.getUserConfigInt("WebConnectTimeout", 10000));
+            socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
             try {
                 socket.startHandshake();
                 socket.close();

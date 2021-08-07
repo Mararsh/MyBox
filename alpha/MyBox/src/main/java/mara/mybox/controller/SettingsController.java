@@ -146,15 +146,15 @@ public class SettingsController extends BaseController {
 
     protected void initSettingValues() {
         try {
-            stopAlarmCheck.setSelected(UserConfig.getUserConfigBoolean("StopAlarmsWhenExit"));
+            stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
 
-            thumbnailWidthInput.setText(UserConfig.getUserConfigInt("ThumbnailWidth", 100) + "");
+            thumbnailWidthInput.setText(UserConfig.getInt("ThumbnailWidth", 100) + "");
 
-            recentFileNumber = UserConfig.getUserConfigInt("FileRecentNumber", 20);
+            recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
 
-            String style = UserConfig.getUserConfigString("InterfaceStyle", AppValues.DefaultStyle);
+            String style = UserConfig.getString("InterfaceStyle", AppValues.DefaultStyle);
             switch (style) {
                 case AppValues.DefaultStyle:
                     styleBox.getSelectionModel().select(Languages.message("DefaultStyle"));
@@ -212,11 +212,11 @@ public class SettingsController extends BaseController {
             controlsTextCheck.setSelected(AppVariables.controlDisplayText);
             hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
 
-            imageWidthBox.getSelectionModel().select(UserConfig.getUserConfigInt("MaxImageSampleWidth", 4096) + "");
+            imageWidthBox.getSelectionModel().select(UserConfig.getInt("MaxImageSampleWidth", 4096) + "");
 
-            splitPaneSensitiveCheck.setSelected(UserConfig.getUserConfigBoolean("ControlSplitPanesSensitive", false));
-            mousePassControlPanesCheck.setSelected(UserConfig.getUserConfigBoolean("MousePassControlPanes", true));
-            popColorSetCheck.setSelected(UserConfig.getUserConfigBoolean("PopColorSetWhenMousePassing", true));
+            splitPaneSensitiveCheck.setSelected(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
+            mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
+            popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
 
             checkLanguage();
             checkPdfMem();
@@ -329,7 +329,7 @@ public class SettingsController extends BaseController {
                         return;
                     }
                     AppVariables.controlDisplayText = controlsTextCheck.isSelected();
-                    UserConfig.setUserConfigBoolean("ControlDisplayText", AppVariables.controlDisplayText);
+                    UserConfig.setBoolean("ControlDisplayText", AppVariables.controlDisplayText);
                     refreshInterfaceAll();
                 }
             });
@@ -341,7 +341,7 @@ public class SettingsController extends BaseController {
                         return;
                     }
                     AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
-                    UserConfig.setUserConfigBoolean("HidpiIcons", AppVariables.hidpiIcons);
+                    UserConfig.setBoolean("HidpiIcons", AppVariables.hidpiIcons);
                     refreshInterfaceAll();
                 }
             });
@@ -349,7 +349,7 @@ public class SettingsController extends BaseController {
             popSizeSelector.getItems().addAll(Arrays.asList(
                     "1.5", "1", "1.2", "2", "2.5", "0.8")
             );
-            popSizeSelector.setValue(UserConfig.getUserConfigString("PopTextSize", "1.5"));
+            popSizeSelector.setValue(UserConfig.getString("PopTextSize", "1.5"));
             popSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -357,7 +357,7 @@ public class SettingsController extends BaseController {
                         try {
                             float f = Float.parseFloat(newValue);
                             if (f > 0) {
-                                UserConfig.setUserConfigString("PopTextSize", newValue);
+                                UserConfig.setString("PopTextSize", newValue);
                                 ValidationTools.setEditorNormal(popSizeSelector);
                                 popSuccessful();
                             } else {
@@ -373,7 +373,7 @@ public class SettingsController extends BaseController {
             popDurationSelector.getItems().addAll(Arrays.asList(
                     "3000", "5000", "2000", "1500", "1000", "4000", "2500")
             );
-            popDurationSelector.setValue(UserConfig.getUserConfigInt("PopTextDuration", 3000) + "");
+            popDurationSelector.setValue(UserConfig.getInt("PopTextDuration", 3000) + "");
             popDurationSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -381,7 +381,7 @@ public class SettingsController extends BaseController {
                         try {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
-                                UserConfig.setUserConfigInt("PopTextDuration", v);
+                                UserConfig.setInt("PopTextDuration", v);
                                 ValidationTools.setEditorNormal(popDurationSelector);
                                 popSuccessful();
                             } else {
@@ -398,7 +398,7 @@ public class SettingsController extends BaseController {
             popBgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setUserConfigString("PopTextBgColor", popBgColorController.rgb());
+                    UserConfig.setString("PopTextBgColor", popBgColorController.rgb());
                     popSuccessful();
                 }
             });
@@ -407,7 +407,7 @@ public class SettingsController extends BaseController {
             popInfoColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setUserConfigString("PopInfoColor", popInfoColorController.rgb());
+                    UserConfig.setString("PopInfoColor", popInfoColorController.rgb());
                     popSuccessful();
                 }
             });
@@ -416,7 +416,7 @@ public class SettingsController extends BaseController {
             popErrorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setUserConfigString("PopErrorColor", popErrorColorController.rgb());
+                    UserConfig.setString("PopErrorColor", popErrorColorController.rgb());
                     popSuccessful();
                 }
             });
@@ -425,7 +425,7 @@ public class SettingsController extends BaseController {
             popWarnColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setUserConfigString("PopWarnColor", popWarnColorController.rgb());
+                    UserConfig.setString("PopWarnColor", popWarnColorController.rgb());
                     popSuccessful();
                 }
             });
@@ -497,7 +497,7 @@ public class SettingsController extends BaseController {
 
     public void setStyle(String style) {
         try {
-            UserConfig.setUserConfigString("InterfaceStyle", style);
+            UserConfig.setString("InterfaceStyle", style);
             styleAll(style);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
@@ -518,17 +518,17 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void mousePassControlPanes() {
-        UserConfig.setUserConfigBoolean("MousePassControlPanes", mousePassControlPanesCheck.isSelected());
+        UserConfig.setBoolean("MousePassControlPanes", mousePassControlPanesCheck.isSelected());
     }
 
     @FXML
     protected void popColorSet() {
-        UserConfig.setUserConfigBoolean("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
+        UserConfig.setBoolean("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
     }
 
     @FXML
     protected void splitPaneSensitive() {
-        UserConfig.setUserConfigBoolean("ControlSplitPanesSensitive", splitPaneSensitiveCheck.isSelected());
+        UserConfig.setBoolean("ControlSplitPanesSensitive", splitPaneSensitiveCheck.isSelected());
     }
 
     /*
@@ -576,8 +576,8 @@ public class SettingsController extends BaseController {
             settingsJVMButton.setDisable(true);
             isSettingValues = false;
 
-            webConnectTimeoutInput.setText(UserConfig.getUserConfigInt("WebConnectTimeout", 10000) + "");
-            webReadTimeoutInput.setText(UserConfig.getUserConfigInt("WebReadTimeout", 10000) + "");
+            webConnectTimeoutInput.setText(UserConfig.getInt("WebConnectTimeout", 10000) + "");
+            webReadTimeoutInput.setText(UserConfig.getInt("WebReadTimeout", 10000) + "");
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -672,7 +672,7 @@ public class SettingsController extends BaseController {
         try {
             int v = Integer.parseInt(webConnectTimeoutInput.getText());
             if (v > 0) {
-                UserConfig.setUserConfigInt("WebConnectTimeout", v);
+                UserConfig.setInt("WebConnectTimeout", v);
                 webConnectTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
@@ -688,7 +688,7 @@ public class SettingsController extends BaseController {
         try {
             int v = Integer.parseInt(webReadTimeoutInput.getText());
             if (v > 0) {
-                UserConfig.setUserConfigInt("WebReadTimeout", v);
+                UserConfig.setInt("WebReadTimeout", v);
                 webReadTimeoutInput.setStyle(null);
                 popSuccessful();
             } else {
@@ -740,7 +740,7 @@ public class SettingsController extends BaseController {
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    UserConfig.setUserConfigBoolean("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
+                    UserConfig.setBoolean("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
                 }
             });
 
@@ -751,7 +751,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void setFileRecentAction(ActionEvent event) {
-        UserConfig.setUserConfigInt("FileRecentNumber", recentFileNumber);
+        UserConfig.setInt("FileRecentNumber", recentFileNumber);
         AppVariables.fileRecentNumber = recentFileNumber;
         popSuccessful();
     }
@@ -768,7 +768,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected void noFileHistories(ActionEvent event) {
         fileRecentInput.setText("0");
-        UserConfig.setUserConfigInt("FileRecentNumber", 0);
+        UserConfig.setInt("FileRecentNumber", 0);
         AppVariables.fileRecentNumber = 0;
         popSuccessful();
     }
@@ -841,7 +841,7 @@ public class SettingsController extends BaseController {
     }
 
     protected void checkPdfMem() {
-        String pm = UserConfig.getUserConfigString("PdfMemDefault", "1GB");
+        String pm = UserConfig.getString("PdfMemDefault", "1GB");
         switch (pm) {
             case "1GB":
                 pdfMem1GRadio.setSelected(true);
@@ -892,7 +892,7 @@ public class SettingsController extends BaseController {
                         try {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
-                                UserConfig.setUserConfigInt("StrokeWidth", v);
+                                UserConfig.setInt("StrokeWidth", v);
                                 ValidationTools.setEditorNormal(strokeWidthBox);
                                 if (parentController instanceof BaseImageShapesController) {
                                     ((BaseImageShapesController) parentController).setMaskStroke();
@@ -908,7 +908,7 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
-            strokeWidthBox.getSelectionModel().select(UserConfig.getUserConfigString("StrokeWidth", "3"));
+            strokeWidthBox.getSelectionModel().select(UserConfig.getString("StrokeWidth", "3"));
 
             strokeColorSetController.init(this, "StrokeColor", Color.web(BaseImageShapesController.DefaultStrokeColor));
             strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
@@ -935,7 +935,7 @@ public class SettingsController extends BaseController {
                         try {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
-                                UserConfig.setUserConfigInt("AnchorWidth", v);
+                                UserConfig.setInt("AnchorWidth", v);
                                 ValidationTools.setEditorNormal(anchorWidthBox);
                                 if (parentController instanceof BaseImageShapesController) {
                                     ((BaseImageShapesController) parentController).setMaskStroke();
@@ -951,7 +951,7 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
-            anchorWidthBox.getSelectionModel().select(UserConfig.getUserConfigString("AnchorWidth", "10"));
+            anchorWidthBox.getSelectionModel().select(UserConfig.getString("AnchorWidth", "10"));
 
             anchorColorSetController.init(this, "AnchorColor", Color.web(BaseImageShapesController.DefaultAnchorColor));
             anchorColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
@@ -971,7 +971,7 @@ public class SettingsController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setUserConfigBoolean("AnchorSolid", new_toggle);
+                    UserConfig.setBoolean("AnchorSolid", new_toggle);
                     if (parentController instanceof BaseImageShapesController) {
                         ((BaseImageShapesController) parentController).setMaskStroke();
                     } else if (parentController instanceof BaseImageController) {
@@ -979,7 +979,7 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
-            anchorSolidCheck.setSelected(UserConfig.getUserConfigBoolean("AnchorSolid", true));
+            anchorSolidCheck.setSelected(UserConfig.getBoolean("AnchorSolid", true));
 
             alphaColorSetController.init(this, "AlphaAsColor", Color.WHITE);
             alphaColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
@@ -1002,7 +1002,7 @@ public class SettingsController extends BaseController {
                     try {
                         int v = Integer.valueOf(thumbnailWidthInput.getText());
                         if (v > 0) {
-                            UserConfig.setUserConfigInt("ThumbnailWidth", v);
+                            UserConfig.setInt("ThumbnailWidth", v);
                             thumbnailWidthInput.setStyle(null);
                             popSuccessful();
                         } else {
@@ -1023,7 +1023,7 @@ public class SettingsController extends BaseController {
                         try {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
-                                UserConfig.setUserConfigInt("MaxImageSampleWidth", v);
+                                UserConfig.setInt("MaxImageSampleWidth", v);
                                 ValidationTools.setEditorNormal(imageWidthBox);
                             } else {
                                 ValidationTools.setEditorBadStyle(imageWidthBox);
@@ -1034,7 +1034,7 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
-            imageWidthBox.getSelectionModel().select(UserConfig.getUserConfigString("MaxImageSampleWidth", "4096"));
+            imageWidthBox.getSelectionModel().select(UserConfig.getString("MaxImageSampleWidth", "4096"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -1072,9 +1072,9 @@ public class SettingsController extends BaseController {
      */
     public void initMapTab() {
         try {
-            tiandituWebKeyInput.setText(UserConfig.getUserConfigString("TianDiTuWebKey", AppValues.TianDiTuWebKey));
-            gaodeWebKeyInput.setText(UserConfig.getUserConfigString("GaoDeMapWebKey", AppValues.GaoDeMapWebKey));
-            gaodeServiceKeyInput.setText(UserConfig.getUserConfigString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey));
+            tiandituWebKeyInput.setText(UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey));
+            gaodeWebKeyInput.setText(UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapWebKey));
+            gaodeServiceKeyInput.setText(UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1091,9 +1091,9 @@ public class SettingsController extends BaseController {
             popError(Languages.message("InvalidData"));
             return;
         }
-        UserConfig.setUserConfigString("TianDiTuWebKey", tiandituKey);
-        UserConfig.setUserConfigString("GaoDeMapWebKey", daodeWeb);
-        UserConfig.setUserConfigString("GaoDeMapServiceKey", gaoServiceKey);
+        UserConfig.setString("TianDiTuWebKey", tiandituKey);
+        UserConfig.setString("GaoDeMapWebKey", daodeWeb);
+        UserConfig.setString("GaoDeMapServiceKey", gaoServiceKey);
     }
 
     @FXML

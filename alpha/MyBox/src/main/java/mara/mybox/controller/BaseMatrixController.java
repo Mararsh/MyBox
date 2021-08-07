@@ -81,29 +81,29 @@ public class BaseMatrixController extends BaseSheetController {
     public void setParameters(BaseController parent) {
         try {
             super.setParameters(parent);
-            colsNumber = UserConfig.getUserConfigInt(baseName + "ColsNumber", 3);
-            rowsNumber = UserConfig.getUserConfigInt(baseName + "RowsNumber", 3);
-            scale = (short) UserConfig.getUserConfigInt(baseName + "Scale", 2);
-            maxRandom = UserConfig.getUserConfigInt(baseName + "MaxRandom", 1);
+            colsNumber = UserConfig.getInt(baseName + "ColsNumber", 3);
+            rowsNumber = UserConfig.getInt(baseName + "RowsNumber", 3);
+            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
+            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 1);
             nameInput.setText(rowsNumber + "x" + colsNumber);
 
             if (colsNumber <= 0) {
                 colsNumber = 3;
-                UserConfig.setUserConfigInt(baseName + "ColsNumber", colsNumber);
+                UserConfig.setInt(baseName + "ColsNumber", colsNumber);
             }
             if (rowsNumber <= 0) {
                 rowsNumber = 3;
-                UserConfig.setUserConfigInt(baseName + "RowsNumber", rowsNumber);
+                UserConfig.setInt(baseName + "RowsNumber", rowsNumber);
             }
             if (scale < 0) {
                 scale = 2;
-                UserConfig.setUserConfigInt(baseName + "Scale", scale);
+                UserConfig.setInt(baseName + "Scale", scale);
             }
             makeSheet(new String[rowsNumber][colsNumber], false);
 
-            autoNameCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "AutoName", true));
+            autoNameCheck.setSelected(UserConfig.getBoolean(baseName + "AutoName", true));
             autoNameCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "AutoName", newValue);
+                        UserConfig.setBoolean(baseName + "AutoName", newValue);
                     });
 
             columnsNumberSelector.getItems().addAll(
@@ -118,7 +118,7 @@ public class BaseMatrixController extends BaseSheetController {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 colsNumber = v;
-                                UserConfig.setUserConfigInt(baseName + "ColsNumber", v);
+                                UserConfig.setInt(baseName + "ColsNumber", v);
                                 columnsNumberSelector.getEditor().setStyle(null);
                                 if (autoNameCheck.isSelected()) {
                                     nameInput.setText(rowsNumber + "x" + colsNumber);
@@ -144,7 +144,7 @@ public class BaseMatrixController extends BaseSheetController {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 rowsNumber = v;
-                                UserConfig.setUserConfigInt(baseName + "RowsNumber", v);
+                                UserConfig.setInt(baseName + "RowsNumber", v);
                                 rowsNumberSelector.getEditor().setStyle(null);
                                 if (autoNameCheck.isSelected()) {
                                     nameInput.setText(rowsNumber + "x" + colsNumber);
@@ -170,7 +170,7 @@ public class BaseMatrixController extends BaseSheetController {
                             int v = Integer.parseInt(newValue);
                             if (v >= 0 && v <= 15) {
                                 scale = (short) v;
-                                UserConfig.setUserConfigInt(baseName + "Scale", v);
+                                UserConfig.setInt(baseName + "Scale", v);
                                 scaleSelector.getEditor().setStyle(null);
                                 scaleMatrix();
                             } else {
@@ -193,7 +193,7 @@ public class BaseMatrixController extends BaseSheetController {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 maxRandom = v;
-                                UserConfig.setUserConfigInt(baseName + "MaxRandom", v);
+                                UserConfig.setInt(baseName + "MaxRandom", v);
                                 randomSelector.getEditor().setStyle(null);
                             } else {
                                 randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);

@@ -131,7 +131,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                     startButton.setDisable(false);
                     codeType = BarcodeType.valueOf(((RadioButton) newV).getText());
-                    UserConfig.setUserConfigString("BarcodeType", codeType.name());
+                    UserConfig.setString("BarcodeType", codeType.name());
 
                     optionsBox.getChildren().clear();
                     switch (codeType) {
@@ -204,7 +204,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 }
             });
             NodeTools.setRadioSelected(typeGroup,
-                    UserConfig.getUserConfigString("BarcodeType", BarcodeType.QR_Code.name()));
+                    UserConfig.getString("BarcodeType", BarcodeType.QR_Code.name()));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -221,10 +221,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     orientation = Integer.valueOf(orientationSelecor.getValue());
-                    UserConfig.setUserConfigInt("BarcodeOrientation", orientation);
+                    UserConfig.setInt("BarcodeOrientation", orientation);
                 }
             });
-            orientationSelecor.getSelectionModel().select(UserConfig.getUserConfigString("BarcodeOrientation", "0"));
+            orientationSelecor.getSelectionModel().select(UserConfig.getString("BarcodeOrientation", "0"));
 
             textPostion = HumanReadablePlacement.HRP_BOTTOM;
             textPositionSelector.getItems().addAll(Arrays.asList(Languages.message("Bottom"), Languages.message("Top"), Languages.message("None")
@@ -239,18 +239,18 @@ public class BarcodeCreatorController extends ImageViewerController {
                     } else if (newV.equals(Languages.message("None"))) {
                         textPostion = HumanReadablePlacement.HRP_NONE;
                     }
-                    UserConfig.setUserConfigString("BarcodeTextPosition", newV);
+                    UserConfig.setString("BarcodeTextPosition", newV);
                 }
             });
-            textPositionSelector.getSelectionModel().select(UserConfig.getUserConfigString("BarcodeTextPosition", Languages.message("Bottom")));
+            textPositionSelector.getSelectionModel().select(UserConfig.getString("BarcodeTextPosition", Languages.message("Bottom")));
 
-            fontName = UserConfig.getUserConfigString("BarcodeFontName", "Arial");
+            fontName = UserConfig.getString("BarcodeFontName", "Arial");
             fontSelector.getItems().addAll(javafx.scene.text.Font.getFamilies());
             fontSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     fontName = newValue;
-                    UserConfig.setUserConfigString("BarcodeFontName", newValue);
+                    UserConfig.setString("BarcodeFontName", newValue);
                 }
             });
             fontSelector.getSelectionModel().select(fontName);
@@ -266,7 +266,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             fontSize = v;
-                            UserConfig.setUserConfigInt("BarcodeFontSize", v);
+                            UserConfig.setInt("BarcodeFontSize", v);
                             ValidationTools.setEditorNormal(sizeSelector);
                         } else {
                             ValidationTools.setEditorBadStyle(sizeSelector);
@@ -276,7 +276,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            sizeSelector.getSelectionModel().select(UserConfig.getUserConfigInt("BarcodeFontSize", 8) + "");
+            sizeSelector.getSelectionModel().select(UserConfig.getInt("BarcodeFontSize", 8) + "");
 
             narrowWidth = 0.19;
             narrowWidthInput.textProperty().addListener(new ChangeListener<String>() {
@@ -286,7 +286,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         double v = Double.valueOf(newValue);
                         if (v > 0) {
                             narrowWidth = v;
-                            UserConfig.setUserConfigString("BarcodeNarrowWdith", newValue);
+                            UserConfig.setString("BarcodeNarrowWdith", newValue);
                             narrowWidthInput.setStyle(null);
                         } else {
                             narrowWidthInput.setStyle(NodeStyleTools.badStyle);
@@ -296,7 +296,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            narrowWidthInput.setText(UserConfig.getUserConfigString("BarcodeNarrowWdith", "0.19"));
+            narrowWidthInput.setText(UserConfig.getString("BarcodeNarrowWdith", "0.19"));
 
             barRatio = 2.5;
             barRatioSelecor.getItems().addAll(Arrays.asList(
@@ -309,7 +309,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         double v = Double.valueOf(newV);
                         if (v > 0) {
                             barRatio = v;
-                            UserConfig.setUserConfigString("BarcodeBarRatio", newV);
+                            UserConfig.setString("BarcodeBarRatio", newV);
                             ValidationTools.setEditorNormal(barRatioSelecor);
                         } else {
                             ValidationTools.setEditorBadStyle(barRatioSelecor);
@@ -319,7 +319,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            barRatioSelecor.getSelectionModel().select(UserConfig.getUserConfigString("BarcodeBarRatio", "2.5"));
+            barRatioSelecor.getSelectionModel().select(UserConfig.getString("BarcodeBarRatio", "2.5"));
 
             height1 = 15;
             height1Input.textProperty().addListener(new ChangeListener<String>() {
@@ -329,7 +329,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             height1 = v;
-                            UserConfig.setUserConfigInt("BarcodeHeight", v);
+                            UserConfig.setInt("BarcodeHeight", v);
                             height1Input.setStyle(null);
                         } else {
                             height1Input.setStyle(NodeStyleTools.badStyle);
@@ -339,7 +339,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            height1Input.setText(UserConfig.getUserConfigInt("BarcodeHeight", 15) + "");
+            height1Input.setText(UserConfig.getInt("BarcodeHeight", 15) + "");
 
             quietWidth = 0.25;
             quietWidthInput.textProperty().addListener(new ChangeListener<String>() {
@@ -349,7 +349,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         double v = Double.valueOf(newValue);
                         if (v >= 0) {
                             quietWidth = v;
-                            UserConfig.setUserConfigString("BarcodeQuietWdith", newValue);
+                            UserConfig.setString("BarcodeQuietWdith", newValue);
                             quietWidthInput.setStyle(null);
                         } else {
                             quietWidthInput.setStyle(NodeStyleTools.badStyle);
@@ -359,7 +359,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            quietWidthInput.setText(UserConfig.getUserConfigString("BarcodeQuietWdith", "0.25"));
+            quietWidthInput.setText(UserConfig.getString("BarcodeQuietWdith", "0.25"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -378,7 +378,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             qrWidth = v;
-                            UserConfig.setUserConfigInt("BarcodeWdith2", v);
+                            UserConfig.setInt("BarcodeWdith2", v);
                             qrWidthInput.setStyle(null);
                         } else {
                             qrWidthInput.setStyle(NodeStyleTools.badStyle);
@@ -388,7 +388,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            qrWidthInput.setText(UserConfig.getUserConfigInt("BarcodeWdith2", 200) + "");
+            qrWidthInput.setText(UserConfig.getInt("BarcodeWdith2", 200) + "");
 
             qrHeight = 200;
             qrHeightInput.textProperty().addListener(new ChangeListener<String>() {
@@ -398,7 +398,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             qrHeight = v;
-                            UserConfig.setUserConfigInt("BarcodeHeight2", v);
+                            UserConfig.setInt("BarcodeHeight2", v);
                             qrHeightInput.setStyle(null);
                         } else {
                             qrHeightInput.setStyle(NodeStyleTools.badStyle);
@@ -408,7 +408,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            qrHeightInput.setText(UserConfig.getUserConfigInt("BarcodeHeight2", 200) + "");
+            qrHeightInput.setText(UserConfig.getInt("BarcodeHeight2", 200) + "");
 
             qrMargin = 2;
             qrMarginInput.textProperty().addListener(new ChangeListener<String>() {
@@ -418,7 +418,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             qrMargin = v;
-                            UserConfig.setUserConfigInt("BarcodeMargin", v);
+                            UserConfig.setInt("BarcodeMargin", v);
                             qrMarginInput.setStyle(null);
                         } else {
                             qrMarginInput.setStyle(NodeStyleTools.badStyle);
@@ -428,7 +428,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            qrMarginInput.setText(UserConfig.getUserConfigInt("BarcodeMargin", 2) + "");
+            qrMarginInput.setText(UserConfig.getInt("BarcodeMargin", 2) + "");
 
             qrErrorCorrectionLevel = ErrorCorrectionLevel.H;
             qrErrorCorrectionSelecor.getItems().addAll(Arrays.asList(Languages.message("ErrorCorrectionLevelL"), Languages.message("ErrorCorrectionLevelM"),
@@ -446,10 +446,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                     } else if (Languages.message("ErrorCorrectionLevelH").equals(newV)) {
                         qrErrorCorrectionLevel = ErrorCorrectionLevel.H;
                     }
-                    UserConfig.setUserConfigString("QRErrorCorrection", newV);
+                    UserConfig.setString("QRErrorCorrection", newV);
                 }
             });
-            qrErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getUserConfigString("QRErrorCorrection", Languages.message("ErrorCorrectionLevelH")));
+            qrErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getString("QRErrorCorrection", Languages.message("ErrorCorrectionLevelH")));
 
             File pic = mara.mybox.fxml.FxFileTools.getInternalFile("/img/About.png", "image", "About.png");
             if (pic != null) {
@@ -471,7 +471,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             pdf417Width = v;
-                            UserConfig.setUserConfigInt("PDF417Width", v);
+                            UserConfig.setInt("PDF417Width", v);
                             pdf417WidthInput.setStyle(null);
                         } else {
                             pdf417WidthInput.setStyle(NodeStyleTools.badStyle);
@@ -481,7 +481,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            pdf417WidthInput.setText(UserConfig.getUserConfigInt("PDF417Width", 300) + "");
+            pdf417WidthInput.setText(UserConfig.getInt("PDF417Width", 300) + "");
 
             pdf417Height = 100;
             pdf417HeightInput.textProperty().addListener(new ChangeListener<String>() {
@@ -491,7 +491,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             pdf417Height = v;
-                            UserConfig.setUserConfigInt("PDF417Height", v);
+                            UserConfig.setInt("PDF417Height", v);
                             pdf417HeightInput.setStyle(null);
                         } else {
                             pdf417HeightInput.setStyle(NodeStyleTools.badStyle);
@@ -501,7 +501,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            pdf417HeightInput.setText(UserConfig.getUserConfigInt("PDF417Height", 100) + "");
+            pdf417HeightInput.setText(UserConfig.getInt("PDF417Height", 100) + "");
 
             pdf417Margin = 10;
             pdf417MarginInput.textProperty().addListener(new ChangeListener<String>() {
@@ -511,7 +511,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             pdf417Margin = v;
-                            UserConfig.setUserConfigInt("PDF417Margin", v);
+                            UserConfig.setInt("PDF417Margin", v);
                             pdf417MarginInput.setStyle(null);
                         } else {
                             pdf417MarginInput.setStyle(NodeStyleTools.badStyle);
@@ -521,7 +521,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            pdf417MarginInput.setText(UserConfig.getUserConfigInt("PDF417Margin", 10) + "");
+            pdf417MarginInput.setText(UserConfig.getInt("PDF417Margin", 10) + "");
 
             pdf417Compact = Compaction.AUTO;
             pdf417CompactionSelecor.getItems().addAll(Arrays.asList(Compaction.AUTO.name(), Compaction.TEXT.name(),
@@ -543,10 +543,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                     } catch (Exception e) {
                         pdf417Compact = Compaction.AUTO;
                     }
-                    UserConfig.setUserConfigString("PDF417Compaction", newV);
+                    UserConfig.setString("PDF417Compaction", newV);
                 }
             });
-            pdf417CompactionSelecor.getSelectionModel().select(UserConfig.getUserConfigString("PDF417Compaction", Compaction.AUTO.name()));
+            pdf417CompactionSelecor.getSelectionModel().select(UserConfig.getString("PDF417Compaction", Compaction.AUTO.name()));
 
             pdf417ErrorCorrectionLevel = 3;
             pdf417ErrorCorrectionSelecor.getItems().addAll(Arrays.asList(Languages.message("PDF417ErrorCorrection0"), Languages.message("PDF417ErrorCorrection1"),
@@ -559,10 +559,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     pdf417ErrorCorrectionLevel = Integer.valueOf(newV.substring(0, 1));
-                    UserConfig.setUserConfigString("PDF417ErrorCorrection", newV);
+                    UserConfig.setString("PDF417ErrorCorrection", newV);
                 }
             });
-            pdf417ErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getUserConfigString("PDF417ErrorCorrection", Languages.message("PDF417ErrorCorrection3")));
+            pdf417ErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getString("PDF417ErrorCorrection", Languages.message("PDF417ErrorCorrection3")));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -579,7 +579,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             dmWidth = v;
-                            UserConfig.setUserConfigInt("DataMatrixWidth", v);
+                            UserConfig.setInt("DataMatrixWidth", v);
                             dmWidthInput.setStyle(null);
                         } else {
                             dmWidthInput.setStyle(NodeStyleTools.badStyle);
@@ -589,7 +589,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            dmWidthInput.setText(UserConfig.getUserConfigInt("DataMatrixWidth", 100) + "");
+            dmWidthInput.setText(UserConfig.getInt("DataMatrixWidth", 100) + "");
 
             dmHeight = 100;
             dmHeightInput.textProperty().addListener(new ChangeListener<String>() {
@@ -599,7 +599,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             dmHeight = v;
-                            UserConfig.setUserConfigInt("DataMatrixHeight", v);
+                            UserConfig.setInt("DataMatrixHeight", v);
                             dmHeightInput.setStyle(null);
                         } else {
                             dmHeightInput.setStyle(NodeStyleTools.badStyle);
@@ -609,7 +609,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     }
                 }
             });
-            dmHeightInput.setText(UserConfig.getUserConfigInt("DataMatrixHeight", 100) + "");
+            dmHeightInput.setText(UserConfig.getInt("DataMatrixHeight", 100) + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -806,7 +806,7 @@ public class BarcodeCreatorController extends ImageViewerController {
     @Override
     public void saveAsAction() {
         try {
-            final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+            final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                     null, FileFilters.ImageExtensionFilter);
             if (file == null) {
                 return;

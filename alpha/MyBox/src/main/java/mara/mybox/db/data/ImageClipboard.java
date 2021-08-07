@@ -193,7 +193,7 @@ public class ImageClipboard extends BaseData {
             }
             String thumbFile = prefix + "_thumbnail.png";
             BufferedImage thumbnail = ScaleTools.scaleImageWidthKeep(image,
-                    UserConfig.getUserConfigInt("ThumbnailWidth", 100));
+                    UserConfig.getInt("ThumbnailWidth", 100));
             if (thumbnail == null) {
                 return null;
             }

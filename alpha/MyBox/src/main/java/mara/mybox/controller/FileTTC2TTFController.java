@@ -22,7 +22,7 @@ import thridparty.TTC;
  * @CreateDate 2020-12-01
  * @License Apache License Version 2.0
  */
-public class FileTTC2TTFController extends HtmlViewerController {
+public class FileTTC2TTFController extends HtmlTableController {
 
     protected TTC ttc;
 
@@ -108,7 +108,7 @@ public class FileTTC2TTFController extends HtmlViewerController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = UserConfig.getUserConfigPath(baseName + "TargetPath");
+            File path = UserConfig.getPath(baseName + "TargetPath");
             if (path != null) {
                 chooser.setInitialDirectory(path);
             }

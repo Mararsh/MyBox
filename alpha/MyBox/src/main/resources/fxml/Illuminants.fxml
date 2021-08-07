@@ -125,7 +125,7 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab closable="false" text="%StandardIlluminants">
                             <content>
-                                <fx:include fx:id="illuminants" source="HtmlViewer.fxml" />
+                                <fx:include fx:id="illuminants" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
                     </tabs>

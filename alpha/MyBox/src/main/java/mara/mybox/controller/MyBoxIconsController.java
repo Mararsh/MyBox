@@ -64,7 +64,7 @@ public class MyBoxIconsController extends BaseTaskController {
     @Override
     protected boolean doTask() {
         try {
-            String saved = UserConfig.getUserConfigString("SourceCodesPath", null);
+            String saved = UserConfig.getString("SourceCodesPath", null);
             if (saved == null) {
                 parentController.popError(Languages.message("MissSourceCodesPath"));
                 return false;

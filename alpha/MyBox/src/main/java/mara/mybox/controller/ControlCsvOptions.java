@@ -64,18 +64,18 @@ public class ControlCsvOptions extends BaseController {
                 });
             }
 
-            withNamesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Names", true));
+            withNamesCheck.setSelected(UserConfig.getBoolean(baseName + "Names", true));
             withNamesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Names", newValue);
+                    UserConfig.setBoolean(baseName + "Names", newValue);
                 }
             });
 
             List<String> setNames = TextTools.getCharsetNames();
             charsetSelector.getItems().addAll(setNames);
             try {
-                charset = Charset.forName(UserConfig.getUserConfigString(baseName + "Charset", Charset.defaultCharset().name()));
+                charset = Charset.forName(UserConfig.getString(baseName + "Charset", Charset.defaultCharset().name()));
             } catch (Exception e) {
                 charset = Charset.defaultCharset();
             }
@@ -101,10 +101,10 @@ public class ControlCsvOptions extends BaseController {
                     } else {
                         delimiter = ((RadioButton) (delimiterGroup.getSelectedToggle())).getText().charAt(0);
                     }
-                    UserConfig.setUserConfigInt(baseName + "Delimiter", delimiter);
+                    UserConfig.setInt(baseName + "Delimiter", delimiter);
                 }
             });
-            delimiter = (char) (UserConfig.getUserConfigInt(baseName + "Delimiter", ','));
+            delimiter = (char) (UserConfig.getInt(baseName + "Delimiter", ','));
             switch (delimiter) {
                 case ',':
                     commaRadio.fire();
@@ -146,7 +146,7 @@ public class ControlCsvOptions extends BaseController {
                 charsetSelector.setDisable(false);
             }
         }
-        UserConfig.setUserConfigString(baseName + "Charset", charset.name());
+        UserConfig.setString(baseName + "Charset", charset.name());
     }
 
 }

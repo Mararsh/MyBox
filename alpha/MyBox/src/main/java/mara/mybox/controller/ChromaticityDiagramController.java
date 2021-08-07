@@ -84,7 +84,7 @@ public class ChromaticityDiagramController extends BaseImageController {
     @FXML
     protected TextArea sourceInputArea, sourceDataArea;
     @FXML
-    protected HtmlViewerController calculateViewController,
+    protected HtmlTableController calculateViewController,
             d2n1Controller, d2n5Controller, d10n1Controller, d10n5Controller;
     @FXML
     protected TextField XInput, YInput, ZInput, xInput, yInput;
@@ -931,7 +931,7 @@ public class ChromaticityDiagramController extends BaseImageController {
     @FXML
     @Override
     public void saveAction() {
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 "ChromaticityDiagram", FileFilters.ImageExtensionFilter);
         if (file == null) {
             return;

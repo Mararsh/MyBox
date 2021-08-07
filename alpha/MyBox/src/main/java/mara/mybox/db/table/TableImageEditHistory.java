@@ -60,10 +60,10 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         if (filename == null || filename.trim().isEmpty()) {
             return records;
         }
-        int max = UserConfig.getUserConfigInt("MaxImageHistories", Default_Max_Histories);
+        int max = UserConfig.getInt("MaxImageHistories", Default_Max_Histories);
         if (max <= 0) {
             max = TableImageEditHistory.Default_Max_Histories;
-            UserConfig.setUserConfigInt("MaxImageHistories", Default_Max_Histories);
+            UserConfig.setInt("MaxImageHistories", Default_Max_Histories);
         }
         try ( Connection conn = DerbyBase.getConnection();
                  Statement statement = conn.createStatement()) {

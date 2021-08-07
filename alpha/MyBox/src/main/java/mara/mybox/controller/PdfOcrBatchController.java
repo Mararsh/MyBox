@@ -221,10 +221,10 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             deskewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("ImageOCRDeskew", newValue);
+                    UserConfig.setBoolean("ImageOCRDeskew", newValue);
                 }
             });
-            deskewCheck.setSelected(UserConfig.getUserConfigBoolean("ImageOCRDeskew", false));
+            deskewCheck.setSelected(UserConfig.getBoolean("ImageOCRDeskew", false));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -289,7 +289,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                         OCRinstance.setTessVariable(key, p.get(key));
                     }
                 }
-                String path = UserConfig.getUserConfigString(OCRTools.TessDataPath, null);
+                String path = UserConfig.getString(OCRTools.TessDataPath, null);
                 if (path != null) {
                     OCRinstance.setDatapath(path);
                 }

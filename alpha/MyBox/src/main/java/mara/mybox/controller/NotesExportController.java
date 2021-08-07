@@ -80,50 +80,50 @@ public class NotesExportController extends BaseTaskController {
             super.initControls();
             treeView = notebooksController.treeView;
 
-            timeCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Time", false));
+            timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean(baseName + "Time", timeCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Time", timeCheck.isSelected());
                 }
             });
 
-            textsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Texts", true));
+            textsCheck.setSelected(UserConfig.getBoolean(baseName + "Texts", true));
             textsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean(baseName + "Texts", textsCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Texts", textsCheck.isSelected());
                 }
             });
 
-            htmlCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Html", false));
+            htmlCheck.setSelected(UserConfig.getBoolean(baseName + "Html", false));
             htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean(baseName + "Html", htmlCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Html", htmlCheck.isSelected());
                 }
             });
 
-            framesetCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Frameset", false));
+            framesetCheck.setSelected(UserConfig.getBoolean(baseName + "Frameset", false));
             framesetCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean(baseName + "Frameset", framesetCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Frameset", framesetCheck.isSelected());
                 }
             });
 
-            xmlCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Xml", false));
+            xmlCheck.setSelected(UserConfig.getBoolean(baseName + "Xml", false));
             xmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean(baseName + "Xml", xmlCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Xml", xmlCheck.isSelected());
                 }
             });
 
             List<String> setNames = TextTools.getCharsetNames();
             charsetSelector.getItems().addAll(setNames);
             try {
-                charset = Charset.forName(UserConfig.getUserConfigString(baseName + "Charset", Charset.defaultCharset().name()));
+                charset = Charset.forName(UserConfig.getString(baseName + "Charset", Charset.defaultCharset().name()));
             } catch (Exception e) {
                 charset = Charset.defaultCharset();
             }
@@ -132,11 +132,11 @@ public class NotesExportController extends BaseTaskController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
-                    UserConfig.setUserConfigString(baseName + "Charset", charset.name());
+                    UserConfig.setString(baseName + "Charset", charset.name());
                 }
             });
 
-            styleInput.setText(UserConfig.getUserConfigString(baseName + "Style", null));
+            styleInput.setText(UserConfig.getString(baseName + "Style", null));
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
@@ -209,7 +209,7 @@ public class NotesExportController extends BaseTaskController {
                     @Override
                     public void handle(ActionEvent event) {
                         styleInput.setText(HtmlStyles.styleValue(style));
-                        UserConfig.setUserConfigString(baseName + "Style", styleInput.getText());
+                        UserConfig.setString(baseName + "Style", styleInput.getText());
                     }
                 });
                 popMenu.getItems().add(menu);

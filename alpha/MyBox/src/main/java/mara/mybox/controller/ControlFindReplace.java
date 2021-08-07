@@ -98,42 +98,42 @@ public class ControlFindReplace extends BaseController {
             caseInsensitiveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "FindCaseInsensitive", caseInsensitiveCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FindCaseInsensitive", caseInsensitiveCheck.isSelected());
                 }
             });
-            caseInsensitiveCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "FindCaseInsensitive", false));
+            caseInsensitiveCheck.setSelected(UserConfig.getBoolean(baseName + "FindCaseInsensitive", false));
 
             if (wrapCheck != null) {
                 wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "Wrap", wrapCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Wrap", wrapCheck.isSelected());
                     }
                 });
-                wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Wrap", true));
+                wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             }
 
             multilineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "FindMultiline", multilineCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FindMultiline", multilineCheck.isSelected());
                 }
             });
-            multilineCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "FindMultiline", true));
+            multilineCheck.setSelected(UserConfig.getBoolean(baseName + "FindMultiline", true));
 
             dotallCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "DotAll", dotallCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "DotAll", dotallCheck.isSelected());
                 }
             });
-            dotallCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "DotAll", true));
+            dotallCheck.setSelected(UserConfig.getBoolean(baseName + "DotAll", true));
 
-            regexCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "FindRegex", false));
+            regexCheck.setSelected(UserConfig.getBoolean(baseName + "FindRegex", false));
             regexCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "FindRegex", regexCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FindRegex", regexCheck.isSelected());
                 }
             });
 

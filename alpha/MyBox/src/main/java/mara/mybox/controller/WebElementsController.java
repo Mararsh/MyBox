@@ -210,7 +210,7 @@ public class WebElementsController extends BaseWebViewController {
                 index++;
             }
             foundCount = index - 1;
-            String style = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+            String style = UserConfig.getString(baseName + "HtmlStyle", "Default");
             String html = HtmlWriteTools.html(null, style, StringTable.tableDiv(table));
             webEngine.loadContent(html);
         } catch (Exception e) {

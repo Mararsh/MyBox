@@ -34,7 +34,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            hostsList.setText(UserConfig.getUserConfigString(baseName + "Hosts", ""));
+            hostsList.setText(UserConfig.getString(baseName + "Hosts", ""));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -45,7 +45,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
     public void queryAction() {
         dnsList.clear();
         loadingController = null;
-        UserConfig.setUserConfigString(baseName + "Hosts", hostsList.getText());
+        UserConfig.setString(baseName + "Hosts", hostsList.getText());
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

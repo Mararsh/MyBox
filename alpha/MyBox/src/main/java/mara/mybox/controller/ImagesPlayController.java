@@ -132,13 +132,13 @@ public class ImagesPlayController extends ImageViewerController {
             fromInput.setText("1");
             toInput.setText("-1");
 
-            isTransparent = UserConfig.getUserConfigBoolean(baseName + "Transparent", false);
+            isTransparent = UserConfig.getBoolean(baseName + "Transparent", false);
             transparentBackgroundCheck.setSelected(isTransparent);
             transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     isTransparent = transparentBackgroundCheck.isSelected();
-                    UserConfig.setUserConfigBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
                     if (fileFormat != null && fileFormat.equalsIgnoreCase("pdf")) {
                         reloadImages();
                     }

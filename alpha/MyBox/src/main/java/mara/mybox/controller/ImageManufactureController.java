@@ -173,9 +173,9 @@ public class ImageManufactureController extends ImageViewerController {
 
     protected void initCreatePane() {
         try {
-            createPane.setExpanded(UserConfig.getUserConfigBoolean("ImageManufactureNewPane", true));
+            createPane.setExpanded(UserConfig.getBoolean("ImageManufactureNewPane", true));
             createPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setUserConfigBoolean("ImageManufactureNewPane", createPane.isExpanded());
+                        UserConfig.setBoolean("ImageManufactureNewPane", createPane.isExpanded());
                     });
 
             newWidthInput.textProperty().addListener(
@@ -225,12 +225,12 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             historiesPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
-            historiesPane.setExpanded(UserConfig.getUserConfigBoolean("ImageManufactureHistoriesPane", false));
+            historiesPane.setExpanded(UserConfig.getBoolean("ImageManufactureHistoriesPane", false));
             historiesPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setUserConfigBoolean("ImageManufactureHistoriesPane", historiesPane.isExpanded());
+                        UserConfig.setBoolean("ImageManufactureHistoriesPane", historiesPane.isExpanded());
                     });
 
-            recordHistoriesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "RecordHistories", true));
+            recordHistoriesCheck.setSelected(UserConfig.getBoolean(baseName + "RecordHistories", true));
             checkRecordHistoriesStatus();
             recordHistoriesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -239,7 +239,7 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            maxEditHistories = UserConfig.getUserConfigInt("MaxImageHistories", TableImageEditHistory.Default_Max_Histories);
+            maxEditHistories = UserConfig.getInt("MaxImageHistories", TableImageEditHistory.Default_Max_Histories);
             if (maxEditHistories <= 0) {
                 maxEditHistories = TableImageEditHistory.Default_Max_Histories;
             }
@@ -251,7 +251,7 @@ public class ImageManufactureController extends ImageViewerController {
                         int v = Integer.valueOf(maxHistoriesInput.getText());
                         if (v >= 0) {
                             maxEditHistories = v;
-                            UserConfig.setUserConfigInt("MaxImageHistories", v);
+                            UserConfig.setInt("MaxImageHistories", v);
                             maxHistoriesInput.setStyle(null);
                             okHistoriesSizeButton.setDisable(false);
                         } else {
@@ -293,7 +293,7 @@ public class ImageManufactureController extends ImageViewerController {
                             } else {
                                 setStyle("");
                             }
-                            view.setFitWidth(UserConfig.getUserConfigInt("ThumbnailWidth", 100));
+                            view.setFitWidth(UserConfig.getInt("ThumbnailWidth", 100));
                             view.setImage(item.getThumbnail());
                             setGraphic(view);
                             setText(s);
@@ -321,9 +321,9 @@ public class ImageManufactureController extends ImageViewerController {
     protected void initBackupsTab() {
         try {
             backupPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            backupPane.setExpanded(UserConfig.getUserConfigBoolean("ImageManufactureBackupPane", false));
+            backupPane.setExpanded(UserConfig.getBoolean("ImageManufactureBackupPane", false));
             backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setUserConfigBoolean("ImageManufactureBackupPane", backupPane.isExpanded());
+                        UserConfig.setBoolean("ImageManufactureBackupPane", backupPane.isExpanded());
                     });
 
             backupController.setControls(this, baseName);
@@ -358,7 +358,7 @@ public class ImageManufactureController extends ImageViewerController {
                     controlScopePane();
                 }
             });
-            imagePaneControl.setPickOnBounds(UserConfig.getUserConfigBoolean("ControlSplitPanesSensitive", false));
+            imagePaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
 
             scopePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
                 @Override
@@ -372,10 +372,10 @@ public class ImageManufactureController extends ImageViewerController {
                     controlImagePane();
                 }
             });
-            scopePaneControl.setPickOnBounds(UserConfig.getUserConfigBoolean("ControlSplitPanesSensitive", false));
+            scopePaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
 
             try {
-                String mv = UserConfig.getUserConfigString(baseName + "MainPanePosition", "0.7");
+                String mv = UserConfig.getString(baseName + "MainPanePosition", "0.7");
                 mainSplitPane.setDividerPositions(Double.parseDouble(mv));
             } catch (Exception e) {
                 mainSplitPane.setDividerPositions(0.7);
@@ -383,7 +383,7 @@ public class ImageManufactureController extends ImageViewerController {
             mainDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
                 if (!isSettingValues) {
                     if (mainSplitPane.getItems().size() > 1) {
-                        UserConfig.setUserConfigString(baseName + "MainPanePosition", newValue.doubleValue() + "");
+                        UserConfig.setString(baseName + "MainPanePosition", newValue.doubleValue() + "");
                     }
                 }
             };
@@ -512,7 +512,7 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     public void controlScopePaneOnMouseEnter() {
-        if (UserConfig.getUserConfigBoolean("MousePassControlPanes", true)) {
+        if (UserConfig.getBoolean("MousePassControlPanes", true)) {
             controlScopePane();
         }
     }
@@ -530,7 +530,7 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         if (mainSplitPane.getItems().contains(scopePane)) {
-            if (UserConfig.getUserConfigBoolean(baseName + "FitSize", false)) {
+            if (UserConfig.getBoolean(baseName + "FitSize", false)) {
                 autoSize();
             }
             return;
@@ -538,7 +538,7 @@ public class ImageManufactureController extends ImageViewerController {
         isSettingValues = true;
         mainSplitPane.getItems().add(0, scopePane);
         try {
-            String v = UserConfig.getUserConfigString(baseName + "MainPanePosition", "0.7");
+            String v = UserConfig.getString(baseName + "MainPanePosition", "0.7");
             mainSplitPane.setDividerPosition(0, Double.parseDouble(v));
         } catch (Exception e) {
             mainSplitPane.setDividerPosition(0, 0.7);
@@ -547,7 +547,7 @@ public class ImageManufactureController extends ImageViewerController {
 //        if (scopeController.scopeAllRadio.isSelected()) {
 //            scopeController.scopeRectangleRadio.fire();
 //        }
-        if (UserConfig.getUserConfigBoolean(baseName + "FitSize", false)) {
+        if (UserConfig.getBoolean(baseName + "FitSize", false)) {
             autoSize();
         }
         isSettingValues = false;
@@ -564,7 +564,7 @@ public class ImageManufactureController extends ImageViewerController {
         isSettingValues = true;
         mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
         mainSplitPane.getItems().remove(scopePane);
-        if (UserConfig.getUserConfigBoolean(baseName + "FitSize", false)) {
+        if (UserConfig.getBoolean(baseName + "FitSize", false)) {
             autoSize();
         }
         isSettingValues = false;
@@ -573,7 +573,7 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     public void controlImagePaneOnMouseEnter() {
-        if (UserConfig.getUserConfigBoolean("MousePassControlPanes", true)) {
+        if (UserConfig.getBoolean("MousePassControlPanes", true)) {
             controlImagePane();
         }
     }
@@ -591,7 +591,7 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         if (mainSplitPane.getItems().contains(imagePane)) {
-            if (UserConfig.getUserConfigBoolean(baseName + "FitSize", false)) {
+            if (UserConfig.getBoolean(baseName + "FitSize", false)) {
                 autoSize();
             }
             return;
@@ -599,13 +599,13 @@ public class ImageManufactureController extends ImageViewerController {
         isSettingValues = true;
         mainSplitPane.getItems().add(imagePane);
         try {
-            String v = UserConfig.getUserConfigString(baseName + "MainPanePosition", "0.7");
+            String v = UserConfig.getString(baseName + "MainPanePosition", "0.7");
             mainSplitPane.setDividerPosition(0, Double.parseDouble(v));
         } catch (Exception e) {
             mainSplitPane.setDividerPosition(0, 0.7);
         }
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-        if (UserConfig.getUserConfigBoolean(baseName + "FitSize", false)) {
+        if (UserConfig.getBoolean(baseName + "FitSize", false)) {
             autoSize();
         }
         isSettingValues = false;
@@ -649,7 +649,7 @@ public class ImageManufactureController extends ImageViewerController {
             setHistoryIndex(-1);
         }
         historiesBox.applyCss();
-        UserConfig.setUserConfigBoolean(baseName + "RecordHistories", recordHistoriesCheck.isSelected());
+        UserConfig.setBoolean(baseName + "RecordHistories", recordHistoriesCheck.isSelected());
     }
 
     protected void setHistoryIndex(int historyIndex) {
@@ -763,7 +763,7 @@ public class ImageManufactureController extends ImageViewerController {
                             finalname = new File(filename + ".png").getAbsolutePath();
                             ImageFileWriters.writeImageFile(bufferedImage, "png", finalname);
                             thumbnail = ScaleTools.scaleImageWidthKeep(bufferedImage,
-                                    UserConfig.getUserConfigInt("ThumbnailWidth", 100));
+                                    UserConfig.getInt("ThumbnailWidth", 100));
                             String thumbname = new File(filename + "_thumbnail.png").getAbsolutePath();
                             if (!ImageFileWriters.writeImageFile(thumbnail, "png", thumbname)) {
                                 return false;
@@ -839,7 +839,7 @@ public class ImageManufactureController extends ImageViewerController {
                 return;
             }
             String fname = his.getHistoryLocation();
-            int width = UserConfig.getUserConfigInt("ThumbnailWidth", 100);
+            int width = UserConfig.getInt("ThumbnailWidth", 100);
             String thumbname = FileNameTools.appendName(fname, "_thumbnail");
             File thumbfile = new File(thumbname);
             BufferedImage bufferedImage;
@@ -973,7 +973,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected void okHistoriesSize(ActionEvent event) {
         try {
-            UserConfig.setUserConfigInt("MaxImageHistories", maxEditHistories);
+            UserConfig.setInt("MaxImageHistories", maxEditHistories);
             popSuccessful();
             loadImageHistories();
         } catch (Exception e) {
@@ -1232,7 +1232,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
         if (isPickingColor
                 || (scopeController.isPickingColor && isUsingScope())
-                || (!needNotCoordinates && UserConfig.getUserConfigBoolean(baseName + "PopCooridnate", false))) {
+                || (!needNotCoordinates && UserConfig.getBoolean(baseName + "PopCooridnate", false))) {
             DoublePoint p = ImageViewTools.getImageXY(event, imageView);
             showXY(event, p);
             return p;

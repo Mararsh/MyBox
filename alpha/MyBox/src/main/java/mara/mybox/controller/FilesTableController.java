@@ -25,11 +25,11 @@ public class FilesTableController extends BaseBatchTableController<FileInformati
             super.initTable();
 
             if (tableSubdirCheck != null) {
-                tableSubdirCheck.setSelected(UserConfig.getUserConfigBoolean("FileTableSubDir", true));
+                tableSubdirCheck.setSelected(UserConfig.getBoolean("FileTableSubDir", true));
                 tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean("FileTableSubDir", tableSubdirCheck.isSelected());
+                        UserConfig.setBoolean("FileTableSubDir", tableSubdirCheck.isSelected());
                     }
                 });
             }

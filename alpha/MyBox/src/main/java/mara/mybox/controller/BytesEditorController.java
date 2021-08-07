@@ -83,9 +83,9 @@ public class BytesEditorController extends BaseFileEditorController {
             });
 
             isSettingValues = true;
-            lbBytesInput.setText(UserConfig.getUserConfigString(baseName + "LineBreakValue", "0D 0A "));
-            lbWidthInput.setText(UserConfig.getUserConfigString(baseName + "LineBreakWidth", "30"));
-            String savedLB = UserConfig.getUserConfigString(baseName + "LineBreak", "Width");
+            lbBytesInput.setText(UserConfig.getString(baseName + "LineBreakValue", "0D 0A "));
+            lbWidthInput.setText(UserConfig.getString(baseName + "LineBreakWidth", "30"));
+            String savedLB = UserConfig.getString(baseName + "LineBreak", "Width");
             if (savedLB.equals(Line_Break.Value.toString())) {
                 bytesRadio.fire();
             } else if (savedLB.equals(Line_Break.LF.toString())) {
@@ -126,7 +126,7 @@ public class BytesEditorController extends BaseFileEditorController {
                 lineBreakValue = "0D 0A ";
                 sourceInformation.setLineBreakValue("0D 0A ");
             }
-            UserConfig.setUserConfigString(baseName + "LineBreak", lineBreak.toString());
+            UserConfig.setString(baseName + "LineBreak", lineBreak.toString());
             sourceInformation.setLineBreak(lineBreak);
             checkBytesHex();
             checkBytesNumber();
@@ -166,7 +166,7 @@ public class BytesEditorController extends BaseFileEditorController {
                         isSettingValues = false;
                     }
                 });
-                UserConfig.setUserConfigString(baseName + "LineBreakValue", lineBreakValue);
+                UserConfig.setString(baseName + "LineBreakValue", lineBreakValue);
                 sourceInformation.setLineBreakValue(lineBreakValue);
                 if (!isSettingValues) {
                     if (sourceFile == null) {
@@ -194,7 +194,7 @@ public class BytesEditorController extends BaseFileEditorController {
             if (v > 0) {
                 lineBreakWidth = v;
                 lbWidthInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "LineBreakWidth", v);
+                UserConfig.setInt(baseName + "LineBreakWidth", v);
                 sourceInformation.setLineBreakWidth(lineBreakWidth);
                 if (!isSettingValues) {
                     if (sourceFile == null) {
@@ -221,14 +221,14 @@ public class BytesEditorController extends BaseFileEditorController {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 sourceInformation.setCharset(Charset.forName(newValue));
-                UserConfig.setUserConfigString(baseName + "Charset", newValue);
+                UserConfig.setString(baseName + "Charset", newValue);
                 charsetByUser = true;
                 refreshPairAction();
                 updateNumbers(fileChanged.get());
 
             }
         });
-        encodeSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Charset", "UTF-8"));
+        encodeSelector.getSelectionModel().select(UserConfig.getString(baseName + "Charset", "UTF-8"));
     }
 
     @Override

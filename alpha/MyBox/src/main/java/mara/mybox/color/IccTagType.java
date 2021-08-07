@@ -443,7 +443,7 @@ public class IccTagType {
             double e9 = IccTagType.s15Fixed16Number(subBytes(bytes, 44, 4));
             values.put("e9", e9);
             int offset = 48;
-            int maxItems = UserConfig.getUserConfigInt("ICCMaxDecodeNumber", 500);
+            int maxItems = UserConfig.getInt("ICCMaxDecodeNumber", 500);
             List<List<Double>> InputTables = new ArrayList<>();
             for (int n = 0; n < 256; n++) {
                 List<Double> InputTable = new ArrayList<>();
@@ -543,7 +543,7 @@ public class IccTagType {
             values.put("OutputTablesNumber", OutputTablesNumber);
 
             int offset = 52;
-            int maxItems = UserConfig.getUserConfigInt("ICCMaxDecodeNumber", 500);
+            int maxItems = UserConfig.getInt("ICCMaxDecodeNumber", 500);
             List<List<Double>> InputTables = new ArrayList<>();
             for (int n = 0; n < InputTablesNumber; n++) {
                 List<Double> InputTable = new ArrayList<>();

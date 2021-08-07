@@ -184,7 +184,7 @@ public class SecurityCertificatesAddController extends BaseController {
                     @Override
                     protected void whenSucceeded() {
                         if (result != null) {
-                            ControllerTools.openHtmlViewer(null, result);
+                            ControllerTools.openHtmlTable(null, result);
                         } else {
                             popError(error);
                         }

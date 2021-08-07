@@ -7,7 +7,6 @@ import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ComboBox;
@@ -24,7 +23,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -123,20 +121,6 @@ public class NodeTools {
         }
     }
 
-    public static HTMLEditor editor(WebView webView) {
-        if (webView == null) {
-            return null;
-        }
-        Parent p = webView.getParent();
-        while (p != null) {
-            if (p instanceof HTMLEditor) {
-                return (HTMLEditor) p;
-            }
-            p = p.getParent();
-        }
-        return null;
-    }
-
     public static Object textInputFocus(Scene scene) {
         if (scene == null) {
             return null;
@@ -156,7 +140,7 @@ public class NodeTools {
             return cb.isEditable() ? node : null;
         }
         if (node instanceof WebView) {
-            return editor((WebView) node);
+            return WebViewTools.editor((WebView) node);
         }
         return null;
     }

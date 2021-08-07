@@ -102,9 +102,9 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                             return;
                         }
                         coordinateSystem = new CoordinateSystem(newValue);
-                        UserConfig.setUserConfigString("GeographyCodeCoordinateSystem", newValue);
+                        UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
                     });
-            coordinateSystemSelector.getSelectionModel().select(UserConfig.getUserConfigString("GeographyCodeCoordinateSystem", Languages.message("CGCS2000")));
+            coordinateSystemSelector.getSelectionModel().select(UserConfig.getString("GeographyCodeCoordinateSystem", Languages.message("CGCS2000")));
 
             areaInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {

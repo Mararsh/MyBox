@@ -64,26 +64,26 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
             clipboard = Clipboard.getSystemClipboard();
 
-            saveCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Save", false));
+            saveCheck.setSelected(UserConfig.getBoolean(baseName + "Save", false));
             saveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Save", newValue);
+                    UserConfig.setBoolean(baseName + "Save", newValue);
                 }
             });
 
-            copyCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Copy", false));
+            copyCheck.setSelected(UserConfig.getBoolean(baseName + "Copy", false));
             copyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Copy", newValue);
+                    UserConfig.setBoolean(baseName + "Copy", newValue);
                 }
             });
 
             List<String> values = Arrays.asList(Languages.message("OriginalSize"),
                     "512", "1024", "256", "128", "2048", "100", "80", "4096");
             widthSelector.getItems().addAll(values);
-            int v = UserConfig.getUserConfigInt(baseName + "ScaledWidth", -1);
+            int v = UserConfig.getInt(baseName + "ScaledWidth", -1);
             if (v <= 0) {
                 scaledWidth = -1;
                 widthSelector.getSelectionModel().select(0);
@@ -105,7 +105,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                             return;
                         }
                     }
-                    UserConfig.setUserConfigInt(baseName + "ScaledWidth", scaledWidth);
+                    UserConfig.setInt(baseName + "ScaledWidth", scaledWidth);
                 }
             });
 

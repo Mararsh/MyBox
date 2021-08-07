@@ -104,9 +104,9 @@ public class DataExportController extends BaseTaskController {
             for (ColumnDefinition column : tableColumns) {
                 CheckBox cb = new CheckBox(column.getLabel());
                 cb.setUserData(column);
-                cb.setSelected(UserConfig.getUserConfigBoolean(baseName + column.getName(), false));
+                cb.setSelected(UserConfig.getBoolean(baseName + column.getName(), false));
                 cb.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + column.getName(), cb.isSelected());
+                    UserConfig.setBoolean(baseName + column.getName(), cb.isSelected());
                 });
                 fieldsPane.getChildren().add(cb);
             }

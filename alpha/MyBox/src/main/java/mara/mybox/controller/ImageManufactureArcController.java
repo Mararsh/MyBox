@@ -35,7 +35,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
         try {
             colorSetController.init(this, baseName + "Color");
 
-            arc = UserConfig.getUserConfigInt(baseName + "Arc", 20);
+            arc = UserConfig.getInt(baseName + "Arc", 20);
             int width = (int) imageView.getImage().getWidth();
             arcBox.getItems().addAll(Arrays.asList(
                     width / 6 + "", width / 8 + "", width / 4 + "", width / 10 + "",
@@ -48,7 +48,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             arc = v;
-                            UserConfig.setUserConfigInt(baseName + "Arc", arc);
+                            UserConfig.setInt(baseName + "Arc", arc);
                             ValidationTools.setEditorNormal(arcBox);
                         } else {
                             ValidationTools.setEditorBadStyle(arcBox);

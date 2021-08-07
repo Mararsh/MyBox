@@ -133,7 +133,7 @@ License:    Apache License Version 2.0
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="matrix" source="HtmlViewer.fxml" />   
+                                        <fx:include fx:id="matrix" source="HtmlTable.fxml" />   
                                     </children>
                                     <padding>
                                         <Insets top="10.0" />

@@ -39,7 +39,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     @FXML
     protected Button calculateButton, exportButton;
     @FXML
-    protected HtmlViewerController primariesController;
+    protected HtmlTableController primariesController;
 
     public RGBColorSpacesController() {
         baseTitle = Languages.message("RGBColorSpaces");

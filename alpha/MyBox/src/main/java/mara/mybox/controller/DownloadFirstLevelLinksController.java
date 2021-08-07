@@ -318,45 +318,45 @@ public class DownloadFirstLevelLinksController extends BaseController {
     public void initOptionsTab() {
         try {
 
-            relinksCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Relinks", true));
+            relinksCheck.setSelected(UserConfig.getBoolean(baseName + "Relinks", true));
             relinksCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                UserConfig.setUserConfigBoolean(baseName + "Relinks", relinksCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Relinks", relinksCheck.isSelected());
             });
 
-            indexCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "GenerateIndex", true));
+            indexCheck.setSelected(UserConfig.getBoolean(baseName + "GenerateIndex", true));
             indexCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "GenerateIndex", indexCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "GenerateIndex", indexCheck.isSelected());
                     });
 
-            pdfTextCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MergeTextPDF", true));
-            pdfMarkdownCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MergeMarkdownPDF", false));
-            pdfHtmlCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MergeHtmlPDF", false));
+            pdfTextCheck.setSelected(UserConfig.getBoolean(baseName + "MergeTextPDF", true));
+            pdfMarkdownCheck.setSelected(UserConfig.getBoolean(baseName + "MergeMarkdownPDF", false));
+            pdfHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "MergeHtmlPDF", false));
             pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
 
             pdfTextCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "MergeTextPDF", pdfTextCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "MergeTextPDF", pdfTextCheck.isSelected());
                         pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
                     });
             pdfMarkdownCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "MergeMarkdownPDF", pdfMarkdownCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "MergeMarkdownPDF", pdfMarkdownCheck.isSelected());
                         pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
                     });
             pdfHtmlCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "MergeHtmlPDF", pdfHtmlCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "MergeHtmlPDF", pdfHtmlCheck.isSelected());
                         pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
                     });
 
-            textCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MergeText", true));
+            textCheck.setSelected(UserConfig.getBoolean(baseName + "MergeText", true));
             textCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "MergeText", textCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "MergeText", textCheck.isSelected());
                     });
-            htmlCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MergeHtml", true));
+            htmlCheck.setSelected(UserConfig.getBoolean(baseName + "MergeHtml", true));
             htmlCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "MergeHtml", htmlCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "MergeHtml", htmlCheck.isSelected());
                     });
-            mdCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MergeMarkdown", true));
+            mdCheck.setSelected(UserConfig.getBoolean(baseName + "MergeMarkdown", true));
             mdCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "MergeMarkdown", mdCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "MergeMarkdown", mdCheck.isSelected());
                     });
 
             ttfController.name(baseName);
@@ -371,13 +371,13 @@ public class DownloadFirstLevelLinksController extends BaseController {
             });
             checkTtf();
 
-            webConnectTimeoutInput.setText(UserConfig.getUserConfigInt("WebConnectTimeout", 10000) + "");
-            webReadTimeoutInput.setText(UserConfig.getUserConfigInt("WebReadTimeout", 10000) + "");
+            webConnectTimeoutInput.setText(UserConfig.getInt("WebConnectTimeout", 10000) + "");
+            webReadTimeoutInput.setText(UserConfig.getInt("WebReadTimeout", 10000) + "");
 
             intervalController.isSeconds(false).init(baseName + "Inteval", 1000);
 
             threadsSelector.getItems().addAll(Arrays.asList("6", "3", "1", "2", "5", "8"));
-            maxThreadsNumber = UserConfig.getUserConfigInt(baseName + "ThreadsNumber", 6);
+            maxThreadsNumber = UserConfig.getInt(baseName + "ThreadsNumber", 6);
             if (maxThreadsNumber <= 0) {
                 maxThreadsNumber = 6;
             }
@@ -386,7 +386,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                             int v = Integer.parseInt(newValue);
                             if (v >= 0) {
                                 maxThreadsNumber = v;
-                                UserConfig.setUserConfigInt(baseName + "ThreadsNumber", v);
+                                UserConfig.setInt(baseName + "ThreadsNumber", v);
                                 threadsSelector.getEditor().setStyle(null);
                                 checkThreads();
                             } else {
@@ -399,7 +399,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             threadsSelector.getSelectionModel().select(maxThreadsNumber + "");
 
             retriesSelector.getItems().addAll(Arrays.asList("3", "2", "1", "4", "5", "6"));
-            maxRetries = UserConfig.getUserConfigInt(baseName + "MaxRetries", 3);
+            maxRetries = UserConfig.getInt(baseName + "MaxRetries", 3);
             if (maxRetries <= 0) {
                 maxRetries = 3;
             }
@@ -408,7 +408,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 maxRetries = v;
-                                UserConfig.setUserConfigInt(baseName + "MaxRetries", v);
+                                UserConfig.setInt(baseName + "MaxRetries", v);
                                 retriesSelector.getEditor().setStyle(null);
                             } else {
                                 retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
@@ -419,11 +419,11 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     });
             retriesSelector.getSelectionModel().select(maxRetries + "");
 
-            miaowCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Miaow", true));
+            miaowCheck.setSelected(UserConfig.getBoolean(baseName + "Miaow", true));
             miaowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "Miaow", miaowCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Miaow", miaowCheck.isSelected());
                 }
             });
 
@@ -454,7 +454,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
     public void initLogsTab() {
         try {
-            maxLogs = UserConfig.getUserConfigInt(baseName + "MaxLogs", 50000);
+            maxLogs = UserConfig.getInt(baseName + "MaxLogs", 50000);
             maxLogsinput.setText(maxLogs + "");
 
         } catch (Exception e) {
@@ -911,7 +911,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                     table.add(row);
                 }
                 s.append(StringTable.tableDiv(table));
-                ControllerTools.openHtmlViewer(null, s.toString());
+                ControllerTools.openHtmlTable(null, s.toString());
             }
 
             @Override
@@ -997,7 +997,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 + Languages.message("Name") + ": " + (link.getName() == null ? "" : link.getName()) + "<br>"
                 + Languages.message("Title") + ": " + (link.getTitle() == null ? "" : link.getTitle()) + "<br>"
                 + Languages.message("TargetFile") + ": " + link.getFile();
-        HtmlReadTools.viewHtml(Languages.message("Link"), s);
+        HtmlReadTools.htmlTable(Languages.message("Link"), s);
     }
 
     @FXML
@@ -1210,8 +1210,8 @@ public class DownloadFirstLevelLinksController extends BaseController {
             webReadTimeoutInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
-        UserConfig.setUserConfigInt("WebConnectTimeout", connValue);
-        UserConfig.setUserConfigInt("WebReadTimeout", readValue);
+        UserConfig.setInt("WebConnectTimeout", connValue);
+        UserConfig.setInt("WebReadTimeout", readValue);
         popSuccessful();
     }
 
@@ -1644,7 +1644,7 @@ public class DownloadFirstLevelLinksController extends BaseController {
             if (v > 0) {
                 maxLogs = v;
                 maxLogsinput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "MaxLogs", maxLogs);
+                UserConfig.setInt(baseName + "MaxLogs", maxLogs);
             } else {
                 maxLogsinput.setStyle(NodeStyleTools.badStyle);
             }

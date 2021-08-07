@@ -129,7 +129,7 @@ public class ControlOCROptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle oldVal, Toggle newVal) {
                     checkEngine();
-                    UserConfig.setUserConfigBoolean("ImageOCREmbed", embedRadio.isSelected());
+                    UserConfig.setBoolean("ImageOCREmbed", embedRadio.isSelected());
                 }
             });
 
@@ -155,24 +155,24 @@ public class ControlOCROptions extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     String[] vs = newValue.split("    ");
                     psm = Integer.parseInt(vs[0]);
-                    UserConfig.setUserConfigInt("ImageOCRPSM", psm);
+                    UserConfig.setInt("ImageOCRPSM", psm);
                 }
             });
-            psmSelector.getSelectionModel().select(UserConfig.getUserConfigInt("ImageOCRPSM", 6));
+            psmSelector.getSelectionModel().select(UserConfig.getInt("ImageOCRPSM", 6));
 
-            htmlCheck.setSelected(UserConfig.getUserConfigBoolean("ImageOCRhtml", false));
+            htmlCheck.setSelected(UserConfig.getBoolean("ImageOCRhtml", false));
             htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("ImageOCRhtml", htmlCheck.isSelected());
+                    UserConfig.setBoolean("ImageOCRhtml", htmlCheck.isSelected());
                 }
             });
 
-            pdfCheck.setSelected(UserConfig.getUserConfigBoolean("ImageOCRpdf", false));
+            pdfCheck.setSelected(UserConfig.getBoolean("ImageOCRpdf", false));
             pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("ImageOCRpdf", pdfCheck.isSelected());
+                    UserConfig.setBoolean("ImageOCRpdf", pdfCheck.isSelected());
                 }
             });
 
@@ -183,7 +183,7 @@ public class ControlOCROptions extends BaseController {
 
     public void initWin() {
         embedRadio.setDisable(false);
-        if (UserConfig.getUserConfigBoolean("ImageOCREmbed", true)) {
+        if (UserConfig.getBoolean("ImageOCREmbed", true)) {
             embedRadio.fire();
         } else {
             tesseractRadio.fire();
@@ -214,10 +214,10 @@ public class ControlOCROptions extends BaseController {
                 } else {
                     regionLevel = -1;
                 }
-                UserConfig.setUserConfigString("ImageOCRRegionLevel", newValue);
+                UserConfig.setString("ImageOCRRegionLevel", newValue);
             }
         });
-        regionSelector.getSelectionModel().select(UserConfig.getUserConfigString("ImageOCRRegionLevel", Languages.message("Symbol")));
+        regionSelector.getSelectionModel().select(UserConfig.getString("ImageOCRRegionLevel", Languages.message("Symbol")));
 
         wordLevel = -1;
         wordSelector.getItems().addAll(Arrays.asList(Languages.message("None"),
@@ -245,10 +245,10 @@ public class ControlOCROptions extends BaseController {
                 } else {
                     wordLevel = -1;
                 }
-                UserConfig.setUserConfigString("ImageOCRWordLevel", newValue);
+                UserConfig.setString("ImageOCRWordLevel", newValue);
             }
         });
-        wordSelector.getSelectionModel().select(UserConfig.getUserConfigString("ImageOCRWordLevel", Languages.message("Symbol")));
+        wordSelector.getSelectionModel().select(UserConfig.getString("ImageOCRWordLevel", Languages.message("Symbol")));
     }
 
     public void setLanguages() {
@@ -262,7 +262,7 @@ public class ControlOCROptions extends BaseController {
                     checkLanguages();
                 }
             });
-            selectedLanguages = UserConfig.getUserConfigString("ImageOCRLanguages", null);
+            selectedLanguages = UserConfig.getString("ImageOCRLanguages", null);
             if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
                 currentOCRFilesLabel.setText(MessageFormat.format(Languages.message("CurrentDataFiles"), selectedLanguages));
                 currentOCRFilesLabel.setStyle(null);
@@ -405,7 +405,7 @@ public class ControlOCROptions extends BaseController {
                 }
             }
             if (selectedLanguages != null) {
-                UserConfig.setUserConfigString("ImageOCRLanguages", selectedLanguages);
+                UserConfig.setString("ImageOCRLanguages", selectedLanguages);
                 currentOCRFilesLabel.setText(MessageFormat.format(Languages.message("CurrentDataFiles"), selectedLanguages));
                 currentOCRFilesLabel.setStyle(null);
             } else {

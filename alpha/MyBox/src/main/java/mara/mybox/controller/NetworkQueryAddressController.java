@@ -43,7 +43,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-3-25
  * @License Apache License Version 2.0
  */
-public class NetworkQueryAddressController extends HtmlViewerController {
+public class NetworkQueryAddressController extends HtmlTableController {
 
     protected String host;
     protected Certificate[] chain;
@@ -162,7 +162,7 @@ public class NetworkQueryAddressController extends HtmlViewerController {
                         context.init(null, null, null);
                         SSLSocket socket = (SSLSocket) context.getSocketFactory()
                                 .createSocket(host, 443);
-                        socket.setSoTimeout(UserConfig.getUserConfigInt("WebConnectTimeout", 10000));
+                        socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                         try {
                             socket.startHandshake();
                             socket.close();

@@ -47,7 +47,7 @@ public class ExtractTextsFromMSController extends BaseBatchFileController {
             List<String> names = TextTools.getCharsetNames();
             charsetSelector.getItems().addAll(names);
             try {
-                charset = Charset.forName(UserConfig.getUserConfigString(baseName + "Charset", Charset.defaultCharset().name()));
+                charset = Charset.forName(UserConfig.getString(baseName + "Charset", Charset.defaultCharset().name()));
             } catch (Exception e) {
                 charset = Charset.defaultCharset();
             }
@@ -56,7 +56,7 @@ public class ExtractTextsFromMSController extends BaseBatchFileController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
-                    UserConfig.setUserConfigString(baseName + "Charset", newValue);
+                    UserConfig.setString(baseName + "Charset", newValue);
                 }
             });
 

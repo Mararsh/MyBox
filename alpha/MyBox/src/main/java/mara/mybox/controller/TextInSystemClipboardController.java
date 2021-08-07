@@ -85,7 +85,7 @@ public class TextInSystemClipboardController extends BaseController {
                 }
             });
 
-            startCheck.setSelected(UserConfig.getUserConfigBoolean("TextClipboardMonitorStartWhenBoot", false));
+            startCheck.setSelected(UserConfig.getBoolean("TextClipboardMonitorStartWhenBoot", false));
             startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
@@ -99,22 +99,22 @@ public class TextInSystemClipboardController extends BaseController {
                     message("BlankLine"), message("BlankLine2"),
                     "--------------------", "======================", "*********************", "######################",
                     "%%%%%%%%%%%%%%%%%%%%", "~~~~~~~~~~~~~~~~~~~~~~", "^^^^^^^^^^^^^^^^^^^^^", "......................"));
-            String lineSelect = UserConfig.getUserConfigString(baseName + "SeparateLine", message("NotAccumulate"));
+            String lineSelect = UserConfig.getString(baseName + "SeparateLine", message("NotAccumulate"));
             separateSelector.setValue(lineSelect);
             checkSeparateLine(lineSelect);
             separateSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     checkSeparateLine(newValue);
-                    UserConfig.setUserConfigString(baseName + "SeparateLine", newValue);
+                    UserConfig.setString(baseName + "SeparateLine", newValue);
                 }
             });
 
-            wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Wrap", true));
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Wrap", newValue);
+                    UserConfig.setBoolean(baseName + "Wrap", newValue);
                     textArea.setWrapText(newValue);
                 }
             });

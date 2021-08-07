@@ -127,12 +127,12 @@ public class FileUnarchiveController extends FilesTreeController {
 
             List<String> setNames = TextTools.getCharsetNames();
             encodeSelector.getItems().addAll(setNames);
-            encodeSelector.getSelectionModel().select(UserConfig.getUserConfigString("FilesUnarchiveEncoding", Charset.defaultCharset().name()));
+            encodeSelector.getSelectionModel().select(UserConfig.getString("FilesUnarchiveEncoding", Charset.defaultCharset().name()));
             encodeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldItem, String newItem) {
-                    UserConfig.setUserConfigString("FilesUnarchiveEncoding", newItem);
+                    UserConfig.setString("FilesUnarchiveEncoding", newItem);
                     readEntries();
                 }
             });

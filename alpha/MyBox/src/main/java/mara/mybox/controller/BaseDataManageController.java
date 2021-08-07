@@ -418,7 +418,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
                 }
                 html += loadMoreInfo();
             }
-            String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
             html = HtmlWriteTools.html(null, htmlStyle, html);
             infoView.getEngine().loadContent​(html);
 

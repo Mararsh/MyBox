@@ -104,53 +104,53 @@ public class ControlDataConvert extends BaseController {
             csvWriteController.setControls(baseName + "Write");
             if (toCsv) {
                 formatsPane.getChildren().add(csvCheck);
-                csvCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CSV", true));
+                csvCheck.setSelected(UserConfig.getBoolean(baseName + "CSV", true));
                 csvCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "CSV", csvCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "CSV", csvCheck.isSelected());
                     }
                 });
             }
             if (toJson) {
                 formatsPane.getChildren().add(jsonCheck);
-                jsonCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Json", false));
+                jsonCheck.setSelected(UserConfig.getBoolean(baseName + "Json", false));
                 jsonCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "Json", jsonCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Json", jsonCheck.isSelected());
                     }
                 });
 
             }
             if (toXml) {
                 formatsPane.getChildren().add(xmlCheck);
-                xmlCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Xml", false));
+                xmlCheck.setSelected(UserConfig.getBoolean(baseName + "Xml", false));
                 xmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "Xml", xmlCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Xml", xmlCheck.isSelected());
                     }
                 });
             }
             if (toXlsx) {
                 formatsPane.getChildren().add(xlsxCheck);
-                xlsxCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Xlsx", false));
+                xlsxCheck.setSelected(UserConfig.getBoolean(baseName + "Xlsx", false));
                 xlsxCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "Xlsx", xlsxCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Xlsx", xlsxCheck.isSelected());
                     }
                 });
             }
             if (toHtml) {
                 formatsPane.getChildren().add(htmlCheck);
-                cssArea.setText(UserConfig.getUserConfigString(baseName + "Css", HtmlStyles.BaseStyle));
-                htmlCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Html", false));
+                cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.BaseStyle));
+                htmlCheck.setSelected(UserConfig.getBoolean(baseName + "Html", false));
                 htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "Html", htmlCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Html", htmlCheck.isSelected());
                     }
                 });
             } else {
@@ -158,11 +158,11 @@ public class ControlDataConvert extends BaseController {
             }
             if (toPdf) {
                 formatsPane.getChildren().add(pdfCheck);
-                pdfCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "PDF", false));
+                pdfCheck.setSelected(UserConfig.getBoolean(baseName + "PDF", false));
                 pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setUserConfigBoolean(baseName + "PDF", pdfCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "PDF", pdfCheck.isSelected());
                     }
                 });
             } else {
@@ -177,7 +177,7 @@ public class ControlDataConvert extends BaseController {
                         if (newValue == null || newValue.isEmpty()) {
                             return;
                         }
-                        UserConfig.setUserConfigString(baseName + "ExportMaxLines", newValue);
+                        UserConfig.setString(baseName + "ExportMaxLines", newValue);
                         if (Languages.message("NotSplit").equals(newValue)) {
                             maxLines = -1;
                             ValidationTools.setEditorNormal(maxLinesSelector);
@@ -195,7 +195,7 @@ public class ControlDataConvert extends BaseController {
                             ValidationTools.setEditorBadStyle(maxLinesSelector);
                         }
                     });
-            maxLinesSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "ExportMaxLines", Languages.message("NotSplit")));
+            maxLinesSelector.getSelectionModel().select(UserConfig.getString(baseName + "ExportMaxLines", Languages.message("NotSplit")));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -251,7 +251,7 @@ public class ControlDataConvert extends BaseController {
                         .setShowPageNumber(pdfOptionsController.showPageNumber);
             }
             if (toHtml && htmlCheck.isSelected()) {
-                UserConfig.setUserConfigString(baseName + "Css", cssArea.getText());
+                UserConfig.setString(baseName + "Css", cssArea.getText());
             }
             if (toCsv && csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)) {
                 return false;

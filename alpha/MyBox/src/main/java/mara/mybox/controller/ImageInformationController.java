@@ -29,7 +29,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageInformationController extends HtmlViewerController {
+public class ImageInformationController extends HtmlTableController {
 
     protected ImageInformation imageInfo;
 
@@ -77,7 +77,7 @@ public class ImageInformationController extends HtmlViewerController {
                 }
                 s.append(makeImageInformationTable(i, iInfo)).append("</br>\n");
             }
-            String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
             html = HtmlWriteTools.html(finfo.getFileName(), htmlStyle, s.toString());
             webView.getEngine().loadContent​(html);
             if (indexSelector.getItems().isEmpty()) {

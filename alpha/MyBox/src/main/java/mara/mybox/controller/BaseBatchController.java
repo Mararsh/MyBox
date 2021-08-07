@@ -250,7 +250,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             super.initControls();
 
             if (targetSubdirCheck != null) {
-                targetSubdirCheck.setSelected(UserConfig.getUserConfigBoolean(targetSubdirKey));
+                targetSubdirCheck.setSelected(UserConfig.getBoolean(targetSubdirKey));
             }
 
             if (acumFromInput != null) {
@@ -259,7 +259,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
             if (previewInput != null) {
-                previewInput.setText(UserConfig.getUserConfigString(previewKey, "1"));
+                previewInput.setText(UserConfig.getString(previewKey, "1"));
                 ValidationTools.setPositiveValidation(previewInput);
                 previewInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -269,7 +269,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         if (newValue == null || newValue.isEmpty()) {
                             return;
                         }
-                        UserConfig.setUserConfigString(previewKey, newValue);
+                        UserConfig.setString(previewKey, newValue);
                     }
                 });
             }
@@ -342,12 +342,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue,
                             Boolean newValue) {
-                        UserConfig.setUserConfigBoolean("Miao", newValue);
+                        UserConfig.setBoolean("Miao", newValue);
 
                     }
                 });
 
-                miaoCheck.setSelected(UserConfig.getUserConfigBoolean("Miao"));
+                miaoCheck.setSelected(UserConfig.getBoolean("Miao"));
             }
 
             if (openCheck != null) {
@@ -355,12 +355,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue,
                             Boolean newValue) {
-                        UserConfig.setUserConfigBoolean("OpenWhenComplete", newValue);
+                        UserConfig.setBoolean("OpenWhenComplete", newValue);
 
                     }
                 });
 
-                openCheck.setSelected(UserConfig.getUserConfigBoolean("OpenWhenComplete"));
+                openCheck.setSelected(UserConfig.getBoolean("OpenWhenComplete"));
             }
 
             if (verboseCheck != null) {
@@ -368,12 +368,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue,
                             Boolean newValue) {
-                        UserConfig.setUserConfigBoolean("BatchLogVerbose", newValue);
+                        UserConfig.setBoolean("BatchLogVerbose", newValue);
 
                     }
                 });
 
-                verboseCheck.setSelected(UserConfig.getUserConfigBoolean("BatchLogVerbose", true));
+                verboseCheck.setSelected(UserConfig.getBoolean("BatchLogVerbose", true));
             }
 
         } catch (Exception e) {
@@ -473,7 +473,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
         if (targetSubdirCheck != null) {
             actualParameters.targetSubDir = targetSubdirCheck.isSelected();
-            UserConfig.setUserConfigBoolean(targetSubdirKey, actualParameters.targetSubDir);
+            UserConfig.setBoolean(targetSubdirKey, actualParameters.targetSubDir);
         }
 
         createDirectories = tableController.tableCreateDirCheck != null

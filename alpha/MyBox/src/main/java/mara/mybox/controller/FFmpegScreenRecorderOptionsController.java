@@ -76,18 +76,18 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             audioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("FFmpegScreenRecorderAudio", newValue);
+                    UserConfig.setBoolean("FFmpegScreenRecorderAudio", newValue);
                 }
             });
-            audioCheck.setSelected(UserConfig.getUserConfigBoolean("FFmpegScreenRecorderAudio", true));
+            audioCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderAudio", true));
 
             videoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("FFmpegScreenRecorderVideo", newValue);
+                    UserConfig.setBoolean("FFmpegScreenRecorderVideo", newValue);
                 }
             });
-            videoCheck.setSelected(UserConfig.getUserConfigBoolean("FFmpegScreenRecorderVideo", true));
+            videoCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderVideo", true));
 
             os = SystemTools.os();
             switch (os) {
@@ -129,7 +129,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     checkRectangle();
                 }
             });
-            xInput.setText(UserConfig.getUserConfigString("FFmpegScreenRecorderX", "0"));
+            xInput.setText(UserConfig.getString("FFmpegScreenRecorderX", "0"));
 
             y = 0;
             yInput.textProperty().addListener(new ChangeListener<String>() {
@@ -138,7 +138,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     checkRectangle();
                 }
             });
-            yInput.setText(UserConfig.getUserConfigString("FFmpegScreenRecorderY", "0"));
+            yInput.setText(UserConfig.getString("FFmpegScreenRecorderY", "0"));
 
             width = 0;
             widthInput.textProperty().addListener(new ChangeListener<String>() {
@@ -147,7 +147,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     checkRectangle();
                 }
             });
-            widthInput.setText(UserConfig.getUserConfigString("FFmpegScreenRecorderWidth", screenWidth + ""));
+            widthInput.setText(UserConfig.getString("FFmpegScreenRecorderWidth", screenWidth + ""));
 
             height = 0;
             heightInput.textProperty().addListener(new ChangeListener<String>() {
@@ -156,7 +156,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     checkRectangle();
                 }
             });
-            heightInput.setText(UserConfig.getUserConfigString("FFmpegScreenRecorderHeight", screenHeight + ""));
+            heightInput.setText(UserConfig.getString("FFmpegScreenRecorderHeight", screenHeight + ""));
 
             titleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -302,7 +302,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                         if (v > 0) {
                             audioThreadQueueSize = v;
                             audioThreadQueueSizeInput.setStyle(null);
-                            UserConfig.setUserConfigString("FFmpegScreenRecorderAudio", newValue);
+                            UserConfig.setString("FFmpegScreenRecorderAudio", newValue);
                         } else {
                             audioThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                         }
@@ -313,7 +313,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
 
                 }
             });
-            audioThreadQueueSizeInput.setText(UserConfig.getUserConfigString("FFmpegAudioThreadQueueSize", "128"));
+            audioThreadQueueSizeInput.setText(UserConfig.getString("FFmpegAudioThreadQueueSize", "128"));
 
             videoThreadQueueSize = 128;
             videoThreadQueueSizeInput.textProperty().addListener(new ChangeListener<String>() {
@@ -324,7 +324,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                         if (v > 0) {
                             videoThreadQueueSize = v;
                             videoThreadQueueSizeInput.setStyle(null);
-                            UserConfig.setUserConfigString("FFmpegScreenRecorderAudio", newValue);
+                            UserConfig.setString("FFmpegScreenRecorderAudio", newValue);
                         } else {
                             videoThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                         }
@@ -334,7 +334,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     }
                 }
             });
-            videoThreadQueueSizeInput.setText(UserConfig.getUserConfigString("FFmpegVideoThreadQueueSize", "128"));
+            videoThreadQueueSizeInput.setText(UserConfig.getString("FFmpegVideoThreadQueueSize", "128"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -366,7 +366,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             if (v >= 0 && v <= screenWidth) {
                 x = v;
                 xInput.setStyle(null);
-                UserConfig.setUserConfigString("FFmpegScreenRecorderX", v + "");
+                UserConfig.setString("FFmpegScreenRecorderX", v + "");
             } else {
                 xInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -378,7 +378,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             if (v >= 0 && v <= screenWidth) {
                 y = v;
                 yInput.setStyle(null);
-                UserConfig.setUserConfigString("FFmpegScreenRecorderY", v + "");
+                UserConfig.setString("FFmpegScreenRecorderY", v + "");
             } else {
                 yInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -391,7 +391,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             if (v >= 0 && v <= screenWidth) {
                 width = v;
                 widthInput.setStyle(null);
-                UserConfig.setUserConfigString("FFmpegScreenRecorderWidth", v + "");
+                UserConfig.setString("FFmpegScreenRecorderWidth", v + "");
             } else {
                 widthInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -403,7 +403,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             if (v >= 0 && v <= screenHeight) {
                 height = v;
                 heightInput.setStyle(null);
-                UserConfig.setUserConfigString("FFmpegScreenRecorderHeight", v + "");
+                UserConfig.setString("FFmpegScreenRecorderHeight", v + "");
             } else {
                 heightInput.setStyle(NodeStyleTools.badStyle);
             }

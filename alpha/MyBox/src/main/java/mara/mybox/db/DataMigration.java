@@ -57,7 +57,7 @@ import mara.mybox.value.SystemConfig;
 public class DataMigration {
 
     public static boolean checkUpdates() {
-        SystemConfig.setSystemConfigString("CurrentVersion", AppValues.AppVersion);
+        SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try ( Connection conn = DerbyBase.getConnection()) {
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
@@ -724,18 +724,18 @@ public class DataMigration {
     public static boolean migrateBefore621(Connection conn) {
         MyBoxLog.info("Migrate before 6.2.1...");
         try {
-            if (!SystemConfig.getSystemConfigBoolean("UpdatedTables4.2", false)) {
+            if (!SystemConfig.getBoolean("UpdatedTables4.2", false)) {
                 MyBoxLog.info("Updating tables in 4.2...");
                 List<ConvolutionKernel> records = TableConvolutionKernel.read();
                 TableConvolutionKernel t = new TableConvolutionKernel();
                 t.drop();
                 t.init();
                 if (TableConvolutionKernel.write(records)) {
-                    SystemConfig.setSystemConfigBoolean("UpdatedTables4.2", true);
+                    SystemConfig.setBoolean("UpdatedTables4.2", true);
                 }
             }
 
-            if (!SystemConfig.getSystemConfigBoolean("UpdatedTables5.4", false)) {
+            if (!SystemConfig.getBoolean("UpdatedTables5.4", false)) {
                 MyBoxLog.info("Updating tables in 5.4...");
                 String sql = "ALTER TABLE User_Conf  alter  column  key_Name set data type VARCHAR(1024)";
                 DerbyBase.update(conn, sql);
@@ -765,10 +765,10 @@ public class DataMigration {
                 DerbyBase.update(conn, sql);
                 sql = "DROP TABLE image_init";
                 DerbyBase.update(conn, sql);
-                SystemConfig.setSystemConfigBoolean("UpdatedTables5.4", true);
+                SystemConfig.setBoolean("UpdatedTables5.4", true);
             }
 
-            if (!SystemConfig.getSystemConfigBoolean("UpdatedTables5.8", false)) {
+            if (!SystemConfig.getBoolean("UpdatedTables5.8", false)) {
                 MyBoxLog.info("Updating tables in 5.8...");
                 String sql = "ALTER TABLE SRGB  add  column  palette_index  INT";
                 DerbyBase.update(conn, sql);
@@ -778,28 +778,28 @@ public class DataMigration {
 //                    TableColor.setPalette(saveColors);
 //                }
                 TableStringValues.clear("ColorPalette");
-                SystemConfig.setSystemConfigBoolean("UpdatedTables5.8", true);
+                SystemConfig.setBoolean("UpdatedTables5.8", true);
             }
 
-            if (!SystemConfig.getSystemConfigBoolean("UpdatedTables5.9", false)) {
+            if (!SystemConfig.getBoolean("UpdatedTables5.9", false)) {
                 MyBoxLog.info("Updating tables in 5.9...");
                 String sql = "DROP TABLE Browser_URLs";
                 DerbyBase.update(conn, sql);
-                SystemConfig.setSystemConfigBoolean("UpdatedTables5.9", true);
+                SystemConfig.setBoolean("UpdatedTables5.9", true);
             }
 
-            if (!SystemConfig.getSystemConfigBoolean("UpdatedTables6.1.5", false)) {
+            if (!SystemConfig.getBoolean("UpdatedTables6.1.5", false)) {
                 MyBoxLog.info("Updating tables in 6.1.5...");
                 migrateGeographyCode615();
                 migrateEpidemicReport615();
-                SystemConfig.setSystemConfigBoolean("UpdatedTables6.1.5", true);
+                SystemConfig.setBoolean("UpdatedTables6.1.5", true);
             }
 
-            if (!SystemConfig.getSystemConfigBoolean("UpdatedTables6.2.1", false)) {
+            if (!SystemConfig.getBoolean("UpdatedTables6.2.1", false)) {
                 MyBoxLog.info("Updating tables in 6.2.1...");
                 migrateGeographyCode621();
                 migrateEpidemicReport621();
-                SystemConfig.setSystemConfigBoolean("UpdatedTables6.2.1", true);
+                SystemConfig.setBoolean("UpdatedTables6.2.1", true);
             }
 
             TableStringValues.add(conn, "InstalledVersions", "6.2.1");

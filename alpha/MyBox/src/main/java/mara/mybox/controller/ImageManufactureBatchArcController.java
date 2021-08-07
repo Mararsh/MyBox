@@ -80,7 +80,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
         try {
             super.initOptionsSection();
 
-            arc = UserConfig.getUserConfigInt(baseName + "Arc", 15);
+            arc = UserConfig.getInt(baseName + "Arc", 15);
             arcBox.getItems().addAll(Arrays.asList("15", "30", "50", "150", "300", "10", "3"));
             arcBox.setValue(arc + "");
             arcBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -90,7 +90,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
                 }
             });
 
-            percent = UserConfig.getUserConfigInt(baseName + "Percent", 15);
+            percent = UserConfig.getInt(baseName + "Percent", 15);
             perBox.getItems().addAll(Arrays.asList("15", "25", "30", "10", "12", "8"));
             perBox.setValue(percent + "");
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -141,7 +141,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             int v = Integer.valueOf(perBox.getValue());
             if (v > 0 && v <= 100) {
                 percent = v;
-                UserConfig.setUserConfigInt(baseName + "Percent", percent);
+                UserConfig.setInt(baseName + "Percent", percent);
                 ValidationTools.setEditorNormal(perBox);
             } else {
                 ValidationTools.setEditorBadStyle(perBox);
@@ -156,7 +156,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             int v = Integer.valueOf(arcBox.getValue());
             if (v > 0) {
                 arc = v;
-                UserConfig.setUserConfigInt(baseName + "Arc", arc);
+                UserConfig.setInt(baseName + "Arc", arc);
                 ValidationTools.setEditorNormal(arcBox);
             } else {
                 ValidationTools.setEditorBadStyle(arcBox);

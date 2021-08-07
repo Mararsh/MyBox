@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -10,13 +11,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -26,13 +29,13 @@ import mara.mybox.value.UserConfig;
  */
 public class WebFindController extends BaseWebViewController {
 
+    protected static final String ItemPrefix = "MyBoxSearchLocation";
     protected int foundCount, foundItem;
     protected String loadedHtml;
+    protected LoadingController loading;
 
     @FXML
     protected ComboBox<String> findFontSelector, foundItemSelector;
-    @FXML
-    protected HBox findBox, findResultsBox;
     @FXML
     protected ControlStringSelector findInputController;
     @FXML
@@ -40,12 +43,12 @@ public class WebFindController extends BaseWebViewController {
     @FXML
     protected Label foundLabel;
     @FXML
-    protected Button goItemButton;
+    protected Button goItemButton, queryButton;
     @FXML
     protected CheckBox caseCheck, wrapCheck, regCheck;
 
     public WebFindController() {
-        baseTitle = Languages.message("WebFind");
+        baseTitle = message("WebFind");
     }
 
     @Override
@@ -60,34 +63,34 @@ public class WebFindController extends BaseWebViewController {
 
             List<String> fonts = new ArrayList();
             fonts.addAll(Arrays.asList("1em", "1.2em", "1.5em", "24px", "28px"));
-            String saved = UserConfig.getUserConfigString(baseName + "Font", "1.2em");
+            String saved = UserConfig.getString(baseName + "Font", "1.2em");
             if (!fonts.contains(saved)) {
                 fonts.add(0, saved);
             }
             findFontSelector.getItems().addAll(fonts);
             findFontSelector.getSelectionModel().select(saved);
 
-            caseCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CaseInsensitive", false));
+            caseCheck.setSelected(UserConfig.getBoolean(baseName + "CaseInsensitive", false));
             caseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "CaseInsensitive", caseCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "CaseInsensitive", caseCheck.isSelected());
                 }
             });
 
-            regCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "RegularExpression", false));
+            regCheck.setSelected(UserConfig.getBoolean(baseName + "RegularExpression", false));
             regCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "RegularExpression", regCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "RegularExpression", regCheck.isSelected());
                 }
             });
 
-            wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "WrapAround", false));
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "WrapAround", false));
             wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "WrapAround", wrapCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "WrapAround", wrapCheck.isSelected());
                 }
             });
 
@@ -101,6 +104,16 @@ public class WebFindController extends BaseWebViewController {
             MyBoxLog.error(e.toString());
         }
 
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(queryButton, new Tooltip(message("Query") + "\nF1"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     @Override
@@ -121,7 +134,7 @@ public class WebFindController extends BaseWebViewController {
     public void afterPageLoaded() {
         try {
             super.afterPageLoaded();
-            bottomLabel.setText(Languages.message("Count") + ": " + foundCount);
+
             if (loadedHtml == null) {
                 loadedHtml = WebViewTools.getHtml(webEngine);
             }
@@ -132,103 +145,146 @@ public class WebFindController extends BaseWebViewController {
     }
 
     @FXML
-    protected void findString() {
-        try {
-            foundCount = 0;
-            String value = findInputController.value();
-            if (value == null || value.isBlank()) {
-                parentController.popError(Languages.message("InvalidData"));
+    protected void queryAction() {
+        synchronized (this) {
+            if (task != null) {
+                task.cancel();
+                task = null;
+            }
+            if (loadedHtml == null) {
+                loadedHtml = WebViewTools.getHtml(webEngine);
+            }
+            if (loadedHtml == null || loadedHtml.isBlank()) {
+                popError(message("NoData"));
+                return;
+            }
+            String string = findInputController.value();
+            if (string == null || string.isBlank()) {
+                parentController.popError(message("InvalidData"));
                 return;
             }
             findInputController.refreshList();
-            loadedHtml = loadedHtml == null ? WebViewTools.getHtml(webEngine) : loadedHtml;
-            if (loadedHtml == null || loadedHtml.isBlank()) {
-                parentController.popInformation(Languages.message("NoData"));
-                return;
-            }
+
+            foundCount = 0;
+            foundLabel.setText("");
             foundItemSelector.getItems().clear();
             goItemButton.setDisable(true);
             firstButton.setDisable(true);
             previousButton.setDisable(true);
             nextButton.setDisable(true);
             lastButton.setDisable(true);
-            String findString = HtmlWriteTools.textToHtml(value);
+            task = new SingletonTask<Void>() {
 
-            String font = findFontSelector.getValue();
-            UserConfig.setUserConfigString(baseName + "Font", font);
+                private StringBuilder results;
 
-            FindReplaceString textsChecker = FindReplaceString.create()
-                    .setOperation(FindReplaceString.Operation.FindNext)
-                    .setIsRegex(false).setCaseInsensitive(true).setMultiline(true);
+                @Override
+                protected boolean handle() {
+                    try {
+                        String findString = HtmlWriteTools.stringToHtml(string);
 
-            FindReplaceString finder = FindReplaceString.create()
-                    .setOperation(FindReplaceString.Operation.FindNext).setFindString(findString)
-                    .setIsRegex(regCheck.isSelected()).setCaseInsensitive(caseCheck.isSelected()).setMultiline(true);
-            String inputString = loadedHtml;
-            String replaceSuffix = " style=\"color:" + findColorController.rgb()
-                    + "; background: " + findBgColorController.rgb()
-                    + "; font-size:" + font + ";\">" + findString + "</span>";
-            StringBuilder s = new StringBuilder();
-            String texts;
-            while (!inputString.isBlank()) {
-                textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).run();
-                if (textsChecker.getStringRange() == null) {
-                    break;
-                }
-                s.append(inputString.substring(0, textsChecker.getLastEnd()));
-                inputString = inputString.substring(textsChecker.getLastEnd());
-                textsChecker.setInputString(inputString).setFindString("<").setAnchor(0).run();
-                if (textsChecker.getStringRange() == null) {
-                    texts = inputString;
-                    inputString = "";
-                } else {
-                    if (textsChecker.getLastStart() > 0) {
-                        texts = inputString.substring(0, textsChecker.getLastStart());
-                    } else {
-                        texts = "";
+                        String font = findFontSelector.getValue();
+                        UserConfig.setString(baseName + "Font", font);
+
+                        FindReplaceString textsChecker = FindReplaceString.create()
+                                .setOperation(FindReplaceString.Operation.FindNext)
+                                .setIsRegex(false).setCaseInsensitive(true).setMultiline(true);
+
+                        FindReplaceString finder = FindReplaceString.create()
+                                .setOperation(FindReplaceString.Operation.FindNext).setFindString(findString)
+                                .setIsRegex(regCheck.isSelected()).setCaseInsensitive(caseCheck.isSelected()).setMultiline(true);
+                        String inputString = HtmlReadTools.body(loadedHtml, false);
+                        String replaceSuffix = " style=\"color:" + findColorController.rgb()
+                                + "; background: " + findBgColorController.rgb()
+                                + "; font-size:" + font + ";\">" + findString + "</span>";
+
+                        results = new StringBuilder();
+                        String texts;
+                        while (!inputString.isBlank()) {
+                            textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).run();
+                            if (textsChecker.getStringRange() == null) {
+                                break;
+                            }
+                            results.append(inputString.substring(0, textsChecker.getLastEnd()));
+                            inputString = inputString.substring(textsChecker.getLastEnd());
+                            textsChecker.setInputString(inputString).setFindString("<").setAnchor(0).run();
+                            if (textsChecker.getStringRange() == null) {
+                                texts = inputString;
+                                inputString = "";
+                            } else {
+                                if (textsChecker.getLastStart() > 0) {
+                                    texts = inputString.substring(0, textsChecker.getLastStart());
+                                } else {
+                                    texts = "";
+                                }
+                                inputString = inputString.substring(textsChecker.getLastStart());
+                            }
+                            if (texts.isEmpty()) {
+                                continue;
+                            }
+                            StringBuilder r = new StringBuilder();
+                            while (!texts.isBlank()) {
+                                finder.setInputString(texts).setAnchor(0).run();
+                                if (finder.getStringRange() == null) {
+                                    break;
+                                }
+                                String replaceString = "<span id=\"" + ItemPrefix + (++foundCount) + "\" " + replaceSuffix;
+                                if (finder.getLastStart() > 0) {
+                                    r.append(texts.substring(0, finder.getLastStart()));
+                                }
+                                r.append(replaceString);
+                                texts = texts.substring(finder.getLastEnd());
+                                Platform.runLater(() -> {
+                                    loading.setInfo(message("Found") + ": " + foundCount);
+                                });
+                            }
+                            r.append(texts);
+                            results.append(r.toString());
+                        }
+                        results.append(inputString);
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
                     }
-                    inputString = inputString.substring(textsChecker.getLastStart());
                 }
-                if (texts.isEmpty()) {
-                    continue;
-                }
-                StringBuilder r = new StringBuilder();
-                while (!texts.isBlank()) {
-                    finder.setInputString(texts).setAnchor(0).run();
-                    if (finder.getStringRange() == null) {
-                        break;
+
+                @Override
+                protected void whenSucceeded() {
+                    String info = message("Found") + ": " + foundCount;
+                    foundLabel.setText(info);
+                    popInformation(info);
+                    if (foundCount > 0) {
+                        List<String> numbers = new ArrayList<>();
+                        for (int i = 1; i <= foundCount; i++) {
+                            numbers.add(i + "");
+                        }
+                        foundItemSelector.getItems().setAll(numbers);
+                        foundItemSelector.getSelectionModel().select(0);
+                        goItemButton.setDisable(false);
+                        firstButton.setDisable(false);
+                        previousButton.setDisable(false);
+                        nextButton.setDisable(false);
+                        lastButton.setDisable(false);
                     }
-                    String replaceString = "<span id=\"MyBoxSearchLocation" + (++foundCount) + "\" " + replaceSuffix;
-                    if (finder.getLastStart() > 0) {
-                        r.append(texts.substring(0, finder.getLastStart()));
-                    }
-                    r.append(replaceString);
-                    texts = texts.substring(finder.getLastEnd());
+                    webEngine.getLoadWorker().cancel();
+                    webEngine.loadContent(results.toString());
                 }
-                r.append(texts);
-                s.append(r.toString());
-            }
-            s.append(inputString);
-            webEngine.loadContent(s.toString());
-            foundLabel.setText(foundCount + "");
-            if (foundCount > 0) {
-                List<String> numbers = new ArrayList<>();
-                for (int i = 1; i <= foundCount; i++) {
-                    numbers.add(i + "");
+
+                @Override
+                protected void finalAction() {
+                    loading = null;
                 }
-                foundItemSelector.getItems().setAll(numbers);
-                foundItemSelector.getSelectionModel().select(0);
-                goItemButton.setDisable(false);
-                firstButton.setDisable(false);
-                previousButton.setDisable(false);
-                nextButton.setDisable(false);
-                lastButton.setDisable(false);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+
+            };
+            task.setSelf(task);
+            loading = handling(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
         }
     }
 
+    // 1-based
     protected void goItem(int index) {
         foundItem = index;
         if (foundItem < 1) {
@@ -238,7 +294,7 @@ public class WebFindController extends BaseWebViewController {
             foundItem = wrapCheck.isSelected() ? 1 : foundCount;
         }
         foundItemSelector.getSelectionModel().select(foundItem + "");
-        String id = "MyBoxSearchLocation" + foundItem;
+        String id = ItemPrefix + foundItem;
         webEngine.executeScript("document.getElementById('" + id + "').scrollIntoView();");
     }
 
@@ -273,6 +329,12 @@ public class WebFindController extends BaseWebViewController {
     @Override
     public void lastAction() {
         goItem(foundCount);
+    }
+
+    @Override
+    public boolean keyF1() {
+        queryAction();
+        return true;
     }
 
 }

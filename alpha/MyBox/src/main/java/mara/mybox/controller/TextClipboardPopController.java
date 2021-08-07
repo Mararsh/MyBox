@@ -56,11 +56,8 @@ public class TextClipboardPopController extends MenuTextBaseController {
     /*
         static methods
      */
-    public static TextClipboardPopController open(BaseController parent, Node node, double x, double y) {
+    public static void closeAll() {
         try {
-            if (parent == null || node == null) {
-                return null;
-            }
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
@@ -69,6 +66,17 @@ public class TextClipboardPopController extends MenuTextBaseController {
                     ((TextClipboardPopController) object).close();
                 }
             }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static TextClipboardPopController open(BaseController parent, Node node, double x, double y) {
+        try {
+            if (parent == null || node == null) {
+                return null;
+            }
+            closeAll();
             TextClipboardPopController controller
                     = (TextClipboardPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.TextClipboardPopFxml, false);
             controller.setParameters(parent, node, x, y);

@@ -82,7 +82,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                         if (v >= 0) {
                             marginsWidth = v;
                             ValidationTools.setEditorNormal(marginsWidthBox);
-                            UserConfig.setUserConfigInt("ImageTextMarginsWidth", v);
+                            UserConfig.setInt("ImageTextMarginsWidth", v);
                             if (webView != null) {
                                 webView.setPrefWidth(imageController.maskRectangleLine.getWidth() - 2 * marginsWidth);
                                 webView.setPrefHeight(imageController.maskRectangleLine.getHeight() - 2 * marginsWidth);
@@ -98,7 +98,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                     }
                 }
             });
-            marginsWidthBox.getSelectionModel().select(UserConfig.getUserConfigInt("ImageTextMarginsWidth", 15) + "");
+            marginsWidthBox.getSelectionModel().select(UserConfig.getInt("ImageTextMarginsWidth", 15) + "");
 
             colorSetController.init(this, baseName + "Color", Color.WHITE);
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
@@ -118,7 +118,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                         if (v >= 0) {
                             arc = v;
                             ValidationTools.setEditorNormal(arcBox);
-                            UserConfig.setUserConfigInt("ImageTextArc", v);
+                            UserConfig.setInt("ImageTextArc", v);
                             imageController.maskRectangleLine.setArcWidth(v);
                             imageController.maskRectangleLine.setArcHeight(v);
                         } else {
@@ -129,7 +129,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                     }
                 }
             });
-            arcBox.getSelectionModel().select(UserConfig.getUserConfigInt("ImageTextArc", 20) + "");
+            arcBox.getSelectionModel().select(UserConfig.getInt("ImageTextArc", 20) + "");
 
             opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -139,7 +139,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                         float f = Float.valueOf(newValue);
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
-                            UserConfig.setUserConfigInt("ImageTextOpacity", (int) (f * 100));
+                            UserConfig.setInt("ImageTextOpacity", (int) (f * 100));
                             ValidationTools.setEditorNormal(opacityBox);
                             imageController.maskRectangleLine.setOpacity(opacity);
                         } else {
@@ -150,7 +150,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                     }
                 }
             });
-            opacityBox.getSelectionModel().select((UserConfig.getUserConfigInt("ImageTextOpacity", 50) / 100f) + "");
+            opacityBox.getSelectionModel().select((UserConfig.getInt("ImageTextOpacity", 50) / 100f) + "");
 
             angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override

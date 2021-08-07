@@ -36,13 +36,13 @@ public class Languages {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        UserConfig.setUserConfigString("language", lang);
+        UserConfig.setString("language", lang);
         currentBundle = getBundle(lang);
         currentTableBundle = getTableBundle(lang);
     }
 
     public static String getLanguage() {
-        String lang = UserConfig.getUserConfigString("language", Locale.getDefault().getLanguage());
+        String lang = UserConfig.getString("language", Locale.getDefault().getLanguage());
         return lang != null ? lang.toLowerCase() : Locale.getDefault().getLanguage().toLowerCase();
     }
 

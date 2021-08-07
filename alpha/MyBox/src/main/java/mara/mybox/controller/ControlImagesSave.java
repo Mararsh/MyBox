@@ -179,7 +179,7 @@ public class ControlImagesSave extends BaseController {
                         checkGifSizeType();
                     });
 
-            gifWidth = UserConfig.getUserConfigInt(baseName + "GifWidth", 600);
+            gifWidth = UserConfig.getInt(baseName + "GifWidth", 600);
             gifWidth = gifWidth <= 0 ? 600 : gifWidth;
             gifWidthInput.setText(gifWidth + "");
             gifWidthInput.textProperty().addListener(
@@ -211,7 +211,7 @@ public class ControlImagesSave extends BaseController {
             if (v > 0) {
                 gifWidth = v;
                 gifWidthInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "GifWidth", v);
+                UserConfig.setInt(baseName + "GifWidth", v);
             } else {
                 gifWidthInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -222,7 +222,7 @@ public class ControlImagesSave extends BaseController {
 
     public void initPptPane() {
         try {
-            pptWidth = UserConfig.getUserConfigInt(baseName + "PptWidth", 1024);
+            pptWidth = UserConfig.getInt(baseName + "PptWidth", 1024);
             pptWidth = pptWidth <= 0 ? 1024 : pptWidth;
             pptWidthInput.setText(pptWidth + "");
             pptWidthInput.textProperty().addListener(
@@ -230,7 +230,7 @@ public class ControlImagesSave extends BaseController {
                         checkPptWidth();
                     });
 
-            pptHeight = UserConfig.getUserConfigInt(baseName + "PptHeight", 768);
+            pptHeight = UserConfig.getInt(baseName + "PptHeight", 768);
             pptHeight = pptHeight <= 0 ? 768 : pptHeight;
             pptHeightInput.setText(pptHeight + "");
             pptHeightInput.textProperty().addListener(
@@ -238,7 +238,7 @@ public class ControlImagesSave extends BaseController {
                         checkPptHeight();
                     });
 
-            pptMargin = UserConfig.getUserConfigInt(baseName + "PptMargin", 20);
+            pptMargin = UserConfig.getInt(baseName + "PptMargin", 20);
             pptMargin = pptHeight <= 0 ? 20 : pptMargin;
             pptMarginInput.setText(pptMargin + "");
             pptMarginInput.textProperty().addListener(
@@ -257,7 +257,7 @@ public class ControlImagesSave extends BaseController {
             if (v > 0) {
                 pptWidth = v;
                 pptWidthInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "PptWidth", v);
+                UserConfig.setInt(baseName + "PptWidth", v);
             } else {
                 pptWidthInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -272,7 +272,7 @@ public class ControlImagesSave extends BaseController {
             if (v > 0) {
                 pptHeight = v;
                 pptHeightInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "PptHeight", v);
+                UserConfig.setInt(baseName + "PptHeight", v);
             } else {
                 pptHeightInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -287,7 +287,7 @@ public class ControlImagesSave extends BaseController {
             if (v > 0) {
                 pptMargin = v;
                 pptMarginInput.setStyle(null);
-                UserConfig.setUserConfigInt(baseName + "PptMargin", v);
+                UserConfig.setInt(baseName + "PptMargin", v);
             } else {
                 pptMarginInput.setStyle(NodeStyleTools.badStyle);
             }

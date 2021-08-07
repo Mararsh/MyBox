@@ -30,7 +30,7 @@ public class ImageClipboardTools {
     }
 
     public static int getMonitorInterval() {
-        int v = UserConfig.getUserConfigInt("ImageClipboardMonitorInterval", DefaultInterval);
+        int v = UserConfig.getInt("ImageClipboardMonitorInterval", DefaultInterval);
         if (v <= 0) {
             v = DefaultInterval;
         }
@@ -41,7 +41,7 @@ public class ImageClipboardTools {
         if (v <= 0) {
             v = DefaultInterval;
         }
-        UserConfig.setUserConfigInt("ImageClipboardMonitorInterval", v);
+        UserConfig.setInt("ImageClipboardMonitorInterval", v);
         return v;
     }
 
@@ -63,7 +63,7 @@ public class ImageClipboardTools {
                 cc.putImage(image);
                 Clipboard.getSystemClipboard().setContent(cc);
                 controller.popInformation(Languages.message("CopiedInSystemClipBoard"));
-                if (UserConfig.getUserConfigBoolean("MonitorImageClipboard", false)) {
+                if (UserConfig.getBoolean("MonitorImageClipboard", false)) {
                     ControlImagesClipboard.updateClipboards();
                 }
             }

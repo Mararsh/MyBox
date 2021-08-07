@@ -471,17 +471,17 @@ License:    Apache License Version 2.0
                                                 </Tab>
                                                 <Tab closable="false" text="html">
                                                     <content>
-                                                        <fx:include fx:id="html" source="HtmlViewer.fxml" />
+                                                        <fx:include fx:id="html" source="HtmlTable.fxml" />
                                                     </content>
                                                 </Tab>
                                                 <Tab fx:id="regionsTab" closable="false" text="%Regions">
                                                     <content>
-                                                        <fx:include fx:id="regionsTable" source="HtmlViewer.fxml" />
+                                                        <fx:include fx:id="regionsTable" source="HtmlTable.fxml" />
                                                     </content>
                                                 </Tab>
                                                 <Tab fx:id="wordsTab" closable="false" text="%Words">
                                                     <content>
-                                                        <fx:include fx:id="wordsTable" source="HtmlViewer.fxml" />
+                                                        <fx:include fx:id="wordsTable" source="HtmlTable.fxml" />
                                                     </content>
                                                 </Tab>
                                             </tabs>

@@ -123,7 +123,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             originalColorSetController.init(this, baseName + "OriginalColor", Color.WHITE);
             newColorSetController.init(this, baseName + "NewColor", Color.TRANSPARENT);
 
-            colorDistance = UserConfig.getUserConfigInt(baseName + "ColorDistance", 20);
+            colorDistance = UserConfig.getInt(baseName + "ColorDistance", 20);
             colorDistance = colorDistance <= 0 ? 20 : colorDistance;
             distanceSelector.setValue(colorDistance + "");
             distanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -133,7 +133,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 }
             });
 
-            squareRootCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ColorDistanceSquare", false));
+            squareRootCheck.setSelected(UserConfig.getBoolean(baseName + "ColorDistanceSquare", false));
             squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
@@ -192,7 +192,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     }
                     if (v >= 0 && v <= max) {
                         colorDistance = v;
-                        UserConfig.setUserConfigInt(baseName + "ColorDistance", colorDistance);
+                        UserConfig.setInt(baseName + "ColorDistance", colorDistance);
                         distanceSelector.getEditor().setStyle(null);
                     } else {
                         distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);

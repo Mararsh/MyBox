@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
@@ -129,6 +131,38 @@ public class WebViewTools {
 //            MyBoxLog.debug(e.toString());
             return null;
         }
+    }
+
+    public static HTMLEditor editor(WebView webView) {
+        if (webView == null) {
+            return null;
+        }
+        Parent p = webView.getParent();
+        while (p != null) {
+            if (p instanceof HTMLEditor) {
+                return (HTMLEditor) p;
+            }
+            p = p.getParent();
+        }
+        return null;
+    }
+
+    public static WebView webview(Parent node) {
+        if (node == null) {
+            return null;
+        }
+        for (Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof WebView) {
+                return (WebView) child;
+            }
+            if (child instanceof Parent) {
+                WebView w = webview((Parent) child);
+                if (w != null) {
+                    return w;
+                }
+            }
+        }
+        return null;
     }
 
     public static String getFrame(WebEngine engine, int index) {

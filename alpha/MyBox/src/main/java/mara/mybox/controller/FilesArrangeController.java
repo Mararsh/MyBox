@@ -110,10 +110,10 @@ public class FilesArrangeController extends BaseBatchFileController {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean old_toggle, Boolean new_toggle) {
-                UserConfig.setUserConfigBoolean(baseName + "Subdir", isCopy);
+                UserConfig.setBoolean(baseName + "Subdir", isCopy);
             }
         });
-        handleSubdirCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Subdir", true));
+        handleSubdirCheck.setSelected(UserConfig.getBoolean(baseName + "Subdir", true));
 
         filesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -121,10 +121,10 @@ public class FilesArrangeController extends BaseBatchFileController {
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) filesGroup.getSelectedToggle();
                 isCopy = Languages.message("Copy").equals(selected.getText());
-                UserConfig.setUserConfigBoolean(baseName + "Copy", isCopy);
+                UserConfig.setBoolean(baseName + "Copy", isCopy);
             }
         });
-        if (UserConfig.getUserConfigBoolean(baseName + "Copy", true)) {
+        if (UserConfig.getBoolean(baseName + "Copy", true)) {
             copyRadio.setSelected(true);
             isCopy = true;
         } else {
@@ -139,7 +139,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                 checkReplaceType();
             }
         });
-        String replaceSelect = UserConfig.getUserConfigString(baseName + "Exist", "ReplaceModified");
+        String replaceSelect = UserConfig.getString(baseName + "Exist", "ReplaceModified");
         switch (replaceSelect) {
             case "ReplaceModified":
                 replaceModifiedRadio.setSelected(true);
@@ -162,10 +162,10 @@ public class FilesArrangeController extends BaseBatchFileController {
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) byGroup.getSelectedToggle();
                 byModifyTime = Languages.message("ModifyTime").equals(selected.getText());
-                UserConfig.setUserConfigBoolean(baseName + "ModifyTime", byModifyTime);
+                UserConfig.setBoolean(baseName + "ModifyTime", byModifyTime);
             }
         });
-        if (UserConfig.getUserConfigBoolean(baseName + "ModifyTime", true)) {
+        if (UserConfig.getBoolean(baseName + "ModifyTime", true)) {
             modifiyTimeRadio.setSelected(true);
             byModifyTime = true;
         } else {
@@ -180,7 +180,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                 checkDirType();
             }
         });
-        String dirSelect = UserConfig.getUserConfigString(baseName + "Category", "Month");
+        String dirSelect = UserConfig.getString(baseName + "Category", "Month");
         switch (dirSelect) {
             case "Year":
                 yearRadio.setSelected(true);
@@ -200,19 +200,19 @@ public class FilesArrangeController extends BaseBatchFileController {
         RadioButton selected = (RadioButton) replaceGroup.getSelectedToggle();
         if (Languages.message("ReplaceModified").equals(selected.getText())) {
             replaceType = ReplaceType.ReplaceModified;
-            UserConfig.setUserConfigString(baseName + "Exist", "ReplaceModified");
+            UserConfig.setString(baseName + "Exist", "ReplaceModified");
         } else if (Languages.message("NotCopy").equals(selected.getText())) {
             replaceType = ReplaceType.NotCopy;
-            UserConfig.setUserConfigString(baseName + "Exist", "NotCopy");
+            UserConfig.setString(baseName + "Exist", "NotCopy");
         } else if (Languages.message("Replace").equals(selected.getText())) {
             replaceType = ReplaceType.Replace;
-            UserConfig.setUserConfigString(baseName + "Exist", "Replace");
+            UserConfig.setString(baseName + "Exist", "Replace");
         } else if (Languages.message("Rename").equals(selected.getText())) {
             replaceType = ReplaceType.Rename;
-            UserConfig.setUserConfigString(baseName + "Exist", "Rename");
+            UserConfig.setString(baseName + "Exist", "Rename");
         } else {
             replaceType = ReplaceType.ReplaceModified;
-            UserConfig.setUserConfigString(baseName + "Exist", "ReplaceModified");
+            UserConfig.setString(baseName + "Exist", "ReplaceModified");
         }
 
     }
@@ -221,16 +221,16 @@ public class FilesArrangeController extends BaseBatchFileController {
         RadioButton selected = (RadioButton) dirGroup.getSelectedToggle();
         if (Languages.message("Year").equals(selected.getText())) {
             dirType = DirType.Year;
-            UserConfig.setUserConfigString(baseName + "Category", "Year");
+            UserConfig.setString(baseName + "Category", "Year");
         } else if (Languages.message("Month").equals(selected.getText())) {
             dirType = DirType.Month;
-            UserConfig.setUserConfigString(baseName + "Category", "Month");
+            UserConfig.setString(baseName + "Category", "Month");
         } else if (Languages.message("Day").equals(selected.getText())) {
             dirType = DirType.Day;
-            UserConfig.setUserConfigString(baseName + "Category", "Day");
+            UserConfig.setString(baseName + "Category", "Day");
         } else {
             dirType = DirType.Month;
-            UserConfig.setUserConfigString(baseName + "Category", "Month");
+            UserConfig.setString(baseName + "Category", "Month");
         }
     }
 

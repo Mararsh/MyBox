@@ -79,7 +79,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
             originalColorSetController.init(this, baseName + "OriginalColor", Color.WHITE);
             newColorSetController.init(this, baseName + "NewColor", Color.TRANSPARENT);
 
-            distance = UserConfig.getUserConfigInt(baseName + "Distance", 20);
+            distance = UserConfig.getInt(baseName + "Distance", 20);
             distance = distance <= 0 ? 20 : distance;
             distanceSelector.setValue(distance + "");
             distanceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -89,7 +89,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
                 }
             });
 
-            squareRootCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ColorDistanceSquare", false));
+            squareRootCheck.setSelected(UserConfig.getBoolean(baseName + "ColorDistanceSquare", false));
             squareRootCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
@@ -150,7 +150,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
                     }
                     if (v >= 0 && v <= max) {
                         distance = v;
-                        UserConfig.setUserConfigInt(baseName + "Distance", distance);
+                        UserConfig.setInt(baseName + "Distance", distance);
                         distanceSelector.getEditor().setStyle(null);
                     } else {
                         distanceSelector.getEditor().setStyle(NodeStyleTools.badStyle);

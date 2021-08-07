@@ -38,7 +38,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -54,7 +53,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-20
  * @License Apache License Version 2.0
  */
-public class HtmlSnapController extends BaseHtmlController {
+public class HtmlSnapController extends BaseWebViewController {
 
     protected int delay, orginalStageHeight, orginalStageY;
     protected int lastHtmlLen, lastCodesLen;
@@ -120,7 +119,7 @@ public class HtmlSnapController extends BaseHtmlController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             delay = v * 1000;
-                            UserConfig.setUserConfigInt(baseName + "Delay", v);
+                            UserConfig.setInt(baseName + "Delay", v);
                             ValidationTools.setEditorNormal(delayBox);
                         } else {
                             ValidationTools.setEditorBadStyle(delayBox);
@@ -130,7 +129,7 @@ public class HtmlSnapController extends BaseHtmlController {
                     }
                 }
             });
-            delayBox.getSelectionModel().select(UserConfig.getUserConfigInt(baseName + "Delay", 2) + "");
+            delayBox.getSelectionModel().select(UserConfig.getInt(baseName + "Delay", 2) + "");
 
             snapGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -166,28 +165,17 @@ public class HtmlSnapController extends BaseHtmlController {
         }
     }
 
-    @Override
-    protected void updateStatus(boolean changed) {
-        String t = getBaseTitle();
-        if (webviewController.address != null) {
-            t += "  " + webviewController.address;
-        } else if (sourceFile != null) {
-            t += "  " + sourceFile.getAbsolutePath();
-        }
-        getMyStage().setTitle(t);
-    }
-
     @FXML
     @Override
     public void saveAsAction() {
         File file;
-        String name = "Snap" + (webviewController.sourceFile != null ? "_" + FileNameTools.filenameFilter(webviewController.sourceFile.getName()) : "")
+        String name = "Snap" + (sourceFile != null ? "_" + FileNameTools.filenameFilter(sourceFile.getName()) : "")
                 + "_" + DateTools.nowFileString();
         if (isOneImage) {
-            file = chooseSaveFile(UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
+            file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
                     name + ".png", FileFilters.ImageExtensionFilter);
         } else {
-            file = chooseSaveFile(UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF)),
+            file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF)),
                     name + ".pdf", FileFilters.PdfExtensionFilter);
         }
         if (file == null) {
@@ -279,7 +267,7 @@ public class HtmlSnapController extends BaseHtmlController {
             snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
             snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
             snapHeight = 0;
-            webLabel.setText(Languages.message("SnapingImage..."));
+            bottomLabel.setText(Languages.message("SnapingImage..."));
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
@@ -401,7 +389,7 @@ public class HtmlSnapController extends BaseHtmlController {
                 }
 
                 webEngine.executeScript("window.scrollTo(0,0 );");
-                webLabel.setText("");
+                bottomLabel.setText("");
                 snapshotButton.setDisable(false);
 
                 if (loadingController != null) {

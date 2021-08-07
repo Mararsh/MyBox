@@ -545,11 +545,11 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
                 tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
-                        UserConfig.setUserConfigBoolean("TableSubDirctories", newv);
+                        UserConfig.setBoolean("TableSubDirctories", newv);
                         countSize();
                     }
                 });
-                tableSubdirCheck.setSelected(UserConfig.getUserConfigBoolean("TableSubDirctories", true));
+                tableSubdirCheck.setSelected(UserConfig.getBoolean("TableSubDirctories", true));
             }
 
             if (tableExpandDirCheck != null) {
@@ -567,21 +567,21 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
                 tableCreateDirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
-                        UserConfig.setUserConfigBoolean("TableCreateDirctories", newv);
+                        UserConfig.setBoolean("TableCreateDirctories", newv);
                     }
                 });
-                tableCreateDirCheck.setSelected(UserConfig.getUserConfigBoolean("TableCreateDirctories", true));
+                tableCreateDirCheck.setSelected(UserConfig.getBoolean("TableCreateDirctories", true));
             }
 
             if (countDirCheck != null) {
                 countDirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
-                        UserConfig.setUserConfigBoolean("TableCountDirctories", newv);
+                        UserConfig.setBoolean("TableCountDirctories", newv);
                         countSize();
                     }
                 });
-                countDirCheck.setSelected(UserConfig.getUserConfigBoolean("TableCountDirctories", true));
+                countDirCheck.setSelected(UserConfig.getBoolean("TableCountDirctories", true));
             }
 
             if (tableLabel != null) {
@@ -815,7 +815,7 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
     public void addFiles(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = UserConfig.getUserConfigPath(baseName + "SourcePath");
+            File defaultPath = UserConfig.getPath(baseName + "SourcePath");
             if (defaultPath.exists()) {
                 fileChooser.setInitialDirectory(defaultPath);
             }
@@ -922,7 +922,7 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
     public void addDirectory(int index) {
         try {
             DirectoryChooser dirChooser = new DirectoryChooser();
-            File defaultPath = UserConfig.getUserConfigPath(baseName + "SourcePath");
+            File defaultPath = UserConfig.getPath(baseName + "SourcePath");
             if (defaultPath != null) {
                 dirChooser.setInitialDirectory(defaultPath);
             }

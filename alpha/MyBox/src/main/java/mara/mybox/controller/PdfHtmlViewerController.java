@@ -310,7 +310,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             if (sourceFile != null) {
                 name = FileNameTools.getFilePrefix(sourceFile.getName());
             }
-            final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+            final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                     name, targetExtensionFilter);
             if (file == null) {
                 return;

@@ -79,7 +79,7 @@ public class ColorSet extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setUserConfigString(thisName, ((Color) newValue).toString());
+                    UserConfig.setString(thisName, ((Color) newValue).toString());
                 }
             });
 
@@ -109,7 +109,7 @@ public class ColorSet extends BaseController {
     }
 
     public void resetRect() {
-        Color color = Color.web(UserConfig.getUserConfigString(thisName, FxColorTools.color2rgba(defaultColor)));
+        Color color = Color.web(UserConfig.getString(thisName, FxColorTools.color2rgba(defaultColor)));
         rect.setFill(color);
         NodeStyleTools.setTooltip(rect, FxColorTools.colorNameDisplay(tableColor, color));
     }
@@ -121,7 +121,7 @@ public class ColorSet extends BaseController {
 
     @FXML
     public void popColorPalette(MouseEvent event) {
-        if (UserConfig.getUserConfigBoolean("PopColorSetWhenMousePassing", true)) {
+        if (UserConfig.getBoolean("PopColorSetWhenMousePassing", true)) {
             showColorPalette();
         }
     }

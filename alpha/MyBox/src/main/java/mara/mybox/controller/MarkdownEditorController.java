@@ -108,9 +108,9 @@ public class MarkdownEditorController extends TextEditorController {
 
             webEngine = webView.getEngine();
 
-            wrapCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Wrap", true));
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             wrapCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                UserConfig.setUserConfigBoolean(baseName + "Wrap", wrapCheck.isSelected());
+                UserConfig.setBoolean(baseName + "Wrap", wrapCheck.isSelected());
                 codesArea.setWrapText(wrapCheck.isSelected());
             });
             codesArea.setWrapText(wrapCheck.isSelected());
@@ -135,11 +135,11 @@ public class MarkdownEditorController extends TextEditorController {
                     "GITHUB", "MARKDOWN", "GITHUB_DOC", "COMMONMARK", "KRAMDOWN", "PEGDOWN",
                     "FIXED_INDENT", "MULTI_MARKDOWN", "PEGDOWN_STRICT"
             ));
-            emulationSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Emulation", "GITHUB"));
+            emulationSelector.getSelectionModel().select(UserConfig.getString(baseName + "Emulation", "GITHUB"));
             emulationSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "Emulation", newValue);
+                    UserConfig.setString(baseName + "Emulation", newValue);
                     updateHtmlConverter();
                 }
             });
@@ -147,7 +147,7 @@ public class MarkdownEditorController extends TextEditorController {
             indentSelector.getItems().addAll(Arrays.asList(
                     "4", "2", "0", "6", "8"
             ));
-            indentSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Indent", "4"));
+            indentSelector.getSelectionModel().select(UserConfig.getString(baseName + "Indent", "4"));
             indentSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -155,7 +155,7 @@ public class MarkdownEditorController extends TextEditorController {
                         int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             indentSize = v;
-                            UserConfig.setUserConfigString(baseName + "Indent", newValue);
+                            UserConfig.setString(baseName + "Indent", newValue);
                             updateHtmlConverter();
                         }
                     } catch (Exception e) {
@@ -163,38 +163,38 @@ public class MarkdownEditorController extends TextEditorController {
                 }
             });
 
-            trimCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Trim", false));
+            trimCheck.setSelected(UserConfig.getBoolean(baseName + "Trim", false));
             trimCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Indent", trimCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Indent", trimCheck.isSelected());
                     updateHtmlConverter();
                 }
             });
 
-            appendCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Append", false));
+            appendCheck.setSelected(UserConfig.getBoolean(baseName + "Append", false));
             appendCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Append", appendCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Append", appendCheck.isSelected());
                     updateHtmlConverter();
                 }
             });
 
-            discardCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Discard", false));
+            discardCheck.setSelected(UserConfig.getBoolean(baseName + "Discard", false));
             discardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Discard", discardCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Discard", discardCheck.isSelected());
                     updateHtmlConverter();
                 }
             });
 
-            linesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Trim", false));
+            linesCheck.setSelected(UserConfig.getBoolean(baseName + "Trim", false));
             linesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Trim", linesCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Trim", linesCheck.isSelected());
                     updateHtmlConverter();
                 }
             });
@@ -204,11 +204,11 @@ public class MarkdownEditorController extends TextEditorController {
                 styles.add(Languages.message(style.name()));
             }
             styleSelector.getItems().addAll(styles);
-            styleSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "HtmlStyle", Languages.message("Default")));
+            styleSelector.getSelectionModel().select(UserConfig.getString(baseName + "HtmlStyle", Languages.message("Default")));
             styleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    UserConfig.setUserConfigString(baseName + "HtmlStyle", newValue);
+                    UserConfig.setString(baseName + "HtmlStyle", newValue);
                     updateHtmlConverter();
                 }
             });
@@ -310,7 +310,7 @@ public class MarkdownEditorController extends TextEditorController {
                         Node document = htmlParser.parse(mainArea.getText());
                         html = htmlRenderer.render(document);
 
-                        String style = UserConfig.getUserConfigString(baseName + "HtmlStyle", Languages.message("Default"));
+                        String style = UserConfig.getString(baseName + "HtmlStyle", Languages.message("Default"));
                         html = HtmlWriteTools.html(titleInput.getText(), style, html);
                         return html != null;
                     } catch (Exception e) {

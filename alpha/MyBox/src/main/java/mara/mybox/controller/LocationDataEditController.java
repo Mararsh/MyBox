@@ -130,9 +130,9 @@ public class LocationDataEditController extends BaseController {
                             return;
                         }
                         coordinateSystem = new CoordinateSystem(newValue);
-                        UserConfig.setUserConfigString("GeographyCodeCoordinateSystem", newValue);
+                        UserConfig.setString("GeographyCodeCoordinateSystem", newValue);
                     });
-            coordinateSystemSelector.getSelectionModel().select(UserConfig.getUserConfigString("GeographyCodeCoordinateSystem", Languages.message(CoordinateSystem.defaultValue().name())));
+            coordinateSystemSelector.getSelectionModel().select(UserConfig.getString("GeographyCodeCoordinateSystem", Languages.message(CoordinateSystem.defaultValue().name())));
 
             speedInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {

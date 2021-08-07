@@ -86,24 +86,24 @@ public class DataFileExcelController extends BaseDataFileController {
             super.initControls();
             currentSheetName = null;
 
-            sourceWithNamesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "SourceWithNames", true));
+            sourceWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "SourceWithNames", true));
             sourceWithNamesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         if (!isSettingValues) {
-                            UserConfig.setUserConfigBoolean(baseName + "SourceWithNames", newValue);
+                            UserConfig.setBoolean(baseName + "SourceWithNames", newValue);
                         }
                     });
 
-            targetWithNamesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "TargetWithNames", true));
+            targetWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "TargetWithNames", true));
             targetWithNamesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         if (!isSettingValues) {
-                            UserConfig.setUserConfigBoolean(baseName + "TargetWithNames", newValue);
+                            UserConfig.setBoolean(baseName + "TargetWithNames", newValue);
                         }
                     });
 
-            currentOnlyCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "CurrentOnly", false));
+            currentOnlyCheck.setSelected(UserConfig.getBoolean(baseName + "CurrentOnly", false));
             currentOnlyCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         if (!isSettingValues) {
-                            UserConfig.setUserConfigBoolean(baseName + "CurrentOnly", newValue);
+                            UserConfig.setBoolean(baseName + "CurrentOnly", newValue);
                         }
                     });
 
@@ -459,7 +459,7 @@ public class DataFileExcelController extends BaseDataFileController {
         if (sourceFile != null) {
             name = FileNameTools.getFilePrefix(sourceFile.getName());
         }
-        targetFile = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        targetFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 name, targetExtensionFilter);
         if (targetFile == null) {
             return;

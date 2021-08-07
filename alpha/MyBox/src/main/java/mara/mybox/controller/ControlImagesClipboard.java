@@ -49,7 +49,7 @@ import mara.mybox.value.UserConfig;
 public class ControlImagesClipboard extends BaseDataTableController<ImageClipboard> {
 
     protected Image lastSystemClip;
-    protected int thumbWidth = UserConfig.getUserConfigInt("ThumbnailWidth", 100);
+    protected int thumbWidth = UserConfig.getInt("ThumbnailWidth", 100);
 
     @FXML
     protected HBox buttonsBox;
@@ -259,7 +259,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     }
 
     public void updateStatus() {
-        if (UserConfig.getUserConfigBoolean("MonitorImageClipboard", false)) {
+        if (UserConfig.getBoolean("MonitorImageClipboard", false)) {
             bottomLabel.setText(Languages.message("MonitoringImageInSystemClipboard"));
         } else {
             bottomLabel.setText(Languages.message("NotMonitoringImageInSystemClipboard"));

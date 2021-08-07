@@ -46,7 +46,7 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
     @FXML
     protected Button calculateButton, calculateAllButton, exportButton;
     @FXML
-    protected HtmlViewerController matrixController;
+    protected HtmlTableController matrixController;
 
     public RGB2XYZConversionMatrixController() {
         baseTitle = Languages.message("LinearRGB2XYZMatrix");
@@ -128,14 +128,14 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
                     } else {
                         scale = p;
                         scaleMatricesInput.setStyle(null);
-                        UserConfig.setUserConfigInt("MatrixDecimalScale", scale);
+                        UserConfig.setInt("MatrixDecimalScale", scale);
                     }
                 } catch (Exception e) {
                     scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
                 }
             }
         });
-        int p = UserConfig.getUserConfigInt("MatrixDecimalScale", 8);
+        int p = UserConfig.getInt("MatrixDecimalScale", 8);
         scaleMatricesInput.setText(p + "");
 
         calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()

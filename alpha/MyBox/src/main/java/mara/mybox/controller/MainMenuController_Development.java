@@ -112,7 +112,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
     @FXML
     protected void checkMemroyMonitor() {
         boolean v = monitorMemroyCheck.isSelected();
-        UserConfig.setUserConfigBoolean("MonitorMemroy", v);
+        UserConfig.setBoolean("MonitorMemroy", v);
         if (v) {
             if (memoryBox == null) {
                 makeMemoryMonitorBox();
@@ -205,7 +205,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
     @FXML
     protected void checkCpuMonitor() {
         boolean v = monitorCpuCheck.isSelected();
-        UserConfig.setUserConfigBoolean("MonitorCpu", v);
+        UserConfig.setBoolean("MonitorCpu", v);
         if (v) {
             if (cpuBox == null) {
                 makeCpuMonitorBox();

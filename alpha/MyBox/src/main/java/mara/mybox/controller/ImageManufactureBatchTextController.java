@@ -113,7 +113,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 }
             });
 
-            fontSize = UserConfig.getUserConfigInt(baseName + "FontSize", 72);
+            fontSize = UserConfig.getInt(baseName + "FontSize", 72);
             List<String> sizes = Arrays.asList(
                     "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
             waterSizeBox.getItems().addAll(sizes);
@@ -125,7 +125,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             fontSize = v;
-                            UserConfig.setUserConfigInt(baseName + "FontSize", fontSize);
+                            UserConfig.setInt(baseName + "FontSize", fontSize);
                             ValidationTools.setEditorNormal(waterSizeBox);
                         } else {
                             ValidationTools.setEditorBadStyle(waterSizeBox);
@@ -137,14 +137,14 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             });
 
             try {
-                float f = Float.valueOf(UserConfig.getUserConfigString(baseName + "Opacity", "1.0"));
+                float f = Float.valueOf(UserConfig.getString(baseName + "Opacity", "1.0"));
                 if (f >= 0.0f && f <= 1.0f) {
                     opacity = f;
                 }
             } catch (Exception e) {
                 opacity = 1.0f;
             }
-            String mode = UserConfig.getUserConfigString(baseName + "TextBlendMode", Languages.message("NormalMode"));
+            String mode = UserConfig.getString(baseName + "TextBlendMode", Languages.message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
             blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
             blendSelector.setValue(mode);
@@ -153,11 +153,11 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     String mode = blendSelector.getSelectionModel().getSelectedItem();
                     blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setUserConfigString(baseName + "TextBlendMode", mode);
+                    UserConfig.setString(baseName + "TextBlendMode", mode);
                 }
             });
 
-            opacity = UserConfig.getUserConfigInt(baseName + "TextOpacity", 100) / 100f;
+            opacity = UserConfig.getInt(baseName + "TextOpacity", 100) / 100f;
             opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
             opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacitySelector.setValue(opacity + "");
@@ -168,7 +168,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         float f = Float.valueOf(newValue);
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
-                            UserConfig.setUserConfigInt(baseName + "TextOpacity", (int) (f * 100));
+                            UserConfig.setInt(baseName + "TextOpacity", (int) (f * 100));
                             ValidationTools.setEditorNormal(opacitySelector);
                         } else {
                             ValidationTools.setEditorBadStyle(opacitySelector);
@@ -179,24 +179,24 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 }
             });
 
-            blendTopCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "TextBlendTop", true));
+            blendTopCheck.setSelected(UserConfig.getBoolean(baseName + "TextBlendTop", true));
             blendTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setUserConfigBoolean(baseName + "TextBlendTop", blendTopCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "TextBlendTop", blendTopCheck.isSelected());
                 }
             });
 
-            ignoreTransparentCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IgnoreTransparent", true));
+            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
             ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
                 }
             });
 
-            shadow = UserConfig.getUserConfigInt(baseName + "Shadow", 0);
+            shadow = UserConfig.getInt(baseName + "Shadow", 0);
             waterShadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
             waterShadowBox.setValue(shadow + "");
             waterShadowBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -206,7 +206,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             shadow = v;
-                            UserConfig.setUserConfigInt(baseName + "Shadow", shadow);
+                            UserConfig.setInt(baseName + "Shadow", shadow);
                             ValidationTools.setEditorNormal(waterShadowBox);
                         } else {
                             ValidationTools.setEditorBadStyle(waterShadowBox);
@@ -224,19 +224,19 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
             String[] fontNames = e.getAvailableFontFamilyNames();
             waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
-            waterFamilyBox.setValue(UserConfig.getUserConfigString(baseName + "FontFamily", fontNames[0]));
+            waterFamilyBox.setValue(UserConfig.getString(baseName + "FontFamily", fontNames[0]));
             waterFamilyBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (newValue != null) {
-                        UserConfig.setUserConfigString(baseName + "FontFamily", newValue);
+                        UserConfig.setString(baseName + "FontFamily", newValue);
                     }
                 }
             });
 
             colorSetController.init(this, baseName + "Color", Color.RED);
 
-            angle = UserConfig.getUserConfigInt(baseName + "Angle", 0);
+            angle = UserConfig.getInt(baseName + "Angle", 0);
             waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
             waterAngleBox.setVisibleRowCount(10);
@@ -248,7 +248,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             angle = v;
-                            UserConfig.setUserConfigInt(baseName + "Angle", angle);
+                            UserConfig.setInt(baseName + "Angle", angle);
                             ValidationTools.setEditorNormal(waterAngleBox);
                         } else {
                             ValidationTools.setEditorBadStyle(waterAngleBox);
@@ -259,7 +259,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
                 }
             });
 
-            margin = UserConfig.getUserConfigInt(baseName + "Margin", 20);
+            margin = UserConfig.getInt(baseName + "Margin", 20);
             marginInput.setText(margin + "");
             positionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -320,7 +320,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             int v = Integer.valueOf(marginInput.getText());
             if (v >= 0) {
                 margin = v;
-                UserConfig.setUserConfigInt(baseName + "Margin", margin);
+                UserConfig.setInt(baseName + "Margin", margin);
                 marginInput.setStyle(null);
             } else {
                 marginInput.setStyle(NodeStyleTools.badStyle);

@@ -20,10 +20,10 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -49,7 +49,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             sourceFileInput.setStyle(NodeStyleTools.badStyle);
             return;
         }
-        UserConfig.setUserConfigString(baseName + "SourceFile", file.getAbsolutePath());
+        UserConfig.setString(baseName + "SourceFile", file.getAbsolutePath());
         sourceFileInput.setStyle(null);
         sourceFileChanged(file);
         if (parentController != null && parentController != this) {
@@ -70,7 +70,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
             targetPath = file;
             targetPathInput.setStyle(null);
-            UserConfig.setUserConfigString(baseName + "TargetPath", file.getAbsolutePath());
+            UserConfig.setString(baseName + "TargetPath", file.getAbsolutePath());
         } catch (Exception e) {
         }
     }
@@ -84,7 +84,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
             sourcePath = file;
             sourcePathInput.setStyle(null);
-            UserConfig.setUserConfigString(baseName + "SourcePath", file.getAbsolutePath());
+            UserConfig.setString(baseName + "SourcePath", file.getAbsolutePath());
         } catch (Exception e) {
         }
     }
@@ -94,7 +94,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             String input = targetFileInput.getText();
             targetFile = new File(input);
             targetFileInput.setStyle(null);
-            UserConfig.setUserConfigString(baseName + "TargetFile", targetFile.getAbsolutePath());
+            UserConfig.setString(baseName + "TargetFile", targetFile.getAbsolutePath());
         } catch (Exception e) {
             targetFile = null;
             targetFileInput.setStyle(NodeStyleTools.badStyle);
@@ -119,14 +119,14 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 if (targetAppendInput.getText() == null || targetAppendInput.getText().trim().isEmpty()) {
                     targetAppendInput.setStyle(NodeStyleTools.badStyle);
                 } else {
-                    UserConfig.setUserConfigString(baseName + "TargetExistAppend", targetAppendInput.getText().trim());
+                    UserConfig.setString(baseName + "TargetExistAppend", targetAppendInput.getText().trim());
                 }
             }
 
         } else if (selected.equals(targetSkipRadio)) {
             targetExistType = BaseController.TargetExistType.Skip;
         }
-        UserConfig.setUserConfigString(baseName + "TargetExistType", selected.getText());
+        UserConfig.setString(baseName + "TargetExistType", selected.getText());
     }
 
     @FXML
@@ -194,16 +194,16 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try ( Connection conn = DerbyBase.getConnection()) {
             if (file.isDirectory()) {
                 String path = file.getPath();
-                UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                UserConfig.setUserConfigString(conn, baseName + "SourcePath", path);
-                UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(fileType), path);
+                UserConfig.setString(conn, baseName + "LastPath", path);
+                UserConfig.setString(conn, baseName + "SourcePath", path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(fileType), path);
                 VisitHistoryTools.readPath(conn, pathType, path);
             } else {
                 String path = file.getParent();
                 String fname = file.getAbsolutePath();
-                UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                UserConfig.setUserConfigString(conn, baseName + "SourceFile", fname);
-                UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(fileType), path);
+                UserConfig.setString(conn, baseName + "LastPath", path);
+                UserConfig.setString(conn, baseName + "SourceFile", fname);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(fileType), path);
                 VisitHistoryTools.readPath(conn, pathType, path);
                 VisitHistoryTools.readFile(conn, fileType, fname);
             }
@@ -231,16 +231,16 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try ( Connection conn = DerbyBase.getConnection()) {
             if (file.isDirectory()) {
                 String path = file.getPath();
-                UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                UserConfig.setUserConfigString(conn, baseName + "TargetPath", path);
-                UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
+                UserConfig.setString(conn, baseName + "LastPath", path);
+                UserConfig.setString(conn, baseName + "TargetPath", path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
                 VisitHistoryTools.writePath(conn, TargetPathType, path);
             } else {
                 String path = file.getParent();
                 String fname = file.getAbsolutePath();
-                UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                UserConfig.setUserConfigString(conn, baseName + "TargetFile", fname);
-                UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
+                UserConfig.setString(conn, baseName + "LastPath", path);
+                UserConfig.setString(conn, baseName + "TargetFile", fname);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
                 VisitHistoryTools.writePath(conn, TargetPathType, path);
                 VisitHistoryTools.writeFile(conn, TargetFileType, fname);
             }
@@ -260,16 +260,16 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try ( Connection conn = DerbyBase.getConnection()) {
             if (file.isDirectory()) {
                 String path = file.getPath();
-                UserConfig.setUserConfigString(conn, baseName + "SourcePath", path);
-                UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
+                UserConfig.setString(conn, baseName + "SourcePath", path);
+                UserConfig.setString(conn, baseName + "LastPath", path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
                 VisitHistoryTools.readPath(conn, SourcePathType, path);
             } else {
                 String path = file.getParent();
                 String fname = file.getAbsolutePath();
-                UserConfig.setUserConfigString(conn, baseName + "SourceFile", fname);
-                UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
+                UserConfig.setString(conn, baseName + "SourceFile", fname);
+                UserConfig.setString(conn, baseName + "LastPath", path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
                 VisitHistoryTools.readPath(conn, SourcePathType, path);
                 VisitHistoryTools.readFile(conn, AddFileType, fname);
             }
@@ -286,16 +286,16 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             for (File file : files) {
                 if (file.isDirectory()) {
                     String path = file.getPath();
-                    UserConfig.setUserConfigString(conn, baseName + "SourcePath", path);
-                    UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                    UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
+                    UserConfig.setString(conn, baseName + "SourcePath", path);
+                    UserConfig.setString(conn, baseName + "LastPath", path);
+                    UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
                     VisitHistoryTools.readPath(conn, SourcePathType, path);
                 } else {
                     String path = file.getParent();
                     String fname = file.getAbsolutePath();
-                    UserConfig.setUserConfigString(conn, baseName + "SourceFile", fname);
-                    UserConfig.setUserConfigString(conn, baseName + "LastPath", path);
-                    UserConfig.setUserConfigString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
+                    UserConfig.setString(conn, baseName + "SourceFile", fname);
+                    UserConfig.setString(conn, baseName + "LastPath", path);
+                    UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
                     VisitHistoryTools.readPath(conn, SourcePathType, path);
                     VisitHistoryTools.readFile(conn, AddFileType, fname);
                 }
@@ -309,7 +309,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     public void selectTargetPath() {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = UserConfig.getUserConfigPath(baseName + "TargetPath");
+            File path = UserConfig.getPath(baseName + "TargetPath");
             if (path != null) {
                 chooser.setInitialDirectory(path);
             }
@@ -337,7 +337,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     @FXML
     public void selectTargetFile() {
-        File path = UserConfig.getUserConfigPath(baseName + "TargetPath");
+        File path = UserConfig.getPath(baseName + "TargetPath");
         selectTargetFileFromPath(path);
     }
 
@@ -378,7 +378,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     public void selectSourcePath() {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = UserConfig.getUserConfigPath(baseName + "SourcePath");
+            File path = UserConfig.getPath(baseName + "SourcePath");
             if (path != null) {
                 chooser.setInitialDirectory(path);
             }
@@ -790,8 +790,16 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public File chooseSaveFile() {
-        return chooseSaveFile(TargetFileType,
-                sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) : (new Date().getTime() + ""));
+        File savedPath = VisitHistoryTools.getSavedPath(TargetFileType);
+        String defaultPathName = UserConfig.getString(baseName + "TargetPath", savedPath != null ? savedPath.getAbsolutePath() : null);
+        File defaultPath;
+        if (defaultPathName != null) {
+            defaultPath = new File(defaultPathName);
+        } else {
+            defaultPath = MyBoxTempPath;
+        }
+        String defaultName = sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) + "m" : (new Date().getTime() + "");
+        return chooseSaveFile(defaultPath, defaultName, VisitHistoryTools.getExtensionFilter(TargetFileType));
     }
 
     public File chooseSaveFile(String defaultName) {

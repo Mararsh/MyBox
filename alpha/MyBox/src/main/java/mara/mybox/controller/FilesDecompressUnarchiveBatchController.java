@@ -72,18 +72,18 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
                 public void changed(ObservableValue<? extends String> ov,
                         String oldItem, String newItem) {
                     encoding = newItem;
-                    UserConfig.setUserConfigString("FilesUnarchiveEncoding", encoding);
+                    UserConfig.setString("FilesUnarchiveEncoding", encoding);
                 }
             });
-            encoding = UserConfig.getUserConfigString("FilesUnarchiveEncoding", Charset.defaultCharset().name());
+            encoding = UserConfig.getString("FilesUnarchiveEncoding", Charset.defaultCharset().name());
             encodeBox.getSelectionModel().select(encoding);
 
-            deleteCheck.setSelected(UserConfig.getUserConfigBoolean("FilesDecompressUnarchiveDelete", false));
+            deleteCheck.setSelected(UserConfig.getBoolean("FilesDecompressUnarchiveDelete", false));
             deleteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("FilesDecompressUnarchiveDelete", newValue);
+                    UserConfig.setBoolean("FilesDecompressUnarchiveDelete", newValue);
                 }
             });
 

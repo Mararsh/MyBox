@@ -93,31 +93,31 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
         try {
             rotateAngle = 0;
 
-            enlargeCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "EnlargerImageAsClip", true));
+            enlargeCheck.setSelected(UserConfig.getBoolean(baseName + "EnlargerImageAsClip", true));
             enlargeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "EnlargerImageAsClip", enlargeCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "EnlargerImageAsClip", enlargeCheck.isSelected());
                 }
             });
 
-            clipTopCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ClipOnTop", true));
+            clipTopCheck.setSelected(UserConfig.getBoolean(baseName + "ClipOnTop", true));
             clipTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "ClipOnTop", clipTopCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "ClipOnTop", clipTopCheck.isSelected());
                 }
             });
 
-            ignoreTransparentCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IgnoreTransparent", true));
+            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
             ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
                 }
             });
 
-            String mode = UserConfig.getUserConfigString(baseName + "TextBlendMode", Languages.message("NormalMode"));
+            String mode = UserConfig.getString(baseName + "TextBlendMode", Languages.message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
             blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
             blendSelector.setValue(mode);
@@ -126,11 +126,11 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     String mode = blendSelector.getSelectionModel().getSelectedItem();
                     blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setUserConfigString(baseName + "TextBlendMode", mode);
+                    UserConfig.setString(baseName + "TextBlendMode", mode);
                 }
             });
 
-            opacity = UserConfig.getUserConfigInt(baseName + "Opacity", 100) / 100f;
+            opacity = UserConfig.getInt(baseName + "Opacity", 100) / 100f;
             opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
             opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacitySelector.setValue(opacity + "");
@@ -141,7 +141,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                         float f = Float.valueOf(newValue);
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
-                            UserConfig.setUserConfigInt(baseName + "Opacity", (int) (f * 100));
+                            UserConfig.setInt(baseName + "Opacity", (int) (f * 100));
                             ValidationTools.setEditorNormal(opacitySelector);
                         } else {
                             ValidationTools.setEditorBadStyle(opacitySelector);
@@ -182,7 +182,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 }
             });
 
-            margin = UserConfig.getUserConfigInt(baseName + "Margin", 20);
+            margin = UserConfig.getInt(baseName + "Margin", 20);
             marginInput.setText(margin + "");
             positionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -242,7 +242,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             int v = Integer.valueOf(marginInput.getText());
             if (v >= 0) {
                 margin = v;
-                UserConfig.setUserConfigInt(baseName + "Margin", margin);
+                UserConfig.setInt(baseName + "Margin", margin);
                 marginInput.setStyle(null);
             } else {
                 marginInput.setStyle(NodeStyleTools.badStyle);

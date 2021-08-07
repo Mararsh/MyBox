@@ -322,7 +322,7 @@ public class ImageAnalyseController extends ImageViewerController {
     protected void initDominantTab() {
         try {
 
-            colorNumber1 = UserConfig.getUserConfigInt(baseName + "ColorNumber1", 16);
+            colorNumber1 = UserConfig.getInt(baseName + "ColorNumber1", 16);
             colorNumber1 = colorNumber1 <= 0 ? 16 : colorNumber1;
             colorsNumberSelectors1.getItems().addAll(Arrays.asList(
                     "16", "8", "5", "6", "27", "64", "258", "128"));
@@ -334,7 +334,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             colorNumber1 = v;
-                            UserConfig.setUserConfigInt(baseName + "ColorNumber1", colorNumber1);
+                            UserConfig.setInt(baseName + "ColorNumber1", colorNumber1);
                             ValidationTools.setEditorNormal(colorsNumberSelectors1);
                             loadData(false, true, false);
                         } else {
@@ -346,7 +346,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 }
             });
 
-            regionSize1 = UserConfig.getUserConfigInt(baseName + "RegionSize1", 256);
+            regionSize1 = UserConfig.getInt(baseName + "RegionSize1", 256);
             regionSize1 = regionSize1 <= 0 ? 256 : regionSize1;
             regionSizeSelector1.getItems().addAll(Arrays.asList("256", "1024", "64", "512", "1024", "4096", "128"));
             regionSizeSelector1.setValue(regionSize1 + "");
@@ -357,7 +357,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             regionSize1 = v;
-                            UserConfig.setUserConfigInt(baseName + "RegionSize1", regionSize1);
+                            UserConfig.setInt(baseName + "RegionSize1", regionSize1);
                             regionSizeSelector1.getEditor().setStyle(null);
                             loadData(false, true, false);
                         } else {
@@ -372,7 +372,7 @@ public class ImageAnalyseController extends ImageViewerController {
             weight11 = 2;
             weight12 = 4;
             weight13 = 4;
-            String defaultV = UserConfig.getUserConfigString(baseName + "RGBWeights1", "2:4:3");
+            String defaultV = UserConfig.getString(baseName + "RGBWeights1", "2:4:3");
             weightSelector1.getItems().addAll(Arrays.asList(
                     "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
             ));
@@ -393,7 +393,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         weight12 = v2;
                         weight13 = v3;
                         weightSelector1.getEditor().setStyle(null);
-                        UserConfig.setUserConfigString(baseName + "RGBWeights1", newValue);
+                        UserConfig.setString(baseName + "RGBWeights1", newValue);
                         loadData(false, true, false);
                     } catch (Exception e) {
                         weightSelector1.getEditor().setStyle(NodeStyleTools.badStyle);
@@ -423,7 +423,7 @@ public class ImageAnalyseController extends ImageViewerController {
             });
             kmeansLoopSelector.getSelectionModel().select(0);
 
-            colorNumber2 = UserConfig.getUserConfigInt(baseName + "ColorNumber2", 16);
+            colorNumber2 = UserConfig.getInt(baseName + "ColorNumber2", 16);
             colorNumber2 = colorNumber2 <= 0 ? 16 : colorNumber2;
             colorsNumberSelectors2.getItems().addAll(Arrays.asList(
                     "16", "8", "5", "6", "27", "64", "258", "128"));
@@ -435,7 +435,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             colorNumber2 = v;
-                            UserConfig.setUserConfigInt(baseName + "ColorNumber2", colorNumber2);
+                            UserConfig.setInt(baseName + "ColorNumber2", colorNumber2);
                             ValidationTools.setEditorNormal(colorsNumberSelectors2);
                             loadData(false, false, true);
                         } else {
@@ -447,7 +447,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 }
             });
 
-            regionSize2 = UserConfig.getUserConfigInt(baseName + "RegionSize2", 256);
+            regionSize2 = UserConfig.getInt(baseName + "RegionSize2", 256);
             regionSize2 = regionSize2 <= 0 ? 256 : regionSize2;
             regionSizeSelector2.getItems().addAll(Arrays.asList("256", "1024", "64", "512", "1024", "4096", "128"));
             regionSizeSelector2.setValue(regionSize2 + "");
@@ -458,7 +458,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             regionSize2 = v;
-                            UserConfig.setUserConfigInt(baseName + "RegionSize2", regionSize2);
+                            UserConfig.setInt(baseName + "RegionSize2", regionSize2);
                             regionSizeSelector2.getEditor().setStyle(null);
                             loadData(false, false, true);
                         } else {
@@ -473,7 +473,7 @@ public class ImageAnalyseController extends ImageViewerController {
             weight21 = 2;
             weight22 = 4;
             weight23 = 4;
-            String defaultV2 = UserConfig.getUserConfigString(baseName + "RGBWeights2", "2:4:3");
+            String defaultV2 = UserConfig.getString(baseName + "RGBWeights2", "2:4:3");
             weightSelector2.getItems().addAll(Arrays.asList(
                     "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
             ));
@@ -494,7 +494,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         weight22 = v2;
                         weight23 = v3;
                         weightSelector2.getEditor().setStyle(null);
-                        UserConfig.setUserConfigString(baseName + "RGBWeights2", newValue);
+                        UserConfig.setString(baseName + "RGBWeights2", newValue);
                         loadData(false, false, true);
                     } catch (Exception e) {
                         weightSelector2.getEditor().setStyle(NodeStyleTools.badStyle);
@@ -629,83 +629,83 @@ public class ImageAnalyseController extends ImageViewerController {
             grayHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistGrey", newVal);
+                    UserConfig.setBoolean("ImageHistGrey", newVal);
                     showComponentsHistogram();
                 }
             });
-            grayHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistGrey", false));
+            grayHistCheck.setSelected(UserConfig.getBoolean("ImageHistGrey", false));
 
             redHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistRed", newVal);
+                    UserConfig.setBoolean("ImageHistRed", newVal);
                     showComponentsHistogram();
                 }
             });
-            redHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistRed", true));
+            redHistCheck.setSelected(UserConfig.getBoolean("ImageHistRed", true));
 
             greenHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistGreen", newVal);
+                    UserConfig.setBoolean("ImageHistGreen", newVal);
                     showComponentsHistogram();
                 }
             });
-            greenHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistGreen", true));
+            greenHistCheck.setSelected(UserConfig.getBoolean("ImageHistGreen", true));
 
             blueHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistBlue", newVal);
+                    UserConfig.setBoolean("ImageHistBlue", newVal);
                     showComponentsHistogram();
                 }
             });
-            blueHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistBlue", true));
+            blueHistCheck.setSelected(UserConfig.getBoolean("ImageHistBlue", true));
 
             hueHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistHue", newVal);
+                    UserConfig.setBoolean("ImageHistHue", newVal);
                     showComponentsHistogram();
                 }
             });
-            hueHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistHue", false));
+            hueHistCheck.setSelected(UserConfig.getBoolean("ImageHistHue", false));
 
             brightnessHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistBrightness", newVal);
+                    UserConfig.setBoolean("ImageHistBrightness", newVal);
                     showComponentsHistogram();
                 }
             });
-            brightnessHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistBrightness", false));
+            brightnessHistCheck.setSelected(UserConfig.getBoolean("ImageHistBrightness", false));
 
             saturationHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistSaturation", newVal);
+                    UserConfig.setBoolean("ImageHistSaturation", newVal);
                     showComponentsHistogram();
                 }
             });
-            saturationHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistSaturation", false));
+            saturationHistCheck.setSelected(UserConfig.getBoolean("ImageHistSaturation", false));
 
             alphaHistCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistAlpha", newVal);
+                    UserConfig.setBoolean("ImageHistAlpha", newVal);
                     showComponentsHistogram();
                 }
             });
-            alphaHistCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistAlpha", false));
+            alphaHistCheck.setSelected(UserConfig.getBoolean("ImageHistAlpha", false));
 
             componentsLegendCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("ImageHistLegend", newVal);
+                    UserConfig.setBoolean("ImageHistLegend", newVal);
                     updateComponentsLegend();
                 }
             });
-            componentsLegendCheck.setSelected(UserConfig.getUserConfigBoolean("ImageHistLegend", true));
+            componentsLegendCheck.setSelected(UserConfig.getBoolean("ImageHistLegend", true));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1081,7 +1081,7 @@ public class ImageAnalyseController extends ImageViewerController {
             if (sourceFile != null) {
                 name = FileNameTools.getFilePrefix(sourceFile.getName());
             }
-            final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+            final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                     name, targetExtensionFilter);
             if (file == null) {
                 return;

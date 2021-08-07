@@ -335,7 +335,7 @@ public class CompressTools {
         Map<String, Object> unarchive = new HashMap<>();
         try {
             String encoding = (encodingIn != null) ? encodingIn
-                    : UserConfig.getUserConfigString("FilesUnarchiveEncoding", Charset.defaultCharset().name());
+                    : UserConfig.getString("FilesUnarchiveEncoding", Charset.defaultCharset().name());
             if (srcFile == null || "none".equals(extIn) || encoding == null) {
                 return null;
             }

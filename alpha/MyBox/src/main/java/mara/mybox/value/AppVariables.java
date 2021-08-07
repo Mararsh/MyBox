@@ -20,8 +20,6 @@ import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.getBundle;
 import static mara.mybox.value.Languages.getTableBundle;
 import static mara.mybox.value.UserConfig.getPdfMem;
-import static mara.mybox.value.UserConfig.getUserConfigBoolean;
-import static mara.mybox.value.UserConfig.getUserConfigInt;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
@@ -60,17 +58,17 @@ public class AppVariables {
             getBundle();
             getTableBundle();
             getPdfMem();
-            openStageInNewWindow = getUserConfigBoolean("OpenStageInNewWindow", false);
-            restoreStagesSize = getUserConfigBoolean("RestoreStagesSize", true);
-            sceneFontSize = getUserConfigInt("SceneFontSize", 15);
-            fileRecentNumber = getUserConfigInt("FileRecentNumber", 16);
-            iconSize = getUserConfigInt("IconSize", 20);
-            thumbnailWidth = getUserConfigInt("ThumbnailWidth", 100);
+            openStageInNewWindow = UserConfig.getBoolean("OpenStageInNewWindow", false);
+            restoreStagesSize = UserConfig.getBoolean("RestoreStagesSize", true);
+            sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
+            fileRecentNumber = UserConfig.getInt("FileRecentNumber", 16);
+            iconSize = UserConfig.getInt("IconSize", 20);
+            thumbnailWidth = UserConfig.getInt("ThumbnailWidth", 100);
             ControlColor = StyleTools.getConfigStyleColor();
-            controlDisplayText = getUserConfigBoolean("ControlDisplayText", false);
-            hidpiIcons = getUserConfigBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
-            saveDebugLogs = getUserConfigBoolean("SaveDebugLogs", false);
-            detailedDebugLogs = getUserConfigBoolean("DetailedDebugLogs", false);
+            controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
+            hidpiIcons = UserConfig.getBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
+            saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
+            detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;
             popErrorLogs = true;
         } catch (Exception e) {

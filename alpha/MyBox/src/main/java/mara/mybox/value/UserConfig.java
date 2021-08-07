@@ -16,7 +16,7 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
  */
 public class UserConfig {
 
-    public static boolean setUserConfigString(String key, String value) {
+    public static boolean setString(String key, String value) {
         userConfigValues.put(key, value);
         if (TableUserConf.writeString(key, value) >= 0) {
             return true;
@@ -26,7 +26,7 @@ public class UserConfig {
         }
     }
 
-    public static boolean setUserConfigString(Connection conn, String key, String value) {
+    public static boolean setString(Connection conn, String key, String value) {
         userConfigValues.put(key, value);
         if (TableUserConf.writeString(conn, key, value) >= 0) {
             return true;
@@ -35,7 +35,7 @@ public class UserConfig {
         }
     }
 
-    public static String getUserConfigString(String key, String defaultValue) {
+    public static String getString(String key, String defaultValue) {
         try {
             String value;
             if (userConfigValues.containsKey(key)) {
@@ -51,7 +51,7 @@ public class UserConfig {
         }
     }
 
-    public static boolean setUserConfigInt(String key, int value) {
+    public static boolean setInt(String key, int value) {
         userConfigValues.put(key, value + "");
         if (TableUserConf.writeInt(key, value) > 0) {
             return true;
@@ -60,7 +60,7 @@ public class UserConfig {
         }
     }
 
-    public static int getUserConfigInt(String key, int defaultValue) {
+    public static int getInt(String key, int defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
                 int v = Integer.valueOf(userConfigValues.get(key));
@@ -79,20 +79,11 @@ public class UserConfig {
         }
     }
 
-    public static boolean getUserConfigBoolean(String key) {
-        return getUserConfigBoolean(key, true);
+    public static boolean getBoolean(String key) {
+        return getBoolean(key, true);
     }
 
-    public static boolean setUserConfigBoolean(String key, boolean value) {
-        userConfigValues.put(key, value ? "true" : "false");
-        if (TableUserConf.writeBoolean(key, value) > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean getUserConfigBoolean(String key, boolean defaultValue) {
+    public static boolean getBoolean(String key, boolean defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
                 boolean v = userConfigValues.get(key).equals("true");
@@ -110,7 +101,16 @@ public class UserConfig {
         }
     }
 
-    public static boolean deleteUserConfigValue(String key) {
+    public static boolean setBoolean(String key, boolean value) {
+        userConfigValues.put(key, value ? "true" : "false");
+        if (TableUserConf.writeBoolean(key, value) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean deleteValue(String key) {
         if (TableUserConf.delete(key)) {
             userConfigValues.remove(key);
             return true;
@@ -119,11 +119,11 @@ public class UserConfig {
         }
     }
 
-    public static File getUserConfigPath(String key) {
-        return getUserConfigPath(key, MyboxDataPath);
+    public static File getPath(String key) {
+        return getPath(key, MyboxDataPath);
     }
 
-    public static File getUserConfigPath(String key, String defaultValue) {
+    public static File getPath(String key, String defaultValue) {
         try {
             String pathString;
             if (userConfigValues.containsKey(key)) {
@@ -136,7 +136,7 @@ public class UserConfig {
             }
             File path = new File(pathString);
             if (!path.exists() || !path.isDirectory()) {
-                deleteUserConfigValue(key);
+                deleteValue(key);
                 path = new File(MyboxDataPath);
                 if (!path.exists()) {
                     path.mkdirs();
@@ -151,48 +151,48 @@ public class UserConfig {
     }
 
     public static String getPopInfoColor() {
-        String v = getUserConfigString("PopInfoColor", "white");
+        String v = getString("PopInfoColor", "white");
         return v != null && v.startsWith("#") ? v : "white";
     }
 
     public static String getPopTextSize() {
-        return getUserConfigString("PopTextSize", "1.5") + "em";
+        return getString("PopTextSize", "1.5") + "em";
     }
 
     public static String getPopTextbgColor() {
-        String v = getUserConfigString("PopTextBgColor", "black");
+        String v = getString("PopTextBgColor", "black");
         return v != null && v.startsWith("#") ? v : "black";
     }
 
     public static Color getAlphaColor() {
-        String color = getUserConfigString("AlphaAsColor", Color.WHITE.toString());
+        String color = getString("AlphaAsColor", Color.WHITE.toString());
         return Color.web(color);
     }
 
     public static String getPopErrorColor() {
-        String v = getUserConfigString("PopErrorColor", "aqua");
+        String v = getString("PopErrorColor", "aqua");
         return v != null && v.startsWith("#") ? v : "aqua";
     }
 
     public static String getPopWarnColor() {
-        String v = getUserConfigString("PopWarnColor", "orange");
+        String v = getString("PopWarnColor", "orange");
         return v != null && v.startsWith("#") ? v : "orange";
     }
 
     public static int getPopTextDuration() {
-        return getUserConfigInt("PopTextDuration", 3000);
+        return getInt("PopTextDuration", 3000);
     }
 
     public static String getStyle() {
-        return UserConfig.getUserConfigString("InterfaceStyle", AppValues.MyBoxStyle);
+        return UserConfig.getString("InterfaceStyle", AppValues.MyBoxStyle);
     }
 
     public static MemoryUsageSetting getPdfMem() {
-        return setPdfMem(UserConfig.getUserConfigString("PdfMemDefault", "1GB"));
+        return setPdfMem(UserConfig.getString("PdfMemDefault", "1GB"));
     }
 
     public static boolean setRestoreStagesSize(boolean value) {
-        if (UserConfig.setUserConfigBoolean("RestoreStagesSize", value)) {
+        if (UserConfig.setBoolean("RestoreStagesSize", value)) {
             AppVariables.restoreStagesSize = value;
             return true;
         } else {
@@ -202,7 +202,7 @@ public class UserConfig {
 
     public static boolean setSceneFontSize(int size) {
         AppVariables.sceneFontSize = size;
-        if (UserConfig.setUserConfigInt("SceneFontSize", size)) {
+        if (UserConfig.setInt("SceneFontSize", size)) {
             return true;
         } else {
             return false;
@@ -210,7 +210,7 @@ public class UserConfig {
     }
 
     public static boolean setOpenStageInNewWindow(boolean value) {
-        if (UserConfig.setUserConfigBoolean("OpenStageInNewWindow", value)) {
+        if (UserConfig.setBoolean("OpenStageInNewWindow", value)) {
             AppVariables.openStageInNewWindow = value;
             return true;
         } else {
@@ -221,20 +221,20 @@ public class UserConfig {
     public static MemoryUsageSetting setPdfMem(String value) {
         switch (value) {
             case "1GB":
-                UserConfig.setUserConfigString("PdfMemDefault", "1GB");
+                UserConfig.setString("PdfMemDefault", "1GB");
                 AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024L, -1);
                 break;
             case "2GB":
-                UserConfig.setUserConfigString("PdfMemDefault", "2GB");
+                UserConfig.setString("PdfMemDefault", "2GB");
                 AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024L, -1);
                 break;
             case "Unlimit":
-                UserConfig.setUserConfigString("PdfMemDefault", "Unlimit");
+                UserConfig.setString("PdfMemDefault", "Unlimit");
                 AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
                 break;
             case "500MB":
             default:
-                UserConfig.setUserConfigString("PdfMemDefault", "500MB");
+                UserConfig.setString("PdfMemDefault", "500MB");
                 AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024L, -1);
         }
         return AppVariables.pdfMemUsage;
@@ -242,7 +242,7 @@ public class UserConfig {
 
     public static boolean setIconSize(int size) {
         AppVariables.iconSize = size;
-        if (UserConfig.setUserConfigInt("IconSize", size)) {
+        if (UserConfig.setInt("IconSize", size)) {
             return true;
         } else {
             return false;

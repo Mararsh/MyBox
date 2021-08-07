@@ -41,7 +41,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
     @FXML
     protected WebView webView;
     @FXML
-    protected HtmlViewerController matrixController;
+    protected HtmlTableController matrixController;
 
     public ChromaticAdaptationMatrixController() {
         baseTitle = Languages.message("ChromaticAdaptationMatrix");
@@ -97,14 +97,14 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
                         } else {
                             scale = p;
                             scaleMatricesInput.setStyle(null);
-                            UserConfig.setUserConfigInt("MatrixDecimalScale", scale);
+                            UserConfig.setInt("MatrixDecimalScale", scale);
                         }
                     } catch (Exception e) {
                         scaleMatricesInput.setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
-            int p = UserConfig.getUserConfigInt("MatrixDecimalScale", 8);
+            int p = UserConfig.getInt("MatrixDecimalScale", 8);
             scaleMatricesInput.setText(p + "");
 
             calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()

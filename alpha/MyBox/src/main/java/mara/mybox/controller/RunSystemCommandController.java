@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-3-27
  * @License Apache License Version 2.0
  */
-public class RunSystemCommandController extends HtmlViewerController {
+public class RunSystemCommandController extends HtmlTableController {
 
     protected Process process;
 
@@ -77,7 +77,7 @@ public class RunSystemCommandController extends HtmlViewerController {
                 protected boolean handle() {
                     try {
                         lastText = "";
-                        htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+                        htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
                         List<String> p = new ArrayList<>();
                         p.addAll(Arrays.asList(StringTools.splitBySpace(cmd)));
                         ProcessBuilder pb = new ProcessBuilder(p).redirectErrorStream(true);

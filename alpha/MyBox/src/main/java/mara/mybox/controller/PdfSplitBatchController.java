@@ -186,7 +186,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             info.setCreationDate(Calendar.getInstance());
             info.setModificationDate(Calendar.getInstance());
             info.setProducer("MyBox v" + AppValues.AppVersion);
-            info.setAuthor(UserConfig.getUserConfigString("AuthorKey", System.getProperty("user.name")));
+            info.setAuthor(UserConfig.getString("AuthorKey", System.getProperty("user.name")));
             String targetPrefix = FileNameTools.getFilePrefix(currentParameters.currentSourceFile.getName());
             int total = docs.size();
             for (PDDocument pd : docs) {

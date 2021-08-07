@@ -69,7 +69,7 @@ public class ControlFileSplit extends BaseController {
                     checkPagesNumber();
                 }
             });
-            pagesNumberInput.setText(UserConfig.getUserConfigString(baseName + "PagesNumber", "20"));
+            pagesNumberInput.setText(UserConfig.getString(baseName + "PagesNumber", "20"));
 
             filesNumberInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -77,7 +77,7 @@ public class ControlFileSplit extends BaseController {
                     checkFilesNumber();
                 }
             });
-            filesNumberInput.setText(UserConfig.getUserConfigString(baseName + "FilesNumber", "3"));
+            filesNumberInput.setText(UserConfig.getString(baseName + "FilesNumber", "3"));
 
             listInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -85,7 +85,7 @@ public class ControlFileSplit extends BaseController {
                     checkStartEndList();
                 }
             });
-            listInput.setText(UserConfig.getUserConfigString(baseName + "List", ""));
+            listInput.setText(UserConfig.getString(baseName + "List", ""));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -135,7 +135,7 @@ public class ControlFileSplit extends BaseController {
             if (v > 0) {
                 pagesNumberInput.setStyle(null);
                 pagesNumber = v;
-                UserConfig.setUserConfigString(baseName + "PagesNumber", pagesNumber + "");
+                UserConfig.setString(baseName + "PagesNumber", pagesNumber + "");
             } else {
                 pagesNumberInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -150,7 +150,7 @@ public class ControlFileSplit extends BaseController {
             if (v > 0) {
                 filesNumberInput.setStyle(null);
                 filesNumber = v;
-                UserConfig.setUserConfigString(baseName + "FilesNumber", filesNumber + "");
+                UserConfig.setString(baseName + "FilesNumber", filesNumber + "");
             } else {
                 filesNumberInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -182,7 +182,7 @@ public class ControlFileSplit extends BaseController {
                 listInput.setStyle(NodeStyleTools.badStyle);
             } else {
                 listInput.setStyle(null);
-                UserConfig.setUserConfigString(baseName + "List", listInput.getText());
+                UserConfig.setString(baseName + "List", listInput.getText());
             }
         } catch (Exception e) {
             listInput.setStyle(NodeStyleTools.badStyle);

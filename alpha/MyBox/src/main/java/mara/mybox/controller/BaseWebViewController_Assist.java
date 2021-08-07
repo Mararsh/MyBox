@@ -75,6 +75,7 @@ public abstract class BaseWebViewController_Assist extends BaseController {
 
     protected WebEngine webEngine;
     protected final SimpleIntegerProperty stateNotify;
+    protected boolean addressChanged;
     protected double linkX, linkY;
     protected float zoomScale;
     protected String address;
@@ -96,6 +97,8 @@ public abstract class BaseWebViewController_Assist extends BaseController {
     protected ComboBox<String> urlSelector;
     @FXML
     protected Button backwardButton, forwardButton;
+    @FXML
+    protected Label webViewLabel;
 
     public BaseWebViewController_Assist() {
         linkX = linkY = -1;
@@ -113,6 +116,7 @@ public abstract class BaseWebViewController_Assist extends BaseController {
             if (urlSelector != null) {
                 tableWebHistory = new TableWebHistory();
             }
+            addressChanged = false;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -151,18 +155,18 @@ public abstract class BaseWebViewController_Assist extends BaseController {
                             afterPageLoaded();
                             break;
                         case CANCELLED:
-                            if (bottomLabel != null) {
-                                bottomLabel.setText(message("Canceled"));
+                            if (webViewLabel != null) {
+                                webViewLabel.setText(message("Canceled"));
                             }
                             break;
                         case FAILED:
-                            if (bottomLabel != null) {
-                                bottomLabel.setText(message("Failed"));
+                            if (webViewLabel != null) {
+                                webViewLabel.setText(message("Failed"));
                             }
                             break;
                         default:
-                            if (bottomLabel != null) {
-                                bottomLabel.setText(newState.name());
+                            if (webViewLabel != null) {
+                                webViewLabel.setText(newState.name());
                             }
                     }
                 }
@@ -198,11 +202,11 @@ public abstract class BaseWebViewController_Assist extends BaseController {
                             element = null;
                         }
 //                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
-                        if (bottomLabel != null) {
+                        if (webViewLabel != null) {
                             if ("mouseover".equals(domEventType)) {
-                                bottomLabel.setText(href != null ? URLDecoder.decode(href, charset) : tag);
+                                webViewLabel.setText(href != null ? URLDecoder.decode(href, charset) : tag);
                             } else if ("mouseout".equals(domEventType)) {
-                                bottomLabel.setText("");
+                                webViewLabel.setText("");
                             }
                         }
                         if (element == null) {
@@ -255,8 +259,8 @@ public abstract class BaseWebViewController_Assist extends BaseController {
                     if (nt == null) {
                         return;
                     }
-                    if (bottomLabel != null) {
-                        bottomLabel.setText(nt.getMessage());
+                    if (webViewLabel != null) {
+                        webViewLabel.setText(nt.getMessage());
                     }
                     if (parentController != null) {
                         parentController.alertError(nt.getMessage());
@@ -270,15 +274,15 @@ public abstract class BaseWebViewController_Assist extends BaseController {
                 public void handle(WebEvent<String> ev) {
 //                    javafx.event.EventTarget t = ev.getTarget();
 //                    MyBoxLog.console("here:" + ev.getData());
-//                    bottomLabel.setText(ev.getData());
+//                    webViewLabel.setText(ev.getData());
                 }
             });
 
             webEngine.locationProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    if (bottomLabel != null) {
-                        bottomLabel.setText(URLDecoder.decode(newv, charset));
+                    if (webViewLabel != null) {
+                        webViewLabel.setText(URLDecoder.decode(newv, charset));
                     }
                 }
             });
@@ -417,10 +421,10 @@ public abstract class BaseWebViewController_Assist extends BaseController {
         if (!checkBeforeNextAction()) {
             return false;
         }
+        setAddress(address);
+        addressChanged = true;
         webEngine.getLoadWorker().cancel();
         webEngine.loadContent(contents);
-        setAddress(address);
-        updateFileStatus(true);
         return true;
     }
 
@@ -433,9 +437,7 @@ public abstract class BaseWebViewController_Assist extends BaseController {
                 setSourceFile(file);
             }
         }
-        updateFileStatus(sourceFile == null);
         if (urlSelector != null) {
-            urlSelector.getEditor().setText(address);
             Platform.runLater(() -> {
                 tableWebHistory.insertData(makeHis(address));
 
@@ -492,16 +494,17 @@ public abstract class BaseWebViewController_Assist extends BaseController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        setAddress(value);
-        if (bottomLabel != null) {
-            bottomLabel.setText(message("Loading..."));
+        try {
+            setAddress(value);
+            addressChanged = true;
+            if (webViewLabel != null) {
+                webViewLabel.setText(message("Loading..."));
+            }
+            webEngine.getLoadWorker().cancel();
+            webEngine.load(address);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        webEngine.getLoadWorker().cancel();
-        webEngine.load(address);
-
-    }
-
-    protected void updateFileStatus(boolean changed) {
 
     }
 
@@ -517,19 +520,20 @@ public abstract class BaseWebViewController_Assist extends BaseController {
     }
 
     protected void pageIsLoading() {
-        if (bottomLabel != null) {
-            bottomLabel.setText(message("Loading..."));
+        if (webViewLabel != null) {
+            webViewLabel.setText(message("Loading..."));
         }
         changeDocState(DocLoading);
     }
 
     protected void afterPageLoaded() {
         try {
-            if (bottomLabel != null) {
-                bottomLabel.setText(message("Loaded"));
+            addressChanged = false;
+            if (webViewLabel != null) {
+                webViewLabel.setText(message("Loaded"));
             }
-            charset = HtmlReadTools.charset(webEngine.getDocument());
             doc = webEngine.getDocument();
+            charset = HtmlReadTools.charset(doc);
             framesDoc.clear();
             addDocListener(doc);
             changeDocState(DocLoaded);
@@ -538,9 +542,23 @@ public abstract class BaseWebViewController_Assist extends BaseController {
                 backwardButton.setDisable(hisSize < 2);
                 forwardButton.setDisable(hisSize < 2);
             }
+            updateTitle();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    protected void updateTitle() {
+        if (myStage == null) {
+            return;
+        }
+        String title = getBaseTitle();
+        if (address != null) {
+            title += "  " + address;
+        } else if (sourceFile != null) {
+            title += "  " + sourceFile.getAbsolutePath();
+        }
+        myStage.setTitle(title);
     }
 
     protected void addDocListener(Document doc) {
@@ -843,19 +861,6 @@ public abstract class BaseWebViewController_Assist extends BaseController {
             thread.setDaemon(false);
             thread.start();
         }
-    }
-
-    @Override
-    public void cleanPane() {
-        if (timer != null) {
-            timer.cancel();
-        }
-        if (webEngine != null && webEngine.getLoadWorker() != null) {
-            webEngine.getLoadWorker().cancel();
-        }
-        webEngine = null;
-        webView.setUserData(null);
-        super.cleanPane();
     }
 
 }

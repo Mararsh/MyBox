@@ -39,7 +39,7 @@ public class IlluminantsController extends ChromaticityBaseController {
     @FXML
     protected Button calculateButton;
     @FXML
-    protected HtmlViewerController illuminantsController;
+    protected HtmlTableController illuminantsController;
 
     public IlluminantsController() {
         baseTitle = Languages.message("Illuminants");

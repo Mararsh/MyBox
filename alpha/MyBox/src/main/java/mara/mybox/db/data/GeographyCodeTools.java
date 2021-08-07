@@ -58,7 +58,7 @@ public class GeographyCodeTools {
                 // GaoDe Map only supports info codes of China
                 String urlString = "https://restapi.amap.com/v3/geocode/geo?address="
                         + URLEncoder.encode(address, "UTF-8") + "&output=xml&key="
-                        + UserConfig.getUserConfigString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
+                        + UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
                 GeographyCode geographyCode = new GeographyCode();
                 geographyCode.setChineseName(address);
                 geographyCode.setCoordinateSystem(coordinateSystem);
@@ -69,7 +69,7 @@ public class GeographyCodeTools {
                         + URLEncoder.encode("{\"keyWord\":\""
                                 + address
                                 + "\"}", "UTF-8") + "&tk="
-                        + UserConfig.getUserConfigString("TianDiTuWebKey", AppValues.TianDiTuWebKey);
+                        + UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey);
                 URL url = new URL(urlString);
                 File jsonFile = TmpFileTools.getTempFile(".json");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -143,7 +143,7 @@ public class GeographyCodeTools {
             if (coordinateSystem.getValue() == CoordinateSystem.Value.GCJ_02) {
                 String urlString = "https://restapi.amap.com/v3/geocode/regeo?location="
                         + longitude + "," + latitude + "&output=xml&key="
-                        + UserConfig.getUserConfigString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
+                        + UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
                 GeographyCode geographyCode = new GeographyCode();
                 geographyCode.setLongitude(longitude);
                 geographyCode.setLatitude(latitude);
@@ -153,7 +153,7 @@ public class GeographyCodeTools {
                 String urlString = "http://api.tianditu.gov.cn/geocoder?postStr={'lon':"
                         + longitude + ",'lat':" + latitude
                         + ",'ver':1}&type=geocode&tk="
-                        + UserConfig.getUserConfigString("TianDiTuWebKey", AppValues.TianDiTuWebKey);
+                        + UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey);
                 GeographyCode geographyCode = new GeographyCode();
                 geographyCode.setLongitude(longitude);
                 geographyCode.setLatitude(latitude);
@@ -1969,7 +1969,7 @@ public class GeographyCodeTools {
             String urlString = "https://restapi.amap.com/v3/assistant/coordinate/convert?locations="
                     + locationsString
                     + "&coordsys=" + sourceCS.gaodeConvertService()
-                    + "&output=xml&key=" + UserConfig.getUserConfigString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
+                    + "&output=xml&key=" + UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
             URL url = new URL(urlString);
             File xmlFile = HtmlReadTools.url2File(url.toString());
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);

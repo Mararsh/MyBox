@@ -128,14 +128,14 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected void setControlDisplayText(ActionEvent event) {
         AppVariables.controlDisplayText = controlTextCheck.isSelected();
-        UserConfig.setUserConfigBoolean("ControlDisplayText", controlTextCheck.isSelected());
+        UserConfig.setBoolean("ControlDisplayText", controlTextCheck.isSelected());
         refreshInterfaceAll();
     }
 
     @FXML
     protected void hidpiIcons(ActionEvent event) {
         AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
-        UserConfig.setUserConfigBoolean("HidpiIcons", AppVariables.hidpiIcons);
+        UserConfig.setBoolean("HidpiIcons", AppVariables.hidpiIcons);
         if (AppVariables.hidpiIcons) {
             if (Toolkit.getDefaultToolkit().getScreenResolution() <= 120) {
                 parentController.alertInformation(Languages.message("HidpiIconsComments"));
@@ -165,17 +165,17 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         } else {
             AppVariables.fileRecentNumber = 0;
         }
-        UserConfig.setUserConfigInt("FileRecentNumber", AppVariables.fileRecentNumber);
+        UserConfig.setInt("FileRecentNumber", AppVariables.fileRecentNumber);
     }
 
     @FXML
     protected void popColorSetAction() {
-        UserConfig.setUserConfigBoolean("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
+        UserConfig.setBoolean("PopColorSetWhenMousePassing", popColorSetCheck.isSelected());
     }
 
     @FXML
     protected void controlPanesAction() {
-        UserConfig.setUserConfigBoolean("MousePassControlPanes", controlPanesCheck.isSelected());
+        UserConfig.setBoolean("MousePassControlPanes", controlPanesCheck.isSelected());
     }
 
     @FXML
@@ -230,7 +230,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
 
     public void setStyle(String style) {
         try {
-            UserConfig.setUserConfigString("InterfaceStyle", style);
+            UserConfig.setString("InterfaceStyle", style);
             styleAll(style);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

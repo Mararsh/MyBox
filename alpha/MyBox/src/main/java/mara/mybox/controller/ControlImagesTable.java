@@ -103,13 +103,13 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             super.initControls();
 
             if (tableThumbCheck != null && imageColumn != null) {
-                tableThumbCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Thumbnail", true));
+                tableThumbCheck.setSelected(UserConfig.getBoolean(baseName + "Thumbnail", true));
                 checkThumb();
                 tableThumbCheck.selectedProperty().addListener(new ChangeListener() {
                     @Override
                     public void changed(ObservableValue ov, Object t, Object t1) {
                         checkThumb();
-                        UserConfig.setUserConfigBoolean(baseName + "Thumbnail", tableThumbCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Thumbnail", tableThumbCheck.isSelected());
                     }
                 });
             }

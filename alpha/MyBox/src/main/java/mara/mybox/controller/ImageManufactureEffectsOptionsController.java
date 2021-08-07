@@ -225,7 +225,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 }
             });
 
-            quanColors = UserConfig.getUserConfigInt(baseName + "QuanColorsNumber", 256);
+            quanColors = UserConfig.getInt(baseName + "QuanColorsNumber", 256);
             quanColors = regionSize <= 0 ? 256 : quanColors;
             quanColorsSelector.getItems().addAll(Arrays.asList(
                     "27", "64", "8", "16", "256", "512", "1024", "2048", "4096", "216", "343", "128", "1000", "729", "1728", "8000"));
@@ -237,7 +237,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             quanColors = v;
-                            UserConfig.setUserConfigInt(baseName + "QuanColorsNumber", quanColors);
+                            UserConfig.setInt(baseName + "QuanColorsNumber", quanColors);
                             ValidationTools.setEditorNormal(intBox);
                         } else {
                             ValidationTools.setEditorBadStyle(intBox);
@@ -248,7 +248,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 }
             });
 
-            regionSize = UserConfig.getUserConfigInt(baseName + "RegionSize", 256);
+            regionSize = UserConfig.getInt(baseName + "RegionSize", 256);
             regionSize = regionSize <= 0 ? 256 : regionSize;
             regionSizeSelector.getItems().addAll(Arrays.asList("256", "1024", "64", "512", "1024", "4096", "128"));
             regionSizeSelector.setValue(regionSize + "");
@@ -259,7 +259,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             regionSize = v;
-                            UserConfig.setUserConfigInt(baseName + "RegionSize", regionSize);
+                            UserConfig.setInt(baseName + "RegionSize", regionSize);
                             regionSizeSelector.getEditor().setStyle(null);
                         } else {
                             regionSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
@@ -289,14 +289,14 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         weight2 = v2;
                         weight3 = v3;
                         weightSelector.getEditor().setStyle(null);
-                        UserConfig.setUserConfigString(baseName + (hsbQuanRadio.isSelected() ? "HSBWeights" : "RGBWeights"), newValue);
+                        UserConfig.setString(baseName + (hsbQuanRadio.isSelected() ? "HSBWeights" : "RGBWeights"), newValue);
                     } catch (Exception e) {
                         weightSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
                 }
             });
 
-            kmeansLoop = UserConfig.getUserConfigInt(baseName + "KmeansLoop", 10000);
+            kmeansLoop = UserConfig.getInt(baseName + "KmeansLoop", 10000);
             kmeansLoop = kmeansLoop <= 0 ? 10000 : kmeansLoop;
             kmeansLoopSelector.getItems().addAll(Arrays.asList(
                     "10000", "5000", "3000", "1000", "500", "100", "20000"));
@@ -308,7 +308,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             kmeansLoop = v;
-                            UserConfig.setUserConfigInt(baseName + "KmeansLoop", kmeansLoop);
+                            UserConfig.setInt(baseName + "KmeansLoop", kmeansLoop);
                             ValidationTools.setEditorNormal(kmeansLoopSelector);
                         } else {
                             ValidationTools.setEditorBadStyle(kmeansLoopSelector);
@@ -319,27 +319,27 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 }
             });
 
-            quanDitherCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "QuanDither", true));
+            quanDitherCheck.setSelected(UserConfig.getBoolean(baseName + "QuanDither", true));
             quanDitherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "QuanDither", newValue);
+                    UserConfig.setBoolean(baseName + "QuanDither", newValue);
                 }
             });
 
-            quanDataCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "QuanData", true));
+            quanDataCheck.setSelected(UserConfig.getBoolean(baseName + "QuanData", true));
             quanDataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "QuanData", newValue);
+                    UserConfig.setBoolean(baseName + "QuanData", newValue);
                 }
             });
 
-            ceilCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "QuanCeil", true));
+            ceilCheck.setSelected(UserConfig.getBoolean(baseName + "QuanCeil", true));
             ceilCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "QuanCeil", newValue);
+                    UserConfig.setBoolean(baseName + "QuanCeil", newValue);
                 }
             });
 
@@ -401,7 +401,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             weight1 = 4;
             weight2 = 4;
             weight3 = 1;
-            String defaultV = UserConfig.getUserConfigString(baseName + "HSBWeights", "4:4:1");
+            String defaultV = UserConfig.getString(baseName + "HSBWeights", "4:4:1");
             weightSelector.getItems().addAll(Arrays.asList(
                     "4:4:1", "4:4:2", "1:1:1", "5:3:2", "2:2:1", "4:2:1"
             ));
@@ -410,7 +410,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             weight1 = 2;
             weight2 = 4;
             weight3 = 4;
-            String defaultV = UserConfig.getUserConfigString(baseName + "RGBWeights", "2:4:3");
+            String defaultV = UserConfig.getString(baseName + "RGBWeights", "2:4:3");
             weightSelector.getItems().addAll(Arrays.asList(
                     "2:4:3", "1:1:1", "4:4:2", "2:1:1", "21:71:7", "299:587:114", "2126:7152:722"
             ));
@@ -756,7 +756,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         if (v >= 0 && v <= 255) {
                             intPara1 = v;
                             ValidationTools.setEditorNormal(intBox);
-                            UserConfig.setUserConfigInt("ImageSepiaIntensity", v);
+                            UserConfig.setInt("ImageSepiaIntensity", v);
                         } else {
                             ValidationTools.setEditorBadStyle(intBox);
                             popError("0~255");
@@ -770,7 +770,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             intBox.setEditable(true);
             intBox.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
             intBox.getItems().addAll(Arrays.asList("80", "20", "50", "10", "5", "100", "15", "20", "60"));
-            intBox.getSelectionModel().select(UserConfig.getUserConfigInt("ImageSepiaIntensity", 80) + "");
+            intBox.getSelectionModel().select(UserConfig.getInt("ImageSepiaIntensity", 80) + "");
 
             setBox.getChildren().addAll(intBoxPane);
             if (okButton != null) {
@@ -797,7 +797,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                         if (v > 0) {
                             intPara1 = v;
                             ValidationTools.setEditorNormal(intBox);
-                            UserConfig.setUserConfigInt("ImageMosaicIntensity", v);
+                            UserConfig.setInt("ImageMosaicIntensity", v);
                         } else {
                             ValidationTools.setEditorBadStyle(intBox);
                         }
@@ -809,7 +809,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             intBox.setEditable(true);
             intBox.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
             intBox.getItems().addAll(Arrays.asList("20", "50", "10", "5", "80", "100", "15", "20", "60"));
-            intBox.getSelectionModel().select(UserConfig.getUserConfigInt("ImageMosaicIntensity", 20) + "");
+            intBox.getSelectionModel().select(UserConfig.getInt("ImageMosaicIntensity", 20) + "");
 
             setBox.getChildren().addAll(intBoxPane);
             if (okButton != null) {

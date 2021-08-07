@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -36,10 +35,6 @@ public class StyleCheckBox {
                 return new StyleData("openCheck", "", Languages.message("OpenWhenComplete"), "", "iconOpen2.png");
             case "selectAreaCheck":
                 return new StyleData("selectAreaCheck", "", Languages.message("SelectArea"), "CTRL+t / ALT+t", "iconTarget.png");
-            case "openSaveCheck":
-                return new StyleData("openSaveCheck", "", Languages.message("OpenAfterSave"), "", "iconOpen2.png");
-            //            case "deleteConfirmCheck":
-            //                return new StyleData("deleteConfirmCheck", "", message("ConfirmWhenDelete"), "", "iconConfirm.png");
             case "bookmarksCheck":
                 return new StyleData("bookmarksCheck", "", Languages.message("Bookmarks"), "", "iconTree.png");
             case "thumbCheck":

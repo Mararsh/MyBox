@@ -15,7 +15,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ShortcutsController extends HtmlViewerController {
+public class ShortcutsController extends HtmlTableController {
 
     public ShortcutsController() {
         baseTitle = message("Shortcuts");
@@ -44,7 +44,7 @@ public class ShortcutsController extends HtmlViewerController {
             if (table == null) {
                 table();
             }
-            String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
             html = "<P class=\"valueText\">" + message("ShortcutsTips") + "</P>\n"
                     + StringTable.tableDiv(table);
             html = HtmlWriteTools.html(message("Shortcuts"), htmlStyle, html);
@@ -62,7 +62,8 @@ public class ShortcutsController extends HtmlViewerController {
             );
             table = new StringTable(names, message("Shortcuts"));
 
-            key("F1", "", message("Start") + " / " + message("OK") + " / " + message("Set") + " / " + message("Query"), "CTRL+e / ALT+e, CTRL+q / ALT+q");
+            key("F1", "", message("Start") + " / " + message("OK") + " / " + message("Synchronize") + " / " + message("Set")
+                    + " / " + message("Query"), "CTRL+e / ALT+e, CTRL+q / ALT+q");
             key("F2", "", message("Save"), "CTRL+s / ALT+s");
             key("F3", "", message("Recover") + " / " + message("Export"), "CTRL+r / ALT+r, CTRL+e / ALT+e ");
             key("F4", "", message("ControlLeftPane"), "");

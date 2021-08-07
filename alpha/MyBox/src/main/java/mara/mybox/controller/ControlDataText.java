@@ -45,7 +45,7 @@ public class ControlDataText extends BaseController {
                 this.baseName = parent.baseName;
                 this.baseTitle = parent.baseTitle;
             }
-            delimiter = UserConfig.getUserConfigString(baseName + "TargetDelimiter", "Blank");
+            delimiter = UserConfig.getString(baseName + "TargetDelimiter", "Blank");
             switch (delimiter.toLowerCase()) {
                 case "blank":
                     blankRadio.fire();
@@ -108,7 +108,7 @@ public class ControlDataText extends BaseController {
                     } else if (semicolonsRadio.isSelected()) {
                         delimiter = ";";
                     }
-                    UserConfig.setUserConfigString(baseName + "TargetDelimiter", delimiter);
+                    UserConfig.setString(baseName + "TargetDelimiter", delimiter);
                     update(TextTools.dataText(sheet, delimiter));
                 }
             });
@@ -123,7 +123,7 @@ public class ControlDataText extends BaseController {
                         return;
                     }
                     delimiter = newValue;
-                    UserConfig.setUserConfigString(baseName + "TargetDelimiter", delimiter);
+                    UserConfig.setString(baseName + "TargetDelimiter", delimiter);
                     delimiterInput.setStyle(null);
                     update(TextTools.dataText(sheet, delimiter));
                 }

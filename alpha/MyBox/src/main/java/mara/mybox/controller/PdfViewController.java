@@ -96,24 +96,24 @@ public class PdfViewController extends BaseFileImagesViewController {
             super.initControls();
 
             if (bookmarksCheck != null) {
-                bookmarksCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Bookmarks", true));
+                bookmarksCheck.setSelected(UserConfig.getBoolean(baseName + "Bookmarks", true));
                 bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         checkOutline();
-                        UserConfig.setUserConfigBoolean(baseName + "Bookmarks", bookmarksCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Bookmarks", bookmarksCheck.isSelected());
                     }
                 });
             }
 
             if (transparentBackgroundCheck != null) {
-                isTransparent = UserConfig.getUserConfigBoolean(baseName + "Transparent", false);
+                isTransparent = UserConfig.getBoolean(baseName + "Transparent", false);
                 transparentBackgroundCheck.setSelected(isTransparent);
                 transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         isTransparent = transparentBackgroundCheck.isSelected();
-                        UserConfig.setUserConfigBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
                         loadPage();
                     }
                 });

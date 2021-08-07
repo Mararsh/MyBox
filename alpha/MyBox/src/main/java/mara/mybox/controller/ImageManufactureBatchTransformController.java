@@ -88,7 +88,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
             checkTransformType();
 
             try {
-                float f = Float.valueOf(UserConfig.getUserConfigString(baseName + "Shear", "0.5"));
+                float f = Float.valueOf(UserConfig.getString(baseName + "Shear", "0.5"));
                 if (f >= 0.0f && f <= 1.0f) {
                     shearX = 0.5f;
                 }
@@ -117,7 +117,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
                 }
             });
 
-            rotateAngle = UserConfig.getUserConfigInt(baseName + "Rotate", 0);
+            rotateAngle = UserConfig.getInt(baseName + "Rotate", 0);
             angleBox.getItems().addAll(Arrays.asList("90", "180", "45", "30", "60", "15", "75", "120", "135"));
             angleBox.setVisibleRowCount(10);
             angleBox.setValue(rotateAngle + "");
@@ -165,7 +165,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
     private void checkShear() {
         try {
             shearX = Float.valueOf(shearBox.getValue());
-            UserConfig.setUserConfigString(baseName + "Shear", shearX + "");
+            UserConfig.setString(baseName + "Shear", shearX + "");
             ValidationTools.setEditorNormal(shearBox);
         } catch (Exception e) {
             ValidationTools.setEditorBadStyle(shearBox);
@@ -176,7 +176,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
         try {
             rotateAngle = Integer.valueOf(angleBox.getValue());
             angleSlider.setValue(rotateAngle);
-            UserConfig.setUserConfigInt(baseName + "Rotate", rotateAngle);
+            UserConfig.setInt(baseName + "Rotate", rotateAngle);
             ValidationTools.setEditorNormal(angleBox);
         } catch (Exception e) {
             rotateAngle = 0;

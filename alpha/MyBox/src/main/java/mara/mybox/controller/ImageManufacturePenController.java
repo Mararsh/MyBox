@@ -116,7 +116,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             strokeWidth = v;
-                            UserConfig.setUserConfigInt(strokeWidthKey, strokeWidth);
+                            UserConfig.setInt(strokeWidthKey, strokeWidth);
                             updateMask();
                             ValidationTools.setEditorNormal(strokeWidthBox);
                         } else {
@@ -127,7 +127,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     }
                 }
             });
-            strokeWidthBox.getSelectionModel().select(UserConfig.getUserConfigInt(strokeWidthKey, defaultStrokeWidth) + "");
+            strokeWidthBox.getSelectionModel().select(UserConfig.getInt(strokeWidthKey, defaultStrokeWidth) + "");
 
             arcBox.getItems().clear();
             List<String> as = new ArrayList<>();
@@ -147,7 +147,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             arcWidth = v;
-                            UserConfig.setUserConfigInt("ImagePenArcWidth", arcWidth);
+                            UserConfig.setInt("ImagePenArcWidth", arcWidth);
                             updateMask();
                             ValidationTools.setEditorNormal(arcBox);
                         } else {
@@ -158,7 +158,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     }
                 }
             });
-            arcBox.getSelectionModel().select(UserConfig.getUserConfigString("ImagePenArcWidth", "0") + "");
+            arcBox.getSelectionModel().select(UserConfig.getString("ImagePenArcWidth", "0") + "");
 
             strokeColorSetController.init(this, baseName + "StrokeColor", Color.RED);
             strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
@@ -178,36 +178,36 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
             });
 
-            dottedCheck.setSelected(UserConfig.getUserConfigBoolean("ImagePenDotted", false));
+            dottedCheck.setSelected(UserConfig.getBoolean("ImagePenDotted", false));
             dottedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setUserConfigBoolean("ImagePenDotted", dottedCheck.isSelected());
+                    UserConfig.setBoolean("ImagePenDotted", dottedCheck.isSelected());
                     updateMask();
                 }
             });
 
-            fillCheck.setSelected(UserConfig.getUserConfigBoolean("ImagePenFill", false));
+            fillCheck.setSelected(UserConfig.getBoolean("ImagePenFill", false));
             fillCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setUserConfigBoolean("ImagePenFill", fillCheck.isSelected());
+                    UserConfig.setBoolean("ImagePenFill", fillCheck.isSelected());
                     updateMask();
                 }
             });
 
-            coordinatePenCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "PenCoordinate", false));
+            coordinatePenCheck.setSelected(UserConfig.getBoolean(baseName + "PenCoordinate", false));
             coordinatePenCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setUserConfigBoolean(baseName + "PenCoordinate", coordinatePenCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "PenCoordinate", coordinatePenCheck.isSelected());
                 }
             });
 
-            String mode = UserConfig.getUserConfigString("ImagePenBlendMode", Languages.message("NormalMode"));
+            String mode = UserConfig.getString("ImagePenBlendMode", Languages.message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
             blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
             blendSelector.setValue(mode);
@@ -216,12 +216,12 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     String mode = blendSelector.getSelectionModel().getSelectedItem();
                     blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setUserConfigString("ImagePenBlendMode", mode);
+                    UserConfig.setString("ImagePenBlendMode", mode);
                     updateMask();
                 }
             });
 
-            opacity = UserConfig.getUserConfigInt("ImagePenOpacity", 100) / 100f;
+            opacity = UserConfig.getInt("ImagePenOpacity", 100) / 100f;
             opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
             opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacitySelector.setValue(opacity + "");
@@ -232,7 +232,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         float f = Float.valueOf(newValue);
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
-                            UserConfig.setUserConfigInt("ImagePenOpacity", (int) (f * 100));
+                            UserConfig.setInt("ImagePenOpacity", (int) (f * 100));
                             ValidationTools.setEditorNormal(opacitySelector);
                             updateMask();
                         } else {
@@ -244,21 +244,21 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
             });
 
-            blendTopCheck.setSelected(UserConfig.getUserConfigBoolean("ImagePenBlendTop", true));
+            blendTopCheck.setSelected(UserConfig.getBoolean("ImagePenBlendTop", true));
             blendTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setUserConfigBoolean("ImagePenBlendTop", blendTopCheck.isSelected());
+                    UserConfig.setBoolean("ImagePenBlendTop", blendTopCheck.isSelected());
                     updateMask();
                 }
             });
 
-            ignoreTransparentCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IgnoreTransparent", true));
+            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
             ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
                     updateMask();
                 }
             });
@@ -275,7 +275,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         if (v > 0) {
                             intensity = v;
                             ValidationTools.setEditorNormal(intensityBox);
-                            UserConfig.setUserConfigInt("ImageMosaicIntensity", v);
+                            UserConfig.setInt("ImageMosaicIntensity", v);
                         } else {
                             ValidationTools.setEditorBadStyle(intensityBox);
                         }
@@ -284,7 +284,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     }
                 }
             });
-            intensityBox.getSelectionModel().select(UserConfig.getUserConfigInt("ImageMosaicIntensity", 20) + "");
+            intensityBox.getSelectionModel().select(UserConfig.getInt("ImageMosaicIntensity", 20) + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -397,7 +397,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 defaultStrokeWidth = 80;
 
             }
-            strokeWidthBox.getSelectionModel().select(UserConfig.getUserConfigInt(strokeWidthKey, defaultStrokeWidth) + "");
+            strokeWidthBox.getSelectionModel().select(UserConfig.getInt(strokeWidthKey, defaultStrokeWidth) + "");
 
             refreshStyle(setBox);
             updateMask();

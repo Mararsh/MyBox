@@ -110,11 +110,11 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                     .or(toInput.styleProperty().isEqualTo(NodeStyleTools.badStyle))
             );
 
-            tableSubdirCheck.setSelected(UserConfig.getUserConfigBoolean("PDFTableSubDir", true));
+            tableSubdirCheck.setSelected(UserConfig.getBoolean("PDFTableSubDir", true));
             tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean("PDFTableSubDir", tableSubdirCheck.isSelected());
+                    UserConfig.setBoolean("PDFTableSubDir", tableSubdirCheck.isSelected());
                 }
             });
 

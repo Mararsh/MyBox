@@ -121,11 +121,11 @@ public class GameMineController extends BaseController {
             mineImage = StyleTools.getIconPath(AppVariables.ControlColor) + "iconClear.png";
 
             spacing = 0;
-            chessSize = UserConfig.getUserConfigInt(baseName + "ChessSize", 20);
-            vNumber = UserConfig.getUserConfigInt(baseName + "BoardHeight", 16);
-            hNumber = UserConfig.getUserConfigInt(baseName + "BoardWidth", 30);
-            minesNumber = UserConfig.getUserConfigInt(baseName + "MinesNumber", 99);
-            historiesNumber = UserConfig.getUserConfigInt(baseName + "HistoriesNumber", 50);
+            chessSize = UserConfig.getInt(baseName + "ChessSize", 20);
+            vNumber = UserConfig.getInt(baseName + "BoardHeight", 16);
+            hNumber = UserConfig.getInt(baseName + "BoardWidth", 30);
+            minesNumber = UserConfig.getInt(baseName + "MinesNumber", 99);
+            historiesNumber = UserConfig.getInt(baseName + "HistoriesNumber", 50);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -148,13 +148,13 @@ public class GameMineController extends BaseController {
             chessSizeSelector.setValue(chessSize + "");
 
             historiesNumberSelector.getItems().addAll(Arrays.asList("50", "100", "200", "20", "10", "300", "500"));
-            historiesNumberSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "HistoriesNumber", "50"));
+            historiesNumberSelector.getSelectionModel().select(UserConfig.getString(baseName + "HistoriesNumber", "50"));
 
-            miaowCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Miaow", true));
+            miaowCheck.setSelected(UserConfig.getBoolean(baseName + "Miaow", true));
             miaowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "Miaow", miaowCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Miaow", miaowCheck.isSelected());
                 }
             });
 
@@ -475,7 +475,7 @@ public class GameMineController extends BaseController {
                         ));
                         table.add(row);
                     }
-                    String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+                    String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
                     html = HtmlWriteTools.html(null, htmlStyle, StringTable.tableDiv(table));
                     return true;
                 }
@@ -777,10 +777,10 @@ public class GameMineController extends BaseController {
         } catch (Exception e) {
             boardMinesInput.setStyle(NodeStyleTools.badStyle);
         }
-        UserConfig.setUserConfigInt(baseName + "ChessSize", chessSize);
-        UserConfig.setUserConfigInt(baseName + "BoardHeight", vNumber);
-        UserConfig.setUserConfigInt(baseName + "BoardWidth", hNumber);
-        UserConfig.setUserConfigInt(baseName + "MinesNumber", minesNumber);
+        UserConfig.setInt(baseName + "ChessSize", chessSize);
+        UserConfig.setInt(baseName + "BoardHeight", vNumber);
+        UserConfig.setInt(baseName + "BoardWidth", hNumber);
+        UserConfig.setInt(baseName + "MinesNumber", minesNumber);
         createAction();
         tabPane.getSelectionModel().select(playTab);
     }
@@ -796,7 +796,7 @@ public class GameMineController extends BaseController {
             }
             historiesNumber = v;
             historiesNumberSelector.getEditor().setStyle(null);
-            UserConfig.setUserConfigInt(baseName + "HistoriesNumber", historiesNumber);
+            UserConfig.setInt(baseName + "HistoriesNumber", historiesNumber);
         } catch (Exception e) {
             historiesNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return;

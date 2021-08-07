@@ -9,7 +9,7 @@ import mara.mybox.db.table.TableSystemConf;
  */
 public class SystemConfig {
 
-    public static boolean setSystemConfigString(String key, String value) {
+    public static boolean setString(String key, String value) {
         AppVariables.systemConfigValues.put(key, value);
         if (TableSystemConf.writeString(key, value) >= 0) {
             return true;
@@ -18,7 +18,7 @@ public class SystemConfig {
         }
     }
 
-    public static String getSystemConfigString(String key, String defaultValue) {
+    public static String getString(String key, String defaultValue) {
         try {
             //            MyBoxLog.debug("getSystemConfigString:" + key);
             String value;
@@ -35,7 +35,7 @@ public class SystemConfig {
         }
     }
 
-    public static boolean setSystemConfigInt(String key, int value) {
+    public static boolean setInt(String key, int value) {
         AppVariables.systemConfigValues.put(key, value + "");
         if (TableSystemConf.writeInt(key, value) >= 0) {
             return true;
@@ -44,7 +44,7 @@ public class SystemConfig {
         }
     }
 
-    public static int getSystemConfigInt(String key, int defaultValue) {
+    public static int getInt(String key, int defaultValue) {
         try {
             int v;
             if (AppVariables.systemConfigValues.containsKey(key)) {
@@ -60,7 +60,7 @@ public class SystemConfig {
         }
     }
 
-    public static boolean setSystemConfigBoolean(String key, boolean value) {
+    public static boolean setBoolean(String key, boolean value) {
         AppVariables.systemConfigValues.put(key, value ? "true" : "false");
         if (TableSystemConf.writeBoolean(key, value) >= 0) {
             return true;
@@ -69,7 +69,7 @@ public class SystemConfig {
         }
     }
 
-    public static boolean getSystemConfigBoolean(String key, boolean defaultValue) {
+    public static boolean getBoolean(String key, boolean defaultValue) {
         try {
             boolean v;
             if (AppVariables.systemConfigValues.containsKey(key)) {
@@ -85,11 +85,11 @@ public class SystemConfig {
         }
     }
 
-    public static boolean getSystemConfigBoolean(String key) {
-        return getSystemConfigBoolean(key, true);
+    public static boolean getBoolean(String key) {
+        return getBoolean(key, true);
     }
 
-    public static boolean deleteSystemConfigValue(String key) {
+    public static boolean deleteValue(String key) {
         if (TableSystemConf.delete(key)) {
             AppVariables.systemConfigValues.remove(key);
             return true;

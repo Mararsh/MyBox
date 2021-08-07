@@ -57,37 +57,37 @@ public class PptExtractController extends BaseBatchFileController {
         try {
             super.initControls();
 
-            slidesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Slides", true));
+            slidesCheck.setSelected(UserConfig.getBoolean(baseName + "Slides", true));
             slidesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Slides", slidesCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Slides", slidesCheck.isSelected());
                     });
-            notesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Notes", true));
+            notesCheck.setSelected(UserConfig.getBoolean(baseName + "Notes", true));
             notesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Notes", notesCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Notes", notesCheck.isSelected());
                     });
-            masterCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Master", true));
+            masterCheck.setSelected(UserConfig.getBoolean(baseName + "Master", true));
             masterCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Master", masterCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Master", masterCheck.isSelected());
                     });
-            commentsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Comments", true));
+            commentsCheck.setSelected(UserConfig.getBoolean(baseName + "Comments", true));
             commentsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Comments", commentsCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Comments", commentsCheck.isSelected());
                     });
-            soundsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Sounds", true));
+            soundsCheck.setSelected(UserConfig.getBoolean(baseName + "Sounds", true));
             soundsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Sounds", soundsCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Sounds", soundsCheck.isSelected());
                     });
-            imagesCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Images", true));
+            imagesCheck.setSelected(UserConfig.getBoolean(baseName + "Images", true));
             imagesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Images", imagesCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Images", imagesCheck.isSelected());
                     });
-            wordCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Word", true));
+            wordCheck.setSelected(UserConfig.getBoolean(baseName + "Word", true));
             wordCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Word", wordCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Word", wordCheck.isSelected());
                     });
-            excelCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Excel", true));
+            excelCheck.setSelected(UserConfig.getBoolean(baseName + "Excel", true));
             excelCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "Excel", excelCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Excel", excelCheck.isSelected());
                     });
 
         } catch (Exception e) {

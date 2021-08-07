@@ -298,7 +298,7 @@ public class DataFileCSVController extends BaseDataFileController {
         if (sourceFile != null) {
             name = FileNameTools.getFilePrefix(sourceFile.getName());
         }
-        targetFile = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        targetFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 name, targetExtensionFilter);
         if (targetFile == null) {
             return;

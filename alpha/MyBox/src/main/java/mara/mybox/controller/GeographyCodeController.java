@@ -293,7 +293,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (selected == null) {
             return;
         }
-        HtmlReadTools.viewHtml(Languages.message("GeographyCode"), BaseDataTools.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(Languages.message("GeographyCode"), BaseDataTools.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

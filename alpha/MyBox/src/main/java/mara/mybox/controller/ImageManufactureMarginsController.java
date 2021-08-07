@@ -104,7 +104,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             marginWidthBox.getItems().addAll(Arrays.asList(
                     width / 6 + "", width / 8 + "", width / 4 + "", width / 10 + "",
                     "20", "10", "5", "100", "200", "300", "50", "150", "500"));
-            marginWidthBox.getSelectionModel().select(UserConfig.getUserConfigInt("ImageMarginsWidth", 20) + "");
+            marginWidthBox.getSelectionModel().select(UserConfig.getInt("ImageMarginsWidth", 20) + "");
 
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -114,7 +114,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
                 }
             });
             distanceInput.setText("20");
-            distanceInput.setText(UserConfig.getUserConfigInt("ImageMarginsColorDistance", 20) + "");
+            distanceInput.setText(UserConfig.getInt("ImageMarginsColorDistance", 20) + "");
 
             marginWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -206,7 +206,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             int v = Integer.valueOf(marginWidthBox.getValue());
             if (v > 0) {
                 addedWidth = v;
-                UserConfig.setUserConfigInt("ImageMarginsWidth", v);
+                UserConfig.setInt("ImageMarginsWidth", v);
                 ValidationTools.setEditorNormal(marginWidthBox);
             } else {
                 ValidationTools.setEditorBadStyle(marginWidthBox);
@@ -222,7 +222,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             if (distance >= 0 && distance <= 255) {
                 distance = v;
                 distanceInput.setStyle(null);
-                UserConfig.setUserConfigInt("ImageMarginsColorDistance", v);
+                UserConfig.setInt("ImageMarginsColorDistance", v);
             } else {
                 distanceInput.setStyle(NodeStyleTools.badStyle);
             }

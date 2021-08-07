@@ -52,6 +52,8 @@ public class Fxmls {
     public static final String HtmlFramesetFxml = "/fxml/HtmlFrameset.fxml";
     public static final String WebFindFxml = "/fxml/WebFind.fxml";
     public static final String WebElementsFxml = "/fxml/WebElements.fxml";
+    public static final String HtmlTableFxml = "/fxml/HtmlTable.fxml";
+    public static final String HtmlPopFxml = "/fxml/HtmlPop.fxml";
 
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
     public static final String MarkdownToHtmlFxml = "/fxml/MarkdownToHtml.fxml";
@@ -66,6 +68,7 @@ public class Fxmls {
     public static final String TextToHtmlFxml = "/fxml/TextToHtml.fxml";
     public static final String TextInSystemClipboardFxml = "/fxml/TextInSystemClipboard.fxml";
     public static final String TextInMyBoxClipboardFxml = "/fxml/TextInMyBoxClipboard.fxml";
+    public static final String TextPopFxml = "/fxml/TextPop.fxml";
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
 
@@ -263,15 +266,13 @@ public class Fxmls {
     /*
         network
      */
-    public static final String HtmlViewerFxml = "/fxml/HtmlViewer.fxml";
-
     public static final String WeiboSnapFxml = "/fxml/WeiboSnap.fxml";
     public static final String WeiboSnapPostsFxml = "/fxml/WeiboSnapPosts.fxml";
     public static final String WeiboSnapLikeFxml = "/fxml/WeiboSnapLike.fxml";
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
 
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
-    public static final String ControlWebBrowserBoxFxml = "/fxml/ControlWebBrowserBox.fxml";
+    public static final String ControlTabWebViewFxml = "/fxml/ControlTabWebView.fxml";
 
     public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
 

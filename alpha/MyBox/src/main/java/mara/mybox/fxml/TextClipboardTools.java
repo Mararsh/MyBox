@@ -46,7 +46,7 @@ public class TextClipboardTools {
     }
 
     public static int getMonitorInterval() {
-        int v = UserConfig.getUserConfigInt("TextClipboardMonitorInterval", DefaultInterval);
+        int v = UserConfig.getInt("TextClipboardMonitorInterval", DefaultInterval);
         if (v <= 0) {
             v = DefaultInterval;
         }
@@ -57,7 +57,7 @@ public class TextClipboardTools {
         if (v <= 0) {
             v = DefaultInterval;
         }
-        UserConfig.setUserConfigInt("TextClipboardMonitorInterval", v);
+        UserConfig.setInt("TextClipboardMonitorInterval", v);
         return v;
     }
 
@@ -66,19 +66,19 @@ public class TextClipboardTools {
     }
 
     public static boolean isCopy() {
-        return UserConfig.getUserConfigBoolean("CopyTextInSystemClipboard", false);
+        return UserConfig.getBoolean("CopyTextInSystemClipboard", false);
     }
 
     public static void setCopy(boolean value) {
-        UserConfig.setUserConfigBoolean("CopyTextInSystemClipboard", value);
+        UserConfig.setBoolean("CopyTextInSystemClipboard", value);
     }
 
     public static boolean isStartWhenBoot() {
-        return UserConfig.getUserConfigBoolean("StartTextClipboardMonitorWhenBoot", false);
+        return UserConfig.getBoolean("StartTextClipboardMonitorWhenBoot", false);
     }
 
     public static void setStartWhenBoot(boolean value) {
-        UserConfig.setUserConfigBoolean("StartTextClipboardMonitorWhenBoot", value);
+        UserConfig.setBoolean("StartTextClipboardMonitorWhenBoot", value);
     }
 
     /*

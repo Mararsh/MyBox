@@ -89,7 +89,7 @@ public class PdfTools {
     }
 
     public static PDDocument createPDF(File file) {
-        return createPDF(file, UserConfig.getUserConfigString("AuthorKey", System.getProperty("user.name")));
+        return createPDF(file, UserConfig.getString("AuthorKey", System.getProperty("user.name")));
     }
 
     public static PDDocument createPDF(File file, String author) {

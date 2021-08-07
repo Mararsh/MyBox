@@ -123,7 +123,7 @@ public class ColorPalettePopupController extends BaseController {
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
-                        String paletteName = UserConfig.getUserConfigString(baseName + "Palette", defaultPalette.getName());
+                        String paletteName = UserConfig.getString(baseName + "Palette", defaultPalette.getName());
                         currentPalette = tableColorPaletteName.find(conn, paletteName);
                         if (currentPalette == null) {
                             currentPalette = defaultPalette;
@@ -132,7 +132,7 @@ public class ColorPalettePopupController extends BaseController {
                             return false;
                         }
                         paletteName = currentPalette.getName();
-                        UserConfig.setUserConfigString(baseName + "Palette", paletteName);
+                        UserConfig.setString(baseName + "Palette", paletteName);
                         colors = tableColorPalette.colors(conn, currentPalette.getCpnid());
                         palettes = tableColorPaletteName.readAll(conn);
                     } catch (Exception e) {
@@ -244,7 +244,7 @@ public class ColorPalettePopupController extends BaseController {
                 for (ColorPaletteName palette : palettes) {
                     menu = new MenuItem(palette.getName());
                     menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        UserConfig.setUserConfigString(baseName + "Palette", palette.getName());
+                        UserConfig.setString(baseName + "Palette", palette.getName());
                         loadColors();
                     });
                     items.add(menu);
@@ -262,11 +262,11 @@ public class ColorPalettePopupController extends BaseController {
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem checkMenu = new CheckMenuItem(Languages.message("PopColorSetWhenMousePassing"));
-            checkMenu.setSelected(UserConfig.getUserConfigBoolean("PopColorSetWhenMousePassing", true));
+            checkMenu.setSelected(UserConfig.getBoolean("PopColorSetWhenMousePassing", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setUserConfigBoolean("PopColorSetWhenMousePassing", checkMenu.isSelected());
+                    UserConfig.setBoolean("PopColorSetWhenMousePassing", checkMenu.isSelected());
                 }
             });
             items.add(checkMenu);

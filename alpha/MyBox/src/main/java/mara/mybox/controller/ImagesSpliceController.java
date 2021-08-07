@@ -113,7 +113,7 @@ public class ImagesSpliceController extends ImageViewerController {
                         int columnsValue = Integer.valueOf(newValue);
                         if (columnsValue > 0) {
                             imageCombine.setColumnsValue(columnsValue);
-                            UserConfig.setUserConfigString(baseName + "Columns", columnsValue + "");
+                            UserConfig.setString(baseName + "Columns", columnsValue + "");
                             combineImages();
                             ValidationTools.setEditorNormal(columnsBox);
                         } else {
@@ -127,7 +127,7 @@ public class ImagesSpliceController extends ImageViewerController {
                     }
                 }
             });
-            columnsBox.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Columns", "2"));
+            columnsBox.getSelectionModel().select(UserConfig.getString(baseName + "Columns", "2"));
 
             intervalBox.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
             intervalBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -138,7 +138,7 @@ public class ImagesSpliceController extends ImageViewerController {
                         int intervalValue = Integer.valueOf(newValue);
                         if (intervalValue >= 0) {
                             imageCombine.setIntervalValue(intervalValue);
-                            UserConfig.setUserConfigString(baseName + "Interval", intervalValue + "");
+                            UserConfig.setString(baseName + "Interval", intervalValue + "");
                             ValidationTools.setEditorNormal(intervalBox);
                             combineImages();
                         } else {
@@ -150,7 +150,7 @@ public class ImagesSpliceController extends ImageViewerController {
                     }
                 }
             });
-            intervalBox.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Interval", "5"));
+            intervalBox.getSelectionModel().select(UserConfig.getString(baseName + "Interval", "5"));
 
             MarginsBox.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
             MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -161,7 +161,7 @@ public class ImagesSpliceController extends ImageViewerController {
                         int MarginsValue = Integer.valueOf(newValue);
                         if (MarginsValue >= 0) {
                             imageCombine.setMarginsValue(MarginsValue);
-                            UserConfig.setUserConfigString(baseName + "Margin", MarginsValue + "");
+                            UserConfig.setString(baseName + "Margin", MarginsValue + "");
                             ValidationTools.setEditorNormal(MarginsBox);
                             combineImages();
                         } else {
@@ -173,7 +173,7 @@ public class ImagesSpliceController extends ImageViewerController {
                     }
                 }
             });
-            MarginsBox.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "Margin", "5"));
+            MarginsBox.getSelectionModel().select(UserConfig.getString(baseName + "Margin", "5"));
 
             colorSetController.init(this, baseName + "Color");
             imageCombine.setBgColor(colorSetController.color());
@@ -193,20 +193,20 @@ public class ImagesSpliceController extends ImageViewerController {
                     if (Languages.message("SingleColumn").equals(selected.getText())) {
                         imageCombine.setArrayType(ArrayType.SingleColumn);
                         columnsBox.setDisable(true);
-                        UserConfig.setUserConfigString(baseName + "ArrayType", "SingleColumn");
+                        UserConfig.setString(baseName + "ArrayType", "SingleColumn");
                     } else if (Languages.message("SingleRow").equals(selected.getText())) {
                         imageCombine.setArrayType(ArrayType.SingleRow);
                         columnsBox.setDisable(true);
-                        UserConfig.setUserConfigString(baseName + "ArrayType", "SingleRow");
+                        UserConfig.setString(baseName + "ArrayType", "SingleRow");
                     } else if (Languages.message("ColumnsNumber").equals(selected.getText())) {
                         imageCombine.setArrayType(ArrayType.ColumnsNumber);
                         columnsBox.setDisable(false);
-                        UserConfig.setUserConfigString(baseName + "ArrayType", "ColumnsNumber");
+                        UserConfig.setString(baseName + "ArrayType", "ColumnsNumber");
                     }
                     combineImages();
                 }
             });
-            String arraySelect = UserConfig.getUserConfigString(baseName + "ArrayType", "SingleColumn");
+            String arraySelect = UserConfig.getString(baseName + "ArrayType", "SingleColumn");
             switch (arraySelect) {
                 case "SingleColumn":
                     arrayColumnRadio.setSelected(true);
@@ -233,7 +233,7 @@ public class ImagesSpliceController extends ImageViewerController {
                     checkEachWidthValue();
                 }
             });
-            eachWidthInput.setText(UserConfig.getUserConfigString(baseName + "EachWidth", ""));
+            eachWidthInput.setText(UserConfig.getString(baseName + "EachWidth", ""));
 
             eachHeightInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -242,7 +242,7 @@ public class ImagesSpliceController extends ImageViewerController {
                     checkEachHeightValue();
                 }
             });
-            eachHeightInput.setText(UserConfig.getUserConfigString(baseName + "EachHeight", ""));
+            eachHeightInput.setText(UserConfig.getString(baseName + "EachHeight", ""));
 
             totalWidthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -251,7 +251,7 @@ public class ImagesSpliceController extends ImageViewerController {
                     checkTotalWidthValue();
                 }
             });
-            totalWidthInput.setText(UserConfig.getUserConfigString(baseName + "TotalWidth", ""));
+            totalWidthInput.setText(UserConfig.getString(baseName + "TotalWidth", ""));
 
             totalHeightInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -260,7 +260,7 @@ public class ImagesSpliceController extends ImageViewerController {
                     checkTotalHeightValue();
                 }
             });
-            totalHeightInput.setText(UserConfig.getUserConfigString(baseName + "TotalHeight", ""));
+            totalHeightInput.setText(UserConfig.getString(baseName + "TotalHeight", ""));
 
             sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -277,40 +277,40 @@ public class ImagesSpliceController extends ImageViewerController {
                     RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
                     if (Languages.message("KeepSize").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.KeepSize);
-                        UserConfig.setUserConfigString(baseName + "SizeType", "KeepSize");
+                        UserConfig.setString(baseName + "SizeType", "KeepSize");
                         combineImages();
                     } else if (Languages.message("AlignAsBigger").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.AlignAsBigger);
-                        UserConfig.setUserConfigString(baseName + "SizeType", "AlignAsBigger");
+                        UserConfig.setString(baseName + "SizeType", "AlignAsBigger");
                         combineImages();
                     } else if (Languages.message("AlignAsSmaller").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.AlignAsSmaller);
-                        UserConfig.setUserConfigString(baseName + "SizeType", "AlignAsSmaller");
+                        UserConfig.setString(baseName + "SizeType", "AlignAsSmaller");
                         combineImages();
                     } else if (Languages.message("EachWidth").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.EachWidth);
                         eachWidthInput.setDisable(false);
                         checkEachWidthValue();
-                        UserConfig.setUserConfigString(baseName + "SizeType", "EachWidth");
+                        UserConfig.setString(baseName + "SizeType", "EachWidth");
                     } else if (Languages.message("EachHeight").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.EachHeight);
                         eachHeightInput.setDisable(false);
                         checkEachHeightValue();
-                        UserConfig.setUserConfigString(baseName + "SizeType", "EachHeight");
+                        UserConfig.setString(baseName + "SizeType", "EachHeight");
                     } else if (Languages.message("TotalWidth").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.TotalWidth);
                         totalWidthInput.setDisable(false);
                         checkTotalWidthValue();
-                        UserConfig.setUserConfigString(baseName + "SizeType", "TotalWidth");
+                        UserConfig.setString(baseName + "SizeType", "TotalWidth");
                     } else if (Languages.message("TotalHeight").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.TotalHeight);
                         totalHeightInput.setDisable(false);
                         checkTotalHeightValue();
-                        UserConfig.setUserConfigString(baseName + "SizeType", "TotalHeight");
+                        UserConfig.setString(baseName + "SizeType", "TotalHeight");
                     }
                 }
             });
-            String arraySelect = UserConfig.getUserConfigString(baseName + "SizeType", "KeepSize");
+            String arraySelect = UserConfig.getString(baseName + "SizeType", "KeepSize");
             switch (arraySelect) {
                 case "KeepSize":
                     keepSizeRadio.setSelected(true);
@@ -346,7 +346,7 @@ public class ImagesSpliceController extends ImageViewerController {
             if (eachWidthValue > 0) {
                 imageCombine.setEachWidthValue(eachWidthValue);
                 eachWidthInput.setStyle(null);
-                UserConfig.setUserConfigString(baseName + "EachWidth", eachWidthValue + "");
+                UserConfig.setString(baseName + "EachWidth", eachWidthValue + "");
                 combineImages();
             } else {
                 imageCombine.setEachWidthValue(-1);
@@ -364,7 +364,7 @@ public class ImagesSpliceController extends ImageViewerController {
             if (eachHeightValue > 0) {
                 imageCombine.setEachHeightValue(eachHeightValue);
                 eachHeightInput.setStyle(null);
-                UserConfig.setUserConfigString(baseName + "EachHeight", eachHeightValue + "");
+                UserConfig.setString(baseName + "EachHeight", eachHeightValue + "");
                 combineImages();
             } else {
                 imageCombine.setEachHeightValue(-1);
@@ -382,7 +382,7 @@ public class ImagesSpliceController extends ImageViewerController {
             if (totalWidthValue > 0) {
                 imageCombine.setTotalWidthValue(totalWidthValue);
                 totalWidthInput.setStyle(null);
-                UserConfig.setUserConfigString(baseName + "TotalWidth", totalWidthValue + "");
+                UserConfig.setString(baseName + "TotalWidth", totalWidthValue + "");
                 combineImages();
             } else {
                 imageCombine.setTotalWidthValue(-1);
@@ -400,7 +400,7 @@ public class ImagesSpliceController extends ImageViewerController {
             if (totalHeightValue > 0) {
                 imageCombine.setTotalHeightValue(totalHeightValue);
                 totalHeightInput.setStyle(null);
-                UserConfig.setUserConfigString(baseName + "TotalHeight", totalHeightValue + "");
+                UserConfig.setString(baseName + "TotalHeight", totalHeightValue + "");
                 combineImages();
             } else {
                 imageCombine.setTotalHeightValue(-1);
@@ -518,7 +518,7 @@ public class ImagesSpliceController extends ImageViewerController {
         if (image == null) {
             return;
         }
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 null, targetExtensionFilter);
         if (file == null) {
             return;

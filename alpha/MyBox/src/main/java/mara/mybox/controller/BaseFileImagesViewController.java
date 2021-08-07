@@ -121,12 +121,12 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             }
 
             if (thumbCheck != null) {
-                thumbCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Thumbnails", false));
+                thumbCheck.setSelected(UserConfig.getBoolean(baseName + "Thumbnails", false));
                 thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         checkThumbs();
-                        UserConfig.setUserConfigBoolean(baseName + "Thumbnails", thumbCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "Thumbnails", thumbCheck.isSelected());
                     }
                 });
 
@@ -140,7 +140,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
 
             if (percentBox != null) {
                 percentBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
-                percent = UserConfig.getUserConfigInt(baseName + "Percent", 100);
+                percent = UserConfig.getInt(baseName + "Percent", 100);
                 if (percent < 0) {
                     percent = 100;
                 }
@@ -155,7 +155,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 percent = v;
-                                UserConfig.setUserConfigInt(baseName + "Percent", percent);
+                                UserConfig.setInt(baseName + "Percent", percent);
                                 setPercent(percent);
                                 ValidationTools.setEditorNormal(percentBox);
                             } else {
@@ -171,7 +171,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
 
             if (dpiBox != null) {
                 dpiBox.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
-                dpi = UserConfig.getUserConfigInt(baseName + "DPI", 96);
+                dpi = UserConfig.getInt(baseName + "DPI", 96);
                 if (dpi < 0) {
                     dpi = 96;
                 }
@@ -186,7 +186,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 dpi = v;
-                                UserConfig.setUserConfigInt(baseName + "DPI", dpi);
+                                UserConfig.setInt(baseName + "DPI", dpi);
                                 loadPage();
                                 ValidationTools.setEditorNormal(dpiBox);
                             } else {

@@ -25,7 +25,7 @@ import mara.mybox.value.Languages;
  * @Description
  * @License Apache License Version 2.0
  */
-public class MyBoxPropertiesController extends HtmlViewerController {
+public class MyBoxPropertiesController extends HtmlTableController {
 
     public MyBoxPropertiesController() {
         baseTitle = Languages.message("JvmProperties");

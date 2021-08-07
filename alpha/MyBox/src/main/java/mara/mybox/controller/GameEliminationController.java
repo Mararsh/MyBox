@@ -321,7 +321,7 @@ public class GameEliminationController extends BaseController {
             });
             imagesListview.getItems().addAll(items);
 
-            List<String> selected = Arrays.asList(UserConfig.getUserConfigString("GameEliminationChessImages",
+            List<String> selected = Arrays.asList(UserConfig.getString("GameEliminationChessImages",
                     defaultSelected).split(","));
             if (selected.isEmpty()) {
                 selected = Arrays.asList(defaultSelected.split(","));
@@ -347,9 +347,9 @@ public class GameEliminationController extends BaseController {
                     "50", "40", "60", "30", "80"
             ));
 
-            shadowCheck.setSelected(UserConfig.getUserConfigBoolean("GameEliminationShadow", false));
-            arcCheck.setSelected(UserConfig.getUserConfigBoolean("GameEliminationArc", false));
-            chessSizeSelector.getSelectionModel().select(UserConfig.getUserConfigString("GameEliminationChessImageSize", "50"));
+            shadowCheck.setSelected(UserConfig.getBoolean("GameEliminationShadow", false));
+            arcCheck.setSelected(UserConfig.getBoolean("GameEliminationArc", false));
+            chessSizeSelector.getSelectionModel().select(UserConfig.getString("GameEliminationChessImageSize", "50"));
             isSettingValues = false;
 
             setChessImagesLabel();
@@ -427,7 +427,7 @@ public class GameEliminationController extends BaseController {
                         return;
                     }
                     if (newVal) {
-                        UserConfig.setUserConfigString("GameEliminationSound", "Guai");
+                        UserConfig.setString("GameEliminationSound", "Guai");
                     }
                 }
             });
@@ -439,7 +439,7 @@ public class GameEliminationController extends BaseController {
                         return;
                     }
                     if (newVal) {
-                        UserConfig.setUserConfigString("GameEliminationSound", "Ben");
+                        UserConfig.setString("GameEliminationSound", "Ben");
                     }
                 }
             });
@@ -451,7 +451,7 @@ public class GameEliminationController extends BaseController {
                         return;
                     }
                     if (newVal) {
-                        UserConfig.setUserConfigString("GameEliminationSound", "GuaiBen");
+                        UserConfig.setString("GameEliminationSound", "GuaiBen");
                     }
                 }
             });
@@ -463,7 +463,7 @@ public class GameEliminationController extends BaseController {
                         return;
                     }
                     if (newVal) {
-                        UserConfig.setUserConfigString("GameEliminationSound", "Mute");
+                        UserConfig.setString("GameEliminationSound", "Mute");
                     }
                 }
             });
@@ -475,11 +475,11 @@ public class GameEliminationController extends BaseController {
                         return;
                     }
                     if (newVal) {
-                        UserConfig.setUserConfigString("GameEliminationSound", "Customized");
+                        UserConfig.setString("GameEliminationSound", "Customized");
                     }
                 }
             });
-            String sound = UserConfig.getUserConfigString("GameEliminationSound", "Guai");
+            String sound = UserConfig.getString("GameEliminationSound", "Guai");
             switch (sound) {
                 case "Ben":
                     benRadio.fire();
@@ -505,7 +505,7 @@ public class GameEliminationController extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setUserConfigString("GameEliminationDead", "Renew");
+                    UserConfig.setString("GameEliminationDead", "Renew");
                 }
             });
             deadChanceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -515,7 +515,7 @@ public class GameEliminationController extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setUserConfigString("GameEliminationDead", "Chance");
+                    UserConfig.setString("GameEliminationDead", "Chance");
                 }
             });
             deadPromptRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -525,10 +525,10 @@ public class GameEliminationController extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setUserConfigString("GameEliminationDead", "Prompt");
+                    UserConfig.setString("GameEliminationDead", "Prompt");
                 }
             });
-            String dead = UserConfig.getUserConfigString("GameEliminationDead", "Renew");
+            String dead = UserConfig.getString("GameEliminationDead", "Renew");
             switch (dead) {
                 case "Chance":
                     deadChanceRadio.fire();
@@ -546,7 +546,7 @@ public class GameEliminationController extends BaseController {
                 public void changed(ObservableValue ov, Boolean oldVal,
                         Boolean newVal) {
                     autoSpeed = 1000;
-                    UserConfig.setUserConfigString("GameEliminationAutoSpeed", "1");
+                    UserConfig.setString("GameEliminationAutoSpeed", "1");
                 }
             });
             speed2Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -554,7 +554,7 @@ public class GameEliminationController extends BaseController {
                 public void changed(ObservableValue ov, Boolean oldVal,
                         Boolean newVal) {
                     autoSpeed = 2000;
-                    UserConfig.setUserConfigString("GameEliminationAutoSpeed", "2");
+                    UserConfig.setString("GameEliminationAutoSpeed", "2");
                 }
             });
             speed3Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -562,7 +562,7 @@ public class GameEliminationController extends BaseController {
                 public void changed(ObservableValue ov, Boolean oldVal,
                         Boolean newVal) {
                     autoSpeed = 3000;
-                    UserConfig.setUserConfigString("GameEliminationAutoSpeed", "3");
+                    UserConfig.setString("GameEliminationAutoSpeed", "3");
                 }
             });
             speed5Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -570,11 +570,11 @@ public class GameEliminationController extends BaseController {
                 public void changed(ObservableValue ov, Boolean oldVal,
                         Boolean newVal) {
                     autoSpeed = 5000;
-                    UserConfig.setUserConfigString("GameEliminationAutoSpeed", "5");
+                    UserConfig.setString("GameEliminationAutoSpeed", "5");
                 }
             });
             autoSpeed = 2000;
-            String speed = UserConfig.getUserConfigString("GameEliminationAutoSpeed", "2");
+            String speed = UserConfig.getString("GameEliminationAutoSpeed", "2");
             switch (speed) {
                 case "1":
                     speed1Radio.fire();
@@ -596,7 +596,7 @@ public class GameEliminationController extends BaseController {
                         Boolean newVal) {
                     flushTimes = 0;
                     eliminateDelay = flushDuration * (2 * flushTimes + 1);
-                    UserConfig.setUserConfigString("GameEliminationFlushTime", "0");
+                    UserConfig.setString("GameEliminationFlushTime", "0");
                 }
             });
             flush1Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -605,7 +605,7 @@ public class GameEliminationController extends BaseController {
                         Boolean newVal) {
                     flushTimes = 1;
                     eliminateDelay = flushDuration * (2 * flushTimes + 1);
-                    UserConfig.setUserConfigString("GameEliminationFlushTime", "1");
+                    UserConfig.setString("GameEliminationFlushTime", "1");
                 }
             });
             flush2Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -614,7 +614,7 @@ public class GameEliminationController extends BaseController {
                         Boolean newVal) {
                     flushTimes = 2;
                     eliminateDelay = flushDuration * (2 * flushTimes + 1);
-                    UserConfig.setUserConfigString("GameEliminationFlushTime", "2");
+                    UserConfig.setString("GameEliminationFlushTime", "2");
                 }
             });
             flush3Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -623,12 +623,12 @@ public class GameEliminationController extends BaseController {
                         Boolean newVal) {
                     flushTimes = 3;
                     eliminateDelay = flushDuration * (2 * flushTimes + 1);
-                    UserConfig.setUserConfigString("GameEliminationFlushTime", "3");
+                    UserConfig.setString("GameEliminationFlushTime", "3");
                 }
             });
             flushTimes = 2;
             eliminateDelay = flushDuration * (2 * flushTimes + 1);
-            String flush = UserConfig.getUserConfigString("GameEliminationFlushTime", "2");
+            String flush = UserConfig.getString("GameEliminationFlushTime", "2");
             switch (flush) {
                 case "1":
                     flush1Radio.fire();
@@ -648,14 +648,14 @@ public class GameEliminationController extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldVal,
                         Boolean newVal) {
-                    UserConfig.setUserConfigBoolean("GameEliminationPopScores", scoreCheck.isSelected());
+                    UserConfig.setBoolean("GameEliminationPopScores", scoreCheck.isSelected());
                 }
             });
-            scoreCheck.setSelected(UserConfig.getUserConfigBoolean("GameEliminationPopScores", true));
+            scoreCheck.setSelected(UserConfig.getBoolean("GameEliminationPopScores", true));
 
             selectSoundBox.disableProperty().bind(customizedSoundRadio.selectedProperty().not());
 
-            String sfile = UserConfig.getUserConfigString("GameEliminationSoundFile", null);
+            String sfile = UserConfig.getString("GameEliminationSoundFile", null);
             if (sfile != null) {
                 soundFile = new File(sfile);
                 if (soundFile.exists()) {
@@ -757,7 +757,7 @@ public class GameEliminationController extends BaseController {
                     return;
                 }
             }
-            UserConfig.setUserConfigString("GameEliminationCountedImages", s);
+            UserConfig.setString("GameEliminationCountedImages", s);
 
             scoreRulers.clear();
             s = "";
@@ -769,7 +769,7 @@ public class GameEliminationController extends BaseController {
                 }
                 s += r.adjacentNumber + "," + r.score;
             }
-            UserConfig.setUserConfigString("GameElimniationScoreRulers", s);
+            UserConfig.setString("GameElimniationScoreRulers", s);
 
             tabPane.getSelectionModel().select(playTab);
             newGame(true);
@@ -874,7 +874,7 @@ public class GameEliminationController extends BaseController {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            File file = mara.mybox.fxml.FxFileTools.selectFile(this, UserConfig.getUserConfigPath("MusicPath"),
+            File file = mara.mybox.fxml.FxFileTools.selectFile(this, UserConfig.getPath("MusicPath"),
                     FileFilters.Mp3WavExtensionFilter);
             if (file == null) {
                 return;
@@ -894,8 +894,8 @@ public class GameEliminationController extends BaseController {
             return;
         }
         soundFile = file;
-        UserConfig.setUserConfigString("MusicPath", file.getParent());
-        UserConfig.setUserConfigString("GameEliminationSoundFile", file.getAbsolutePath());
+        UserConfig.setString("MusicPath", file.getParent());
+        UserConfig.setString("GameEliminationSoundFile", file.getAbsolutePath());
         soundFileLabel.setText(file.getAbsolutePath());
         SoundTools.mp3(soundFile);
     }
@@ -972,9 +972,9 @@ public class GameEliminationController extends BaseController {
         } catch (Exception e) {
             chessSize = 50;
         }
-        UserConfig.setUserConfigString("GameEliminationChessImageSize", chessSize + "");
-        UserConfig.setUserConfigBoolean("GameEliminationShadow", shadowCheck.isSelected());
-        UserConfig.setUserConfigBoolean("GameEliminationArc", arcCheck.isSelected());
+        UserConfig.setString("GameEliminationChessImageSize", chessSize + "");
+        UserConfig.setBoolean("GameEliminationShadow", shadowCheck.isSelected());
+        UserConfig.setBoolean("GameEliminationArc", arcCheck.isSelected());
 
         selectedChesses.clear();
         String s = "";
@@ -1001,7 +1001,7 @@ public class GameEliminationController extends BaseController {
             alert.showAndWait();
             return;
         }
-        UserConfig.setUserConfigString("GameEliminationChessImages", s);
+        UserConfig.setString("GameEliminationChessImages", s);
         boardSize = selectedChesses.size();
         tabPane.getSelectionModel().select(playTab);
         makeChessBoard();
@@ -1068,7 +1068,7 @@ public class GameEliminationController extends BaseController {
             scoreRulers.clear();
             scoreRulersData.clear();
             try {
-                String s = UserConfig.getUserConfigString("GameElimniationScoreRulers", "");
+                String s = UserConfig.getString("GameElimniationScoreRulers", "");
                 if (s != null && !s.isEmpty()) {
                     String[] ss = s.split(",");
                     for (int i = 1; i < ss.length; i = i + 2) {

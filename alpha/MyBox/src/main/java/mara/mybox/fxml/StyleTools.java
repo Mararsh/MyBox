@@ -130,12 +130,12 @@ public class StyleTools {
         Color
      */
     public static StyleColor getConfigStyleColor() {
-        return getColorStyle(UserConfig.getUserConfigString("ControlColor", "red"));
+        return getColorStyle(UserConfig.getString("ControlColor", "red"));
     }
 
     public static boolean setConfigStyleColor(String value) {
         AppVariables.ControlColor = getColorStyle(value);
-        return UserConfig.setUserConfigString("ControlColor", value);
+        return UserConfig.setString("ControlColor", value);
     }
 
     /*
@@ -376,7 +376,7 @@ public class StyleTools {
     }
 
     public static ContentDisplay getConfigControlContent() {
-        return getControlContent(UserConfig.getUserConfigString("ControlContent", "image"));
+        return getControlContent(UserConfig.getString("ControlContent", "image"));
     }
 
 }

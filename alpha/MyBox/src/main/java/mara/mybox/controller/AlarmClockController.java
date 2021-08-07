@@ -332,14 +332,14 @@ public class AlarmClockController extends BaseController {
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
                 dPath = "C:\\Windows\\media";
             }
-            File path = UserConfig.getUserConfigPath(SystemMediaPathKey, dPath);
+            File path = UserConfig.getPath(SystemMediaPathKey, dPath);
             List<FileChooser.ExtensionFilter> wavExtensionFilter = new ArrayList<>();
             wavExtensionFilter.add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             File file = FxFileTools.selectFile(this, path, wavExtensionFilter);
             if (file == null) {
                 return;
             }
-            UserConfig.setUserConfigString(SystemMediaPathKey, file.getParent());
+            UserConfig.setString(SystemMediaPathKey, file.getParent());
             sysInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
@@ -351,11 +351,11 @@ public class AlarmClockController extends BaseController {
     protected void selectLocal(ActionEvent event) {
         try {
             File file = FxFileTools.selectFile(this,
-                    UserConfig.getUserConfigPath(MusicPathKey), FileFilters.SoundExtensionFilter);
+                    UserConfig.getPath(MusicPathKey), FileFilters.SoundExtensionFilter);
             if (file == null) {
                 return;
             }
-            UserConfig.setUserConfigString(MusicPathKey, file.getParent());
+            UserConfig.setString(MusicPathKey, file.getParent());
             localInput.setText(file.getAbsolutePath());
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());

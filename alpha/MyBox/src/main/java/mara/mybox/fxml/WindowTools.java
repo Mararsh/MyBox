@@ -346,7 +346,7 @@ public class WindowTools {
             TextClipboardTools.stopTextClipboardMonitor();
 
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
-                if (UserConfig.getUserConfigBoolean("StopAlarmsWhenExit")) {
+                if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVariables.scheduledTasks.keySet()) {
                         ScheduledFuture future = AppVariables.scheduledTasks.get(key);
                         future.cancel(true);

@@ -107,8 +107,8 @@ public class ControlMapOptions extends BaseController {
             mapLoaded = false;
             markerSize = 24;
             textSize = 12;
-            mapSize = UserConfig.getUserConfigInt(baseName + "MapSize", 3);
-            dataMax = UserConfig.getUserConfigInt(baseName + "DataMax", 300);
+            mapSize = UserConfig.getInt(baseName + "MapSize", 3);
+            dataMax = UserConfig.getInt(baseName + "DataMax", 300);
 
             if (mapGroup == null) {
                 return;
@@ -170,7 +170,7 @@ public class ControlMapOptions extends BaseController {
                     } else {
                         type = "Point";
                     }
-                    UserConfig.setUserConfigString(baseName + "MarkerImageType", type);
+                    UserConfig.setString(baseName + "MarkerImageType", type);
                     drawPoints();
                 }
                 );
@@ -189,7 +189,7 @@ public class ControlMapOptions extends BaseController {
                     if (markerImageFile == null || !markerImageFile.getAbsolutePath().equals(file.getAbsolutePath())) {
                         markerImageFile = file;
                         recordFileOpened(file, VisitHistory.FileType.Image);
-                        UserConfig.setUserConfigString(baseName + "MarkerImageFile", markerImageFile.getAbsolutePath());
+                        UserConfig.setString(baseName + "MarkerImageFile", markerImageFile.getAbsolutePath());
                         if (!isSettingValues) {
                             drawPoints();
                         }
@@ -208,7 +208,7 @@ public class ControlMapOptions extends BaseController {
                             dataMaximumSelector.getEditor().setStyle(null);
                             if (dataMax != v) {
                                 dataMax = v;
-                                UserConfig.setUserConfigInt(baseName + "DataMax", dataMax);
+                                UserConfig.setInt(baseName + "DataMax", dataMax);
                                 if (!isSettingValues && currentQueryRadio.isSelected()) {
                                     mapController.reloadData();
                                 }
@@ -286,7 +286,7 @@ public class ControlMapOptions extends BaseController {
                         if (v > 0) {
                             markerSize = v;
                             markerSizeSelector.getEditor().setStyle(null);
-                            UserConfig.setUserConfigInt(baseName + "MarkerSize", markerSize);
+                            UserConfig.setInt(baseName + "MarkerSize", markerSize);
                             if (!isSettingValues) {
                                 drawPoints();
                             }
@@ -326,7 +326,7 @@ public class ControlMapOptions extends BaseController {
                         if (v > 0) {
                             textSize = v;
                             textSizeSelector.getEditor().setStyle(null);
-                            UserConfig.setUserConfigInt(baseName + "TextSize", textSize);
+                            UserConfig.setInt(baseName + "TextSize", textSize);
                             if (!isSettingValues) {
                                 drawPoints();
                             }
@@ -355,7 +355,7 @@ public class ControlMapOptions extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setUserConfigBoolean(baseName + "TextDataColor", dataColorRadio.isSelected());
+                    UserConfig.setBoolean(baseName + "TextDataColor", dataColorRadio.isSelected());
                     if (!isSettingValues) {
                         drawPoints();
                     }
@@ -365,7 +365,7 @@ public class ControlMapOptions extends BaseController {
 
             if (markerLabelCheck != null) {
                 markerLabelCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerLabel", markerLabelCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerLabel", markerLabelCheck.isSelected());
                     if (!isSettingValues) {
                         drawPoints();
                     }
@@ -373,7 +373,7 @@ public class ControlMapOptions extends BaseController {
             }
             if (markerAddressCheck != null) {
                 markerAddressCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerAddress", markerAddressCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerAddress", markerAddressCheck.isSelected());
                     if (!isSettingValues) {
                         drawPoints();
                     }
@@ -381,7 +381,7 @@ public class ControlMapOptions extends BaseController {
             }
             if (markerCoordinateCheck != null) {
                 markerCoordinateCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerCoordinate", markerCoordinateCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerCoordinate", markerCoordinateCheck.isSelected());
                     if (!isSettingValues) {
                         drawPoints();
                     }
@@ -389,13 +389,13 @@ public class ControlMapOptions extends BaseController {
             }
             if (markerDatasetCheck != null) {
                 markerDatasetCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerDataset", markerDatasetCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerDataset", markerDatasetCheck.isSelected());
                     drawPoints();
                 });
             }
             if (markerValueCheck != null) {
                 markerValueCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerValue", markerValueCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerValue", markerValueCheck.isSelected());
                     if (!isSettingValues) {
                         drawPoints();
                     }
@@ -403,13 +403,13 @@ public class ControlMapOptions extends BaseController {
             }
             if (markerSizeCheck != null) {
                 markerSizeCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerSize", markerSizeCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerSize", markerSizeCheck.isSelected());
                     drawPoints();
                 });
             }
             if (markerStartCheck != null) {
                 markerStartCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerStart", markerStartCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerStart", markerStartCheck.isSelected());
                     if (!isSettingValues) {
                         drawPoints();
                     }
@@ -417,7 +417,7 @@ public class ControlMapOptions extends BaseController {
             }
             if (markerEndCheck != null) {
                 markerEndCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerEnd", markerEndCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerEnd", markerEndCheck.isSelected());
                     if (!isSettingValues) {
                         drawPoints();
                     }
@@ -425,46 +425,46 @@ public class ControlMapOptions extends BaseController {
             }
             if (markerDurationCheck != null) {
                 markerDurationCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "\"MarkerDuration", markerDurationCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "\"MarkerDuration", markerDurationCheck.isSelected());
                     drawPoints();
                 });
             }
             if (markerSpeedCheck != null) {
                 markerSpeedCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerSpeed", markerSpeedCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerSpeed", markerSpeedCheck.isSelected());
                     drawPoints();
                 });
             }
             if (markerDirectionCheck != null) {
                 markerDirectionCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerDirection", markerDirectionCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerDirection", markerDirectionCheck.isSelected());
                     drawPoints();
                 });
             }
 
             if (boldCheck != null) {
                 boldCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "MarkerBold", boldCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "MarkerBold", boldCheck.isSelected());
                     drawPoints();
                 });
             }
 
             if (popInfoCheck != null) {
                 popInfoCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "PopInfo", popInfoCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "PopInfo", popInfoCheck.isSelected());
                     drawPoints();
                 });
             }
 
             if (fitViewCheck != null) {
                 fitViewCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "FitView", fitViewCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "FitView", fitViewCheck.isSelected());
                     drawPoints();
                 });
             }
             if (zoomCheck != null) {
                 zoomCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "ControlZoom", zoomCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "ControlZoom", zoomCheck.isSelected());
                     if (!isSettingValues) {
                         webEngine.executeScript("setControl('zoom'," + zoomCheck.isSelected() + ");");
                     }
@@ -472,7 +472,7 @@ public class ControlMapOptions extends BaseController {
             }
             if (scaleCheck != null) {
                 scaleCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "ControlScale", scaleCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "ControlScale", scaleCheck.isSelected());
                     if (!isSettingValues) {
                         webEngine.executeScript("setControl('scale'," + scaleCheck.isSelected() + ");");
                     }
@@ -480,7 +480,7 @@ public class ControlMapOptions extends BaseController {
             }
             if (typeCheck != null) {
                 typeCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "ControlType", typeCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "ControlType", typeCheck.isSelected());
                     if (!isSettingValues) {
                         webEngine.executeScript("setControl('mapType'," + typeCheck.isSelected() + ");");
                     }
@@ -488,7 +488,7 @@ public class ControlMapOptions extends BaseController {
             }
             if (symbolsCheck != null) {
                 symbolsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "ControlSymbols", symbolsCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "ControlSymbols", symbolsCheck.isSelected());
                     if (!isSettingValues) {
                         webEngine.executeScript("setControl('symbols'," + symbolsCheck.isSelected() + ");");
                     }
@@ -506,77 +506,77 @@ public class ControlMapOptions extends BaseController {
                 englishRadio.fire();
             }
             if (dataMaximumSelector != null) {
-                dataMaximumSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "DataMax", "300"));
+                dataMaximumSelector.getSelectionModel().select(UserConfig.getString(baseName + "DataMax", "300"));
             }
             if (markerSizeSelector != null) {
-                markerSizeSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "MarkerSize", "24"));
+                markerSizeSelector.getSelectionModel().select(UserConfig.getString(baseName + "MarkerSize", "24"));
             }
             if (markerImageInput != null) {
-                markerImageInput.setText(UserConfig.getUserConfigString(baseName + "MarkerImageFile", ""));
+                markerImageInput.setText(UserConfig.getString(baseName + "MarkerImageFile", ""));
             }
 
             if (textSizeSelector != null) {
-                textSizeSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "TextSize", "12"));
+                textSizeSelector.getSelectionModel().select(UserConfig.getString(baseName + "TextSize", "12"));
             }
             if (markerLabelCheck != null) {
-                markerLabelCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerLabel", true));
+                markerLabelCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerLabel", true));
             }
             if (markerAddressCheck != null) {
-                markerAddressCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerAddress", false));
+                markerAddressCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerAddress", false));
             }
             if (markerCoordinateCheck != null) {
-                markerCoordinateCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerCoordinate", false));
+                markerCoordinateCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerCoordinate", false));
             }
             if (markerDatasetCheck != null) {
-                markerDatasetCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerDataset", false));
+                markerDatasetCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerDataset", false));
             }
             if (markerValueCheck != null) {
-                markerValueCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerValue", false));
+                markerValueCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerValue", false));
             }
             if (markerSizeCheck != null) {
-                markerSizeCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerSize", false));
+                markerSizeCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerSize", false));
             }
             if (markerStartCheck != null) {
-                markerStartCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerStart", true));
+                markerStartCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerStart", true));
             }
             if (markerEndCheck != null) {
-                markerEndCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerEnd", true));
+                markerEndCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerEnd", true));
             }
             if (markerDurationCheck != null) {
-                markerDurationCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerDuration", false));
+                markerDurationCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerDuration", false));
             }
             if (markerSpeedCheck != null) {
-                markerSpeedCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerSpeed", false));
+                markerSpeedCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerSpeed", false));
             }
             if (markerDirectionCheck != null) {
-                markerDirectionCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerDirection", false));
+                markerDirectionCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerDirection", false));
             }
             if (boldCheck != null) {
-                boldCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MarkerBold", false));
+                boldCheck.setSelected(UserConfig.getBoolean(baseName + "MarkerBold", false));
             }
             if (popInfoCheck != null) {
-                popInfoCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "PopInfo", true));
+                popInfoCheck.setSelected(UserConfig.getBoolean(baseName + "PopInfo", true));
             }
             if (fitViewCheck != null) {
-                fitViewCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "FitView", true));
+                fitViewCheck.setSelected(UserConfig.getBoolean(baseName + "FitView", true));
             }
             if (zoomCheck != null) {
-                zoomCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ControlZoom", true));
+                zoomCheck.setSelected(UserConfig.getBoolean(baseName + "ControlZoom", true));
             }
             if (scaleCheck != null) {
-                scaleCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ControlScale", true));
+                scaleCheck.setSelected(UserConfig.getBoolean(baseName + "ControlScale", true));
             }
             if (typeCheck != null) {
-                typeCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ControlType", true));
+                typeCheck.setSelected(UserConfig.getBoolean(baseName + "ControlType", true));
             }
             if (symbolsCheck != null) {
-                symbolsCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ControlSymbols", false));
+                symbolsCheck.setSelected(UserConfig.getBoolean(baseName + "ControlSymbols", false));
             }
             if (geodeticRadio != null
-                    && "EPSG:4326".equals(UserConfig.getUserConfigString(baseName + "Projection", "EPSG:900913"))) {
+                    && "EPSG:4326".equals(UserConfig.getString(baseName + "Projection", "EPSG:900913"))) {
                 geodeticRadio.fire();
             }
-            String type = UserConfig.getUserConfigString(baseName + "MarkerImageType",
+            String type = UserConfig.getString(baseName + "MarkerImageType",
                     mapController instanceof LocationDataMapController ? "Dataset" : "Point");
             if ("Circle".equals(type)) {
                 markerCircleRadio.fire();
@@ -589,7 +589,7 @@ public class ControlMapOptions extends BaseController {
             } else {
                 markerPointRadio.fire();
             }
-            if (UserConfig.getUserConfigBoolean(baseName + "TextDataColor", false)) {
+            if (UserConfig.getBoolean(baseName + "TextDataColor", false)) {
                 dataColorRadio.fire();
             }
             isSettingValues = false;
@@ -741,9 +741,9 @@ public class ControlMapOptions extends BaseController {
             return;
         }
         if (mercatorRadio.isSelected()) {
-            UserConfig.setUserConfigString(baseName + "Projection", "EPSG:900913");
+            UserConfig.setString(baseName + "Projection", "EPSG:900913");
         } else {
-            UserConfig.setUserConfigString(baseName + "Projection", "EPSG:4326");
+            UserConfig.setString(baseName + "Projection", "EPSG:4326");
         }
         setMap();
     }
@@ -790,7 +790,7 @@ public class ControlMapOptions extends BaseController {
             return;
         }
         mapSize = size;
-        UserConfig.setUserConfigInt(baseName + "MapSize", mapSize);
+        UserConfig.setInt(baseName + "MapSize", mapSize);
         if (setMap) {
             webEngine.executeScript("setZoom(" + size + ");");
         }

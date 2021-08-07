@@ -79,9 +79,9 @@ public class LocationInMapController extends GeographyCodeMapController {
             checkLocateMethod();
 
             multipleCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) -> {
-                        UserConfig.setUserConfigBoolean(baseName + "MultiplePoints", newv);
+                        UserConfig.setBoolean(baseName + "MultiplePoints", newv);
                     });
-            multipleCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "MultiplePoints", true));
+            multipleCheck.setSelected(UserConfig.getBoolean(baseName + "MultiplePoints", true));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

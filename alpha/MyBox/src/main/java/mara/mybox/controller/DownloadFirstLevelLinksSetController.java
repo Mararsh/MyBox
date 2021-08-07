@@ -40,7 +40,7 @@ public class DownloadFirstLevelLinksSetController extends BaseController {
         try {
             super.initControls();
 
-            String type = UserConfig.getUserConfigString(baseName + "NameType", "name");
+            String type = UserConfig.getString(baseName + "NameType", "name");
             switch (type) {
                 case "title":
                     titleRadio.fire();
@@ -63,7 +63,7 @@ public class DownloadFirstLevelLinksSetController extends BaseController {
                 } else {
                     nameType = FilenameType.ByLinkName;
                 }
-                UserConfig.setUserConfigString(baseName + "NameType", nameType.name());
+                UserConfig.setString(baseName + "NameType", nameType.name());
             });
 
         } catch (Exception e) {

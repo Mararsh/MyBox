@@ -212,7 +212,7 @@ License:    Apache License Version 2.0
                                                                                                 </HBox>
                                                                                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                                                                     <content>
-                                                                                                        <fx:include fx:id="calculateView" source="HtmlViewer.fxml" />
+                                                                                                        <fx:include fx:id="calculateView" source="HtmlTable.fxml" />
                                                                                                     </content>
                                                                                                 </ScrollPane>
                                                                                             </children>
@@ -383,22 +383,22 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="d2Tab" closable="false" text="%CIE2Degree1nm">
                             <content>
-                                <fx:include fx:id="d2n1" source="HtmlViewer.fxml" />
+                                <fx:include fx:id="d2n1" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
                         <Tab closable="false" text="%CIE2Degree5nm">
                             <content>
-                                <fx:include fx:id="d2n5" source="HtmlViewer.fxml" />
+                                <fx:include fx:id="d2n5" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
                         <Tab closable="false" text="%CIE10Degree1nm">
                             <content>
-                                <fx:include fx:id="d10n1" source="HtmlViewer.fxml" />
+                                <fx:include fx:id="d10n1" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
                         <Tab closable="false" text="%CIE10Degree5nm">
                             <content>
-                                <fx:include fx:id="d10n5" source="HtmlViewer.fxml" />
+                                <fx:include fx:id="d10n5" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
                     </tabs>

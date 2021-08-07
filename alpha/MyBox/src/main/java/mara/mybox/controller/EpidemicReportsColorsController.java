@@ -233,7 +233,7 @@ public class EpidemicReportsColorsController extends BaseController {
         for (int i = 0; i < size; i++) {
             GeographyCode location = chartController.chartLocations.get(i);
             String controllerName = "EpidemicReportLocationColor" + location.getFullName();
-            UserConfig.setUserConfigString(controllerName, colors.get(i));
+            UserConfig.setString(controllerName, colors.get(i));
         }
         makeLocationsColors();
     }
@@ -301,7 +301,7 @@ public class EpidemicReportsColorsController extends BaseController {
                 return null;
             }
             String controllerName = "EpidemicReportLocationColor" + name;
-            Color color = Color.web(UserConfig.getUserConfigString(controllerName, Color.GREY.toString()));
+            Color color = Color.web(UserConfig.getString(controllerName, Color.GREY.toString()));
             return FxColorTools.color2rgb(color);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

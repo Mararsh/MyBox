@@ -140,7 +140,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
         });
         checkLineBreak();
 
-        maxLines = UserConfig.getUserConfigInt(baseName + "LinesNumber", 1000);
+        maxLines = UserConfig.getInt(baseName + "LinesNumber", 1000);
         splitSelector.getItems().addAll(Arrays.asList(Languages.message("NotSplit"), "1000", "2000", "500", "1500", "3000", "5000", "10000"
         ));
         if (maxLines > 0) {
@@ -155,7 +155,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
             if (Languages.message("NotSplit").equals(newValue)) {
                 maxLines = -1;
                 ValidationTools.setEditorNormal(splitSelector);
-                UserConfig.setUserConfigInt(baseName + "LinesNumber", -1);
+                UserConfig.setInt(baseName + "LinesNumber", -1);
                 return;
             }
             try {
@@ -163,7 +163,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
                 if (v > 0) {
                     maxLines = v;
                     ValidationTools.setEditorNormal(splitSelector);
-                    UserConfig.setUserConfigInt(baseName + "LinesNumber", maxLines);
+                    UserConfig.setInt(baseName + "LinesNumber", maxLines);
                 } else {
                     ValidationTools.setEditorBadStyle(splitSelector);
                 }

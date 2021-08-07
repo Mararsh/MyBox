@@ -108,12 +108,12 @@ public abstract class BaseImageShapesController extends BaseImageController {
             }
             super.setMaskStroke();
 
-            double strokeWidth = UserConfig.getUserConfigInt("StrokeWidth", 2);
-            Color strokeColor = Color.web(UserConfig.getUserConfigString("StrokeColor", DefaultStrokeColor));
+            double strokeWidth = UserConfig.getInt("StrokeWidth", 2);
+            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", DefaultStrokeColor));
             setMaskLinesStroke(strokeColor, strokeWidth, true);
 
-            Color anchorColor = Color.web(UserConfig.getUserConfigString("AnchorColor", DefaultAnchorColor));
-            int anchorWidth = UserConfig.getUserConfigInt("AnchorWidth", 10);
+            Color anchorColor = Color.web(UserConfig.getString("AnchorColor", DefaultAnchorColor));
+            int anchorWidth = UserConfig.getInt("AnchorWidth", 10);
             setMaskAnchorsStroke(anchorColor, anchorWidth);
 
         } catch (Exception e) {
@@ -187,7 +187,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
             rightCenterHandler.setWidth(anchorWidth);
             rightCenterHandler.setHeight(anchorWidth);
 
-            if (UserConfig.getUserConfigBoolean("AnchorSolid", true)) {
+            if (UserConfig.getBoolean("AnchorSolid", true)) {
                 topLeftHandler.setFill(anchorColor);
                 topCenterHandler.setFill(anchorColor);
                 topRightHandler.setFill(anchorColor);
@@ -216,7 +216,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
             polygonP1.setWidth(anchorWidth);
             polygonP2.setWidth(anchorWidth);
 
-            if (UserConfig.getUserConfigBoolean("AnchorSolid", true)) {
+            if (UserConfig.getBoolean("AnchorSolid", true)) {
                 polygonP1.setFill(anchorColor);
                 polygonP2.setFill(anchorColor);
             } else {
@@ -365,7 +365,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
                     || imageView == null || imageView.getImage() == null) {
                 return false;
             }
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
             double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
             double x1 = maskRectangleData.getSmallX() * xRatio;
@@ -465,7 +465,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
                 return false;
             }
 
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
             double r = maskCircleData.getRadius() * xRatio;
             double x = maskCircleData.getCenterX() * xRatio;
@@ -537,7 +537,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
                 return false;
             }
 
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
             double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
             double rx = maskEllipseData.getRadiusX() * xRatio;
@@ -608,7 +608,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
                 return false;
             }
 
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
             double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
 
@@ -712,7 +712,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
 
             maskPolyline.getPoints().clear();
 
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
             double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
 
@@ -794,7 +794,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
         if (size == 1) {
             polygonP1.setOpacity(1);
             DoublePoint p1 = maskPolylineLineData.get(0);
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
             polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
         } else if (size > 1) {
@@ -856,7 +856,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
         if (size == 1) {
             polygonP1.setOpacity(1);
             DoublePoint p1 = maskPenData.getPoint(0);
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
             polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
         } else if (size > 1) {
@@ -904,7 +904,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
         if (lastPonit == null) {
             polygonP1.setOpacity(1);
             DoublePoint p1 = thisPoint;
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
             polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
             return null;
@@ -953,7 +953,7 @@ public abstract class BaseImageShapesController extends BaseImageController {
         if (size == 1) {
             polygonP1.setOpacity(1);
             DoublePoint p1 = maskPenData.getPoint(0);
-            int anchorHW = UserConfig.getUserConfigInt("AnchorWidth", 10) / 2;
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
             polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
         } else if (size > 1) {

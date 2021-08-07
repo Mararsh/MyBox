@@ -14,7 +14,7 @@ import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.HtmlEditorController;
-import mara.mybox.controller.HtmlViewerController;
+import mara.mybox.controller.HtmlTableController;
 import mara.mybox.controller.ImageInformationController;
 import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.controller.ImageMetaDataController;
@@ -308,9 +308,9 @@ public class ControllerTools {
         }
     }
 
-    public static HtmlViewerController openHtmlViewer(Stage stage, String body) {
+    public static HtmlTableController openHtmlTable(Stage stage, String body) {
         try {
-            final HtmlViewerController controller = (HtmlViewerController) openScene(stage, Fxmls.HtmlViewerFxml);
+            final HtmlTableController controller = (HtmlTableController) openScene(stage, Fxmls.HtmlTableFxml);
             controller.loadBody(body);
             controller.toFront();
             return controller;
@@ -428,14 +428,14 @@ public class ControllerTools {
     }
 
     public static boolean mapFirstRun(BaseController c) {
-        if (SystemConfig.getSystemConfigBoolean("MapRunFirstTime" + AppValues.AppVersion, true)) {
+        if (SystemConfig.getBoolean("MapRunFirstTime" + AppValues.AppVersion, true)) {
             WebBrowserController.mapFirstRun();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        SystemConfig.setSystemConfigBoolean("MapRunFirstTime" + AppValues.AppVersion, false);
+                        SystemConfig.setBoolean("MapRunFirstTime" + AppValues.AppVersion, false);
                         c.reload();
                     });
                 }

@@ -580,7 +580,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         if (info.getHtml() == null) {
             makeHtml(info, null);
         }
-        ControllerTools.openHtmlViewer(null, info.getHtml());
+        ControllerTools.openHtmlTable(null, info.getHtml());
     }
 
     @FXML

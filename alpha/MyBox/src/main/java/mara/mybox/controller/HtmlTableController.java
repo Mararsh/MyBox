@@ -6,15 +6,12 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.HtmlReadTools;
-
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.HtmlStyles;
@@ -24,10 +21,9 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2018-6-20
- * @Description
  * @License Apache License Version 2.0
  */
-public class HtmlViewerController extends BaseController {
+public class HtmlTableController extends BaseWebViewController {
 
     protected String body;
     protected List<String> fields;
@@ -35,15 +31,12 @@ public class HtmlViewerController extends BaseController {
     protected String html;
     protected String title;
 
-    @FXML
-    protected WebView webView;
-
-    public HtmlViewerController() {
+    public HtmlTableController() {
         baseTitle = Languages.message("Html");
     }
 
     public String styleString() {
-        String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
         return HtmlStyles.styleValue(HtmlStyles.styleName(htmlStyle));
     }
 
@@ -51,14 +44,9 @@ public class HtmlViewerController extends BaseController {
         return "\n<style type=\"text/css\">/>\n" + styleString() + "</style>\n";
     }
 
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Html);
-    }
-
     @FXML
     protected void editHtml() {
-        String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
         if (table != null) {
             html = HtmlWriteTools.html(title, htmlStyle, StringTable.tableDiv(table));
 
@@ -69,7 +57,7 @@ public class HtmlViewerController extends BaseController {
     }
 
     public void displayHtml() {
-        String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
         if (table != null) {
             html = HtmlWriteTools.html(title, htmlStyle, StringTable.tableDiv(table));
 
@@ -106,7 +94,7 @@ public class HtmlViewerController extends BaseController {
             if (body == null) {
                 return;
             }
-            String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+            String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
             html = HtmlWriteTools.html(title, htmlStyle, body);
             displayHtml(html);
         } catch (Exception e) {
@@ -121,7 +109,7 @@ public class HtmlViewerController extends BaseController {
         }
         this.title = table.getTitle();
         this.fields = table.getNames();
-        String htmlStyle = UserConfig.getUserConfigString(baseName + "HtmlStyle", "Default");
+        String htmlStyle = UserConfig.getString(baseName + "HtmlStyle", "Default");
         html = HtmlWriteTools.html(title, htmlStyle, StringTable.tableDiv(table));
         displayHtml(html);
     }
@@ -178,7 +166,7 @@ public class HtmlViewerController extends BaseController {
         if (name != null) {
             name += ".htm";
         }
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 name, targetExtensionFilter);
         if (file == null) {
             return;

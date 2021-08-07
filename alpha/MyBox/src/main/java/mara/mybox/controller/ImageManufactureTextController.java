@@ -71,7 +71,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         try {
             isSettingValues = true;
 
-            fontFamily = UserConfig.getUserConfigString(baseName + "TextFontFamily", "Arial");
+            fontFamily = UserConfig.getString(baseName + "TextFontFamily", "Arial");
             fontWeight = FontWeight.NORMAL;
             fontPosture = FontPosture.REGULAR;
             fontSize = 24;
@@ -92,7 +92,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     fontFamily = newValue;
-                    UserConfig.setUserConfigString(baseName + "TextFontFamily", newValue);
+                    UserConfig.setString(baseName + "TextFontFamily", newValue);
                     write(true);
                 }
             });
@@ -135,7 +135,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             fontSize = v;
-                            UserConfig.setUserConfigInt(baseName + "TextFontSize", v);
+                            UserConfig.setInt(baseName + "TextFontSize", v);
                             write(true);
                             ValidationTools.setEditorNormal(sizeBox);
                         } else {
@@ -146,9 +146,9 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                 }
             });
-            sizeBox.getSelectionModel().select(UserConfig.getUserConfigInt(baseName + "TextFontSize", 72) + "");
+            sizeBox.getSelectionModel().select(UserConfig.getInt(baseName + "TextFontSize", 72) + "");
 
-            String mode = UserConfig.getUserConfigString(baseName + "TextBlendMode", Languages.message("NormalMode"));
+            String mode = UserConfig.getString(baseName + "TextBlendMode", Languages.message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
             blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
             blendSelector.setValue(mode);
@@ -157,12 +157,12 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     String mode = blendSelector.getSelectionModel().getSelectedItem();
                     blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setUserConfigString(baseName + "TextBlendMode", mode);
+                    UserConfig.setString(baseName + "TextBlendMode", mode);
                     write(true);
                 }
             });
 
-            opacity = UserConfig.getUserConfigInt(baseName + "TextOpacity", 100) / 100f;
+            opacity = UserConfig.getInt(baseName + "TextOpacity", 100) / 100f;
             opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
             opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacitySelector.setValue(opacity + "");
@@ -173,7 +173,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         float f = Float.valueOf(newValue);
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
-                            UserConfig.setUserConfigInt(baseName + "TextOpacity", (int) (f * 100));
+                            UserConfig.setInt(baseName + "TextOpacity", (int) (f * 100));
                             ValidationTools.setEditorNormal(opacitySelector);
                             write(true);
                         } else {
@@ -185,21 +185,21 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 }
             });
 
-            blendTopCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "TextBlendTop", true));
+            blendTopCheck.setSelected(UserConfig.getBoolean(baseName + "TextBlendTop", true));
             blendTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setUserConfigBoolean(baseName + "TextBlendTop", blendTopCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "TextBlendTop", blendTopCheck.isSelected());
                     write(true);
                 }
             });
 
-            ignoreTransparentCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IgnoreTransparent", true));
+            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
             ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
                     write(true);
                 }
             });
@@ -212,7 +212,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             shadow = v;
-                            UserConfig.setUserConfigInt(baseName + "TextShadow", v);
+                            UserConfig.setInt(baseName + "TextShadow", v);
                             ValidationTools.setEditorNormal(shadowBox);
                             write(true);
                         } else {
@@ -223,7 +223,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                 }
             });
-            shadowBox.getSelectionModel().select(UserConfig.getUserConfigInt(baseName + "TextShadow", 0) + "");
+            shadowBox.getSelectionModel().select(UserConfig.getInt(baseName + "TextShadow", 0) + "");
 
             angleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
@@ -234,7 +234,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             angle = v;
-                            UserConfig.setUserConfigInt(baseName + "TextAngle", v);
+                            UserConfig.setInt(baseName + "TextAngle", v);
                             ValidationTools.setEditorNormal(angleBox);
                             write(true);
                         } else {
@@ -245,29 +245,29 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     }
                 }
             });
-            angleBox.getSelectionModel().select(UserConfig.getUserConfigInt(baseName + "TextAngle", 0) + "");
+            angleBox.getSelectionModel().select(UserConfig.getInt(baseName + "TextAngle", 0) + "");
 
             outlineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "TextOutline", outlineCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "TextOutline", outlineCheck.isSelected());
                     write(true);
                 }
             });
-            outlineCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "TextOutline", false));
+            outlineCheck.setSelected(UserConfig.getBoolean(baseName + "TextOutline", false));
 
             verticalCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "TextVertical", verticalCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "TextVertical", verticalCheck.isSelected());
                     write(true);
                 }
             });
-            verticalCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "TextVertical", false));
+            verticalCheck.setSelected(UserConfig.getBoolean(baseName + "TextVertical", false));
 
             isSettingValues = false;
 
-            textInput.setText(UserConfig.getUserConfigString(baseName + "TextValue", "MyBox"));
+            textInput.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
             xInput.setText((int) (imageView.getImage().getWidth() / 2) + "");
             yInput.setText((int) (imageView.getImage().getHeight() / 2) + "");
             goAction();
@@ -402,7 +402,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             return false;
         } else {
             textInput.setStyle(null);
-            UserConfig.setUserConfigString(baseName + "TextValue", textInput.getText().trim());
+            UserConfig.setString(baseName + "TextValue", textInput.getText().trim());
         }
         return true;
     }

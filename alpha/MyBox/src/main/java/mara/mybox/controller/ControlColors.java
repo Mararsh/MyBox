@@ -184,7 +184,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                         copyPaletteButton.setDisable(isAll);
                         trimButton.setDisable(isAll);
                         if (!isAll) {
-                            UserConfig.setUserConfigString(baseName + "Palette", currentPalette.getName());
+                            UserConfig.setString(baseName + "Palette", currentPalette.getName());
                         }
                         refreshPalette();
                     });

@@ -142,7 +142,7 @@ public class ColorCopyController extends ControlColorPaletteSelector {
                                 return false;
                             }
                             count = cpList.size();
-                            UserConfig.setUserConfigString(baseName + "Palette", palette.getName());
+                            UserConfig.setString(baseName + "Palette", palette.getName());
                         }
                     } catch (Exception e) {
                         error = e.toString();

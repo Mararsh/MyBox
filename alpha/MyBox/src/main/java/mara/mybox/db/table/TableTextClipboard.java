@@ -50,7 +50,7 @@ public class TableTextClipboard extends BaseTable<TextClipboard> {
             if (conn1 == null || conn1.isClosed()) {
                 conn1 = DerbyBase.getConnection();
             }
-            if (UserConfig.getUserConfigBoolean("TextClipboardNoDuplication", true)) {
+            if (UserConfig.getBoolean("TextClipboardNoDuplication", true)) {
                 TextClipboard exist = null;
                 try ( PreparedStatement statement = conn1.prepareStatement(QueryText)) {
                     statement.setString(1, text);

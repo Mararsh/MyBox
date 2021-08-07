@@ -38,8 +38,8 @@ public class WeiboSnapPostsController extends WeiboSnapRunController {
         currentAddress = parameters.getWebAddress() + "?is_all=1&stat_date="
                 + currentMonthString.replace("-", "")
                 + "&page=" + currentPage + "&mmts=" + new Date().getTime();
-        UserConfig.setUserConfigString("WeiboPostsLastMonth", currentMonthString);
-        UserConfig.setUserConfigString("WeiboPostsLastPage", currentPage + "");
+        UserConfig.setString("WeiboPostsLastMonth", currentMonthString);
+        UserConfig.setString("WeiboPostsLastPage", currentPage + "");
 
         if (parameters.isCreatePDF()) {
             if (parameters.getCategory() == WeiboSnapParameters.FileCategoryType.InMonthsPaths) {

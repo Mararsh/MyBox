@@ -118,7 +118,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     AppVariables.saveDebugLogs = debugSaveCheck.isSelected();
-                    UserConfig.setUserConfigBoolean("SaveDebugLogs", AppVariables.saveDebugLogs);
+                    UserConfig.setBoolean("SaveDebugLogs", AppVariables.saveDebugLogs);
                 }
             });
 
@@ -127,7 +127,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     AppVariables.detailedDebugLogs = debugDetailedCheck.isSelected();
-                    UserConfig.setUserConfigBoolean("DetailedDebugLogs", AppVariables.detailedDebugLogs);
+                    UserConfig.setBoolean("DetailedDebugLogs", AppVariables.detailedDebugLogs);
                 }
             });
 

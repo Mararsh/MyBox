@@ -105,7 +105,7 @@ public class ControlImageFormat extends BaseController {
             parentController = parent;
             baseName = parent.baseName;
 
-            NodeTools.setRadioSelected(formatGroup, UserConfig.getUserConfigString(baseName + "Format", "png"));
+            NodeTools.setRadioSelected(formatGroup, UserConfig.getString(baseName + "Format", "png"));
             formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue v, Toggle oldV, Toggle newV) {
@@ -113,7 +113,7 @@ public class ControlImageFormat extends BaseController {
                 }
             });
 
-            embedProfileCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ProfileEmbed", true));
+            embedProfileCheck.setSelected(UserConfig.getBoolean(baseName + "ProfileEmbed", true));
             embedProfileCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
@@ -131,7 +131,7 @@ public class ControlImageFormat extends BaseController {
             qualitySelector.getItems().addAll(Arrays.asList(
                     "100", "90", "80", "75", "60", "50", "30", "10"
             ));
-            qualitySelector.setValue(UserConfig.getUserConfigString(baseName + "Quality", "100"));
+            qualitySelector.setValue(UserConfig.getString(baseName + "Quality", "100"));
             qualitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
@@ -139,7 +139,7 @@ public class ControlImageFormat extends BaseController {
                 }
             });
 
-            NodeTools.setRadioSelected(binaryGroup, UserConfig.getUserConfigString(baseName + "Binary", Languages.message("OTSU")));
+            NodeTools.setRadioSelected(binaryGroup, UserConfig.getString(baseName + "Binary", Languages.message("OTSU")));
             binaryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -147,7 +147,7 @@ public class ControlImageFormat extends BaseController {
                 }
             });
 
-            thresholdInput.setText(UserConfig.getUserConfigString(baseName + "Threashold", "128"));
+            thresholdInput.setText(UserConfig.getString(baseName + "Threashold", "128"));
             thresholdInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
@@ -155,7 +155,7 @@ public class ControlImageFormat extends BaseController {
                 }
             });
 
-            ditherCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Dither", true));
+            ditherCheck.setSelected(UserConfig.getBoolean(baseName + "Dither", true));
             ditherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
@@ -166,7 +166,7 @@ public class ControlImageFormat extends BaseController {
             icoWidthSelector.getItems().addAll(Arrays.asList(
                     "45", "40", "30", "50", "25", "80", "120", "24", "64", "128", "256", "512", "48", "96", "144"
             ));
-            icoWidthSelector.getSelectionModel().select(UserConfig.getUserConfigString(baseName + "IcoWidth", "45"));
+            icoWidthSelector.getSelectionModel().select(UserConfig.getString(baseName + "IcoWidth", "45"));
             icoWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
@@ -199,7 +199,7 @@ public class ControlImageFormat extends BaseController {
         attributes = new ImageAttributes();
         String format = ((RadioButton) formatGroup.getSelectedToggle()).getText();
         attributes.setImageFormat(format);
-        UserConfig.setUserConfigString(baseName + "Format", format);
+        UserConfig.setString(baseName + "Format", format);
 
         ValidationTools.setEditorNormal(dpiSelector);
         ValidationTools.setEditorNormal(qualitySelector);
@@ -233,7 +233,7 @@ public class ControlImageFormat extends BaseController {
                 colorSpaceList.addAll(Arrays.asList(Languages.message("Gray"), Languages.message("BlackOrWhite"), Languages.message("IccProfile")));
                 break;
         }
-        String dcs = UserConfig.getUserConfigString(baseName + "ColorSpace", "sRGB");
+        String dcs = UserConfig.getString(baseName + "ColorSpace", "sRGB");
         setColorSpace(dcs);
         for (String colorSpace : colorSpaceList) {
             RadioButton button = new RadioButton(colorSpace);
@@ -289,7 +289,7 @@ public class ControlImageFormat extends BaseController {
         attributes.setColorSpaceName(colorSpace);
         attributes.setProfile(null);
         attributes.setProfileName(null);
-        UserConfig.setUserConfigString(baseName + "ColorSpace", colorSpace);
+        UserConfig.setString(baseName + "ColorSpace", colorSpace);
 
         if (Languages.message("IccProfile").equals(colorSpace)) {
             if (!colorspaceBox.getChildren().contains(profileBox)) {
@@ -367,7 +367,7 @@ public class ControlImageFormat extends BaseController {
             return;
         }
         attributes.setEmbedProfile(embedProfileCheck.isSelected());
-        UserConfig.setUserConfigBoolean(baseName + "ProfileEmbed", embedProfileCheck.isSelected());
+        UserConfig.setBoolean(baseName + "ProfileEmbed", embedProfileCheck.isSelected());
     }
 
     public void checkAlpha() {
@@ -384,14 +384,14 @@ public class ControlImageFormat extends BaseController {
         } else if (Languages.message("PremultipliedAndRemove").equals(alpha)) {
             attributes.setAlpha(ImageAttributes.Alpha.PremultipliedAndRemove);
         }
-        UserConfig.setUserConfigString(baseName + "Alpha", alpha);
+        UserConfig.setString(baseName + "Alpha", alpha);
 
         boolean hasAlpha = attributes.getAlpha() == ImageAttributes.Alpha.Keep
                 || attributes.getAlpha() == ImageAttributes.Alpha.PremultipliedAndKeep;
 
         compressPane.getChildren().clear();
         compressGroup.getToggles().clear();
-        String defaultCompress = UserConfig.getUserConfigString(baseName + "CompressionType", "Deflate");
+        String defaultCompress = UserConfig.getString(baseName + "CompressionType", "Deflate");
         String[] compressionTypes = ImageColorSpace.getCompressionTypes(attributes.getImageFormat(),
                 attributes.getColorSpaceName(), hasAlpha);
         if (compressionTypes != null && compressionTypes.length > 0) {
@@ -402,7 +402,7 @@ public class ControlImageFormat extends BaseController {
                     public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
                         if (button.isSelected()) {
                             attributes.setCompressionType(compress);
-                            UserConfig.setUserConfigString(baseName + "CompressionType", compress);
+                            UserConfig.setString(baseName + "CompressionType", compress);
                         }
                     }
                 });
@@ -416,7 +416,7 @@ public class ControlImageFormat extends BaseController {
                 compressGroup.getToggles().get(0).setSelected(true);
             }
             isSettingValues = true;
-            String q = UserConfig.getUserConfigString(baseName + "Quality", "100");
+            String q = UserConfig.getString(baseName + "Quality", "100");
             qualitySelector.getSelectionModel().select(q);
             if (!thisPane.getChildren().contains(compressBox)) {
                 thisPane.getChildren().add(compressBox);
@@ -444,7 +444,7 @@ public class ControlImageFormat extends BaseController {
             if (v > 0 && v <= 100) {
                 attributes.setQuality(v);
                 ValidationTools.setEditorNormal(qualitySelector);
-                UserConfig.setUserConfigString(baseName + "Quality", v + "");
+                UserConfig.setString(baseName + "Quality", v + "");
             } else {
                 ValidationTools.setEditorBadStyle(qualitySelector);
             }
@@ -463,7 +463,7 @@ public class ControlImageFormat extends BaseController {
             if (v > 0) {
                 attributes.setWidth(v);
                 ValidationTools.setEditorNormal(icoWidthSelector);
-                UserConfig.setUserConfigString(baseName + "IcoWidth", v + "");
+                UserConfig.setString(baseName + "IcoWidth", v + "");
             } else {
                 ValidationTools.setEditorBadStyle(icoWidthSelector);
             }
@@ -493,7 +493,7 @@ public class ControlImageFormat extends BaseController {
                 thresholdInput.setStyle(null);
                 thresholdInput.setDisable(true);
             }
-            UserConfig.setUserConfigString(baseName + "Binary", s);
+            UserConfig.setString(baseName + "Binary", s);
 
             checkDither();
 
@@ -511,7 +511,7 @@ public class ControlImageFormat extends BaseController {
             if (inputValue >= 0 && inputValue <= 255) {
                 attributes.setThreshold(inputValue);
                 thresholdInput.setStyle(null);
-                UserConfig.setUserConfigString(baseName + "Threashold", inputValue + "");
+                UserConfig.setString(baseName + "Threashold", inputValue + "");
             } else {
                 thresholdInput.setStyle(NodeStyleTools.badStyle);
             }
@@ -525,7 +525,7 @@ public class ControlImageFormat extends BaseController {
             return;
         }
         attributes.setIsDithering(ditherCheck.isSelected());
-        UserConfig.setUserConfigBoolean(baseName + "Dither", ditherCheck.isSelected());
+        UserConfig.setBoolean(baseName + "Dither", ditherCheck.isSelected());
     }
 
     public void checkDpi() {
@@ -578,7 +578,7 @@ public class ControlImageFormat extends BaseController {
 
     @FXML
     public void selectIccAction() {
-        selectIccFile(UserConfig.getUserConfigPath(baseName + "SourcePath"));
+        selectIccFile(UserConfig.getPath(baseName + "SourcePath"));
     }
 
     public void selectIccFile(File path) {

@@ -102,7 +102,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
                 }
             });
 
-            distance = UserConfig.getUserConfigInt(baseName + "Distance", 20);
+            distance = UserConfig.getInt(baseName + "Distance", 20);
             distanceInput.setText(distance + "");
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -112,7 +112,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
                 }
             });
 
-            width = UserConfig.getUserConfigInt(baseName + "Width", 20);
+            width = UserConfig.getInt(baseName + "Width", 20);
             marginWidthBox.getItems().addAll(Arrays.asList(
                     "50", "20", "10", "5", "100", "200", "300", "150", "500"));
             marginWidthBox.setValue(width + "");
@@ -171,7 +171,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             int v = Integer.valueOf(marginWidthBox.getValue());
             if (v > 0) {
                 width = v;
-                UserConfig.setUserConfigInt(baseName + "Width", width);
+                UserConfig.setInt(baseName + "Width", width);
                 ValidationTools.setEditorNormal(marginWidthBox);
             } else {
                 ValidationTools.setEditorBadStyle(marginWidthBox);
@@ -186,7 +186,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             int v = Integer.valueOf(distanceInput.getText());
             if (v >= 0 && v <= 255) {
                 distance = v;
-                UserConfig.setUserConfigInt(baseName + "Distance", distance);
+                UserConfig.setInt(baseName + "Distance", distance);
                 distanceInput.setStyle(null);
             } else {
                 distanceInput.setStyle(NodeStyleTools.badStyle);

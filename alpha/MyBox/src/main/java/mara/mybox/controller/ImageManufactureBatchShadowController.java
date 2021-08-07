@@ -84,7 +84,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
         try {
             super.initOptionsSection();
 
-            shadow = UserConfig.getUserConfigInt(baseName + "Shadow", 15);
+            shadow = UserConfig.getInt(baseName + "Shadow", 15);
             shadowBox.getItems().addAll(Arrays.asList("8", "5", "15", "3", "6", "1", "20", "30"));
             shadowBox.setValue(shadow + "");
             shadowBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -95,7 +95,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             });
             shadowBox.getSelectionModel().select(0);
 
-            percent = UserConfig.getUserConfigInt(baseName + "Percent", 5);
+            percent = UserConfig.getInt(baseName + "Percent", 5);
             perBox.getItems().addAll(Arrays.asList("2", "1", "3", "5", "4", "6", "8", "7", "10", "9"));
             perBox.setValue(percent + "");
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -147,7 +147,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             int v = Integer.valueOf(perBox.getValue());
             if (v > 0 && v <= 100) {
                 percent = v;
-                UserConfig.setUserConfigInt(baseName + "Percent", percent);
+                UserConfig.setInt(baseName + "Percent", percent);
                 ValidationTools.setEditorNormal(perBox);
             } else {
                 ValidationTools.setEditorBadStyle(perBox);
@@ -162,7 +162,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             int v = Integer.valueOf(shadowBox.getValue());
             if (v > 0) {
                 shadow = v;
-                UserConfig.setUserConfigInt(baseName + "Shadow", shadow);
+                UserConfig.setInt(baseName + "Shadow", shadow);
                 ValidationTools.setEditorNormal(shadowBox);
             } else {
                 ValidationTools.setEditorBadStyle(shadowBox);

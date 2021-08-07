@@ -213,7 +213,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     if (v > 0) {
                         mapOptionsController.textSize = v;
                         labelSizeSelector.getEditor().setStyle(null);
-                        UserConfig.setUserConfigInt("EpidemicReportChartTextSize", mapOptionsController.textSize);
+                        UserConfig.setInt("EpidemicReportChartTextSize", mapOptionsController.textSize);
                         if (!isSettingValues) {
                             drawChart();
                         }
@@ -250,7 +250,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean("EpidemicReportDisplayCategoryAxis", newValue);
+                UserConfig.setBoolean("EpidemicReportDisplayCategoryAxis", newValue);
                 drawChart();
             });
 
@@ -258,7 +258,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean("EpidemicReportChartLoop", newValue);
+                UserConfig.setBoolean("EpidemicReportChartLoop", newValue);
                 drawChart();
             });
 
@@ -266,7 +266,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean("EpidemicReportDisplayHlines", newValue);
+                UserConfig.setBoolean("EpidemicReportDisplayHlines", newValue);
                 drawChart();
             });
 
@@ -274,16 +274,16 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 if (isSettingValues) {
                     return;
                 }
-                UserConfig.setUserConfigBoolean("EpidemicReportDisplayVlines", newValue);
+                UserConfig.setBoolean("EpidemicReportDisplayVlines", newValue);
                 drawChart();
             });
 
             isSettingValues = true;
-            labelSizeSelector.getSelectionModel().select(UserConfig.getUserConfigString("EpidemicReportChartTextSize", "12"));
-            categoryAxisCheck.setSelected(UserConfig.getUserConfigBoolean("EpidemicReportDisplayCategoryAxis", false));
-            hlinesCheck.setSelected(UserConfig.getUserConfigBoolean("EpidemicReportDisplayHlines", true));
-            vlinesCheck.setSelected(UserConfig.getUserConfigBoolean("EpidemicReportDisplayVlines", true));
-            loopCheck.setSelected(UserConfig.getUserConfigBoolean("EpidemicReportChartLoop", true));
+            labelSizeSelector.getSelectionModel().select(UserConfig.getString("EpidemicReportChartTextSize", "12"));
+            categoryAxisCheck.setSelected(UserConfig.getBoolean("EpidemicReportDisplayCategoryAxis", false));
+            hlinesCheck.setSelected(UserConfig.getBoolean("EpidemicReportDisplayHlines", true));
+            vlinesCheck.setSelected(UserConfig.getBoolean("EpidemicReportDisplayVlines", true));
+            loopCheck.setSelected(UserConfig.getBoolean("EpidemicReportChartLoop", true));
             isSettingValues = false;
 
         } catch (Exception e) {
@@ -293,7 +293,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
 
     protected void initSnapOptions() {
         try {
-            snapWidth = UserConfig.getUserConfigInt(baseName + "SnapWidth", 800);
+            snapWidth = UserConfig.getInt(baseName + "SnapWidth", 800);
             List<String> widthValues = new ArrayList();
             widthValues.addAll(Arrays.asList("800", "1000", "500", "300", "1200", "1600", "2000", "2500"));
             gifWidthSelector.getItems().addAll(widthValues);
@@ -303,7 +303,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     int v = Integer.parseInt(newValue);
                     if (v > 0) {
                         snapWidth = v;
-                        UserConfig.setUserConfigInt(baseName + "SnapWidth", snapWidth);
+                        UserConfig.setInt(baseName + "SnapWidth", snapWidth);
                     }
                 } catch (Exception e) {
                 }
@@ -1326,7 +1326,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 return;
             }
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image));
+            File path = UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image));
             if (path != null) {
                 chooser.setInitialDirectory(path);
             }

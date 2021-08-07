@@ -239,7 +239,7 @@ public class PopTools {
                     @Override
                     public void handle(ActionEvent event) {
                         try {
-                            UserConfig.setUserConfigString(baseName + "HtmlStyle", style.name());
+                            UserConfig.setString(baseName + "HtmlStyle", style.name());
                             if (webEngine == null) {
                                 return;
                             }

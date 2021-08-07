@@ -89,7 +89,7 @@ public class ControlPlay extends BaseController {
             intervalSelector.getItems().addAll(Arrays.asList(
                     "500", "200", "100", "1000", "50", "2000", "300", "3000", "20", "10", "6000", "30000", "12000", "60000"
             ));
-            interval = UserConfig.getUserConfigInt(baseName + "Interval", 500);
+            interval = UserConfig.getInt(baseName + "Interval", 500);
             if (interval <= 0) {
                 interval = 500;
             }
@@ -104,7 +104,7 @@ public class ControlPlay extends BaseController {
                         } else {
                             interval = v;
                             intervalSelector.getEditor().setStyle(null);
-                            UserConfig.setUserConfigInt(baseName + "Interval", v);
+                            UserConfig.setInt(baseName + "Interval", v);
                             if (parentController instanceof ImagesPlayController) {
                                 ImagesPlayController imagesPlayController = (ImagesPlayController) parentController;
                                 if (imagesPlayController.imageInfos != null) {

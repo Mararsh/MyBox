@@ -128,7 +128,7 @@ public class ValidationTools {
                 return;
             }
             input.setStyle(null);
-            UserConfig.setUserConfigString(key, file.getParent());
+            UserConfig.setString(key, file.getParent());
         });
     }
 

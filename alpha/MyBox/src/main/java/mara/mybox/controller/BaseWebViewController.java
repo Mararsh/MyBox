@@ -1,14 +1,10 @@
 package mara.mybox.controller;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +14,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -25,15 +22,12 @@ import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
-import org.jsoup.Jsoup;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -59,7 +53,12 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     public void setParameters(BaseController parent, WebView webView) {
         setParameters(parent);
         this.webView = webView;
-        webView.setUserData(this);
+        HTMLEditor editor = WebViewTools.editor(webView);
+        if (editor != null) {
+            editor.setUserData(this);
+        } else {
+            webView.setUserData(this);
+        }
         this.setFileType();
         initWebView();
     }
@@ -98,50 +97,31 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     @FXML
     @Override
     public void saveAsAction() {
-        String name;
-        if (sourceFile != null) {
-            name = FileNameTools.appendName(sourceFile.getName(), "m");
-        } else {
-            name = new Date().getTime() + ".htm";
-        }
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
-                name, targetExtensionFilter);
-        if (file == null) {
-            return;
-        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
+            File file = chooseSaveFile();
+            if (file == null) {
+                return;
+            }
             String html = currentHtml();
-            if (html == null) {
+            if (html == null || html.isBlank()) {
                 popError(message("NoData"));
                 return;
             }
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    try {
-                        Charset charset = HtmlReadTools.htmlCharset(html);
-                        File tmpFile = TmpFileTools.getTempFile();
-                        try ( BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
-                            out.write(html);
-                            out.flush();
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
-                        }
-                        return FileTools.rename(tmpFile, file);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
+                    File tmpFile = HtmlWriteTools.writeHtml(html);
+                    return FileTools.rename(tmpFile, file);
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
+                    afterSaveAs(file);
                 }
             };
             handling(task);
@@ -150,6 +130,10 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
             thread.setDaemon(false);
             thread.start();
         }
+    }
+
+    protected void afterSaveAs(File file) {
+
     }
 
     @FXML
@@ -322,6 +306,13 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
                 items.addAll(editItems);
             }
 
+            menu = new MenuItem(message("HtmlCodes"));
+            menu.setOnAction((ActionEvent event) -> {
+                TextPopController.open(myController, html);
+            });
+            menu.setDisable(html == null || html.isBlank());
+            items.add(menu);
+
             menu = new MenuItem(message("WebFind"));
             menu.setOnAction((ActionEvent event) -> {
                 find(html);
@@ -456,17 +447,13 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     protected void links() {
         doc = webEngine.getDocument();
         if (doc == null) {
-            if (parentController != null) {
-                parentController.popInformation(message("NoData"));
-            }
+            popError(message("NoData"));
             return;
         }
         try {
             NodeList aList = doc.getElementsByTagName("a");
             if (aList == null || aList.getLength() < 1) {
-                if (parentController != null) {
-                    parentController.popInformation(message("NoData"));
-                }
+                popError(message("NoData"));
                 return;
             }
             List<String> names = new ArrayList<>();
@@ -507,26 +494,20 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
             }
             table.editHtml();
         } catch (Exception e) {
-            if (parentController != null) {
-                parentController.popError(e.toString());
-            }
+            popError(e.toString());
         }
     }
 
     protected void images() {
         doc = webEngine.getDocument();
         if (doc == null) {
-            if (parentController != null) {
-                parentController.popInformation(message("NoData"));
-            }
+            popError(message("NoData"));
             return;
         }
         try {
             NodeList aList = doc.getElementsByTagName("img");
             if (aList == null || aList.getLength() < 1) {
-                if (parentController != null) {
-                    parentController.popInformation(message("NoData"));
-                }
+                popError(message("NoData"));
                 return;
             }
             List<String> names = new ArrayList<>();
@@ -566,24 +547,18 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
             }
             table.editHtml();
         } catch (Exception e) {
-            if (parentController != null) {
-                parentController.popError(e.toString());
-            }
+            popError(e.toString());
         }
     }
 
     protected void toc(String html) {
         if (html == null) {
-            if (parentController != null) {
-                parentController.popInformation(message("NoData"));
-            }
+            popError(message("NoData"));
             return;
         }
         String toc = HtmlReadTools.toc(html, 8);
         if (toc == null || toc.isBlank()) {
-            if (parentController != null) {
-                parentController.popInformation(message("NoData"));
-            }
+            popError(message("NoData"));
             return;
         }
         TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
@@ -593,16 +568,12 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
 
     protected void texts(String html) {
         if (html == null) {
-            if (parentController != null) {
-                parentController.popInformation(message("NoData"));
-            }
+            popError(message("NoData"));
             return;
         }
-        String texts = Jsoup.parse(html).wholeText();
+        String texts = HtmlWriteTools.htmlToText(html);
         if (texts == null || texts.isBlank()) {
-            if (parentController != null) {
-                parentController.popInformation(message("NoData"));
-            }
+            popError(message("NoData"));
             return;
         }
         TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
@@ -613,8 +584,7 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     @FXML
     @Override
     public void popAction() {
-        HtmlEditorController controller = edit(WebViewTools.getHtml(webEngine));
-        controller.setAsPopup(baseName + "Pop");
+        HtmlPopController.open(this, webView);
     }
 
     @Override
@@ -674,6 +644,19 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
             return;
         }
         TextClipboardTools.copyToSystemClipboard(myController, html);
+    }
+
+    @Override
+    public void cleanPane() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        if (webEngine != null && webEngine.getLoadWorker() != null) {
+            webEngine.getLoadWorker().cancel();
+        }
+        webEngine = null;
+        webView.setUserData(null);
+        super.cleanPane();
     }
 
 }

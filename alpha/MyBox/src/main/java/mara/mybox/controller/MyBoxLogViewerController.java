@@ -23,7 +23,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-11-27
  * @License Apache License Version 2.0
  */
-public class MyBoxLogViewerController extends HtmlViewerController {
+public class MyBoxLogViewerController extends HtmlTableController {
 
     protected TableMyBoxLog logTable;
 

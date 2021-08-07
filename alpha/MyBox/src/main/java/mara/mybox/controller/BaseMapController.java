@@ -110,7 +110,7 @@ public abstract class BaseMapController extends BaseController {
                         });
             }
 
-            interval = UserConfig.getUserConfigInt(baseName + "Interval", 200);
+            interval = UserConfig.getInt(baseName + "Interval", 200);
             if (intervalSelector != null) {
                 intervalSelector.getItems().addAll(Arrays.asList(
                         "200", "500", "1000", "50", "5", "3", "1", "10", "100", "300", "800", "1500", "2000", "3000", "5000", "10000"
@@ -121,7 +121,7 @@ public abstract class BaseMapController extends BaseController {
                         int v = Integer.valueOf(intervalSelector.getValue());
                         if (v > 0) {
                             interval = v;
-                            UserConfig.setUserConfigInt(baseName + "Interval", interval);
+                            UserConfig.setInt(baseName + "Interval", interval);
                             ValidationTools.setEditorNormal(intervalSelector);
                             if (isSettingValues) {
                                 return;
@@ -138,9 +138,9 @@ public abstract class BaseMapController extends BaseController {
 
             if (loopCheck != null) {
                 loopCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "Loop", loopCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Loop", loopCheck.isSelected());
                 });
-                loopCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Loop", true));
+                loopCheck.setSelected(UserConfig.getBoolean(baseName + "Loop", true));
             }
 
             if (mapOptionsController != null) {
@@ -551,7 +551,7 @@ public abstract class BaseMapController extends BaseController {
 
     protected void snapCurrentFrame() {
         String filename = snapName(true) + ".png";
-        File file = chooseSaveFile(UserConfig.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
+        File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
                 filename, FileFilters.ImageExtensionFilter);
         if (file == null) {
             return;
@@ -613,7 +613,7 @@ public abstract class BaseMapController extends BaseController {
 
     public void snapHtml() {
         final String htmlTitle = snapName(true);
-        File htmlFile = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        File htmlFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 htmlTitle, FileFilters.HtmlExtensionFilter);
         if (htmlFile == null) {
             return;

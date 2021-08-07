@@ -85,10 +85,10 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "Open", newValue);
+                    UserConfig.setBoolean(baseName + "Open", newValue);
                 }
             });
-            openCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "Open", true));
+            openCheck.setSelected(UserConfig.getBoolean(baseName + "Open", true));
 
             optionsController.extensionInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {

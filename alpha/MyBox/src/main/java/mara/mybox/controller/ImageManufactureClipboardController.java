@@ -97,44 +97,44 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             rotateAngle = currentAngle = 0;
             clipsController.setParameters(imageController, true);
 
-            enlargeCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "EnlargerImageAsClip", true));
+            enlargeCheck.setSelected(UserConfig.getBoolean(baseName + "EnlargerImageAsClip", true));
             enlargeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "EnlargerImageAsClip", enlargeCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "EnlargerImageAsClip", enlargeCheck.isSelected());
                     if (imageController != null) {
                         pasteClip(currentAngle);
                     }
                 }
             });
 
-            clipTopCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ClipOnTop", true));
+            clipTopCheck.setSelected(UserConfig.getBoolean(baseName + "ClipOnTop", true));
             clipTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "ClipOnTop", clipTopCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "ClipOnTop", clipTopCheck.isSelected());
                     if (imageController != null) {
                         pasteClip(currentAngle);
                     }
                 }
             });
 
-            ignoreTransparentCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "IgnoreTransparent", true));
+            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
             ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
                     if (imageController != null) {
                         pasteClip(currentAngle);
                     }
                 }
             });
 
-            keepRatioCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "KeepClipRatio", true));
+            keepRatioCheck.setSelected(UserConfig.getBoolean(baseName + "KeepClipRatio", true));
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setUserConfigBoolean(baseName + "KeepClipRatio", keepRatioCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "KeepClipRatio", keepRatioCheck.isSelected());
                     if (imageController != null) {
                         pasteClip(currentAngle);
                     }
@@ -164,7 +164,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             });
             ratioBox.getSelectionModel().select(0);
 
-            String mode = UserConfig.getUserConfigString("ImageClipBlendMode", Languages.message("NormalMode"));
+            String mode = UserConfig.getString("ImageClipBlendMode", Languages.message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
             blendBox.getItems().addAll(PixelsBlendFactory.blendModes());
             blendBox.setValue(mode);
@@ -173,14 +173,14 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     String mode = blendBox.getSelectionModel().getSelectedItem();
                     blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setUserConfigString("ImageClipBlendMode", mode);
+                    UserConfig.setString("ImageClipBlendMode", mode);
                     if (imageController != null) {
                         pasteClip(rotateAngle);
                     }
                 }
             });
 
-            opacity = UserConfig.getUserConfigInt(baseName + "ImageClipOpacity", 100) / 100f;
+            opacity = UserConfig.getInt(baseName + "ImageClipOpacity", 100) / 100f;
             opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
             opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacityBox.setValue(opacity + "");
@@ -191,7 +191,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         float f = Float.valueOf(newValue);
                         if (opacity >= 0.0f && opacity <= 1.0f) {
                             opacity = f;
-                            UserConfig.setUserConfigInt("ImageClipOpacity", (int) (f * 100));
+                            UserConfig.setInt("ImageClipOpacity", (int) (f * 100));
                             ValidationTools.setEditorNormal(opacityBox);
                             if (imageController != null) {
                                 pasteClip(0);

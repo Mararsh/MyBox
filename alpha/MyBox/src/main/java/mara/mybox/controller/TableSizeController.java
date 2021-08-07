@@ -41,7 +41,7 @@ public class TableSizeController extends BaseController {
             colsSelector.getItems().addAll(Arrays.asList(
                     "3", "5", "4", "6", "2", "1", "10", "8", "9", "7", "15", "20", "30"
             ));
-            colsNumber = UserConfig.getUserConfigInt(baseName + "ColsNumber", 3);
+            colsNumber = UserConfig.getInt(baseName + "ColsNumber", 3);
             colsNumber = colsNumber <= 0 ? 3 : colsNumber;
             colsSelector.setValue(colsNumber + "");
             colsSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -51,7 +51,7 @@ public class TableSizeController extends BaseController {
                                 colsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             } else {
                                 colsNumber = v;
-                                UserConfig.setUserConfigInt(baseName + "ColsNumber", colsNumber);
+                                UserConfig.setInt(baseName + "ColsNumber", colsNumber);
                                 colsSelector.getEditor().setStyle(null);
                             }
                         } catch (Exception e) {
@@ -62,7 +62,7 @@ public class TableSizeController extends BaseController {
             rowsSelector.getItems().addAll(Arrays.asList(
                     "3", "5", "4", "6", "2", "1", "10", "8", "9", "7", "15", "20", "30", "50"
             ));
-            rowsNumber = UserConfig.getUserConfigInt(baseName + "RowsNumber", 3);
+            rowsNumber = UserConfig.getInt(baseName + "RowsNumber", 3);
             rowsNumber = rowsNumber <= 0 ? 3 : rowsNumber;
             rowsSelector.setValue(rowsNumber + "");
             rowsSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -72,7 +72,7 @@ public class TableSizeController extends BaseController {
                                 rowsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                             } else {
                                 rowsNumber = v;
-                                UserConfig.setUserConfigInt(baseName + "RowsNumber", rowsNumber);
+                                UserConfig.setInt(baseName + "RowsNumber", rowsNumber);
                                 rowsSelector.getEditor().setStyle(null);
                             }
                         } catch (Exception e) {

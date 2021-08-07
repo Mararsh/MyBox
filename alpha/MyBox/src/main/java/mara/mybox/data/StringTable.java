@@ -86,8 +86,8 @@ public class StringTable {
         HtmlWriteTools.editHtml(tableHtml(this));
     }
 
-    public void viewHtml() {
-        HtmlReadTools.viewHtml(title, body(this));
+    public void htmlTable() {
+        HtmlReadTools.htmlTable(title, body(this));
     }
 
     public void newLinkRow(String name, String link) {

@@ -63,6 +63,15 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
             List<javafx.scene.Node> aNodes = new ArrayList<>();
 
+            Button blank4 = new Button(Languages.message("Blank4"));
+            blank4.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    insertText("    ");
+                }
+            });
+            aNodes.add(blank4);
+
             Button br = new Button(Languages.message("BreakLine"));
             br.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -228,6 +237,44 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
             addFlowPane(listNodes);
 
+            List<Node> codeNodes = new ArrayList<>();
+
+            Button SeparatorLine = new Button(Languages.message("SeparateLine"));
+            SeparatorLine.setOnAction((ActionEvent event) -> {
+                insertText("\n---\n");
+            });
+            codeNodes.add(SeparatorLine);
+
+            Button Quote = new Button(Languages.message("Quote"));
+            Quote.setOnAction((ActionEvent event) -> {
+                insertText("\n\n>");
+            });
+            codeNodes.add(Quote);
+
+            Button Codes = new Button(Languages.message("Codes"));
+            Codes.setOnAction((ActionEvent event) -> {
+                addTextAround("`");
+            });
+            codeNodes.add(Codes);
+
+            Button CodesBlock = new Button(Languages.message("CodesBlock"));
+            CodesBlock.setOnAction((ActionEvent event) -> {
+                addTextAround("\n```\n", "\n```\n");
+            });
+            codeNodes.add(CodesBlock);
+
+            Button ReferLocalFile = new Button(Languages.message("ReferLocalFile"));
+            ReferLocalFile.setOnAction((ActionEvent event) -> {
+                File file = FxFileTools.selectFile(myController, VisitHistory.FileType.All);
+                if (file == null) {
+                    return;
+                }
+                insertText(UrlTools.decodeURL(file, Charset.defaultCharset()));
+            });
+            codeNodes.add(ReferLocalFile);
+
+            addFlowPane(codeNodes);
+
             List<javafx.scene.Node> otherNodes = new ArrayList<>();
 
             Button Bold = new Button(Languages.message("Bold"));
@@ -247,40 +294,6 @@ public class MenuMarkdownEditController extends MenuTextEditController {
                 addTextAround("***");
             });
             otherNodes.add(BoldItalic);
-
-            Button Quote = new Button(Languages.message("Quote"));
-            Quote.setOnAction((ActionEvent event) -> {
-                insertText("\n\n>");
-            });
-            otherNodes.add(Quote);
-
-            Button Codes = new Button(Languages.message("Codes"));
-            Codes.setOnAction((ActionEvent event) -> {
-                addTextAround("`");
-            });
-            otherNodes.add(Codes);
-
-            Button CodesBlock = new Button(Languages.message("CodesBlock"));
-            CodesBlock.setOnAction((ActionEvent event) -> {
-                addTextAround("\n```\n", "\n```\n");
-            });
-            otherNodes.add(CodesBlock);
-
-            Button ReferLocalFile = new Button(Languages.message("ReferLocalFile"));
-            ReferLocalFile.setOnAction((ActionEvent event) -> {
-                File file = FxFileTools.selectFile(myController, VisitHistory.FileType.All);
-                if (file == null) {
-                    return;
-                }
-                insertText(UrlTools.decodeURL(file, Charset.defaultCharset()));
-            });
-            otherNodes.add(ReferLocalFile);
-
-            Button SeparatorLine = new Button(Languages.message("SeparateLine"));
-            SeparatorLine.setOnAction((ActionEvent event) -> {
-                insertText("\n---\n");
-            });
-            otherNodes.add(SeparatorLine);
 
             addFlowPane(otherNodes);
 

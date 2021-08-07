@@ -87,17 +87,17 @@ public class ControlSheetData extends BaseController {
                 textArea = textController.textArea;
             }
             if (htmlColumnCheck != null) {
-                htmlColumnCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "HtmlColumn", true));
+                htmlColumnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlColumn", true));
                 htmlColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                     updateDataHtml(pickData());
-                    UserConfig.setUserConfigBoolean(baseName + "HtmlColumn", newValue);
+                    UserConfig.setBoolean(baseName + "HtmlColumn", newValue);
                 });
             }
             if (htmlColumnCheck != null) {
-                htmlRowCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "HtmlRow", true));
+                htmlRowCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlRow", true));
                 htmlRowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                     updateDataHtml(pickData());
-                    UserConfig.setUserConfigBoolean(baseName + "HtmlRow", newValue);
+                    UserConfig.setBoolean(baseName + "HtmlRow", newValue);
                 });
             }
 

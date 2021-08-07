@@ -17,9 +17,9 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.UserConfig.setUserConfigString;
-import static mara.mybox.value.UserConfig.setUserConfigString;
-import static mara.mybox.value.UserConfig.setUserConfigBoolean;
+import static mara.mybox.value.UserConfig.setString;
+import static mara.mybox.value.UserConfig.setString;
+import static mara.mybox.value.UserConfig.setBoolean;
 
 /**
  * @Author Mara
@@ -74,28 +74,28 @@ public class ImageConverterBatchController extends BaseBatchImageController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v,
                         Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("ImageConverterAppendColor", appendColorCheck.isSelected());
+                    UserConfig.setBoolean("ImageConverterAppendColor", appendColorCheck.isSelected());
                 }
             });
-            appendColorCheck.setSelected(UserConfig.getUserConfigBoolean("ImageConverterAppendColor"));
+            appendColorCheck.setSelected(UserConfig.getBoolean("ImageConverterAppendColor"));
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v,
                         Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("ImageConverterAppendCompression", appendCompressionCheck.isSelected());
+                    UserConfig.setBoolean("ImageConverterAppendCompression", appendCompressionCheck.isSelected());
                 }
             });
-            appendCompressionCheck.setSelected(UserConfig.getUserConfigBoolean("ImageConverterAppendCompression"));
+            appendCompressionCheck.setSelected(UserConfig.getBoolean("ImageConverterAppendCompression"));
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v,
                         Boolean oldV, Boolean newV) {
-                    UserConfig.setUserConfigBoolean("ImageConverterAppendQuality", appendQualityCheck.isSelected());
+                    UserConfig.setBoolean("ImageConverterAppendQuality", appendQualityCheck.isSelected());
                 }
             });
-            appendQualityCheck.setSelected(UserConfig.getUserConfigBoolean("ImageConverterAppendQuality"));
+            appendQualityCheck.setSelected(UserConfig.getBoolean("ImageConverterAppendQuality"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

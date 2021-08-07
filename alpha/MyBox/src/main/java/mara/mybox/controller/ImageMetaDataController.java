@@ -111,7 +111,7 @@ public class ImageMetaDataController extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 null, targetExtensionFilter);
         if (file == null) {
             return;

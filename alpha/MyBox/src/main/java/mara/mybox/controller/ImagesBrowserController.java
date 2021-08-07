@@ -123,7 +123,7 @@ public class ImagesBrowserController extends ImageViewerController {
             colsNum = -1;
             displayMode = DisplayMode.ImagesGrid;
             currentIndex = -1;
-            thumbWidth = UserConfig.getUserConfigInt("ThumbnailWidth", 100);
+            thumbWidth = UserConfig.getInt("ThumbnailWidth", 100);
             thumbWidth = thumbWidth > 0 ? thumbWidth : 100;
 
         } catch (Exception e) {
@@ -204,7 +204,7 @@ public class ImagesBrowserController extends ImageViewerController {
                         if (v > 0) {
                             ValidationTools.setEditorNormal(thumbWidthSelector);
                             thumbWidth = v;
-                            UserConfig.setUserConfigInt("ThumbnailWidth", thumbWidth);
+                            UserConfig.setInt("ThumbnailWidth", thumbWidth);
                             loadImages();
                         } else {
                             ValidationTools.setEditorBadStyle(thumbWidthSelector);
@@ -215,11 +215,11 @@ public class ImagesBrowserController extends ImageViewerController {
                 }
             });
 
-            saveRotationCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "SaveRotation", true));
+            saveRotationCheck.setSelected(UserConfig.getBoolean(baseName + "SaveRotation", true));
             saveRotationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setUserConfigBoolean(baseName + "SaveRotation", saveRotationCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "SaveRotation", saveRotationCheck.isSelected());
                 }
             });
 
@@ -1404,7 +1404,7 @@ public class ImagesBrowserController extends ImageViewerController {
     @FXML
     @Override
     public void selectSourcePath() {
-        File defaultPath = UserConfig.getUserConfigPath(baseName + "SourcePath");
+        File defaultPath = UserConfig.getPath(baseName + "SourcePath");
         selectSourcePath(defaultPath);
     }
 

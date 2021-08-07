@@ -110,14 +110,14 @@ public class ControlTimeLength extends BaseController {
                         long v = Long.parseLong(s);
                         if (v > 0 || (permitZero && v == 0)) {
                             value = v;
-                            UserConfig.setUserConfigString(name, v + "");
+                            UserConfig.setString(name, v + "");
                         }
                     } catch (Exception e) {
                     }
                     if (value < 0) {
                         if (permitNotSetting || permitInvalid) {
                             lengthSelector.getEditor().setStyle(null);
-                            UserConfig.setUserConfigString(name, "-1");
+                            UserConfig.setString(name, "-1");
                         } else {
                             lengthSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
@@ -131,7 +131,7 @@ public class ControlTimeLength extends BaseController {
         value = this.defaultValue;
 //        MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
         if (name != null) {
-            String saved = UserConfig.getUserConfigString(name, this.defaultValue + "");
+            String saved = UserConfig.getString(name, this.defaultValue + "");
             if ("-1".equals(saved) || Languages.message("NotSetting").equals(saved)) {
                 value = -1;
                 if (permitNotSetting) {

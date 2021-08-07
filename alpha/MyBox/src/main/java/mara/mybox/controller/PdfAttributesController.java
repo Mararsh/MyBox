@@ -184,10 +184,10 @@ public class PdfAttributesController extends BaseController {
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                UserConfig.setUserConfigString("AuthorKey", newValue);
+                UserConfig.setString("AuthorKey", newValue);
             }
         });
-        authorInput.setText(UserConfig.getUserConfigString("AuthorKey", System.getProperty("user.name")));
+        authorInput.setText(UserConfig.getString("AuthorKey", System.getProperty("user.name")));
 
         saveButton.disableProperty().bind(
                 sourceFileInput.styleProperty().isEqualTo(NodeStyleTools.badStyle)

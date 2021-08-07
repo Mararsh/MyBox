@@ -88,7 +88,7 @@ public class ChromaticityBaseController extends BaseController {
                     checkScale();
                 }
             });
-            int p = UserConfig.getUserConfigInt("MatrixDecimalScale", 8);
+            int p = UserConfig.getInt("MatrixDecimalScale", 8);
             scaleInput.setText(p + "");
         }
     }
@@ -122,7 +122,7 @@ public class ChromaticityBaseController extends BaseController {
             } else {
                 scale = p;
                 scaleInput.setStyle(null);
-                UserConfig.setUserConfigInt("MatrixDecimalScale", scale);
+                UserConfig.setInt("MatrixDecimalScale", scale);
             }
         } catch (Exception e) {
             scaleInput.setStyle(NodeStyleTools.badStyle);
@@ -204,7 +204,7 @@ public class ChromaticityBaseController extends BaseController {
 
     @FXML
     public void exportAction() {
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 exportName, FileFilters.TextExtensionFilter);
         if (file == null) {
             return;

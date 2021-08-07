@@ -136,9 +136,9 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
             if (deleteConfirmCheck != null) {
                 deleteConfirmCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    UserConfig.setUserConfigBoolean(baseName + "ConfirmDelete", deleteConfirmCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "ConfirmDelete", deleteConfirmCheck.isSelected());
                 });
-                deleteConfirmCheck.setSelected(UserConfig.getUserConfigBoolean(baseName + "ConfirmDelete", true));
+                deleteConfirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmDelete", true));
             }
 
             initButtons();
@@ -329,7 +329,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
             pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
                     "500", "1000", "2000", "5000", "10000", "20000", "50000"));
-            pageSize = UserConfig.getUserConfigInt(baseName + "PageSize", 50);
+            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
             if (pageSize < 1) {
                 pageSize = 50;
             }
@@ -344,7 +344,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                         pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     } else {
                         pageSize = v;
-                        UserConfig.setUserConfigInt(baseName + "PageSize", pageSize);
+                        UserConfig.setInt(baseName + "PageSize", pageSize);
                         pageSizeSelector.getEditor().setStyle(null);
                         if (!isSettingValues) {
                             loadTableData();
@@ -797,7 +797,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
 
     @FXML
     protected void exportAction() {
-        final File file = chooseSaveFile(UserConfig.getUserConfigPath(baseName + "TargetPath"),
+        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 Languages.message(tableName) + ".txt", FileFilters.AllExtensionFilter);
         if (file == null) {
             return;

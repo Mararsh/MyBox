@@ -575,8 +575,8 @@ public class ImageSplitController extends ImageViewerController {
                 checkImages();
                 return;
             }
-            Color strokeColor = Color.web(UserConfig.getUserConfigString("StrokeColor", "#FF0000"));
-            double strokeWidth = UserConfig.getUserConfigInt("StrokeWidth", 2);
+            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
+            double strokeWidth = UserConfig.getInt("StrokeWidth", 2);
             double w = imageView.getBoundsInParent().getWidth();
             double h = imageView.getBoundsInParent().getHeight();
             double ratiox = w / imageView.getImage().getWidth();

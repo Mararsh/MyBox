@@ -120,7 +120,7 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab closable="false" text="%RGBPrimaries">
                             <content>
-                                <fx:include fx:id="primaries" source="HtmlViewer.fxml" />
+                                <fx:include fx:id="primaries" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
                     </tabs>

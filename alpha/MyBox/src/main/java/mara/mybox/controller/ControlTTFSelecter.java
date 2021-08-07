@@ -46,10 +46,10 @@ public class ControlTTFSelecter extends BaseController {
                     return;
                 }
                 ttfFile = newValue;
-                UserConfig.setUserConfigString(baseName + "TTF", newValue);
+                UserConfig.setString(baseName + "TTF", newValue);
             }
         });
-        ttfFile = UserConfig.getUserConfigString(baseName + "TTF", null);
+        ttfFile = UserConfig.getString(baseName + "TTF", null);
         if (ttfFile == null) {
             if (!ttfSelector.getItems().isEmpty()) {
                 ttfSelector.getSelectionModel().select(0);

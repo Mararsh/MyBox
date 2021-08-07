@@ -11,14 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import mara.mybox.controller.ImageManufactureController.ImageOperation;
-import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.StringTable;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools.Direction;
 import mara.mybox.bufferedimage.ColorConvertTools;
@@ -35,11 +27,15 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.StringTable;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -267,8 +263,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         if (quanTable == null) {
             return;
         }
-        HtmlViewerController controller
-                = (HtmlViewerController) WindowTools.openStage(Fxmls.HtmlViewerFxml);
+        HtmlTableController controller
+                = (HtmlTableController) WindowTools.openStage(Fxmls.HtmlTableFxml);
         controller.loadTable(quanTable);
     }
 

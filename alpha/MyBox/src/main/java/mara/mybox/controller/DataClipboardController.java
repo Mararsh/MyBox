@@ -80,7 +80,7 @@ public class DataClipboardController extends BaseSheetController {
             super.setParameters(parent);
             isMatrix = false;
 
-            setSourceDelimiter(UserConfig.getUserConfigString(baseName + "SourceDelimiter", "Blank"));
+            setSourceDelimiter(UserConfig.getString(baseName + "SourceDelimiter", "Blank"));
             delimiterSourceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -115,7 +115,7 @@ public class DataClipboardController extends BaseSheetController {
                     } else if (semicolonsSourceRadio.isSelected()) {
                         sourceDelimiter = ";";
                     }
-                    UserConfig.setUserConfigString(baseName + "SourceDelimiter", sourceDelimiter);
+                    UserConfig.setString(baseName + "SourceDelimiter", sourceDelimiter);
                     synchronizeChanged();
                 }
             });
@@ -130,7 +130,7 @@ public class DataClipboardController extends BaseSheetController {
                         return;
                     }
                     sourceDelimiter = newValue;
-                    UserConfig.setUserConfigString(baseName + "SourceDelimiter", sourceDelimiter);
+                    UserConfig.setString(baseName + "SourceDelimiter", sourceDelimiter);
                     delimiterSourceInput.setStyle(null);
                     synchronizeChanged();
                 }

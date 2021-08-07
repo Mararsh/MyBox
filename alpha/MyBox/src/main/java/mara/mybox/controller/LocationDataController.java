@@ -423,7 +423,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
         if (selected == null) {
             return;
         }
-        HtmlReadTools.viewHtml(Languages.message("LocationData"), BaseDataTools.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(Languages.message("LocationData"), BaseDataTools.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

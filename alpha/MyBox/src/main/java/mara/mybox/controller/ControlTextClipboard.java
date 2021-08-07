@@ -114,11 +114,11 @@ public class ControlTextClipboard extends BaseDataTableController<TextClipboard>
                 buttonsBox.getChildren().remove(useButton);
             }
 
-            noDupCheck.setSelected(UserConfig.getUserConfigBoolean("TextClipboardNoDuplication", true));
+            noDupCheck.setSelected(UserConfig.getBoolean("TextClipboardNoDuplication", true));
             noDupCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean ov, Boolean nv) {
-                    UserConfig.setUserConfigBoolean("TextClipboardNoDuplication", noDupCheck.isSelected());
+                    UserConfig.setBoolean("TextClipboardNoDuplication", noDupCheck.isSelected());
                 }
             });
             textArea.textProperty().addListener(new ChangeListener<String>() {
