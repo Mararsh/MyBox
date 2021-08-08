@@ -6,9 +6,7 @@ import java.awt.color.ICC_Profile;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import static mara.mybox.color.IccXML.iccXML;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.MessageDigestTools;
@@ -171,7 +169,7 @@ public class IccProfile {
         if (!update(newHeader)) {
             return false;
         }
-        return ByteFileTools.writeFile(file, data);
+        return ByteFileTools.writeFile(file, data) != null;
     }
 
     public float[] calculateXYZ(float[] color) {

@@ -1,40 +1,30 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
-import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2021-8-7
+ * @CreateDate 2021-8-8
  * @License Apache License Version 2.0
  */
-public class TextPopController extends BaseController {
+public class MarkdownPopController extends TextPopController {
 
-    @FXML
-    protected TextArea textArea;
-    @FXML
-    protected CheckBox wrapCheck, openCheck;
-
-    public TextPopController() {
-        baseTitle = message("Texts");
+    public MarkdownPopController() {
+        baseTitle = "Markdown";
     }
 
     @Override
     public void setFileType() {
-        setFileType(FileType.Text);
+        setFileType(FileType.Markdown);
     }
 
     @Override
@@ -42,24 +32,10 @@ public class TextPopController extends BaseController {
         try {
             super.initControls();
 
-            editButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
-            saveAsButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
-
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
-            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            textArea.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    textArea.setWrapText(newValue);
-                }
-            });
-            textArea.setWrapText(wrapCheck.isSelected());
-
-            openCheck.setSelected(UserConfig.getBoolean(baseName + "Open", true));
-            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Open", newValue);
+                public void handle(ContextMenuEvent event) {
+                    MenuMarkdownEditController.open(myController, textArea, event);
                 }
             });
 
@@ -68,18 +44,10 @@ public class TextPopController extends BaseController {
         }
     }
 
-    @Override
-    public void setStageStatus(String prefix, int minSize) {
-        setAsPopup(baseName);
-    }
-
-    public void loadText(String text) {
-        textArea.setText(text);
-    }
-
     @FXML
+    @Override
     public void editAction() {
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
         controller.loadContents(textArea.getText());
         controller.toFront();
     }
@@ -112,7 +80,7 @@ public class TextPopController extends BaseController {
                     popSaved();
                     recordFileWritten(file);
                     if (openCheck.isSelected()) {
-                        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+                        MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
                         controller.sourceFileChanged(file);
                     }
                 }
@@ -128,12 +96,12 @@ public class TextPopController extends BaseController {
     /*
         static methods
      */
-    public static TextPopController open(BaseController parent, String text) {
+    public static MarkdownPopController open(BaseController parent, String text) {
         try {
             if (text == null) {
                 return null;
             }
-            TextPopController controller = (TextPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.TextPopFxml, false);
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.MarkdownPopFxml, false);
             controller.loadText(text);
             return controller;
         } catch (Exception e) {

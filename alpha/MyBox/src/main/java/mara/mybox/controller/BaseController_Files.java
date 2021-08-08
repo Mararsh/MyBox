@@ -21,6 +21,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyBoxTempPath;
@@ -789,40 +790,50 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }.pop();
     }
 
-    public File chooseSaveFile() {
-        File savedPath = VisitHistoryTools.getSavedPath(TargetFileType);
-        String defaultPathName = UserConfig.getString(baseName + "TargetPath", savedPath != null ? savedPath.getAbsolutePath() : null);
-        File defaultPath;
-        if (defaultPathName != null) {
-            defaultPath = new File(defaultPathName);
-        } else {
-            defaultPath = MyBoxTempPath;
+    public String defaultTargetName(String prefix) {
+        String defaultName = prefix != null ? prefix : "";
+        if (sourceFile != null) {
+            defaultName += FileNameTools.prefixFilter(sourceFile) + "_";
         }
-        String defaultName = sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) + "m" : (new Date().getTime() + "");
-        return chooseSaveFile(defaultPath, defaultName, VisitHistoryTools.getExtensionFilter(TargetFileType));
+        defaultName += DateTools.nowFileString();
+        return defaultName;
+    }
+
+    public File defaultTargetPath(int type) {
+        File savedPath = VisitHistoryTools.getSavedPath(type);
+        String defaultPathName = UserConfig.getString(baseName + "TargetPath", savedPath != null ? savedPath.getAbsolutePath() : null);
+        if (defaultPathName != null) {
+            return new File(defaultPathName);
+        } else {
+            return MyBoxTempPath;
+        }
+    }
+
+    public List<FileChooser.ExtensionFilter> defaultFilter(int type) {
+        return VisitHistoryTools.getExtensionFilter(type);
+    }
+
+    public File chooseSaveFile() {
+        return chooseSaveFile(defaultTargetPath(TargetPathType), defaultTargetName(""), targetExtensionFilter);
     }
 
     public File chooseSaveFile(String defaultName) {
-        return chooseSaveFile(TargetFileType, defaultName);
+        return chooseSaveFile(defaultTargetPath(TargetPathType), defaultName, targetExtensionFilter);
     }
 
     public File chooseSaveFile(int type) {
-        return chooseSaveFile(VisitHistoryTools.getSavedPath(type), null,
-                VisitHistoryTools.getExtensionFilter(type));
+        return chooseSaveFile(defaultTargetPath(type), defaultTargetName(""), defaultFilter(type));
     }
 
     public File chooseSaveFile(int type, String defaultName) {
-        return chooseSaveFile(VisitHistoryTools.getSavedPath(type), defaultName,
-                VisitHistoryTools.getExtensionFilter(type));
+        return chooseSaveFile(defaultTargetPath(type), defaultName, defaultFilter(type));
     }
 
-    public File chooseSaveFile(File defaultPath, String defaultName,
-            List<FileChooser.ExtensionFilter> filters) {
+    public File chooseSaveFile(File defaultPath, String defaultName, List<FileChooser.ExtensionFilter> filters) {
         return chooseSaveFile(null, defaultPath, defaultName, filters);
     }
 
-    public File chooseSaveFile(String title, File defaultPath, String defaultName,
-            List<FileChooser.ExtensionFilter> filters) {
+    public File chooseSaveFile(String title, File defaultPath, String defaultName, List<FileChooser.ExtensionFilter> filters) {
         try {
             FileChooser fileChooser = new FileChooser();
             if (title != null) {

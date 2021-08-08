@@ -363,8 +363,7 @@ public class MarkdownEditorController extends TextEditorController {
 
     @FXML
     public void popHtmlMenu(MouseEvent mouseEvent) {
-        MenuWebviewController.pop((BaseWebViewController) (webView.getUserData()), null,
-                mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
+        MenuWebviewController.pop(webView, null, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 
     @FXML
@@ -384,6 +383,12 @@ public class MarkdownEditorController extends TextEditorController {
     public void createAction() {
         super.createAction();
         clearPairArea();
+    }
+
+    @FXML
+    @Override
+    public void popAction() {
+        MarkdownPopController.open(this, mainArea.getText());
     }
 
 }

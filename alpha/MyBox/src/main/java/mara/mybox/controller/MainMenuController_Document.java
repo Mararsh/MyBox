@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -20,11 +19,6 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void openPdfView(ActionEvent event) {
         loadScene(Fxmls.PdfViewFxml);
-    }
-
-    @FXML
-    protected void openPdfHtmlViewer(ActionEvent event) {
-        loadScene(Fxmls.PdfHtmlViewerFxml);
     }
 
     @FXML

@@ -13,6 +13,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -28,39 +29,13 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox fx:id="snapBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="15.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                    <children>
-                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTips.png" />
-                            </image>
-                        </ImageView>
-                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="DPI" HBox.hgrow="ALWAYS" />
-                        <ComboBox fx:id="dpiSelector" editable="true" prefWidth="100.0" />
-                        <Label text="%RetryDelay" />
-                        <ComboBox fx:id="delayBox" editable="true" prefWidth="80.0" />
-                        <RadioButton mnemonicParsing="false" selected="true" text="%OneImage">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="snapGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton mnemonicParsing="false" text="PDF" toggleGroup="$snapGroup" />
-                        <CheckBox fx:id="windowSizeCheck" disable="true" mnemonicParsing="false" selected="true" text="%WindowSize" />
-                        <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconSnapshot.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </HBox>
-                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="482.0" prefViewportWidth="1634.0" VBox.vgrow="ALWAYS">
-                    <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                            <children>
+            <SplitPane fx:id="splitPane" dividerPositions="0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+               <items>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
                                 <HBox fx:id="addressBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
@@ -73,7 +48,7 @@ License:    Apache License Version 2.0
                                             </graphic>
                                         </Button>
                                         <ComboBox fx:id="urlSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="goButton" defaultButton="true" mnemonicParsing="false" onAction="#goAction">
+                                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -91,21 +66,71 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                                    <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                        <graphic>
+                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../buttons/Red/iconSnapshot.png" />
+                                                </image>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                              <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                 </image>
+                              </ImageView>
                                     </children>
                                 </HBox>
                                 <WebView fx:id="webView" minHeight="200.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
                                 <Label fx:id="webViewLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
-                            </children>
+                     </children>
+                  </VBox>
+                  <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <children>
+                                    <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconTips.png" />
+                                        </image>
+                                    </ImageView>
+                                    <RadioButton mnemonicParsing="false" selected="true" text="%OneImage">
+                                        <toggleGroup>
+                                            <ToggleGroup fx:id="snapGroup" />
+                                        </toggleGroup>
+                                    </RadioButton>
+                              <HBox fx:id="snapBox11" alignment="CENTER_LEFT" layoutX="15.0" layoutY="237.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                          <RadioButton mnemonicParsing="false" text="PDF" toggleGroup="$snapGroup" />
+                                          <CheckBox fx:id="windowSizeCheck" disable="true" mnemonicParsing="false" selected="true" text="%WindowSize" />
+                                 </children>
+                              </HBox>
+                                  <HBox fx:id="snapBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                          <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="DPI" />
+                                          <ComboBox fx:id="dpiSelector" editable="true" prefWidth="140.0" />
+                                 </children>
+                                  </HBox>
+                              <HBox fx:id="snapBox1" alignment="CENTER_LEFT" layoutX="15.0" layoutY="232.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                          <Label text="%RetryDelay" />
+                                          <ComboBox fx:id="delayBox" editable="true" prefWidth="100.0" />
+                                 </children>
+                              </HBox>
+                           </children>
                         </VBox>
-                    </content>
-                </ScrollPane>
+                     </content>
+                  </ScrollPane>
+               </items>
+            </SplitPane>
             </children>
         </VBox>
     </center>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-    <bottom>
-        <Label fx:id="bottomLabel" wrapText="true" BorderPane.alignment="CENTER_LEFT" />
-    </bottom>
 </BorderPane>

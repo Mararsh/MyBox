@@ -687,19 +687,6 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
 
     @FXML
     @Override
-    public void popAction() {
-        BaseFileEditorController controller = openNewStage();
-        controller.setAsPopup(baseName + "Pop");
-        autoSaveCheck.setSelected(false);
-        if (sourceFile != null) {
-            controller.openFile(sourceFile);
-        } else {
-            controller.mainArea.setText(mainArea.getText());
-        }
-    }
-
-    @FXML
-    @Override
     public void myBoxClipBoard() {
         TextClipboardPopController.open(this, mainArea);
     }

@@ -27,11 +27,11 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-5-5
  * @License Apache License Version 2.0
  */
-public class WebFindController extends BaseWebViewController {
+public class HtmlFindController extends BaseWebViewController {
 
     protected static final String ItemPrefix = "MyBoxSearchLocation";
     protected int foundCount, foundItem;
-    protected String loadedHtml;
+    protected String loadedHtml, resultsHtml;
     protected LoadingController loading;
 
     @FXML
@@ -47,7 +47,7 @@ public class WebFindController extends BaseWebViewController {
     @FXML
     protected CheckBox caseCheck, wrapCheck, regCheck;
 
-    public WebFindController() {
+    public HtmlFindController() {
         baseTitle = message("WebFind");
     }
 
@@ -119,6 +119,7 @@ public class WebFindController extends BaseWebViewController {
     @Override
     public void find(String html) {
         loadedHtml = html;
+        foundCount = 0;
         loadContents(html);
     }
 
@@ -137,6 +138,9 @@ public class WebFindController extends BaseWebViewController {
 
             if (loadedHtml == null) {
                 loadedHtml = WebViewTools.getHtml(webEngine);
+            } else {
+                popInformation(message("Found") + ": " + foundCount);
+
             }
 
         } catch (Exception e) {
@@ -252,7 +256,7 @@ public class WebFindController extends BaseWebViewController {
                 protected void whenSucceeded() {
                     String info = message("Found") + ": " + foundCount;
                     foundLabel.setText(info);
-                    popInformation(info);
+
                     if (foundCount > 0) {
                         List<String> numbers = new ArrayList<>();
                         for (int i = 1; i <= foundCount; i++) {

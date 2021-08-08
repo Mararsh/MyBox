@@ -4,33 +4,23 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.text.MessageFormat;
-import javafx.beans.binding.Bindings;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.PdfInformation;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.WebViewTools;
-import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
+import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
 import org.fit.pdfdom.PDFDomTreeConfig;
@@ -38,25 +28,28 @@ import thridparty.PDFResourceToDirHandler;
 
 /**
  * @Author Mara
- * @CreateDate 2019-8-31
+ * @CreateDate 2021-8-8
  * @License Apache License Version 2.0
  */
-public class PdfHtmlViewerController extends PdfViewController {
+public abstract class PdfViewController_Html extends PdfViewController_Texts {
 
     protected final String checkBottomScript, checkTopScript;
-
+    protected PdfInformation pdfInformation;
     protected File htmlFile, subPath;
     protected PDFDomTreeConfig domConfig;
     protected WebEngine webEngine;
-    protected float zoomScale;
     protected boolean atTop, atBottom, setScroll;
+    protected Task htmlTask;
+    protected int htmlPage;
 
     @FXML
+    protected Tab htmlTab;
+    @FXML
     protected WebView webView;
+    @FXML
+    protected Label webViewLabel;
 
-    public PdfHtmlViewerController() {
-        baseTitle = Languages.message("PdfHtmlViewer");
-
+    public PdfViewController_Html() {
         checkBottomScript
                 = " function checkBottom() { "
                 + "     var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;  "
@@ -80,20 +73,11 @@ public class PdfHtmlViewerController extends PdfViewController {
     }
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Html);
-    }
-
-    @Override
     public void initControls() {
         try {
             super.initControls();
 
-            operationBox.disableProperty().bind(Bindings.not(infoLoaded));
-            mainPane.disableProperty().bind(Bindings.not(infoLoaded));
-
             domConfig = PDFDomTreeConfig.createDefaultConfig();
-            zoomScale = 1.0f;
 
             // https://stackoverflow.com/questions/51048312/javafx-webview-scrollevent-listener-zooms-in-and-scrolls-only-want-it-to-zoom-i?r=SearchResults
             webView.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
@@ -163,61 +147,22 @@ public class PdfHtmlViewerController extends PdfViewController {
         }
     }
 
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            if (tipsView != null) {
-                NodeStyleTools.setTooltip(tipsView,
-                        new Tooltip(Languages.message("PDFComments") + "\n\n" + Languages.message("PdfHtmlViewerTips")));
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    @Override
-    public void loadFile(File file, PdfInformation pdfInfo, int page) {
-        try {
-            initPage(file, page);
-            webEngine.load(null);
-            infoLoaded.set(false);
-            outlineTree.setRoot(null);
-            if (file == null) {
-                return;
-            }
-            sourceFile = file;
-
-            if (pdfInfo != null) {
-                pdfInformation = pdfInfo;
-                loadPage();
-            } else {
-                pdfInformation = new PdfInformation(sourceFile);
-                loadInformation(null);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    @Override
-    protected void loadPage() {
-        if (pdfInformation == null) {
+    @FXML
+    public void convertHtml() {
+        if (imageView.getImage() == null) {
             return;
         }
-        initCurrentPage();
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                task.cancel();
+            if (htmlTask != null) {
+                htmlTask.cancel();
             }
-            task = new SingletonTask<Void>() {
+            htmlTask = new SingletonTask<Void>() {
 
                 protected String title;
 
                 @Override
                 protected boolean handle() {
-                    title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(Languages.message("PageNumber3"), (frameIndex + 1) + "");
+                    title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
                     htmlFile = TmpFileTools.getTempFile(".html");
                     subPath = new File(htmlFile.getParent() + File.separator
                             + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
@@ -250,85 +195,24 @@ public class PdfHtmlViewerController extends PdfViewController {
 
                 @Override
                 protected void whenSucceeded() {
-                    String name = htmlFile.getAbsolutePath();
-                    name = name.replace("\\\\", "/");
-                    webEngine.load("file:///" + name);
+                    webEngine.load(htmlFile.toURI().toString());
                     webView.requestFocus();
                     atBottom = false;
-
-                    getMyStage().setTitle(getBaseTitle() + " " + title);
-                    isSettingValues = true;
-                    pageSelector.setValue((frameIndex + 1) + "");
-                    isSettingValues = false;
-                    pagePreviousButton.setDisable(frameIndex <= 0);
-                    pageNextButton.setDisable(!infoLoaded.get() || frameIndex >= (pdfInformation.getNumberOfPages() - 1));
+                    htmlPage = frameIndex;
                 }
             };
-            handling(task, Modality.WINDOW_MODAL,
-                    MessageFormat.format(Languages.message("LoadingPageNumber"), (frameIndex + 1) + ""));
-            task.setSelf(task);
-            Thread thread = new Thread(task);
+            handling(htmlTask, Modality.WINDOW_MODAL,
+                    MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
+            Thread thread = new Thread(htmlTask);
             thread.setDaemon(false);
             thread.start();
         }
     }
 
     @FXML
-    @Override
-    public void zoomIn() {
-        zoomScale += 0.1f;
-        webView.setZoom(zoomScale);
-    }
-
-    @FXML
-    @Override
-    public void zoomOut() {
-        zoomScale -= 0.1f;
-        webView.setZoom(zoomScale);
-    }
-
-    @Override
-    protected void setPercent(int percent) {
-        zoomScale = percent / 100f;
-        webView.setZoom(zoomScale);
-    }
-
-    @FXML
-    public void editAction() {
+    public void editHtml() {
         HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
         controller.loadContents(WebViewTools.getHtml(webEngine));
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-        try {
-            if (htmlFile == null || subPath == null) {
-                return;
-            }
-            String name = "";
-            if (sourceFile != null) {
-                name = FileNameTools.getFilePrefix(sourceFile.getName());
-            }
-            final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                    name, targetExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file);
-
-            FileCopyTools.copyFile(htmlFile, file);
-            String path = file.getParent() + File.separator
-                    + htmlFile.getName().substring(0, htmlFile.getName().length() - 5);
-            FileCopyTools.copyWholeDirectory(subPath, new File(path));
-
-            if (file.exists()) {
-                ControllerTools.openHtmlEditor(null, file);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
 }

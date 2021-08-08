@@ -26,6 +26,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -65,6 +67,23 @@ public class NodeTools {
         try {
             Node node = pane.lookup("#" + nodeId);
             return node;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Window getWindow(Node node) {
+        try {
+            return node.getScene().getWindow();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static BaseController getController(Node node) {
+        try {
+            Window window = getWindow(node);
+            return (BaseController) (window.getUserData());
         } catch (Exception e) {
             return null;
         }

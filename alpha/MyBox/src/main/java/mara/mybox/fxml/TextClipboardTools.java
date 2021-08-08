@@ -6,7 +6,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.ControlTextClipboard;
+import mara.mybox.controller.TextInMyBoxClipboardController;
 import mara.mybox.controller.TextInSystemClipboardController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableTextClipboard;
@@ -197,7 +197,7 @@ public class TextClipboardTools {
                         }
                         table.save(conn, string);
                         conn.commit();
-                        ControlTextClipboard.updateMyBoxClipboard();
+                        TextInMyBoxClipboardController.updateMyBoxClipboard();
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                     }

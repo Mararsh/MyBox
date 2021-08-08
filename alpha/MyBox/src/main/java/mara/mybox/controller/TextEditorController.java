@@ -132,4 +132,10 @@ public class TextEditorController extends BaseFileEditorController {
         isSettingValues = false;
     }
 
+    @FXML
+    @Override
+    public void popAction() {
+        TextPopController.open(this, mainArea.getText());
+    }
+
 }

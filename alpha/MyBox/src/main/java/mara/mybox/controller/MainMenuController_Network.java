@@ -34,12 +34,12 @@ public abstract class MainMenuController_Network extends MainMenuController_File
 
     @FXML
     protected void webFind(ActionEvent event) {
-        loadScene(Fxmls.WebFindFxml);
+        loadScene(Fxmls.HtmlFindFxml);
     }
 
     @FXML
     protected void webElements(ActionEvent event) {
-        loadScene(Fxmls.WebElementsFxml);
+        loadScene(Fxmls.HtmlElementsFxml);
     }
 
     @FXML

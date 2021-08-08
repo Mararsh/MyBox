@@ -13,11 +13,10 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -32,7 +31,7 @@ public class MenuTextEditController extends MenuTextBaseController {
     protected Button findButton, replaceButton;
 
     public MenuTextEditController() {
-        baseTitle = Languages.message("Texts");
+        baseTitle = message("Texts");
     }
 
     @Override
@@ -76,11 +75,11 @@ public class MenuTextEditController extends MenuTextBaseController {
         }
         IndexRange range = textInput.getSelection();
         int selection = range != null ? range.getLength() : 0;
-        String info = Languages.message("Length") + ": " + textInput.getLength() + "  ";
+        String info = message("Length") + ": " + textInput.getLength() + "  ";
         if (selection > 0) {
-            info += Languages.message("Selection") + ": " + (range.getStart() + 1) + "-" + range.getEnd() + "(" + selection + ")";
+            info += message("Selection") + ": " + (range.getStart() + 1) + "-" + range.getEnd() + "(" + selection + ")";
         } else {
-            info += Languages.message("Cursor") + ": " + (textInput.getAnchor() + 1) + " " + Languages.message("Selection") + ": 0";
+            info += message("Cursor") + ": " + (textInput.getAnchor() + 1) + " " + message("Selection") + ": 0";
         }
         bottomLabel.setText(info);
         if (undoButton != null) {
@@ -129,9 +128,9 @@ public class MenuTextEditController extends MenuTextBaseController {
             replaceButton.setDisable(empty || !textInput.isEditable() || textInput.isDisable());
         }
         if (TextClipboardTools.isMonitoring()) {
-            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
         } else {
-            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
         }
     }
 
@@ -251,17 +250,7 @@ public class MenuTextEditController extends MenuTextBaseController {
         if (textInput == null) {
             return;
         }
-        if (parentController instanceof BaseFileEditorController) {
-            BaseFileEditorController e = (BaseFileEditorController) parentController;
-            if (textInput != null && textInput == e.mainArea) {
-                e.popAction();
-                return;
-            }
-        }
-        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-        controller.setAsPopup(baseName + "Pop");
-        controller.autoSaveCheck.setSelected(false);
-        controller.loadContents(textInput.getText());
+        TextPopController.open(parentController, textInput.getText());
     }
 
     /*

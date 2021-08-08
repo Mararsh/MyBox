@@ -23,7 +23,6 @@ public class Fxmls {
     public static final String NotesCopyNotesFxml = "/fxml/NotesCopyNotes.fxml";
     public static final String NotesMoveNotesFxml = "/fxml/NotesMoveNotes.fxml";
 
-    public static final String PdfHtmlViewerFxml = "/fxml/PdfHtmlViewer.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
     public static final String PdfAttributesBatchFxml = "/fxml/PdfAttributesBatch.fxml";
@@ -50,15 +49,17 @@ public class Fxmls {
     public static final String HtmlMergeAsPDFFxml = "/fxml/HtmlMergeAsPDF.fxml";
     public static final String HtmlMergeAsTextFxml = "/fxml/HtmlMergeAsText.fxml";
     public static final String HtmlFramesetFxml = "/fxml/HtmlFrameset.fxml";
-    public static final String WebFindFxml = "/fxml/WebFind.fxml";
-    public static final String WebElementsFxml = "/fxml/WebElements.fxml";
+    public static final String HtmlFindFxml = "/fxml/HtmlFind.fxml";
+    public static final String HtmlElementsFxml = "/fxml/HtmlElements.fxml";
     public static final String HtmlTableFxml = "/fxml/HtmlTable.fxml";
     public static final String HtmlPopFxml = "/fxml/HtmlPop.fxml";
+    public static final String HtmlCodesPopFxml = "/fxml/HtmlCodesPop.fxml";
 
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
     public static final String MarkdownToHtmlFxml = "/fxml/MarkdownToHtml.fxml";
     public static final String MarkdownToTextFxml = "/fxml/MarkdownToText.fxml";
     public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
+    public static final String MarkdownPopFxml = "/fxml/MarkdownPop.fxml";
 
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
@@ -71,6 +72,7 @@ public class Fxmls {
     public static final String TextPopFxml = "/fxml/TextPop.fxml";
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
+    public static final String BytesPopFxml = "/fxml/BytesPop.fxml";
 
     public static final String WordViewFxml = "/fxml/WordView.fxml";
     public static final String WordToHtmlFxml = "/fxml/WordToHtml.fxml";

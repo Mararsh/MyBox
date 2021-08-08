@@ -45,31 +45,52 @@ public class UrlTools {
     }
 
     public static String decodeURL(String value, Charset charset) {
-        if (value == null) {
-            return null;
+        try {
+            if (value == null) {
+                return null;
+            }
+            return URLDecoder.decode(value, charset);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return value;
         }
-        return URLDecoder.decode(value, charset);
     }
 
     public static String decodeURL(File file, Charset charset) {
-        if (file == null) {
+        try {
+            if (file == null) {
+                return null;
+            }
+            return decodeURL(file.toURI().toString(), charset);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
             return null;
         }
-        return decodeURL(file.toURI().toString(), charset);
     }
 
     public static String encodeURL(String value, Charset charset) {
-        if (value == null) {
-            return null;
+        try {
+            if (value == null) {
+                return null;
+            }
+            return URLEncoder.encode(value, charset);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return value;
         }
-        return URLEncoder.encode(value, charset);
     }
 
     public static String encodeURL(File file, Charset charset) {
-        if (file == null) {
+        try {
+            if (file == null) {
+                return null;
+            }
+            return encodeURL(file.toURI().toString(), charset);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
             return null;
         }
-        return encodeURL(file.toURI().toString(), charset);
+
     }
 
     public static String fullAddress(String baseAddress, String address) {

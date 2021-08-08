@@ -9,10 +9,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.poi.hslf.usermodel.HSLFObjectData;
@@ -59,36 +56,36 @@ public class PptExtractController extends BaseBatchFileController {
 
             slidesCheck.setSelected(UserConfig.getBoolean(baseName + "Slides", true));
             slidesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Slides", slidesCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Slides", slidesCheck.isSelected());
+            });
             notesCheck.setSelected(UserConfig.getBoolean(baseName + "Notes", true));
             notesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Notes", notesCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Notes", notesCheck.isSelected());
+            });
             masterCheck.setSelected(UserConfig.getBoolean(baseName + "Master", true));
             masterCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Master", masterCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Master", masterCheck.isSelected());
+            });
             commentsCheck.setSelected(UserConfig.getBoolean(baseName + "Comments", true));
             commentsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Comments", commentsCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Comments", commentsCheck.isSelected());
+            });
             soundsCheck.setSelected(UserConfig.getBoolean(baseName + "Sounds", true));
             soundsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Sounds", soundsCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Sounds", soundsCheck.isSelected());
+            });
             imagesCheck.setSelected(UserConfig.getBoolean(baseName + "Images", true));
             imagesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Images", imagesCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Images", imagesCheck.isSelected());
+            });
             wordCheck.setSelected(UserConfig.getBoolean(baseName + "Word", true));
             wordCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Word", wordCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Word", wordCheck.isSelected());
+            });
             excelCheck.setSelected(UserConfig.getBoolean(baseName + "Excel", true));
             excelCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) -> {
-                        UserConfig.setBoolean(baseName + "Excel", excelCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "Excel", excelCheck.isSelected());
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -147,7 +144,7 @@ public class PptExtractController extends BaseBatchFileController {
                         if (imagesCheck.isSelected() && (shape instanceof HSLFPictureShape)) {
                             HSLFPictureData pictData = ((HSLFPictureShape) shape).getPictureData();
                             targetFile = makeObjectFile(srcFile, slideIndex, ++pixIndex, pictData.getType().extension, targetPath);
-                            if (ByteFileTools.writeFile(targetFile, pictData.getData())) {
+                            if (ByteFileTools.writeFile(targetFile, pictData.getData()) != null) {
                                 targetFileGenerated(targetFile);
                             }
                         }
@@ -175,7 +172,7 @@ public class PptExtractController extends BaseBatchFileController {
                                     bytes = ByteFileTools.readBytes(file);
                                 }
                             }
-                            if (ByteFileTools.writeFile(targetFile, bytes)) {
+                            if (ByteFileTools.writeFile(targetFile, bytes) != null) {
                                 targetFileGenerated(targetFile);
                             }
                         }
@@ -194,7 +191,7 @@ public class PptExtractController extends BaseBatchFileController {
                 int soundIndex = 0;
                 for (HSLFSoundData sound : ppt.getSoundData()) {
                     targetFile = makeObjectFile(srcFile, -1, ++soundIndex, sound.getSoundType(), targetPath);
-                    if (ByteFileTools.writeFile(targetFile, sound.getData())) {
+                    if (ByteFileTools.writeFile(targetFile, sound.getData()) != null) {
                         targetFileGenerated(targetFile);
                     }
                 }
@@ -238,7 +235,7 @@ public class PptExtractController extends BaseBatchFileController {
                         if (imagesCheck.isSelected() && (shape instanceof XSLFPictureShape)) {
                             XSLFPictureData pictData = ((XSLFPictureShape) shape).getPictureData();
                             targetFile = makeObjectFile(srcFile, slideIndex, ++pixIndex, pictData.getType().extension, targetPath);
-                            if (ByteFileTools.writeFile(targetFile, pictData.getData())) {
+                            if (ByteFileTools.writeFile(targetFile, pictData.getData()) != null) {
                                 targetFileGenerated(targetFile);
                             }
                         }
@@ -263,7 +260,7 @@ public class PptExtractController extends BaseBatchFileController {
                                     bytes = ByteFileTools.readBytes(file);
                                 }
                             }
-                            if (ByteFileTools.writeFile(targetFile, bytes)) {
+                            if (ByteFileTools.writeFile(targetFile, bytes) != null) {
                                 targetFileGenerated(targetFile);
                             }
                         }

@@ -41,7 +41,7 @@ public class MenuWebviewController extends MenuController {
     protected Label tagLabel, htmlLabel, textLabel;
 
     public MenuWebviewController() {
-        baseTitle = message("Edit");
+        baseTitle = message("Html");
     }
 
     @Override
@@ -49,13 +49,13 @@ public class MenuWebviewController extends MenuController {
         setFileType(VisitHistory.FileType.Html);
     }
 
-    public void setParameters(BaseWebViewController webViewController, Element element) {
+    public void setParameters(BaseWebViewController webViewController, WebView webview, Element element) {
         try {
             if (webViewController == null) {
                 return;
             }
             this.webViewController = webViewController;
-            this.webView = webViewController.webView;
+            this.webView = webview;
             this.element = element;
             if (webView == null) {
                 return;
@@ -270,12 +270,12 @@ public class MenuWebviewController extends MenuController {
     /*
         static methods
      */
-    public static MenuWebviewController pop(BaseWebViewController parent, Element element, double x, double y) {
+    public static MenuWebviewController pop(BaseWebViewController parent, WebView webview, Element element, double x, double y) {
         try {
-            if (parent == null) {
+            if (parent == null || webview == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.MenuWebviewFxml, parent.webView, x, y);
+            Popup popup = PopTools.popWindow(parent, Fxmls.MenuWebviewFxml, webview, x, y);
             if (popup == null) {
                 return null;
             }
@@ -284,8 +284,26 @@ public class MenuWebviewController extends MenuController {
                 return null;
             }
             MenuWebviewController controller = (MenuWebviewController) object;
-            controller.setParameters(parent, element);
+            controller.setParameters(parent, webview, element);
             return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MenuWebviewController pop(BaseWebViewController parent, Element element, double x, double y) {
+        try {
+            return pop(parent, parent.webView, element, x, y);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MenuWebviewController pop(WebView webview, Element element, double x, double y) {
+        try {
+            return pop((BaseWebViewController) (webview.getUserData()), webview, element, x, y);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

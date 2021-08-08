@@ -42,7 +42,6 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="PDF">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfView" text="%PdfView" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openPdfHtmlViewer" text="%PdfHtmlViewer" />
                                         <MenuItem mnemonicParsing="false" onAction="#pdfPlay" text="%PdfPlay" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />

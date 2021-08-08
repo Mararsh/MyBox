@@ -15,12 +15,13 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextPopController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="600.0" spacing="5.0" 
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlCodesPopController">
     <children>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <CheckBox fx:id="wrapCheck" mnemonicParsing="false" selected="true" text="%Wrap" />
-            <CheckBox fx:id="openCheck" layoutX="455.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%OpenAfterSaveAs" />
+                <CheckBox fx:id="openCheck" layoutX="455.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%OpenAfterSaveAs" />
                 <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -18,7 +18,6 @@ import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
@@ -362,6 +361,12 @@ public class BytesEditorController extends BaseFileEditorController {
     @Override
     public void popMenu(MouseEvent mouseEvent) {
         MenuBytesEditController.open(myController, mainArea, mouseEvent);
+    }
+
+    @FXML
+    @Override
+    public void popAction() {
+        BytesPopController.open(this, mainArea.getText());
     }
 
 }

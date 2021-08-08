@@ -6,7 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
-import mara.mybox.controller.ControlTextClipboard;
+import mara.mybox.controller.TextInMyBoxClipboardController;
 import mara.mybox.controller.TextInSystemClipboardController;
 import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.dev.MyBoxLog;
@@ -35,7 +35,7 @@ public class TextClipboardMonitor extends Timer {
         schedule(new MonitorTask(), 0, this.interval);
         Platform.runLater(() -> {
             TextInSystemClipboardController.updateSystemClipboard();
-            ControlTextClipboard.updateMyBoxClipboard();
+            TextInMyBoxClipboardController.updateMyBoxClipboard();
         });
         MyBoxLog.debug("Text Clipboard Monitor started. Interval:" + interval);
         return this;
@@ -45,7 +45,7 @@ public class TextClipboardMonitor extends Timer {
         cancel();
         Platform.runLater(() -> {
             TextInSystemClipboardController.updateSystemClipboard();
-            ControlTextClipboard.updateMyBoxClipboard();
+            TextInMyBoxClipboardController.updateMyBoxClipboard();
         });
         MyBoxLog.debug("Text Clipboard Monitor stopped.");
     }

@@ -16,7 +16,6 @@ import javafx.stage.Popup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.Fxmls;
@@ -162,17 +161,7 @@ public class MenuBytesEditController extends MenuTextEditController {
         if (textInput == null) {
             return;
         }
-        if (parentController instanceof BaseFileEditorController) {
-            BaseFileEditorController e = (BaseFileEditorController) parentController;
-            if (textInput != null && textInput == e.mainArea) {
-                e.popAction();
-                return;
-            }
-        }
-        BytesEditorController controller = (BytesEditorController) openStage(Fxmls.BytesEditorFxml);
-        controller.setAsPopup(baseName + "Pop");
-        controller.autoSaveCheck.setSelected(false);
-        controller.loadContents(textInput.getText());
+        BytesPopController.open(parentController, textInput.getText());
     }
 
     /*

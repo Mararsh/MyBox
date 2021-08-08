@@ -52,9 +52,9 @@ public class ByteFileTools {
         return data;
     }
 
-    public static boolean writeFile(File file, byte[] data) {
+    public static File writeFile(File file, byte[] data) {
         if (file == null || data == null) {
-            return false;
+            return null;
         }
         file.getParentFile().mkdirs();
         try (final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
@@ -62,9 +62,9 @@ public class ByteFileTools {
             outputStream.flush();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return false;
+            return null;
         }
-        return true;
+        return file;
     }
 
     public static boolean mergeBytesFiles(File file1, File file2, File targetFile) {

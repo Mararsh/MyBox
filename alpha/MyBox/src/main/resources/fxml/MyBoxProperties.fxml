@@ -6,12 +6,14 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
 <VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxPropertiesController">
     <children>
@@ -36,6 +38,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconEdit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
         <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />

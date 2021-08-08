@@ -16,8 +16,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -26,17 +26,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -55,16 +50,14 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public class PdfViewController extends BaseFileImagesViewController {
+public class PdfViewController extends PdfViewController_Html {
 
-    protected PdfInformation pdfInformation;
     protected SimpleBooleanProperty infoLoaded;
     protected boolean isTransparent;
     protected Task outlineTask;
-    protected String password;
 
     @FXML
-    protected CheckBox transparentBackgroundCheck, bookmarksCheck;
+    protected CheckBox transparentBackgroundCheck, bookmarksCheck, wrapTextsCheck, wrapOCRCheck;
     @FXML
     protected ScrollPane outlineScrollPane;
     @FXML
@@ -95,6 +88,11 @@ public class PdfViewController extends BaseFileImagesViewController {
         try {
             super.initControls();
 
+            if (ocrOptionsController != null) {
+                ocrOptionsController.setParameters(this, false, false);
+            }
+            initTabPane();
+
             if (bookmarksCheck != null) {
                 bookmarksCheck.setSelected(UserConfig.getBoolean(baseName + "Bookmarks", true));
                 bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -124,15 +122,52 @@ public class PdfViewController extends BaseFileImagesViewController {
         }
     }
 
-    @Override
-    public void setControlsStyle() {
+    protected void initTabPane() {
         try {
-            super.setControlsStyle();
-            if (tipsView != null) {
-                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("PDFComments") + "\n\n" + Languages.message("PdfViewTips")));
-            }
+            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                @Override
+                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                    if (imageView.getImage() == null) {
+                        return;
+                    }
+                    if (newValue == ocrTab) {
+                        if (orcPage != frameIndex) {
+                            startOCR();
+                        }
+                    } else if (newValue == textsTab) {
+                        if (textsPage != frameIndex) {
+                            extractTexts();
+                        }
+                    } else if (newValue == htmlTab) {
+                        if (htmlPage != frameIndex) {
+                            convertHtml();
+                        }
+                    }
+                }
+            });
+
+            wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapTexts", true));
+            wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapTexts", newValue);
+                    textsArea.setWrapText(newValue);
+                }
+            });
+            textsArea.setWrapText(wrapTextsCheck.isSelected());
+
+            wrapOCRCheck.setSelected(UserConfig.getBoolean(baseName + "WrapOCR", true));
+            wrapOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapOCR", newValue);
+                    ocrArea.setWrapText(newValue);
+                }
+            });
+            ocrArea.setWrapText(wrapTextsCheck.isSelected());
+
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -168,6 +203,12 @@ public class PdfViewController extends BaseFileImagesViewController {
             initPage(file, page);
             infoLoaded.set(false);
             outlineTree.setRoot(null);
+            ocrArea.clear();
+            ocrLabel.setText("");
+            textsArea.clear();
+            textsLabel.setText("");
+            webEngine.load(null);
+            webViewLabel.setText("");
             if (file == null) {
                 return;
             }
@@ -182,6 +223,14 @@ public class PdfViewController extends BaseFileImagesViewController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    @Override
+    public void setSourceFile(File file) {
+        super.setSourceFile(file);
+        orcPage = -1;
+        textsPage = -1;
+        htmlPage = -1;
     }
 
     public void loadInformation(String inPassword) {
@@ -283,6 +332,22 @@ public class PdfViewController extends BaseFileImagesViewController {
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;
+        }
+    }
+
+    @Override
+    public void setImage(Image image, int percent) {
+        if (imageView == null) {
+            return;
+        }
+        super.setImage(image, percent);
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == ocrTab) {
+            startOCR();
+        } else if (tab == textsTab) {
+            extractTexts();
+        } else if (tab == htmlTab) {
+            convertHtml();
         }
     }
 
@@ -414,7 +479,7 @@ public class PdfViewController extends BaseFileImagesViewController {
             return;
         }
         try {
-            final PdfInformationController controller = (PdfInformationController) openStage(Fxmls.PdfInformationFxml);
+            PdfInformationController controller = (PdfInformationController) openStage(Fxmls.PdfInformationFxml);
             controller.setInformation(pdfInformation);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -422,12 +487,29 @@ public class PdfViewController extends BaseFileImagesViewController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (outlineTask != null && !outlineTask.isDone()) {
+    public void cleanPane() {
+        if (webEngine != null && webEngine.getLoadWorker() != null) {
+            webEngine.getLoadWorker().cancel();
+        }
+        webEngine = null;
+        webView.setUserData(null);
+        if (outlineTask != null) {
             outlineTask.cancel();
             outlineTask = null;
         }
-        return super.checkBeforeNextAction();
+        if (htmlTask != null) {
+            htmlTask.cancel();
+            htmlTask = null;
+        }
+        if (textsTask != null) {
+            textsTask.cancel();
+            textsTask = null;
+        }
+        if (ocrTask != null) {
+            ocrTask.cancel();
+            ocrTask = null;
+        }
+        super.cleanPane();
     }
 
 }

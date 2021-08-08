@@ -35,17 +35,15 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import mara.mybox.bufferedimage.CombineTools;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -79,7 +77,7 @@ public class HtmlSnapController extends BaseWebViewController {
     protected HBox snapBox;
 
     public HtmlSnapController() {
-        baseTitle = Languages.message("HtmlSnap");
+        baseTitle = message("HtmlSnap");
         TipsLabelKey = "HtmlSnapComments";
     }
 
@@ -98,20 +96,12 @@ public class HtmlSnapController extends BaseWebViewController {
         try {
             super.initControls();
 
-            initSnap();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void initSnap() {
-        try {
-            if (snapBox == null) {
-                return;
+            delay = UserConfig.getInt(baseName + "Delay", 2000);
+            if (delay <= 0) {
+                delay = 2000;
             }
-            delay = 2000;
             delayBox.getItems().addAll(Arrays.asList("2", "3", "5", "1", "10"));
+            delayBox.getSelectionModel().select(delay + "");
             delayBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
@@ -129,15 +119,14 @@ public class HtmlSnapController extends BaseWebViewController {
                     }
                 }
             });
-            delayBox.getSelectionModel().select(UserConfig.getInt(baseName + "Delay", 2) + "");
 
             snapGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-                    checkOneImage();
+                    checkType();
                 }
             });
-            checkOneImage();
+            checkType();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -145,9 +134,9 @@ public class HtmlSnapController extends BaseWebViewController {
 
     }
 
-    protected void checkOneImage() {
+    protected void checkType() {
         RadioButton selected = (RadioButton) snapGroup.getSelectedToggle();
-        if (Languages.message("OneImage").equals(selected.getText())) {
+        if (message("OneImage").equals(selected.getText())) {
             isOneImage = true;
             windowSizeCheck.setDisable(true);
 
@@ -168,16 +157,7 @@ public class HtmlSnapController extends BaseWebViewController {
     @FXML
     @Override
     public void saveAsAction() {
-        File file;
-        String name = "Snap" + (sourceFile != null ? "_" + FileNameTools.filenameFilter(sourceFile.getName()) : "")
-                + "_" + DateTools.nowFileString();
-        if (isOneImage) {
-            file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                    name + ".png", FileFilters.ImageExtensionFilter);
-        } else {
-            file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF)),
-                    name + ".pdf", FileFilters.PdfExtensionFilter);
-        }
+        File file = chooseSaveFile(defaultTargetName("Snap-"));
         if (file == null) {
             return;
         }
@@ -235,9 +215,9 @@ public class HtmlSnapController extends BaseWebViewController {
                     Platform.runLater(() -> {
                         try {
                             newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
-                            loadingController.setInfo(Languages.message("CurrentPageHeight") + ": " + newHeight);
+                            loadingController.setInfo(message("CurrentPageHeight") + ": " + newHeight);
                             if (newHeight == lastHeight) {
-                                loadingController.setInfo(Languages.message("ExpandingPage"));
+                                loadingController.setInfo(message("ExpandingPage"));
                                 startSnap();
                             } else {
                                 webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
@@ -267,7 +247,7 @@ public class HtmlSnapController extends BaseWebViewController {
             snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
             snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
             snapHeight = 0;
-            bottomLabel.setText(Languages.message("SnapingImage..."));
+            bottomLabel.setText(message("SnapingImage..."));
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
@@ -325,7 +305,7 @@ public class HtmlSnapController extends BaseWebViewController {
             File tmpfile = TmpFileTools.getTempFile(".png");
             ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(cropped, null), "png", tmpfile.getAbsolutePath());
             snaps.add(tmpfile);
-            loadingController.setInfo(Languages.message("CurrentPageHeight") + ": " + snapHeight);
+            loadingController.setInfo(message("CurrentPageHeight") + ": " + snapHeight);
             if (snapTotalHeight > snapHeight) {
                 webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
                 if (timer != null) {
@@ -345,7 +325,7 @@ public class HtmlSnapController extends BaseWebViewController {
                 }, 300);    // make sure page is loaded before snapping
 
             } else { // last snap
-                loadingController.setInfo(Languages.message("WritingFile"));
+                loadingController.setInfo(message("WritingFile"));
                 boolean success = true;
                 if (isOneImage) {
                     Runtime r = Runtime.getRuntime();
@@ -354,10 +334,10 @@ public class HtmlSnapController extends BaseWebViewController {
                     if (availableMem < requiredMem) {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setTitle(getBaseTitle());
-                        alert.setContentText(MessageFormat.format(Languages.message("MergedSnapshotTooLarge"), availableMem, requiredMem));
+                        alert.setContentText(MessageFormat.format(message("MergedSnapshotTooLarge"), availableMem, requiredMem));
                         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                        ButtonType buttonPdf = new ButtonType(Languages.message("SaveAsPdf"));
-                        ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+                        ButtonType buttonPdf = new ButtonType(message("SaveAsPdf"));
+                        ButtonType buttonCancel = new ButtonType(message("Cancel"));
                         alert.getButtonTypes().setAll(buttonPdf, buttonCancel);
                         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                         stage.setAlwaysOnTop(true);

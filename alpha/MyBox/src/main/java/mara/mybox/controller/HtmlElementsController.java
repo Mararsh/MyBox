@@ -38,7 +38,7 @@ import org.w3c.dom.html.HTMLDocument;
  * @CreateDate 2021-5-5
  * @License Apache License Version 2.0
  */
-public class WebElementsController extends BaseWebViewController {
+public class HtmlElementsController extends BaseWebViewController {
 
     protected int foundCount;
     protected HTMLDocument loadedDoc;
@@ -58,7 +58,7 @@ public class WebElementsController extends BaseWebViewController {
     @FXML
     protected Label codesLabel;
 
-    public WebElementsController() {
+    public HtmlElementsController() {
         baseTitle = Languages.message("WebElements");
     }
 

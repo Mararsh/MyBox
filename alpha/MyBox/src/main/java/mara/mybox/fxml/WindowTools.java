@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
@@ -187,7 +188,11 @@ public class WindowTools {
             Stage stage = new Stage();
             stage.initModality(modality);
             if (isOwned && parent != null) {
-                stage.initOwner(parent);
+                if (parent instanceof Popup) {
+                    stage.initOwner(((Popup) parent).getOwnerWindow());
+                } else {
+                    stage.initOwner(parent);
+                }
             } else {
                 stage.initOwner(null);
             }

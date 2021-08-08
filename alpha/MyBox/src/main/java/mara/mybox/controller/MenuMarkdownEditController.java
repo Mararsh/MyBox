@@ -406,17 +406,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
         if (textInput == null) {
             return;
         }
-        if (parentController instanceof BaseFileEditorController) {
-            BaseFileEditorController e = (BaseFileEditorController) parentController;
-            if (textInput != null && textInput == e.mainArea) {
-                e.popAction();
-                return;
-            }
-        }
-        MarkdownEditorController controller = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
-        controller.setAsPopup(baseName + "Pop");
-        controller.autoSaveCheck.setSelected(false);
-        controller.loadContents(textInput.getText());
+        MarkdownPopController.open(parentController, textInput.getText());
     }
 
     /*

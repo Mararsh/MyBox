@@ -1,72 +1,45 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.Arrays;
 import mara.mybox.data.PdfInformation;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import mara.mybox.tools.DateTools;
-import static mara.mybox.tools.FileTools.showFileSize;
-import mara.mybox.value.AppVariables;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.Languages;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2018-6-9 16:32:08
- * @Description
+ * @CreateDate 2021-8-8
  * @License Apache License Version 2.0
  */
-public class PdfInformationController extends BaseController {
-
-    @FXML
-    protected TextField FilesPath;
-    @FXML
-    protected TextField FileName;
-    @FXML
-    protected TextField FileSize;
-    @FXML
-    protected TextField title;
-    @FXML
-    protected TextField subject;
-    @FXML
-    protected TextField creator;
-    @FXML
-    protected TextField author;
-    @FXML
-    protected TextField createTime;
-    @FXML
-    protected TextField modifyTime;
-    @FXML
-    protected TextField producer;
-    @FXML
-    protected TextField version;
-    @FXML
-    protected TextField numberOfPages;
-    @FXML
-    protected TextField firstPageSize, firstPageSize2;
+public class PdfInformationController extends HtmlTableController {
 
     public PdfInformationController() {
-        baseTitle = Languages.message("PdfInformation");
-
+        baseTitle = "PDF";
     }
 
     public void setInformation(PdfInformation info) {
         try {
             File file = info.getFile();
-            FilesPath.setText(file.getParent());
-            FileName.setText(file.getName());
-            FileSize.setText(showFileSize(file.length()));
-            title.setText(info.getTitle());
-            subject.setText(info.getSubject());
-            creator.setText(info.getCreator());
-            author.setText(info.getAuthor());
-            createTime.setText(DateTools.datetimeToString(info.getCreateTime()));
-            modifyTime.setText(DateTools.datetimeToString(info.getModifyTime()));
-            producer.setText(info.getProducer());
-            version.setText(info.getVersion() + "");
-            numberOfPages.setText(info.getNumberOfPages() + "");
-            firstPageSize.setText(info.getFirstPageSize());
-            firstPageSize2.setText(info.getFirstPageSize2());
+            table = new StringTable();
+            table.add(Arrays.asList(message("FilesPath"), file.getParent()));
+            table.add(Arrays.asList(message("FileName"), file.getName()));
+            table.add(Arrays.asList(message("FileSize"), FileTools.showFileSize(file.length())));
+            table.add(Arrays.asList(message("Title"), info.getTitle()));
+            table.add(Arrays.asList(message("Subject"), info.getSubject()));
+            table.add(Arrays.asList(message("Author"), info.getAuthor()));
+            table.add(Arrays.asList(message("Creator"), info.getCreator()));
+            table.add(Arrays.asList(message("CreateTime"), DateTools.datetimeToString(info.getCreateTime())));
+            table.add(Arrays.asList(message("ModifyTime"), DateTools.datetimeToString(info.getModifyTime())));
+            table.add(Arrays.asList(message("PDFProducer"), info.getProducer()));
+            table.add(Arrays.asList(message("Version"), info.getVersion() + ""));
+            table.add(Arrays.asList(message("NumberOfPages"), info.getNumberOfPages() + ""));
+            table.add(Arrays.asList(message("FirstPageSize"), info.getFirstPageSize()));
+            table.add(Arrays.asList("", info.getFirstPageSize2()));
+
+            displayHtml();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

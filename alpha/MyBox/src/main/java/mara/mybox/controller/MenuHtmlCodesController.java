@@ -424,9 +424,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
         if (textInput == null) {
             return;
         }
-        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.setAsPopup(baseName + "Pop");
-        controller.loadContents(textInput.getText());
+        HtmlCodesPopController.open(parentController, textInput.getText());
     }
 
     /*

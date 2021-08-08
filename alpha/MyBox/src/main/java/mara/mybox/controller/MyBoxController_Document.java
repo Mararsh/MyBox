@@ -8,9 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -31,11 +28,6 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         Menu pdfMenu = new Menu("PDF");
-
-        MenuItem pdfHtmlViewer = new MenuItem(Languages.message("PdfHtmlViewer"));
-        pdfHtmlViewer.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.PdfHtmlViewerFxml);
-        });
 
         MenuItem pdfView = new MenuItem(Languages.message("PdfView"));
         pdfView.setOnAction((ActionEvent event1) -> {
@@ -109,7 +101,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         pdfMenu.getItems().addAll(
-                pdfView, pdfHtmlViewer, PdfPlay, new SeparatorMenuItem(),
+                pdfView, PdfPlay, new SeparatorMenuItem(),
                 pdfConvertImagesBatch, PdfImagesConvertBatch, pdfConvertHtmlsBatch, pdfCompressImagesBatch, new SeparatorMenuItem(),
                 pdfExtractImagesBatch, pdfExtractTextsBatch, pdfOcrBatch, new SeparatorMenuItem(),
                 PdfSplitBatch, pdfMerge, imagesCombinePdf, new SeparatorMenuItem(),
@@ -196,12 +188,12 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         MenuItem WebFind = new MenuItem(Languages.message("WebFind"));
         WebFind.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.WebFindFxml);
+            loadScene(Fxmls.HtmlFindFxml);
         });
 
         MenuItem WebElements = new MenuItem(Languages.message("WebElements"));
         WebElements.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.WebElementsFxml);
+            loadScene(Fxmls.HtmlElementsFxml);
         });
 
         MenuItem HtmlMergeAsHtml = new MenuItem(Languages.message("HtmlMergeAsHtml"));

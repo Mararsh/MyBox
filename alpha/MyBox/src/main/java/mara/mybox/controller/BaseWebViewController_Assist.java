@@ -794,7 +794,7 @@ public abstract class BaseWebViewController_Assist extends BaseController {
             if (linkX < 0 || linkY < 0) {
                 return;
             }
-            MenuWebviewController.pop((BaseWebViewController) this, element, linkX, linkY);
+            MenuWebviewController.pop((BaseWebViewController) this, webView, element, linkX, linkY);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

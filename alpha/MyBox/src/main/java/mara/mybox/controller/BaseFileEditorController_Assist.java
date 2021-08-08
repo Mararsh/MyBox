@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
@@ -38,9 +37,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
@@ -960,14 +957,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
         if (!formatMainArea()) {
             return;
         }
-        String name;
-        if (sourceFile != null) {
-            name = FileNameTools.getFilePrefix(sourceFile.getName());
-        } else {
-            name = new Date().getTime() + "";
-        }
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                name, targetExtensionFilter);
+        final File file = chooseSaveFile();
         if (file == null) {
             return;
         }

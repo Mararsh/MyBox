@@ -308,7 +308,7 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
 
             menu = new MenuItem(message("HtmlCodes"));
             menu.setOnAction((ActionEvent event) -> {
-                TextPopController.open(myController, html);
+                HtmlCodesPopController.open(myController, html);
             });
             menu.setDisable(html == null || html.isBlank());
             items.add(menu);
@@ -322,7 +322,7 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
 
             menu = new MenuItem(message("WebElements"));
             menu.setOnAction((ActionEvent event) -> {
-                WebElementsController controller = (WebElementsController) WindowTools.openStage(Fxmls.WebElementsFxml);
+                HtmlElementsController controller = (HtmlElementsController) WindowTools.openStage(Fxmls.HtmlElementsFxml);
                 if (address != null && !address.isBlank()) {
                     controller.loadAddress(address);
                 } else if (html != null && !html.isBlank()) {
@@ -417,7 +417,7 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     }
 
     public void find(String html) {
-        WebFindController controller = (WebFindController) WindowTools.openStage(Fxmls.WebFindFxml);
+        HtmlFindController controller = (HtmlFindController) WindowTools.openStage(Fxmls.HtmlFindFxml);
         controller.loadContents(html);
         controller.setAddress(address);
         controller.toFront();
@@ -584,7 +584,7 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     @FXML
     @Override
     public void popAction() {
-        HtmlPopController.open(this, webView);
+        HtmlPopController.open(parentController, WebViewTools.getHtml(webView));
     }
 
     @Override

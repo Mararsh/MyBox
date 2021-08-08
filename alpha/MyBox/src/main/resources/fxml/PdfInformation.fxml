@@ -6,74 +6,53 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfInformationController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" spacing="5.0" 
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfInformationController">
     <children>
-        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="520.0" prefWidth="860.0" VBox.vgrow="NEVER">
-            <content>
-                <GridPane alignment="CENTER_LEFT">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="0.0" prefWidth="0.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="630.0" minWidth="10.0" prefWidth="630.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                        <Label text="%FilesPath" />
-                        <TextField fx:id="FilesPath" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" />
-                        <Label text="%FileName" GridPane.rowIndex="1" />
-                        <TextField fx:id="FileName" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label text="%FileSize" GridPane.rowIndex="2" />
-                        <TextField fx:id="FileSize" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="%Title" GridPane.rowIndex="3" />
-                        <TextField fx:id="title" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label text="%Subject" GridPane.rowIndex="4" />
-                        <TextField fx:id="subject" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label text="%Author" GridPane.rowIndex="5" />
-                        <TextField fx:id="author" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <Label text="%Creator" GridPane.rowIndex="6" />
-                        <TextField fx:id="creator" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <Label text="%CreateTime" GridPane.rowIndex="7" />
-                        <TextField fx:id="createTime" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <Label text="%ModifyTime" GridPane.rowIndex="8" />
-                        <TextField fx:id="modifyTime" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                        <Label text="%PDFProducer" GridPane.rowIndex="9" />
-                        <TextField fx:id="producer" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                        <Label text="%Version" GridPane.rowIndex="10" />
-                        <TextField fx:id="version" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                        <Label text="%NumberOfPages" GridPane.rowIndex="11" />
-                        <TextField fx:id="numberOfPages" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                        <Label text="%FirstPageSize" GridPane.rowIndex="12" />
-                        <TextField fx:id="firstPageSize" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                        <Label text=" " GridPane.rowIndex="13" />
-                        <TextField fx:id="firstPageSize2" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                    </children>
-                    <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                    </padding>
-                </GridPane>
-            </content>
-            <VBox.margin>
-                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-            </VBox.margin>
-        </ScrollPane>
+        <HBox alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconStyle.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconSave.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconEdit.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
     </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
 </VBox>

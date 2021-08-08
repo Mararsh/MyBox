@@ -517,7 +517,7 @@ public class HtmlEditorController extends BaseWebViewController {
 
     @FXML
     public void popViewMenu(MouseEvent mouseEvent) {
-        MenuWebviewController.open(myController, null, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
+        MenuWebviewController.pop(this, null, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 
     /*
@@ -789,10 +789,10 @@ public class HtmlEditorController extends BaseWebViewController {
                 HtmlPopController.open(this, htmlInWebview());
 
             } else if (tab == markdownTab) {
-                TextPopController.open(this, markdownArea.getText());
+                MarkdownPopController.open(this, markdownArea.getText());
 
             } else if (tab == codesTab) {
-                TextPopController.open(this, codesArea.getText());
+                HtmlCodesPopController.open(this, codesArea.getText());
 
             } else if (tab == editorTab) {
                 HtmlPopController.open(this, htmlByEditor());

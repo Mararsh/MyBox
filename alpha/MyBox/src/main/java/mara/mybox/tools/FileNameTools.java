@@ -98,6 +98,23 @@ public class FileNameTools {
         return pos >= 0 ? path + name.substring(0, pos) : path + name;
     }
 
+    public static String prefixFilter(File file) {
+        try {
+            return prefixFilter(file.getName());
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static String prefixFilter(String file) {
+        String prefix = getFilePrefix(file);
+        if (prefix == null || prefix.isBlank()) {
+            return prefix;
+        }
+        Pattern pattern = Pattern.compile(AppValues.FileNameSpecialChars);
+        return pattern.matcher(prefix).replaceAll("_");
+    }
+
     public static String getFileSuffix(File file) {
         if (file == null) {
             return null;
