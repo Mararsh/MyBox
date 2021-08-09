@@ -22,15 +22,12 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -53,7 +50,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     protected ComboBox<String> intervalSelector, widthSelector;
 
     public ImageInSystemClipboardController() {
-        baseTitle = Languages.message("ImagesInSystemClipboard");
+        baseTitle = message("ImagesInSystemClipboard");
         TipsLabelKey = "RecordImagesTips";
     }
 
@@ -64,26 +61,26 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
             clipboard = Clipboard.getSystemClipboard();
 
-            saveCheck.setSelected(UserConfig.getBoolean(baseName + "Save", false));
+            saveCheck.setSelected(ImageClipboardTools.isSave());
             saveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Save", newValue);
+                    ImageClipboardTools.setSave(newValue);
                 }
             });
 
-            copyCheck.setSelected(UserConfig.getBoolean(baseName + "Copy", false));
+            copyCheck.setSelected(ImageClipboardTools.isCopy());
             copyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Copy", newValue);
+                    ImageClipboardTools.setCopy(newValue);
                 }
             });
 
-            List<String> values = Arrays.asList(Languages.message("OriginalSize"),
+            List<String> values = Arrays.asList(message("OriginalSize"),
                     "512", "1024", "256", "128", "2048", "100", "80", "4096");
             widthSelector.getItems().addAll(values);
-            int v = UserConfig.getInt(baseName + "ScaledWidth", -1);
+            int v = ImageClipboardTools.getWidth();
             if (v <= 0) {
                 scaledWidth = -1;
                 widthSelector.getSelectionModel().select(0);
@@ -94,7 +91,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             widthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (Languages.message("OriginalSize").equals(newValue)) {
+                    if (message("OriginalSize").equals(newValue)) {
                         scaledWidth = -1;
                     } else {
                         try {
@@ -105,7 +102,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                             return;
                         }
                     }
-                    UserConfig.setInt(baseName + "ScaledWidth", scaledWidth);
+                    ImageClipboardTools.setWidth(scaledWidth);
                 }
             });
 
@@ -119,6 +116,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                         if (v > 0) {
                             intervalSelector.getEditor().setStyle(null);
                             ImageClipboardTools.setMonitorInterval(v);
+                            startMonitor();
                         } else {
                             intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
@@ -141,7 +139,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-
+        updateStatus();
         refreshAction();
     }
 
@@ -149,8 +147,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(clearButton, new Tooltip(Languages.message("DeleteSysTemporaryPathFiles")));
-            NodeStyleTools.setTooltip(clearBoardButton, new Tooltip(Languages.message("ClearSystemClipboard")));
+            NodeStyleTools.setTooltip(clearButton, new Tooltip(message("DeleteSysTemporaryPathFiles")));
+            NodeStyleTools.setTooltip(clearBoardButton, new Tooltip(message("ClearSystemClipboard")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -166,32 +164,37 @@ public class ImageInSystemClipboardController extends ImageViewerController {
         WindowTools.openStage(Fxmls.FilesDeleteSysTempFxml);
     }
 
+    public void startMonitor() {
+        try {
+            if (targetPath != null) {
+                if (targetPrefixInput.getText().trim().isEmpty()) {
+                    filePrefix = targetPath.getAbsolutePath() + File.separator;
+                } else {
+                    filePrefix = targetPath.getAbsolutePath() + File.separator
+                            + targetPrefixInput.getText().trim() + "-";
+                }
+            } else {
+                filePrefix = null;
+            }
+            if (imageClipboardMonitor != null) {
+                imageClipboardMonitor.cancel();
+                imageClipboardMonitor = null;
+            }
+            imageClipboardMonitor = new ImageClipboardMonitor()
+                    .start(ImageClipboardTools.getMonitorInterval(), attributes, filePrefix);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     @FXML
     @Override
     public synchronized void startAction() {
         try {
             if (ImageClipboardTools.isMonitoring()) {
-                if (imageClipboardMonitor != null) {
-                    imageClipboardMonitor.stop();
-                    imageClipboardMonitor = null;
-                }
+                ImageClipboardTools.stopImageClipboardMonitor();
             } else {
-                if (targetPath != null) {
-                    if (targetPrefixInput.getText().trim().isEmpty()) {
-                        filePrefix = targetPath.getAbsolutePath() + File.separator;
-                    } else {
-                        filePrefix = targetPath.getAbsolutePath() + File.separator
-                                + targetPrefixInput.getText().trim() + "-";
-                    }
-                } else {
-                    filePrefix = null;
-                }
-                if (imageClipboardMonitor != null) {
-                    imageClipboardMonitor.cancel();
-                    imageClipboardMonitor = null;
-                }
-                imageClipboardMonitor = new ImageClipboardMonitor()
-                        .start(copyCheck.isSelected(), saveCheck.isSelected(), attributes, filePrefix, scaledWidth);
+                startMonitor();
             }
             updateStatus();
         } catch (Exception e) {
@@ -202,15 +205,21 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     public synchronized void updateStatus() {
         try {
             if (ImageClipboardTools.isMonitoring()) {
-                StyleTools.setNameIcon(startButton, Languages.message("StopRecording"), "iconStop.png");
+                StyleTools.setNameIcon(startButton, message("StopRecording"), "iconStop.png");
                 startButton.applyCss();
-                recordLabel.setText(Languages.message("MonitoringImageInSystemClipboardAndNotice"));
-                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+                recordLabel.setText(message("MonitoringImageInSystemClipboardAndNotice"));
             } else {
-                StyleTools.setNameIcon(startButton, Languages.message("StartRecording"), "iconStart.png");
+                StyleTools.setNameIcon(startButton, message("StartRecording"), "iconStart.png");
                 startButton.applyCss();
-                recordLabel.setText(Languages.message("NotMonitoringImageInSystemClipboard"));
-                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(Languages.message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+                recordLabel.setText(message("NotMonitoringImageInSystemClipboard"));
+            }
+            if (ImageClipboardTools.isMonitoringCopy()) {
+                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+            } else {
+                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+            }
+            if (ImageClipboardTools.isSave() && filePrefix == null) {
+                popError(message("ImageNotSaveDueInvalidPath"));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -220,7 +229,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     @FXML
     public void refreshAction() {
         if (!clipboard.hasImage()) {
-            popError(Languages.message("NoImageInClipboard"));
+            popError(message("NoImageInClipboard"));
             return;
         }
         loadClip(clipboard.getImage());
@@ -265,7 +274,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
         return controller;
     }
 
-    public static void updateSystemClipboard() {
+    public static void updateSystemClipboardStatus() {
         Platform.runLater(() -> {
             ImageInSystemClipboardController controller = running();
             if (controller != null) {

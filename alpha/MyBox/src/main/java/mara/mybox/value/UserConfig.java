@@ -5,7 +5,7 @@ import java.sql.Connection;
 import javafx.scene.paint.Color;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import static mara.mybox.value.AppVariables.userConfigValues;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
@@ -120,7 +120,7 @@ public class UserConfig {
     }
 
     public static File getPath(String key) {
-        return getPath(key, MyboxDataPath);
+        return getPath(key, MyBoxTempPath.getAbsolutePath());
     }
 
     public static File getPath(String key, String defaultValue) {
@@ -137,7 +137,7 @@ public class UserConfig {
             File path = new File(pathString);
             if (!path.exists() || !path.isDirectory()) {
                 deleteValue(key);
-                path = new File(MyboxDataPath);
+                path = MyBoxTempPath;
                 if (!path.exists()) {
                     path.mkdirs();
                 }

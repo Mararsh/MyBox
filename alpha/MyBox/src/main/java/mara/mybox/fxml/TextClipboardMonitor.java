@@ -20,22 +20,21 @@ public class TextClipboardMonitor extends Timer {
 
     public final static int DefaultInterval = 200;
     protected Date startTime = null;
-    protected int number, interval;
+    protected int number;
     protected final Clipboard clipboard = Clipboard.getSystemClipboard();
     protected final TableTextClipboard tableTextClipboard = new TableTextClipboard();
     protected String lastString = "";
-    protected boolean isCopy = false;
     protected Connection conn = null;
     protected TextInSystemClipboardController controller;
 
-    public TextClipboardMonitor start(int interval) {
-        this.interval = TextClipboardTools.setMonitorInterval(interval);
+    public TextClipboardMonitor start(int inInterval) {
+        int interval = TextClipboardTools.setMonitorInterval(inInterval);
         startTime = new Date();
         number = 0;
-        schedule(new MonitorTask(), 0, this.interval);
+        schedule(new MonitorTask(), 0, interval);
         Platform.runLater(() -> {
-            TextInSystemClipboardController.updateSystemClipboard();
-            TextInMyBoxClipboardController.updateMyBoxClipboard();
+            TextInSystemClipboardController.updateSystemClipboardStatus();
+            TextInMyBoxClipboardController.updateMyBoxClipboardStatus();
         });
         MyBoxLog.debug("Text Clipboard Monitor started. Interval:" + interval);
         return this;
@@ -44,8 +43,8 @@ public class TextClipboardMonitor extends Timer {
     public void stop() {
         cancel();
         Platform.runLater(() -> {
-            TextInSystemClipboardController.updateSystemClipboard();
-            TextInMyBoxClipboardController.updateMyBoxClipboard();
+            TextInSystemClipboardController.updateSystemClipboardStatus();
+            TextInMyBoxClipboardController.updateMyBoxClipboardStatus();
         });
         MyBoxLog.debug("Text Clipboard Monitor stopped.");
     }
@@ -64,8 +63,7 @@ public class TextClipboardMonitor extends Timer {
                             return;
                         }
                         controller = TextInSystemClipboardController.running();
-                        isCopy = TextClipboardTools.isCopy();
-                        if (!isCopy && controller == null) {
+                        if (!TextClipboardTools.isCopy() && controller == null) {
                             TextClipboardTools.stopTextClipboardMonitor();
                             return;
                         }
@@ -76,7 +74,7 @@ public class TextClipboardMonitor extends Timer {
 
                         lastString = clip;
                         number++;
-                        if (isCopy) {
+                        if (TextClipboardTools.isCopy()) {
                             TextClipboardTools.stringToMyBoxClipboard(tableTextClipboard, conn, lastString);
                         }
                         if (controller != null) {
@@ -116,14 +114,6 @@ public class TextClipboardMonitor extends Timer {
 
     public void setLastString(String lastString) {
         this.lastString = lastString;
-    }
-
-    public boolean isIsCopy() {
-        return isCopy;
-    }
-
-    public void setIsCopy(boolean isCopy) {
-        this.isCopy = isCopy;
     }
 
     public Connection getConn() {

@@ -52,8 +52,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -128,10 +126,6 @@ public class ImageOCRController extends ImageViewerController {
         TargetPathType = VisitHistory.FileType.Text;
         TargetFileType = VisitHistory.FileType.Text;
         targetExtensionFilter = FileFilters.TextExtensionFilter;
-
-        needNotRulers = true;
-        needNotCoordinates = true;
-
     }
 
     @Override

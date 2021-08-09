@@ -21,22 +21,17 @@ import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import javafx.stage.Screen;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -364,9 +359,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 //                            ImageViewerController controller1
 //                                    = (ImageViewerController) openStage(CommonValues.ImageFxml);
 //                            controller1.loadImage(transparent);
-                            ImageViewerController controller
-                                    = (ImageViewerController) openStage(Fxmls.ImagePopupFxml);
-                            controller.loadImage(blended);
+                            ImagePopController.open(imageController, blended);
                         } else {
                             imageController.updateImage(ImageOperation.RichText, null, null, blended, cost);
                             webView = null;

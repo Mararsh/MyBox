@@ -87,7 +87,12 @@ public class HtmlPopController extends BaseWebViewController {
                 return null;
             }
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
-            controller.loadContents(html);
+            if (parent instanceof BaseWebViewController) {
+                BaseWebViewController c = (BaseWebViewController) parent;
+                controller.loadContents(c.address, html);
+            } else {
+                controller.loadContents(html);
+            }
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

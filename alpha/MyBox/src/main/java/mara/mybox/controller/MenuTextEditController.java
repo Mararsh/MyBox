@@ -127,7 +127,7 @@ public class MenuTextEditController extends MenuTextBaseController {
         if (replaceButton != null) {
             replaceButton.setDisable(empty || !textInput.isEditable() || textInput.isDisable());
         }
-        if (TextClipboardTools.isMonitoring()) {
+        if (TextClipboardTools.isMonitoringCopy()) {
             NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
         } else {
             NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));

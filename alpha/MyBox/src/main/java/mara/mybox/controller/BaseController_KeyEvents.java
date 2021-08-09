@@ -474,13 +474,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltP() {
-        if (popButton != null) {
-            if (!popButton.isDisabled() && popButton.isVisible()) {
-                popAction();
-            }
-            return true;
-        }
-        return false;
+        popAction();
+        return true;
     }
 
     public boolean controlAltW() {

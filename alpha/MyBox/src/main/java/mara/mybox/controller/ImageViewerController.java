@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -13,14 +12,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -31,7 +28,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -44,19 +40,18 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.ImageClipboardTools;
+import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileSortTools;
@@ -64,7 +59,7 @@ import mara.mybox.tools.FileSortTools.FileSortMode;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -103,7 +98,7 @@ public class ImageViewerController extends BaseImageShapesController {
     protected ControlFileBackup backupController;
 
     public ImageViewerController() {
-        baseTitle = Languages.message("ImageViewer");
+        baseTitle = message("ImageViewer");
         TipsLabelKey = "ImageViewerTips";
     }
 
@@ -129,7 +124,7 @@ public class ImageViewerController extends BaseImageShapesController {
         try {
             super.setControlsStyle();
             if (loadWidthBox != null) {
-                NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(Languages.message("ImageLoadWidthCommnets")));
+                NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(message("ImageLoadWidthCommnets")));
             }
             if (selectAreaCheck != null) {
                 NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
@@ -151,7 +146,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
             loadWidth = defaultLoadWidth;
             if (loadWidthBox != null) {
-                List<String> values = Arrays.asList(Languages.message("OriginalSize"),
+                List<String> values = Arrays.asList(message("OriginalSize"),
                         "512", "1024", "256", "128", "2048", "100", "80", "4096");
                 loadWidthBox.getItems().addAll(values);
                 int v = UserConfig.getInt(baseName + "LoadWidth", defaultLoadWidth);
@@ -165,7 +160,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        if (Languages.message("OriginalSize").equals(newValue)) {
+                        if (message("OriginalSize").equals(newValue)) {
                             loadWidth = -1;
                         } else {
                             try {
@@ -266,15 +261,14 @@ public class ImageViewerController extends BaseImageShapesController {
             MenuItem menu;
 
             List<MenuItem> subItems = new ArrayList<>();
-            menu = new MenuItem(Languages.message("Pop")
-                    + (popButton != null && popButton.isVisible() && !popButton.isDisabled() ? "  CTRL+p" : ""));
+            menu = new MenuItem(message("Pop") + "  CTRL+p");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 popAction();
             });
             subItems.add(menu);
 
             if (pickColorCheck != null && pickColorCheck.isVisible() && !pickColorCheck.isDisabled()) {
-                CheckMenuItem checkMenu = new CheckMenuItem(Languages.message("PickColor"));
+                CheckMenuItem checkMenu = new CheckMenuItem(message("PickColor"));
                 checkMenu.setSelected(pickColorCheck.isSelected());
                 checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
                     pickColorCheck.setSelected(checkMenu.isSelected());
@@ -282,48 +276,44 @@ public class ImageViewerController extends BaseImageShapesController {
                 subItems.add(checkMenu);
             }
 
-            if (!needNotCoordinates) {
-                CheckMenuItem checkMenu = new CheckMenuItem(Languages.message("Coordinate"));
-                checkMenu.setSelected(coordinateCheck != null ? coordinateCheck.isSelected()
-                        : UserConfig.getBoolean(baseName + "PopCooridnate", false));
-                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (coordinateCheck != null) {
-                        coordinateCheck.setSelected(checkMenu.isSelected());
-                    } else {
-                        UserConfig.setBoolean(baseName + "PopCooridnate", checkMenu.isSelected());
-                        checkCoordinate();
-                    }
-                });
-                subItems.add(checkMenu);
-            }
+            CheckMenuItem coordinateMenu = new CheckMenuItem(message("Coordinate"));
+            coordinateMenu.setSelected(coordinateCheck != null ? coordinateCheck.isSelected()
+                    : UserConfig.getBoolean(baseName + "PopCooridnate", false));
+            coordinateMenu.setOnAction((ActionEvent menuItemEvent) -> {
+                if (coordinateCheck != null) {
+                    coordinateCheck.setSelected(coordinateMenu.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "PopCooridnate", coordinateMenu.isSelected());
+                    checkCoordinate();
+                }
+            });
+            subItems.add(coordinateMenu);
 
-            if (!needNotRulers) {
-                CheckMenuItem checkMenuX = new CheckMenuItem(Languages.message("RulerX"));
-                checkMenuX.setSelected(rulerXCheck != null ? rulerXCheck.isSelected()
-                        : UserConfig.getBoolean(baseName + "RulerX", false));
-                checkMenuX.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (rulerXCheck != null) {
-                        rulerXCheck.setSelected(checkMenuX.isSelected());
-                    } else {
-                        UserConfig.setBoolean(baseName + "RulerX", checkMenuX.isSelected());
-                        checkRulerX();
-                    }
-                });
-                subItems.add(checkMenuX);
+            CheckMenuItem checkMenuX = new CheckMenuItem(message("RulerX"));
+            checkMenuX.setSelected(rulerXCheck != null ? rulerXCheck.isSelected()
+                    : UserConfig.getBoolean(baseName + "RulerX", false));
+            checkMenuX.setOnAction((ActionEvent menuItemEvent) -> {
+                if (rulerXCheck != null) {
+                    rulerXCheck.setSelected(checkMenuX.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "RulerX", checkMenuX.isSelected());
+                    checkRulerX();
+                }
+            });
+            subItems.add(checkMenuX);
 
-                CheckMenuItem checkMenuY = new CheckMenuItem(Languages.message("RulerY"));
-                checkMenuY.setSelected(rulerYCheck != null ? rulerYCheck.isSelected()
-                        : UserConfig.getBoolean(baseName + "RulerY", false));
-                checkMenuY.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (rulerYCheck != null) {
-                        rulerYCheck.setSelected(checkMenuY.isSelected());
-                    } else {
-                        UserConfig.setBoolean(baseName + "RulerY", checkMenuY.isSelected());
-                        checkRulerY();
-                    }
-                });
-                subItems.add(checkMenuY);
-            }
+            CheckMenuItem checkMenuY = new CheckMenuItem(message("RulerY"));
+            checkMenuY.setSelected(rulerYCheck != null ? rulerYCheck.isSelected()
+                    : UserConfig.getBoolean(baseName + "RulerY", false));
+            checkMenuY.setOnAction((ActionEvent menuItemEvent) -> {
+                if (rulerYCheck != null) {
+                    rulerYCheck.setSelected(checkMenuY.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "RulerY", checkMenuY.isSelected());
+                    checkRulerY();
+                }
+            });
+            subItems.add(checkMenuY);
 
             if (!subItems.isEmpty()) {
                 items.addAll(subItems);
@@ -333,7 +323,7 @@ public class ImageViewerController extends BaseImageShapesController {
             subItems = new ArrayList<>();
 
             if (selectAllButton != null && selectAllButton.isVisible() && !selectAllButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("SelectAll") + "  CTRL+a");
+                menu = new MenuItem(message("SelectAll") + "  CTRL+a");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     selectAllAction();
                 });
@@ -341,22 +331,22 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (selectAreaCheck != null && selectAreaCheck.isVisible() && !selectAreaCheck.isDisabled()) {
-                CheckMenuItem checkMenu = new CheckMenuItem(Languages.message("SelectArea"));
-                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
+                CheckMenuItem selectCheckMenu = new CheckMenuItem(message("SelectArea"));
+                selectCheckMenu.setOnAction((ActionEvent menuItemEvent) -> {
                     if (isSettingValues) {
                         return;
                     }
-                    checkMenu.setSelected(!selectAreaCheck.isSelected());
+                    selectCheckMenu.setSelected(!selectAreaCheck.isSelected());
                     selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
                 });
                 isSettingValues = true;
-                checkMenu.setSelected(selectAreaCheck.isSelected());
+                selectCheckMenu.setSelected(selectAreaCheck.isSelected());
                 isSettingValues = false;
-                subItems.add(checkMenu);
+                subItems.add(selectCheckMenu);
             }
 
             if (copyButton == null || (copyButton.isVisible() && !copyButton.isDisabled())) {
-                menu = new MenuItem(Languages.message("Copy") + "  CTRL+c");
+                menu = new MenuItem(message("Copy") + "  CTRL+c");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     copyAction();
                 });
@@ -364,7 +354,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (pasteButton != null && pasteButton.isVisible() && !pasteButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Paste") + "  CTRL+v");
+                menu = new MenuItem(message("Paste") + "  CTRL+v");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     pasteAction();
                 });
@@ -372,7 +362,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (cropButton != null && cropButton.isVisible() && !cropButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Crop") + "  CTRL+x");
+                menu = new MenuItem(message("Crop") + "  CTRL+x");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     cropAction();
                 });
@@ -380,7 +370,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (rotateLeftButton != null && rotateLeftButton.isVisible() && !rotateLeftButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("RotateLeft"));
+                menu = new MenuItem(message("RotateLeft"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     rotateLeft();
                 });
@@ -388,7 +378,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (rotateRightButton != null && rotateRightButton.isVisible() && !rotateRightButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("RotateRight"));
+                menu = new MenuItem(message("RotateRight"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     rotateRight();
                 });
@@ -396,7 +386,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (undoButton != null && undoButton.isVisible() && !undoButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Undo") + "  CTRL+z");
+                menu = new MenuItem(message("Undo") + "  CTRL+z");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     undoAction();
                 });
@@ -404,7 +394,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (redoButton != null && redoButton.isVisible() && !redoButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Redo") + "  F3CTRL+y");
+                menu = new MenuItem(message("Redo") + "  F3CTRL+y");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     redoAction();
                 });
@@ -412,7 +402,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (recoverButton != null && recoverButton.isVisible() && !recoverButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Recover") + "  F3 / CTRL+r");
+                menu = new MenuItem(message("Recover") + "  F3 / CTRL+r");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     recoverAction();
                 });
@@ -420,7 +410,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (saveButton != null && saveButton.isVisible() && !saveButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Save") + "  F2 / CTRL+s");
+                menu = new MenuItem(message("Save") + "  F2 / CTRL+s");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     saveAction();
                 });
@@ -428,7 +418,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (saveAsButton != null && saveAsButton.isVisible() && !saveAsButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("SaveAs") + "  F11");
+                menu = new MenuItem(message("SaveAs") + "  F11");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     saveAsAction();
                 });
@@ -436,7 +426,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (renameButton != null && renameButton.isVisible() && !renameButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Rename"));
+                menu = new MenuItem(message("Rename"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     renameAction();
                 });
@@ -444,7 +434,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (deleteButton != null && deleteButton.isVisible() && !deleteButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Delete"));
+                menu = new MenuItem(message("Delete"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteAction();
                 });
@@ -453,7 +443,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
             if (!subItems.isEmpty()) {
                 if (subItems.size() > 2) {
-                    Menu subMenu = new Menu(Languages.message("Edit"));
+                    Menu subMenu = new Menu(message("Edit"));
                     subMenu.getItems().addAll(subItems);
                     items.add(subMenu);
                 } else {
@@ -463,15 +453,15 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (imageInformation != null) {
-                menu = new MenuItem(Languages.message("Information"));
+                menu = new MenuItem(message("Information"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     infoAction();
                 });
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("MetaData"));
+                menu = new MenuItem(message("MetaData"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    popMetaData();
+                    metaAction();
                 });
                 items.add(menu);
 
@@ -480,14 +470,14 @@ public class ImageViewerController extends BaseImageShapesController {
 
             subItems = new ArrayList<>();
             if (previousButton != null && previousButton.isVisible() && !previousButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Previous") + "  PAGE UP");
+                menu = new MenuItem(message("Previous") + "  PAGE UP");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     previousAction();
                 });
                 subItems.add(menu);
             }
             if (nextButton != null && nextButton.isVisible() && !nextButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Next") + "  PAGE DOWN");
+                menu = new MenuItem(message("Next") + "  PAGE DOWN");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     nextAction();
                 });
@@ -495,7 +485,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (firstButton != null && firstButton.isVisible() && !firstButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("First") + "  ALT+HOME");
+                menu = new MenuItem(message("First") + "  ALT+HOME");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     firstAction();
                 });
@@ -503,7 +493,7 @@ public class ImageViewerController extends BaseImageShapesController {
             }
 
             if (lastButton != null && lastButton.isVisible() && !lastButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Last") + "  ALT+END");
+                menu = new MenuItem(message("Last") + "  ALT+END");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     lastAction();
                 });
@@ -512,7 +502,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
             if (!subItems.isEmpty()) {
                 if (subItems.size() > 2) {
-                    Menu subMenu = new Menu(Languages.message("Navigate"));
+                    Menu subMenu = new Menu(message("Navigate"));
                     subMenu.getItems().addAll(subItems);
                     items.add(subMenu);
                 } else {
@@ -584,7 +574,7 @@ public class ImageViewerController extends BaseImageShapesController {
                     }
                     String selected = ((RadioButton) newValue).getText();
                     for (FileSortMode mode : FileSortMode.values()) {
-                        if (Languages.message(mode.name()).equals(selected)) {
+                        if (message(mode.name()).equals(selected)) {
                             sortMode = mode;
                             break;
                         }
@@ -594,7 +584,7 @@ public class ImageViewerController extends BaseImageShapesController {
                 });
                 for (Toggle toggle : sortGroup.getToggles()) {
                     RadioButton button = (RadioButton) toggle;
-                    if (button.getText().equals(Languages.message(saveMode))) {
+                    if (button.getText().equals(message(saveMode))) {
                         isSettingValues = true;
                         button.fire();
                         isSettingValues = false;
@@ -652,15 +642,6 @@ public class ImageViewerController extends BaseImageShapesController {
             MyBoxLog.error(e.toString());
         }
 
-    }
-
-    @Override
-    public void setStageStatus(String prefix, int minSize) {
-        if (this.mainMenuController == null) {
-            setAsPopup(baseName);
-        } else {
-            super.setStageStatus(prefix, minSize);
-        }
     }
 
     @Override
@@ -828,7 +809,7 @@ public class ImageViewerController extends BaseImageShapesController {
             if (imageView != null) {
                 imageView.setImage(null);
             }
-            alertInformation(Languages.message("NotSupported"));
+            alertInformation(message("NotSupported"));
             return false;
         }
     }
@@ -890,8 +871,7 @@ public class ImageViewerController extends BaseImageShapesController {
     @Override
     public void playAction() {
         try {
-            ImagesPlayController controller
-                    = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
+            ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
             controller.sourceFileChanged(sourceFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -935,22 +915,13 @@ public class ImageViewerController extends BaseImageShapesController {
 
     @FXML
     @Override
-    public void infoAction() {
-        if (imageInformation == null) {
-            return;
-        }
-        ControllerTools.showImageInformation(imageInformation);
-    }
-
-    @FXML
-    @Override
     public void loadContentInSystemClipboard() {
         if (!checkBeforeNextAction()) {
             return;
         }
         Image clip = ImageClipboardTools.fetchImageInClipboard(false);
         if (clip == null) {
-            popError(Languages.message("NoImageInClipboard"));
+            popError(message("NoImageInClipboard"));
             return;
         }
         loadImage(clip);
@@ -976,16 +947,6 @@ public class ImageViewerController extends BaseImageShapesController {
         if (previousFile != null) {
             loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
         }
-    }
-
-    @FXML
-    public void viewImageAction() {
-        ControllerTools.openImageViewer(null, imageFile());
-    }
-
-    @FXML
-    public void popMetaData() {
-        ControllerTools.showImageMetaData(imageInformation);
     }
 
     @FXML
@@ -1152,81 +1113,7 @@ public class ImageViewerController extends BaseImageShapesController {
             resetMaskControls();
         }
         setImageChanged(false);
-        popInformation(Languages.message("Recovered"));
-    }
-
-    @Override
-    public void copyToMyBoxClipboard() {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private Image areaImage;
-
-                @Override
-                protected boolean handle() {
-                    areaImage = imageToHandle();
-                    return ImageClipboard.add(areaImage, ImageClipboard.ImageSource.Copy) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(Languages.message("ImageSelectionInClipBoard"));
-                    ControlImagesClipboard.updateClipboards();
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        copyToSystemClipboard();
-    }
-
-    @FXML
-    @Override
-    public void copyToSystemClipboard() {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private Image areaImage;
-
-                @Override
-                protected boolean handle() {
-                    areaImage = imageToHandle();
-                    return areaImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    ImageClipboardTools.copyToSystemClipboard(myController, areaImage);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
+        popInformation(message("Recovered"));
     }
 
     @FXML
@@ -1244,18 +1131,18 @@ public class ImageViewerController extends BaseImageShapesController {
         try {
             String ask = null;
             if (imageInformation != null && imageInformation.isIsScaled()) {
-                ask = Languages.message("SureSaveScaled");
+                ask = message("SureSaveScaled");
             } else if (saveConfirmCheck != null && saveConfirmCheck.isSelected()) {
-                ask = Languages.message("SureOverrideFile");
+                ask = message("SureOverrideFile");
             }
             if (ask != null) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(ask);
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSave = new ButtonType(Languages.message("Save"));
-                ButtonType buttonSaveAs = new ButtonType(Languages.message("SaveAs"));
-                ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+                ButtonType buttonSave = new ButtonType(message("Save"));
+                ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
+                ButtonType buttonCancel = new ButtonType(message("Cancel"));
                 alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.setAlwaysOnTop(true);
@@ -1322,7 +1209,7 @@ public class ImageViewerController extends BaseImageShapesController {
                     protected void whenSucceeded() {
                         image = targetImage;
                         imageView.setImage(image);
-                        popInformation(imageFile + "   " + Languages.message("Saved"));
+                        popInformation(imageFile + "   " + message("Saved"));
                         setImageChanged(false);
                     }
 
@@ -1342,12 +1229,12 @@ public class ImageViewerController extends BaseImageShapesController {
     public String saveAsPrefix() {
         String name;
         if (imageFile() != null) {
-            name = FileNameTools.getFilePrefix(imageFile().getName())
+            name = FileNameTools.prefixFilter(imageFile())
                     + (framesNumber > 1 && (saveAllFramesRadio == null || !saveAllFramesRadio.isSelected())
-                    ? "-" + Languages.message("Frame") + (frameIndex + 1) : "")
-                    + "-" + new Date().getTime();
+                    ? "-" + message("Frame") + (frameIndex + 1) : "")
+                    + "_" + DateTools.nowFileString();
         } else {
-            name = new Date().getTime() + "";
+            name = DateTools.nowFileString();
         }
         if (formatController != null) {
             name += "." + formatController.attributes.getImageFormat();
@@ -1357,6 +1244,7 @@ public class ImageViewerController extends BaseImageShapesController {
         return name;
     }
 
+    @Override
     public Image imageToHandle() {
         Image selected = scopeImage();
         if (selected == null) {
@@ -1430,7 +1318,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popInformation(Languages.message("Saved"));
+                    popInformation(message("Saved"));
                     recordFileWritten(targetFile);
 
                     if (saveAsType == SaveAsType.Load) {
@@ -1477,7 +1365,7 @@ public class ImageViewerController extends BaseImageShapesController {
             return false;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(getMyStage().getTitle(), Languages.message("SureDelete"))) {
+            if (!PopTools.askSure(getMyStage().getTitle(), message("SureDelete"))) {
                 return false;
             }
         }
@@ -1543,81 +1431,14 @@ public class ImageViewerController extends BaseImageShapesController {
         }
     }
 
-    @FXML
-    public void viewAction() {
-        ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
-        checkImage(controller);
-    }
-
-    @FXML
-    protected void manufactureAction() {
-        ImageManufactureController controller = (ImageManufactureController) openStage(Fxmls.ImageManufactureFxml);
-        checkImage(controller);
-    }
-
-    @FXML
-    public void browseAction() {
-        ImagesBrowserController controller = ControllerTools.openImagesBrowser(null);
-        File file = imageFile();
-        if (file != null) {
-            controller.loadImages(file.getParentFile(), 9);
-        }
-    }
-
-    @FXML
     @Override
-    public void popAction() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImagePopupFxml);
-        checkImage(controller);
-    }
-
-    @FXML
-    public void statisticAction() {
-        ImageAnalyseController controller = (ImageAnalyseController) openStage(Fxmls.ImageAnalyseFxml);
-        checkImage(controller);
-    }
-
-    @FXML
-    public void ocrAction() {
-        ImageOCRController controller = (ImageOCRController) openStage(Fxmls.ImageOCRFxml);
-        checkImage(controller);
-    }
-
-    @FXML
-    public void splitAction() {
-        ImageSplitController controller = (ImageSplitController) openStage(Fxmls.ImageSplitFxml);
-        checkImage(controller);
-    }
-
-    public void sampleAction() {
-        ImageSampleController controller = (ImageSampleController) openStage(Fxmls.ImageSampleFxml);
-        checkImage(controller);
-    }
-
-    public File imageFile() {
-        return sourceFile;
-    }
-
     public void checkImage(BaseImageController controller) {
         if (imageView == null || imageView.getImage() == null || controller == null) {
             return;
         }
         controller.toFront();
         if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
-            if (imageChanged) {
-                controller.loadImage(imageView.getImage());
-            } else {
-                if (controller instanceof ImageSampleController || controller instanceof ImageSplitController) {
-                    controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
-                } else if (imageInformation != null && imageInformation.isIsScaled()) {
-                    controller.loadImage(imageView.getImage());
-                } else {
-                    controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
-                }
-            }
+            super.checkImage(controller);
             return;
         }
         synchronized (this) {
@@ -1636,7 +1457,7 @@ public class ImageViewerController extends BaseImageShapesController {
 
                 @Override
                 protected void whenSucceeded() {
-                    controller.loadImage(imageView.getImage());
+                    controller.loadImage(areaImage);
                 }
             };
             handling(task);
@@ -1645,151 +1466,6 @@ public class ImageViewerController extends BaseImageShapesController {
             thread.setDaemon(false);
             thread.start();
         }
-    }
-
-    @FXML
-    public void convertAction() {
-        ImageConverterBatchController controller = (ImageConverterBatchController) openStage(Fxmls.ImageConverterBatchFxml);
-        File file = imageFile();
-        if (file != null) {
-            controller.tableController.addFile(file);
-        }
-    }
-
-    @FXML
-    public void settings() {
-        SettingsController controller = (SettingsController) openStage(Fxmls.SettingsFxml);
-        controller.setParentController(this);
-        controller.parentFxml = myFxml;
-        controller.tabPane.getSelectionModel().select(controller.imageTab);
-    }
-
-    @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            menu = new MenuItem(Languages.message("Copy"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyAction();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("View"));
-            menu.setOnAction((ActionEvent event) -> {
-                viewAction();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("Manufacture"));
-            menu.setOnAction((ActionEvent event) -> {
-                manufactureAction();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("Statistic"));
-            menu.setOnAction((ActionEvent event) -> {
-                statisticAction();
-
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("OCR"));
-            menu.setOnAction((ActionEvent event) -> {
-                ocrAction();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("Split"));
-            menu.setOnAction((ActionEvent event) -> {
-                splitAction();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("Sample"));
-            menu.setOnAction((ActionEvent event) -> {
-                sampleAction();
-
-            });
-            popMenu.getItems().add(menu);
-
-            if (imageFile() != null) {
-                menu = new MenuItem(Languages.message("Convert"));
-                menu.setOnAction((ActionEvent event) -> {
-                    convertAction();
-                });
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(Languages.message("Browse"));
-                menu.setOnAction((ActionEvent event) -> {
-                    browseAction();
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            if (imageInformation != null) {
-                popMenu.getItems().add(new SeparatorMenuItem());
-
-                menu = new MenuItem(Languages.message("Information"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                popMenu.getItems().add(menu);
-
-                menu = new MenuItem(Languages.message("MetaData"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    popMetaData();
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("ImagesInMyBoxClipboard"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageInMyBoxClipboardController.oneOpen();
-
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("ImagesInSystemClipboard"));
-            menu.setOnAction((ActionEvent event) -> {
-                ImageInSystemClipboardController.oneOpen();
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("Settings"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                settings();
-
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void popMenu(MouseEvent mouseEvent) {
-//        MenuTextEditController.open(myController, mainArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 
 }

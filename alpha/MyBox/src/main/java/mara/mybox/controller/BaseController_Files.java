@@ -839,9 +839,10 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             if (title != null) {
                 fileChooser.setTitle(title);
             }
-            if (defaultPath != null && defaultPath.exists()) {
-                fileChooser.setInitialDirectory(defaultPath);
+            if (defaultPath == null || !defaultPath.exists()) {
+                defaultPath = MyBoxTempPath;
             }
+            fileChooser.setInitialDirectory(defaultPath);
             String suffix = null, prefix = null;
             if (defaultName != null && !defaultName.isBlank()) {
                 suffix = FileNameTools.getFileSuffix(defaultName);

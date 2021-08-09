@@ -156,7 +156,7 @@ public class Fxmls {
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
 
-    public static final String ImagePopupFxml = "/fxml/ImagePopup.fxml";
+    public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";
@@ -330,6 +330,7 @@ public class Fxmls {
     public static final String MenuHtmlCodesFxml = "/fxml/MenuHtmlCodes.fxml";
     public static final String MenuWebviewFxml = "/fxml/MenuWebview.fxml";
     public static final String MenuImageFxml = "/fxml/MenuImage.fxml";
+    public static final String MenuImageBaseFxml = "/fxml/MenuImageBase.fxml";
 
     public static final String TextClipboardPopFxml = "/fxml/TextClipboardPop.fxml";
     public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";

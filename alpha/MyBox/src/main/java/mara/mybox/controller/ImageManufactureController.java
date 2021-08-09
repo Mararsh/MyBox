@@ -41,29 +41,24 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.StyleTools;
-import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -175,8 +170,8 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             createPane.setExpanded(UserConfig.getBoolean("ImageManufactureNewPane", true));
             createPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setBoolean("ImageManufactureNewPane", createPane.isExpanded());
-                    });
+                UserConfig.setBoolean("ImageManufactureNewPane", createPane.isExpanded());
+            });
 
             newWidthInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -227,8 +222,8 @@ public class ImageManufactureController extends ImageViewerController {
 
             historiesPane.setExpanded(UserConfig.getBoolean("ImageManufactureHistoriesPane", false));
             historiesPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setBoolean("ImageManufactureHistoriesPane", historiesPane.isExpanded());
-                    });
+                UserConfig.setBoolean("ImageManufactureHistoriesPane", historiesPane.isExpanded());
+            });
 
             recordHistoriesCheck.setSelected(UserConfig.getBoolean(baseName + "RecordHistories", true));
             checkRecordHistoriesStatus();
@@ -323,8 +318,8 @@ public class ImageManufactureController extends ImageViewerController {
             backupPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             backupPane.setExpanded(UserConfig.getBoolean("ImageManufactureBackupPane", false));
             backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setBoolean("ImageManufactureBackupPane", backupPane.isExpanded());
-                    });
+                UserConfig.setBoolean("ImageManufactureBackupPane", backupPane.isExpanded());
+            });
 
             backupController.setControls(this, baseName);
 
@@ -500,15 +495,6 @@ public class ImageManufactureController extends ImageViewerController {
         maskView.setFitHeight(imageView.getFitHeight());
         maskView.setLayoutX(imageView.getLayoutX());
         maskView.setLayoutY(imageView.getLayoutY());
-    }
-
-    @FXML
-    @Override
-    public void popAction() {
-        ImageViewerController controller
-                = (ImageViewerController) openStage(Fxmls.ImagePopupFxml);
-        controller.loadImage(imageView.getImage());
-        controller.paneSize();
     }
 
     public void controlScopePaneOnMouseEnter() {
@@ -1232,7 +1218,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
         if (isPickingColor
                 || (scopeController.isPickingColor && isUsingScope())
-                || (!needNotCoordinates && UserConfig.getBoolean(baseName + "PopCooridnate", false))) {
+                || UserConfig.getBoolean(baseName + "PopCooridnate", false)) {
             DoublePoint p = ImageViewTools.getImageXY(event, imageView);
             showXY(event, p);
             return p;

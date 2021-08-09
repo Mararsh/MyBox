@@ -709,7 +709,11 @@ public abstract class BaseWebViewController_Assist extends BaseController {
         items.add(new SeparatorMenuItem());
 
         if (tag.equalsIgnoreCase("img")) {
-            menu = new MenuItem(message("CopyImageToSystemClipboard"));
+            if (ImageClipboardTools.isMonitoringCopy()) {
+                menu = new MenuItem(message("CopyImageToClipboards"));
+            } else {
+                menu = new MenuItem(message("CopyImageToSystemClipboard"));
+            }
             menu.setOnAction((ActionEvent event) -> {
                 copyImage(finalAddress, name, true);
             });
@@ -844,7 +848,8 @@ public abstract class BaseWebViewController_Assist extends BaseController {
                                 ImageClipboardTools.copyToSystemClipboard(myController, image);
                                 return true;
                             } else {
-                                return ImageClipboard.add(image, ImageClipboard.ImageSource.Link) != null;
+                                ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
+                                return true;
                             }
                         } else {
                             return false;

@@ -69,6 +69,10 @@ public class TextClipboardTools {
         return UserConfig.getBoolean("CopyTextInSystemClipboard", false);
     }
 
+    public static boolean isMonitoringCopy() {
+        return isMonitoring() && isCopy();
+    }
+
     public static void setCopy(boolean value) {
         UserConfig.setBoolean("CopyTextInSystemClipboard", value);
     }
@@ -100,7 +104,7 @@ public class TextClipboardTools {
             ClipboardContent cc = new ClipboardContent();
             cc.putString(string);
             Clipboard.getSystemClipboard().setContent(cc);
-            TextInSystemClipboardController.updateSystemClipboard();
+            TextInSystemClipboardController.updateSystemClipboardStatus();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -128,7 +132,7 @@ public class TextClipboardTools {
                 }
                 if (stringToSystemClipboard(text)) {
                     String info = text.length() > 200 ? text.substring(0, 200) + "\n......" : text;
-                    if (TextClipboardTools.isMonitoring()) {
+                    if (TextClipboardTools.isMonitoringCopy()) {
                         controller.popInformation(Languages.message("CopiedInClipBoards") + "\n----------------------\n" + info);
                     } else {
                         controller.popInformation(Languages.message("CopiedInSystemClipBoard") + "\n----------------------\n" + info);

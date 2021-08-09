@@ -14,12 +14,9 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
-import javafx.stage.Modality;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.BarcodeTools.BarcodeType;
 import mara.mybox.tools.ByteTools;
-import mara.mybox.value.AppVariables;
-import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -39,8 +36,6 @@ public class BarcodeDecoderController extends ImageViewerController {
 
     public BarcodeDecoderController() {
         baseTitle = Languages.message("BarcodeDecoder");
-        needNotRulers = true;
-        needNotCoordinates = true;
     }
 
     @Override

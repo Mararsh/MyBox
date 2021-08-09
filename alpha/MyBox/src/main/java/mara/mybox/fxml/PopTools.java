@@ -6,19 +6,24 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TextInputDialog;
@@ -37,8 +42,8 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.HtmlStyles;
-
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
 
@@ -100,7 +105,7 @@ public class PopTools {
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
             ControllerTools.openTarget(null, uri.toString());
         } else {
-            alertError(Languages.message("DesktopNotSupportBrowse"));
+            alertError(message("DesktopNotSupportBrowse"));
         }
     }
 
@@ -174,8 +179,8 @@ public class PopTools {
         }
         alert.setContentText(sureString);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(Languages.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+        ButtonType buttonSure = new ButtonType(message("Sure"));
+        ButtonType buttonCancel = new ButtonType(message("Cancel"));
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
@@ -234,7 +239,7 @@ public class PopTools {
             String baseName = controller == null ? "" : controller.getBaseName();
             MenuItem menu;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
-                menu = new MenuItem(Languages.message(style.name()));
+                menu = new MenuItem(message(style.name()));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -258,7 +263,7 @@ public class PopTools {
                 popMenu.getItems().add(menu);
             }
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -301,7 +306,7 @@ public class PopTools {
                 popMenu.getItems().add(menu);
             }
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -321,7 +326,35 @@ public class PopTools {
     public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            List<String> values = Arrays.asList("^      " + Languages.message("StartLocation"), "$      " + Languages.message("EndLocation"), "*      " + Languages.message("ZeroOrNTimes"), "+      " + Languages.message("OneOrNTimes"), "?      " + Languages.message("ZeroOrOneTimes"), "{n}      " + Languages.message("NTimes"), "{n,}      " + Languages.message("N+Times"), "{n,m}      " + Languages.message("NMTimes"), "|      " + Languages.message("Or"), "[abc]      " + Languages.message("MatchOneCharacters"), "[A-Z]      " + Languages.message("A-Z"), "\\x20      " + Languages.message("Blank"), "\\s      " + Languages.message("NonprintableCharacter"), "\\S      " + Languages.message("PrintableCharacter"), "\\n      " + Languages.message("LineBreak"), "\\r      " + Languages.message("CarriageReturn"), "\\t      " + Languages.message("Tab"), "[0-9]{n}      " + Languages.message("NNumber"), "[A-Z]{n}      " + Languages.message("NUppercase"), "[a-z]{n}      " + Languages.message("NLowercase"), "[\\u4e00-\\u9fa5]      " + Languages.message("Chinese"), "[^\\x00-\\xff]      " + Languages.message("DoubleByteCharacter"), "[A-Za-z0-9]+      " + Languages.message("EnglishAndNumber"), "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      " + Languages.message("Email"), "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + Languages.message("PhoneNumber"), "[a-zA-z]+://[^\\s]*       " + Languages.message("URL"), "^(\\s*)\\n       " + Languages.message("BlankLine"), "\\d+\\.\\d+\\.\\d+\\.\\d+      " + Languages.message("IP"));
+            List<String> values = Arrays.asList("^      "
+                    + message("StartLocation"), "$      "
+                    + message("EndLocation"), "*      "
+                    + message("ZeroOrNTimes"), "+      "
+                    + message("OneOrNTimes"), "?      "
+                    + message("ZeroOrOneTimes"), "{n}      "
+                    + message("NTimes"), "{n,}      "
+                    + message("N+Times"), "{n,m}      "
+                    + message("NMTimes"), "|      "
+                    + message("Or"), "[abc]      "
+                    + message("MatchOneCharacters"), "[A-Z]      "
+                    + message("A-Z"), "\\x20      "
+                    + message("Blank"), "\\s      "
+                    + message("NonprintableCharacter"), "\\S      "
+                    + message("PrintableCharacter"), "\\n      "
+                    + message("LineBreak"), "\\r      "
+                    + message("CarriageReturn"), "\\t      "
+                    + message("Tab"), "[0-9]{n}      "
+                    + message("NNumber"), "[A-Z]{n}      "
+                    + message("NUppercase"), "[a-z]{n}      "
+                    + message("NLowercase"), "[\\u4e00-\\u9fa5]      "
+                    + message("Chinese"), "[^\\x00-\\xff]      "
+                    + message("DoubleByteCharacter"), "[A-Za-z0-9]+      "
+                    + message("EnglishAndNumber"), "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      "
+                    + message("Email"), "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      "
+                    + message("PhoneNumber"), "[a-zA-z]+://[^\\s]*       "
+                    + message("URL"), "^(\\s*)\\n       "
+                    + message("BlankLine"), "\\d+\\.\\d+\\.\\d+\\.\\d+      "
+                    + message("IP"));
             List<Node> nodes = new ArrayList<>();
             for (String value : values) {
                 String[] vv = value.split("      ");
@@ -336,7 +369,7 @@ public class PopTools {
                 nodes.add(button);
             }
             controller.addFlowPane(nodes);
-            Hyperlink link = new Hyperlink(Languages.message("AboutRegularExpression"));
+            Hyperlink link = new Hyperlink(message("AboutRegularExpression"));
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -353,4 +386,63 @@ public class PopTools {
         }
     }
 
+    public static ContextMenu popMenuStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
+        try {
+            ContextMenu popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+            Map<String, String> styles = new LinkedHashMap<>();
+            styles.put("Default", "");
+            styles.put("Transparent", "; -fx-text-fill: black; -fx-background-color: transparent;");
+            styles.put("Console", "; -fx-text-fill: #CCFF99; -fx-background-color: black;");
+            styles.put("Blackboard", "; -fx-text-fill: white; -fx-background-color: #336633;");
+            styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
+            styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
+            for (String name : styles.keySet()) {
+                menu = new MenuItem(message(name));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        String style = styles.get(name);
+                        UserConfig.setString(parent.getBaseName() + "WindowStyle", style);
+                        parent.getThisPane().setStyle(baseStyle + style);
+                        setMenuLabelsStyle(parent.getThisPane(), baseStyle + style);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            parent.closePopup();
+            parent.setPopMenu(popMenu);
+
+            LocateTools.locateMouse(mouseEvent, popMenu);
+            return popMenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void setMenuLabelsStyle(Node node, String style) {
+        if (node instanceof Label) {
+            node.setStyle(style);
+        } else if (node instanceof Parent && !(node instanceof TableView)) {
+            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                setMenuLabelsStyle(child, style);
+            }
+        }
+    }
 }

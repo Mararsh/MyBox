@@ -15,10 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
@@ -26,17 +23,13 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -67,6 +60,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     @Override
     public void setTableDefinition() {
         tableDefinition = new TableImageClipboard();
+        parentController = this;
     }
 
     @Override
@@ -162,11 +156,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                 }
 
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
+            parentController.handling(task);
             task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(false);
@@ -201,10 +191,6 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                         return clip != null;
                     }
 
-                    @Override
-                    protected void whenSucceeded() {
-                        refreshAction();
-                    }
                 };
                 if (parentController != null) {
                     parentController.handling(task);
@@ -259,7 +245,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     }
 
     public void updateStatus() {
-        if (UserConfig.getBoolean("MonitorImageClipboard", false)) {
+        if (ImageClipboardTools.isMonitoring()) {
             bottomLabel.setText(Languages.message("MonitoringImageInSystemClipboard"));
         } else {
             bottomLabel.setText(Languages.message("NotMonitoringImageInSystemClipboard"));
@@ -329,17 +315,10 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
 
                 @Override
                 protected void whenSucceeded() {
-                    ClipboardContent cc = new ClipboardContent();
-                    cc.putImage(selectedImage);
-                    Clipboard.getSystemClipboard().setContent(cc);
-                    popInformation(Languages.message("CopiedInSystemClipBoard"));
+                    ImageClipboardTools.copyToSystemClipboard(parentController, selectedImage);
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
+            parentController.handling(task);
             task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(false);
@@ -355,24 +334,47 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
 
     @Override
     public void loadExamples() {
-        List<Image> examples = Arrays.asList(
-                new Image("img/ww1.png"), new Image("img/ww2.png"), new Image("img/ww5.png"),
-                new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
-                new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
-                new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
-                new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
-                new Image("img/DocumentTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
-                new Image("img/Settings.png"), new Image("img/zz1.png"), new Image("img/jade.png")
-        );
-        List<ImageClipboard> clips = new ArrayList<>();
-        for (int i = examples.size() - 1; i >= 0; --i) {
-            ImageClipboard clip = ImageClipboard.create(examples.get(i), ImageClipboard.ImageSource.Example);
-            if (clip == null) {
-                continue;
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
             }
-            clips.add(clip);
+            task = new SingletonTask<Void>() {
+
+                private List<ImageClipboard> clips;
+
+                @Override
+                protected boolean handle() {
+                    List<Image> examples = Arrays.asList(
+                            new Image("img/ww1.png"), new Image("img/ww2.png"), new Image("img/ww5.png"),
+                            new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
+                            new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
+                            new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
+                            new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
+                            new Image("img/DocumentTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
+                            new Image("img/Settings.png"), new Image("img/zz1.png"), new Image("img/jade.png")
+                    );
+                    clips = new ArrayList<>();
+                    for (int i = examples.size() - 1; i >= 0; --i) {
+                        ImageClipboard clip = ImageClipboard.create(examples.get(i), ImageClipboard.ImageSource.Example);
+                        if (clip == null) {
+                            continue;
+                        }
+                        clips.add(clip);
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    tableDefinition.insertList(clips);
+                }
+            };
+            parentController.handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
         }
-        tableDefinition.insertList(clips);
     }
 
     @FXML

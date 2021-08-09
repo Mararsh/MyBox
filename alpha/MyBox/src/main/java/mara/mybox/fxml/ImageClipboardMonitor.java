@@ -35,27 +35,24 @@ public class ImageClipboardMonitor extends Timer {
     public final static int DefaultInterval = 1000;
     protected ImageAttributes attributes;
     protected Date startTime = null;
-    protected int number, interval, width = -1;
+    protected int number;
     protected final Clipboard clipboard = Clipboard.getSystemClipboard();
     protected TableImageClipboard tableImageClipboard = new TableImageClipboard();
     private String filePrefix;
     private Image lastImage = null;
-    protected boolean isCopy = false, isSave = false;
     protected Connection conn = null;
     protected ImageInSystemClipboardController controller;
 
-    public ImageClipboardMonitor start(boolean isCopy, boolean isSave,
-            ImageAttributes attributes, String filePrefix, int width) {
-        interval = ImageClipboardTools.getMonitorInterval();
+    public ImageClipboardMonitor start(int inInterval, ImageAttributes attributes, String filePrefix) {
+        int interval = ImageClipboardTools.setMonitorInterval(inInterval);
         this.attributes = attributes;
         this.filePrefix = filePrefix;
-        this.width = width;
         startTime = new Date();
         number = 0;
-        schedule(new MonitorTask(), 0, this.interval);
+        schedule(new MonitorTask(), 0, interval);
         Platform.runLater(() -> {
-            ImageInSystemClipboardController.updateSystemClipboard();
-//            ControlImageClipboard.updateMyBoxClipboard();
+            ImageInSystemClipboardController.updateSystemClipboardStatus();
+            ControlImagesClipboard.updateClipboardsStatus();
         });
         MyBoxLog.debug("Image Clipboard Monitor started. Interval:" + interval);
         return this;
@@ -64,8 +61,8 @@ public class ImageClipboardMonitor extends Timer {
     public void stop() {
         cancel();
         Platform.runLater(() -> {
-            ImageInSystemClipboardController.updateSystemClipboard();
-//            ControlImageClipboard.updateMyBoxClipboard();
+            ImageInSystemClipboardController.updateSystemClipboardStatus();
+            ControlImagesClipboard.updateClipboardsStatus();
         });
         MyBoxLog.debug("Image Clipboard Monitor stopped.");
     }
@@ -84,7 +81,8 @@ public class ImageClipboardMonitor extends Timer {
                             return;
                         }
                         controller = ImageInSystemClipboardController.running();
-                        if (!isCopy && !isSave && controller == null) {
+                        if (controller == null && !ImageClipboardTools.isCopy()
+                                && (!ImageClipboardTools.isSave() || filePrefix == null || attributes == null)) {
                             ImageClipboardTools.stopImageClipboardMonitor();
                             return;
                         }
@@ -97,10 +95,10 @@ public class ImageClipboardMonitor extends Timer {
                         if (controller != null) {
                             controller.loadClip(clip);
                         }
-                        if (isCopy) {
+                        if (ImageClipboardTools.isCopy()) {
                             copyToMyBoxClipboard(clip);
                         }
-                        if (isSave) {
+                        if (ImageClipboardTools.isSave()) {
                             saveImage(clip);
                         }
                     } catch (Exception e) {
@@ -119,6 +117,7 @@ public class ImageClipboardMonitor extends Timer {
             @Override
             public void run() {
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                int width = ImageClipboardTools.getWidth();
                 if (width > 0) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
                 }
@@ -142,6 +141,7 @@ public class ImageClipboardMonitor extends Timer {
             @Override
             public void run() {
                 try {
+                    int width = ImageClipboardTools.getWidth();
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     if (width > 0) {
                         bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
@@ -184,14 +184,6 @@ public class ImageClipboardMonitor extends Timer {
         this.number = number;
     }
 
-    public boolean isIsCopy() {
-        return isCopy;
-    }
-
-    public void setIsCopy(boolean isCopy) {
-        this.isCopy = isCopy;
-    }
-
     public Connection getConn() {
         return conn;
     }
@@ -206,22 +198,6 @@ public class ImageClipboardMonitor extends Timer {
 
     public void setController(ImageInSystemClipboardController controller) {
         this.controller = controller;
-    }
-
-    public int getInterval() {
-        return interval;
-    }
-
-    public void setInterval(int interval) {
-        this.interval = interval;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
     }
 
     public TableImageClipboard getTableImageClipboard() {
@@ -254,14 +230,6 @@ public class ImageClipboardMonitor extends Timer {
 
     public void setAttributes(ImageAttributes attributes) {
         this.attributes = attributes;
-    }
-
-    public boolean isIsSave() {
-        return isSave;
-    }
-
-    public void setIsSave(boolean isSave) {
-        this.isSave = isSave;
     }
 
 }

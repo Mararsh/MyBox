@@ -18,8 +18,6 @@ import javafx.scene.input.Clipboard;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
@@ -67,7 +65,7 @@ public class TextInSystemClipboardController extends BaseController {
                         int v = Integer.valueOf(intervalSelector.getValue());
                         if (v > 0) {
                             intervalSelector.getEditor().setStyle(null);
-                            TextClipboardTools.setMonitorInterval(v);
+                            TextClipboardTools.startTextClipboardMonitor(v);
                         } else {
                             intervalSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                         }
@@ -163,11 +161,14 @@ public class TextInSystemClipboardController extends BaseController {
                 StyleTools.setNameIcon(startButton, message("StopRecording"), "iconStop.png");
                 startButton.applyCss();
                 recordLabel.setText(message("MonitoringTextInSystemClipboardAndNotice"));
-                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
             } else {
                 StyleTools.setNameIcon(startButton, message("StartRecording"), "iconStart.png");
                 startButton.applyCss();
                 recordLabel.setText(message("NotMonitoringTextInSystemClipboard"));
+            }
+            if (TextClipboardTools.isMonitoringCopy()) {
+                NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+            } else {
                 NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
             }
         } catch (Exception e) {
@@ -246,7 +247,7 @@ public class TextInSystemClipboardController extends BaseController {
         return controller;
     }
 
-    public static void updateSystemClipboard() {
+    public static void updateSystemClipboardStatus() {
         Platform.runLater(() -> {
             TextInSystemClipboardController controller = running();
             if (controller != null) {

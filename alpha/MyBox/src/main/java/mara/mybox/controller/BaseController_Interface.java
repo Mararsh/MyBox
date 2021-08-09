@@ -829,7 +829,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (thisPane != null) {
                 thisPane.setUserData(null);
             }
-            System.gc();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

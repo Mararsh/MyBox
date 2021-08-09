@@ -334,7 +334,7 @@ public class WindowTools {
                 appExit();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e.toString());
         }
     }
 
@@ -347,7 +347,7 @@ public class WindowTools {
                     closeWindow(window);
                 }
             }
-            TextClipboardTools.setCopy(false);
+            ImageClipboardTools.stopImageClipboardMonitor();
             TextClipboardTools.stopTextClipboardMonitor();
 
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {

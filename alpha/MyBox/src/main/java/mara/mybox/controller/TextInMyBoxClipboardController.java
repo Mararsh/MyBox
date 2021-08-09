@@ -174,6 +174,10 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
     @Override
     public void refreshAction() {
         loadTableData();
+        updateStatus();
+    }
+
+    public void updateStatus() {
         if (TextClipboardTools.isMonitoring()) {
             bottomLabel.setText(Languages.message("MonitoringTextInSystemClipboard"));
         } else {
@@ -219,6 +223,25 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
                 }
                 if (object instanceof TextInMyBoxClipboardController) {
                     ((TextInMyBoxClipboardController) object).refreshAction();
+                }
+            }
+        });
+    }
+
+    public static void updateMyBoxClipboardStatus() {
+        Platform.runLater(() -> {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object == null) {
+                    continue;
+                }
+                if (object instanceof TextClipboardPopController) {
+                    ((TextClipboardPopController) object).updateStatus();
+                }
+                if (object instanceof TextInMyBoxClipboardController) {
+                    ((TextInMyBoxClipboardController) object).updateStatus();
                 }
             }
         });

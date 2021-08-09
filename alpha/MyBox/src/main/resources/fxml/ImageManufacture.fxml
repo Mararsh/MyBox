@@ -82,7 +82,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="22.0" spacing="5.0">
                                                                     <children>
-                                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
+                                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#metaAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>

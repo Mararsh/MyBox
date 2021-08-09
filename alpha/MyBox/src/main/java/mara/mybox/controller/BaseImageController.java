@@ -4,12 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -25,9 +23,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -36,21 +35,23 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
+import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import static mara.mybox.fxml.NodeStyleTools.darkRedText;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -64,8 +65,7 @@ public abstract class BaseImageController extends BaseController {
     protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
-    protected boolean isPickingColor, imageChanged, operateOriginalSize,
-            needNotRulers, needNotCoordinates, needNotContextMenu;
+    protected boolean isPickingColor, imageChanged, operateOriginalSize, needNotContextMenu;
     protected int loadWidth, defaultLoadWidth, framesNumber, frameIndex, sizeChangeAware = 10,
             zoomStep, xZoomStep, yZoomStep;
     protected LoadingController loadingController;
@@ -90,8 +90,7 @@ public abstract class BaseImageController extends BaseController {
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, rulerYCheck, coordinateCheck,
-            contextMenuCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, rulerYCheck, coordinateCheck, contextMenuCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector;
 
@@ -103,8 +102,7 @@ public abstract class BaseImageController extends BaseController {
         try {
             super.initValues();
 
-            isPickingColor = imageChanged = operateOriginalSize
-                    = needNotRulers = needNotCoordinates = needNotContextMenu = false;
+            isPickingColor = imageChanged = operateOriginalSize = needNotContextMenu = false;
             loadWidth = defaultLoadWidth = -1;
             frameIndex = framesNumber = 0;
             sizeChangeAware = 10;
@@ -118,28 +116,6 @@ public abstract class BaseImageController extends BaseController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Image);
-    }
-
-    public void initController(ImageViewerController parent) {
-        this.parentController = parent;
-        initMaskPane();
-        initMaskControls(false);
-    }
-
-    public void initController(File sourceFile, Image image) {
-        try {
-            this.sourceFile = sourceFile;
-            this.image = image;
-            imageView.setImage(image);
-            fitSize();
-
-            checkRulerX();
-            checkRulerY();
-            checkCoordinate();
-            setMaskStroke();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     public void updateImage(Image image) {
@@ -284,9 +260,23 @@ public abstract class BaseImageController extends BaseController {
                     }
                 });
             }
+            imageView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                @Override
+                public void handle(ContextMenuEvent event) {
+                    popImageMenu(event);
+                }
+            });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    protected void popImageMenu(ContextMenuEvent event) {
+        if (needNotContextMenu || !UserConfig.getBoolean(baseName + "ContextMenu", true)
+                || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        MenuImageBaseController.open(this, event.getScreenX(), event.getScreenY());
     }
 
     protected void initViewControls() {
@@ -468,7 +458,7 @@ public abstract class BaseImageController extends BaseController {
     }
 
     public void drawMaskRulerX() {
-        if (needNotRulers || maskPane == null || imageView == null || imageView.getImage() == null) {
+        if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerX();
@@ -510,7 +500,7 @@ public abstract class BaseImageController extends BaseController {
     }
 
     public void clearMaskRulerX() {
-        if (needNotRulers || maskPane == null || imageView == null || imageView.getImage() == null) {
+        if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         List<Node> nodes = new ArrayList<>();
@@ -524,7 +514,7 @@ public abstract class BaseImageController extends BaseController {
     }
 
     public void drawMaskRulerY() {
-        if (needNotRulers || maskPane == null || imageView == null || imageView.getImage() == null) {
+        if (maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerY();
@@ -565,7 +555,7 @@ public abstract class BaseImageController extends BaseController {
     }
 
     public void clearMaskRulerY() {
-        if (needNotRulers || maskPane == null || imageView.getImage() == null) {
+        if (maskPane == null || imageView.getImage() == null) {
             return;
         }
         List<Node> nodes = new ArrayList<>();
@@ -886,6 +876,7 @@ public abstract class BaseImageController extends BaseController {
             frameIndex = 0;
             framesNumber = 0;
         }
+        fitSize();
         return true;
     }
 
@@ -982,23 +973,11 @@ public abstract class BaseImageController extends BaseController {
     }
 
     @FXML
-    @Override
-    public void popAction() {
-        if (image == null) {
-            return;
-        }
-        ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImagePopupFxml);
-        controller.setAsPopup(baseName + "Pop");
-        controller.loadImage(sourceFile, imageInformation, image, imageChanged);
-    }
-
-    @FXML
     public DoublePoint showXY(MouseEvent event) {
         if (xyText == null || !xyText.isVisible()) {
             return null;
         }
-        if (!isPickingColor
-                && (needNotCoordinates || !UserConfig.getBoolean(baseName + "PopCooridnate", false))) {
+        if (!isPickingColor && !UserConfig.getBoolean(baseName + "PopCooridnate", false)) {
             xyText.setText("");
             return null;
         }
@@ -1073,21 +1052,6 @@ public abstract class BaseImageController extends BaseController {
     }
 
     public void imageSingleClicked(MouseEvent event, DoublePoint p) {
-        if (needNotContextMenu || !UserConfig.getBoolean(baseName + "ContextMenu", true)
-                || imageView == null || imageView.getImage() == null
-                || event == null || event.getButton() != MouseButton.SECONDARY) {
-            return;
-        }
-        Timer menuTimer = new Timer();
-        menuTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    popImageMenu(imageView, event);
-                });
-            }
-        }, 100);  // double click will be eaten by the menu if not delay
-
     }
 
     @FXML
@@ -1145,35 +1109,6 @@ public abstract class BaseImageController extends BaseController {
         }
     }
 
-    protected void popImageMenu(Node node, MouseEvent event) {
-        if (needNotContextMenu || !UserConfig.getBoolean(baseName + "ContextMenu", true)
-                || node == null || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        List<MenuItem> items = makeImageContextMenu();
-        if (items == null || items.isEmpty()) {
-            return;
-        }
-        MenuItem menu = new MenuItem(Languages.message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(node, event.getScreenX(), event.getScreenY());
-
-    }
-
     protected List<MenuItem> makeImageContextMenu() {
         try {
             if (imageView == null || imageView.getImage() == null) {
@@ -1216,17 +1151,338 @@ public abstract class BaseImageController extends BaseController {
         }
     }
 
+    public File imageFile() {
+        return sourceFile;
+    }
+
+    public Image imageToHandle() {
+        return imageView.getImage();
+    }
+
+    @FXML
+    public void viewAction() {
+        ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
+        checkImage(controller);
+    }
+
+    @FXML
     @Override
-    public boolean checkBeforeNextAction() {
-        if (loadTask != null && !loadTask.isQuit()) {
-            loadTask.cancel();
-            loadTask = null;
+    public void popAction() {
+        ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
+        checkImage(controller);
+    }
+
+    @FXML
+    protected void manufactureAction() {
+        ImageManufactureController controller = (ImageManufactureController) openStage(Fxmls.ImageManufactureFxml);
+        checkImage(controller);
+    }
+
+    @FXML
+    public void browseAction() {
+        ImagesBrowserController controller = (ImagesBrowserController) openStage(Fxmls.ImagesBrowserFxml);
+        File file = imageFile();
+        if (file != null) {
+            controller.loadImages(file.getParentFile(), 9);
         }
-        if (paletteController != null) {
-            paletteController.closeStage();
-            paletteController = null;
+    }
+
+    @FXML
+    public void statisticAction() {
+        ImageAnalyseController controller = (ImageAnalyseController) openStage(Fxmls.ImageAnalyseFxml);
+        checkImage(controller);
+    }
+
+    @FXML
+    public void ocrAction() {
+        ImageOCRController controller = (ImageOCRController) openStage(Fxmls.ImageOCRFxml);
+        checkImage(controller);
+    }
+
+    @FXML
+    public void splitAction() {
+        ImageSplitController controller = (ImageSplitController) openStage(Fxmls.ImageSplitFxml);
+        checkImage(controller);
+    }
+
+    @FXML
+    public void sampleAction() {
+        ImageSampleController controller = (ImageSampleController) openStage(Fxmls.ImageSampleFxml);
+        checkImage(controller);
+    }
+
+    @FXML
+    public void convertAction() {
+        ImageConverterBatchController controller = (ImageConverterBatchController) openStage(Fxmls.ImageConverterBatchFxml);
+        File file = imageFile();
+        if (file != null) {
+            controller.tableController.addFile(file);
         }
-        return true;
+    }
+
+    @FXML
+    public void settings() {
+        SettingsController controller = (SettingsController) openStage(Fxmls.SettingsFxml);
+        controller.setParentController(this);
+        controller.parentFxml = myFxml;
+        controller.tabPane.getSelectionModel().select(controller.imageTab);
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        copyToSystemClipboard();
+    }
+
+    @FXML
+    @Override
+    public void copyToSystemClipboard() {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private Image areaImage;
+
+                @Override
+                protected boolean handle() {
+                    areaImage = imageToHandle();
+                    return areaImage != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    ImageClipboardTools.copyToSystemClipboard(myController, areaImage);
+                }
+
+            };
+            handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
+
+    @Override
+    public void copyToMyBoxClipboard() {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private Image areaImage;
+
+                @Override
+                protected boolean handle() {
+                    areaImage = imageToHandle();
+                    return ImageClipboard.add(areaImage, ImageClipboard.ImageSource.Copy) != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(message("ImageSelectionInClipBoard"));
+                }
+
+            };
+            handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
+
+    @FXML
+    @Override
+    public void infoAction() {
+        if (imageInformation == null) {
+            return;
+        }
+        ControllerTools.showImageInformation(imageInformation);
+    }
+
+    @FXML
+    public void metaAction() {
+        if (imageInformation == null) {
+            return;
+        }
+        ControllerTools.showImageMetaData(imageInformation);
+    }
+
+    public void checkImage(BaseImageController controller) {
+        if (imageView == null || imageView.getImage() == null || controller == null) {
+            return;
+        }
+        controller.toFront();
+        if (imageChanged) {
+            controller.loadImage(imageView.getImage());
+        } else {
+            if (controller instanceof ImageSampleController || controller instanceof ImageSplitController) {
+                controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+            } else if (imageInformation != null && imageInformation.isIsScaled()) {
+                controller.loadImage(imageView.getImage());
+            } else {
+                controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+            }
+        }
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("Copy"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Pop"));
+            menu.setOnAction((ActionEvent event) -> {
+                popAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("View"));
+            menu.setOnAction((ActionEvent event) -> {
+                viewAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Manufacture"));
+            menu.setOnAction((ActionEvent event) -> {
+                manufactureAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Statistic"));
+            menu.setOnAction((ActionEvent event) -> {
+                statisticAction();
+
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("OCR"));
+            menu.setOnAction((ActionEvent event) -> {
+                ocrAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Split"));
+            menu.setOnAction((ActionEvent event) -> {
+                splitAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Sample"));
+            menu.setOnAction((ActionEvent event) -> {
+                sampleAction();
+
+            });
+            popMenu.getItems().add(menu);
+
+            if (imageFile() != null) {
+                menu = new MenuItem(message("Convert"));
+                menu.setOnAction((ActionEvent event) -> {
+                    convertAction();
+                });
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("Browse"));
+                menu.setOnAction((ActionEvent event) -> {
+                    browseAction();
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            if (imageInformation != null) {
+                popMenu.getItems().add(new SeparatorMenuItem());
+
+                menu = new MenuItem(message("Information"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("MetaData"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    metaAction();
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("ImagesInMyBoxClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageInMyBoxClipboardController.oneOpen();
+
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImagesInSystemClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                ImageInSystemClipboardController.oneOpen();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Settings"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                settings();
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void popMenu(MouseEvent event) {
+        MenuImageBaseController.open(this, event.getScreenX(), event.getScreenY());
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            if (loadTask != null) {
+                loadTask.cancel();
+                loadTask = null;
+            }
+            if (paletteController != null) {
+                paletteController.closeStage();
+                paletteController = null;
+            }
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

@@ -203,14 +203,15 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("AddAsFavorite"));
-            menu.setOnAction((ActionEvent event) -> {
-                WebFavoriteAddController controller = (WebFavoriteAddController) WindowTools.openStage(Fxmls.WebFavoriteAddFxml);
-                controller.setValues(webEngine.getTitle(), address);
+            if (address != null && address.isBlank()) {
+                menu = new MenuItem(message("AddAsFavorite"));
+                menu.setOnAction((ActionEvent event) -> {
+                    WebFavoriteAddController controller = (WebFavoriteAddController) WindowTools.openStage(Fxmls.WebFavoriteAddFxml);
+                    controller.setValues(webEngine.getTitle(), address);
 
-            });
-            menu.setDisable(address == null || address.isBlank());
-            items.add(menu);
+                });
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("WebFavorites"));
             menu.setOnAction((ActionEvent event) -> {
@@ -234,17 +235,16 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
                 items.add(menu);
             }
 
-            if (!(parentController instanceof HtmlSnapController)) {
+            if (!(parentController instanceof HtmlSnapController) && html != null && !html.isBlank()) {
                 menu = new MenuItem(message("HtmlSnap"));
                 menu.setOnAction((ActionEvent event) -> {
                     HtmlSnapController controller = (HtmlSnapController) WindowTools.openStage(Fxmls.HtmlSnapFxml);
                     if (address != null && !address.isBlank()) {
                         controller.loadAddress(address);
-                    } else if (html != null && !html.isBlank()) {
+                    } else {
                         controller.loadContents(html);
                     }
                 });
-                menu.setDisable(html == null || html.isBlank());
                 items.add(menu);
             }
 
@@ -252,12 +252,11 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
 
             List<MenuItem> editItems = new ArrayList<>();
 
-            if (!(parentController instanceof HtmlEditorController)) {
+            if (!(parentController instanceof HtmlEditorController) && html != null && !html.isBlank()) {
                 menu = new MenuItem(message("HtmlEditor"));
                 menu.setOnAction((ActionEvent event) -> {
                     edit(html);
                 });
-                menu.setDisable(html == null || html.isBlank());
                 editItems.add(menu);
             }
 
@@ -271,9 +270,9 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
                             continue;
                         }
                         int index = i;
-                        Element element = (Element) node;
-                        String src = element.getAttribute("src");
-                        String name = element.getAttribute("name");
+                        Element e = (Element) node;
+                        String src = e.getAttribute("src");
+                        String name = e.getAttribute("name");
                         String frame = message("Frame") + index;
                         if (name != null && !name.isBlank()) {
                             frame += " :   " + name;
@@ -306,68 +305,67 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
                 items.addAll(editItems);
             }
 
-            menu = new MenuItem(message("HtmlCodes"));
-            menu.setOnAction((ActionEvent event) -> {
-                HtmlCodesPopController.open(myController, html);
-            });
-            menu.setDisable(html == null || html.isBlank());
-            items.add(menu);
+            if (html != null && !html.isBlank()) {
+                menu = new MenuItem(message("HtmlCodes"));
+                menu.setOnAction((ActionEvent event) -> {
+                    HtmlCodesPopController.open(myController, html);
+                });
+                items.add(menu);
 
-            menu = new MenuItem(message("WebFind"));
-            menu.setOnAction((ActionEvent event) -> {
-                find(html);
-            });
-            menu.setDisable(html == null || html.isBlank());
-            items.add(menu);
+                menu = new MenuItem(message("WebFind"));
+                menu.setOnAction((ActionEvent event) -> {
+                    find(html);
+                });
+                items.add(menu);
 
-            menu = new MenuItem(message("WebElements"));
-            menu.setOnAction((ActionEvent event) -> {
-                HtmlElementsController controller = (HtmlElementsController) WindowTools.openStage(Fxmls.HtmlElementsFxml);
-                if (address != null && !address.isBlank()) {
-                    controller.loadAddress(address);
-                } else if (html != null && !html.isBlank()) {
-                    controller.loadContents(html);
-                }
-                controller.toFront();
-            });
-            menu.setDisable(html == null || html.isBlank());
-            items.add(menu);
+                menu = new MenuItem(message("WebElements"));
+                menu.setOnAction((ActionEvent event) -> {
+                    HtmlElementsController controller = (HtmlElementsController) WindowTools.openStage(Fxmls.HtmlElementsFxml);
+                    if (address != null && !address.isBlank()) {
+                        controller.loadAddress(address);
+                    } else {
+                        controller.loadContents(html);
+                    }
+                    controller.toFront();
+                });
+                items.add(menu);
 
-            Menu elementsMenu = new Menu(message("Extract"));
-            List<MenuItem> elementsItems = new ArrayList<>();
+                Menu elementsMenu = new Menu(message("Extract"));
+                List<MenuItem> elementsItems = new ArrayList<>();
 
-            menu = new MenuItem(message("Texts"));
-            menu.setOnAction((ActionEvent event) -> {
-                texts(html);
-            });
-            menu.setDisable(isFrameset || html == null || html.isBlank());
-            elementsItems.add(menu);
+                menu = new MenuItem(message("Texts"));
+                menu.setOnAction((ActionEvent event) -> {
+                    texts(html);
+                });
+                menu.setDisable(isFrameset);
+                elementsItems.add(menu);
 
-            menu = new MenuItem(message("Links"));
-            menu.setOnAction((ActionEvent event) -> {
-                links();
-            });
-            menu.setDisable(isFrameset || doc == null);
-            elementsItems.add(menu);
+                menu = new MenuItem(message("Links"));
+                menu.setOnAction((ActionEvent event) -> {
+                    links();
+                });
+                menu.setDisable(isFrameset || doc == null);
+                elementsItems.add(menu);
 
-            menu = new MenuItem(message("Images"));
-            menu.setOnAction((ActionEvent event) -> {
-                images();
-            });
-            menu.setDisable(isFrameset || doc == null);
-            elementsItems.add(menu);
+                menu = new MenuItem(message("Images"));
+                menu.setOnAction((ActionEvent event) -> {
+                    images();
+                });
+                menu.setDisable(isFrameset || doc == null);
+                elementsItems.add(menu);
 
-            menu = new MenuItem(message("Headings"));
-            menu.setOnAction((ActionEvent event) -> {
-                toc(html);
-            });
-            menu.setDisable(isFrameset || html == null || html.isBlank());
-            elementsItems.add(menu);
+                menu = new MenuItem(message("Headings"));
+                menu.setOnAction((ActionEvent event) -> {
+                    toc(html);
+                });
+                menu.setDisable(isFrameset);
+                elementsItems.add(menu);
 
-            elementsMenu.getItems().setAll(elementsItems);
-            items.add(elementsMenu);
+                elementsMenu.getItems().setAll(elementsItems);
+                items.add(elementsMenu);
 
-            items.add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
+            }
 
             if (address != null && !address.isBlank()) {
                 menu = new MenuItem(message("OpenLinkBySystem"));

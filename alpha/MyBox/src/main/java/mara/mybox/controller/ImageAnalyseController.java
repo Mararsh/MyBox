@@ -37,15 +37,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
-import mara.mybox.data.IntStatistic;
-import mara.mybox.data.StringTable;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.WebViewTools;
 import mara.mybox.bufferedimage.ColorComponentTools;
 import mara.mybox.bufferedimage.ColorComponentTools.ColorComponent;
 import mara.mybox.bufferedimage.ColorConvertTools;
@@ -56,19 +47,22 @@ import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.K
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantization;
 import mara.mybox.bufferedimage.ImageStatistic;
+import mara.mybox.data.IntStatistic;
+import mara.mybox.data.StringTable;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WebViewTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.HtmlReadTools;
-
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -265,12 +259,27 @@ public class ImageAnalyseController extends ImageViewerController {
         }
     }
 
+    public void setImage(Image image) {
+        try {
+            this.image = image;
+            imageView.setImage(image);
+            fitSize();
+
+            checkRulerX();
+            checkRulerY();
+            checkCoordinate();
+            setMaskStroke();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     @FXML
     public void refreshData() {
         if (parentView != null) {
-            initController(sourceFile, parentView.getImage());
+            setImage(parentView.getImage());
         } else {
-            initController(sourceFile, imageView.getImage());
+            setImage(imageView.getImage());
         }
         loadData();
     }

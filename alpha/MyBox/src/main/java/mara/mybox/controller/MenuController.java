@@ -1,19 +1,10 @@
 package mara.mybox.controller;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -22,10 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -62,7 +50,7 @@ public class MenuController extends BaseController {
                 baseStyle = "";
             }
             String style = UserConfig.getString(baseName + "WindowStyle", "");
-            setLabelsStyle(baseStyle + style);
+            PopTools.setMenuLabelsStyle(thisPane, baseStyle + style);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -106,21 +94,6 @@ public class MenuController extends BaseController {
         titleLabel.setText(title);
     }
 
-    public void setLabelsStyle(String style) {
-        thisPane.setStyle(style);
-        setLabelsStyle(thisPane, style);
-    }
-
-    public void setLabelsStyle(Node node, String style) {
-        if (node instanceof Label) {
-            node.setStyle(style);
-        } else if (node instanceof Parent && !(node instanceof TableView)) {
-            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
-                setLabelsStyle(child, style);
-            }
-        }
-    }
-
     public void addNode(Node node) {
         nodesBox.getChildren().add(node);
     }
@@ -150,50 +123,7 @@ public class MenuController extends BaseController {
 
     @FXML
     public void popStyles(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-            Map<String, String> styles = new LinkedHashMap<>();
-            styles.put("Default", "");
-            styles.put("Transparent", "; -fx-text-fill: black; -fx-background-color: transparent;");
-            styles.put("Console", "; -fx-text-fill: #CCFF99; -fx-background-color: black;");
-            styles.put("Blackboard", "; -fx-text-fill: white; -fx-background-color: #336633;");
-            styles.put("Ago", "; -fx-text-fill: white; -fx-background-color: darkblue;");
-            styles.put("Book", "; -fx-text-fill: black; -fx-background-color: #F6F1EB;");
-            for (String name : styles.keySet()) {
-                menu = new MenuItem(Languages.message(name));
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        String style = styles.get(name);
-                        UserConfig.setString(baseName + "WindowStyle", style);
-                        setLabelsStyle(baseStyle + style);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateMouse(mouseEvent, popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        PopTools.popMenuStyles(this, baseStyle, mouseEvent);
     }
 
     @FXML
@@ -219,25 +149,20 @@ public class MenuController extends BaseController {
      */
     public static MenuController open(BaseController parent, Node node, double x, double y) {
         try {
-            try {
-                if (parent == null) {
-                    return null;
-                }
-                Popup popup = PopTools.popWindow(parent, Fxmls.MenuFxml, node, x, y);
-                if (popup == null) {
-                    return null;
-                }
-                Object object = popup.getUserData();
-                if (object == null && !(object instanceof MenuController)) {
-                    return null;
-                }
-                MenuController controller = (MenuController) object;
-                controller.setParameters(parent, node, x, y);
-                return controller;
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+            if (parent == null) {
                 return null;
             }
+            Popup popup = PopTools.popWindow(parent, Fxmls.MenuFxml, node, x, y);
+            if (popup == null) {
+                return null;
+            }
+            Object object = popup.getUserData();
+            if (object == null && !(object instanceof MenuController)) {
+                return null;
+            }
+            MenuController controller = (MenuController) object;
+            controller.setParameters(parent, node, x, y);
+            return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

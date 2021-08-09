@@ -29,7 +29,6 @@ import org.w3c.dom.Element;
  */
 public class MenuWebviewController extends MenuController {
 
-    protected HTMLEditor editor;
     protected WebView webView;
     protected Element element;
     protected BaseWebViewController webViewController;
@@ -61,7 +60,7 @@ public class MenuWebviewController extends MenuController {
                 return;
             }
             if (webView.getId() == null) {
-                editor = WebViewTools.editor(webView);
+                HTMLEditor editor = WebViewTools.editor(webView);
                 if (editor != null) {
                     titleLabel.setText(editor.getId());
                 }
@@ -95,7 +94,7 @@ public class MenuWebviewController extends MenuController {
         } else {
             tagLabel.setText("");
         }
-        if (TextClipboardTools.isMonitoring()) {
+        if (TextClipboardTools.isMonitoringCopy()) {
             NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
             NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
         } else {
