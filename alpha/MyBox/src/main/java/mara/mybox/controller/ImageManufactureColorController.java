@@ -26,14 +26,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import mara.mybox.controller.ImageManufactureController.ImageOperation;
-import mara.mybox.data.DoublePoint;
-import mara.mybox.data.DoubleRectangle;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
@@ -42,13 +34,16 @@ import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -225,8 +220,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 return;
             }
             if (colorReplaceRadio.isSelected()) {
-                imageController.hideScopePane();
-                imageController.showImagePane();
+                imageController.imageTab();
                 okButton.disableProperty().bind(distanceSelector.getEditor().styleProperty().isEqualTo(NodeStyleTools.badStyle));
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(replaceBox);
@@ -235,11 +229,9 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             } else {
                 if (scopeController != null && scopeController.scope != null
                         && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                    imageController.hideImagePane();
-                    imageController.showScopePane();
+                    imageController.scopeTab();
                 } else {
-                    imageController.hideScopePane();
-                    imageController.showImagePane();
+                    imageController.imageTab();
                 }
                 okButton.setDisable(true);
                 commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));

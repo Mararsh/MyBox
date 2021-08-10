@@ -21,23 +21,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.table.TableConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleData;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution.SharpenAlgorithm;
 import mara.mybox.bufferedimage.ImageConvolution.SmoothAlgorithm;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.table.TableConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -142,11 +136,9 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 imageController.resetImagePane();
                 if (scopeController != null && scopeController.scope != null
                         && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                    imageController.hideImagePane();
-                    imageController.showScopePane();
+                    imageController.scopeTab();
                 } else {
-                    imageController.hideScopePane();
-                    imageController.showImagePane();
+                    imageController.imageTab();
                 }
             }
 
@@ -158,8 +150,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             RadioButton selected = (RadioButton) enhancementGroup.getSelectedToggle();
             if (ContrastRadio.equals(selected)) {
                 if (imageController != null) {
-                    imageController.showImagePane();
-                    imageController.hideScopePane();
+                    imageController.imageTab();
                     commentsLabel.setText(Languages.message("ManufactureWholeImage"));
                 }
                 enhanceType = OperationType.Contrast;
@@ -169,11 +160,9 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 if (imageController != null) {
                     if (scopeController != null && scopeController.scope != null
                             && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                        imageController.hideImagePane();
-                        imageController.showScopePane();
+                        imageController.scopeTab();
                     } else {
-                        imageController.hideScopePane();
-                        imageController.showImagePane();
+                        imageController.imageTab();
                     }
                     commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
                 }

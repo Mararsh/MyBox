@@ -18,20 +18,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -145,8 +138,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     private void checkOperationType() {
         imageController.resetImagePane();
-        imageController.hideScopePane();
-        imageController.showImagePane();
+        imageController.imageTab();
         setBox.getChildren().clear();
         ValidationTools.setEditorNormal(marginWidthBox);
         distanceInput.setStyle(null);

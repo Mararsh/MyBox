@@ -9,11 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ValidationTools;
 
@@ -93,11 +90,11 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     protected void paneExpanded() {
         imageController.showRightPane();
         imageController.resetImagePane();
-        imageController.hideScopePane();
-        imageController.showImagePane();
+        imageController.imageTab();
     }
 
     @FXML
+    @Override
     public void rotateRight() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
@@ -132,6 +129,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     }
 
     @FXML
+    @Override
     public void rotateLeft() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {

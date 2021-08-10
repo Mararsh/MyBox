@@ -180,16 +180,15 @@ public class NodeTools {
         }
     }
 
-    public static double getX(Node node) {
-        return node.getScene().getWindow().getX() + node.getScene().getX()
-                + node.localToScene(0, 0).getX();
-    }
-
-    public static double getY(Node node) {
-        return node.getScene().getWindow().getY() + node.getScene().getY()
-                + node.localToScene(0, 0).getY();
-    }
-
+//    public static double getX(Node node) {
+//        Point2D localToScreen = node.localToScreen(0, 0);
+//        return localToScreen.getX();
+//    }
+//
+//    public static double getY(Node node) {
+//        Point2D localToScreen = node.localToScreen(0, 0);
+//        return localToScreen.getY();
+//    }
     public static double getWidth(Control control) {
         return control.getBoundsInParent().getWidth();
     }
@@ -220,20 +219,19 @@ public class NodeTools {
     }
 
     // Not work~
-    public static void fireMouseRightClicked(Node node) {
-        try {
-            MyBoxLog.console(node.getScene().getWindow().getX() + " " + node.getScene().getWindow().getY());
-            MyBoxLog.console(node.getScene().getX() + " " + node.getScene().getY());
-            MyBoxLog.console(getX(node) + " " + getY(node));
-            node.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED,
-                    node.getScene().getX() + 20, node.getScene().getY() + 20, getX(node) + 20, getY(node) + 20,
-                    MouseButton.SECONDARY, 1,
-                    false, false, false, false, false, false, true, false, false, false, null));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
+//    public static void fireMouseRightClicked(Node node) {
+//        try {
+////            MyBoxLog.console(node.getScene().getWindow().getX() + " " + node.getScene().getWindow().getY());
+////            MyBoxLog.console(node.getScene().getX() + " " + node.getScene().getY());
+////            MyBoxLog.console(getX(node) + " " + getY(node));
+//            node.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED,
+//                    node.getScene().getX() + 20, node.getScene().getY() + 20, getX(node) + 20, getY(node) + 20,
+//                    MouseButton.SECONDARY, 1,
+//                    false, false, false, false, false, false, true, false, false, false, null));
+//        } catch (Exception e) {
+//            MyBoxLog.debug(e.toString());
+//        }
+//    }
     public static double dpiScale() {
         try {
             double scale = Toolkit.getDefaultToolkit().getScreenResolution() / Screen.getPrimary().getDpi();

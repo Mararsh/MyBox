@@ -178,7 +178,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="viewPane" expanded="false" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%View">
+                                        <TitledPane fx:id="viewPane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%View">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
@@ -219,6 +219,28 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
                                                             </children>
                                                         </FlowPane>
+                                          <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="20.0" layoutY="20.0" vgap="5.0">
+                                             <children>
+                                                              <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                                                                  <graphic>
+                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                          <image>
+                                                                              <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                                          </image>
+                                                                      </ImageView>
+                                                                  </graphic>
+                                                              </Button>
+                                                              <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
+                                                                  <graphic>
+                                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                          <image>
+                                                                              <Image url="@../buttons/Red/iconClipboard.png" />
+                                                                          </image>
+                                                                      </ImageView>
+                                                                  </graphic>
+                                                              </Button>
+                                             </children>
+                                          </FlowPane>
                                                         <CheckBox fx:id="contextMenuCheck" layoutX="32.0" layoutY="74.0" mnemonicParsing="false" selected="true" text="%ContextMenu" />
                                                     </children>
                                                 </VBox>
@@ -405,29 +427,11 @@ License:    Apache License Version 2.0
                                                           </ImageView>
                                                       </graphic>
                                                   </Button>
-                                                  <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
-                                                      <graphic>
-                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                              </image>
-                                                          </ImageView>
-                                                      </graphic>
-                                                  </Button>
                                                   <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                                       <graphic>
                                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                               <image>
                                                                   <Image url="@../buttons/Red/iconPop.png" />
-                                                              </image>
-                                                          </ImageView>
-                                                      </graphic>
-                                                  </Button>
-                                                  <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
-                                                      <graphic>
-                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                              <image>
-                                                                  <Image url="@../buttons/Red/iconClipboard.png" />
                                                               </image>
                                                           </ImageView>
                                                       </graphic>
@@ -517,8 +521,6 @@ License:    Apache License Version 2.0
                                                         <Cursor fx:constant="NONE" />
                                                     </cursor>
                                                 </Rectangle>
-                                                <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0">
-                                                </Text>
                                                 <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
                                                 </ImageView>
                                                 <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
@@ -566,6 +568,8 @@ License:    Apache License Version 2.0
                                                         <Cursor fx:constant="NW_RESIZE" />
                                                     </cursor>
                                                 </Rectangle>
+                                                <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0">
+                                                </Text>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
                                             </children>
                                         </AnchorPane>

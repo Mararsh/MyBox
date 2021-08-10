@@ -17,7 +17,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.bufferedimage.ImageAttributes;
@@ -27,11 +26,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ValidationTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -180,8 +175,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     protected void checkScaleType() {
         try {
             imageController.resetImagePane();
-            imageController.hideScopePane();
-            imageController.showImagePane();
+            imageController.imageTab();
             setBox.getChildren().clear();
             widthInput.setStyle(null);
             heightInput.setStyle(null);

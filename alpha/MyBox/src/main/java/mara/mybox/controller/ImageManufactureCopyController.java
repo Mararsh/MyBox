@@ -8,14 +8,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.fximage.ScopeTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -66,11 +63,9 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
         imageController.resetImagePane();
         if (scopeController != null && scopeController.scope != null
                 && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-            imageController.hideImagePane();
-            imageController.showScopePane();
+            imageController.scopeTab();
         } else {
-            imageController.hideScopePane();
-            imageController.showImagePane();
+            imageController.imageTab();
         }
     }
 

@@ -16,17 +16,16 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
+import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
-import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
@@ -244,9 +243,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @Override
     protected void paneExpanded() {
         imageController.showRightPane();
-        imageController.hideScopePane();
         imageController.resetImagePane();
-        imageController.showImagePane();
+        imageController.imageTab();
     }
 
     public void selectClip() {
@@ -311,8 +309,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             return;
         }
         imageController.showRightPane();
-        imageController.showImagePane();
-        imageController.hideScopePane();
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

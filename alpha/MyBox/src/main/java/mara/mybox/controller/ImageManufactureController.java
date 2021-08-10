@@ -16,7 +16,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -26,12 +25,11 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -52,7 +50,6 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -72,7 +69,6 @@ public class ImageManufactureController extends ImageViewerController {
     protected SimpleBooleanProperty imageLoaded;
     protected String imageHistoriesPath;
     protected int newWidth, newHeight, maxEditHistories, historyIndex;
-    protected ChangeListener<Number> mainDividerListener;
     protected ImageOperation operation;
 
     public static enum ImageOperation {
@@ -87,11 +83,13 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected VBox mainBox, historiesBox, historiesListBox;
     @FXML
-    protected SplitPane mainSplitPane;
+    protected TabPane tabPane;
     @FXML
-    protected ScrollPane imagePane, scopePane;
+    protected Tab imageTab, scopeTab;
     @FXML
-    protected ImageView maskView, imagePaneControl, scopePaneControl;
+    protected Label scopeLabel;
+    @FXML
+    protected ImageView maskView;
     @FXML
     protected TextField newWidthInput, newHeightInput, maxHistoriesInput;
     @FXML
@@ -104,8 +102,6 @@ public class ImageManufactureController extends ImageViewerController {
     protected ListView<ImageEditHistory> historiesList;
     @FXML
     protected ColorSet colorSetController;
-    @FXML
-    protected Label scopeLabel;
     @FXML
     protected CheckBox recordHistoriesCheck;
 
@@ -140,13 +136,10 @@ public class ImageManufactureController extends ImageViewerController {
             initHistoriesTab();
             initBackupsTab();
             initEditBar();
-            initMainSplitPane();
 
             mainBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
-            imageLabel.setText(Languages.message("ImagePaneTitle"));
-            scopeLabel.setText(Languages.message("ScopePaneTitle"));
             scopeController.imageView.fitWidthProperty().bind(imageView.fitWidthProperty());
             scopeController.imageView.fitHeightProperty().bind(imageView.fitHeightProperty());
 
@@ -159,8 +152,7 @@ public class ImageManufactureController extends ImageViewerController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(imagePaneControl, new Tooltip("F7"));
-            NodeStyleTools.setTooltip(scopePaneControl, new Tooltip("F8"));
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -339,62 +331,11 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    protected void initMainSplitPane() {
-        try {
-            imagePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    controlScopePaneOnMouseEnter();
-                }
-            });
-            imagePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    controlScopePane();
-                }
-            });
-            imagePaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
-
-            scopePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    controlImagePaneOnMouseEnter();
-                }
-            });
-            scopePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    controlImagePane();
-                }
-            });
-            scopePaneControl.setPickOnBounds(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
-
-            try {
-                String mv = UserConfig.getString(baseName + "MainPanePosition", "0.7");
-                mainSplitPane.setDividerPositions(Double.parseDouble(mv));
-            } catch (Exception e) {
-                mainSplitPane.setDividerPositions(0.7);
-            }
-            mainDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                if (!isSettingValues) {
-                    if (mainSplitPane.getItems().size() > 1) {
-                        UserConfig.setString(baseName + "MainPanePosition", newValue.doubleValue() + "");
-                    }
-                }
-            };
-            mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     @Override
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
 
-            hideScopePane();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -495,127 +436,6 @@ public class ImageManufactureController extends ImageViewerController {
         maskView.setFitHeight(imageView.getFitHeight());
         maskView.setLayoutX(imageView.getLayoutX());
         maskView.setLayoutY(imageView.getLayoutY());
-    }
-
-    public void controlScopePaneOnMouseEnter() {
-        if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-            controlScopePane();
-        }
-    }
-
-    public void controlScopePane() {
-        if (mainSplitPane.getItems().contains(scopePane)) {
-            hideScopePane();
-        } else {
-            showScopePane();
-        }
-    }
-
-    public void showScopePane() {
-        if (isSettingValues) {
-            return;
-        }
-        if (mainSplitPane.getItems().contains(scopePane)) {
-            if (UserConfig.getBoolean(baseName + "FitSize", false)) {
-                autoSize();
-            }
-            return;
-        }
-        isSettingValues = true;
-        mainSplitPane.getItems().add(0, scopePane);
-        try {
-            String v = UserConfig.getString(baseName + "MainPanePosition", "0.7");
-            mainSplitPane.setDividerPosition(0, Double.parseDouble(v));
-        } catch (Exception e) {
-            mainSplitPane.setDividerPosition(0, 0.7);
-        }
-        mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-//        if (scopeController.scopeAllRadio.isSelected()) {
-//            scopeController.scopeRectangleRadio.fire();
-//        }
-        if (UserConfig.getBoolean(baseName + "FitSize", false)) {
-            autoSize();
-        }
-        isSettingValues = false;
-        refreshStyle(mainSplitPane);
-        StyleTools.setIconName(scopePaneControl, "iconDoubleRight.png");
-        StyleTools.setIconName(imagePaneControl, "iconDoubleLeft.png");
-    }
-
-    public void hideScopePane() {
-        if (isSettingValues || !mainSplitPane.getItems().contains(scopePane)
-                || mainSplitPane.getItems().size() == 1) {
-            return;
-        }
-        isSettingValues = true;
-        mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
-        mainSplitPane.getItems().remove(scopePane);
-        if (UserConfig.getBoolean(baseName + "FitSize", false)) {
-            autoSize();
-        }
-        isSettingValues = false;
-        refreshStyle(mainSplitPane);
-        StyleTools.setIconName(imagePaneControl, "iconDoubleRight.png");
-    }
-
-    public void controlImagePaneOnMouseEnter() {
-        if (UserConfig.getBoolean("MousePassControlPanes", true)) {
-            controlImagePane();
-        }
-    }
-
-    public void controlImagePane() {
-        if (mainSplitPane.getItems().contains(imagePane)) {
-            hideImagePane();
-        } else {
-            showImagePane();
-        }
-    }
-
-    public void showImagePane() {
-        if (isSettingValues) {
-            return;
-        }
-        if (mainSplitPane.getItems().contains(imagePane)) {
-            if (UserConfig.getBoolean(baseName + "FitSize", false)) {
-                autoSize();
-            }
-            return;
-        }
-        isSettingValues = true;
-        mainSplitPane.getItems().add(imagePane);
-        try {
-            String v = UserConfig.getString(baseName + "MainPanePosition", "0.7");
-            mainSplitPane.setDividerPosition(0, Double.parseDouble(v));
-        } catch (Exception e) {
-            mainSplitPane.setDividerPosition(0, 0.7);
-        }
-        mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-        if (UserConfig.getBoolean(baseName + "FitSize", false)) {
-            autoSize();
-        }
-        isSettingValues = false;
-        refreshStyle(mainSplitPane);
-        StyleTools.setIconName(scopePaneControl, "iconDoubleRight.png");
-        StyleTools.setIconName(imagePaneControl, "iconDoubleLeft.png");
-    }
-
-    public void hideImagePane() {
-        if (isSettingValues || !mainSplitPane.getItems().contains(imagePane)
-                || mainSplitPane.getItems().size() == 1) {
-            return;
-        }
-        isSettingValues = true;
-        mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
-        mainSplitPane.getItems().remove(imagePane);
-        isSettingValues = false;
-        refreshStyle(mainSplitPane);
-        StyleTools.setIconName(scopePaneControl, "iconDoubleLeft.png");
-    }
-
-    @FXML
-    public void scopeAction() {
-        controlScopePane();
     }
 
     /*
@@ -1041,7 +861,6 @@ public class ImageManufactureController extends ImageViewerController {
     public void updateImage(Image newImage, String info) {
         try {
             updateImage(newImage);
-//            showImagePane();
             scopeController.updateImage(newImage);
             resetImagePane();
             operationsController.resetOperationPanes();
@@ -1071,7 +890,7 @@ public class ImageManufactureController extends ImageViewerController {
 
     public void updateBottom(String info) {
         try {
-            if (bottomLabel == null) {
+            if (imageLabel == null) {
                 return;
             }
             String bottom = info != null ? info + "  " : "";
@@ -1089,7 +908,7 @@ public class ImageManufactureController extends ImageViewerController {
                 bottom += "  " + Languages.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
                         + Languages.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
             }
-            bottomLabel.setText(bottom);
+            imageLabel.setText(bottom);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -1228,18 +1047,6 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    @Override
-    public boolean keyF7() {
-        controlScopePane();
-        return true;
-    }
-
-    @Override
-    public boolean keyF8() {
-        controlImagePane();
-        return true;
-    }
-
     // should make sure no event conflicts in these panes
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
@@ -1253,16 +1060,6 @@ public class ImageManufactureController extends ImageViewerController {
         return true;
     }
 
-    @Override
-    public boolean controlAltC() {
-        if (controlAltCTextInput()) {
-            return true;
-        }
-
-        return false;
-
-    }
-
     public void resetImagePane() {
         operation = null;
         scope = null;
@@ -1273,9 +1070,14 @@ public class ImageManufactureController extends ImageViewerController {
         maskView.setVisible(false);
         maskView.toBack();
         initMaskControls(false);
-        imageLabel.setText(Languages.message("ImagePaneTitle"));
-        scopeLabel.setText(Languages.message("ScopePaneTitle"));
+    }
 
+    public void imageTab() {
+        tabPane.getSelectionModel().select(imageTab);
+    }
+
+    public void scopeTab() {
+        tabPane.getSelectionModel().select(scopeTab);
     }
 
     /*

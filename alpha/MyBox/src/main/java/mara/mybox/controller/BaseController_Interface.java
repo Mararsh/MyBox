@@ -488,8 +488,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
         isPop = true;
         this.baseName = baseName;
         setStageStatus(interfaceKeysPrefix(), 200, 0, 0, 600, 500);
-        hideLeftPane();
-        hideRightPane();
+//        hideLeftPane();
+//        hideRightPane();
         if (topCheck != null) {
             topCheck.setVisible(true);
             checkAlwaysTop();

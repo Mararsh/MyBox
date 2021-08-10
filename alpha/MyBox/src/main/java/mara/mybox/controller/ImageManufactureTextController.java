@@ -20,19 +20,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Modality;
+import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
+import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -282,8 +277,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     protected void paneExpanded() {
         imageController.showRightPane();
         imageController.resetImagePane();
-        imageController.hideScopePane();
-        imageController.showImagePane();
+        imageController.imageTab();
     }
 
     @FXML

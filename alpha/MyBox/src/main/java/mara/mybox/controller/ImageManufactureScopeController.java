@@ -60,11 +60,6 @@ import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import static mara.mybox.fxml.NodeStyleTools.blueText;
-import static mara.mybox.fxml.NodeStyleTools.darkRedText;
-import static mara.mybox.fxml.NodeStyleTools.redText;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
@@ -132,7 +127,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
     public ImageManufactureScopeController() {
         baseTitle = Languages.message("ImageManufacture");
-        needNotContextMenu = true;
     }
 
     /*
@@ -477,11 +471,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-    }
-
-    @Override
-    protected List<MenuItem> makeImageContextMenu() {
-        return null;
     }
 
     @Override
@@ -895,8 +884,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            final String text = imageController.scopeLabel.getText();
-            imageController.scopeLabel.setText(Languages.message("Loading"));
             task = new SingletonTask<Void>() {
                 private Image scopedImage;
 
@@ -929,15 +916,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
                     scopeView.setFitHeight(imageView.getFitHeight());
                     scopeView.setLayoutX(imageView.getLayoutX());
                     scopeView.setLayoutY(imageView.getLayoutY());
-                }
-
-                @Override
-                protected void finalAction() {
-                    if (Languages.message("Loading").equals(text)) {
-                        imageController.scopeLabel.setText(Languages.message("Scope"));
-                    } else {
-                        imageController.scopeLabel.setText(text);
-                    }
                 }
 
             };

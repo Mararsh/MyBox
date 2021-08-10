@@ -8,15 +8,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.fximage.ScopeTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -80,8 +76,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     protected void paneExpanded() {
         imageController.showRightPane();
         imageController.resetImagePane();
-        imageController.hideImagePane();
-        imageController.showScopePane();
+        imageController.scopeTab();
         if (scopeController.scope == null
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {

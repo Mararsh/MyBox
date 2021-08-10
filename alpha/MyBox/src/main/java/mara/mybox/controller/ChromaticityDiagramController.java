@@ -27,7 +27,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.stage.Modality;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.CIEDataTools;
@@ -39,11 +38,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.fximage.ImageViewTools;
@@ -51,11 +47,9 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -66,7 +60,7 @@ import mara.mybox.value.UserConfig;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ChromaticityDiagramController extends BaseImageController {
+public class ChromaticityDiagramController extends ImageViewerController {
 
     protected boolean isLine, inputInit = true;
     protected int dotSize, fontSize;

@@ -11,42 +11,29 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.CropTools;
-import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -67,10 +54,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-6-20
  * @License Apache License Version 2.0
  */
-public class ImageViewerController extends BaseImageShapesController {
+public class ImageViewerController extends BaseImageController {
 
     protected ImageScope scope;
-    protected int currentAngle = 0, rotateAngle = 90;
     protected File nextFile, previousFile;
     protected FileSortMode sortMode;
 
@@ -79,15 +65,13 @@ public class ImageViewerController extends BaseImageShapesController {
     @FXML
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
-    protected HBox operationBox;
-    @FXML
     protected FlowPane saveFramesPane;
     @FXML
-    protected CheckBox selectAreaCheck, deleteConfirmCheck, saveConfirmCheck;
+    protected CheckBox deleteConfirmCheck, saveConfirmCheck;
     @FXML
     protected ToggleGroup sortGroup, framesSaveGroup;
     @FXML
-    protected ComboBox<String> loadWidthBox, frameSelector;
+    protected ComboBox<String> frameSelector;
     @FXML
     protected Label framesLabel;
     @FXML
@@ -112,26 +96,9 @@ public class ImageViewerController extends BaseImageShapesController {
             initSaveAsPane();
             initEditPane();
             initBrowsePane();
-            initOperationBox();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            if (loadWidthBox != null) {
-                NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(message("ImageLoadWidthCommnets")));
-            }
-            if (selectAreaCheck != null) {
-                NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -254,276 +221,6 @@ public class ImageViewerController extends BaseImageShapesController {
         }
     }
 
-    @Override
-    protected List<MenuItem> makeImageContextMenu() {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            List<MenuItem> subItems = new ArrayList<>();
-            menu = new MenuItem(message("Pop") + "  CTRL+p");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                popAction();
-            });
-            subItems.add(menu);
-
-            if (pickColorCheck != null && pickColorCheck.isVisible() && !pickColorCheck.isDisabled()) {
-                CheckMenuItem checkMenu = new CheckMenuItem(message("PickColor"));
-                checkMenu.setSelected(pickColorCheck.isSelected());
-                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                    pickColorCheck.setSelected(checkMenu.isSelected());
-                });
-                subItems.add(checkMenu);
-            }
-
-            CheckMenuItem coordinateMenu = new CheckMenuItem(message("Coordinate"));
-            coordinateMenu.setSelected(coordinateCheck != null ? coordinateCheck.isSelected()
-                    : UserConfig.getBoolean(baseName + "PopCooridnate", false));
-            coordinateMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (coordinateCheck != null) {
-                    coordinateCheck.setSelected(coordinateMenu.isSelected());
-                } else {
-                    UserConfig.setBoolean(baseName + "PopCooridnate", coordinateMenu.isSelected());
-                    checkCoordinate();
-                }
-            });
-            subItems.add(coordinateMenu);
-
-            CheckMenuItem checkMenuX = new CheckMenuItem(message("RulerX"));
-            checkMenuX.setSelected(rulerXCheck != null ? rulerXCheck.isSelected()
-                    : UserConfig.getBoolean(baseName + "RulerX", false));
-            checkMenuX.setOnAction((ActionEvent menuItemEvent) -> {
-                if (rulerXCheck != null) {
-                    rulerXCheck.setSelected(checkMenuX.isSelected());
-                } else {
-                    UserConfig.setBoolean(baseName + "RulerX", checkMenuX.isSelected());
-                    checkRulerX();
-                }
-            });
-            subItems.add(checkMenuX);
-
-            CheckMenuItem checkMenuY = new CheckMenuItem(message("RulerY"));
-            checkMenuY.setSelected(rulerYCheck != null ? rulerYCheck.isSelected()
-                    : UserConfig.getBoolean(baseName + "RulerY", false));
-            checkMenuY.setOnAction((ActionEvent menuItemEvent) -> {
-                if (rulerYCheck != null) {
-                    rulerYCheck.setSelected(checkMenuY.isSelected());
-                } else {
-                    UserConfig.setBoolean(baseName + "RulerY", checkMenuY.isSelected());
-                    checkRulerY();
-                }
-            });
-            subItems.add(checkMenuY);
-
-            if (!subItems.isEmpty()) {
-                items.addAll(subItems);
-                items.add(new SeparatorMenuItem());
-            }
-
-            subItems = new ArrayList<>();
-
-            if (selectAllButton != null && selectAllButton.isVisible() && !selectAllButton.isDisabled()) {
-                menu = new MenuItem(message("SelectAll") + "  CTRL+a");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    selectAllAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (selectAreaCheck != null && selectAreaCheck.isVisible() && !selectAreaCheck.isDisabled()) {
-                CheckMenuItem selectCheckMenu = new CheckMenuItem(message("SelectArea"));
-                selectCheckMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    selectCheckMenu.setSelected(!selectAreaCheck.isSelected());
-                    selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
-                });
-                isSettingValues = true;
-                selectCheckMenu.setSelected(selectAreaCheck.isSelected());
-                isSettingValues = false;
-                subItems.add(selectCheckMenu);
-            }
-
-            if (copyButton == null || (copyButton.isVisible() && !copyButton.isDisabled())) {
-                menu = new MenuItem(message("Copy") + "  CTRL+c");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    copyAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (pasteButton != null && pasteButton.isVisible() && !pasteButton.isDisabled()) {
-                menu = new MenuItem(message("Paste") + "  CTRL+v");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    pasteAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (cropButton != null && cropButton.isVisible() && !cropButton.isDisabled()) {
-                menu = new MenuItem(message("Crop") + "  CTRL+x");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    cropAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (rotateLeftButton != null && rotateLeftButton.isVisible() && !rotateLeftButton.isDisabled()) {
-                menu = new MenuItem(message("RotateLeft"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    rotateLeft();
-                });
-                subItems.add(menu);
-            }
-
-            if (rotateRightButton != null && rotateRightButton.isVisible() && !rotateRightButton.isDisabled()) {
-                menu = new MenuItem(message("RotateRight"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    rotateRight();
-                });
-                subItems.add(menu);
-            }
-
-            if (undoButton != null && undoButton.isVisible() && !undoButton.isDisabled()) {
-                menu = new MenuItem(message("Undo") + "  CTRL+z");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    undoAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (redoButton != null && redoButton.isVisible() && !redoButton.isDisabled()) {
-                menu = new MenuItem(message("Redo") + "  F3CTRL+y");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    redoAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (recoverButton != null && recoverButton.isVisible() && !recoverButton.isDisabled()) {
-                menu = new MenuItem(message("Recover") + "  F3 / CTRL+r");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    recoverAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (saveButton != null && saveButton.isVisible() && !saveButton.isDisabled()) {
-                menu = new MenuItem(message("Save") + "  F2 / CTRL+s");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    saveAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (saveAsButton != null && saveAsButton.isVisible() && !saveAsButton.isDisabled()) {
-                menu = new MenuItem(message("SaveAs") + "  F11");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    saveAsAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (renameButton != null && renameButton.isVisible() && !renameButton.isDisabled()) {
-                menu = new MenuItem(message("Rename"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    renameAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (deleteButton != null && deleteButton.isVisible() && !deleteButton.isDisabled()) {
-                menu = new MenuItem(message("Delete"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    deleteAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (!subItems.isEmpty()) {
-                if (subItems.size() > 2) {
-                    Menu subMenu = new Menu(message("Edit"));
-                    subMenu.getItems().addAll(subItems);
-                    items.add(subMenu);
-                } else {
-                    items.addAll(subItems);
-                }
-                items.add(new SeparatorMenuItem());
-            }
-
-            if (imageInformation != null) {
-                menu = new MenuItem(message("Information"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    infoAction();
-                });
-                items.add(menu);
-
-                menu = new MenuItem(message("MetaData"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    metaAction();
-                });
-                items.add(menu);
-
-                items.add(new SeparatorMenuItem());
-            }
-
-            subItems = new ArrayList<>();
-            if (previousButton != null && previousButton.isVisible() && !previousButton.isDisabled()) {
-                menu = new MenuItem(message("Previous") + "  PAGE UP");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    previousAction();
-                });
-                subItems.add(menu);
-            }
-            if (nextButton != null && nextButton.isVisible() && !nextButton.isDisabled()) {
-                menu = new MenuItem(message("Next") + "  PAGE DOWN");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    nextAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (firstButton != null && firstButton.isVisible() && !firstButton.isDisabled()) {
-                menu = new MenuItem(message("First") + "  ALT+HOME");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    firstAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (lastButton != null && lastButton.isVisible() && !lastButton.isDisabled()) {
-                menu = new MenuItem(message("Last") + "  ALT+END");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    lastAction();
-                });
-                subItems.add(menu);
-            }
-
-            if (!subItems.isEmpty()) {
-                if (subItems.size() > 2) {
-                    Menu subMenu = new Menu(message("Navigate"));
-                    subMenu.getItems().addAll(subItems);
-                    items.add(subMenu);
-                } else {
-                    items.addAll(subItems);
-                }
-
-            }
-
-            List<MenuItem> superItems = super.makeImageContextMenu();
-            if (!superItems.isEmpty()) {
-                superItems.addAll(items);
-            }
-
-            return superItems;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
     protected void initSaveAsPane() {
         try {
             if (saveAsPane != null) {
@@ -612,105 +309,15 @@ public class ImageViewerController extends BaseImageShapesController {
         }
     }
 
-    protected void initOperationBox() {
-        try {
-            if (imageView != null) {
-                if (operationBox != null) {
-                    operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                }
-                if (leftPaneControl != null) {
-                    leftPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-                }
-                if (rightPaneControl != null) {
-                    rightPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-                }
-            }
-
-            if (selectAreaCheck != null) {
-                selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "SelectArea", selectAreaCheck.isSelected());
-                        checkSelect();
-                    }
-                });
-                selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
-                checkSelect();
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    @Override
-    public boolean controlAltT() {
-        if (selectAreaCheck != null) {
-            selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
-            return true;
-        }
-        return false;
-    }
-
     protected void checkSaveAs() {
 
     }
 
-    protected void checkSelect() {
-        if (cropButton != null) {
-            cropButton.setDisable(!selectAreaCheck.isSelected());
-        }
-        if (selectAllButton != null) {
-            selectAllButton.setDisable(!selectAreaCheck.isSelected());
-        }
-
-        if (selectAreaCheck != null) {
-            initMaskRectangleLine(selectAreaCheck.isSelected());
-        }
-        updateLabelsTitle();
-    }
-
-    protected void setLoadWidth() {
-        if (isSettingValues) {
-            return;
-        }
-        if (imageFile() != null) {
-            loadImageFile(imageFile(), loadWidth);
-        } else if (imageView.getImage() != null) {
-            loadImage(imageView.getImage(), loadWidth);
-        } else if (image != null) {
-            loadImage(image, loadWidth);
-        }
-        if (imageInformation != null) {
-            setImageChanged(imageInformation.isIsScaled());
-        } else {
-            setImageChanged(false);
-        }
-    }
-
     @Override
     public void afterInfoLoaded() {
-        if (infoButton != null) {
-            infoButton.setDisable(imageInformation == null);
-        }
-        if (metaButton != null) {
-            metaButton.setDisable(imageInformation == null);
-        }
-        if (deleteButton != null) {
-            deleteButton.setDisable(imageFile() == null);
-        }
-        if (renameButton != null) {
-            renameButton.setDisable(imageFile() == null);
-        }
+        super.afterInfoLoaded();
         if (deleteConfirmCheck != null) {
             deleteConfirmCheck.setDisable(imageFile() == null);
-        }
-        if (previousButton != null) {
-            previousButton.setDisable(imageFile() == null);
-        }
-        if (nextButton != null) {
-            nextButton.setDisable(imageFile() == null);
         }
     }
 
@@ -720,25 +327,9 @@ public class ImageViewerController extends BaseImageShapesController {
             if (!super.afterImageLoaded()) {
                 return false;
             }
-            afterInfoLoaded();
             if (imageView == null) {
                 return true;
             }
-            imageView.setPreserveRatio(true);
-            imageView.setImage(image);
-            if (image == null) {
-                return true;
-            }
-
-            if (sampledView != null) {
-                if (imageInformation != null && imageInformation.isIsSampled()) {
-                    NodeStyleTools.setTooltip(sampledView, imageInformation.sampleInformation(image));
-                    sampledView.setVisible(true);
-                } else {
-                    sampledView.setVisible(false);
-                }
-            }
-
             if (saveAsBox != null && saveFramesPane != null) {
                 if (framesNumber <= 1) {
                     if (saveAsBox.getChildren().contains(saveFramesPane)) {
@@ -784,25 +375,6 @@ public class ImageViewerController extends BaseImageShapesController {
             if (imageFile() != null && nextButton != null) {
                 makeImageNevigator();
             }
-
-            if (isPop) {
-                paneSize();
-            } else {
-                fitSize();
-            }
-            setMaskStroke();
-
-            if (selectAreaCheck != null) {
-                checkSelect();
-            }
-
-            if (imageInformation == null) {
-                setImageChanged(true);
-            } else {
-                setImageChanged(imageInformation.isIsScaled());
-            }
-            refinePane();
-
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -868,17 +440,6 @@ public class ImageViewerController extends BaseImageShapesController {
     }
 
     @FXML
-    @Override
-    public void playAction() {
-        try {
-            ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
-            controller.sourceFileChanged(sourceFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
     public void nextFrame() {
         loadFrame(frameIndex + 1);
     }
@@ -915,20 +476,6 @@ public class ImageViewerController extends BaseImageShapesController {
 
     @FXML
     @Override
-    public void loadContentInSystemClipboard() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        Image clip = ImageClipboardTools.fetchImageInClipboard(false);
-        if (clip == null) {
-            popError(message("NoImageInClipboard"));
-            return;
-        }
-        loadImage(clip);
-    }
-
-    @FXML
-    @Override
     public void nextAction() {
         if (!checkBeforeNextAction()) {
             return;
@@ -947,90 +494,6 @@ public class ImageViewerController extends BaseImageShapesController {
         if (previousFile != null) {
             loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
         }
-    }
-
-    @FXML
-    public void moveRight() {
-        NodeTools.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
-    }
-
-    @FXML
-    public void moveLeft() {
-        NodeTools.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
-    }
-
-    @FXML
-    public void moveUp() {
-        NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
-    }
-
-    @FXML
-    public void moveDown() {
-        NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
-    }
-
-    @FXML
-    public void rotateRight() {
-        rotate(90);
-    }
-
-    @FXML
-    public void rotateLeft() {
-        rotate(270);
-    }
-
-    @FXML
-    public void turnOver() {
-        rotate(180);
-    }
-
-    public void rotate(final int rotateAngle) {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        currentAngle = rotateAngle;
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = TransformTools.rotateImage(imageView.getImage(), rotateAngle);
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageView.setImage(newImage);
-                    checkSelect();
-                    setImageChanged(true);
-                    refinePane();
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    @Override
-    public void selectAllAction() {
-        if (imageView.getImage() == null
-                || maskRectangleLine == null || !maskRectangleLine.isVisible()) {
-            return;
-        }
-        maskRectangleData = new DoubleRectangle(0, 0,
-                getImageWidth() - 1, getImageHeight() - 1);
-
-        drawMaskRectangleLineAsData();
     }
 
     @FXML
@@ -1072,32 +535,6 @@ public class ImageViewerController extends BaseImageShapesController {
             MyBoxLog.error(e.toString());
         }
 
-    }
-
-    protected Image scopeImage() {
-        Image inImage = imageView.getImage();
-
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-            if (maskRectangleData.getSmallX() == 0
-                    && maskRectangleData.getSmallY() == 0
-                    && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
-                    && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
-                return null;
-            }
-            return CropTools.cropOutsideFx(inImage, maskRectangleData, Color.WHITE);
-
-        } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskCircleData, Color.WHITE);
-
-        } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskEllipseData, Color.WHITE);
-
-        } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskPolygonData, Color.WHITE);
-
-        } else {
-            return null;
-        }
     }
 
     @FXML
@@ -1242,23 +679,6 @@ public class ImageViewerController extends BaseImageShapesController {
             name += "." + ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
         }
         return name;
-    }
-
-    @Override
-    public Image imageToHandle() {
-        Image selected = scopeImage();
-        if (selected == null) {
-            selected = imageView.getImage();
-        }
-        return selected;
-    }
-
-    public Object imageToSave() {
-        Image selected = scopeImage();
-        if (selected == null) {
-            selected = imageView.getImage();
-        }
-        return selected;
     }
 
     @FXML
@@ -1432,40 +852,12 @@ public class ImageViewerController extends BaseImageShapesController {
     }
 
     @Override
-    public void checkImage(BaseImageController controller) {
-        if (imageView == null || imageView.getImage() == null || controller == null) {
+    protected void popImageMenu(double x, double y) {
+        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
+                || imageView == null || imageView.getImage() == null) {
             return;
         }
-        controller.toFront();
-        if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
-            super.checkImage(controller);
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private Image areaImage;
-
-                @Override
-                protected boolean handle() {
-                    areaImage = imageToHandle();
-                    return areaImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    controller.loadImage(areaImage);
-                }
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
+        MenuImageViewController.open(this, x, y);
     }
 
 }

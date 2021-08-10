@@ -8,14 +8,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.AppVariables;
-
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.UserConfig;
 
@@ -85,8 +81,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
     protected void paneExpanded() {
         imageController.showRightPane();
         imageController.resetImagePane();
-        imageController.hideScopePane();
-        imageController.showImagePane();
+        imageController.imageTab();
     }
 
     @FXML

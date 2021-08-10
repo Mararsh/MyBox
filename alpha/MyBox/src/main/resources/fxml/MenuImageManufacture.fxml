@@ -227,7 +227,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#manufactureAction">
+                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>

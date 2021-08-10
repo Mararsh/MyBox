@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -12,7 +11,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-8-13
  * @License Apache License Version 2.0
  */
-public class ImageManufactureOperationController extends BaseImageController {
+public class ImageManufactureOperationController extends ImageViewerController {
 
     protected ImageManufactureController imageController;
     protected ImageManufactureScopeController scopeController;
@@ -54,7 +53,7 @@ public class ImageManufactureOperationController extends BaseImageController {
 
     @FXML
     public void scopeAction() {
-        imageController.controlScopePane();
+        imageController.scopeTab();
     }
 
     public void quitPane() {

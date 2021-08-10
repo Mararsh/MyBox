@@ -331,6 +331,7 @@ public class Fxmls {
     public static final String MenuWebviewFxml = "/fxml/MenuWebview.fxml";
     public static final String MenuImageFxml = "/fxml/MenuImage.fxml";
     public static final String MenuImageBaseFxml = "/fxml/MenuImageBase.fxml";
+    public static final String MenuImageViewFxml = "/fxml/MenuImageView.fxml";
 
     public static final String TextClipboardPopFxml = "/fxml/TextClipboardPop.fxml";
     public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";

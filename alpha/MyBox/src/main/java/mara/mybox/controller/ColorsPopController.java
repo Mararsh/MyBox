@@ -47,14 +47,18 @@ public class ColorsPopController extends ColorsManageController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (parentController != null && (parentController instanceof BaseImageController)) {
-            BaseImageController c = (BaseImageController) parentController;
-            if (c.pickColorCheck != null && c.pickColorCheck.isSelected()) {
-                c.pickColorCheck.setSelected(false);
+    public void cleanPane() {
+        try {
+            if (parentController != null && (parentController instanceof BaseImageController)) {
+                BaseImageController c = (BaseImageController) parentController;
+                if (c.pickColorCheck != null) {
+                    c.pickColorCheck.setSelected(false);
+                }
+                c.isPickingColor = false;
             }
+        } catch (Exception e) {
         }
-        return true;
+        super.cleanPane();
     }
 
     /*

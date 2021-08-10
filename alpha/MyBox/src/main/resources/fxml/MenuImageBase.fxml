@@ -9,6 +9,7 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
@@ -29,6 +30,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -37,8 +39,7 @@ License:    Apache License Version 2.0
                             </image>
                         </ImageView>
                     </graphic>
-                </Button>
-                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" /> 
+                </Button> 
                 <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popStyles">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -93,6 +94,12 @@ License:    Apache License Version 2.0
                         </Button>
                     </children>
                 </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="43.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+               <children>
+                  <Label text="%ZoomStep" />
+                  <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
+               </children>
+            </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
@@ -104,6 +111,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </CheckBox>
+                  <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconTarget.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </CheckBox>
                         <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -131,28 +147,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </CheckBox>
-                    </children>
-                </HBox>
-                <HBox fx:id="bottomBox11" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                    <children>
-                        <Button fx:id="copyToSystemClipboardButton1" mnemonicParsing="false" onAction="#copyToSystemClipboard">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconCopySystem.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="copyToMyBoxClipboardButton" mnemonicParsing="false" onAction="#copyToMyBoxClipboard">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconCopy.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
                     </children>
                 </HBox>
                 <HBox fx:id="fileBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -206,6 +200,24 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox fx:id="bottomBox12" alignment="CENTER_LEFT" layoutX="10.0" layoutY="134.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
+                        <Button fx:id="copyToSystemClipboardButton" mnemonicParsing="false" onAction="#copyToSystemClipboard">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconCopySystem.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="copyToMyBoxClipboardButton" mnemonicParsing="false" onAction="#copyToMyBoxClipboard">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconCopy.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="systemClipboardButton" mnemonicParsing="false" onAction="#systemClipBoard">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

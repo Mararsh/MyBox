@@ -38,24 +38,15 @@ License:    Apache License Version 2.0
             <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="5.0" HBox.hgrow="ALWAYS">
                <children>
                   <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true" text="%OpenAfterSaveAs" />
-                          <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
-                              <graphic>
-                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                      <image>
-                                          <Image url="@../buttons/iconPickColor.png" />
-                                      </image>
-                                  </ImageView>
-                              </graphic>
-                          </CheckBox>
-                          <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
-                              <graphic>
-                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                      <image>
-                                          <Image url="@../buttons/Red/iconLocation.png" />
-                                      </image>
-                                  </ImageView>
-                              </graphic>
-                          </CheckBox>
+                  <Button fx:id="menuButton" mnemonicParsing="false" onMouseEntered="#popMenu">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconMenu.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                           <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                               <graphic>
                                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

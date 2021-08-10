@@ -22,17 +22,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
+import mara.mybox.bufferedimage.ImageMosaic.MosaicType;
+import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
+import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.bufferedimage.ImageMosaic.MosaicType;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fximage.PenTools;
 import mara.mybox.fxml.ValidationTools;
@@ -301,8 +300,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     private void checkPenType() {
         try {
             imageController.resetImagePane();
-            imageController.hideScopePane();
-            imageController.showImagePane();
+            imageController.imageTab();
             setBox.getChildren().clear();
             imageController.initMaskControls(false);
             if (typeGroup.getSelectedToggle() == null) {

@@ -20,21 +20,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleData;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fxml.StyleTools;
-import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.BufferedImageTools.Direction;
+import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -158,11 +153,9 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 imageController.resetImagePane();
                 if (scopeController != null && scopeController.scope != null
                         && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                    imageController.hideImagePane();
-                    imageController.showScopePane();
+                    imageController.scopeTab();
                 } else {
-                    imageController.hideScopePane();
-                    imageController.showImagePane();
+                    imageController.imageTab();
                 }
             }
 
