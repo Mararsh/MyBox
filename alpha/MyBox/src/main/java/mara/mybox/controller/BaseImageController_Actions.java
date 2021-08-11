@@ -9,6 +9,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -479,8 +480,9 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
-    public void popMenu(MouseEvent event) {
-        MenuImageBaseController.open((BaseImageController) this, event.getScreenX(), event.getScreenY());
+    public void menuAction() {
+        Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
+        MenuImageBaseController.open((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
     }
 
     @FXML

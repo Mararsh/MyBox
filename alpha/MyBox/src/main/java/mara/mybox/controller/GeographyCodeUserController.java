@@ -51,7 +51,10 @@ public class GeographyCodeUserController extends BaseController {
 
     @Override
     public void cleanPane() {
-        locationController.cleanPane();
+        try {
+            locationController.cleanPane();
+        } catch (Exception e) {
+        }
         super.cleanPane();
     }
 

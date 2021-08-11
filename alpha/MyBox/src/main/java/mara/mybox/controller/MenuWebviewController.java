@@ -62,10 +62,10 @@ public class MenuWebviewController extends MenuController {
             if (webView.getId() == null) {
                 HTMLEditor editor = WebViewTools.editor(webView);
                 if (editor != null) {
-                    titleLabel.setText(editor.getId());
+                    setTitleid(editor.getId());
                 }
             } else {
-                titleLabel.setText(webView.getId());
+                setTitleid(webView.getId());
             }
 
             webView.setOnMouseReleased(new EventHandler<MouseEvent>() {

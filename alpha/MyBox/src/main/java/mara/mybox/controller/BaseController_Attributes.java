@@ -31,7 +31,6 @@ import mara.mybox.data.BaseTask;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -85,8 +84,8 @@ public abstract class BaseController_Attributes {
             clearButton, createButton, cancelButton, addButton, recoverButton, viewButton, popButton,
             copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
-            myBoxClipboardButton, systemClipboardButton, selectButton,
-            selectAllButton, selectNoneButton, renameButton, tipsButton, setButton, allButton, refButton,
+            myBoxClipboardButton, systemClipboardButton, selectButton, selectAllButton, selectNoneButton,
+            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
             firstButton, lastButton, previousButton, nextButton, pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
             infoButton, metaButton, transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML

@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#popMenu">
+                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>

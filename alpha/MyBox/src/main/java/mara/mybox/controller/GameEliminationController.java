@@ -70,7 +70,6 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SoundTools;
@@ -1675,9 +1674,12 @@ public class GameEliminationController extends BaseController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        catButton.setSelected(false);
-        return true;
+    public void cleanPane() {
+        try {
+            catButton.setSelected(false);
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 

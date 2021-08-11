@@ -17,6 +17,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -50,12 +51,14 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -97,6 +100,8 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ImageManufactureScopeController scopeController;
     @FXML
+    protected ImageManufactureScopesSavedController scopeSavedController;
+    @FXML
     protected Button clearHistoriesButton, deleteHistoriesButton, useHistoryButton, okHistoriesSizeButton;
     @FXML
     protected ListView<ImageEditHistory> historiesList;
@@ -114,9 +119,6 @@ public class ImageManufactureController extends ImageViewerController {
     public void initValues() {
         try {
             super.initValues();
-
-            operationsController.imageController = this;
-            operationsController.imageView = imageView;
 
             imageLoaded = new SimpleBooleanProperty(false);
             historyIndex = -1;
@@ -140,8 +142,7 @@ public class ImageManufactureController extends ImageViewerController {
             mainBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
-            scopeController.imageView.fitWidthProperty().bind(imageView.fitWidthProperty());
-            scopeController.imageView.fitHeightProperty().bind(imageView.fitHeightProperty());
+            operationsController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -336,6 +337,7 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             super.afterSceneLoaded();
 
+            operationsController.viewPane.setExpanded(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -349,7 +351,8 @@ public class ImageManufactureController extends ImageViewerController {
             }
             imageLoaded.set(true);
             imageChanged = false;
-            scopeController.initController(this);
+            scopeController.setParameters(this);
+            scopeSavedController.setParameters(this);
             operationsController.resetOperationPanes();
             resetImagePane();
 
@@ -1080,15 +1083,49 @@ public class ImageManufactureController extends ImageViewerController {
         tabPane.getSelectionModel().select(scopeTab);
     }
 
-    /*
-        get/set
-     */
-    public ImageManufactureOperationsController getOperationsController() {
-        return operationsController;
+    @Override
+    protected void popImageMenu(double x, double y) {
+        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
+                || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        MenuImageManufactureController.open(this, x, y);
     }
 
-    public void setOperationsController(ImageManufactureOperationsController operationsController) {
-        this.operationsController = operationsController;
+    @FXML
+    @Override
+    public void menuAction() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == imageTab) {
+                Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
+                MenuImageManufactureController.open(this, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == scopeTab) {
+                scopeController.popMenu();
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void popAction() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == imageTab) {
+                ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
+                controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+
+            } else if (tab == scopeTab) {
+                scopeController.popImage();
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
 }

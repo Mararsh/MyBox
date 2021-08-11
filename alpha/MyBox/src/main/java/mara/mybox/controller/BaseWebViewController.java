@@ -646,14 +646,19 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
 
     @Override
     public void cleanPane() {
-        if (timer != null) {
-            timer.cancel();
+        try {
+            if (timer != null) {
+                timer.cancel();
+            }
+            if (webEngine != null && webEngine.getLoadWorker() != null) {
+                webEngine.getLoadWorker().cancel();
+            }
+            webEngine = null;
+            if (webView != null) {
+                webView.setUserData(null);
+            }
+        } catch (Exception e) {
         }
-        if (webEngine != null && webEngine.getLoadWorker() != null) {
-            webEngine.getLoadWorker().cancel();
-        }
-        webEngine = null;
-        webView.setUserData(null);
         super.cleanPane();
     }
 

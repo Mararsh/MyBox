@@ -249,7 +249,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
             return null;
         }
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
-        return open(parent, node, bounds.getMinX() + 40, bounds.getMinY() + 40);
+        return open(parent, node, bounds.getMinX() + 80, bounds.getMinY() + 80);
     }
 
 }

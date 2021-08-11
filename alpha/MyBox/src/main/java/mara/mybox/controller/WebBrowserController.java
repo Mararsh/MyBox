@@ -207,8 +207,11 @@ public class WebBrowserController extends BaseController {
 
     @Override
     public void cleanPane() {
-        tabControllers.clear();
-        tabControllers = null;
+        try {
+            tabControllers.clear();
+            tabControllers = null;
+        } catch (Exception e) {
+        }
         super.cleanPane();
     }
 

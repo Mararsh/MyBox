@@ -19,22 +19,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.StyleData;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -56,6 +50,8 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     protected ControlFileSelecter targetFileController;
     @FXML
     protected CheckBox openCheck;
+    @FXML
+    protected TextField commandInput;
 
     public FFmpegScreenRecorderController() {
         baseTitle = Languages.message("FFmpegScreenRecorder");
@@ -69,6 +65,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                     .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
                     .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
             targetFileInput = targetFileController.fileInput;
+            stopping = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -79,7 +76,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     public void initControls() {
         try {
             super.initControls();
-            stopping = new SimpleBooleanProperty(false);
+
             os = SystemTools.os();
 
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -184,32 +181,44 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             timer = null;
         }
         updateLogs(Languages.message("Started"));
+        List<String> parameters = makeParameters();
+        if (parameters == null) {
+            return false;
+        }
+        return startRecorder(parameters);
+    }
+
+    protected List<String> makeParameters() {
         List<String> parameters = new ArrayList();
         // http://trac.ffmpeg.org/wiki/Capture/Desktop
         parameters.add(optionsController.executable.getAbsolutePath());
         switch (os) {
             case "win":
                 if (!winParameters(parameters)) {
-                    return false;
+                    return null;
                 }
                 break;
             case "linux":
                 if (!linuxParameters(parameters)) {
-                    return false;
+                    return null;
                 }
                 break;
             case "mac":
                 if (!macParameters(parameters)) {
-                    return false;
+                    return null;
                 }
                 break;
             default:
-                return false;
+                return null;
         }
         if (!moreParameters(parameters)) {
-            return false;
+            return null;
         }
-        return startRecorder(parameters);
+        return parameters;
+    }
+
+    protected String makeCommand(List<String> parameters) {
+        return parameters.toString().replaceAll("[\\[|,|\\]]", " ");
     }
 
     protected boolean winParameters(List<String> parameters) {
@@ -440,7 +449,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             warmUp(pb);
             FileDeleteTools.delete(targetFile);
             recorder = pb.start();
-            String cmd = parameters.toString().replaceAll("[\\[|,|\\]]", " ");
+            String cmd = makeCommand(parameters);
             updateLogs(cmd);
             updateLogs("PID:" + recorder.pid());
             if (optionsController.durationController.value > 0) {
@@ -562,13 +571,16 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+    public void cleanPane() {
+        try {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            cancelAction();
+        } catch (Exception e) {
         }
-        cancelAction();
-        return true;
+        super.cleanPane();
     }
 
 }

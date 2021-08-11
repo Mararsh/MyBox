@@ -103,26 +103,48 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                        <VBox styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
-                                                                <fx:include fx:id="findColor" source="ColorSet.fxml" />
+                                                                <Label text="%FoundItems" />
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
+                                                                        <fx:include fx:id="findColor" source="ColorSet.fxml" />
+                                                                    </children>
+                                                                </HBox>
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
+                                                                        <fx:include fx:id="findBgColor" source="ColorSet.fxml" />
+                                                                    </children>
+                                                                </HBox>
                                                             </children>
-                                                        </HBox>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                        </VBox>
+                                                        <VBox styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <Label minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
-                                                                <fx:include fx:id="findBgColor" source="ColorSet.fxml" />
+                                                                <Label text="%CurrentItem" />
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label minHeight="-Infinity" text="%TextColor" wrapText="true" />
+                                                                        <fx:include fx:id="currentColor" source="ColorSet.fxml" />
+                                                                    </children>
+                                                                </HBox>
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label minHeight="-Infinity" text="%BackgroundColor" wrapText="true" />
+                                                                        <fx:include fx:id="currentBgColor" source="ColorSet.fxml" />
+                                                                    </children>
+                                                                </HBox>
                                                             </children>
-                                                        </HBox>
+                                                        </VBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
                                                                 <Label minHeight="-Infinity" text="%Font" wrapText="true" />
-                                                                <ComboBox fx:id="findFontSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <ComboBox fx:id="findFontSelector" editable="true" prefWidth="120.0" HBox.hgrow="ALWAYS" />
                                                             </children>
                                                         </HBox>
                                                     </children>
-                                                </VBox>
+                                                </VBox> 
                                             </content>
                                         </TitledPane>
                                         <TitledPane layoutX="15.0" layoutY="134.0" text="%Results">

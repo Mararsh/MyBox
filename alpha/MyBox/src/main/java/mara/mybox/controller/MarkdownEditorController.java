@@ -18,6 +18,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
@@ -25,14 +26,11 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -350,36 +348,6 @@ public class MarkdownEditorController extends TextEditorController {
 
     @FXML
     @Override
-    public void popMenu(MouseEvent mouseEvent) {
-        MenuMarkdownEditController.open(myController, mainArea, mouseEvent);
-    }
-
-    @FXML
-    protected void popHtml() {
-        HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-        controller.setAsPopup(baseName + "HtmlPop");
-        controller.loadContents(WebViewTools.getHtml(webEngine));
-    }
-
-    @FXML
-    public void popHtmlMenu(MouseEvent mouseEvent) {
-        MenuWebviewController.pop(webView, null, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
-    }
-
-    @FXML
-    protected void popCodes() {
-        HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-        controller.setAsPopup(baseName + "HtmlPop");
-        controller.loadContents(codesArea.getText());
-    }
-
-    @FXML
-    public void popCodesMenu(MouseEvent mouseEvent) {
-        MenuHtmlCodesController.open(myController, codesArea, mouseEvent);
-    }
-
-    @FXML
-    @Override
     public void createAction() {
         super.createAction();
         clearPairArea();
@@ -388,7 +356,44 @@ public class MarkdownEditorController extends TextEditorController {
     @FXML
     @Override
     public void popAction() {
-        MarkdownPopController.open(this, mainArea.getText());
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == markdownTab) {
+                MarkdownPopController.open(this, mainArea.getText());
+
+            } else if (tab == htmlTab) {
+                HtmlPopController.open(myController, WebViewTools.getHtml(webEngine));
+
+            } else if (tab == codesTab) {
+                HtmlCodesPopController.open(myController, codesArea.getText());
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void menuAction() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == markdownTab) {
+                Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
+                MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == htmlTab) {
+                Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
+                MenuWebviewController.pop(webView, null, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == codesTab) {
+                Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
+                MenuHtmlCodesController.open(myController, codesArea, localToScreen.getX(), localToScreen.getY());
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
 }

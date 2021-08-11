@@ -20,29 +20,21 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import mara.mybox.bufferedimage.ImageFileInformation;
+import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.BaseTask;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fximage.FxImageTools;
-import mara.mybox.bufferedimage.ImageFileInformation;
-import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -925,16 +917,19 @@ public class ImagesPlayController extends ImageViewerController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (loadThread != null) {
-            loadThread.interrupt();
-            loadThread = null;
+    public void cleanPane() {
+        try {
+            if (loadThread != null) {
+                loadThread.interrupt();
+                loadThread = null;
+            }
+            if (loading != null) {
+                loading.closeStage();
+                loading = null;
+            }
+        } catch (Exception e) {
         }
-        if (loading != null) {
-            loading.closeStage();
-            loading = null;
-        }
-        return super.checkBeforeNextAction();
+        super.cleanPane();
     }
 
 }

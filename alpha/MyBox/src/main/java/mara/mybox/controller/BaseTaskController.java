@@ -174,8 +174,11 @@ public class BaseTaskController extends BaseController {
 
     @Override
     public void cleanPane() {
-        cancelAction();
-        cancelled = true;
+        try {
+            cancelAction();
+            cancelled = true;
+        } catch (Exception e) {
+        }
         super.cleanPane();
     }
 

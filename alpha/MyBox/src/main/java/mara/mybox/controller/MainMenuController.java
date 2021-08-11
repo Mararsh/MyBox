@@ -164,8 +164,11 @@ public class MainMenuController extends MainMenuController_Help {
 
     @Override
     public void cleanPane() {
-        stopMemoryMonitorTimer();
-        stopCpuMonitorTimer();
+        try {
+            stopMemoryMonitorTimer();
+            stopCpuMonitorTimer();
+        } catch (Exception e) {
+        }
         super.cleanPane();
     }
 }

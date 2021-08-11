@@ -10,7 +10,6 @@ import mara.mybox.db.data.AlarmClock;
 import static mara.mybox.db.data.AlarmClock.getTypeString;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -144,12 +143,15 @@ public class AlarmClockRunController extends BaseController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (playTask != null && !playTask.isDone()) {
-            playTask.cancel();
-            playTask = null;
+    public void cleanPane() {
+        try {
+            if (playTask != null && !playTask.isDone()) {
+                playTask.cancel();
+                playTask = null;
+            }
+        } catch (Exception e) {
         }
-        return super.checkBeforeNextAction();
+        super.cleanPane();
     }
 
 }

@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
@@ -745,8 +746,9 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
     }
 
     @FXML
-    public void popMenu(MouseEvent mouseEvent) {
-        MenuTextEditController.open(myController, mainArea, mouseEvent);
+    public void menuAction() {
+        Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
+        MenuTextEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
     }
 
     @Override

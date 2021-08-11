@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -858,6 +859,13 @@ public class ImageViewerController extends BaseImageController {
             return;
         }
         MenuImageViewController.open(this, x, y);
+    }
+
+    @FXML
+    @Override
+    public void menuAction() {
+        Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
+        MenuImageViewController.open(this, localToScreen.getX(), localToScreen.getY());
     }
 
 }

@@ -7,14 +7,11 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.Notebook;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -65,8 +62,8 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
                 protected boolean handle() {
                     try {
                         long noteid = -1;
-                        if (notesController.currentNote != null) {
-                            noteid = notesController.currentNote.getNtid();
+                        if (notesController.noteEditorController.currentNote != null) {
+                            noteid = notesController.noteEditorController.currentNote.getNtid();
                         }
                         for (Note note : notes) {
                             note.setNotebook(bookid);
@@ -92,9 +89,9 @@ public class NotesMoveNotesController extends ControlNotebookSelector {
                     notesController.notebooksController.loadTree(targetBook);
                     notesController.popInformation(Languages.message("Moved") + ": " + count);
                     if (updateNote) {
-                        notesController.currentNote.setNotebook(bookid);
-                        notesController.bookOfCurrentNote = targetBook;
-                        notesController.updateBookOfCurrentNote();
+                        notesController.noteEditorController.currentNote.setNotebook(bookid);
+                        notesController.noteEditorController.bookOfCurrentNote = targetBook;
+                        notesController.noteEditorController.updateBookOfCurrentNote();
                     }
                     closeStage();
                 }

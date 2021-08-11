@@ -20,11 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -73,21 +69,23 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         try {
             super.initControls();
 
+            audioCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderAudio", true));
             audioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("FFmpegScreenRecorderAudio", newValue);
+
                 }
             });
-            audioCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderAudio", true));
 
+            videoCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderVideo", true));
             videoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("FFmpegScreenRecorderVideo", newValue);
+
                 }
             });
-            videoCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderVideo", true));
 
             os = SystemTools.os();
             switch (os) {
@@ -123,40 +121,40 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             });
 
             x = 0;
+            xInput.setText(UserConfig.getString("FFmpegScreenRecorderX", "0"));
             xInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkRectangle();
                 }
             });
-            xInput.setText(UserConfig.getString("FFmpegScreenRecorderX", "0"));
 
             y = 0;
+            yInput.setText(UserConfig.getString("FFmpegScreenRecorderY", "0"));
             yInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkRectangle();
                 }
             });
-            yInput.setText(UserConfig.getString("FFmpegScreenRecorderY", "0"));
 
             width = 0;
+            widthInput.setText(UserConfig.getString("FFmpegScreenRecorderWidth", screenWidth + ""));
             widthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkRectangle();
                 }
             });
-            widthInput.setText(UserConfig.getString("FFmpegScreenRecorderWidth", screenWidth + ""));
 
             height = 0;
+            heightInput.setText(UserConfig.getString("FFmpegScreenRecorderHeight", screenHeight + ""));
             heightInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     checkRectangle();
                 }
             });
-            heightInput.setText(UserConfig.getString("FFmpegScreenRecorderHeight", screenHeight + ""));
 
             titleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -221,6 +219,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                         audioDevice = line.substring(0, pos);
                         audioComments.setText(Languages.message("AudioDevice") + ": " + audioDevice);
                         audioCheck.setDisable(false);
+                        audioCheck.setSelected(true);
                         return;
                     }
                 }
@@ -231,6 +230,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 audioCheck.setDisable(true);
                 audioCheck.setSelected(false);
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -265,10 +265,12 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             macVideo = index;
                             videoComments.setText(name);
                             videoCheck.setDisable(false);
+                            videoCheck.setSelected(true);
                         } else if (line.contains("Microphone") || line.contains("麦克风")) {
                             macAudio = index;
                             audioComments.setText(Languages.message("AudioDevice") + ": " + name);
                             audioCheck.setDisable(false);
+                            audioCheck.setSelected(true);
                         }
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
@@ -286,6 +288,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 audioCheck.setDisable(true);
                 audioCheck.setSelected(false);
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -294,6 +297,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
     protected void checkThreadQueueSizes() {
         try {
             audioThreadQueueSize = 128;
+            audioThreadQueueSizeInput.setText(UserConfig.getString("FFmpegAudioThreadQueueSize", "128"));
             audioThreadQueueSizeInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -303,6 +307,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             audioThreadQueueSize = v;
                             audioThreadQueueSizeInput.setStyle(null);
                             UserConfig.setString("FFmpegScreenRecorderAudio", newValue);
+
                         } else {
                             audioThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                         }
@@ -313,9 +318,9 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
 
                 }
             });
-            audioThreadQueueSizeInput.setText(UserConfig.getString("FFmpegAudioThreadQueueSize", "128"));
 
             videoThreadQueueSize = 128;
+            videoThreadQueueSizeInput.setText(UserConfig.getString("FFmpegVideoThreadQueueSize", "128"));
             videoThreadQueueSizeInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -325,6 +330,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             videoThreadQueueSize = v;
                             videoThreadQueueSizeInput.setStyle(null);
                             UserConfig.setString("FFmpegScreenRecorderAudio", newValue);
+
                         } else {
                             videoThreadQueueSizeInput.setStyle(NodeStyleTools.badStyle);
                         }
@@ -334,7 +340,6 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     }
                 }
             });
-            videoThreadQueueSizeInput.setText(UserConfig.getString("FFmpegVideoThreadQueueSize", "128"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -355,6 +360,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             } else if (fullscreenRadio.isSelected()) {
 
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -410,6 +416,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         } catch (Exception e) {
             heightInput.setStyle(NodeStyleTools.badStyle);
         }
+
     }
 
     protected void checkWindow() {
@@ -418,6 +425,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         } else {
             titleInput.setStyle(null);
         }
+
     }
 
     @FXML
@@ -429,6 +437,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         videoThreadQueueSizeInput.setText("128");
         delayController.select(5);
         durationController.select(-1);
+
     }
 
 }

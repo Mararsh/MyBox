@@ -19,25 +19,22 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -66,10 +63,6 @@ public class HtmlEditorController extends BaseWebViewController {
     protected TabPane tabPane;
     @FXML
     protected Tab viewTab, codesTab, editorTab, markdownTab, textsTab, backupTab;
-    @FXML
-    protected Button synchronizeCodesButton, synchronizeEditorButton, synchronizeMarkdownButton, synchronizeTextsButton,
-            popCodesButton, popEditorButton, popMarkdownButton, popTextsButton, popViewButton,
-            myBoxClipboardCodesButton, myBoxClipboardMarkdownButton, myBoxClipboardTextButton;
     @FXML
     protected HTMLEditor htmlEditor;
     @FXML
@@ -235,38 +228,12 @@ public class HtmlEditorController extends BaseWebViewController {
 
     protected void initBackupsTab() {
         try {
-            backupController.setControls(this, baseName);
+            if (backupController != null) {
+                backupController.setControls(this, baseName);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            String tips = message("SynchronizeChangesToOtherPanes") + "\nF1";
-            NodeStyleTools.setTooltip(synchronizeCodesButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(synchronizeEditorButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(synchronizeMarkdownButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(synchronizeTextsButton, new Tooltip(tips));
-
-            tips = message("Pop") + "\nCTRL+p / ALT+p";
-            NodeStyleTools.setTooltip(popCodesButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(popEditorButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(popMarkdownButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(popTextsButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(popViewButton, new Tooltip(tips));
-
-            tips = message("MyBoxClipboard") + "\nCTRL+m / ALT+m";
-            NodeStyleTools.setTooltip(myBoxClipboardCodesButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(myBoxClipboardMarkdownButton, new Tooltip(tips));
-            NodeStyleTools.setTooltip(myBoxClipboardTextButton, new Tooltip(tips));
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -302,7 +269,7 @@ public class HtmlEditorController extends BaseWebViewController {
                             return false;
                         }
                         if (sourceFile != null) {
-                            if (backupController.isBack()) {
+                            if (backupController != null && backupController.isBack()) {
                                 backupController.addBackup(sourceFile);
                             }
                         }
@@ -342,13 +309,23 @@ public class HtmlEditorController extends BaseWebViewController {
             if (framesDoc.isEmpty()) {
                 Tab tab = tabPane.getSelectionModel().getSelectedItem();
 
-                if (tab == editorTab) {
+                if (tab == viewTab) {
+                    String html = htmlInWebview();
+                    if (synchronize) {
+                        loadHtmlCodes(html, false);
+                        loadMarkdown(html, false);
+                        loadText(html, false);
+                        loadRichEditor(html, false);
+                    }
+                    return html;
+
+                } else if (tab == editorTab) {
                     String html = htmlByEditor();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
                         loadMarkdown(html, false);
                         loadText(html, false);
-                        loadWebview(html);
+                        loadView(html, false);
                     }
                     return html;
 
@@ -358,7 +335,7 @@ public class HtmlEditorController extends BaseWebViewController {
                         loadHtmlCodes(html, false);
                         loadRichEditor(html, false);
                         loadText(html, false);
-                        loadWebview(html);
+                        loadView(html, false);
                     }
                     return html;
 
@@ -368,7 +345,7 @@ public class HtmlEditorController extends BaseWebViewController {
                         loadHtmlCodes(html, false);
                         loadMarkdown(html, false);
                         loadRichEditor(html, false);
-                        loadWebview(html);
+                        loadView(html, false);
                     }
                     return html;
 
@@ -379,7 +356,7 @@ public class HtmlEditorController extends BaseWebViewController {
                 loadRichEditor(html, false);
                 loadMarkdown(html, false);
                 loadText(html, false);
-                loadWebview(html);
+                loadView(html, false);
             }
             return html;
         } catch (Exception e) {
@@ -406,7 +383,9 @@ public class HtmlEditorController extends BaseWebViewController {
             loadText("", false);
             getMyStage().setTitle(getBaseTitle());
             fileChanged = false;
-            backupController.loadBackups(null);
+            if (backupController != null) {
+                backupController.loadBackups(null);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -433,6 +412,7 @@ public class HtmlEditorController extends BaseWebViewController {
         fileChanged = changed;
         updateTitle();
         if (!changed) {
+            viewChanged(false);
             codesChanged(false);
             richTextChanged(false);
             markdownChanged(false);
@@ -449,12 +429,15 @@ public class HtmlEditorController extends BaseWebViewController {
     protected void pageIsLoading() {
         super.pageIsLoading();
         pageLoaded = false;
-        saveButton.setDisable(true);
-        saveAsButton.setDisable(true);
-        synchronizeCodesButton.setDisable(true);
-        synchronizeEditorButton.setDisable(true);
-        synchronizeMarkdownButton.setDisable(true);
-        synchronizeTextsButton.setDisable(true);
+        if (saveButton != null) {
+            saveButton.setDisable(true);
+        }
+        if (saveAsButton != null) {
+            saveAsButton.setDisable(true);
+        }
+        if (synchronizeButton != null) {
+            synchronizeButton.setDisable(true);
+        }
         codesArea.setEditable(false);
         htmlEditor.setDisable(true);
         markdownArea.setEditable(false);
@@ -480,15 +463,21 @@ public class HtmlEditorController extends BaseWebViewController {
                 loadMarkdown(html, false);
                 loadText(html, false);
                 Platform.runLater(() -> {
-                    backupController.loadBackups(sourceFile);
+                    if (backupController != null) {
+                        viewChanged(false);
+                        backupController.loadBackups(sourceFile);
+                    }
                 });
             }
-            saveButton.setDisable(false);
-            saveAsButton.setDisable(false);
-            synchronizeCodesButton.setDisable(false);
-            synchronizeEditorButton.setDisable(false);
-            synchronizeMarkdownButton.setDisable(false);
-            synchronizeTextsButton.setDisable(false);
+            if (saveButton != null) {
+                saveButton.setDisable(false);
+            }
+            if (saveAsButton != null) {
+                saveAsButton.setDisable(false);
+            }
+            if (synchronizeButton != null) {
+                synchronizeButton.setDisable(false);
+            }
             codesArea.setEditable(true);
             htmlEditor.setDisable(false);
             markdownArea.setEditable(true);
@@ -500,25 +489,30 @@ public class HtmlEditorController extends BaseWebViewController {
         }
     }
 
-    public void loadWebview(String html) {
+    public void loadView(String html, boolean updated) {
         Platform.runLater(() -> {
             try {
                 webEngine.getLoadWorker().cancel();
                 webEngine.loadContent(html);
+                viewChanged(updated);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
             }
         });
     }
 
+    protected void viewChanged(boolean changed) {
+        codesChanged = changed;
+        viewTab.setText(message("View") + (fileChanged ? " *" : ""));
+        if (changed) {
+            updateFileStatus(true);
+        }
+    }
+
     public String htmlInWebview() {
         return WebViewTools.getHtml(webEngine);
     }
 
-    @FXML
-    public void popViewMenu(MouseEvent mouseEvent) {
-        MenuWebviewController.pop(this, null, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
-    }
 
     /*
         codes
@@ -552,11 +546,6 @@ public class HtmlEditorController extends BaseWebViewController {
     }
 
     @FXML
-    public void popCodesMenu(MouseEvent event) {
-        MenuHtmlCodesController.open(myController, codesArea, event);
-    }
-
-    @FXML
     public void clearCodes() {
         codesArea.clear();
     }
@@ -568,14 +557,6 @@ public class HtmlEditorController extends BaseWebViewController {
         controller.toFront();
     }
 
-    @FXML
-    public void synchronizeCodes() {
-        String html = htmlByCodes();
-        loadRichEditor(html, true);
-        loadMarkdown(html, true);
-        loadText(html, true);
-        loadWebview(html);
-    }
 
     /*
         richText
@@ -615,21 +596,6 @@ public class HtmlEditorController extends BaseWebViewController {
         if (changed) {
             updateFileStatus(true);
         }
-    }
-
-    @FXML
-    public void popEditorMenu(MouseEvent mouseEvent) {
-        MenuWebviewController.pop((BaseWebViewController) (htmlEditor.getUserData()), null,
-                mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
-    }
-
-    @FXML
-    public void synchronizeEditor() {
-        String html = htmlByEditor();
-        loadHtmlCodes(html, true);
-        loadMarkdown(html, true);
-        loadText(html, true);
-        loadWebview(html);
     }
 
     @FXML
@@ -699,20 +665,6 @@ public class HtmlEditorController extends BaseWebViewController {
         markdownArea.clear();
     }
 
-    @FXML
-    public void popMarkdownMenu(MouseEvent mouseEvent) {
-        MenuMarkdownEditController.open(myController, markdownArea, mouseEvent);
-    }
-
-    @FXML
-    public void synchronizeMarkdown() {
-        String html = htmlByMarkdown();
-        loadRichEditor(html, true);
-        loadHtmlCodes(html, true);
-        loadText(html, true);
-        loadWebview(html);
-    }
-
     /*
         texts
      */
@@ -757,26 +709,19 @@ public class HtmlEditorController extends BaseWebViewController {
         textsArea.clear();
     }
 
-    @FXML
-    public void popTextsMenu(MouseEvent mouseEvent) {
-        MenuTextEditController.open(myController, textsArea, mouseEvent);
-    }
-
-    @FXML
-    public void synchronizeTexts() {
-        String html = htmlByText();
-        loadRichEditor(html, true);
-        loadHtmlCodes(html, true);
-        loadMarkdown(html, true);
-        loadWebview(html);
-    }
 
     /*
         buttons
      */
     @Override
-    public boolean controlAltP() {
-        popAction();
+    public boolean keyF9() {
+        synchronizeAction();
+        return true;
+    }
+
+    @Override
+    public boolean keyF12() {
+        menuAction();
         return true;
     }
 
@@ -807,6 +752,93 @@ public class HtmlEditorController extends BaseWebViewController {
     }
 
     @FXML
+    public void synchronizeAction() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == viewTab) {
+                Platform.runLater(() -> {
+                    String html = htmlInWebview();
+                    loadHtmlCodes(html, true);
+                    loadRichEditor(html, true);
+                    loadMarkdown(html, true);
+                    loadText(html, true);
+                });
+
+            } else if (tab == codesTab) {
+                Platform.runLater(() -> {
+                    String html = htmlByCodes();
+                    loadRichEditor(html, true);
+                    loadMarkdown(html, true);
+                    loadText(html, true);
+                    loadView(html, true);
+                });
+
+            } else if (tab == editorTab) {
+                Platform.runLater(() -> {
+                    String html = htmlByEditor();
+                    loadHtmlCodes(html, true);
+                    loadMarkdown(html, true);
+                    loadText(html, true);
+                    loadView(html, true);
+                });
+
+            } else if (tab == markdownTab) {
+                Platform.runLater(() -> {
+                    String html = htmlByMarkdown();
+                    loadRichEditor(html, true);
+                    loadHtmlCodes(html, true);
+                    loadText(html, true);
+                    loadView(html, true);
+                });
+
+            } else if (tab == textsTab) {
+                Platform.runLater(() -> {
+                    String html = htmlByText();
+                    loadRichEditor(html, true);
+                    loadHtmlCodes(html, true);
+                    loadMarkdown(html, true);
+                    loadView(html, true);
+                });
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    public void menuAction() {
+        try {
+            closePopup();
+
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == viewTab) {
+                Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
+                MenuWebviewController.pop(this, webView, null, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == codesTab) {
+                Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
+                MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == editorTab) {
+                Point2D localToScreen = htmlEditor.localToScreen(htmlEditor.getWidth() - 80, 80);
+                MenuWebviewController.pop((BaseWebViewController) (htmlEditor.getUserData()), null, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == markdownTab) {
+                Point2D localToScreen = markdownArea.localToScreen(markdownArea.getWidth() - 80, 80);
+                MenuMarkdownEditController.open(this, markdownArea, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == textsTab) {
+                Point2D localToScreen = textsArea.localToScreen(textsArea.getWidth() - 80, 80);
+                MenuTextEditController.open(this, textsArea, localToScreen.getX(), localToScreen.getY());
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
     @Override
     public void myBoxClipBoard() {
         try {
@@ -823,41 +855,6 @@ public class HtmlEditorController extends BaseWebViewController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-    }
-
-    @Override
-    public boolean keyF1() {
-        try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == markdownTab) {
-                Platform.runLater(() -> {
-                    synchronizeMarkdown();
-                });
-                return true;
-
-            } else if (tab == codesTab) {
-                Platform.runLater(() -> {
-                    synchronizeCodes();
-                });
-                return true;
-
-            } else if (tab == editorTab) {
-                Platform.runLater(() -> {
-                    synchronizeEditor();
-                });
-                return true;
-
-            } else if (tab == textsTab) {
-                Platform.runLater(() -> {
-                    synchronizeTexts();
-                });
-                return true;
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        return false;
     }
 
     @Override
@@ -889,7 +886,11 @@ public class HtmlEditorController extends BaseWebViewController {
 
     @Override
     public void cleanPane() {
-        htmlEditor.setUserData(null);
+        try {
+            htmlEditor.setUserData(null);
+        } catch (Exception e) {
+        }
         super.cleanPane();
     }
+
 }

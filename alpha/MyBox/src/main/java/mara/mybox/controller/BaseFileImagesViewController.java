@@ -526,17 +526,21 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
 
     @Override
     public void cleanPane() {
-        if (thumbTask != null) {
-            thumbTask.cancel();
-            thumbTask = null;
-        }
-        if (process != null) {
-            process.destroy();
-            process = null;
-        }
-        if (loading != null) {
-            loading.closeStage();
-            loading = null;
+        try {
+            if (thumbTask != null) {
+                thumbTask.cancel();
+                thumbTask = null;
+            }
+            if (process != null) {
+                process.destroy();
+                process = null;
+            }
+            if (loading != null) {
+                loading.closeStage();
+                loading = null;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
         super.cleanPane();
     }

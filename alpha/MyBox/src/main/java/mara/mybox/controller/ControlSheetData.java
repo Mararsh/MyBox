@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -22,11 +24,7 @@ import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.WebViewTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -36,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public class ControlSheetData extends BaseController {
+public class ControlSheetData extends BaseWebViewController {
 
     protected List<ColumnDefinition> columns;
     protected ColumnType defaultColumnType;
@@ -44,14 +42,15 @@ public class ControlSheetData extends BaseController {
     protected boolean defaultColNotNull, dataChanged;
     protected String[][] sheet;
     protected int colsNumber, rowsNumber;
-    protected TextArea textArea;
 
+    @FXML
+    protected TabPane tabPane;
+    @FXML
+    protected Tab defTab, htmlTab, textsTab;
     @FXML
     protected ControlDataText textController;
     @FXML
-    protected WebView webView;
-    @FXML
-    protected CheckBox htmlColumnCheck, htmlRowCheck;
+    protected CheckBox htmlColumnCheck, htmlRowCheck, textColumnCheck, textRowCheck;
     @FXML
     protected VBox defBox;
     @FXML
@@ -67,6 +66,7 @@ public class ControlSheetData extends BaseController {
     }
 
     // Should always run this after scene loaded and before input data
+    @Override
     public void setParameters(BaseController parent) {
         try {
             this.parentController = parent;
@@ -84,20 +84,35 @@ public class ControlSheetData extends BaseController {
             }
             if (textController != null) {
                 textController.setParameters(parent == null ? this : parent);
-                textArea = textController.textArea;
+                textController.sheetController = this;
             }
             if (htmlColumnCheck != null) {
-                htmlColumnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlColumn", true));
+                htmlColumnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlColumn", false));
                 htmlColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                     updateDataHtml(pickData());
                     UserConfig.setBoolean(baseName + "HtmlColumn", newValue);
                 });
             }
-            if (htmlColumnCheck != null) {
-                htmlRowCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlRow", true));
+            if (htmlRowCheck != null) {
+                htmlRowCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlRow", false));
                 htmlRowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                     updateDataHtml(pickData());
                     UserConfig.setBoolean(baseName + "HtmlRow", newValue);
+                });
+            }
+
+            if (textColumnCheck != null) {
+                textColumnCheck.setSelected(UserConfig.getBoolean(baseName + "TextColumn", false));
+                textColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    updateDataText(pickData());
+                    UserConfig.setBoolean(baseName + "TextColumn", newValue);
+                });
+            }
+            if (textRowCheck != null) {
+                textRowCheck.setSelected(UserConfig.getBoolean(baseName + "TextRow", false));
+                textRowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    updateDataText(pickData());
+                    UserConfig.setBoolean(baseName + "TextRow", newValue);
                 });
             }
 
@@ -167,8 +182,20 @@ public class ControlSheetData extends BaseController {
                 return null;
             }
             List<String> names = new ArrayList<>();
-            for (ColumnDefinition column : columns) {
-                names.add(column.getName());
+            for (int i = 0; i < columns.size(); i++) {
+                names.add(colName(i));
+            }
+            return names;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected List<String> rowNames(int rows) {
+        try {
+            List<String> names = new ArrayList<>();
+            for (int i = 0; i < rows; i++) {
+                names.add(rowName(i));
             }
             return names;
         } catch (Exception e) {
@@ -297,6 +324,7 @@ public class ControlSheetData extends BaseController {
         TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
         controller.loadContents(textController.textArea.getText());
     }
+
 
     /*
         html tab
@@ -497,6 +525,46 @@ public class ControlSheetData extends BaseController {
     public void clearDefAction() {
         makeColumns();
         makeDataDefintion();
+    }
+
+    /*
+        buttons
+     */
+    @FXML
+    @Override
+    public void popAction() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == htmlTab) {
+                HtmlPopController.open(this, WebViewTools.getHtml(webView));
+
+            } else if (tab == textsTab) {
+                TextPopController.open(this, textController.textArea.getText());
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    public void menuAction() {
+        try {
+            closePopup();
+
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == htmlTab) {
+                Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
+                MenuWebviewController.pop(this, webView, null, localToScreen.getX(), localToScreen.getY());
+
+            } else if (tab == textsTab) {
+                Point2D localToScreen = textController.textArea.localToScreen(textController.textArea.getWidth() - 80, 80);
+                MenuTextEditController.open(this, textController.textArea, localToScreen.getX(), localToScreen.getY());
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
 }

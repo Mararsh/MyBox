@@ -46,14 +46,8 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.StyleData;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -1020,12 +1014,15 @@ public class MediaPlayerController extends BaseController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (player != null) {
-            player.dispose();
-            player = null;
+    public void cleanPane() {
+        try {
+            if (player != null) {
+                player.dispose();
+                player = null;
+            }
+        } catch (Exception e) {
         }
-        return true;
+        super.cleanPane();
     }
 
 }

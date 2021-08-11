@@ -12,8 +12,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.Region;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -167,11 +165,15 @@ public class LoadingController extends BaseController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (loadingTask != null && !loadingTask.isDone()) {
-            loadingTask.cancel();
-            loadingTask = null;
+    public void cleanPane() {
+        try {
+            if (loadingTask != null && !loadingTask.isDone()) {
+                loadingTask.cancel();
+                loadingTask = null;
+            }
+        } catch (Exception e) {
         }
-        return true;
+        super.cleanPane();
     }
+
 }

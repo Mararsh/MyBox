@@ -61,7 +61,7 @@ public class MenuTextBaseController extends MenuController {
     }
 
     @FXML
-    public void popMenu() {
+    public void menuAction() {
         if (parentController == null || node == null) {
             return;
         }

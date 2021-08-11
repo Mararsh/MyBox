@@ -514,6 +514,11 @@ public class TextTools {
     }
 
     public static String dataText(Object[][] data, String delimiter) {
+        return dataText(data, delimiter, null, null);
+    }
+
+    public static String dataText(Object[][] data, String delimiter,
+            List<String> colsNames, List<String> rowsNames) {
         if (data == null || data.length == 0 || delimiter == null) {
             return "";
         }
@@ -522,7 +527,22 @@ public class TextTools {
             String p = delimiterText(delimiter);
             int rowsNumber = data.length;
             int colsNumber = data[0].length;
+            if (colsNames != null && colsNames.size() >= colsNumber) {
+                if (rowsNames != null) {
+                    s.append(p);
+                }
+                for (int j = 0; j < colsNumber; j++) {
+                    s.append(colsNames.get(j));
+                    if (j < colsNumber - 1) {
+                        s.append(p);
+                    }
+                }
+                s.append("\n");
+            }
             for (int i = 0; i < rowsNumber; i++) {
+                if (rowsNames != null) {
+                    s.append(rowsNames.get(i)).append(p);
+                }
                 for (int j = 0; j < colsNumber; j++) {
                     s.append(data[i][j]);
                     if (j < colsNumber - 1) {

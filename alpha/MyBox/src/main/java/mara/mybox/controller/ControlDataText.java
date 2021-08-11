@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -10,9 +11,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -22,6 +21,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataText extends BaseController {
 
+    protected ControlSheetData sheetController;
     protected String[][] sheet;
     protected String delimiter;
 
@@ -109,7 +109,7 @@ public class ControlDataText extends BaseController {
                         delimiter = ";";
                     }
                     UserConfig.setString(baseName + "TargetDelimiter", delimiter);
-                    update(TextTools.dataText(sheet, delimiter));
+                    update(sheet);
                 }
             });
             delimiterInput.textProperty().addListener(new ChangeListener<String>() {
@@ -125,7 +125,7 @@ public class ControlDataText extends BaseController {
                     delimiter = newValue;
                     UserConfig.setString(baseName + "TargetDelimiter", delimiter);
                     delimiterInput.setStyle(null);
-                    update(TextTools.dataText(sheet, delimiter));
+                    update(sheet);
                 }
             });
 
@@ -135,17 +135,26 @@ public class ControlDataText extends BaseController {
     }
 
     public void update(String[][] sheet) {
-        this.sheet = sheet;
-        update(TextTools.dataText(sheet, delimiter));
+        update(sheet, delimiter);
     }
 
-    public void update(String text) {
+    public void update(String[][] sheet, String delimiter) {
+        this.sheet = sheet;
+        List<String> colsNames = null;
+        List<String> rowsNames = null;
         String title;
-        if (parentController instanceof ControlSheetData) {
-            title = ((ControlSheetData) parentController).titleName();
+        if (sheetController != null) {
+            title = sheetController.titleName();
+            if (sheetController.textColumnCheck.isSelected()) {
+                colsNames = sheetController.columnNames();
+            }
+            if (sheetController.textRowCheck.isSelected()) {
+                rowsNames = sheetController.rowNames(sheet.length);
+            }
         } else {
             title = "";
         }
+        String text = TextTools.dataText(sheet, delimiter, colsNames, rowsNames);
         if (!title.isBlank()) {
             textArea.setText(title + "\n\n" + text);
         } else {

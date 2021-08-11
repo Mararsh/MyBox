@@ -180,15 +180,6 @@ public class NodeTools {
         }
     }
 
-//    public static double getX(Node node) {
-//        Point2D localToScreen = node.localToScreen(0, 0);
-//        return localToScreen.getX();
-//    }
-//
-//    public static double getY(Node node) {
-//        Point2D localToScreen = node.localToScreen(0, 0);
-//        return localToScreen.getY();
-//    }
     public static double getWidth(Control control) {
         return control.getBoundsInParent().getWidth();
     }

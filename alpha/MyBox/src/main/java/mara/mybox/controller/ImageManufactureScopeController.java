@@ -12,13 +12,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -61,8 +60,8 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.cell.ListImageCell;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -70,6 +69,7 @@ import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -82,6 +82,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
     protected TableColor tableColor;
     protected ImageManufactureController imageController;
+    protected ImageManufactureScopesSavedController scopesSavedController;
     protected float opacity;
     protected BufferedImage outlineSource;
 
@@ -92,8 +93,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
     @FXML
     protected VBox scopeEditBox, scopeSetBox, scopePointsBox, scopeColorsBox, colorMatchBox,
             scopeOutlineBox, rectangleBox, circleBox;
-    @FXML
-    protected ListView<ImageScope> scopesList;
     @FXML
     protected ComboBox<String> scopeDistanceSelector, opacitySelector;
     @FXML
@@ -111,8 +110,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button saveScopeButton, deleteScopesButton, useScopeButton,
-            deletePointsButton, clearPointsButton,
+    protected Button saveScopeButton, deletePointsButton, clearPointsButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
@@ -129,9 +127,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
         baseTitle = Languages.message("ImageManufacture");
     }
 
-    /*
-        init
-     */
     @Override
     public void setControlsStyle() {
         try {
@@ -142,9 +137,10 @@ public class ImageManufactureScopeController extends ImageViewerController {
         }
     }
 
-    public void initController(ImageManufactureController parent) {
+    public void setParameters(ImageManufactureController parent) {
         this.parentController = parent;
         imageController = parent;
+        scopesSavedController = imageController.scopeSavedController;
         baseName = imageController.baseName;
         baseTitle = imageController.baseTitle;
         sourceFile = imageController.sourceFile;
@@ -157,13 +153,11 @@ public class ImageManufactureScopeController extends ImageViewerController {
         initColorBox();
         initMatchBox();
         initOpacitySelector();
-        initSavedScopesBox();
         refreshStyle();
 
         loadImage(sourceFile, imageInformation, imageController.image, parent.imageChanged);
         checkScopeType();
         scopeAllRadio.fire();
-        loadScopes();
     }
 
     protected void initSplitPane() {
@@ -181,6 +175,9 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
     protected void initScopeView() {
         try {
+            imageView.fitWidthProperty().bind(imageController.imageView.fitWidthProperty());
+            imageView.fitHeightProperty().bind(imageController.imageView.fitHeightProperty());
+
             scopeView.visibleProperty().bind(scopeEditBox.visibleProperty());
             imageView.toBack();
 
@@ -542,6 +539,85 @@ public class ImageManufactureScopeController extends ImageViewerController {
     /*
         scope
      */
+    protected void setScopeName() {
+        if (scope == null) {
+            return;
+        }
+        String name = scope.getName();
+        if (name == null || name.isEmpty()) {
+            name = scope.getScopeType() + "_" + DateTools.datetimeToString(new Date());
+        }
+        scopeNameInput.setText(name);
+    }
+
+    public void showScope(ImageScope scope) {
+        if (scope == null || scope.getScopeType() == null) {
+            return;
+        }
+        clearScope();
+        this.scope = scope;
+        setScopeControls();
+        isSettingValues = true;
+        showScopeType(scope);
+        showAreaData(scope);
+        showColorData(scope);
+        showMatchType(scope);
+        showDistanceValue(scope);
+        eightNeighborCheck.setSelected(scope.isEightNeighbor());
+        isSettingValues = false;
+        if (scope.getScopeType() != ScopeType.Outline) {
+            indicateScope();
+        } else {
+            loadOutlineSource(scope.getOutlineSource(), scope.getRectangle());
+        }
+    }
+
+    public boolean showScopeType(ImageScope scope) {
+        if (scope == null || scope.getScopeType() == null) {
+            return false;
+        }
+        switch (scope.getScopeType()) {
+            case All:
+                scopeTypeGroup.selectToggle(null);
+                break;
+            case Matting:
+                scopeMattingRadio.fire();
+                break;
+            case Color:
+                scopeColorRadio.fire();
+                break;
+            case Rectangle:
+                scopeRectangleRadio.fire();
+                break;
+            case RectangleColor:
+                scopeRectangleColorRadio.fire();
+                break;
+            case Circle:
+                scopeCircleRadio.fire();
+                break;
+            case CircleColor:
+                scopeCircleColorRadio.fire();
+                break;
+            case Ellipse:
+                scopeEllipseRadio.fire();
+                break;
+            case EllipseColor:
+                scopeEllipseColorRadio.fire();
+                break;
+            case Polygon:
+                scopePolygonRadio.fire();
+                break;
+            case PolygonColor:
+                scopePolygonColorRadio.fire();
+                break;
+            case Outline:
+                scopeOutlineRadio.fire();
+                break;
+        }
+        return true;
+
+    }
+
     public void checkScopeType() {
         if (isSettingValues) {
             return;
@@ -958,6 +1034,43 @@ public class ImageManufactureScopeController extends ImageViewerController {
         }
     }
 
+    @FXML
+    public void saveScope() {
+        if (scope == null || scope.getFile() == null || saveScopeButton.isDisabled()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            String name = scopeNameInput.getText().trim();
+            if (name.isEmpty()) {
+                return;
+            }
+            scope.setName(name);
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    TableImageScope.write(scope);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    scopesSavedController.loadScopes();
+                }
+            };
+            parentController.handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+
+        }
+    }
+
+
     /*
         shape
      */
@@ -1338,113 +1451,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
     /*
         Manage scopes
      */
-    public void initSavedScopesBox() {
-        try {
-            scopesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            scopesList.setCellFactory(new Callback<ListView<ImageScope>, ListCell<ImageScope>>() {
-                @Override
-                public ListCell<ImageScope> call(ListView<ImageScope> param) {
-                    return new ImageScopeCell();
-                }
-            });
-
-            scopesList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        useScope();
-                    }
-                }
-            });
-
-            deleteScopesButton.disableProperty().bind(
-                    scopesList.getSelectionModel().selectedItemProperty().isNull()
-            );
-            useScopeButton.disableProperty().bind(deleteScopesButton.disableProperty());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public class ImageScopeCell extends ListCell<ImageScope> {
-
-        private final ImageView view;
-
-        public ImageScopeCell() {
-            setContentDisplay(ContentDisplay.LEFT);
-            view = new ImageView();
-            view.setPreserveRatio(true);
-            view.setFitWidth(20);
-        }
-
-        @Override
-        protected void updateItem(ImageScope item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty || item == null || item.getScopeType() == null) {
-                setText(null);
-                setGraphic(null);
-                return;
-            }
-
-            Image icon;
-            try {
-                switch (item.getScopeType()) {
-                    case Rectangle:
-                        icon = new Image(StyleTools.getIcon("iconRectangle.png"));
-                        break;
-                    case Circle:
-                        icon = new Image(StyleTools.getIcon("iconCircle.png"));
-                        break;
-                    case Ellipse:
-                        icon = new Image(StyleTools.getIcon("iconEllipse.png"));
-                        break;
-                    case Polygon:
-                        icon = new Image(StyleTools.getIcon("iconStar.png"));
-                        break;
-                    case RectangleColor:
-                        icon = new Image(StyleTools.getIcon("iconRectangleFilled.png"));
-                        break;
-                    case CircleColor:
-                        icon = new Image(StyleTools.getIcon("iconCircleFilled.png"));
-                        break;
-                    case EllipseColor:
-                        icon = new Image(StyleTools.getIcon("iconEllipseFilled.png"));
-                        break;
-                    case PolygonColor:
-                        icon = new Image(StyleTools.getIcon("iconStarFilled.png"));
-                        break;
-                    case Color:
-                        icon = new Image(StyleTools.getIcon("iconColorWheel.png"));
-                        break;
-                    case Matting:
-                        icon = new Image(StyleTools.getIcon("iconColorFill.png"));
-                        break;
-                    case Outline:
-                        icon = new Image(StyleTools.getIcon("IconButterfly.png"));
-                        break;
-                    default:
-                        return;
-                }
-                String s = item.getName();
-                if (scope != null && s.equals(scope.getName())) {
-                    setStyle("-fx-text-fill: #961c1c; -fx-font-weight: bolder;");
-                    s = "** " + Languages.message("CurrentScope") + " " + s;
-                } else {
-                    setStyle("");
-                }
-                view.setImage(icon);
-                setGraphic(view);
-                setText(s);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-                setText(null);
-                setGraphic(null);
-            }
-
-        }
-    }
-
     public void initNameBox() {
         try {
             saveScopeButton.disableProperty().bind(scopeNameInput.textProperty().isEmpty()
@@ -1455,239 +1461,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-
-    }
-
-    public void loadScopes() {
-        if (sourceFile == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            scopesList.getItems().clear();
-            task = new SingletonTask<Void>() {
-                List<ImageScope> list;
-
-                @Override
-                protected boolean handle() {
-                    list = TableImageScope.read(sourceFile.getAbsolutePath());
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (list != null && !list.isEmpty()) {
-                        scopesList.getItems().setAll(list);
-//                        scopesList.getSelectionModel().selectFirst();
-                    }
-                }
-            };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    protected void setScopeName() {
-        if (scope == null) {
-            return;
-        }
-        String name = scope.getName();
-        if (name == null || name.isEmpty()) {
-            name = scope.getScopeType() + "_" + DateTools.datetimeToString(new Date());
-        }
-        scopeNameInput.setText(name);
-    }
-
-    @FXML
-    public void deleteScopes() {
-        List<ImageScope> selected = scopesList.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    return TableImageScope.delete(selected);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    for (ImageScope scope : selected) {
-                        scopesList.getItems().remove(scope);
-                    }
-                    scopesList.refresh();
-//                    loadScopes();
-                }
-            };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void saveScope() {
-        if (scope == null || scope.getFile() == null || saveScopeButton.isDisabled()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            String name = scopeNameInput.getText().trim();
-            if (name.isEmpty()) {
-                return;
-            }
-            scope.setName(name);
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    TableImageScope.write(scope);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadScopes();
-                }
-            };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-
-        }
-    }
-
-    @FXML
-    public void clearScopes() {
-        if (sourceFile == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                @Override
-                protected boolean handle() {
-                    TableImageScope.clearScopes(sourceFile.getAbsolutePath());
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    scopesList.getItems().clear();
-                    scopesList.refresh();
-                }
-            };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void useScope() {
-        ImageScope selected = scopesList.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            return;
-        }
-        scope = selected;
-        // Force listView to refresh
-        // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
-        for (int i = 0; i < scopesList.getItems().size(); ++i) {
-            scopesList.getItems().set(i, scopesList.getItems().get(i));
-        }
-        showScope(scope);
-    }
-
-    @FXML
-    public void refreshScopes() {
-        loadScopes();
-    }
-
-    public void showScope(ImageScope scope) {
-        if (scope == null || scope.getScopeType() == null) {
-            return;
-        }
-        clearScope();
-        this.scope = scope;
-        setScopeControls();
-        isSettingValues = true;
-        showScopeType(scope);
-        showAreaData(scope);
-        showColorData(scope);
-        showMatchType(scope);
-        showDistanceValue(scope);
-        eightNeighborCheck.setSelected(scope.isEightNeighbor());
-        isSettingValues = false;
-        if (scope.getScopeType() != ScopeType.Outline) {
-            indicateScope();
-        } else {
-            loadOutlineSource(scope.getOutlineSource(), scope.getRectangle());
-        }
-    }
-
-    public boolean showScopeType(ImageScope scope) {
-        if (scope == null || scope.getScopeType() == null) {
-            return false;
-        }
-        switch (scope.getScopeType()) {
-            case All:
-                scopeTypeGroup.selectToggle(null);
-                break;
-            case Matting:
-                scopeMattingRadio.fire();
-                break;
-            case Color:
-                scopeColorRadio.fire();
-                break;
-            case Rectangle:
-                scopeRectangleRadio.fire();
-                break;
-            case RectangleColor:
-                scopeRectangleColorRadio.fire();
-                break;
-            case Circle:
-                scopeCircleRadio.fire();
-                break;
-            case CircleColor:
-                scopeCircleColorRadio.fire();
-                break;
-            case Ellipse:
-                scopeEllipseRadio.fire();
-                break;
-            case EllipseColor:
-                scopeEllipseColorRadio.fire();
-                break;
-            case Polygon:
-                scopePolygonRadio.fire();
-                break;
-            case PolygonColor:
-                scopePolygonColorRadio.fire();
-                break;
-            case Outline:
-                scopeOutlineRadio.fire();
-                break;
-        }
-        return true;
 
     }
 
@@ -1838,6 +1611,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             MyBoxLog.debug(e.toString());
         }
     }
+
 
     /*
         Outline
@@ -2062,6 +1836,33 @@ public class ImageManufactureScopeController extends ImageViewerController {
             thread.start();
         }
 
+    }
+
+    @Override
+    protected void popImageMenu(double x, double y) {
+        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
+                || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        MenuImageScopeController.open(this, x, y);
+    }
+
+    public void popMenu() {
+        try {
+            Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
+            MenuImageScopeController.open(this, localToScreen.getX(), localToScreen.getY());
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void popImage() {
+        try {
+            ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
+            controller.loadImage(imageFile(), imageInformation, scopeView.getImage(), imageChanged);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
 }

@@ -356,7 +356,7 @@ public class StyleButton {
             return new StyleData(id, message("Stop"), "", "iconStop.png");
         }
         if (id.startsWith("synchronize")) {
-            return new StyleData(id, message("Synchronize"), "", "iconSynchronize.png");
+            return new StyleData(id, message("SynchronizeChangesToOtherPanes"), "F9", "iconSynchronize.png");
         }
         if (id.startsWith("function")) {
             return new StyleData(id, "", "", "iconFunction.png");
@@ -473,7 +473,7 @@ public class StyleButton {
             return new StyleData(id, "", "", "iconCharacter.png");
         }
         if (id.startsWith("menu")) {
-            return new StyleData(id, message("Menu"), "", "iconMenu.png");
+            return new StyleData(id, message("Menu"), "F12", "iconMenu.png");
         }
         if (id.startsWith("openPath")) {
             return new StyleData(id, message("Directory"), "", "iconOpen2.png");
@@ -529,10 +529,6 @@ public class StyleButton {
                 return new StyleData("firstButton", message("First"), "ALT+HOME", "iconFirst.png");
             case "lastButton":
                 return new StyleData("lastButton", message("Last"), "ALT+END", "iconLast.png");
-            case "refButton":
-                return new StyleData("refButton", message("Ref"), message("UseCurrentImageAsReference"), "CTRL+f", "iconRef.png");
-            case "ref2Button":
-                return new StyleData("refButton2", message("Ref"), message("UseCurrentImageAsReference"), "CTRL+f", "iconRef.png");
             case "redoButton":
                 return new StyleData("redoButton", message("Redo"), "CTRL+y / ALT+y", "iconRedo.png");
             case "undoButton":

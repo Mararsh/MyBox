@@ -39,7 +39,9 @@ public class MenuImageBaseController extends MenuController {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(zoomStepSelector, new Tooltip(message("ZoomStep")));
-            NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip(message("SelectArea") + "\nCTRL+t"));
+            if (selectAreaCheck != null) {
+                NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip(message("SelectArea") + "\nCTRL+t"));
+            }
             NodeStyleTools.setTooltip(pickColorCheck, new Tooltip(message("PickColor") + "\nCTRL+k"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -81,25 +83,27 @@ public class MenuImageBaseController extends MenuController {
                 });
             }
 
-            if (imageController.maskRectangleLine == null) {
-                selectAreaCheck.setDisable(true);
-            } else if (imageController.selectAreaCheck != null) {
-                selectAreaCheck.setSelected(imageController.selectAreaCheck.isSelected());
-                selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        imageController.selectAreaCheck.setSelected(newValue);
-                    }
-                });
-            } else {
-                selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
-                selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "SelectArea", newValue);
-                        imageController.checkSelect();
-                    }
-                });
+            if (selectAreaCheck != null) {
+                if (imageController.maskRectangleLine == null) {
+                    selectAreaCheck.setDisable(true);
+                } else if (imageController.selectAreaCheck != null) {
+                    selectAreaCheck.setSelected(imageController.selectAreaCheck.isSelected());
+                    selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                            imageController.selectAreaCheck.setSelected(newValue);
+                        }
+                    });
+                } else {
+                    selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
+                    selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                            UserConfig.setBoolean(baseName + "SelectArea", newValue);
+                            imageController.checkSelect();
+                        }
+                    });
+                }
             }
 
             if (imageController.coordinateCheck != null) {

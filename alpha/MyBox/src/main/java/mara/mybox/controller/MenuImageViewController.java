@@ -19,6 +19,7 @@ public class MenuImageViewController extends MenuImageBaseController {
 
     public void setParameters(ImageViewerController imageViewerController) {
         try {
+            this.imageViewerController = imageViewerController;
             super.setParameters(imageViewerController);
 
         } catch (Exception e) {
@@ -29,58 +30,58 @@ public class MenuImageViewController extends MenuImageBaseController {
     @FXML
     @Override
     public void selectAllAction() {
-        imageController.selectAllAction();
+        imageViewerController.selectAllAction();
     }
 
     @FXML
     @Override
     public void cropAction() {
-        imageController.cropAction();
+        imageViewerController.cropAction();
     }
 
     @FXML
     public void turnOver() {
-        imageController.turnOver();
+        imageViewerController.turnOver();
     }
 
     @FXML
     public void rotateRight() {
-        imageController.rotateRight();
+        imageViewerController.rotateRight();
     }
 
     @FXML
     public void rotateLeft() {
-        imageController.rotateLeft();
+        imageViewerController.rotateLeft();
     }
 
     @FXML
     @Override
     public void recoverAction() {
-        imageController.recoverAction();
+        imageViewerController.recoverAction();
     }
 
     @FXML
     @Override
     public void saveAction() {
-        imageController.saveAction();
+        imageViewerController.saveAction();
     }
 
     @FXML
     @Override
     public void loadContentInSystemClipboard() {
-        imageController.loadContentInSystemClipboard();
+        imageViewerController.loadContentInSystemClipboard();
     }
 
     @FXML
     @Override
     public void previousAction() {
-        imageController.previousAction();
+        imageViewerController.previousAction();
     }
 
     @FXML
     @Override
     public void nextAction() {
-        imageController.nextAction();
+        imageViewerController.nextAction();
     }
 
 

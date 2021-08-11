@@ -488,26 +488,29 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     public void cleanPane() {
-        if (webEngine != null && webEngine.getLoadWorker() != null) {
-            webEngine.getLoadWorker().cancel();
-        }
-        webEngine = null;
-        webView.setUserData(null);
-        if (outlineTask != null) {
-            outlineTask.cancel();
-            outlineTask = null;
-        }
-        if (htmlTask != null) {
-            htmlTask.cancel();
-            htmlTask = null;
-        }
-        if (textsTask != null) {
-            textsTask.cancel();
-            textsTask = null;
-        }
-        if (ocrTask != null) {
-            ocrTask.cancel();
-            ocrTask = null;
+        try {
+            if (webEngine != null && webEngine.getLoadWorker() != null) {
+                webEngine.getLoadWorker().cancel();
+            }
+            webEngine = null;
+            webView.setUserData(null);
+            if (outlineTask != null) {
+                outlineTask.cancel();
+                outlineTask = null;
+            }
+            if (htmlTask != null) {
+                htmlTask.cancel();
+                htmlTask = null;
+            }
+            if (textsTask != null) {
+                textsTask.cancel();
+                textsTask = null;
+            }
+            if (ocrTask != null) {
+                ocrTask.cancel();
+                ocrTask = null;
+            }
+        } catch (Exception e) {
         }
         super.cleanPane();
     }

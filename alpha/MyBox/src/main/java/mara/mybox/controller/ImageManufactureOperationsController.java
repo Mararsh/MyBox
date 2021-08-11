@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -66,6 +65,13 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void setParameters(ImageManufactureController parent) {
+        this.parentController = parent;
+        imageController = parent;
+        imageView = imageController.imageView;
+        baseName = imageController.baseName;
 
     }
 

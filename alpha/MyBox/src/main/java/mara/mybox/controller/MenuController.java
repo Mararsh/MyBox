@@ -76,7 +76,7 @@ public class MenuController extends BaseController {
             setControlsStyle();
 
             if (node != null) {
-                setTitle(Languages.message("Target") + ": " + node.getId());
+                setTitleid(node.getId());
             }
 
         } catch (Exception e) {
@@ -90,8 +90,8 @@ public class MenuController extends BaseController {
         thisPane.applyCss();
     }
 
-    public void setTitle(String title) {
-        titleLabel.setText(title);
+    public void setTitleid(String id) {
+        titleLabel.setText(Languages.message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
     }
 
     public void addNode(Node node) {

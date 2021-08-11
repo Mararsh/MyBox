@@ -7,13 +7,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
@@ -359,8 +359,9 @@ public class BytesEditorController extends BaseFileEditorController {
 
     @FXML
     @Override
-    public void popMenu(MouseEvent mouseEvent) {
-        MenuBytesEditController.open(myController, mainArea, mouseEvent);
+    public void menuAction() {
+        Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
+        MenuBytesEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
     }
 
     @FXML

@@ -707,21 +707,25 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF7() {
-        return false;
-    }
-
-    public boolean keyF8() {
-        return false;
-    }
-
-    public boolean keyF9() {
         closeStage();
         return true;
     }
 
-    public boolean keyF10() {
+    public boolean keyF8() {
         refreshInterfaceAndFile();
         return true;
+    }
+
+    public boolean keyF9() {
+        if (synchronizeButton != null && !synchronizeButton.isDisabled() && synchronizeButton.isVisible()) {
+            synchronizeButton.fire();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean keyF10() {
+        return false;
     }
 
     public boolean keyF11() {
@@ -729,6 +733,10 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF12() {
+        if (menuButton != null && !menuButton.isDisabled() && menuButton.isVisible()) {
+            menuButton.fire();
+            return true;
+        }
         return false;
     }
 

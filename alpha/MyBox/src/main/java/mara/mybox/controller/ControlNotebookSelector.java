@@ -39,7 +39,7 @@ public class ControlNotebookSelector extends BaseNodeSelector<Notebook> {
         baseTitle = Languages.message("Notebook");
     }
 
-    public void setParent(NotesController notesController) {
+    public void setParameters(NotesController notesController) {
         this.notesController = notesController;
         this.tableNotebook = notesController.tableNotebook;
         this.tableNote = notesController.tableNote;

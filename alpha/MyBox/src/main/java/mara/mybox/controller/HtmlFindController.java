@@ -39,7 +39,7 @@ public class HtmlFindController extends BaseWebViewController {
     @FXML
     protected ControlStringSelector findInputController;
     @FXML
-    protected ColorSet findColorController, findBgColorController;
+    protected ColorSet findColorController, findBgColorController, currentColorController, currentBgColorController;
     @FXML
     protected Label foundLabel;
     @FXML
@@ -60,6 +60,8 @@ public class HtmlFindController extends BaseWebViewController {
 
             findColorController.init(this, baseName + "FindColor", Color.YELLOW);
             findBgColorController.init(this, baseName + "FindBgColor", Color.BLACK);
+            currentColorController.init(this, baseName + "CurrentColor", Color.RED);
+            currentBgColorController.init(this, baseName + "CurrentBgColor", Color.BLACK);
 
             List<String> fonts = new ArrayList();
             fonts.addAll(Arrays.asList("1em", "1.2em", "1.5em", "24px", "28px"));
@@ -197,9 +199,7 @@ public class HtmlFindController extends BaseWebViewController {
                                 .setOperation(FindReplaceString.Operation.FindNext).setFindString(findString)
                                 .setIsRegex(regCheck.isSelected()).setCaseInsensitive(caseCheck.isSelected()).setMultiline(true);
                         String inputString = HtmlReadTools.body(loadedHtml, false);
-                        String replaceSuffix = " style=\"color:" + findColorController.rgb()
-                                + "; background: " + findBgColorController.rgb()
-                                + "; font-size:" + font + ";\">" + findString + "</span>";
+                        String replaceSuffix = " style=\"" + itemsStyle() + "\" >" + findString + "</span>";
 
                         results = new StringBuilder();
                         String texts;
@@ -257,6 +257,7 @@ public class HtmlFindController extends BaseWebViewController {
                     String info = message("Found") + ": " + foundCount;
                     foundLabel.setText(info);
 
+                    foundItem = 0;
                     if (foundCount > 0) {
                         List<String> numbers = new ArrayList<>();
                         for (int i = 1; i <= foundCount; i++) {
@@ -288,8 +289,37 @@ public class HtmlFindController extends BaseWebViewController {
         }
     }
 
+    protected String itemsStyle() {
+        return "color:" + findColorController.rgb()
+                + "; background: " + findBgColorController.rgb()
+                + "; font-size:" + findFontSelector.getValue() + ";";
+    }
+
+    protected String currentStyle() {
+        return "color:" + currentColorController.rgb()
+                + "; background: " + currentBgColorController.rgb()
+                + "; font-size:" + findFontSelector.getValue() + ";";
+    }
+
+    protected void setStyle(int id, String style) {
+        if (id <= 0 || id > foundCount) {
+            return;
+        }
+        webEngine.executeScript("document.getElementById('" + ItemPrefix + id + "').setAttribute('style', '" + style + "');");
+    }
+
+    protected void scrollTo(int id) {
+        if (id <= 0 || id > foundCount) {
+            return;
+        }
+        webEngine.executeScript("document.getElementById('" + ItemPrefix + id + "').scrollIntoView();");
+    }
+
     // 1-based
     protected void goItem(int index) {
+        MyBoxLog.console(foundItem);
+        MyBoxLog.console(itemsStyle());
+        setStyle(foundItem, itemsStyle());
         foundItem = index;
         if (foundItem < 1) {
             foundItem = wrapCheck.isSelected() ? foundCount : 1;
@@ -298,8 +328,10 @@ public class HtmlFindController extends BaseWebViewController {
             foundItem = wrapCheck.isSelected() ? 1 : foundCount;
         }
         foundItemSelector.getSelectionModel().select(foundItem + "");
-        String id = ItemPrefix + foundItem;
-        webEngine.executeScript("document.getElementById('" + id + "').scrollIntoView();");
+        MyBoxLog.console(foundItem);
+        MyBoxLog.console(currentStyle());
+        scrollTo(foundItem);
+        setStyle(foundItem, currentStyle());
     }
 
     @FXML

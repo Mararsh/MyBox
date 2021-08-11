@@ -370,17 +370,19 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             }
             controller.parentController = myController;
 
-            task.setOnSucceeded((WorkerStateEvent event) -> {
-                controller.closeStage();
-            });
-            task.setOnCancelled((WorkerStateEvent event) -> {
-                popInformation(Languages.message("Canceled"));
-                controller.closeStage();
-            });
-            task.setOnFailed((WorkerStateEvent event) -> {
-                popError(Languages.message("Error"));
-                controller.closeStage();
-            });
+            if (task != null) {
+                task.setOnSucceeded((WorkerStateEvent event) -> {
+                    controller.closeStage();
+                });
+                task.setOnCancelled((WorkerStateEvent event) -> {
+                    popInformation(Languages.message("Canceled"));
+                    controller.closeStage();
+                });
+                task.setOnFailed((WorkerStateEvent event) -> {
+                    popError(Languages.message("Error"));
+                    controller.closeStage();
+                });
+            }
             return controller;
 
         } catch (Exception e) {

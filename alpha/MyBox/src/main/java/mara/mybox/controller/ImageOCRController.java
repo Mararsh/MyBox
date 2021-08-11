@@ -1215,16 +1215,19 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     @Override
-    public boolean checkBeforeNextAction() {
-        if (process != null) {
-            process.destroy();
-            process = null;
+    public void cleanPane() {
+        try {
+            if (process != null) {
+                process.destroy();
+                process = null;
+            }
+            if (loading != null) {
+                loading.closeStage();
+                loading = null;
+            }
+        } catch (Exception e) {
         }
-        if (loading != null) {
-            loading.closeStage();
-            loading = null;
-        }
-        return true;
+        super.cleanPane();
     }
 
 }

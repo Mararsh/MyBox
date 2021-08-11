@@ -868,4 +868,13 @@ public abstract class BaseWebViewController_Assist extends BaseController {
         }
     }
 
+    @Override
+    public boolean keyEnter() {
+        if (urlSelector.isFocused()) {
+            goAction();
+            return true;
+        }
+        return false;
+    }
+
 }
