@@ -479,6 +479,9 @@ public abstract class BaseWebViewController_Assist extends BaseController {
     }
 
     public void goAddress(String value) {
+        if (webEngine == null) {
+            return;
+        }
         try {
             URL url = new URL(value);
             if (urlSelector != null) {

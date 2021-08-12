@@ -25,7 +25,7 @@ import javafx.scene.shape.Line;
 import mara.mybox.bufferedimage.ImageMosaic.MosaicType;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
-import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;

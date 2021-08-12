@@ -13,15 +13,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -128,13 +125,13 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         setRadio.setSelected(true);
         preAlphaCheck.setVisible(false);
         preAlphaTipsView.setVisible(false);
+        colorUnit.setText("");
         RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
         if (Languages.message("Brightness").equals(selected.getText())) {
             colorOperationType = OperationType.Brightness;
             colorSlider.setMax(100);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
@@ -143,9 +140,8 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         } else if (Languages.message("Saturation").equals(selected.getText())) {
             colorOperationType = OperationType.Saturation;
             colorSlider.setMax(100);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
@@ -154,7 +150,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         } else if (Languages.message("Hue").equals(selected.getText())) {
             colorOperationType = OperationType.Hue;
             colorSlider.setMax(360);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText(Languages.message("Degree"));
             if (colorInput.getText().trim().isEmpty()) {
@@ -165,63 +161,56 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         } else if (Languages.message("Red").equals(selected.getText())) {
             colorOperationType = OperationType.Red;
             colorSlider.setMax(255);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
         } else if (Languages.message("Green").equals(selected.getText())) {
             colorOperationType = OperationType.Green;
             colorSlider.setMax(255);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
         } else if (Languages.message("Blue").equals(selected.getText())) {
             colorOperationType = OperationType.Blue;
             colorSlider.setMax(255);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
         } else if (Languages.message("Yellow").equals(selected.getText())) {
             colorOperationType = OperationType.Yellow;
             colorSlider.setMax(255);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
         } else if (Languages.message("Cyan").equals(selected.getText())) {
             colorOperationType = OperationType.Cyan;
             colorSlider.setMax(255);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
         } else if (Languages.message("Magenta").equals(selected.getText())) {
             colorOperationType = OperationType.Magenta;
             colorSlider.setMax(255);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
         } else if (Languages.message("Opacity").equals(selected.getText())) {
             colorOperationType = OperationType.Opacity;
-            colorSlider.setMax(100);
+            colorSlider.setMax(255);
             colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
@@ -232,9 +221,8 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         } else if (Languages.message("RGB").equals(selected.getText())) {
             colorOperationType = OperationType.RGB;
             colorSlider.setMax(255);
-            colorSlider.setMin(1);
+            colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("10");
             }
@@ -302,11 +290,9 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
                 case Cyan:
                 case Magenta:
                 case RGB:
-                    pixelsOperation.setIntPara1(colorValue);
-                    break;
                 case Opacity:
                 case PreOpacity:
-                    pixelsOperation.setIntPara1(colorValue * 255 / 100);
+                    pixelsOperation.setIntPara1(colorValue);
                     break;
             }
             BufferedImage target = pixelsOperation.operate();

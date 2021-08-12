@@ -807,6 +807,7 @@ public class HtmlEditorController extends BaseWebViewController {
     }
 
     @FXML
+    @Override
     public void menuAction() {
         try {
             closePopup();

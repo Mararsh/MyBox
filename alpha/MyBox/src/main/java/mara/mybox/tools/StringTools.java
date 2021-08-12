@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 
-
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 17:43:53
@@ -102,7 +101,7 @@ public class StringTools {
             String prefix = "";
             for (int i = 0; i < s.length(); i++) {
                 char c = s.charAt(i);
-                if (c >= '0' && c <= '9') {
+                if (isNumber(c)) {
                     prefix += c;
                 } else {
                     break;
@@ -117,60 +116,79 @@ public class StringTools {
         }
     }
 
-    public static int firstNumber(String string) {
-        if (string == null) {
-            return AppValues.InvalidInteger;
-        }
-        try {
-            String s = string.trim();
-            String number = "";
-            boolean startNumber = false;
-            for (int i = 0; i < s.length(); i++) {
-                char c = s.charAt(i);
-                if (c >= '0' && c <= '9') {
-                    startNumber = true;
-                    number += c;
-                } else {
-                    if (startNumber) {
-                        break;
-                    }
-                }
-            }
-            if (number.isBlank()) {
-                return AppValues.InvalidInteger;
-            }
-            return Integer.parseInt(number);
-        } catch (Exception e) {
-            return AppValues.InvalidInteger;
-        }
+    public static boolean isNumber(char c) {
+        return c >= '0' && c <= '9';
     }
 
     public static int compareWithNumber(String string1, String string2) {
-        if (string1 == null) {
-            return string2 == null ? 0 : -1;
-        }
-        if (string2 == null) {
+        try {
+            if (string1 == null) {
+                return string2 == null ? 0 : -1;
+            }
+            if (string2 == null) {
+                return 1;
+            }
+            int len = Math.min(string1.length(), string2.length());
+            String number1 = "", number2 = "";
+            boolean numberEnd1 = false, numberEnd2 = false;
+            for (int i = 0; i < len; i++) {
+                char c1 = string1.charAt(i);
+                char c2 = string2.charAt(i);
+                if (c1 == c2) {
+                    continue;
+                }
+                if (isNumber(c1)) {
+                    if (!numberEnd1) {
+                        number1 += c1;
+                    }
+                } else {
+                    numberEnd1 = true;
+                }
+                if (isNumber(c2)) {
+                    if (!numberEnd2) {
+                        number2 += c2;
+                    }
+                } else {
+                    numberEnd2 = true;
+                }
+                if (numberEnd1 && numberEnd2) {
+                    break;
+                }
+            }
+            if (!number1.isBlank() && !number2.isBlank()) {
+                return compareNumber(number1, number2);
+            }
+            return compare(string1, string2);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
             return 1;
         }
-        int int1 = StringTools.firstNumber(string1);
-        int int2 = StringTools.firstNumber(string2);
-        if (int1 != AppValues.InvalidInteger && int2 != AppValues.InvalidInteger) {
-            int pos1 = string1.indexOf(int1 + "");
-            int pos2 = string2.indexOf(int2 + "");
-            if (pos1 != pos2
-                    || (pos1 > 0 && !string1.substring(0, pos1).equals(string2.substring(0, pos2)))) {
-                return compare(string1, string2);
-            }
-            if (int1 == int2) {
-                return 0;
-            } else if (int1 > int2) {
+    }
+
+    public static int compareNumber(String number1, String number2) {
+        if (number1 == null) {
+            return number2 == null ? 0 : -1;
+        }
+        if (number2 == null) {
+            return 1;
+        }
+        int len1 = number1.length();
+        int len2 = number2.length();
+        if (len1 > len2) {
+            return 1;
+        } else if (len1 < len2) {
+            return -1;
+        }
+        for (int i = 0; i < len1; i++) {
+            char c1 = number1.charAt(i);
+            char c2 = number2.charAt(i);
+            if (c1 > c2) {
                 return 1;
-            } else {
+            } else if (c1 < c2) {
                 return -1;
             }
-        } else {
-            return compare(string1, string2);
         }
+        return 0;
     }
 
     public static int compare(String s1, String s2) {
@@ -180,7 +198,7 @@ public class StringTools {
         if (s2 == null) {
             return 1;
         }
-        Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
+        Collator compare = Collator.getInstance(Locale.getDefault());
         return compare.compare(s1, s2);
     }
 
@@ -190,7 +208,7 @@ public class StringTools {
         }
         Collections.sort(strings, new Comparator<String>() {
 
-            private final Comparator<Object> compare = Collator.getInstance(locale);
+            private final Collator compare = Collator.getInstance(locale);
 
             @Override
             public int compare(String f1, String f2) {
@@ -209,11 +227,11 @@ public class StringTools {
         }
         Collections.sort(strings, new Comparator<String>() {
 
-            private final Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
+            private final Collator compare = Collator.getInstance(Locale.getDefault());
 
             @Override
             public int compare(String f1, String f2) {
-                return 0 - compare.compare(f1, f2);
+                return compare.compare(f2, f1);
             }
         });
     }

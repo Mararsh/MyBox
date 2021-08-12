@@ -20,6 +20,7 @@ import mara.mybox.data.DoubleRectangle;
  */
 public abstract class BaseImageController_MouseEvents extends BaseImageController_Shapes {
 
+    @Override
     public void imageClicked(MouseEvent event, DoublePoint p) {
         if (p == null || imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);

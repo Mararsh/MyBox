@@ -61,6 +61,7 @@ public class MenuTextBaseController extends MenuController {
     }
 
     @FXML
+    @Override
     public void menuAction() {
         if (parentController == null || node == null) {
             return;

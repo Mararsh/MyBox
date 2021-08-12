@@ -21,7 +21,7 @@ import javafx.stage.WindowEvent;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;

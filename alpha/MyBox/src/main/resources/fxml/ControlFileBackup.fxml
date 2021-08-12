@@ -72,7 +72,7 @@ License:    Apache License Version 2.0
                     </children>
                 </HBox>
                 <ListView fx:id="backupsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
-            <FlowPane hgap="5.0" prefWrapLength="600.0" vgap="5.0" VBox.vgrow="NEVER">
+            <FlowPane hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
                <children>
                       <Label text="%MaxBackups" />
                         <TextField fx:id="maxBackupsInput" prefWidth="100.0" text="10" />

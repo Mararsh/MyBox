@@ -377,6 +377,7 @@ public class MarkdownEditorController extends TextEditorController {
     @Override
     public void menuAction() {
         try {
+            closePopup();
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == markdownTab) {
                 Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);

@@ -20,7 +20,7 @@ import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
-import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ImageClipboard;

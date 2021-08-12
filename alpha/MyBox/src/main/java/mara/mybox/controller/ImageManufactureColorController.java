@@ -34,7 +34,7 @@ import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
@@ -215,6 +215,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             ValidationTools.setEditorNormal(valueSelector);
             okButton.disableProperty().unbind();
             commentsLabel.setText("");
+            colorUnit.setText("");
 
             if (colorGroup.getSelectedToggle() == null) {
                 return;
@@ -245,30 +246,28 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
                 } else if (colorRGBRadio.isSelected()) {
                     colorOperationType = OperationType.RGB;
-                    makeValuesBox(255, 1);
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(colorIncreaseButton, colorDecreaseButton, colorInvertButton);
 
                 } else if (colorBrightnessRadio.isSelected()) {
                     colorOperationType = OperationType.Brightness;
-                    makeValuesBox(100, 1);
-                    colorUnit.setText("%");
+                    makeValuesBox(100, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
                 } else if (colorSaturationRadio.isSelected()) {
                     colorOperationType = OperationType.Saturation;
-                    makeValuesBox(100, 1);
-                    colorUnit.setText("%");
+                    makeValuesBox(100, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
                 } else if (colorHueRadio.isSelected()) {
                     colorOperationType = OperationType.Hue;
-                    makeValuesBox(360, 1);
+                    makeValuesBox(360, 0);
                     colorUnit.setText(Languages.message("Degree"));
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
@@ -276,50 +275,49 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
                 } else if (colorRedRadio.isSelected()) {
                     colorOperationType = OperationType.Red;
-                    makeValuesBox(255, 1);
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorGreenRadio.isSelected()) {
                     colorOperationType = OperationType.Green;
-                    makeValuesBox(255, 1);
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorBlueRadio.isSelected()) {
                     colorOperationType = OperationType.Blue;
-                    makeValuesBox(255, 1);
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorYellowRadio.isSelected()) {
                     colorOperationType = OperationType.Yellow;
-                    makeValuesBox(255, 1);
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorCyanRadio.isSelected()) {
                     colorOperationType = OperationType.Cyan;
-                    makeValuesBox(255, 1);
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorMagentaRadio.isSelected()) {
                     colorOperationType = OperationType.Magenta;
-                    makeValuesBox(255, 1);
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorOpacityRadio.isSelected()) {
                     colorOperationType = OperationType.Opacity;
-                    makeValuesBox(100, 0);
-                    colorUnit.setText("%");
+                    makeValuesBox(255, 0);
                     setBox.getChildren().addAll(valueBox, alphaBox, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
@@ -490,7 +488,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             case Magenta:
                             case Opacity:
                             case PreOpacity:
-                                pixelsOperation.setIntPara1(colorValue * 255 / 100);
+                                pixelsOperation.setIntPara1(colorValue);
                                 break;
                         }
                     }

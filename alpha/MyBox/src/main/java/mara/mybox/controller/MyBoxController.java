@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
 import java.text.MessageFormat;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -9,29 +11,34 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppVariables.scheduledTasks;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2018-6-4 17:48:15
+ * @CreateDate 2021-8-12
  * @License Apache License Version 2.0
  */
 public class MyBoxController extends MyBoxController_About {
 
+    @FXML
+    protected Label titleLabel;
+
     public MyBoxController() {
-        baseTitle = Languages.message("AppTitle");
+        baseTitle = message("AppTitle") + " v" + AppValues.AppVersion;
     }
 
     @Override
     public void initControls() {
         try {
             super.initControls();
-            makeImagePopup();
 
+            titleLabel.setText(baseTitle);
+
+            makeImagePopup();
             if (scheduledTasks != null && scheduledTasks.size() > 0) {
-                bottomLabel.setText(MessageFormat.format(Languages.message("AlarmClocksRunning"), scheduledTasks.size()));
+                bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
             }
 
         } catch (Exception e) {

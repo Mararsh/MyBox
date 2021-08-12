@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.table.TableFactory;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
@@ -291,8 +291,8 @@ public class DataExportController extends BaseTaskController {
                         }
                         List<String> row = new ArrayList<>();
                         for (ColumnDefinition column : columns) {
-                            Object value = BaseDataTools.getColumnValue(data, column.getName());
-                            String display = BaseDataTools.displayColumn(data, column, value);
+                            Object value = TableFactory.getColumnValue(data, column.getName());
+                            String display = TableFactory.displayColumn(data, column, value);
                             if (display == null || display.isBlank()) {
                                 display = "";
                             }

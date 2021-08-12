@@ -366,16 +366,18 @@ Packing Steps of MyBox on mac
 Notebook > Note Examples > Coding > MyBox
 Colors of MyBox icons
             <table>
-                <tbody><tr style="font-weight:bold; "><th>name</th><th>rgba</th><th>rgb</th></tr>
-                <tr><td>Light Blue Icon-dark</td><td>0X4788C7FF</td><td>#4788C7</td></tr>
-                <tr><td>Light Blue Icon-light</td><td>0XDFF0FEFF</td><td>#DFF0FE</td></tr>
-                <tr><td>Blue Icon-dark</td><td>0X0066CCFF</td><td>#0066CC</td></tr>
-                <tr><td>Blue Icon-light</td><td>0X92CBFEFF</td><td>#92CBFE</td></tr>
-                <tr><td>Red Icon-dark</td><td>0XC94D58FF</td><td>#C94D58</td></tr>
-                <tr><td>Red Icon-light</td><td>0XFEB6BEFF</td><td>#FEB6BE</td></tr>
-                <tr><td>Orange Icon-dark</td><td>0XC8754BFF</td><td>#C8754B</td></tr>
-                <tr><td>Orange Icon-light</td><td>0XFECDB6FF</td><td>#FECDB6</td></tr>
-                <tr><td>Pink Icon-dark</td><td>0XDE88C7FF</td><td>#DE88C7</td></tr>
-                <tr><td>Pink Icon-light</td><td>0XFFDCFEFF</td><td>#FFDCFE</td></tr>
+                <tbody><tr style="font-weight:bold; "><th>Color</th><th>Color - RGBA</th><th>Color - RGB</th><th>Name</th><th>Value</th><th>sRGB</th><th>HSB</th></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#C32136; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XC32136FF </td><td>#C32136 </td><td>Dark Red</td><td>-3989194</td><td>195 33 54 100%</td><td>352 83% 76%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#FBD5CF; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFBD5CFFF </td><td>#FBD5CF </td><td>Light Red</td><td>-272945</td><td>251 213 207 100%</td><td>8 18% 98%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#FF0097; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFF0097FF </td><td>#FF0097 </td><td>Dark Pink</td><td>-65385</td><td>255 0 151 100%</td><td>324 100% 100%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#EDD1D8; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XEDD1D8FF </td><td>#EDD1D8 </td><td>Light Pink</td><td>-1191464</td><td>237 209 216 100%</td><td>345 12% 93%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#4C8DAE; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X4C8DAEFF </td><td>#4C8DAE </td><td>Dark Grey Blue</td><td>-11760210</td><td>76 141 174 100%</td><td>200 56% 68%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#D6ECF0; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XD6ECF0FF </td><td>#D6ECF0 </td><td>Grey Blue</td><td>-2691856</td><td>214 236 240 100%</td><td>189 11% 94%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#003472; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X003472FF </td><td>#003472 </td><td>Dark Blue</td><td>-16763790</td><td>0 52 114 100%</td><td>213 100% 45%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#E3F9FD; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XE3F9FDFF </td><td>#E3F9FD </td><td>Blue</td><td>-1836547</td><td>227 249 253 100%</td><td>189 10% 99%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#CA6924; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XCA6924FF </td><td>#CA6924 </td><td>Orange</td><td>-3512028</td><td>202 105 36 100%</td><td>25 82% 79%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#FFF2DF; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFFF2DFFF </td><td>#FFF2DF </td><td>Light Orange</td><td>-3361</td><td>255 242 223 100%</td><td>36 13% 100%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#0D3928; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X0D3928FF </td><td>#0D3928 </td><td>Dark Green</td><td>-15910616</td><td>13 57 40 100%</td><td>157 77% 22%</td></tr>
+                <tr><td align="center"><div style="width: 50px;  background-color:#E0F0E9; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XE0F0E9FF </td><td>#E0F0E9 </td><td>Light Green</td><td>-2035479</td><td>224 240 233 100%</td><td>154 7% 94%</td></tr>
             </tbody></table>
 

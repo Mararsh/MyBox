@@ -91,6 +91,9 @@ public class MenuController extends BaseController {
     }
 
     public void setTitleid(String id) {
+        if (id == null || id.isBlank()) {
+            return;
+        }
         titleLabel.setText(Languages.message("Target") + ": " + (parentController.isPop ? "Pop-" : "") + id);
     }
 

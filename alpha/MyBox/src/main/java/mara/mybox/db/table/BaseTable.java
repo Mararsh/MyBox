@@ -15,7 +15,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -498,7 +497,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         if (data instanceof BaseData) {
-            return BaseDataTools.setColumnValue((BaseData) data, column, value);
+            return TableFactory.setColumnValue((BaseData) data, column, value);
         }
         return false;
     }
@@ -508,7 +507,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         if (data instanceof BaseData) {
-            return BaseDataTools.getColumnValue((BaseData) data, column);
+            return TableFactory.getColumnValue((BaseData) data, column);
         }
         return null;
     }
@@ -538,7 +537,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         if (data instanceof BaseData) {
-            return BaseDataTools.valid((BaseData) data);
+            return TableFactory.valid((BaseData) data);
         }
         return false;
     }

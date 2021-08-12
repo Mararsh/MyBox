@@ -2,9 +2,9 @@ package mara.mybox.tools;
 
 import java.io.File;
 import java.text.Collator;
-import java.util.Comparator;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 
 /**
@@ -155,17 +155,22 @@ public class FileNameTools {
     }
 
     public static int compareFilename(File f1, File f2) {
-        if (f1 == null) {
-            return f2 == null ? 0 : -1;
-        }
-        if (f2 == null) {
+        try {
+            if (f1 == null) {
+                return f2 == null ? 0 : -1;
+            }
+            if (f2 == null) {
+                return 1;
+            }
+            if (f1.isFile() && f2.isFile() && f1.getParent().equals(f2.getParent())) {
+                return StringTools.compareWithNumber(f1.getName(), f2.getName());
+            } else {
+                Collator compare = Collator.getInstance(Locale.getDefault());
+                return compare.compare(f1.getAbsolutePath(), f2.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
             return 1;
-        }
-        if (f1.isFile() && f2.isFile() && f1.getParent().equals(f2.getParent())) {
-            return StringTools.compareWithNumber(f1.getName(), f2.getName());
-        } else {
-            Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
-            return compare.compare(f1.getAbsolutePath(), f2.getAbsolutePath());
         }
     }
 

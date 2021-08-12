@@ -548,6 +548,7 @@ public class ControlSheetData extends BaseWebViewController {
     }
 
     @FXML
+    @Override
     public void menuAction() {
         try {
             closePopup();

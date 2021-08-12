@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -16,14 +15,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-9-18
  * @License Apache License Version 2.0
  */
-public class ImagePopController extends ImageViewerController {
+public class ImagePopController extends BaseImageController {
 
     @FXML
     protected CheckBox openCheck;
-
-    public ImagePopController() {
-        baseTitle = Languages.message("ImageViewer");
-    }
 
     @Override
     public void initControls() {

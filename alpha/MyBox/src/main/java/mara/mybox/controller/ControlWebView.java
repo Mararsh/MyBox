@@ -19,12 +19,12 @@ import mara.mybox.value.Languages;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class ControlTabWebView extends BaseWebViewController {
+public class ControlWebView extends BaseWebViewController {
 
     protected Tab tab;
     protected List<String> failedAddress;
 
-    public ControlTabWebView() {
+    public ControlWebView() {
         baseTitle = Languages.message("WebBrowser");
     }
 

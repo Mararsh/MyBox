@@ -274,7 +274,7 @@ public class Fxmls {
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
 
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
-    public static final String ControlTabWebViewFxml = "/fxml/ControlTabWebView.fxml";
+    public static final String ControlWebViewFxml = "/fxml/ControlWebView.fxml";
 
     public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
 

@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.table.TableFactory;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.table.TableDataset;
@@ -423,7 +423,7 @@ public class LocationDataController extends BaseDataManageController<Location> {
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(Languages.message("LocationData"), BaseDataTools.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(Languages.message("LocationData"), TableFactory.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

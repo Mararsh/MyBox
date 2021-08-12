@@ -733,11 +733,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF12() {
-        if (menuButton != null && !menuButton.isDisabled() && menuButton.isVisible()) {
-            menuButton.fire();
-            return true;
-        }
-        return false;
+        menuAction();
+        return true;
     }
 
     public boolean keyESC() {

@@ -262,8 +262,7 @@ public class ImageViewerController extends BaseImageController {
                 nextButton.setDisable(imageFile() == null);
             }
 
-            String saveMode = UserConfig.getString(baseName + "SortMode",
-                    FileSortMode.NameAsc.name());
+            String saveMode = UserConfig.getString(baseName + "SortMode", FileSortMode.NameAsc.name());
             sortMode = FileSortTools.sortMode(saveMode);
             if (sortGroup != null) {
                 sortGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
@@ -388,11 +387,8 @@ public class ImageViewerController extends BaseImageController {
     }
 
     public void makeImageNevigator() {
-        makeImageNevigator(imageFile());
-    }
-
-    public void makeImageNevigator(File currentfile) {
         try {
+            File currentfile = imageFile();
             if (currentfile == null) {
                 previousFile = null;
                 previousButton.setDisable(true);
@@ -482,7 +478,14 @@ public class ImageViewerController extends BaseImageController {
             return;
         }
         if (nextFile != null) {
-            loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
+            if (nextFile.exists()) {
+                loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
+            } else {
+                makeImageNevigator();
+                if (nextFile != null) {
+                    loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
+                }
+            }
         }
     }
 
@@ -493,7 +496,14 @@ public class ImageViewerController extends BaseImageController {
             return;
         }
         if (previousFile != null) {
-            loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
+            if (previousFile.exists()) {
+                loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
+            } else {
+                makeImageNevigator();
+                if (previousFile != null) {
+                    loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
+                }
+            }
         }
     }
 

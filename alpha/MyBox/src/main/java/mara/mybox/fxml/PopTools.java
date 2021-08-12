@@ -326,6 +326,14 @@ public class PopTools {
     public static void popRegexExample(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
         try {
             MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            Button clearButton = new Button(message("Clear"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                }
+            });
+            controller.addNode(clearButton);
             List<String> values = Arrays.asList("^      "
                     + message("StartLocation"), "$      "
                     + message("EndLocation"), "*      "
@@ -369,6 +377,7 @@ public class PopTools {
                 nodes.add(button);
             }
             controller.addFlowPane(nodes);
+
             Hyperlink link = new Hyperlink(message("AboutRegularExpression"));
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

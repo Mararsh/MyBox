@@ -1,5 +1,6 @@
 package mara.mybox.db.data;
 
+import mara.mybox.db.table.TableFactory;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -182,7 +183,7 @@ public class EpidemicReport extends BaseData {
                 return display;
             }
         }
-        return BaseDataTools.displayColumnBase(data, column, value);
+        return TableFactory.displayColumnBase(data, column, value);
     }
 
     public static boolean valid(EpidemicReport data) {

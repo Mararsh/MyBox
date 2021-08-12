@@ -12,10 +12,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -43,7 +45,7 @@ public class HtmlFindController extends BaseWebViewController {
     @FXML
     protected Label foundLabel;
     @FXML
-    protected Button goItemButton, queryButton;
+    protected Button goItemButton, queryButton, exampleFindButton;
     @FXML
     protected CheckBox caseCheck, wrapCheck, regCheck;
 
@@ -101,6 +103,8 @@ public class HtmlFindController extends BaseWebViewController {
             previousButton.setDisable(true);
             nextButton.setDisable(true);
             lastButton.setDisable(true);
+
+            exampleFindButton.disableProperty().bind(regCheck.selectedProperty().not());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -365,6 +369,11 @@ public class HtmlFindController extends BaseWebViewController {
     @Override
     public void lastAction() {
         goItem(foundCount);
+    }
+
+    @FXML
+    public void popFindExample(MouseEvent mouseEvent) {
+        PopTools.popRegexExample(this, findInputController.selector.getEditor(), mouseEvent);
     }
 
     @Override

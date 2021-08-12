@@ -41,7 +41,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
@@ -54,7 +53,6 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.LocateTools;
@@ -63,7 +61,6 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
-import static mara.mybox.value.Languages.message;
 
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -174,20 +171,20 @@ public class ControlColors extends BaseDataTableController<ColorData> {
             });
 
             palettesController.palettesList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends ColorPaletteName> ov, ColorPaletteName t, ColorPaletteName t1) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
-                        boolean isAll = isAllColors();
-                        deletePaletteButton.setDisable(isAll);
-                        renamePaletteButton.setDisable(isAll);
-                        copyPaletteButton.setDisable(isAll);
-                        trimButton.setDisable(isAll);
-                        if (!isAll) {
-                            UserConfig.setString(baseName + "Palette", currentPalette.getName());
-                        }
-                        refreshPalette();
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
+                boolean isAll = isAllColors();
+                deletePaletteButton.setDisable(isAll);
+                renamePaletteButton.setDisable(isAll);
+                copyPaletteButton.setDisable(isAll);
+                trimButton.setDisable(isAll);
+                if (!isAll) {
+                    UserConfig.setString(baseName + "Palette", currentPalette.getName());
+                }
+                refreshPalette();
+            });
 
             paletteTabPane.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) -> {
@@ -899,7 +896,6 @@ public class ControlColors extends BaseDataTableController<ColorData> {
             List<ColorData> rows;
             boolean isAll = isAllColors();
             String title = isAll ? Languages.message("AllColors") : currentPalette.getName();
-            MyBoxLog.console(title);
             if ("selected".equals(type)) {
                 rows = tableView.getSelectionModel().getSelectedItems();
                 if (rows == null || rows.isEmpty()) {

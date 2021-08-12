@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.table.TableFactory;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
@@ -293,7 +293,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(Languages.message("GeographyCode"), BaseDataTools.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(Languages.message("GeographyCode"), TableFactory.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

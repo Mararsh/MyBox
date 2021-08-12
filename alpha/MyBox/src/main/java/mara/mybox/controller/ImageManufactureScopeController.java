@@ -44,6 +44,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScope.ColorScopeType;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.bufferedimage.PixelsOperation;
+import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
@@ -71,6 +72,7 @@ import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -128,6 +130,22 @@ public class ImageManufactureScopeController extends ImageViewerController {
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            initScopeView();
+            initAreaBox();
+            initColorBox();
+            initMatchBox();
+            initOpacitySelector();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
@@ -137,37 +155,16 @@ public class ImageManufactureScopeController extends ImageViewerController {
         }
     }
 
-    public void setParameters(ImageManufactureController parent) {
-        this.parentController = parent;
-        imageController = parent;
-        scopesSavedController = imageController.scopeSavedController;
-        baseName = imageController.baseName;
-        baseTitle = imageController.baseTitle;
-        sourceFile = imageController.sourceFile;
-        imageInformation = imageController.imageInformation;
-        image = imageController.image;
-        tableColor = new TableColor();
-
-        initScopeView();
-        initAreaBox();
-        initColorBox();
-        initMatchBox();
-        initOpacitySelector();
-        refreshStyle();
-
-        loadImage(sourceFile, imageInformation, imageController.image, parent.imageChanged);
-        checkScopeType();
-        scopeAllRadio.fire();
-    }
-
     protected void initSplitPane() {
         try {
             String mv = UserConfig.getString(baseName + "ScopePanePosition", "0.5");
             splitPane.setDividerPositions(Double.parseDouble(mv));
 
-            splitPane.getDividers().get(0).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                UserConfig.setString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
-            });
+            splitPane.getDividers().get(0).positionProperty().addListener(
+                    (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                        UserConfig.setString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
+                        paneSize();
+                    });
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -175,9 +172,6 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
     protected void initScopeView() {
         try {
-            imageView.fitWidthProperty().bind(imageController.imageView.fitWidthProperty());
-            imageView.fitHeightProperty().bind(imageController.imageView.fitHeightProperty());
-
             scopeView.visibleProperty().bind(scopeEditBox.visibleProperty());
             imageView.toBack();
 
@@ -424,6 +418,25 @@ public class ImageManufactureScopeController extends ImageViewerController {
         }
     }
 
+    public void setParameters(ImageManufactureController parent) {
+        this.parentController = parent;
+        imageController = parent;
+        scopesSavedController = imageController.scopeSavedController;
+//        baseName = imageController.baseName;
+//        baseTitle = imageController.baseTitle;
+        sourceFile = imageController.sourceFile;
+        imageInformation = imageController.imageInformation;
+        image = imageController.image;
+        tableColor = new TableColor();
+
+        refreshStyle();
+
+        loadImage(sourceFile, imageInformation, imageController.image, parent.imageChanged);
+        checkScopeType();
+        scopeAllRadio.fire();
+    }
+
+
     /*
         events
      */
@@ -476,7 +489,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
-        if (isPickingColor) {
+        if (scopeSetBox.getChildren().contains(scopeColorsBox) && pickColorCheck.isSelected()) {
             Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {
                 addColor(color);
@@ -1023,6 +1036,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             scopeDistanceSelector.getItems().clear();
             areaExcludedCheck.setSelected(false);
             colorExcludedCheck.setSelected(false);
+            pickColorCheck.setSelected(false);
             scopeDistanceSelector.getEditor().setStyle(null);
             outlinesList.getSelectionModel().select(null);
             scopeSetBox.getChildren().clear();
@@ -1289,27 +1303,30 @@ public class ImageManufactureScopeController extends ImageViewerController {
         colors
      */
     @Override
-    protected void startPickingColor() {
-        popInformation(Languages.message("PickingColorsForScope"));
-        imageController.scopeLabel.setStyle(NodeStyleTools.darkRedText);
-        imageController.scopeLabel.setText(Languages.message("PickingColorsForScope"));
-        imageController.imageLabel.setStyle(NodeStyleTools.darkRedText);
-        imageController.imageLabel.setText(Languages.message("PickingColorsForScope"));
+    public boolean controlAltK() {
+        if (scopeSetBox.getChildren().contains(scopeColorsBox)) {
+            pickColorCheck.setSelected(!pickColorCheck.isSelected());
+        } else {
+            isPickingColor = false;
+        }
+        return true;
+    }
 
+    @Override
+    protected void startPickingColor() {
+        if (!scopeSetBox.getChildren().contains(scopeColorsBox)) {
+            isPickingColor = false;
+            stopPickingColor();
+            return;
+        }
+        imageLabel.setText(message("PickingColorsForScope"));
+        imageLabel.setStyle(NodeStyleTools.darkRedText);
     }
 
     @Override
     protected void stopPickingColor() {
-        imageController.imageLabel.setStyle(null);
-        imageController.scopeLabel.setStyle(null);
-        imageController.imageLabel.setText(Languages.message("ImagePaneTitle"));
-        imageController.scopeLabel.setText(Languages.message("ScopePaneTitle"));
-    }
-
-    @Override
-    protected Color pickColor(DoublePoint p, ImageView view) {
-        Color color = ImageViewTools.imagePixel(p, imageView);
-        return color;
+        imageLabel.setText("");
+        imageLabel.setStyle(null);
     }
 
     public boolean addColor(Color color) {
@@ -1856,13 +1873,51 @@ public class ImageManufactureScopeController extends ImageViewerController {
         }
     }
 
-    public void popImage() {
-        try {
-            ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
-            controller.loadImage(imageFile(), imageInformation, scopeView.getImage(), imageChanged);
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+    public void popScope() {
+        synchronized (this) {
+            SingletonTask popTask = new SingletonTask<Void>() {
+
+                private Image newImage;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                                scope, OperationType.PreOpacity, PixelsOperation.ColorActionType.Set);
+                        pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
+                        pixelsOperation.setIntPara1(255 - (int) (opacity * 255));
+                        pixelsOperation.setExcludeScope(true);
+                        newImage = pixelsOperation.operateFxImage();
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
+                    controller.loadImage(newImage);
+                }
+            };
+            popTask.setSelf(popTask);
+            Thread thread = new Thread(popTask);
+            thread.setDaemon(false);
+            thread.start();
         }
+    }
+
+    @FXML
+    @Override
+    public void menuAction() {
+        imageController.menuAction();
+    }
+
+    @FXML
+    @Override
+    public void popAction() {
+        imageController.popAction();
     }
 
 }

@@ -82,7 +82,20 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
-                                                        <CheckBox fx:id="regCheck" mnemonicParsing="false" text="%RegularExpression" />
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                             <children>
+                                                              <CheckBox fx:id="regCheck" mnemonicParsing="false" text="%RegularExpression" />
+                                                <Button fx:id="exampleFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconExamples.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                                         <CheckBox fx:id="caseCheck" mnemonicParsing="false" text="%CaseInsensitive" />
                                                         <Label minHeight="-Infinity" text="%String" wrapText="true" />
                                                         <fx:include fx:id="findInput" source="ControlStringSelector.fxml" />

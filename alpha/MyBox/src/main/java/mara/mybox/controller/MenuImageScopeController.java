@@ -19,6 +19,10 @@ public class MenuImageScopeController extends MenuImageViewController {
             this.scopeController = scopeController;
             super.setParameters(scopeController);
 
+            if (scopeController.scopeSetBox.getChildren().contains(scopeController.scopeColorsBox)) {
+
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

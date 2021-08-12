@@ -38,7 +38,7 @@ import mara.mybox.value.SystemConfig;
  */
 public class WebBrowserController extends BaseController {
 
-    protected Map<Tab, ControlTabWebView> tabControllers;
+    protected Map<Tab, ControlWebView> tabControllers;
     protected Tab hisTab, favoriteTab;
 
     @FXML
@@ -93,10 +93,10 @@ public class WebBrowserController extends BaseController {
         newTab(true);
     }
 
-    protected ControlTabWebView newTab(boolean focus) {
+    protected ControlWebView newTab(boolean focus) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(WindowTools.class.getResource(
-                    Fxmls.ControlTabWebViewFxml), AppVariables.currentBundle);
+                    Fxmls.ControlWebViewFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
             ImageView tabImage = new ImageView("img/MyBox.png");
@@ -111,7 +111,7 @@ public class WebBrowserController extends BaseController {
             }
             refreshStyle(pane);
 
-            ControlTabWebView controller = (ControlTabWebView) fxmlLoader.getController();
+            ControlWebView controller = (ControlWebView) fxmlLoader.getController();
             controller.initTab(this, tab);
             if (tabControllers == null) {
                 tabControllers = new HashMap();
@@ -130,24 +130,24 @@ public class WebBrowserController extends BaseController {
         }
     }
 
-    public ControlTabWebView loadAddress(String address, boolean focus) {
-        ControlTabWebView controller = newTab(focus);
+    public ControlWebView loadAddress(String address, boolean focus) {
+        ControlWebView controller = newTab(focus);
         if (address != null) {
             controller.loadAddress(address);
         }
         return controller;
     }
 
-    public ControlTabWebView loadContents(String contents, boolean focus) {
-        ControlTabWebView controller = newTab(focus);
+    public ControlWebView loadContents(String contents, boolean focus) {
+        ControlWebView controller = newTab(focus);
         if (contents != null) {
             controller.loadContents(contents);
         }
         return controller;
     }
 
-    public ControlTabWebView loadFile(File file) {
-        ControlTabWebView controller = newTab(true);
+    public ControlWebView loadFile(File file) {
+        ControlWebView controller = newTab(true);
         controller.loadFile(file);
         return controller;
     }

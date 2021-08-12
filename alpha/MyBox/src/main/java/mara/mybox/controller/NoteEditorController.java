@@ -40,6 +40,7 @@ import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.value.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -241,7 +242,7 @@ public class NoteEditorController extends HtmlEditorController {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         note = new Note();
                         note.setTitle(title);
-                        note.setHtml(html);
+                        note.setHtml(HtmlReadTools.body(html));
                         note.setUpdateTime(new Date());
                         if (currentNote != null) {
                             note.setNtid(currentNote.getNtid());

@@ -1,40 +1,35 @@
-package mara.mybox.db.data;
+package mara.mybox.db.table;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.ColumnDefinition;
-import mara.mybox.db.table.TableColor;
-import mara.mybox.db.table.TableColorPalette;
-import mara.mybox.db.table.TableColorPaletteName;
-import mara.mybox.db.table.TableDataColumn;
-import mara.mybox.db.table.TableDataDefinition;
-import mara.mybox.db.table.TableDataset;
-import mara.mybox.db.table.TableEpidemicReport;
-import mara.mybox.db.table.TableFileBackup;
-import mara.mybox.db.table.TableGeographyCode;
-import mara.mybox.db.table.TableImageClipboard;
-import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableLocationData;
-import mara.mybox.db.table.TableMatrix;
-import mara.mybox.db.table.TableMatrixCell;
-import mara.mybox.db.table.TableMyBoxLog;
-import mara.mybox.db.table.TableNote;
-import mara.mybox.db.table.TableNoteTag;
-import mara.mybox.db.table.TableNotebook;
-import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTextClipboard;
-import mara.mybox.db.table.TableTree;
-import mara.mybox.db.table.TableWebFavorite;
-import mara.mybox.db.table.TableWebHistory;
+import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ColorPalette;
+import mara.mybox.db.data.ColorPaletteName;
+import mara.mybox.db.data.DataDefinition;
+import mara.mybox.db.data.Dataset;
+import mara.mybox.db.data.EpidemicReport;
+import mara.mybox.db.data.FileBackup;
+import mara.mybox.db.data.GeographyCode;
+import mara.mybox.db.data.ImageClipboard;
+import mara.mybox.db.data.ImageEditHistory;
+import mara.mybox.db.data.Location;
+import mara.mybox.db.data.Matrix;
+import mara.mybox.db.data.MatrixCell;
+import mara.mybox.db.data.Note;
+import mara.mybox.db.data.NoteTag;
+import mara.mybox.db.data.Notebook;
+import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.TextClipboard;
+import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.WebFavorite;
+import mara.mybox.db.data.WebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -42,9 +37,9 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-12-11
  * @License Apache License Version 2.0
  */
-public class BaseDataTools {
+public class TableFactory {
 
-    public static BaseTable getTable(BaseData data) {
+    public static BaseTable create(BaseData data) {
         if (data == null) {
             return null;
         }
@@ -360,7 +355,7 @@ public class BaseDataTools {
         }
         try {
             if (table == null) {
-                table = getTable(data);
+                table = create(data);
             }
             if (table == null) {
                 return null;
@@ -501,7 +496,7 @@ public class BaseDataTools {
     public static String htmlData(BaseTable table, BaseData data) {
         try {
             if (table == null) {
-                table = getTable(data);
+                table = create(data);
             }
             if (table == null) {
                 return null;
@@ -540,7 +535,7 @@ public class BaseDataTools {
                 return null;
             }
             if (table == null) {
-                table = getTable(dataList.get(0));
+                table = create(dataList.get(0));
             }
             if (table == null) {
                 return null;

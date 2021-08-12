@@ -19,7 +19,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mara.mybox.db.data.BaseDataTools;
+import mara.mybox.db.table.TableFactory;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
@@ -209,7 +209,7 @@ public class LocationInMapController extends GeographyCodeMapController {
                         return;
                     }
                     loading = false;
-                    dataArea.setText(BaseDataTools.displayData(geoTable, geographyCode, null, false));
+                    dataArea.setText(TableFactory.displayData(geoTable, geographyCode, null, false));
                     setButtons();
                     try {
                         if (geographyCodes == null) {

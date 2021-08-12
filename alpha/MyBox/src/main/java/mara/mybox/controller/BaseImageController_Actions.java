@@ -480,6 +480,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
+    @Override
     public void menuAction() {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
         MenuImageBaseController.open((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
