@@ -1,6 +1,6 @@
 package mara.mybox.db.data;
 
-import mara.mybox.db.table.TableFactory;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -331,7 +331,7 @@ public class GeographyCode extends BaseData {
             case "building":
                 return data.getBuildingName();
         }
-        return TableFactory.displayColumnBase(data, column, value);
+        return DataFactory.displayColumnBase(data, column, value);
     }
 
     public static String displayDataMore(GeographyCode data, String lineBreak) {

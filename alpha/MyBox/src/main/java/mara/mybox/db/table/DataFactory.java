@@ -37,7 +37,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-12-11
  * @License Apache License Version 2.0
  */
-public class TableFactory {
+public class DataFactory {
 
     public static BaseTable create(BaseData data) {
         if (data == null) {

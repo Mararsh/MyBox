@@ -194,7 +194,6 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
     public void menuAction() {
         try {
             closePopup();
-            operationsController.viewPane.setExpanded(true);
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
                 Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);

@@ -714,7 +714,7 @@ public class HtmlEditorController extends BaseWebViewController {
         buttons
      */
     @Override
-    public boolean keyF9() {
+    public boolean keyF10() {
         synchronizeAction();
         return true;
     }

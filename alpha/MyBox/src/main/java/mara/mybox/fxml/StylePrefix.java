@@ -1,7 +1,6 @@
 package mara.mybox.fxml;
 
 import javafx.scene.Node;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -77,9 +76,9 @@ public class StylePrefix {
         }
         switch (id) {
             case "scopeButton":
-                return new StyleData(id, "", Languages.message("Scope"), "F7", "iconTarget.png");
+                return new StyleData(id, "", Languages.message("Scope"), "", "iconTarget.png");
             case "scopeAllRadio":
-                return new StyleData("scopeAllRadio", "", Languages.message("WholeImage"), "", "iconLoadSize.png");
+                return new StyleData("scopeAllRadio", "", Languages.message("WholeImage"), "", "iconSelectAll.png");
             case "scopeMattingRadio":
                 return new StyleData("scopeMattingRadio", "", Languages.message("Matting"), "", "iconColorFill.png");
             case "scopeRectangleRadio":

@@ -17,18 +17,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.TextClipboardTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -123,8 +118,8 @@ public abstract class BaseDataFileController extends BaseSheetController {
             }
             backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", false));
             backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
-                    });
+                UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
+            });
 
             backupController.setControls(this, baseName);
 
@@ -140,8 +135,8 @@ public abstract class BaseDataFileController extends BaseSheetController {
             }
             saveAsPane.setExpanded(UserConfig.getBoolean(baseName + "SaveAsPane", true));
             saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
-                    });
+                UserConfig.setBoolean(baseName + "SaveAsPane", saveAsPane.isExpanded());
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -164,25 +159,25 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     "500", "1000", "2000", "5000", "10000"));
             pageSizeSelector.setValue(pageSize + "");
             pageSizeSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null) {
-                            return;
+                if (newValue == null) {
+                    return;
+                }
+                try {
+                    int v = Integer.parseInt(newValue.trim());
+                    if (v <= 0) {
+                        pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    } else {
+                        pageSize = v;
+                        UserConfig.setInt(baseName + "PageSize", pageSize);
+                        pageSizeSelector.getEditor().setStyle(null);
+                        if (!isSettingValues) {
+                            loadPage(currentPage);
                         }
-                        try {
-                            int v = Integer.parseInt(newValue.trim());
-                            if (v <= 0) {
-                                pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                            } else {
-                                pageSize = v;
-                                UserConfig.setInt(baseName + "PageSize", pageSize);
-                                pageSizeSelector.getEditor().setStyle(null);
-                                if (!isSettingValues) {
-                                    loadPage(currentPage);
-                                }
-                            }
-                        } catch (Exception e) {
-                            pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                    }
+                } catch (Exception e) {
+                    pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -219,6 +214,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
         super.afterSceneLoaded();
 
         setParameters(this);
+        newSheet(3, 3);
     }
 
     @FXML
@@ -248,9 +244,8 @@ public abstract class BaseDataFileController extends BaseSheetController {
             sourceFile = null;
             initFile();
             sheetBox.getChildren().clear();
-
             makeSheet(new String[rows][cols], false);
-
+            sheetDataController.thisPane.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -578,6 +573,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
     }
 
     protected void updateStatus() {
+        MyBoxLog.console("here");
         if (sourceFile == null) {
             loadedLabel.setText("");
         } else {

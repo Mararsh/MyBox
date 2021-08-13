@@ -8,9 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -27,8 +24,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem EditExcel = new MenuItem(Languages.message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
-            DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-            c.newSheet(3, 3);
+            loadScene(Fxmls.DataFileExcelFxml);
         });
 
         MenuItem ExcelConvert = new MenuItem(Languages.message("ExcelConvert"));
@@ -48,8 +44,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem EditCSV = new MenuItem(Languages.message("EditCSV"));
         EditCSV.setOnAction((ActionEvent event1) -> {
-            DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-            c.newSheet(3, 3);
+            loadScene(Fxmls.DataFileCSVFxml);
         });
 
         MenuItem CsvConvert = new MenuItem(Languages.message("CsvConvert"));

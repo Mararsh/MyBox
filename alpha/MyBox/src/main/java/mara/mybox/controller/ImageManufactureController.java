@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Tab;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -49,14 +46,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
             operationsController.setParameters(this);
-
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue<? extends Tab> ov, Tab oldVal, Tab newVal) {
-                    buttonsPane.setDisable(newVal != imageTab);
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -86,7 +75,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             operationsController.resetOperationPanes();
 
             recordImageHistory(ImageOperation.Load, image);
-            updateBottom(Languages.message("Loaded"));
+            updateLabel(Languages.message("Loaded"));
 
 //            autoSize();
             backupController.loadBackups(sourceFile);

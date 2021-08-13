@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.application.Platform;
 import mara.mybox.data.CoordinateSystem;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
@@ -38,15 +39,13 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.tools.ConfigTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
 
 /**
@@ -102,6 +101,12 @@ public class DataMigration {
                 if (lastVersion < 6004005) {
                     updateIn645(conn);
                 }
+                if (lastVersion < 6004007) {
+                    Platform.runLater(() -> {
+                        PopTools.alertWarning(null, message("MigrationNotice"));
+                    });
+                }
+
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);

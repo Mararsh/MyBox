@@ -13,6 +13,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -21,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.ImageEditHistory;
@@ -33,8 +35,8 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -45,12 +47,19 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class ImageManufactureController_Histories extends ImageManufactureController_Image {
 
+    protected String imageHistoriesPath;
+    protected int maxEditHistories, historyIndex;
+
+    @FXML
+    protected VBox historiesBox, historiesListBox;
     @FXML
     protected Button clearHistoriesButton, deleteHistoriesButton, useHistoryButton, okHistoriesSizeButton, viewHisButton;
     @FXML
     protected ListView<ImageEditHistory> historiesList;
     @FXML
     protected TextField maxHistoriesInput;
+    @FXML
+    protected CheckBox recordHistoriesCheck;
 
     protected void initHistoriesTab() {
         try {
@@ -507,7 +516,8 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
 
                 @Override
                 protected void whenSucceeded() {
-                    ImagePopController.open(myController, hisImage);
+                    ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
+                    controller.loadImage(hisImage);
                 }
 
             };
@@ -585,7 +595,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
             resetImagePane();
             operationsController.resetOperationPanes();
             popInformation(info);
-            updateBottom(info);
+            updateLabel(info);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -598,37 +608,22 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
             scopeController.updateImage(newImage);
             recordImageHistory(operation, null, null, newImage);
             updateLabelsTitle();
-            updateBottom(operation);
+            updateLabel(operation);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void updateBottom(ImageOperation operation) {
-        updateBottom(operation != null ? Languages.message(operation.name()) : null);
+    public void updateLabel(ImageOperation operation) {
+        updateLabel(operation != null ? Languages.message(operation.name()) : null);
     }
 
-    public void updateBottom(String info) {
+    public void updateLabel(String info) {
         try {
             if (imageLabel == null) {
                 return;
             }
-            String bottom = info != null ? info + "  " : "";
-            if (imageInformation != null) {
-                bottom += Languages.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
-                bottom += Languages.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
-            }
-            if (imageView != null && imageView.getImage() != null) {
-                bottom += Languages.message("LoadedSize") + ":"
-                        + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
-                        + Languages.message("DisplayedSize") + ":"
-                        + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
-            }
-            if (sourceFile != null) {
-                bottom += "  " + Languages.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
-                        + Languages.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
-            }
-            imageLabel.setText(bottom);
+            imageLabel.setText(info);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

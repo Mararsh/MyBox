@@ -142,20 +142,20 @@ public class ControlDataText extends BaseController {
         this.sheet = sheet;
         List<String> colsNames = null;
         List<String> rowsNames = null;
-        String title;
+        String title = null;
         if (sheetController != null) {
-            title = sheetController.titleName();
-            if (sheetController.textColumnCheck.isSelected()) {
+            if (sheetController.textTitleCheck != null && sheetController.textTitleCheck.isSelected()) {
+                title = sheetController.titleName();
+            }
+            if (sheetController.textColumnCheck != null && sheetController.textColumnCheck.isSelected()) {
                 colsNames = sheetController.columnNames();
             }
-            if (sheetController.textRowCheck.isSelected()) {
+            if (sheetController.textRowCheck != null && sheetController.textRowCheck.isSelected()) {
                 rowsNames = sheetController.rowNames(sheet.length);
             }
-        } else {
-            title = "";
         }
         String text = TextTools.dataText(sheet, delimiter, colsNames, rowsNames);
-        if (!title.isBlank()) {
+        if (title != null && !title.isBlank()) {
             textArea.setText(title + "\n\n" + text);
         } else {
             textArea.setText(text);

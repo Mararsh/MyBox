@@ -8,7 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Window;
-import mara.mybox.db.table.TableFactory;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
@@ -99,14 +99,14 @@ public class MyBoxLogViewerController extends HtmlTableController {
 
     public void addLog(MyBoxLog myboxLog) {
         body = (body != null ? body : "")
-                + "</br><hr></br>\n" + TableFactory.htmlData(logTable, myboxLog);
+                + "</br><hr></br>\n" + DataFactory.htmlData(logTable, myboxLog);
         loadBody(body);
     }
 
     public void setLogs(List<MyBoxLog> logs) {
         body = "";
         for (MyBoxLog log : logs) {
-            body += "</br><hr></br>\n" + TableFactory.htmlData(logTable, log);
+            body += "</br><hr></br>\n" + DataFactory.htmlData(logTable, log);
         }
         loadBody(body);
     }

@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureOperationsController">
     <children>
         <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
             <panes>
-                <TitledPane fx:id="viewPane" expanded="false" text="%View">
-                    <content>
-                        <!--<fx:include fx:id="view" source="ImageManufactureView.fxml" />-->
-                    </content>
-                </TitledPane>
                 <TitledPane fx:id="copyPane" expanded="false" text="%Copy" />
                 <TitledPane fx:id="clipboardPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Clipboard">
                     <content>

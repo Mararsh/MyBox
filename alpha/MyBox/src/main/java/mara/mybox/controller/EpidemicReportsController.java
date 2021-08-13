@@ -30,7 +30,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.TableFactory;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.EpidemicReportTools;
 import mara.mybox.db.data.GeographyCode;
@@ -722,7 +722,7 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(baseTitle, TableFactory.displayData(tableDefinition, selected, null, true));
+        HtmlReadTools.htmlTable(baseTitle, DataFactory.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

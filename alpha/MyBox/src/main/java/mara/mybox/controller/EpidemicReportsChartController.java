@@ -46,7 +46,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Screen;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.table.TableFactory;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.EpidemicReportTools;
 import mara.mybox.db.data.GeographyCode;
@@ -1248,7 +1248,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 String info = mapOptionsController.popInfoCheck.isSelected()
                         ? "<div>" + name + value + "</div></br>"
-                        + TableFactory.displayData(reportsController.tableDefinition, report, displayNames(), true) : "";
+                        + DataFactory.displayData(reportsController.tableDefinition, report, displayNames(), true) : "";
                 mapOptionsController.markerSize = markSize(EpidemicReportTools.getNumber(report, orderNames.get(0)).doubleValue());
                 drawPoint(location.getLongitude(), location.getLatitude(),
                         label, circleImage(), info, null);
@@ -1514,7 +1514,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 list.add(report);
             }
-            return TableFactory.htmlDataList(reportsController.tableDefinition, list, displayNames());
+            return DataFactory.htmlDataList(reportsController.tableDefinition, list, displayNames());
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;

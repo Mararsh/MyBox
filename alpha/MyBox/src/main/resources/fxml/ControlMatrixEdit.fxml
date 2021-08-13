@@ -19,6 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
@@ -196,12 +197,36 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                <FlowPane hgap="5.0" prefWrapLength="600.0" vgap="5.0">
                                     <children>
-                                        <CheckBox fx:id="htmlColumnCheck" mnemonicParsing="false" text="%ColumnName" />
-                                        <CheckBox fx:id="htmlRowCheck" mnemonicParsing="false" text="%RowNumber" />
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="editHtmlButton" layoutX="242.0" layoutY="10.0" mnemonicParsing="false" onAction="#editHtml">
+                                        <Button fx:id="menuHtmlButton" mnemonicParsing="false" onAction="#menuAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconMenu.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="popHtmlButton" mnemonicParsing="false" onAction="#popAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconPop.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="copyHtmlButton" mnemonicParsing="false" onAction="#copyHtml">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconCopy.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editHtml">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -210,8 +235,11 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                                        <CheckBox fx:id="htmlTitleCheck" mnemonicParsing="false" text="%Title" />
+                                        <CheckBox fx:id="htmlColumnCheck" mnemonicParsing="false" text="%ColumnName" />
+                                        <CheckBox fx:id="htmlRowCheck" mnemonicParsing="false" text="%RowNumber" />
                                     </children>
-                                </HBox>
+                                </FlowPane>
                                 <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>
@@ -224,9 +252,26 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                <FlowPane hgap="5.0" prefWrapLength="600.0" vgap="5.0">
                                     <children>
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="menuTextButton" mnemonicParsing="false" onAction="#menuAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconMenu.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="popTextButton" mnemonicParsing="false" onAction="#popAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconPop.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="copyTextButton" mnemonicParsing="false" onAction="#copyText">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -245,8 +290,11 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                                        <CheckBox fx:id="textTitleCheck" mnemonicParsing="false" text="%Title" />
+                                        <CheckBox fx:id="textColumnCheck" mnemonicParsing="false" text="%ColumnName" />
+                                        <CheckBox fx:id="textRowCheck" mnemonicParsing="false" text="%RowNumber" />
                                     </children>
-                                </HBox>
+                                </FlowPane> 
                                 <fx:include fx:id="text" source="ControlDataText.fxml" />
                             </children>
                             <padding>

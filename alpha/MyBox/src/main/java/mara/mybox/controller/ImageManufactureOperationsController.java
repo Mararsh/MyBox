@@ -22,7 +22,6 @@ public class ImageManufactureOperationsController extends ImageViewerController 
 
     protected ImageManufactureController imageController;
 
-    protected ImageManufactureViewController viewController;
     protected ImageManufactureCopyController copyController;
     protected ImageManufactureClipboardController clipboardController;
     protected ImageManufactureCropController cropController;
@@ -43,7 +42,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
     @FXML
     protected Accordion accordionPane;
     @FXML
-    protected TitledPane viewPane, copyPane, clipboardPane, cropPane, scalePane, colorPane,
+    protected TitledPane copyPane, clipboardPane, cropPane, scalePane, colorPane,
             effectPane, enhancementPane, transformPane, shadowPane,
             marginsPane, arcPane, penPane, textPane, richTextPane;
 
@@ -84,14 +83,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
             imageController.showRightPane();
             imageController.resetImagePane();
             ImageManufactureOperationController controller;
-            if (currentPane.equals(viewPane)) {
-                controller = checkPaneStatus(currentPane, Fxmls.ImageManufactureViewFxml);
-                if (controller != null) {
-                    viewController = (ImageManufactureViewController) controller;
-                }
-                viewController.paneExpanded();
-                currentController = viewController;
-            } else if (currentPane.equals(copyPane)) {
+            if (currentPane.equals(copyPane)) {
                 controller = checkPaneStatus(currentPane, Fxmls.ImageManufactureCopyFxml);
                 if (controller != null) {
                     copyController = (ImageManufactureCopyController) controller;
@@ -225,9 +217,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         if (currentController == null) {
             return;
         }
-        if (viewController == currentController) {
-            viewController.resetOperationPane();
-        } else if (copyController == currentController) {
+        if (copyController == currentController) {
             copyController.resetOperationPane();
         } else if (clipboardController == currentController) {
             clipboardController.resetOperationPane();

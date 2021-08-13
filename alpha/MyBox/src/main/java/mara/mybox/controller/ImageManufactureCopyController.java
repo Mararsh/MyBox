@@ -122,7 +122,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                 @Override
                 protected void whenSucceeded() {
                     imageController.popSuccessful();
-                    imageController.updateBottom(ImageOperation.Copy);
+                    imageController.updateLabel(ImageOperation.Copy);
                     if (clipboardCheck.isSelected()) {
                         if (operationsController.clipboardController != null) {
                             operationsController.clipboardController.clipsController.refreshAction();

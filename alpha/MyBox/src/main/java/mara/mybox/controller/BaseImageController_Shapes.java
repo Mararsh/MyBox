@@ -304,10 +304,12 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (show && imageView.getImage() != null) {
             maskRectangleLine.setVisible(true);
             if (!maskPane.getChildren().contains(maskRectangleLine)) {
-                maskPane.getChildren().addAll(maskRectangleLine,
-                        leftCenterHandler, rightCenterHandler,
-                        topLeftHandler, topCenterHandler, topRightHandler,
-                        bottomLeftHandler, bottomCenterHandler, bottomRightHandler);
+                maskPane.getChildren().addAll(maskRectangleLine);
+                if (leftCenterHandler != null && !maskPane.getChildren().contains(leftCenterHandler)) {
+                    maskPane.getChildren().addAll(leftCenterHandler, rightCenterHandler,
+                            topLeftHandler, topCenterHandler, topRightHandler,
+                            bottomLeftHandler, bottomCenterHandler, bottomRightHandler);
+                }
             }
             setMaskStroke();
         } else {

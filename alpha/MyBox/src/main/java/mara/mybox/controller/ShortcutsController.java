@@ -71,7 +71,7 @@ public class ShortcutsController extends HtmlTableController {
             key("F6", "", message("ClosePopup"), "");
             key("F7", "", message("CloseStage"), "");
             key("F8", "", message("RefreshStage"), "");
-            key("F9", "", message("Synchronize"), "");
+            key("F10", "", message("Synchronize"), "");
             key("F11", "", message("SaveAs"), "CTRL+b / ALT+b");
             key("F12", "", message("Menu"), "");
             key("DELETE", "", message("Delete"), "CTRL+d / ALT+d");

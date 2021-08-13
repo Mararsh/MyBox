@@ -26,7 +26,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -34,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public class ControlSheetData extends BaseWebViewController {
+public class ControlSheetData extends BaseController {
 
     protected List<ColumnDefinition> columns;
     protected ColumnType defaultColumnType;
@@ -44,20 +44,20 @@ public class ControlSheetData extends BaseWebViewController {
     protected int colsNumber, rowsNumber;
 
     @FXML
-    protected TabPane tabPane;
+    protected TabPane tabPane, validationPane;
     @FXML
-    protected Tab defTab, htmlTab, textsTab;
+    protected Tab defTab, htmlTab, textsTab, reportTab;
+    @FXML
+    protected WebView webView, reportView;
     @FXML
     protected ControlDataText textController;
     @FXML
-    protected CheckBox htmlColumnCheck, htmlRowCheck, textColumnCheck, textRowCheck;
+    protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck, textTitleCheck, textColumnCheck, textRowCheck;
     @FXML
     protected VBox defBox;
-    @FXML
-    protected WebView validationView;
 
     public ControlSheetData() {
-        baseTitle = Languages.message("Data");
+        baseTitle = message("Data");
         dataName = "sheet";
         colPrefix = "Field";
         defaultColumnType = ColumnDefinition.ColumnType.String;
@@ -66,13 +66,13 @@ public class ControlSheetData extends BaseWebViewController {
     }
 
     // Should always run this after scene loaded and before input data
-    @Override
     public void setParameters(BaseController parent) {
         try {
             this.parentController = parent;
             if (parent != null) {
                 this.baseName = parent.baseName;
                 this.baseTitle = parent.baseTitle;
+
                 if (parent instanceof ControlSheetData) {
                     ControlSheetData pSheet = (ControlSheetData) parent;
                     this.dataName = pSheet.dataName;
@@ -80,11 +80,21 @@ public class ControlSheetData extends BaseWebViewController {
                     this.defaultColumnType = pSheet.defaultColumnType;
                     this.defaultColValue = pSheet.defaultColValue;
                     this.defaultColNotNull = pSheet.defaultColNotNull;
+                    if (saveButton == null) {
+                        this.saveButton = pSheet.saveButton;
+                    }
                 }
             }
             if (textController != null) {
                 textController.setParameters(parent == null ? this : parent);
                 textController.sheetController = this;
+            }
+            if (htmlTitleCheck != null) {
+                htmlTitleCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlTitle", true));
+                htmlTitleCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    updateDataHtml(pickData());
+                    UserConfig.setBoolean(baseName + "HtmlTitle", newValue);
+                });
             }
             if (htmlColumnCheck != null) {
                 htmlColumnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlColumn", false));
@@ -100,7 +110,13 @@ public class ControlSheetData extends BaseWebViewController {
                     UserConfig.setBoolean(baseName + "HtmlRow", newValue);
                 });
             }
-
+            if (textTitleCheck != null) {
+                textTitleCheck.setSelected(UserConfig.getBoolean(baseName + "TextTitle", true));
+                textTitleCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    updateDataText(pickData());
+                    UserConfig.setBoolean(baseName + "TextTitle", newValue);
+                });
+            }
             if (textColumnCheck != null) {
                 textColumnCheck.setSelected(UserConfig.getBoolean(baseName + "TextColumn", false));
                 textColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
@@ -122,7 +138,7 @@ public class ControlSheetData extends BaseWebViewController {
     }
 
     protected String titleName() {
-        return sourceFile == null ? "" : sourceFile.getAbsolutePath();
+        return parentController.sourceFile == null ? "" : parentController.sourceFile.getAbsolutePath();
     }
 
     /*
@@ -143,25 +159,31 @@ public class ControlSheetData extends BaseWebViewController {
     }
 
     protected void dataChanged(boolean dataChanged) {
-        this.dataChanged = dataChanged;
-        if (getMyStage() != null) {
-            String title = baseTitle + " " + titleName();
-            if (dataChanged) {
-                title += " *";
+        try {
+            this.dataChanged = dataChanged;
+            if (getMyStage() != null) {
+                String title = baseTitle + " " + titleName();
+                if (dataChanged) {
+                    title += " *";
+                }
+                myStage.setTitle(title);
             }
-            myStage.setTitle(title);
-        }
-        if (!checkInvalid().isEmpty()) {
-//            popError(message("InvalidData"));
+            validationReport();
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
     }
 
     protected String[][] pickData() {
-        if (sheet == null || sheet.length == 0) {
-            rowsNumber = colsNumber = 0;
-        } else {
-            rowsNumber = sheet.length;
-            colsNumber = sheet[0].length;
+        try {
+            if (sheet == null || sheet.length == 0) {
+                rowsNumber = colsNumber = 0;
+            } else {
+                rowsNumber = sheet.length;
+                colsNumber = sheet[0].length;
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
         return sheet;
     }
@@ -211,7 +233,7 @@ public class ControlSheetData extends BaseWebViewController {
     public void makeColumns(int number) {
         columns = new ArrayList<>();
         for (int i = 1; i <= number; i++) {
-            ColumnDefinition column = new ColumnDefinition(Languages.message(colPrefix) + i, defaultColumnType, defaultColNotNull);
+            ColumnDefinition column = new ColumnDefinition(message(colPrefix) + i, defaultColumnType, defaultColNotNull);
             columns.add(column);
         }
     }
@@ -224,7 +246,7 @@ public class ControlSheetData extends BaseWebViewController {
         List<String> columnNames = columnNames();
         List<ColumnDefinition> newColumns = new ArrayList<>();
         for (int i = 1; i <= number; i++) {
-            String name = Languages.message(colPrefix) + (start + i);
+            String name = message(colPrefix) + (start + i);
             while (columnNames.contains(name)) {
                 name += "m";
             }
@@ -236,7 +258,7 @@ public class ControlSheetData extends BaseWebViewController {
     }
 
     protected String rowName(int row) {
-        return Languages.message("Row") + (row + 1);
+        return message("Row") + (row + 1);
     }
 
     protected String colName(int col) {
@@ -263,34 +285,42 @@ public class ControlSheetData extends BaseWebViewController {
         return false;
     }
 
-    protected StringTable checkInvalid() {
-        List<String> names = new ArrayList<>();
-        names.addAll(Arrays.asList(Languages.message("Row"), Languages.message("Column"), Languages.message("Reason")));
-        StringTable table = new StringTable(names, Languages.message("InvalidData"));
-        if (sheet != null) {
-            for (int i = 0; i < sheet.length; i++) {
-                for (int j = 0; j < sheet[i].length; j++) {
-                    String value = sheet[i][j];
-                    if (!dataValid(j, value)) {
-                        List<String> row = new ArrayList<>();
-                        row.addAll(Arrays.asList((i + 1) + "", (j + 1) + "",
-                                (value == null || value.isBlank() ? Languages.message("Null") : Languages.message("InvalidValue"))));
-                        table.add(row);
+    protected void validationReport() {
+        try {
+            if (saveButton == null && reportView == null) {
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("Row"), message("Column"), message("Reason")));
+            StringTable table = new StringTable(names, message("InvalidData"));
+            if (sheet != null) {
+                for (int i = 0; i < sheet.length; i++) {
+                    for (int j = 0; j < sheet[i].length; j++) {
+                        String value = sheet[i][j];
+                        if (!dataValid(j, value)) {
+                            List<String> row = new ArrayList<>();
+                            row.addAll(Arrays.asList((i + 1) + "", (j + 1) + "",
+                                    (value == null || value.isBlank() ? message("Null") : message("InvalidValue"))));
+                            table.add(row);
+                        }
                     }
                 }
             }
-        }
-        if (validationView != null) {
-            if (table.isEmpty()) {
-                validationView.getEngine().loadContent("");
-            } else {
-                validationView.getEngine().loadContent(table.html());
+            if (saveButton != null) {
+                saveButton.setDisable(!table.isEmpty());
             }
+            if (reportView == null) {
+                return;
+            }
+            reportView.getEngine().getLoadWorker().cancel();
+            if (!table.isEmpty()) {
+                reportView.getEngine().loadContent(table.html());
+                validationPane.getSelectionModel().select(reportTab);
+            } else {
+                reportView.getEngine().loadContent(message("DataAreValid"));
+            }
+        } catch (Exception e) {
         }
-        if (saveButton != null) {
-            saveButton.setDisable(!table.isEmpty());
-        }
-        return table;
     }
 
     /*
@@ -357,7 +387,11 @@ public class ControlSheetData extends BaseWebViewController {
             } else {
                 names = null;
             }
-            StringTable table = new StringTable(names, titleName());
+            String title = null;
+            if (htmlTitleCheck != null && htmlTitleCheck.isSelected()) {
+                title = titleName();
+            }
+            StringTable table = new StringTable(names, title);
             for (int i = 0; i < rNumber; i++) {
                 List<String> row = new ArrayList<>();
                 if (htmlRowCheck != null && htmlRowCheck.isSelected()) {
@@ -420,18 +454,18 @@ public class ControlSheetData extends BaseWebViewController {
             widthInput.setPrefWidth(80);
             widthInput.setMinWidth(Region.USE_PREF_SIZE);
 
-            CheckBox notNull = new CheckBox(Languages.message("Yes"));
+            CheckBox notNull = new CheckBox(message("Yes"));
             notNull.setPrefWidth(80);
             notNull.setMinWidth(Region.USE_PREF_SIZE);
             notNull.setSelected(column.isNotNull());
 
             ComboBox<String> typeSelector = new ComboBox<>();
             for (ColumnDefinition.ColumnType type : ColumnDefinition.editTypes()) {
-                typeSelector.getItems().add(Languages.message(type.name()));
+                typeSelector.getItems().add(message(type.name()));
             }
-            typeSelector.setValue(Languages.message(column.getType().name()));
+            typeSelector.setValue(message(column.getType().name()));
 
-            line.getChildren().addAll(indexLabel, nameInput, widthInput, notNull, typeSelector);
+            line.getChildren().addAll(indexLabel, nameInput, typeSelector, notNull, widthInput);
             defBox.getChildren().add(line);
 
         }
@@ -458,7 +492,7 @@ public class ControlSheetData extends BaseWebViewController {
                 nameInput.setStyle(null);
             }
 
-            TextField widthInput = (TextField) (line.getChildren().get(2));
+            TextField widthInput = (TextField) (line.getChildren().get(4));
             try {
                 double v = Double.parseDouble(widthInput.getText());
                 if (v > 10) {
@@ -478,13 +512,13 @@ public class ControlSheetData extends BaseWebViewController {
                 column.setNotNull(notNull.isSelected());
             }
 
-            ComboBox<String> typeSelector = (ComboBox) (line.getChildren().get(4));
+            ComboBox<String> typeSelector = (ComboBox) (line.getChildren().get(2));
             String ctype = typeSelector.getValue();
             if (ctype == null) {
                 ok = false;
             } else if (ok) {
                 for (ColumnDefinition.ColumnType type : ColumnDefinition.ColumnType.values()) {
-                    if (ctype.equals(type.name()) || ctype.equals(Languages.message(type.name()))) {
+                    if (ctype.equals(type.name()) || ctype.equals(message(type.name()))) {
                         column.setType(type);
                         break;
                     }
@@ -503,13 +537,13 @@ public class ControlSheetData extends BaseWebViewController {
             popSaved();
             afterDefChanged();
         } else {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
         }
     }
 
     public void afterDefChanged() {
         dataChanged(true);
-        if (parentController != null && parentController instanceof ControlSheetData) {
+        if (parentController != this && parentController != null && parentController instanceof ControlSheetData) {
             ControlSheetData pSheet = (ControlSheetData) parentController;
             pSheet.columns = columns;
             pSheet.afterDefChanged();
@@ -556,7 +590,7 @@ public class ControlSheetData extends BaseWebViewController {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
                 Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-                MenuWebviewController.pop(this, webView, null, localToScreen.getX(), localToScreen.getY());
+                MenuWebviewController.pop((BaseWebViewController) (webView.getUserData()), webView, null, localToScreen.getX(), localToScreen.getY());
 
             } else if (tab == textsTab) {
                 Point2D localToScreen = textController.textArea.localToScreen(textController.textArea.getWidth() - 80, 80);

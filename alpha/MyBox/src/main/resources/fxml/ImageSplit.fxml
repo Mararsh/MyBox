@@ -220,7 +220,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </ScrollPane>
-                        <VBox>
+                        <VBox spacing="5.0">
                             <children>
                                 <HBox fx:id="operationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
@@ -232,6 +232,15 @@ License:    Apache License Version 2.0
                                         <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" fx:id="xyLabel1" />
                                         <HBox fx:id="opBar" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                                             <children>
+                                    <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconMenu.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -317,6 +326,7 @@ License:    Apache License Version 2.0
                                         </AnchorPane>
                                     </content>
                                 </ScrollPane>
+                        <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" />
                             </children>
                         </VBox>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="536.0" prefViewportWidth="580.0">

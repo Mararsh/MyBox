@@ -28,9 +28,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.table.ColumnDefinition;
@@ -40,15 +38,11 @@ import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -160,15 +154,6 @@ public abstract class BaseSheetController extends ControlSheetData {
         }
         sheet = data;
         return data;
-    }
-
-    @Override
-    protected StringTable checkInvalid() {
-        if (sheetDataController != null) {
-            return sheetDataController.checkInvalid();
-        } else {
-            return super.checkInvalid();
-        }
     }
 
     @Override
@@ -445,9 +430,9 @@ public abstract class BaseSheetController extends ControlSheetData {
                                 v = v == null ? defaultColValue : v;
                                 isSettingValues = true;
                                 valueInput.setText(v);
-                                isSettingValues = false;
                                 valueInput.setStyle(inputStyle + (dataValid(col, v) ? "" : NodeStyleTools.badStyle));
                                 valueInput.setPrefWidth(columns.get(col).getWidth());
+                                isSettingValues = false;
                                 inputs[row][col] = valueInput;
                             }
                         }
@@ -461,7 +446,6 @@ public abstract class BaseSheetController extends ControlSheetData {
                     sheetBox.getChildren().add(noDataLabel);
                 }
                 sheet = pickData();
-
                 refreshStyle(sheetBox);
                 sheetChanged(changed);
             } catch (Exception e) {

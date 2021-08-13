@@ -369,17 +369,17 @@ public abstract class BaseImageController_ImageView extends BaseController {
             }
             String more = moreDisplayInfo();
             loadInfo += (!loadInfo.isBlank() && !more.isBlank() ? "\n" : "") + more;
+            if (imageChanged) {
+                loadInfo += "\n" + message("ImageChanged");
+            }
             if (imageInfoLabel != null) {
                 String info = fileInfo + "\n" + imageInfo + "\n" + loadInfo;
-                if (imageChanged) {
-                    info += "\n" + message("ImageChanged");
-                }
                 imageInfoLabel.setText(info);
-                if (bottomLabel != null) {
-                    bottomLabel.setText(loadInfo.replaceAll("\n", "  "));
+                if (imageLabel != null) {
+                    imageLabel.setText(loadInfo.replaceAll("\n", "  "));
                 }
-            } else if (bottomLabel != null) {
-                bottomLabel.setText((fileInfo + "\n" + imageInfo + "\n" + loadInfo).replaceAll("\n", "  "));
+            } else if (imageLabel != null) {
+                imageLabel.setText((fileInfo + "\n" + imageInfo + "\n" + loadInfo).replaceAll("\n", "  "));
             }
             if (imageView != null && imageView.getImage() != null) {
                 if (borderLine != null) {
@@ -503,6 +503,8 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 imageLabelOriginal.setStyle(imageLabel.getStyle());
                 imageLabel.setText(message("PickingColorsNow"));
                 imageLabel.setStyle(NodeStyleTools.darkRedText);
+            } else {
+                popInformation(message("PickingColorsNow"));
             }
         }
     }

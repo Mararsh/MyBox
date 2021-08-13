@@ -1,6 +1,6 @@
 package mara.mybox.db.data;
 
-import mara.mybox.db.table.TableFactory;
+import mara.mybox.db.table.DataFactory;
 import java.io.File;
 import java.util.Date;
 import mara.mybox.data.CoordinateSystem;
@@ -218,7 +218,7 @@ public class Location extends BaseData implements Cloneable {
                     return data.getDataset().getImage().getAbsolutePath();
                 }
         }
-        return TableFactory.displayColumnBase(data, column, value);
+        return DataFactory.displayColumnBase(data, column, value);
     }
 
 

@@ -125,7 +125,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         setRadio.setSelected(true);
         preAlphaCheck.setVisible(false);
         preAlphaTipsView.setVisible(false);
-        colorUnit.setText("");
+        colorUnit.setText("0-255");
         RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
         if (Languages.message("Brightness").equals(selected.getText())) {
             colorOperationType = OperationType.Brightness;
@@ -137,6 +137,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             }
             filterRadio.setDisable(true);
             invertRadio.setDisable(true);
+            colorUnit.setText("0-100");
         } else if (Languages.message("Saturation").equals(selected.getText())) {
             colorOperationType = OperationType.Saturation;
             colorSlider.setMax(100);
@@ -147,17 +148,18 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             }
             filterRadio.setDisable(true);
             invertRadio.setDisable(true);
+            colorUnit.setText("0-100");
         } else if (Languages.message("Hue").equals(selected.getText())) {
             colorOperationType = OperationType.Hue;
             colorSlider.setMax(360);
             colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
-            colorUnit.setText(Languages.message("Degree"));
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
             filterRadio.setDisable(true);
             invertRadio.setDisable(true);
+            colorUnit.setText("0-360");
         } else if (Languages.message("Red").equals(selected.getText())) {
             colorOperationType = OperationType.Red;
             colorSlider.setMax(255);

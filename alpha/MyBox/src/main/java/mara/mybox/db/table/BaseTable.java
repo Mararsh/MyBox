@@ -497,7 +497,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         if (data instanceof BaseData) {
-            return TableFactory.setColumnValue((BaseData) data, column, value);
+            return DataFactory.setColumnValue((BaseData) data, column, value);
         }
         return false;
     }
@@ -507,7 +507,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         if (data instanceof BaseData) {
-            return TableFactory.getColumnValue((BaseData) data, column);
+            return DataFactory.getColumnValue((BaseData) data, column);
         }
         return null;
     }
@@ -537,7 +537,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         if (data instanceof BaseData) {
-            return TableFactory.valid((BaseData) data);
+            return DataFactory.valid((BaseData) data);
         }
         return false;
     }

@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -24,8 +23,7 @@ import mara.mybox.dev.MyBoxLog;
 public abstract class ImageManufactureController_Image extends ImageViewerController {
 
     protected SimpleBooleanProperty imageLoaded;
-    protected String imageHistoriesPath;
-    protected int newWidth, newHeight, maxEditHistories, historyIndex;
+    protected int newWidth, newHeight;
     protected ImageOperation operation;
 
     public static enum ImageOperation {
@@ -37,7 +35,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     protected TitledPane createPane;
     @FXML
-    protected VBox mainBox, historiesBox, historiesListBox;
+    protected VBox mainBox;
     @FXML
     protected TabPane tabPane;
     @FXML
@@ -56,8 +54,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     protected ImageManufactureScopesSavedController scopeSavedController;
     @FXML
     protected ColorSet colorSetController;
-    @FXML
-    protected CheckBox recordHistoriesCheck;
 
     @Override
     public Image imageToSave() {

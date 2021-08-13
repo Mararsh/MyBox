@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -69,14 +68,12 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openDataCsv(ActionEvent event) {
-        DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-        c.newSheet(3, 3);
+        loadScene(Fxmls.DataFileCSVFxml);
     }
 
     @FXML
     protected void openDataExcel(ActionEvent event) {
-        DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-        c.newSheet(3, 3);
+        loadScene(Fxmls.DataFileExcelFxml);
     }
 
     @FXML

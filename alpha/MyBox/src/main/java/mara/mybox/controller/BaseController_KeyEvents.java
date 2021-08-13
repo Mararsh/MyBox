@@ -709,22 +709,24 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     public boolean keyF7() {
         closeStage();
         return true;
+
     }
 
     public boolean keyF8() {
         refreshInterfaceAndFile();
         return true;
+
     }
 
     public boolean keyF9() {
-        if (synchronizeButton != null && !synchronizeButton.isDisabled() && synchronizeButton.isVisible()) {
-            synchronizeButton.fire();
-            return true;
-        }
         return false;
     }
 
     public boolean keyF10() {
+        if (synchronizeButton != null && !synchronizeButton.isDisabled() && synchronizeButton.isVisible()) {
+            synchronizeButton.fire();
+            return true;
+        }
         return false;
     }
 
