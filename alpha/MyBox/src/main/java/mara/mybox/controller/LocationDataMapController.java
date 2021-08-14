@@ -30,10 +30,10 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import mara.mybox.controller.ControlMapOptions.MapName;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.Location;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.ControllerTools;
@@ -138,9 +138,7 @@ public class LocationDataMapController extends BaseMapController {
 
     public void initMap(LocationDataController dataController) {
         this.dataController = dataController;
-        parentController = dataController;
-
-        initSplitPanes();
+        super.initMap(dataController);
         NodeStyleTools.removeTooltip(snapshotButton);
     }
 

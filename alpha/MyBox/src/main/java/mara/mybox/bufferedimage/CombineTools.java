@@ -4,14 +4,12 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.imagefile.ImageFileReaders;
 
 /**
  * @Author Mara
@@ -231,31 +229,6 @@ public class CombineTools {
             }
             Image newImage = SwingFXUtils.toFXImage(target, null);
             return newImage;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static BufferedImage mergeImagesVertical(List<File> files, int width, int height) {
-        if (files == null || files.isEmpty()) {
-            return null;
-        }
-        try {
-            BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = target.createGraphics();
-            int y = 0;
-            for (File file : files) {
-                BufferedImage image = ImageFileReaders.readImage(file);
-                if (image == null) {
-                    continue;
-                }
-                int imageWidth = (int) image.getWidth();
-                int imageHeight = (int) image.getHeight();
-                g.drawImage(image, 0, y, imageWidth, imageHeight, null);
-                y += imageHeight;
-            }
-            return target;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

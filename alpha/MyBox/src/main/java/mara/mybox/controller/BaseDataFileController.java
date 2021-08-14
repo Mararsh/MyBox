@@ -212,8 +212,6 @@ public abstract class BaseDataFileController extends BaseSheetController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-
-        setParameters(this);
         newSheet(3, 3);
     }
 
@@ -245,7 +243,6 @@ public abstract class BaseDataFileController extends BaseSheetController {
             initFile();
             sheetBox.getChildren().clear();
             makeSheet(new String[rows][cols], false);
-            sheetDataController.thisPane.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -296,10 +293,8 @@ public abstract class BaseDataFileController extends BaseSheetController {
         savedColumns = null;
         paginationBox.setVisible(false);
         formatBox.setDisable(sourceFile == null);
-        saveButton.setDisable(true);
-        sheetDataController.thisPane.setDisable(true);
         dataChanged(false);
-        updateStatus();
+        updateLabel();
         clearSheet();
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
@@ -378,7 +373,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
                 @Override
                 protected void finalAction() {
-                    updateStatus();
+                    updateLabel();
                     afterFileLoaded();
                 }
 
@@ -418,8 +413,6 @@ public abstract class BaseDataFileController extends BaseSheetController {
                     totalRead = true;
                     paginationBox.setVisible(true);
                     setPagination();
-                    saveButton.setDisable(false);
-                    sheetDataController.thisPane.setDisable(false);
                 }
 
                 @Override
@@ -438,7 +431,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
                 @Override
                 protected void finalAction() {
-                    updateStatus();
+                    updateLabel();
                 }
 
             };
@@ -502,7 +495,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
                 @Override
                 protected void finalAction() {
-                    updateStatus();
+                    updateLabel();
                 }
 
             };
@@ -572,8 +565,7 @@ public abstract class BaseDataFileController extends BaseSheetController {
 
     }
 
-    protected void updateStatus() {
-        MyBoxLog.console("here");
+    protected void updateLabel() {
         if (sourceFile == null) {
             loadedLabel.setText("");
         } else {

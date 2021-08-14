@@ -23,13 +23,12 @@ import javafx.stage.Stage;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.Dataset;
 import mara.mybox.db.data.Location;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableDataset;
 import mara.mybox.db.table.TableLocationData;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
@@ -152,10 +151,6 @@ public class LocationDataController extends BaseDataManageController<Location> {
     @Override
     public void afterSceneLoaded() {
         try {
-            if (ControllerTools.mapFirstRun(this)) {
-                return;
-            }
-
             super.afterSceneLoaded();
             mapController.initMap(this);
 

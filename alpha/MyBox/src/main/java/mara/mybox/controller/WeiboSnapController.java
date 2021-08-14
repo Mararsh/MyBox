@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -26,8 +28,6 @@ import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
@@ -35,6 +35,7 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
 import mara.mybox.value.UserConfig;
 
@@ -929,7 +930,29 @@ public class WeiboSnapController extends BaseController {
 
     @FXML
     protected void initWebview() {
-        WebBrowserController.weiboSnapFirstRun();
+        try {
+            HtmlPopController controller = HtmlPopController.address(this, "https://weibo.com");
+            controller.handling(message("FirstRunInfo"));
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        controller.loadAddress("https://weibo.com");
+                    });
+                }
+            }, 12000);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        SystemConfig.setBoolean("WeiboRunFirstTime", false);
+                        controller.closeStage();
+                    });
+                }
+            }, 20000);
+        } catch (Exception e) {
+            closeStage();
+        }
     }
 
     @Override
@@ -946,7 +969,7 @@ public class WeiboSnapController extends BaseController {
                 alert.setContentText(Languages.message("WeiboSSL"));
                 ButtonType buttonSSL = new ButtonType("SSL");
                 ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonCancel, buttonSSL);
+                alert.getButtonTypes().setAll(buttonSSL, buttonCancel);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.setAlwaysOnTop(true);
                 stage.toFront();
@@ -988,6 +1011,7 @@ public class WeiboSnapController extends BaseController {
         parameters.setWebAddress(exmapleAddress);
         parameters.setStartMonth(DateTools.parseMonth("2014-09"));
         parameters.setEndMonth(DateTools.parseMonth("2014-10"));
+        parameters.setTargetPath(targetPath == null ? AppVariables.MyBoxDownloadsPath : targetPath);
         startSnap();
     }
 
@@ -1068,7 +1092,7 @@ public class WeiboSnapController extends BaseController {
 
     protected void startSnap() {
         try {
-            if (webAddress == null || webAddress.isEmpty() || parameters == null) {
+            if (webAddress == null || webAddress.isEmpty() || parameters == null || targetPath == null) {
                 popError(Languages.message("ParametersError"));
                 return;
             }

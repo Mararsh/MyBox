@@ -69,21 +69,21 @@ public class HtmlPopController extends BaseWebViewController {
     /*
         static
      */
-    public static HtmlPopController open(BaseController parent, WebView srcWebview) {
+    public static HtmlPopController html(BaseController parent, WebView srcWebview) {
         try {
             if (srcWebview == null) {
                 return null;
             }
-            return open(parent, WebViewTools.getHtml(srcWebview));
+            return html(parent, WebViewTools.getHtml(srcWebview));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static HtmlPopController open(BaseController parent, String html) {
+    public static HtmlPopController html(BaseController parent, String html) {
         try {
-            if (html == null) {
+            if (parent == null || html == null) {
                 return null;
             }
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
@@ -93,6 +93,20 @@ public class HtmlPopController extends BaseWebViewController {
             } else {
                 controller.loadContents(html);
             }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static HtmlPopController address(BaseController parent, String address) {
+        try {
+            if (parent == null || address == null) {
+                return null;
+            }
+            HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
+            controller.loadAddress(address);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

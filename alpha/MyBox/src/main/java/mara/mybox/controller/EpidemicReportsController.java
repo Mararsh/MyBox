@@ -30,15 +30,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.EpidemicReportTools;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
@@ -278,10 +277,6 @@ public class EpidemicReportsController extends BaseDataManageController<Epidemic
     @Override
     public void afterSceneLoaded() {
         try {
-            if (ControllerTools.mapFirstRun(this)) {
-                return;
-            }
-
             super.afterSceneLoaded();
             chartController.initMap(this);
 

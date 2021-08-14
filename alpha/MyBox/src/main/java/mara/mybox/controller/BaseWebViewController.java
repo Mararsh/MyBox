@@ -582,7 +582,7 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     @FXML
     @Override
     public void popAction() {
-        HtmlPopController.open(parentController, WebViewTools.getHtml(webView));
+        HtmlPopController.html(parentController, webView);
     }
 
     @Override

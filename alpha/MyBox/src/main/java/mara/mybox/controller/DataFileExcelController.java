@@ -16,7 +16,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataDefinition;
@@ -24,7 +23,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
@@ -35,9 +33,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -88,24 +83,24 @@ public class DataFileExcelController extends BaseDataFileController {
 
             sourceWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "SourceWithNames", true));
             sourceWithNamesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (!isSettingValues) {
-                            UserConfig.setBoolean(baseName + "SourceWithNames", newValue);
-                        }
-                    });
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "SourceWithNames", newValue);
+                }
+            });
 
             targetWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "TargetWithNames", true));
             targetWithNamesCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (!isSettingValues) {
-                            UserConfig.setBoolean(baseName + "TargetWithNames", newValue);
-                        }
-                    });
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "TargetWithNames", newValue);
+                }
+            });
 
             currentOnlyCheck.setSelected(UserConfig.getBoolean(baseName + "CurrentOnly", false));
             currentOnlyCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (!isSettingValues) {
-                            UserConfig.setBoolean(baseName + "CurrentOnly", newValue);
-                        }
-                    });
+                if (!isSettingValues) {
+                    UserConfig.setBoolean(baseName + "CurrentOnly", newValue);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -310,7 +305,7 @@ public class DataFileExcelController extends BaseDataFileController {
         previousButton.setDisable(current <= 0);
         sheetsPane.setExpanded(true);
         targetSheetName = currentSheetName;
-        updateStatus();
+        updateLabel();
     }
 
     @Override
@@ -387,7 +382,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected void updateStatus() {
+    protected void updateLabel() {
         if (sourceFile == null) {
             loadedLabel.setText(Languages.message("FirstLineAsNames") + ": " + (sourceWithNames ? Languages.message("Yes") : Languages.message("No")));
         } else {
@@ -1505,8 +1500,8 @@ public class DataFileExcelController extends BaseDataFileController {
     public static DataFileExcelController oneOpen() {
         DataFileExcelController controller = null;
         List<Window> windows = new ArrayList<>();
-                windows.addAll(Window.getWindows());
-                for (Window window : windows) {
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
             Object object = window.getUserData();
             if (object != null && object instanceof DataFileExcelController) {
                 try {

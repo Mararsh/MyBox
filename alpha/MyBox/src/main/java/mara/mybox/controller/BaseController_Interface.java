@@ -81,7 +81,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                             checkSourceFileInput();
                         });
-                sourceFileInput.setText(UserConfig.getString(baseName + "SourceFile", null));
+                sourceFileInput.setText(UserConfig.getString(baseName + "SourceFile", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
             }
 
             if (sourcePathInput != null) {
@@ -92,7 +92,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         checkSourcetPathInput();
                     }
                 });
-                sourcePathInput.setText(UserConfig.getString(baseName + "SourcePath", null));
+                sourcePathInput.setText(UserConfig.getString(baseName + "SourcePath", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
             }
 
             if (targetFileInput != null) {
@@ -103,11 +103,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         checkTargetFileInput();
                     }
                 });
-                targetFileInput.setText(UserConfig.getString(baseName + "TargetFile", null));
+                targetFileInput.setText(UserConfig.getString(baseName + "TargetFile", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
             }
 
             if (targetPrefixInput != null) {
-                targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", null));
                 targetPrefixInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -116,6 +115,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         }
                     }
                 });
+                targetPrefixInput.setText(UserConfig.getString(baseName + "TargetPrefix", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
             }
 
             if (targetPathInput != null) {
@@ -125,7 +125,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         checkTargetPathInput();
                     }
                 });
-                targetPathInput.setText(UserConfig.getString(baseName + "TargetPath", null));
+                targetPathInput.setText(UserConfig.getString(baseName + "TargetPath", AppVariables.MyBoxDownloadsPath.getAbsolutePath()));
 
             }
 
@@ -309,8 +309,13 @@ public abstract class BaseController_Interface extends BaseController_Files {
 //       MyBoxLog.console(this.getClass() + "  " + node.getClass() + "  " + node.getId());
         Object o = node.getUserData();
         // Controls in embedded fxmls have been initialized by themselves
-        if (o != null && o instanceof BaseController && node != thisPane) {
-            return;
+        if (o != null && o instanceof BaseController) {
+            if (node != thisPane) {
+                return;
+            }
+            if (o instanceof BaseMapController) {
+
+            }
         }
         if (node instanceof TextInputControl) {
             makeEditContextMenu(node);

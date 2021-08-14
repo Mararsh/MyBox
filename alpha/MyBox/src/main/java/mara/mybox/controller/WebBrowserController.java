@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -25,11 +22,9 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
-import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.SystemConfig;
 
 /**
  * @Author Mara
@@ -215,57 +210,6 @@ public class WebBrowserController extends BaseController {
         super.cleanPane();
     }
 
-    protected void initWeibo() {
-        try {
-            getMyStage().toBack();
-            LoadingController c = handling(message("FirstRunInfo"));
-            c.cancelButton.setDisable(true);
-            loadAddress("https://weibo.com", true);
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        loadAddress("https://weibo.com", true);
-                    });
-                }
-            }, 12000);
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        SystemConfig.setBoolean("WeiboRunFirstTime", false);
-                        closeStage();
-                    });
-                }
-            }, 20000);
-        } catch (Exception e) {
-            closeStage();
-        }
-    }
-
-    protected void initMap() {
-        try {
-            getMyStage().toBack();
-            LoadingController c = handling(message("FirstRunInfo"));
-            c.cancelButton.setDisable(true);
-            loadContents(LocationTools.gaodeMap(), false);
-            loadAddress(LocationTools.tiandituFile(true).toURI().toString(), true);
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        SystemConfig.setBoolean("MapRunFirstTime", false);
-                        closeStage();
-                    });
-                }
-            }, 3000);
-        } catch (Exception e) {
-            closeStage();
-        }
-    }
-
     /*
         static methods
      */
@@ -303,18 +247,6 @@ public class WebBrowserController extends BaseController {
         if (controller != null && address != null) {
             controller.loadAddress(address, true);
         }
-        return controller;
-    }
-
-    public static WebBrowserController weiboSnapFirstRun() {
-        WebBrowserController controller = (WebBrowserController) WindowTools.openStage(Fxmls.WebBrowserFxml);
-        controller.initWeibo();
-        return controller;
-    }
-
-    public static WebBrowserController mapFirstRun() {
-        WebBrowserController controller = (WebBrowserController) WindowTools.openStage(Fxmls.WebBrowserFxml);
-        controller.initMap();
         return controller;
     }
 

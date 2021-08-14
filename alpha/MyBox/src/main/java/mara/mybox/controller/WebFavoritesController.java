@@ -38,13 +38,9 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableImageFileCell;
 import mara.mybox.imagefile.ImageFileReaders;
-
 import mara.mybox.tools.IconTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -83,7 +79,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
     protected ImageView iconView;
 
     public WebFavoritesController() {
-        baseTitle = Languages.message("WebFavorites");
+        baseTitle = message("WebFavorites");
     }
 
     @Override
@@ -153,19 +149,29 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
 
             goButton.disableProperty().bind(Bindings.isEmpty(addressInput.textProperty()));
 
-            hideRightPane();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+
+            hideRightPane();
+            loadTree(null);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
 
     /*
         tree
      */
     protected void loadTree(TreeNode node) {
         if (tableWebFavorite.size() < 1
-                && PopTools.askSure(getBaseTitle(), Languages.message("ImportExamples"))) {
+                && PopTools.askSure(getBaseTitle(), message("ImportExamples"))) {
             treeController.importExamples();
         } else {
             treeController.loadTree(node);
@@ -310,28 +316,28 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(Languages.message("Delete"));
+            menu = new MenuItem(message("Delete"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteAction();
             });
             menu.setDisable(deleteButton.isDisabled());
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("Copy"));
+            menu = new MenuItem(message("Copy"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 copyAction();
             });
             menu.setDisable(copyButton.isDisabled());
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("Move"));
+            menu = new MenuItem(message("Move"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveAction();
             });
             menu.setDisable(moveDataButton.isDisabled());
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("Add"));
+            menu = new MenuItem(message("Add"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 addAction(null);
             });
@@ -339,7 +345,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("Clear"));
+            menu = new MenuItem(message("Clear"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 clearAction();
             });
@@ -348,7 +354,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             items.add(new SeparatorMenuItem());
 
             if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("NextPage"));
+                menu = new MenuItem(message("NextPage"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     pageNextAction();
                 });
@@ -356,14 +362,14 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             }
 
             if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("PreviousPage"));
+                menu = new MenuItem(message("PreviousPage"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     pagePreviousAction();
                 });
                 items.add(menu);
             }
 
-            menu = new MenuItem(Languages.message("Refresh"));
+            menu = new MenuItem(message("Refresh"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 refreshAction();
             });
@@ -405,7 +411,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
         deleteButton.setDisable(selection == 0);
         copyButton.setDisable(selection == 0);
         moveDataButton.setDisable(selection == 0);
-        selectedLabel.setText(Languages.message("Selected") + ": " + selection);
+        selectedLabel.setText(message("Selected") + ": " + selection);
         return selection;
     }
 
@@ -519,7 +525,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
     @FXML
     protected void copyAddress() {
         idInput.setText("");
-        titleInput.appendText(" " + Languages.message("Copy"));
+        titleInput.appendText(" " + message("Copy"));
         currentAddress = null;
     }
 
@@ -536,7 +542,7 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
                 URL url = new URL(addressInput.getText());
                 address = url.toString();
             } catch (Exception e) {
-                popError(Languages.message("InvalidData"));
+                popError(message("InvalidData"));
                 return;
             }
             SingletonTask updateTask = new SingletonTask<Void>() {
@@ -570,14 +576,14 @@ public class WebFavoritesController extends BaseDataTableController<WebFavorite>
             }
             String title = titleInput.getText();
             if (title == null || title.isBlank()) {
-                popError(Languages.message("InvalidData") + ": " + Languages.message("Title"));
+                popError(message("InvalidData") + ": " + message("Title"));
                 return;
             }
             String address = addressInput.getText();
             try {
                 URL url = new URL(address);
             } catch (Exception e) {
-                popError(Languages.message("InvalidData") + ": " + Languages.message("Address"));
+                popError(message("InvalidData") + ": " + message("Address"));
                 return;
             }
             task = new SingletonTask<Void>() {

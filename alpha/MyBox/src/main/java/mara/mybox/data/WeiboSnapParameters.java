@@ -8,13 +8,11 @@ import mara.mybox.value.AppVariables;
 /**
  * @Author Mara
  * @CreateDate 2018-9-13 22:17:17
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class WeiboSnapParameters {
 
-    private File targetPath;
+    private File targetPath = AppVariables.MyBoxDownloadsPath;
     private int webWidth, retry, startPage, loadInterval, snapInterval, likeStartPage, retried, fontSize = 20;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;

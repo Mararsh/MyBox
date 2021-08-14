@@ -10,7 +10,6 @@ import mara.mybox.db.data.Matrix;
 import mara.mybox.db.table.TableMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableDateCell;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -65,7 +64,7 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
     public void initControls() {
         try {
             super.initControls();
-            editController.setManager(this);
+            editController.initManager(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

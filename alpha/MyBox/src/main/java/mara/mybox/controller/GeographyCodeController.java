@@ -16,13 +16,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mara.mybox.data.CoordinateSystem;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
@@ -140,10 +139,6 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @Override
     public void afterSceneLoaded() {
         try {
-            if (ControllerTools.mapFirstRun(this)) {
-                return;
-            }
-
             super.afterSceneLoaded();
             mapController.initMap(this);
         } catch (Exception e) {

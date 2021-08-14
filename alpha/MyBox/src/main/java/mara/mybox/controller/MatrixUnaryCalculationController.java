@@ -13,16 +13,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -66,7 +61,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     public void initControls() {
         try {
             super.initControls();
-            resultTableController.setManager(listController);
+            resultTableController.initManager(listController);
             resultBox.getChildren().clear();
 
             row = UserConfig.getInt(baseName + "Row", 1);
@@ -90,14 +85,14 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             }
             numberInput.setText(number + "");
             numberInput.textProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            number = Double.parseDouble(newValue);
-                            numberInput.setStyle(null);
-                            UserConfig.setString(baseName + "Number", number + "");
-                        } catch (Exception e) {
-                            numberInput.setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                try {
+                    number = Double.parseDouble(newValue);
+                    numberInput.setStyle(null);
+                    UserConfig.setString(baseName + "Number", number + "");
+                } catch (Exception e) {
+                    numberInput.setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
             try {
                 power = UserConfig.getInt(baseName + "Power", 2);
@@ -106,19 +101,19 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             }
             powerInput.setText(power + "");
             powerInput.textProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 1) {
-                                power = v;
-                                powerInput.setStyle(null);
-                                UserConfig.setInt(baseName + "Power", power);
-                            } else {
-                                powerInput.setStyle(NodeStyleTools.badStyle);
-                            }
-                        } catch (Exception e) {
-                            powerInput.setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 1) {
+                        power = v;
+                        powerInput.setStyle(null);
+                        UserConfig.setInt(baseName + "Power", power);
+                    } else {
+                        powerInput.setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    powerInput.setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
             opGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {

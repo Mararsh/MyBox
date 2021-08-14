@@ -1,10 +1,12 @@
 package mara.mybox.controller;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,18 +35,30 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import mara.mybox.bufferedimage.CombineTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.PdfTools;
+import static mara.mybox.tools.PdfTools.defaultFont;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.AppValues;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 /**
  * @Author Mara
@@ -180,7 +194,6 @@ public class HtmlSnapController extends BaseWebViewController {
 //            myStage.setWidth(900);
 //            webEngine.executeScript("document.body.style.fontSize = '15px' ;");
 
-            snapshotButton.setDisable(true);
             final int maxDelay = delay * 30;
             final long startTime = new Date().getTime();
 
@@ -200,10 +213,7 @@ public class HtmlSnapController extends BaseWebViewController {
                 @Override
                 public void run() {
                     boolean quit = false;
-                    if (new Date().getTime() - startTime > maxDelay) {
-                        quit = true;
-                    }
-                    if (newHeight == lastHeight) {
+                    if (isCanceled() || newHeight == lastHeight || new Date().getTime() - startTime > maxDelay) {
                         quit = true;
                     }
                     if (quit) {
@@ -225,10 +235,7 @@ public class HtmlSnapController extends BaseWebViewController {
 
                         } catch (Exception e) {
                             MyBoxLog.error(e.toString());
-                            if (loadingController != null) {
-                                loadingController.closeStage();
-                                loadingController = null;
-                            }
+                            stopSnap();
                         }
                     });
 
@@ -243,11 +250,14 @@ public class HtmlSnapController extends BaseWebViewController {
 
     protected void startSnap() {
         try {
+            if (isCanceled()) {
+                return;
+            }
             webEngine.executeScript("window.scrollTo(0,0 );");
             snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
             snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
             snapHeight = 0;
-            bottomLabel.setText(message("SnapingImage..."));
+            webViewLabel.setText(message("SnapingImage..."));
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
@@ -284,7 +294,7 @@ public class HtmlSnapController extends BaseWebViewController {
 
     protected void snap() {
         try {
-            if (loadingController == null) {
+            if (isCanceled()) {
                 return;
             }
             WritableImage snapshot = new WritableImage(snapImageWidth, snapImageHeight);
@@ -305,6 +315,9 @@ public class HtmlSnapController extends BaseWebViewController {
             File tmpfile = TmpFileTools.getTempFile(".png");
             ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(cropped, null), "png", tmpfile.getAbsolutePath());
             snaps.add(tmpfile);
+            if (isCanceled()) {
+                return;
+            }
             loadingController.setInfo(message("CurrentPageHeight") + ": " + snapHeight);
             if (snapTotalHeight > snapHeight) {
                 webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
@@ -316,7 +329,7 @@ public class HtmlSnapController extends BaseWebViewController {
                     @Override
                     public void run() {
                         Platform.runLater(() -> {
-                            if (loadingController == null) {
+                            if (isCanceled()) {
                                 return;
                             }
                             snap();
@@ -325,6 +338,9 @@ public class HtmlSnapController extends BaseWebViewController {
                 }, 300);    // make sure page is loaded before snapping
 
             } else { // last snap
+                if (isCanceled()) {
+                    return;
+                }
                 loadingController.setInfo(message("WritingFile"));
                 boolean success = true;
                 if (isOneImage) {
@@ -345,50 +361,188 @@ public class HtmlSnapController extends BaseWebViewController {
 
                         Optional<ButtonType> result = alert.showAndWait();
                         if (result.get() == buttonPdf) {
-                            success = PdfTools.htmlIntoPdf(snaps, targetFile, windowSizeCheck.isSelected());
+                            success = htmlIntoPdf(snaps, targetFile, windowSizeCheck.isSelected());
                         } else {
                             success = false;
                         }
                     } else {
-                        BufferedImage finalImage = CombineTools.mergeImagesVertical(snaps, snapFileWidth, snapFileHeight);
+                        BufferedImage finalImage = mergeImagesVertical(snaps, snapFileWidth, snapFileHeight);
                         if (finalImage != null) {
-                            String format = FileNameTools.getFileSuffix(targetFile.getAbsolutePath());
-                            ImageFileWriters.writeImageFile(finalImage, format, targetFile.getAbsolutePath());
+                            if (isCanceled()) {
+                                success = false;
+                            } else {
+                                String format = FileNameTools.getFileSuffix(targetFile.getAbsolutePath());
+                                ImageFileWriters.writeImageFile(finalImage, format, targetFile.getAbsolutePath());
+                            }
                         } else {
                             success = false;
                         }
                     }
                 } else {
-                    success = PdfTools.htmlIntoPdf(snaps, targetFile, windowSizeCheck.isSelected());
+                    success = htmlIntoPdf(snaps, targetFile, windowSizeCheck.isSelected());
                 }
-                snaps = null;
+
+                stopSnap();
+
                 if (success && targetFile.exists()) {
                     view(targetFile);
                 } else {
                     popFailed();
                 }
 
-                webEngine.executeScript("window.scrollTo(0,0 );");
-                bottomLabel.setText("");
-                snapshotButton.setDisable(false);
-
-                if (loadingController != null) {
-                    loadingController.closeStage();
-                    loadingController = null;
-                }
-                myStage.setY(orginalStageY);
-                myStage.setHeight(orginalStageHeight);
             }
 
         } catch (Exception e) {
             webEngine.executeScript("window.scrollTo(0,0 );");
             popFailed();
-            if (loadingController != null) {
-                loadingController.closeStage();
-                loadingController = null;
-            }
+            stopSnap();
         }
 
+    }
+
+    public BufferedImage mergeImagesVertical(List<File> files, int width, int height) {
+        if (files == null || files.isEmpty()) {
+            return null;
+        }
+        try {
+            BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = target.createGraphics();
+            int y = 0;
+            for (File file : files) {
+                if (isCanceled()) {
+                    return null;
+                }
+                BufferedImage image = ImageFileReaders.readImage(file);
+                if (image == null) {
+                    continue;
+                }
+                int imageWidth = (int) image.getWidth();
+                int imageHeight = (int) image.getHeight();
+                g.drawImage(image, 0, y, imageWidth, imageHeight, null);
+                y += imageHeight;
+            }
+            return target;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public boolean htmlIntoPdf(List<File> files, File targetFile, boolean isImageSize) {
+        if (files == null || files.isEmpty()) {
+            return false;
+        }
+        try {
+            int count = 0;
+            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+                PDPageContentStream content;
+                PDFont font = defaultFont(document);
+                PDDocumentInformation info = new PDDocumentInformation();
+                info.setCreationDate(Calendar.getInstance());
+                info.setModificationDate(Calendar.getInstance());
+                info.setProducer("MyBox v" + AppValues.AppVersion);
+                document.setDocumentInformation(info);
+                document.setVersion(1.0f);
+                PDRectangle pageSize = new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth());
+                int marginSize = 20, total = files.size();
+                for (File file : files) {
+                    if (isCanceled()) {
+                        document.close();
+                        return false;
+                    }
+                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+                    if (bufferedImage == null) {
+                        continue;
+                    }
+                    PDImageXObject imageObject;
+                    imageObject = LosslessFactory.createFromImage(document, bufferedImage);
+                    if (isImageSize) {
+                        pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
+                    }
+                    PDPage page = new PDPage(pageSize);
+                    document.addPage(page);
+                    content = new PDPageContentStream(document, page);
+                    float w, h;
+                    if (isImageSize) {
+                        w = imageObject.getWidth();
+                        h = imageObject.getHeight();
+                    } else {
+                        if (imageObject.getWidth() > imageObject.getHeight()) {
+                            w = page.getTrimBox().getWidth() - marginSize * 2;
+                            h = imageObject.getHeight() * w / imageObject.getWidth();
+                        } else {
+                            h = page.getTrimBox().getHeight() - marginSize * 2;
+                            w = imageObject.getWidth() * h / imageObject.getHeight();
+                        }
+                    }
+                    content.drawImage(imageObject, marginSize, page.getTrimBox().getHeight() - marginSize - h, w, h);
+
+                    content.beginText();
+                    content.setFont(font, 12);
+                    content.newLineAtOffset(w + marginSize - 80, 5);
+                    content.showText((++count) + " / " + total);
+                    content.endText();
+
+                    content.close();
+                }
+
+                if (isCanceled()) {
+                    document.close();
+                    return false;
+                }
+                PDPage page = document.getPage(0);
+                PDPageXYZDestination dest = new PDPageXYZDestination();
+                dest.setPage(page);
+                dest.setZoom(1f);
+                dest.setTop((int) page.getCropBox().getHeight());
+                PDActionGoTo action = new PDActionGoTo();
+                action.setDestination(dest);
+                document.getDocumentCatalog().setOpenAction(action);
+
+                document.save(targetFile);
+                return true;
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+
+    }
+
+    protected boolean isCanceled() {
+        if (loadingController == null || loadingController.isIsCanceled()) {
+            stopSnap();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected void stopSnap() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        if (loadingController != null) {
+            loadingController.closeStage();
+            loadingController = null;
+        }
+        snaps = null;
+        webEngine.getLoadWorker().cancel();
+        webEngine.executeScript("window.scrollTo(0,0 );");
+        webViewLabel.setText("");
+        myStage.setY(orginalStageY);
+        myStage.setHeight(orginalStageHeight);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            stopSnap();
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

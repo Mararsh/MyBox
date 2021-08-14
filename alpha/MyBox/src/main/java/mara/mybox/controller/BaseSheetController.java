@@ -99,13 +99,12 @@ public abstract class BaseSheetController extends ControlSheetData {
     }
 
     @Override
-    public void setParameters(BaseController parent) {
+    public void initSheetController(BaseSheetController parent) {
         try {
             if (sheetDataController != null) {
-                sheetDataController.setParameters(parent);
+                sheetDataController.initSheetController(parent);
             }
-            super.setParameters(parent);
-
+            super.initSheetController(parent);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -123,6 +122,12 @@ public abstract class BaseSheetController extends ControlSheetData {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        initSheetController(this);
     }
 
     @Override
@@ -168,9 +173,6 @@ public abstract class BaseSheetController extends ControlSheetData {
         String value = null;
         try {
             value = inputs[row][col].getText();
-//            if (dataValid(value)) {
-//                return value;
-//            }
         } catch (Exception e) {
         }
         return value == null ? defaultColValue : value;
@@ -513,7 +515,7 @@ public abstract class BaseSheetController extends ControlSheetData {
     @FXML
     public void clipboard() {
         DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
-        controller.setSheet(this);
+        controller.setSourceController(this);
         controller.toFront();
     }
 
@@ -527,9 +529,8 @@ public abstract class BaseSheetController extends ControlSheetData {
         }
     }
 
-    @Override
-    public void afterDefChanged() {
-        makeSheet(pickData());
+    public void afterDefChanged(List<ColumnDefinition> columns) {
+        makeSheet(sheet, columns);
     }
 
     public String askValue(String header, String name, String initValue) {
@@ -839,6 +840,27 @@ public abstract class BaseSheetController extends ControlSheetData {
     public List<MenuItem> colModifyMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
+            List<MenuItem> items1 = colModifyValuesMenu(col);
+            if (items1 != null && !items1.isEmpty()) {
+                items.addAll(items1);
+            }
+            List<MenuItem> items2 = colModifyDefMenu(col);
+            if (items2 != null && !items2.isEmpty()) {
+                if (!items.isEmpty()) {
+                    items.add(new SeparatorMenuItem());
+                }
+                items.addAll(items2);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    public List<MenuItem> colModifyValuesMenu(int col) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
             MenuItem menu = new MenuItem(Languages.message("SetColValues"));
             menu.setOnAction((ActionEvent event) -> {
                 SetPageColValues(col);
@@ -862,9 +884,16 @@ public abstract class BaseSheetController extends ControlSheetData {
             menu.setDisable(copiedCol == null || copiedCol.isEmpty());
             items.add(menu);
 
-            items.add(new SeparatorMenuItem());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
 
-            menu = new MenuItem(Languages.message("InsertColLeft"));
+    public List<MenuItem> colModifyDefMenu(int col) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            MenuItem menu = new MenuItem(Languages.message("InsertColLeft"));
             menu.setOnAction((ActionEvent event) -> {
                 insertPageCol(col, true, 1);
             });
@@ -1484,8 +1513,24 @@ public abstract class BaseSheetController extends ControlSheetData {
     public List<MenuItem> makeSheetDeleteMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu;
+            List<MenuItem> items1 = makeSheetDeleteRowsMenu();
+            if (items1 != null && !items1.isEmpty()) {
+                items.addAll(items1);
+            }
+            List<MenuItem> items2 = makeSheetDeleteColsMenu();
+            if (items2 != null && !items2.isEmpty()) {
+                items.addAll(items2);
+            }
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    public List<MenuItem> makeSheetDeleteRowsMenu() {
+        List<MenuItem> items = new ArrayList<>();
+        try {
             rowsSelected = false;
             if (rowsCheck != null) {
                 for (int j = 0; j < rowsCheck.length; ++j) {
@@ -1495,17 +1540,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                     }
                 }
             }
-            colsSelected = false;
-            if (colsCheck != null) {
-                for (int j = 0; j < colsCheck.length; ++j) {
-                    if (colsCheck[j].isSelected()) {
-                        colsSelected = true;
-                        break;
-                    }
-                }
-            }
-
-            menu = new MenuItem(Languages.message("DeleteSelectedRows"));
+            MenuItem menu = new MenuItem(Languages.message("DeleteSelectedRows"));
             menu.setOnAction((ActionEvent event) -> {
                 int newNumber = 0;
                 int rowsNumber = inputs.length;
@@ -1543,7 +1578,25 @@ public abstract class BaseSheetController extends ControlSheetData {
             menu.setDisable(!rowsSelected);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("DeleteSelectedCols"));
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    public List<MenuItem> makeSheetDeleteColsMenu() {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            colsSelected = false;
+            if (colsCheck != null) {
+                for (int j = 0; j < colsCheck.length; ++j) {
+                    if (colsCheck[j].isSelected()) {
+                        colsSelected = true;
+                        break;
+                    }
+                }
+            }
+            MenuItem menu = new MenuItem(Languages.message("DeleteSelectedCols"));
             menu.setOnAction((ActionEvent event) -> {
                 int colsNumber = colsCheck.length;
                 List<ColumnDefinition> newColumns = new ArrayList<>();
@@ -2072,6 +2125,20 @@ public abstract class BaseSheetController extends ControlSheetData {
             dataChanged = false;
         }
         return goOn;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            tableDataDefinition = null;
+            tableDataColumn = null;
+            dataDefinition = null;
+            inputs = null;
+            colsCheck = null;
+            rowsCheck = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

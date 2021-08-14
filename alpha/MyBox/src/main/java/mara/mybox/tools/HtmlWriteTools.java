@@ -65,7 +65,8 @@ public class HtmlWriteTools {
 
     public static String htmlPrefix(String title, String styleValue) {
         StringBuilder s = new StringBuilder();
-        s.append("<!DOCTYPE html><HTML>\n").append(Indent).append("<HEAD>\n").append(Indent).append(Indent).append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
+        s.append("<!DOCTYPE html><HTML>\n").append(Indent).append("<HEAD>\n").append(Indent).append(Indent)
+                .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
         if (title != null && !title.trim().isEmpty()) {
             s.append(Indent).append(Indent).append("<TITLE>").append(title).append("</TITLE>\n");
         }

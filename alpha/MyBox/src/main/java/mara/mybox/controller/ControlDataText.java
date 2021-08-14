@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataText extends BaseController {
 
-    protected ControlSheetData sheetController;
+    protected ControlSheetData dataController;
     protected String[][] sheet;
     protected String delimiter;
 
@@ -35,16 +35,12 @@ public class ControlDataText extends BaseController {
     @FXML
     protected TextField delimiterInput;
 
-    public void setParameters(BaseController parent) {
+    public void setDataController(ControlSheetData parent) {
         try {
-            if (parentController != null) {
-                return;
-            }
+            dataController = parent;
             this.parentController = parent;
-            if (parent != null) {
-                this.baseName = parent.baseName;
-                this.baseTitle = parent.baseTitle;
-            }
+            this.baseName = parent.baseName;
+            this.baseTitle = parent.baseTitle;
             delimiter = UserConfig.getString(baseName + "TargetDelimiter", "Blank");
             switch (delimiter.toLowerCase()) {
                 case "blank":
@@ -143,15 +139,15 @@ public class ControlDataText extends BaseController {
         List<String> colsNames = null;
         List<String> rowsNames = null;
         String title = null;
-        if (sheetController != null) {
-            if (sheetController.textTitleCheck != null && sheetController.textTitleCheck.isSelected()) {
-                title = sheetController.titleName();
+        if (dataController != null) {
+            if (dataController.textTitleCheck != null && dataController.textTitleCheck.isSelected()) {
+                title = dataController.titleName();
             }
-            if (sheetController.textColumnCheck != null && sheetController.textColumnCheck.isSelected()) {
-                colsNames = sheetController.columnNames();
+            if (dataController.textColumnCheck != null && dataController.textColumnCheck.isSelected()) {
+                colsNames = dataController.columnNames();
             }
-            if (sheetController.textRowCheck != null && sheetController.textRowCheck.isSelected()) {
-                rowsNames = sheetController.rowNames(sheet.length);
+            if (dataController.textRowCheck != null && dataController.textRowCheck.isSelected()) {
+                rowsNames = sheet == null ? null : dataController.rowNames(sheet.length);
             }
         }
         String text = TextTools.dataText(sheet, delimiter, colsNames, rowsNames);

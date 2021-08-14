@@ -16,7 +16,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.DataDefinition.DataType;
@@ -27,12 +26,8 @@ import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.db.table.TableMatrixCell;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -70,17 +65,17 @@ public class BaseMatrixController extends BaseSheetController {
         defaultColNotNull = true;
     }
 
-    public void setManager(ControlMatricesList manager) {
+    public void initManager(ControlMatricesList manager) {
         this.manager = manager;
         baseName = manager.baseName;
         tableMatrix = manager.tableDefinition;
-        setParameters(this);
+        initSheetController(this);
     }
 
     @Override
-    public void setParameters(BaseController parent) {
+    public void initSheetController(BaseSheetController parent) {
         try {
-            super.setParameters(parent);
+            super.initSheetController(parent);
             colsNumber = UserConfig.getInt(baseName + "ColsNumber", 3);
             rowsNumber = UserConfig.getInt(baseName + "RowsNumber", 3);
             scale = (short) UserConfig.getInt(baseName + "Scale", 2);
@@ -103,105 +98,105 @@ public class BaseMatrixController extends BaseSheetController {
 
             autoNameCheck.setSelected(UserConfig.getBoolean(baseName + "AutoName", true));
             autoNameCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        UserConfig.setBoolean(baseName + "AutoName", newValue);
-                    });
+                UserConfig.setBoolean(baseName + "AutoName", newValue);
+            });
 
             columnsNumberSelector.getItems().addAll(
                     Arrays.asList("3", "5", "1", "6", "2", "8", "4", "9", "10", "12", "15", "7")
             );
             columnsNumberSelector.setValue(colsNumber + "");
             columnsNumberSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues) {
-                            return;
+                if (isSettingValues) {
+                    return;
+                }
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        colsNumber = v;
+                        UserConfig.setInt(baseName + "ColsNumber", v);
+                        columnsNumberSelector.getEditor().setStyle(null);
+                        if (autoNameCheck.isSelected()) {
+                            nameInput.setText(rowsNumber + "x" + colsNumber);
                         }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                colsNumber = v;
-                                UserConfig.setInt(baseName + "ColsNumber", v);
-                                columnsNumberSelector.getEditor().setStyle(null);
-                                if (autoNameCheck.isSelected()) {
-                                    nameInput.setText(rowsNumber + "x" + colsNumber);
-                                }
-                                resizeSheet(rowsNumber, colsNumber);
-                            } else {
-                                columnsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                            }
-                        } catch (Exception e) {
-                            columnsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                        resizeSheet(rowsNumber, colsNumber);
+                    } else {
+                        columnsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    columnsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
             rowsNumberSelector.getItems().addAll(
                     Arrays.asList("3", "5", "1", "6", "2", "8", "4", "9", "10", "12", "15", "7")
             );
             rowsNumberSelector.setValue(rowsNumber + "");
             rowsNumberSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues) {
-                            return;
+                if (isSettingValues) {
+                    return;
+                }
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        rowsNumber = v;
+                        UserConfig.setInt(baseName + "RowsNumber", v);
+                        rowsNumberSelector.getEditor().setStyle(null);
+                        if (autoNameCheck.isSelected()) {
+                            nameInput.setText(rowsNumber + "x" + colsNumber);
                         }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                rowsNumber = v;
-                                UserConfig.setInt(baseName + "RowsNumber", v);
-                                rowsNumberSelector.getEditor().setStyle(null);
-                                if (autoNameCheck.isSelected()) {
-                                    nameInput.setText(rowsNumber + "x" + colsNumber);
-                                }
-                                resizeSheet(rowsNumber, colsNumber);
-                            } else {
-                                rowsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                            }
-                        } catch (Exception e) {
-                            rowsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                        resizeSheet(rowsNumber, colsNumber);
+                    } else {
+                        rowsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    rowsNumberSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
             scaleSelector.getItems().addAll(
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
             );
             scaleSelector.setValue(scale + "");
             scaleSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v >= 0 && v <= 15) {
-                                scale = (short) v;
-                                UserConfig.setInt(baseName + "Scale", v);
-                                scaleSelector.getEditor().setStyle(null);
-                                scaleMatrix();
-                            } else {
-                                scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                            }
-                        } catch (Exception e) {
-                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v >= 0 && v <= 15) {
+                        scale = (short) v;
+                        UserConfig.setInt(baseName + "Scale", v);
+                        scaleSelector.getEditor().setStyle(null);
+                        scaleMatrix();
+                    } else {
+                        scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
             randomSelector.getItems().addAll(
                     Arrays.asList("1", "100", "10", "1000", "10000")
             );
             randomSelector.setValue(maxRandom + "");
             randomSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                maxRandom = v;
-                                UserConfig.setInt(baseName + "MaxRandom", v);
-                                randomSelector.getEditor().setStyle(null);
-                            } else {
-                                randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                            }
-                        } catch (Exception e) {
-                            randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                if (isSettingValues) {
+                    return;
+                }
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        maxRandom = v;
+                        UserConfig.setInt(baseName + "MaxRandom", v);
+                        randomSelector.getEditor().setStyle(null);
+                    } else {
+                        randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
 
             save2Button.disableProperty().bind(saveButton.disableProperty());
 
@@ -1006,6 +1001,17 @@ public class BaseMatrixController extends BaseSheetController {
             MyBoxLog.error(e.toString());
         }
         return items;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            manager = null;
+            tableMatrixCell = null;
+            tableMatrix = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
     /*

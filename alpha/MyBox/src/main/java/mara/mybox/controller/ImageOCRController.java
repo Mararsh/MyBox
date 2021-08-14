@@ -642,7 +642,7 @@ public class ImageOCRController extends ImageViewerController {
 
                 try {
                     files = new ArrayList<>();
-                    BufferedImage image = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+                    BufferedImage image = SwingFXUtils.fromFXImage(originalView.getImage(), null);
                     image = ScaleTools.scaleImageLess(image, 1000000);
 
                     ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);

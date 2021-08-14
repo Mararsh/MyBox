@@ -29,7 +29,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WebViewTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.HtmlStyles;
 import mara.mybox.value.Languages;
@@ -362,7 +361,7 @@ public class MarkdownEditorController extends TextEditorController {
                 MarkdownPopController.open(this, mainArea.getText());
 
             } else if (tab == htmlTab) {
-                HtmlPopController.open(myController, WebViewTools.getHtml(webEngine));
+                HtmlPopController.html(myController, webView);
 
             } else if (tab == codesTab) {
                 HtmlCodesPopController.open(myController, codesArea.getText());

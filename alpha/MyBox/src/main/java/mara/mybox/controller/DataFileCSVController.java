@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.stage.Modality;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataDefinition;
@@ -26,9 +25,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -239,7 +235,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected void updateStatus() {
+    protected void updateLabel() {
         if (sourceFile == null) {
             loadedLabel.setText("");
         } else {
@@ -760,8 +756,8 @@ public class DataFileCSVController extends BaseDataFileController {
     public static DataFileCSVController oneOpen() {
         DataFileCSVController controller = null;
         List<Window> windows = new ArrayList<>();
-                windows.addAll(Window.getWindows());
-                for (Window window : windows) {
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
             Object object = window.getUserData();
             if (object != null && object instanceof DataFileCSVController) {
                 try {

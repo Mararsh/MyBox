@@ -48,6 +48,7 @@ import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -61,6 +62,7 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -330,7 +332,8 @@ public class WeiboSnapRunController extends BaseController {
         try {
             setValues(parameters);
 //            MyBoxLog.debug(parameters.getWebAddress());
-            if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
+            if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty() || parameters.getTargetPath() == null) {
+                PopTools.alertError(message("InvalidParameters"));
                 closeStage();
                 return;
             }

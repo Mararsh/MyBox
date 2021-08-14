@@ -6,9 +6,7 @@ import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
-
 import mara.mybox.value.HtmlStyles;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -123,7 +121,7 @@ public class StringTable {
             StringBuilder s = new StringBuilder();
             String title = table.getTitle();
             if (title != null && !title.trim().isEmpty()) {
-                s.append(indent).append(indent).append("<H2 class=\"center\">").append(title).append("</H2>\n");
+                s.append(indent).append(indent).append("<H2 align=\"center\">").append(title).append("</H2>\n");
             }
             s.append(indent).append(indent).append("<DIV align=\"center\">\n");
             s.append(indent).append(indent).append(indent).append("<TABLE>\n");

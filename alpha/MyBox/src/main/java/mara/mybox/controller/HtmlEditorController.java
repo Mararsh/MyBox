@@ -731,7 +731,7 @@ public class HtmlEditorController extends BaseWebViewController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == viewTab) {
-                HtmlPopController.open(this, htmlInWebview());
+                HtmlPopController.html(this, htmlInWebview());
 
             } else if (tab == markdownTab) {
                 MarkdownPopController.open(this, markdownArea.getText());
@@ -740,7 +740,7 @@ public class HtmlEditorController extends BaseWebViewController {
                 HtmlCodesPopController.open(this, codesArea.getText());
 
             } else if (tab == editorTab) {
-                HtmlPopController.open(this, htmlByEditor());
+                HtmlPopController.html(this, htmlByEditor());
 
             } else if (tab == textsTab) {
                 TextPopController.open(this, textsArea.getText());

@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -15,23 +16,17 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.NodeTools;
 import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.tools.FileTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -47,7 +42,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class DataClipboardController extends BaseSheetController {
 
-    protected BaseSheetController sheetController;
+    protected BaseSheetController sourceController;
     protected String sourceDelimiter;
     protected boolean isMatrix;
 
@@ -65,7 +60,7 @@ public class DataClipboardController extends BaseSheetController {
     protected TextField delimiterSourceInput;
 
     public DataClipboardController() {
-        baseTitle = Languages.message("DataClipboard");
+        baseTitle = message("DataClipboard");
         TipsLabelKey = "DataClipboardTips";
     }
 
@@ -75,9 +70,9 @@ public class DataClipboardController extends BaseSheetController {
     }
 
     @Override
-    public void setParameters(BaseController parent) {
+    public void initControls() {
         try {
-            super.setParameters(parent);
+            super.initControls();
             isMatrix = false;
 
             setSourceDelimiter(UserConfig.getString(baseName + "SourceDelimiter", "Blank"));
@@ -148,10 +143,8 @@ public class DataClipboardController extends BaseSheetController {
 
             buttonBox.getChildren().removeAll(cancelButton, okButton);
 
-            super.setParameters(parent);
-
         } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -196,41 +189,36 @@ public class DataClipboardController extends BaseSheetController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        setParameters(this);
-    }
-
-    @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
             if (isMatrix) {
-                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("MatrixInputComments")));
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("MatrixInputComments")));
             } else {
-                NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("DataInputComments")));
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("DataInputComments")));
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void setSheet(BaseSheetController sheetController) {
+    public void setSourceController(BaseSheetController sourceController) {
         try {
-            this.sheetController = sheetController;
-            setData(sheetController.pickData(), sheetController.columns);
+            this.sourceController = sourceController;
+            this.sourceFile = sourceController.sourceFile;
+            makeSheet(sourceController.sheet, sourceController.columns);
 
-            isMatrix = sheetController instanceof BaseMatrixController;
-            if (isMatrix) {
-                defaultColumnType = ColumnType.String;
-                defaultColNotNull = false;
-            }
+            isMatrix = sourceController instanceof BaseMatrixController;
+//            if (isMatrix) {
+//                defaultColumnType = ColumnType.String;
+//                defaultColNotNull = false;
+//            }
             setControlsStyle();
 
             buttonBox.getChildren().addAll(cancelButton, okButton);
-            if ((sheetController instanceof BaseDataFileController)
-                    && ((BaseDataFileController) sheetController).pagesNumber > 1) {
-                bottomLabel.setText(Languages.message("CanNotChangeColumnsNumber"));
+            if ((sourceController instanceof BaseDataFileController)
+                    && ((BaseDataFileController) sourceController).pagesNumber > 1) {
+                bottomLabel.setText(message("CanNotChangeColumnsNumber"));
             }
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -331,15 +319,36 @@ public class DataClipboardController extends BaseSheetController {
             inputArea.setText(TextTools.dataText(sheet, sourceDelimiter));
             isSettingValues = false;
         }
-        okButton.setDisable(inputArea.getText().isBlank());
-        String info = Languages.message("RowsNumber") + ": " + rowsNumber + "  " + Languages.message("ColumnsNumber") + ": " + colsNumber;
-        if (sheetController != null) {
-            if (sheetController.colsNumber != colsNumber) {
-                info += "    " + Languages.message("CanNotChangeColumnsNumber");
-                okButton.setDisable(true);
-            }
+        validate();
+        okButton.setDisable(dataInvalid || inputArea.getText().isBlank());
+        String info = message("RowsNumber") + ": " + rowsNumber + "  " + message("ColumnsNumber") + ": " + colsNumber;
+        if (sourceController != null && sourceController.colsNumber != colsNumber) {
+            info += "    " + message("CanNotChangeColumnsNumber");
+            popError(message("CanNotChangeColumnsNumber"));
+            okButton.setDisable(true);
+            bottomLabel.setStyle(badStyle);
+        } else {
+            bottomLabel.setStyle(null);
         }
         bottomLabel.setText(info);
+    }
+
+    @Override
+    public List<MenuItem> colModifyDefMenu(int col) {
+        if (sourceController != null) {
+            return null;
+        } else {
+            return super.colModifyDefMenu(col);
+        }
+    }
+
+    @Override
+    public List<MenuItem> makeSheetDeleteColsMenu() {
+        if (sourceController != null) {
+            return null;
+        } else {
+            return super.makeSheetDeleteColsMenu();
+        }
     }
 
     @FXML
@@ -361,7 +370,7 @@ public class DataClipboardController extends BaseSheetController {
     public void csvAction() {
         sheet = pickData();
         if (sheet == null || sheet.length < 1) {
-            popError(Languages.message("NoData"));
+            popError(message("NoData"));
             return;
         }
         File tmpFile = TmpFileTools.getTempFile(".csv");
@@ -378,7 +387,7 @@ public class DataClipboardController extends BaseSheetController {
     public void excelAction() {
         sheet = pickData();
         if (sheet == null || sheet.length < 1) {
-            popError(Languages.message("NoData"));
+            popError(message("NoData"));
             return;
         }
         File tmpFile = TmpFileTools.getTempFile(".xlsx");
@@ -415,33 +424,42 @@ public class DataClipboardController extends BaseSheetController {
     @FXML
     @Override
     public void okAction() {
-        if (sheetController == null) {
+        if (sourceController == null) {
             return;
         }
         sheet = pickData();
         if (sheet == null) {
             return;
         }
-        if (sheet[0].length != sheetController.colsCheck.length
-                && (sheetController instanceof BaseDataFileController)) {
-            if (((BaseDataFileController) sheetController).pagesNumber > 1) {
-                popError(Languages.message("CanNotChangeColumnsNumber"));
+        if (sheet[0].length != sourceController.colsCheck.length
+                && (sourceController instanceof BaseDataFileController)) {
+            if (((BaseDataFileController) sourceController).pagesNumber > 1) {
+                popError(message("CanNotChangeColumnsNumber"));
                 return;
             }
         }
         if (rowsNumber * colsNumber > 500) {
-            if (!PopTools.askSure(sheetController.baseTitle, Languages.message("DataTooManyWhetherContinue"))) {
+            if (!PopTools.askSure(sourceController.baseTitle, message("DataTooManyWhetherContinue"))) {
                 return;
             }
         }
-        sheetController.makeSheet(sheet);
-        sheetController.toFront();
+        sourceController.makeSheet(sheet, columns);
+        sourceController.toFront();
         closeStage();
     }
 
     @Override
     public boolean checkBeforeNextAction() {
         return true;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            sourceController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

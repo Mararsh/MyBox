@@ -36,10 +36,11 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlSheetData extends BaseController {
 
+    protected BaseSheetController sheetController;
     protected List<ColumnDefinition> columns;
     protected ColumnType defaultColumnType;
     protected String dataName, defaultColValue, colPrefix, inputStyle;
-    protected boolean defaultColNotNull, dataChanged;
+    protected boolean defaultColNotNull, dataChanged, dataInvalid;
     protected String[][] sheet;
     protected int colsNumber, rowsNumber;
 
@@ -66,28 +67,23 @@ public class ControlSheetData extends BaseController {
     }
 
     // Should always run this after scene loaded and before input data
-    public void setParameters(BaseController parent) {
+    public void initSheetController(BaseSheetController parent) {
         try {
+            sheetController = parent;
             this.parentController = parent;
-            if (parent != null) {
-                this.baseName = parent.baseName;
-                this.baseTitle = parent.baseTitle;
+            this.baseName = parent.baseName;
+            this.baseTitle = parent.baseTitle;
 
-                if (parent instanceof ControlSheetData) {
-                    ControlSheetData pSheet = (ControlSheetData) parent;
-                    this.dataName = pSheet.dataName;
-                    this.colPrefix = pSheet.colPrefix;
-                    this.defaultColumnType = pSheet.defaultColumnType;
-                    this.defaultColValue = pSheet.defaultColValue;
-                    this.defaultColNotNull = pSheet.defaultColNotNull;
-                    if (saveButton == null) {
-                        this.saveButton = pSheet.saveButton;
-                    }
-                }
+            this.dataName = sheetController.dataName;
+            this.colPrefix = sheetController.colPrefix;
+            this.defaultColumnType = sheetController.defaultColumnType;
+            this.defaultColValue = sheetController.defaultColValue;
+            this.defaultColNotNull = sheetController.defaultColNotNull;
+            if (saveButton == null) {
+                this.saveButton = sheetController.saveButton;
             }
             if (textController != null) {
-                textController.setParameters(parent == null ? this : parent);
-                textController.sheetController = this;
+                textController.setDataController(this);
             }
             if (htmlTitleCheck != null) {
                 htmlTitleCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlTitle", true));
@@ -138,7 +134,10 @@ public class ControlSheetData extends BaseController {
     }
 
     protected String titleName() {
-        return parentController.sourceFile == null ? "" : parentController.sourceFile.getAbsolutePath();
+        if (sheetController == null || sheetController.sourceFile == null) {
+            return "";
+        }
+        return sheetController.sourceFile.getAbsolutePath();
     }
 
     /*
@@ -168,7 +167,7 @@ public class ControlSheetData extends BaseController {
                 }
                 myStage.setTitle(title);
             }
-            validationReport();
+            validate();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -285,11 +284,9 @@ public class ControlSheetData extends BaseController {
         return false;
     }
 
-    protected void validationReport() {
+    protected void validate() {
         try {
-            if (saveButton == null && reportView == null) {
-                return;
-            }
+            dataInvalid = false;
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Reason")));
             StringTable table = new StringTable(names, message("InvalidData"));
@@ -306,18 +303,19 @@ public class ControlSheetData extends BaseController {
                     }
                 }
             }
+            dataInvalid = !table.isEmpty();
             if (saveButton != null) {
-                saveButton.setDisable(!table.isEmpty());
+                saveButton.setDisable(dataInvalid);
             }
             if (reportView == null) {
                 return;
             }
             reportView.getEngine().getLoadWorker().cancel();
-            if (!table.isEmpty()) {
+            if (dataInvalid) {
                 reportView.getEngine().loadContent(table.html());
                 validationPane.getSelectionModel().select(reportTab);
             } else {
-                reportView.getEngine().loadContent(message("DataAreValid"));
+                reportView.getEngine().loadContent("<H2 align=\"center\">" + message("DataAreValid") + "</H2>");
             }
         } catch (Exception e) {
         }
@@ -543,10 +541,8 @@ public class ControlSheetData extends BaseController {
 
     public void afterDefChanged() {
         dataChanged(true);
-        if (parentController != this && parentController != null && parentController instanceof ControlSheetData) {
-            ControlSheetData pSheet = (ControlSheetData) parentController;
-            pSheet.columns = columns;
-            pSheet.afterDefChanged();
+        if (sheetController != this) {
+            sheetController.afterDefChanged(columns);
         }
     }
 
@@ -570,10 +566,13 @@ public class ControlSheetData extends BaseController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
-                HtmlPopController.open(this, WebViewTools.getHtml(webView));
+                HtmlPopController.html(this, webView);
 
             } else if (tab == textsTab) {
                 TextPopController.open(this, textController.textArea.getText());
+
+            } else if (tab == reportTab) {
+                HtmlPopController.html(this, reportView);
 
             }
         } catch (Exception e) {
@@ -596,10 +595,25 @@ public class ControlSheetData extends BaseController {
                 Point2D localToScreen = textController.textArea.localToScreen(textController.textArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textController.textArea, localToScreen.getX(), localToScreen.getY());
 
+            } else if (tab == reportTab) {
+                Point2D localToScreen = reportView.localToScreen(reportView.getWidth() - 80, 80);
+                MenuWebviewController.pop((BaseWebViewController) (reportView.getUserData()), reportView, null, localToScreen.getX(), localToScreen.getY());
+
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            sheet = null;
+            columns = null;
+            sheetController = null;
+        } catch (Exception e) {
+        }
+        super.cleanPane();
     }
 
 }

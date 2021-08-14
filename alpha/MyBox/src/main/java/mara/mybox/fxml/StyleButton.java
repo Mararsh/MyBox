@@ -356,7 +356,7 @@ public class StyleButton {
             return new StyleData(id, message("Stop"), "", "iconStop.png");
         }
         if (id.startsWith("synchronize")) {
-            return new StyleData(id, message("SynchronizeChangesToOtherPanes"), "F9", "iconSynchronize.png");
+            return new StyleData(id, message("SynchronizeChangesToOtherPanes"), "F10", "iconSynchronize.png");
         }
         if (id.startsWith("function")) {
             return new StyleData(id, "", "", "iconFunction.png");
@@ -473,7 +473,7 @@ public class StyleButton {
             return new StyleData(id, "", "", "iconCharacter.png");
         }
         if (id.startsWith("menu")) {
-            return new StyleData(id, message("Menu"), "F12", "iconMenu.png");
+            return new StyleData(id, message("Menu"), message("MenuButtonTips"), "iconMenu.png");
         }
         if (id.startsWith("openPath")) {
             return new StyleData(id, message("Directory"), "", "iconOpen2.png");

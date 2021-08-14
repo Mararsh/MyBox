@@ -19,7 +19,6 @@ import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppValues;
@@ -243,80 +242,6 @@ public class PdfTools {
             MyBoxLog.error(e.toString());
             return false;
         }
-    }
-
-    public static boolean htmlIntoPdf(List<File> files, File targetFile, boolean isImageSize) {
-        if (files == null || files.isEmpty()) {
-            return false;
-        }
-        try {
-            int count = 0;
-            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
-                PDPageContentStream content;
-                PDFont font = defaultFont(document);
-                PDDocumentInformation info = new PDDocumentInformation();
-                info.setCreationDate(Calendar.getInstance());
-                info.setModificationDate(Calendar.getInstance());
-                info.setProducer("MyBox v" + AppValues.AppVersion);
-                document.setDocumentInformation(info);
-                document.setVersion(1.0f);
-                PDRectangle pageSize = new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth());
-                int marginSize = 20, total = files.size();
-                for (File file : files) {
-                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
-                    if (bufferedImage == null) {
-                        continue;
-                    }
-                    PDImageXObject imageObject;
-                    imageObject = LosslessFactory.createFromImage(document, bufferedImage);
-                    if (isImageSize) {
-                        pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
-                    }
-                    PDPage page = new PDPage(pageSize);
-                    document.addPage(page);
-                    content = new PDPageContentStream(document, page);
-                    float w, h;
-                    if (isImageSize) {
-                        w = imageObject.getWidth();
-                        h = imageObject.getHeight();
-                    } else {
-                        if (imageObject.getWidth() > imageObject.getHeight()) {
-                            w = page.getTrimBox().getWidth() - marginSize * 2;
-                            h = imageObject.getHeight() * w / imageObject.getWidth();
-                        } else {
-                            h = page.getTrimBox().getHeight() - marginSize * 2;
-                            w = imageObject.getWidth() * h / imageObject.getHeight();
-                        }
-                    }
-                    content.drawImage(imageObject, marginSize, page.getTrimBox().getHeight() - marginSize - h, w, h);
-
-                    content.beginText();
-                    content.setFont(font, 12);
-                    content.newLineAtOffset(w + marginSize - 80, 5);
-                    content.showText((++count) + " / " + total);
-                    content.endText();
-
-                    content.close();
-                }
-
-                PDPage page = document.getPage(0);
-                PDPageXYZDestination dest = new PDPageXYZDestination();
-                dest.setPage(page);
-                dest.setZoom(1f);
-                dest.setTop((int) page.getCropBox().getHeight());
-                PDActionGoTo action = new PDActionGoTo();
-                action.setDestination(dest);
-                document.getDocumentCatalog().setOpenAction(action);
-
-                document.save(targetFile);
-                return true;
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-
     }
 
     public static boolean imageInPdf(PDDocument document,

@@ -22,11 +22,9 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.Matrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixDoubleTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -129,9 +127,9 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         super.afterSceneLoaded();
 
         loadTableData();
-        editController.setManager(this);
-        edit2Controller.setManager(this);
-        resultTableController.setManager(this);
+        editController.initManager(this);
+        edit2Controller.initManager(this);
+        resultTableController.initManager(this);
         editController.notify.addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     checkMatrices();

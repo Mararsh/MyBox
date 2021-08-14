@@ -95,6 +95,8 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 }
                 if (sizeText == null) {
                     sizeText = new Text();
+                    sizeText.setFill(Color.web("#cccccc"));
+                    sizeText.setStrokeWidth(0);
                     maskPane.getChildren().add(sizeText);
                 }
                 if (xyText == null) {

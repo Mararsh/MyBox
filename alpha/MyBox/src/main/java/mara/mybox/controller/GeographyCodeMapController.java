@@ -9,14 +9,12 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.stage.Modality;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -63,7 +61,7 @@ public class GeographyCodeMapController extends BaseMapController {
 
     public void initMap(BaseDataManageController dataController) {
         this.dataController = dataController;
-        initSplitPanes();
+        super.initMap(dataController);
     }
 
     @Override

@@ -2,9 +2,6 @@ package mara.mybox.fxml;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import mara.mybox.bufferedimage.ImageInformation;
@@ -37,7 +34,6 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.SystemConfig;
 
 /**
  * @Author Mara
@@ -425,24 +421,6 @@ public class ControllerTools {
             MyBoxLog.error(e.toString());
             return null;
         }
-    }
-
-    public static boolean mapFirstRun(BaseController c) {
-        if (SystemConfig.getBoolean("MapRunFirstTime" + AppValues.AppVersion, true)) {
-            WebBrowserController.mapFirstRun();
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        SystemConfig.setBoolean("MapRunFirstTime" + AppValues.AppVersion, false);
-                        c.reload();
-                    });
-                }
-            }, 2000);
-            return true;
-        }
-        return false;
     }
 
     public static void about() {

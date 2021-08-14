@@ -5,6 +5,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -49,6 +51,8 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.SystemConfig;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -153,6 +157,37 @@ public abstract class BaseMapController extends BaseController {
 
     }
 
+    public void initMap(BaseController parent) {
+        try {
+            this.parentController = parent;
+            initSplitPanes();
+
+            if (SystemConfig.getBoolean("MapRunFirstTime" + AppValues.AppVersion, true)) {
+                HtmlPopController controller = HtmlPopController.html(parentController, LocationTools.gaodeMap());
+                controller.handling(message("FirstRunInfo"));
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            controller.loadAddress(LocationTools.tiandituFile(true).toURI().toString());
+                        });
+                    }
+                }, 2000);
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            SystemConfig.setBoolean("MapRunFirstTime" + AppValues.AppVersion, false);
+                            controller.closeStage();
+                            parentController.reload();
+                        });
+                    }
+                }, 4000);
+            }
+        } catch (Exception e) {
+        }
+    }
+
     protected void mapClicked(double longitude, double latitude) {
 
     }
@@ -247,19 +282,6 @@ public abstract class BaseMapController extends BaseController {
             MyBoxLog.error(e.toString());
         }
 
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            if (ControllerTools.mapFirstRun(this)) {
-                return;
-            }
-
-            super.afterSceneLoaded();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     public void mapEvents(String data) {
