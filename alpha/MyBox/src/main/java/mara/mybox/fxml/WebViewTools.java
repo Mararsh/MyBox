@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +11,7 @@ import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DateTools;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -88,7 +88,7 @@ public class WebViewTools {
                 return;
             }
             String id = element.getAttribute("id");
-            String newid = new Date().getTime() + "";
+            String newid = DateTools.nowFileString();
             element.setAttribute("id", newid);
             selectNode(webView.getEngine(), newid);
             if (id != null) {

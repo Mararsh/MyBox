@@ -873,9 +873,10 @@ public class ImageViewerController extends BaseImageController {
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
         MenuImageViewController.open(this, localToScreen.getX(), localToScreen.getY());
+        return true;
     }
 
 }

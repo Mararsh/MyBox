@@ -42,6 +42,7 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -163,6 +164,16 @@ public class HtmlEditorController extends BaseWebViewController {
                 }
             });
 
+            wrapCodesCheck.setSelected(UserConfig.getBoolean(baseName + "WrapCodes", true));
+            codesArea.setWrapText(wrapCodesCheck.isSelected());
+            wrapCodesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapCodes", wrapCodesCheck.isSelected());
+                    codesArea.setWrapText(wrapCodesCheck.isSelected());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -184,6 +195,16 @@ public class HtmlEditorController extends BaseWebViewController {
                 @Override
                 public void handle(ContextMenuEvent event) {
                     MenuMarkdownEditController.open(myController, markdownArea, event);
+                }
+            });
+
+            wrapMarkdownCheck.setSelected(UserConfig.getBoolean(baseName + "WrapMarkdown", true));
+            markdownArea.setWrapText(wrapMarkdownCheck.isSelected());
+            wrapMarkdownCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapMarkdown", wrapMarkdownCheck.isSelected());
+                    markdownArea.setWrapText(wrapMarkdownCheck.isSelected());
                 }
             });
 
@@ -218,6 +239,16 @@ public class HtmlEditorController extends BaseWebViewController {
                         return;
                     }
                     textsChanged(true);
+                }
+            });
+
+            wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapText", true));
+            textsArea.setWrapText(wrapTextsCheck.isSelected());
+            wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WrapText", wrapTextsCheck.isSelected());
+                    textsArea.setWrapText(wrapTextsCheck.isSelected());
                 }
             });
 
@@ -713,46 +744,41 @@ public class HtmlEditorController extends BaseWebViewController {
     /*
         buttons
      */
-    @Override
-    public boolean keyF10() {
-        synchronizeAction();
-        return true;
-    }
-
-    @Override
-    public boolean keyF12() {
-        menuAction();
-        return true;
-    }
-
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == viewTab) {
                 HtmlPopController.html(this, htmlInWebview());
+                return true;
 
             } else if (tab == markdownTab) {
                 MarkdownPopController.open(this, markdownArea.getText());
+                return true;
 
             } else if (tab == codesTab) {
                 HtmlCodesPopController.open(this, codesArea.getText());
+                return true;
 
             } else if (tab == editorTab) {
                 HtmlPopController.html(this, htmlByEditor());
+                return true;
 
             } else if (tab == textsTab) {
                 TextPopController.open(this, textsArea.getText());
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     @FXML
-    public void synchronizeAction() {
+    @Override
+    public boolean synchronizeAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == viewTab) {
@@ -763,6 +789,7 @@ public class HtmlEditorController extends BaseWebViewController {
                     loadMarkdown(html, true);
                     loadText(html, true);
                 });
+                return true;
 
             } else if (tab == codesTab) {
                 Platform.runLater(() -> {
@@ -772,6 +799,7 @@ public class HtmlEditorController extends BaseWebViewController {
                     loadText(html, true);
                     loadView(html, true);
                 });
+                return true;
 
             } else if (tab == editorTab) {
                 Platform.runLater(() -> {
@@ -781,6 +809,7 @@ public class HtmlEditorController extends BaseWebViewController {
                     loadText(html, true);
                     loadView(html, true);
                 });
+                return true;
 
             } else if (tab == markdownTab) {
                 Platform.runLater(() -> {
@@ -790,6 +819,7 @@ public class HtmlEditorController extends BaseWebViewController {
                     loadText(html, true);
                     loadView(html, true);
                 });
+                return true;
 
             } else if (tab == textsTab) {
                 Platform.runLater(() -> {
@@ -799,16 +829,18 @@ public class HtmlEditorController extends BaseWebViewController {
                     loadMarkdown(html, true);
                     loadView(html, true);
                 });
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         try {
             closePopup();
 
@@ -816,27 +848,33 @@ public class HtmlEditorController extends BaseWebViewController {
             if (tab == viewTab) {
                 Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
                 MenuWebviewController.pop(this, webView, null, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == codesTab) {
                 Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
                 MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == editorTab) {
                 Point2D localToScreen = htmlEditor.localToScreen(htmlEditor.getWidth() - 80, 80);
                 MenuWebviewController.pop((BaseWebViewController) (htmlEditor.getUserData()), null, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == markdownTab) {
                 Point2D localToScreen = markdownArea.localToScreen(markdownArea.getWidth() - 80, 80);
                 MenuMarkdownEditController.open(this, markdownArea, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == textsTab) {
                 Point2D localToScreen = textsArea.localToScreen(textsArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textsArea, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     @FXML

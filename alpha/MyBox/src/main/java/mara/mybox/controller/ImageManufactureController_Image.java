@@ -98,7 +98,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         scopeController.yZoomStep = zoomStep;
     }
 
-    // should make sure no event conflicts in these panes
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (!super.keyEventsFilter(event)) {

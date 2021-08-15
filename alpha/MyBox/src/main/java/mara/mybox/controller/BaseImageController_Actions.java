@@ -144,9 +144,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
         checkImage(controller);
+        return true;
     }
 
     @FXML
@@ -481,9 +482,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
         MenuImageBaseController.open((BaseImageController) this, localToScreen.getX(), localToScreen.getY());
+        return true;
     }
 
     @FXML
@@ -542,7 +544,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     public void playAction() {
         try {
             ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
-            controller.sourceFileChanged(imageFile());
+            controller.sourceFileChanged(sourceFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

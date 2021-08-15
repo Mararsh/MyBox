@@ -41,7 +41,7 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
     public BaseWebViewController() {
     }
 
-    public void setParameters(BaseController parent) {
+    public void setParent(BaseController parent) {
         if (parent == null) {
             return;
         }
@@ -50,8 +50,8 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
         myController = this;
     }
 
-    public void setParameters(BaseController parent, WebView webView) {
-        setParameters(parent);
+    public void setParent(BaseController parent, WebView webView) {
+        setParent(parent);
         this.webView = webView;
         HTMLEditor editor = WebViewTools.editor(webView);
         if (editor != null) {
@@ -581,8 +581,9 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         HtmlPopController.html(parentController, webView);
+        return true;
     }
 
     @Override
@@ -653,7 +654,6 @@ public class BaseWebViewController extends BaseWebViewController_Assist {
             if (webEngine != null && webEngine.getLoadWorker() != null) {
                 webEngine.getLoadWorker().cancel();
             }
-            webEngine = null;
             if (webView != null) {
                 webView.setUserData(null);
             }

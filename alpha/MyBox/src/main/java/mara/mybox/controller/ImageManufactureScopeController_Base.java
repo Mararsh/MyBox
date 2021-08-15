@@ -200,14 +200,16 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         imageController.menuAction();
+        return true;
     }
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         imageController.popAction();
+        return true;
     }
 
 }

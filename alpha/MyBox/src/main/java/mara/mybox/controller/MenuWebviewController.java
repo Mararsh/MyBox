@@ -259,11 +259,12 @@ public class MenuWebviewController extends MenuController {
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         if (webViewController == null) {
-            return;
+            return false;
         }
         webViewController.popAction();
+        return true;
     }
 
     /*

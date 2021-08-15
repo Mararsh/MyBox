@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
@@ -170,6 +171,14 @@ public class NotesController extends NotesController_Notes {
     @Override
     public void saveAction() {
         noteEditorController.saveAction();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return noteEditorController.keyEventsFilter(event);
+        }
+        return true;
     }
 
     /*

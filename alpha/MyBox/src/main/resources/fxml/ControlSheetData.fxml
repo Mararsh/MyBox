@@ -23,84 +23,79 @@ License:    Apache License Version 2.0
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSheetData">
     <children>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-            <tabs>
-                <Tab fx:id="defTab" text="%DataDefinition">
-                    <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                            <children>
-                                <TabPane fx:id="validationPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                    <tabs>                                                                               
-                                        <Tab text="%ColumnsDefinition">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                                                    <children>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0"> 
-                                                            <children>
-                                                                <Button fx:id="okDefButton" layoutX="580.0" layoutY="10.0" mnemonicParsing="false" onAction="#okDefAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconOK.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="clearDefButton" layoutX="519.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearDefAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconClear.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="recoverDefButton" layoutX="242.0" layoutY="10.0" mnemonicParsing="false" onAction="#recoverDefAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconRecover.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                            <VBox.margin>
-                                                                <Insets top="5.0" />
-                                                            </VBox.margin>
-                                                        </HBox>
-                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                            <content>
-                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                    <children>
-                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                                            <children>
-                                                                                <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="50.0" />
-                                                                                <Label alignment="CENTER" minWidth="-Infinity" prefWidth="200.0" text="%ColumnName" />
-                                                                                <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="%Type" />
-                                                                                <Label alignment="CENTER" layoutX="405.0" layoutY="10.0" minWidth="-Infinity" prefWidth="80.0" text="%NotNull" />
-                                                                                <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="80.0" text="%Width" />
-                                                                            </children>
-                                                                        </HBox>
-                                                                        <VBox fx:id="defBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS" />
-                                                                    </children>
-                                                                </VBox>
-                                                            </content>
-                                                        </ScrollPane>
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </Tab>      
-                                        <Tab fx:id="reportTab" text="%ValidationReport">
-                                            <content>
-                                                <WebView fx:id="reportView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                                            </content>
-                                        </Tab>                                         
-                                    </tabs>
-                                </TabPane>
-                            </children>
-                        </VBox>
-                    </content>
-                </Tab>
+            <tabs>                                                                               
+                      <Tab text="%ColumnsDefinition">
+                          <content>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                                  <children>
+                                      <HBox alignment="CENTER_LEFT" spacing="5.0"> 
+                                          <children>
+                                              <Button fx:id="okDefButton" layoutX="580.0" layoutY="10.0" mnemonicParsing="false" onAction="#okDefAction">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconOK.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                              <Button fx:id="clearDefButton" layoutX="519.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearDefAction">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconClear.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                              <Button fx:id="recoverDefButton" layoutX="242.0" layoutY="10.0" mnemonicParsing="false" onAction="#recoverDefAction">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconRecover.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                          </children>
+                                          <VBox.margin>
+                                              <Insets top="5.0" />
+                                          </VBox.margin>
+                                      </HBox>
+                                      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                          <content>
+                                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                  <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                          <children>
+                                                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="50.0" />
+                                                              <Label alignment="CENTER" minWidth="-Infinity" prefWidth="200.0" text="%ColumnName" />
+                                                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="%Type" />
+                                                              <Label alignment="CENTER" layoutX="405.0" layoutY="10.0" minWidth="-Infinity" prefWidth="80.0" text="%NotNull" />
+                                                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" prefWidth="80.0" text="%Width" />
+                                                          </children>
+                                                      </HBox>
+                                                      <VBox fx:id="defBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS" />
+                                                  </children>
+                                              </VBox>
+                                          </content>
+                                      </ScrollPane>
+                                  </children>
+                              </VBox>
+                          </content>
+                      </Tab>      
+                      <Tab fx:id="reportTab" text="%ValidationReport">
+                          <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                     <children>
+                                    <WebView fx:id="reportView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                          </content>
+                      </Tab>
                 <Tab fx:id="htmlTab" closable="false" text="%Html"> 
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">

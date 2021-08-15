@@ -26,15 +26,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.StyleData;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -43,9 +39,6 @@ import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -844,6 +837,20 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
         List<File> files = new ArrayList<>();
         files.add(file);
         addFiles(index, files);
+    }
+
+    public void addFilenames(List<String> fileNames) {
+        if (fileNames == null) {
+            return;
+        }
+        List<File> files = new ArrayList<>();
+        for (String name : fileNames) {
+            File file = new File(name);
+            if (file.exists()) {
+                files.add(file);
+            }
+        }
+        addFiles(0, files);
     }
 
     public void addFiles(int index, List<File> files) {

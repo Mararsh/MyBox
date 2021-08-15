@@ -10,11 +10,10 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
+import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.ImageInformation;
-import static mara.mybox.value.Languages.message;
-
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -67,7 +66,7 @@ public class ImagesEditorController extends BaseController {
                 }
             });
 
-            saveController.setParameters(this);
+            saveController.setParent(this);
 
             playButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
@@ -113,6 +112,20 @@ public class ImagesEditorController extends BaseController {
     public void loadImages(List<ImageInformation> infos) {
         if (infos != null && !infos.isEmpty()) {
             tableData.addAll(infos);
+        }
+    }
+
+    /*
+        static methods
+     */
+    public static ImagesEditorController open(List<File> files) {
+        try {
+            ImagesEditorController controller = (ImagesEditorController) WindowTools.openStage(Fxmls.ImagesEditorFxml);
+            controller.tableController.addFiles(0, files);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

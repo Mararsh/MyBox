@@ -246,11 +246,12 @@ public class MenuTextEditController extends MenuTextBaseController {
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         if (textInput == null) {
-            return;
+            return false;
         }
         TextPopController.open(parentController, textInput.getText());
+        return true;
     }
 
     /*

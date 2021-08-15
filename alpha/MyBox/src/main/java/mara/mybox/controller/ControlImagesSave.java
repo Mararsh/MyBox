@@ -6,7 +6,6 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -21,7 +20,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
+import javafx.scene.input.MouseEvent;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
@@ -29,20 +28,18 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.bufferedimage.ImageConvertTools;
-import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
@@ -51,10 +48,8 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -84,7 +79,7 @@ public class ControlImagesSave extends BaseController {
     @FXML
     protected ToggleGroup saveGroup;
     @FXML
-    protected RadioButton imagesRadio, pdfRadio, pptRadio, tifFileRadio, gifFileRadio;
+    protected RadioButton imagesRadio, spiceRadio, pdfRadio, pptRadio, tifFileRadio, gifFileRadio;
     @FXML
     protected Label saveImagesLabel;
     @FXML
@@ -99,7 +94,7 @@ public class ControlImagesSave extends BaseController {
     protected ControlPdfWriteOptions pdfOptionsController;
 
     public ControlImagesSave() {
-        baseTitle = Languages.message("ImagesEditor");
+        baseTitle = message("ImagesEditor");
         TipsLabelKey = "ImagesEditorTips";
     }
 
@@ -108,7 +103,7 @@ public class ControlImagesSave extends BaseController {
         setFileType(FileType.Image);
     }
 
-    public void setParameters(BaseController parent) {
+    public void setParent(BaseController parent) {
         try {
             baseName = parent.baseName;
             parentController = parent;
@@ -154,6 +149,8 @@ public class ControlImagesSave extends BaseController {
             setTargetFileType(VisitHistory.FileType.Image);
             saveImagesLabel.setVisible(true);
             convertPane.setExpanded(true);
+        } else if (spiceRadio.isSelected()) {
+            setTargetFileType(VisitHistory.FileType.Image);
         } else if (tifFileRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Tif);
             saveImagesLabel.setVisible(false);
@@ -196,7 +193,7 @@ public class ControlImagesSave extends BaseController {
 
     protected void checkGifSizeType() {
         RadioButton button = (RadioButton) gifSizeGroup.getSelectedToggle();
-        if (Languages.message("KeepImagesSize").equals(button.getText())) {
+        if (message("KeepImagesSize").equals(button.getText())) {
             gifKeepSize = true;
             gifWidthInput.setStyle(null);
         } else {
@@ -299,7 +296,7 @@ public class ControlImagesSave extends BaseController {
     @FXML
     public void pptMaxSize() {
         if (images == null || images.isEmpty()) {
-            parentController.popError(Languages.message("NoData"));
+            parentController.popError(message("NoData"));
             return;
         }
         int maxW = 0, maxH = 0;
@@ -337,42 +334,62 @@ public class ControlImagesSave extends BaseController {
 
     @FXML
     @Override
+    public void popSaveAs(MouseEvent event) {
+        if (spiceRadio.isSelected()) {
+            return;
+        }
+        super.popSaveAs(event);
+    }
+
+    @FXML
+    @Override
     public void saveAsAction() {
         if (images == null || images.isEmpty()) {
-            parentController.popError(Languages.message("NoData"));
+            parentController.popError(message("NoData"));
             return;
         }
         digit = (images.size() + "").length();
 
-        if (TargetFileType == VisitHistory.FileType.Image) {
+        if (imagesRadio.isSelected()) {
             imagesFormat = formatController.attributes.getImageFormat();
-            targetFile = chooseSaveFile(TargetFileType, new Date().getTime() + "." + imagesFormat);
+            targetFile = chooseSaveFile(TargetFileType, DateTools.nowFileString() + "." + imagesFormat);
             if (targetFile == null) {
                 return;
             }
             saveAsImages();
 
-        } else {
+        } else if (spiceRadio.isSelected()) {
+            saveAsSplice();
+
+        } else if (tifFileRadio.isSelected()) {
             targetFile = chooseSaveFile();
             if (targetFile == null) {
                 return;
             }
+            saveAsTiff();
 
-            if (TargetFileType == VisitHistory.FileType.PDF) {
-
-                saveAsPdf();
-
-            } else if (TargetFileType == VisitHistory.FileType.Tif) {
-                saveAsTiff();
-
-            } else if (TargetFileType == VisitHistory.FileType.PPT) {
-                saveAsPPT();
-
-            } else if (TargetFileType == VisitHistory.FileType.Gif) {
-                saveAsGif();
+        } else if (gifFileRadio.isSelected()) {
+            targetFile = chooseSaveFile();
+            if (targetFile == null) {
+                return;
             }
-        }
+            saveAsGif();
 
+        } else if (pdfRadio.isSelected()) {
+            targetFile = chooseSaveFile();
+            if (targetFile == null) {
+                return;
+            }
+            saveAsPdf();
+
+        } else if (pptRadio.isSelected()) {
+            targetFile = chooseSaveFile();
+            if (targetFile == null) {
+                return;
+            }
+            saveAsPPT();
+
+        }
     }
 
     protected BufferedImage image(int index) {
@@ -415,7 +432,7 @@ public class ControlImagesSave extends BaseController {
             }
 
             if (imagesFormat == null) {
-                parentController.popError(Languages.message("InvalidParameters"));
+                parentController.popError(message("InvalidParameters"));
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -434,14 +451,14 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
-                            String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;;
+                            String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
                             BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
                             ImageFileWriters.writeImageFile(converted, formatController.attributes, filename);
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
                             fileNames.add(filename);
-                            String msg = MessageFormat.format(Languages.message("NumberFileGenerated"),
+                            String msg = MessageFormat.format(message("NumberFileGenerated"),
                                     (i + 1) + "/" + images.size(), "\"" + filename + "\"");
                             updateLabel(msg, i + 1);
                         }
@@ -454,7 +471,61 @@ public class ControlImagesSave extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     recordFileWritten(targetFile.getParent());
-                    multipleFilesGenerated(fileNames);
+                    if (spiceRadio.isSelected()) {
+                        ImagesSpliceController.open(images);
+                    } else {
+                        multipleFilesGenerated(fileNames);
+                    }
+                }
+
+            };
+            loading = parentController.handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
+
+    protected void saveAsSplice() {
+        synchronized (this) {
+            if (images == null || images.isEmpty()) {
+                return;
+            }
+            if (task != null && !task.isQuit()) {
+                task.cancel();
+                loading = null;
+            }
+            task = new SingletonTask<Void>() {
+                List<ImageInformation> infos = new ArrayList<>();
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        for (int i = 0; i < images.size(); ++i) {
+                            if (task == null || task.isCancelled()) {
+                                return false;
+                            }
+                            ImageInformation info = images.get(i);
+                            Image image;
+                            if (info.getRegion() != null) {
+                                image = info.loadRegion(-1);
+                            } else {
+                                image = info.loadImage();
+                            }
+                            infos.add(new ImageInformation(image));
+                            String msg = (i + 1) + "/" + images.size();
+                            updateLabel(msg, i + 1);
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
+                    }
+                    return !infos.isEmpty();
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    ImagesSpliceController.open(infos);
                 }
 
             };
@@ -503,7 +574,7 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
-                            String msg = MessageFormat.format(Languages.message("NumberPageWritten"), (i + 1) + "/" + images.size());
+                            String msg = MessageFormat.format(message("NumberPageWritten"), (i + 1) + "/" + images.size());
                             updateLabel(msg, i + 1);
                         }
 
@@ -574,7 +645,7 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
-                            String msg = MessageFormat.format(Languages.message("NumberImageWritten"), (i + 1) + "/" + images.size());
+                            String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + images.size());
                             updateLabel(msg, i + 1);
                         }
                         writer.endWriteSequence();
@@ -643,7 +714,7 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
-                            String msg = MessageFormat.format(Languages.message("NumberImageWritten"), (i + 1) + "/" + images.size());
+                            String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + images.size());
                             updateLabel(msg, i + 1);
                         }
                         gifWriter.endWriteSequence();
@@ -706,7 +777,7 @@ public class ControlImagesSave extends BaseController {
                             if (task == null || task.isCancelled()) {
                                 return false;
                             }
-                            String msg = MessageFormat.format(Languages.message("NumberImageWritten"), (i + 1) + "/" + images.size());
+                            String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + images.size());
                             updateLabel(msg, i + 1);
                         }
                         ppt.write(tmpFile);

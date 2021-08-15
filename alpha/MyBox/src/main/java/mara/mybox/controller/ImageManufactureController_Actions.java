@@ -191,21 +191,24 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         try {
             closePopup();
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
                 Point2D localToScreen = scrollPane.localToScreen(scrollPane.getWidth() - 80, 80);
                 MenuImageManufactureController.open((ImageManufactureController) this, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == scopeTab) {
                 scopeController.popMenu();
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     public void popHistory() {
@@ -238,26 +241,31 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
                 ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
                 controller.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
+                return true;
 
             } else if (tab == scopeTab) {
                 scopeController.popScope();
+                return true;
 
             } else if (tab == hisTab) {
                 popHistory();
+                return true;
 
             } else if (tab == backupTab) {
                 popBackup();
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     public void popBackup() {

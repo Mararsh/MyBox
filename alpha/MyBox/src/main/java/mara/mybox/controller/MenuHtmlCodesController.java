@@ -420,11 +420,12 @@ public class MenuHtmlCodesController extends MenuTextEditController {
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         if (textInput == null) {
-            return;
+            return false;
         }
         HtmlCodesPopController.open(parentController, textInput.getText());
+        return true;
     }
 
     /*

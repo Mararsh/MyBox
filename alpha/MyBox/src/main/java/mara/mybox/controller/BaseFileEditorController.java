@@ -747,9 +747,10 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
         MenuTextEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+        return true;
     }
 
     @Override

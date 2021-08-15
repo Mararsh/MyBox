@@ -359,15 +359,17 @@ public class BytesEditorController extends BaseFileEditorController {
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
         MenuBytesEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+        return true;
     }
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         BytesPopController.open(this, mainArea.getText());
+        return true;
     }
 
 }

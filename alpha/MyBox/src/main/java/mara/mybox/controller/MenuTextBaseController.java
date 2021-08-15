@@ -62,11 +62,12 @@ public class MenuTextBaseController extends MenuController {
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         if (parentController == null || node == null) {
-            return;
+            return false;
         }
         MenuTextEditController.open(parentController, node, initX, initY);
+        return true;
     }
 
     @FXML

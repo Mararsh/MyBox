@@ -354,46 +354,54 @@ public class MarkdownEditorController extends TextEditorController {
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == markdownTab) {
                 MarkdownPopController.open(this, mainArea.getText());
+                return true;
 
             } else if (tab == htmlTab) {
                 HtmlPopController.html(myController, webView);
+                return true;
 
             } else if (tab == codesTab) {
                 HtmlCodesPopController.open(myController, codesArea.getText());
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         try {
             closePopup();
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == markdownTab) {
                 Point2D localToScreen = mainArea.localToScreen(mainArea.getWidth() - 80, 80);
                 MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == htmlTab) {
                 Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
                 MenuWebviewController.pop(webView, null, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == codesTab) {
                 Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
                 MenuHtmlCodesController.open(myController, codesArea, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
 }

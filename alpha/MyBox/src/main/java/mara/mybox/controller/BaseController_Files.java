@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javafx.event.ActionEvent;
@@ -348,7 +347,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             if (sourceFile != null) {
                 name = FileNameTools.getFilePrefix(sourceFile.getName());
             } else {
-                name = new Date().getTime() + "";
+                name = DateTools.nowFileString();
             }
             final File file = chooseSaveFile(path, name, targetExtensionFilter);
             if (file == null) {
@@ -849,7 +848,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 prefix = FileNameTools.getFilePrefix(defaultName);
             }
             if (prefix == null || prefix.isBlank()) {
-                prefix = new Date().getTime() + "";
+                prefix = DateTools.nowFileString();
             }
             if (filters != null) {
                 if (suffix == null || suffix.isBlank()) {

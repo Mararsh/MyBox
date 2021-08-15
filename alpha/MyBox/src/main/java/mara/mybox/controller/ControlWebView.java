@@ -29,7 +29,7 @@ public class ControlWebView extends BaseWebViewController {
     }
 
     public void initTab(BaseController parent, Tab tab) {
-        setParameters(parent);
+        setParent(parent);
         this.tab = tab;
     }
 

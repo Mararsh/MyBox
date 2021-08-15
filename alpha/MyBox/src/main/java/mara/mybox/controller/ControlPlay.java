@@ -13,14 +13,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.StyleData;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fxml.StyleTools;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -118,6 +114,22 @@ public class ControlPlay extends BaseController {
                     } catch (Exception e) {
                         speedSelector.getEditor().setStyle(NodeStyleTools.badStyle);
                     }
+                }
+            });
+
+            loopCheck.setSelected(UserConfig.getBoolean(baseName + "Loop", true));
+            loopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Loop", loopCheck.isSelected());
+                }
+            });
+
+            reverseCheck.setSelected(UserConfig.getBoolean(baseName + "Reverse", false));
+            reverseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Reverse", reverseCheck.isSelected());
                 }
             });
 

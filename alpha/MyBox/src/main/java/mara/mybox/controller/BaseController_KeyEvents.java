@@ -474,8 +474,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltP() {
-        popAction();
-        return true;
+        return popAction();
     }
 
     public boolean controlAltW() {
@@ -723,11 +722,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF10() {
-        if (synchronizeButton != null && !synchronizeButton.isDisabled() && synchronizeButton.isVisible()) {
-            synchronizeButton.fire();
-            return true;
-        }
-        return false;
+        return synchronizeAction();
     }
 
     public boolean keyF11() {
@@ -735,8 +730,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF12() {
-        menuAction();
-        return true;
+        return menuAction();
     }
 
     public boolean keyESC() {

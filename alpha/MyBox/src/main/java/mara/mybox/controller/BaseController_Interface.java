@@ -326,7 +326,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
         } else if (node instanceof WebView && !(this instanceof FunctionsListController)) {
             if (!(this instanceof BaseWebViewController) || !"webView".equals(node.getId())) {
-                new BaseWebViewController().setParameters(myController, (WebView) node);
+                new BaseWebViewController().setParent(myController, (WebView) node);
             }
         } else if (node instanceof SplitPane) {
             for (Node child : ((SplitPane) node).getItems()) {

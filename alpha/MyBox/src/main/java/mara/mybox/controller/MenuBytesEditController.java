@@ -157,11 +157,12 @@ public class MenuBytesEditController extends MenuTextEditController {
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         if (textInput == null) {
-            return;
+            return false;
         }
         BytesPopController.open(parentController, textInput.getText());
+        return true;
     }
 
     /*

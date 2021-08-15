@@ -23,32 +23,26 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.stage.Modality;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.WindowTools;
+import mara.mybox.bufferedimage.CombineTools;
 import mara.mybox.bufferedimage.ImageCombine;
 import mara.mybox.bufferedimage.ImageCombine.ArrayType;
 import mara.mybox.bufferedimage.ImageCombine.CombineSizeType;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.CombineTools;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2018-8-11
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImagesSpliceController extends ImageViewerController {
@@ -561,6 +555,20 @@ public class ImagesSpliceController extends ImageViewerController {
     @Override
     public void saveAction() {
         saveAsAction();
+    }
+
+    /*
+        static methods
+     */
+    public static ImagesSpliceController open(List<ImageInformation> images) {
+        try {
+            ImagesSpliceController controller = (ImagesSpliceController) WindowTools.openStage(Fxmls.ImagesSpliceFxml);
+            controller.tableController.tableData.setAll(images);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

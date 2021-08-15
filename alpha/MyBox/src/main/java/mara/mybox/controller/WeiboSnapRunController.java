@@ -106,7 +106,7 @@ public class WeiboSnapRunController extends BaseController {
     protected ChangeListener webEngineStateListener;
     protected SnapType snapType;
     protected SnapshotParameters snapParameters;
-    protected int pageHeight, screenHeight, screenWidth, startPage, snapsTotal,
+    protected int pageHeight, windowHeight, windowWidth, startPage, snapsTotal,
             snapImageWidth, snapImageHeight, snapHeight, snapStep;
     protected double snapScale;
     protected List<String> imageFiles;
@@ -958,7 +958,7 @@ public class WeiboSnapRunController extends BaseController {
                                         return;
                                     }
                                     if (mainCompleted) {
-                                        expandHeight += screenHeight;
+                                        expandHeight += windowHeight;
                                         webEngine.executeScript("window.scrollTo(0," + expandHeight + ");");
                                     } else {
                                         webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
@@ -1019,7 +1019,7 @@ public class WeiboSnapRunController extends BaseController {
                         expandHeight = 0;
                         mainCompleted = true;
                         webEngine.executeScript("window.scrollTo(0,0);");
-                        screenHeight = (Integer) webEngine.executeScript("document.documentElement.clientHeight || document.body.clientHeight;");
+                        windowHeight = (Integer) webEngine.executeScript("document.documentElement.clientHeight || document.body.clientHeight;");
                         showBaseInfo();
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
@@ -1206,13 +1206,13 @@ public class WeiboSnapRunController extends BaseController {
 
     protected void snapPage() {
         try {
-//            myStage.setHeight(screenHeight);
+//            myStage.setHeight(windowHeight);
             webEngine.executeScript("window.scrollTo(0,0 );");
             webEngine.executeScript("document.getElementsByTagName('body')[0].style.zoom = " + parameters.getZoomScale() + ";");
             pageHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
-            screenHeight = (Integer) webEngine.executeScript("document.documentElement.clientHeight || document.body.clientHeight;");
-            screenWidth = (Integer) webEngine.executeScript("document.documentElement.clientWidth || document.body.clientWidth;");
-            if (pageHeight == 0 || screenHeight == 0 || screenWidth == 0) {
+            windowHeight = (Integer) webEngine.executeScript("document.documentElement.clientHeight || document.body.clientHeight;");
+            windowWidth = (Integer) webEngine.executeScript("document.documentElement.clientWidth || document.body.clientWidth;");
+            if (pageHeight == 0 || windowHeight == 0 || windowWidth == 0) {
                 errorString = "";
                 pageFailed(loadingController);
             }
@@ -1227,8 +1227,8 @@ public class WeiboSnapRunController extends BaseController {
                 loadingController.addLine(Languages.message("CurrentPagePicturesNumber") + ": " + currentPagePicturesNumber);
             }
             loadingController.addLine(Languages.message("PageZoomScale") + ": " + parameters.getZoomScale());
-            loadingController.addLine(Languages.message("CurrentWindowHeight") + ": " + screenHeight);
-            loadingController.addLine(Languages.message("CurrentWindowWidth") + ": " + screenWidth);
+            loadingController.addLine(Languages.message("CurrentWindowHeight") + ": " + windowHeight);
+            loadingController.addLine(Languages.message("CurrentWindowWidth") + ": " + windowWidth);
             if (parameters.isCreatePDF()) {
                 loadingController.addLine(Languages.message("SnapingForPDF") + ": " + pdfFilename);
             }
@@ -1244,7 +1244,7 @@ public class WeiboSnapRunController extends BaseController {
             snapParameters.setFill(Color.TRANSPARENT);
             snapParameters.setTransform(javafx.scene.transform.Transform.scale(snapScale, snapScale));
 
-            snapStep = screenHeight - 100; // Offset due to the pop bar in the page.
+            snapStep = windowHeight - 100; // Offset due to the pop bar in the page.
             snapHeight = 0;
 
             imageFiles = new ArrayList<>();
@@ -1310,7 +1310,7 @@ public class WeiboSnapRunController extends BaseController {
             } else {  // all snapped
                 if (pageHeight < snapHeight) {
                     int y1 = snapHeight - pageHeight + 100;
-//                                            MyBoxLog.debug(pageHeight + " " + snapHeight + " " + screenHeight + " " + y1);
+//                                            MyBoxLog.debug(pageHeight + " " + snapHeight + " " + windowHeight + " " + y1);
                     String filename = imageFiles.get(imageFiles.size() - 1);
                     Image lastSnap = CropTools.cropOutsideFx(snapshot, 0, y1 * snapScale,
                             (int) snapshot.getWidth() - 1, (int) snapshot.getHeight() - 1);

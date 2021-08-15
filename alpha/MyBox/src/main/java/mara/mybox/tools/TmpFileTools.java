@@ -1,7 +1,6 @@
 package mara.mybox.tools;
 
 import java.io.File;
-import java.util.Date;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -16,7 +15,7 @@ public class TmpFileTools {
     }
 
     public static String getTempFileName(String path) {
-        return path + File.separator + new Date().getTime() + IntTools.getRandomInt(100);
+        return path + File.separator + DateTools.nowFileString() + "_" + IntTools.getRandomInt(100);
     }
 
     public static File getTempFile() {

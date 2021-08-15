@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -14,63 +13,33 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.AlphaTools;
-import mara.mybox.bufferedimage.ImageBinary;
-import mara.mybox.bufferedimage.ImageContrast;
-import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
-import mara.mybox.bufferedimage.ImageConvolution;
-import mara.mybox.bufferedimage.PixelsOperation;
-import mara.mybox.bufferedimage.PixelsOperationFactory;
-import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.bufferedimage.TransformTools;
-import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITessAPI;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.Word;
-import net.sourceforge.tess4j.util.ImageHelper;
 
 /**
  * @Author Mara
@@ -95,27 +64,23 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected VBox originalImageBox, imagesBox;
     @FXML
-    protected ScrollPane processPane, originalScrollPane;
+    protected ScrollPane imagePane, processPane;
     @FXML
     protected TextArea textArea;
     @FXML
-    protected Label resultLabel, originalViewLabel;
-    @FXML
-    protected ComboBox<String> rotateSelector, binarySelector, scaleSelector;
+    protected Label resultLabel;
     @FXML
     protected CheckBox startCheck, LoadCheck;
-    @FXML
-    protected ImageView originalView;
     @FXML
     protected HtmlTableController regionsTableController, wordsTableController, htmlController;
     @FXML
     protected ControlOCROptions ocrOptionsController;
     @FXML
-    protected Button demoButton;
+    protected ImageOCRProcessController preprocessController;
     @FXML
     protected TabPane ocrTabPane;
     @FXML
-    protected Tab txtTab, regionsTab, wordsTab;
+    protected Tab txtTab, htmlTab, regionsTab, wordsTab;
     @FXML
     protected Tab ocrOptionsTab;
 
@@ -133,62 +98,81 @@ public class ImageOCRController extends ImageViewerController {
         try {
             super.initControls();
 
-            initImageBox();
-            initPreprocessBox();
-
+            preprocessController.OCRController = this;
             ocrOptionsController.setParameters(this, false, true);
 
-            originalImageBox.disableProperty().bind(originalView.imageProperty().isNull());
-            imagesBox.disableProperty().bind(originalView.imageProperty().isNull());
-            processPane.disableProperty().bind(originalView.imageProperty().isNull());
-            rightPane.disableProperty().bind(originalView.imageProperty().isNull());
+            originalImageBox.disableProperty().bind(imageView.imageProperty().isNull());
+            processPane.disableProperty().bind(imageView.imageProperty().isNull());
+            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    /*
-        Image
-     */
-    protected void initImageBox() {
-        try {
-            originalView.fitWidthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    refineOriginalPane();
-                }
-            });
-            originalView.fitHeightProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    refineOriginalPane();
-                }
-            });
-            originalScrollPane.widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    refineOriginalPane();
-                }
-            });
-            originalScrollPane.heightProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    refineOriginalPane();
-                }
-            });
+    @FXML
+    @Override
+    public boolean menuAction() {
+        if (processPane.isFocused() || preprocessController.scrollPane.isFocused() || preprocessController.imageView.isFocused()) {
+            preprocessController.menuAction();
+            return true;
 
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+        } else if (imagePane.isFocused() || originalImageBox.isFocused() || scrollPane.isFocused() || imageView.isFocused()) {
+            return super.menuAction();
+
+        } else if (rightPane.isFocused() || ocrTabPane.isFocused()) {
+
+            if (txtTab.isSelected()) {
+                Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
+                MenuTextEditController.open(myController, textArea, localToScreen.getX(), localToScreen.getY());
+                return true;
+
+            } else if (htmlTab.isSelected()) {
+                htmlController.menuAction();
+                return true;
+
+            } else if (regionsTab.isSelected()) {
+                regionsTableController.menuAction();
+                return true;
+
+            } else if (wordsTab.isSelected()) {
+                wordsTableController.menuAction();
+                return true;
+            }
         }
+        return super.menuAction();
     }
 
-    public void refineOriginalPane() {
-        if (originalScrollPane == null || originalView == null || originalView.getImage() == null) {
-            return;
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (processPane.isFocused() || preprocessController.scrollPane.isFocused() || preprocessController.imageView.isFocused()) {
+            preprocessController.popAction();
+            return true;
+
+        } else if (imagePane.isFocused() || originalImageBox.isFocused() || scrollPane.isFocused() || imageView.isFocused()) {
+            return super.popAction();
+
+        } else if (rightPane.isFocused() || ocrTabPane.isFocused()) {
+
+            if (txtTab.isSelected()) {
+                TextPopController.open(this, textArea.getText());
+                return true;
+
+            } else if (htmlTab.isSelected()) {
+                htmlController.popAction();
+                return true;
+
+            } else if (regionsTab.isSelected()) {
+                regionsTableController.popAction();
+                return true;
+
+            } else if (wordsTab.isSelected()) {
+                wordsTableController.popAction();
+                return true;
+            }
         }
-        LocateTools.moveXCenter(originalScrollPane, originalView);
-        originalScrollPane.setVvalue(originalScrollPane.getVmin());
+        return super.popAction();
     }
 
     @Override
@@ -198,726 +182,17 @@ public class ImageOCRController extends ImageViewerController {
                 return false;
             }
 
-            originalView.setImage(image);
-            originalViewLabel.setText((int) image.getWidth() + " x " + (int) image.getHeight());
-            paneSizeOriginal();
-
             String name = sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) : "";
             regionsTableController.baseTitle = name + "_regions";
             wordsTableController.baseTitle = name + "_words";
             htmlController.baseTitle = name + "_texts";
 
-            recoverAction();
+            preprocessController.recoverAction();
+
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
-        }
-    }
-
-    @FXML
-    public void zoomOutOriginal() {
-        if (originalScrollPane == null || originalView == null || originalView.getImage() == null) {
-            return;
-        }
-        ImageViewTools.zoomOut(originalScrollPane, originalView, xZoomStep, yZoomStep);
-    }
-
-    @FXML
-    public void zoomInOriginal() {
-        if (originalScrollPane == null || originalView == null || originalView.getImage() == null) {
-            return;
-        }
-        ImageViewTools.zoomIn(originalScrollPane, originalView, xZoomStep, yZoomStep);
-    }
-
-    @FXML
-    public void paneSizeOriginal() {
-        if (originalView == null || originalView.getImage() == null || originalScrollPane == null) {
-            return;
-        }
-        try {
-            ImageViewTools.paneSize(originalScrollPane, originalView);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void loadedSizeOriginal() {
-        if (originalView == null || originalView.getImage() == null || originalScrollPane == null) {
-            return;
-        }
-        try {
-            ImageViewTools.imageSize(originalScrollPane, originalView);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    /*
-        Preprocess
-     */
-    protected void initPreprocessBox() {
-        try {
-            scale = 1.0f;
-            scaleSelector.getItems().addAll(Arrays.asList(
-                    "1.0", "1.5", "2.0", "2.5", "3.0", "5.0", "10.0"
-            ));
-            scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    try {
-                        if (newV == null || newV.isEmpty()) {
-                            return;
-                        }
-                        float f = Float.valueOf(newV);
-                        if (f > 0) {
-                            scale = f;
-                            scaleSelector.getEditor().setStyle(null);
-                        } else {
-                            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    } catch (Exception e) {
-                        scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                    }
-                }
-            });
-            scaleSelector.getSelectionModel().select(0);
-
-            threshold = 0;
-            binarySelector.getItems().addAll(Arrays.asList(
-                    "65", "50", "75", "45", "30", "80", "85", "15"
-            ));
-            binarySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    try {
-                        if (newV == null || newV.isEmpty()) {
-                            return;
-                        }
-                        int i = Integer.valueOf(newV);
-                        if (i > 0) {
-                            threshold = i;
-                            binarySelector.getEditor().setStyle(null);
-                        } else {
-                            binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    } catch (Exception e) {
-                        binarySelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                    }
-                }
-            });
-
-            rotate = 0;
-            rotateSelector.getItems().addAll(Arrays.asList(
-                    "0", "90", "45", "15", "30", "60", "75", "180", "105", "135", "120", "150", "165", "270", "300", "315"
-            ));
-            rotateSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    try {
-                        if (newV == null || newV.isEmpty()) {
-                            return;
-                        }
-                        rotate = Integer.valueOf(newV);
-                    } catch (Exception e) {
-
-                    }
-                }
-            });
-
-            startCheck.setSelected(UserConfig.getBoolean(baseName + "Start", true));
-            startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setBoolean(baseName + "Start", startCheck.isSelected());
-                }
-            });
-
-            LoadCheck.setSelected(UserConfig.getBoolean(baseName + "Start", true));
-            LoadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setBoolean(baseName + "Load", LoadCheck.isSelected());
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    protected void setPreprocessImage(Image image) {
-        imageView.setImage(image);
-        ImageViewTools.paneSize(scrollPane, imageView);
-        updateLabelsTitle();
-        if (startCheck.isSelected()) {
-            startAction();
-        }
-    }
-
-    @Override
-    public void updateLabelsTitle() {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        String s = (int) (imageView.getImage().getWidth()) + " x " + (int) (imageView.getImage().getHeight());
-        if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
-            s += "  " + Languages.message("SelectedSize") + ": "
-                    + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
-        }
-        imageLabel.setText(s);
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        textArea.clear();
-        regionsTableController.clear();
-        wordsTableController.clear();
-        htmlController.clear();
-        resultLabel.setText("");
-
-        setPreprocessImage(image);
-    }
-
-    @FXML
-    protected void scale() {
-        if (isSettingValues || imageView.getImage() == null || scale <= 0) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image changedImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, scale);
-                        changedImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return changedImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setPreprocessImage(changedImage);
-
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    protected void binary() {
-        if (isSettingValues || imageView.getImage() == null || threshold <= 0) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        ImageBinary bin = new ImageBinary(bufferedImage, threshold);
-                        bufferedImage = bin.operateImage();
-                        ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setPreprocessImage(ocrImage);
-
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    protected void popAlgorithmsMenu(MouseEvent mouseEvent) {
-        try {
-            List<String> algorithms = new ArrayList<>();
-            algorithms.addAll(Arrays.asList(Languages.message("Deskew"), Languages.message("Invert"),
-                    Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert"),
-                    Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace"),
-                    Languages.message("HSBHistogramEqualization"), Languages.message("GrayHistogramEqualization"),
-                    Languages.message("GrayHistogramStretching"), Languages.message("GrayHistogramShifting"),
-                    Languages.message("UnsharpMasking"),
-                    Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace"),
-                    Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace"),
-                    Languages.message("GaussianBlur"), Languages.message("AverageBlur")
-            ));
-
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-            for (String algorithm : algorithms) {
-                menu = new MenuItem(algorithm);
-                menu.setOnAction((ActionEvent event) -> {
-                    algorithm(algorithm);
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void algorithm(String algorithm) {
-        if (algorithm == null || isSettingValues || imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (Languages.message("Deskew").equals(algorithm)) {
-                            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                            ImageDeskew id = new ImageDeskew(bufferedImage);
-                            double imageSkewAngle = id.getSkewAngle();
-                            if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
-                                    || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
-                                bufferedImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
-                            }
-                            ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-
-                        } else if (Languages.message("Invert").equals(algorithm)) {
-                            PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                    null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                            ocrImage = pixelsOperation.operateFxImage();
-
-                        } else if (Languages.message("GrayHistogramEqualization").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ContrastAlgorithm.Gray_Histogram_Equalization);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("GrayHistogramStretching").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
-                            imageContrast.setIntPara1(50);
-                            imageContrast.setIntPara2(50);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("GrayHistogramShifting").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
-                            imageContrast.setIntPara1(10);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("HSBHistogramEqualization").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("UnsharpMasking").equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if (Languages.message("GaussianBlur").equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(2);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if (Languages.message("AverageBlur").equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        }
-
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setPreprocessImage(ocrImage);
-
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    protected void demo() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        popInformation(Languages.message("WaitAndHandling"), 6000);
-        demoButton.setDisable(true);
-        Task demoTask = new Task<Void>() {
-            private List<String> files;
-
-            @Override
-            protected Void call() {
-
-                try {
-                    files = new ArrayList<>();
-                    BufferedImage image = SwingFXUtils.fromFXImage(originalView.getImage(), null);
-                    image = ScaleTools.scaleImageLess(image, 1000000);
-
-                    ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
-                    ImageConvolution imageConvolution = ImageConvolution.create().
-                            setImage(image).setKernel(kernel);
-                    BufferedImage bufferedImage = imageConvolution.operateImage();
-                    String tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
-                    imageConvolution = ImageConvolution.create().
-                            setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    ImageContrast imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.HSB_Histogram_Equalization);
-                    bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("HSBHistogramEqualization") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.Gray_Histogram_Equalization);
-                    bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("GrayHistogramEqualization") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.Gray_Histogram_Stretching);
-                    imageContrast.setIntPara1(100);
-                    imageContrast.setIntPara2(100);
-                    bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("GrayHistogramStretching") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    imageContrast = new ImageContrast(image,
-                            ContrastAlgorithm.Gray_Histogram_Shifting);
-                    imageContrast.setIntPara1(40);
-                    bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("GrayHistogramShifting") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                    imageConvolution = ImageConvolution.create().
-                            setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("UnsharpMasking") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                    imageConvolution = ImageConvolution.create().
-                            setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                    imageConvolution = ImageConvolution.create().
-                            setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    kernel = ConvolutionKernel.makeGaussBlur(3);
-                    imageConvolution = ImageConvolution.create().
-                            setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("GaussianBlur") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    kernel = ConvolutionKernel.makeAverageBlur(2);
-                    imageConvolution = ImageConvolution.create().
-                            setImage(image).setKernel(kernel);
-                    bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("AverageBlur") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                            null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                    bufferedImage = pixelsOperation.operateImage();
-                    tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + Languages.message("Invert") + ".png";
-                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
-                        files.add(tmpFile);
-                    }
-
-                } catch (Exception e) {
-
-                }
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                demoButton.setDisable(false);
-                if (files.isEmpty()) {
-                    return;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ImagesBrowserController controller
-                                    = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                            controller.loadFiles(files);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
-                        }
-                    }
-                });
-
-            }
-
-        };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
-
-    }
-
-    @FXML
-    protected void rotate() {
-        if (isSettingValues || imageView.getImage() == null || rotate == 0) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        bufferedImage = TransformTools.rotateImage(bufferedImage, rotate);
-                        ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setPreprocessImage(ocrImage);
-
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void popSavePreprocess(MouseEvent event) { //
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Image);
-            }
-
-            @Override
-            public void handleSelect() {
-                savePreprocessAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    handleSelect();
-                    return;
-                }
-                UserConfig.setString(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), fname);
-                handleSelect();
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void savePreprocessAction() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-
-            String name = (sourceFile != null ? FileNameTools.getFilePrefix(sourceFile.getName()) : "") + "_preprocessed";
-            final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                    name, FileFilters.ImageExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file, VisitHistory.FileType.Image);
-
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    String format = FileNameTools.getFileSuffix(file.getName());
-                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                    return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (LoadCheck.isSelected()) {
-                        sourceFileChanged(file);
-                    }
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
         }
     }
 
@@ -942,7 +217,7 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     protected void command() {
-        if (imageView.getImage() == null || timer != null || process != null
+        if (preprocessController.imageView.getImage() == null || timer != null || process != null
                 || ocrOptionsController.dataPathController.file == null) {
             return;
         }
@@ -959,9 +234,9 @@ public class ImageOCRController extends ImageViewerController {
             @Override
             public void run() {
                 try {
-                    Image selected = scopeImage();
+                    Image selected = preprocessController.scopeImage();
                     if (selected == null) {
-                        selected = imageView.getImage();
+                        selected = preprocessController.imageView.getImage();
                     }
                     String imageFile = TmpFileTools.getTempFile(".png").getAbsolutePath();
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
@@ -1067,7 +342,8 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     protected void embedded() {
-        if (imageView.getImage() == null || ocrOptionsController.dataPathController.file == null) {
+        if (preprocessController.imageView.getImage() == null
+                || ocrOptionsController.dataPathController.file == null) {
             return;
         }
         synchronized (this) {
@@ -1098,9 +374,9 @@ public class ImageOCRController extends ImageViewerController {
                         if (ocrOptionsController.selectedLanguages != null) {
                             instance.setLanguage(ocrOptionsController.selectedLanguages);
                         }
-                        Image selected = scopeImage();
+                        Image selected = preprocessController.scopeImage();
                         if (selected == null) {
-                            selected = imageView.getImage();
+                            selected = preprocessController.imageView.getImage();
                         }
 
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
@@ -1207,11 +483,6 @@ public class ImageOCRController extends ImageViewerController {
             thread.start();
         }
 
-    }
-
-    @FXML
-    public void popTextEditPane(MouseEvent mouseEvent) {
-        MenuTextEditController.open(myController, textArea, mouseEvent.getScreenX() + 40, mouseEvent.getScreenY() + 40);
     }
 
     @Override

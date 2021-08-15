@@ -271,6 +271,7 @@ public class NotesController_Notes extends NotesController_Notebooks {
 
     @FXML
     protected void addBookNote() {
+        showRightPane();
         noteEditorController.bookOfCurrentNote = notebooksController.selectedNode;
         noteEditorController.editNote(null);
     }

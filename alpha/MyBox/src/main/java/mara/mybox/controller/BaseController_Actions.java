@@ -279,13 +279,18 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public void popAction() {
-
+    public boolean popAction() {
+        return false;
     }
 
     @FXML
-    public void menuAction() {
+    public boolean menuAction() {
+        return false;
+    }
 
+    @FXML
+    public boolean synchronizeAction() {
+        return false;
     }
 
     @FXML

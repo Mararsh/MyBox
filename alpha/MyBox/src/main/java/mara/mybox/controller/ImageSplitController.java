@@ -22,15 +22,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
-import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -90,9 +86,11 @@ public class ImageSplitController extends ImageViewerController {
         try {
             super.initControls();
 
+            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
+
             initSplitPane();
 
-            saveController.setParameters(this);
+            saveController.setParent(this);
             this.saveButton = saveController.saveButton;
 
         } catch (Exception e) {

@@ -45,7 +45,7 @@ public class ControlSheetData extends BaseController {
     protected int colsNumber, rowsNumber;
 
     @FXML
-    protected TabPane tabPane, validationPane;
+    protected TabPane tabPane;
     @FXML
     protected Tab defTab, htmlTab, textsTab, reportTab;
     @FXML
@@ -313,11 +313,12 @@ public class ControlSheetData extends BaseController {
             reportView.getEngine().getLoadWorker().cancel();
             if (dataInvalid) {
                 reportView.getEngine().loadContent(table.html());
-                validationPane.getSelectionModel().select(reportTab);
+                tabPane.getSelectionModel().select(reportTab);
             } else {
                 reportView.getEngine().loadContent("<H2 align=\"center\">" + message("DataAreValid") + "</H2>");
             }
         } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -562,27 +563,31 @@ public class ControlSheetData extends BaseController {
      */
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
                 HtmlPopController.html(this, webView);
+                return true;
 
             } else if (tab == textsTab) {
                 TextPopController.open(this, textController.textArea.getText());
+                return true;
 
             } else if (tab == reportTab) {
                 HtmlPopController.html(this, reportView);
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     @FXML
     @Override
-    public void menuAction() {
+    public boolean menuAction() {
         try {
             closePopup();
 
@@ -590,19 +595,23 @@ public class ControlSheetData extends BaseController {
             if (tab == htmlTab) {
                 Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
                 MenuWebviewController.pop((BaseWebViewController) (webView.getUserData()), webView, null, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == textsTab) {
                 Point2D localToScreen = textController.textArea.localToScreen(textController.textArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textController.textArea, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             } else if (tab == reportTab) {
                 Point2D localToScreen = reportView.localToScreen(reportView.getWidth() - 80, 80);
                 MenuWebviewController.pop((BaseWebViewController) (reportView.getUserData()), reportView, null, localToScreen.getX(), localToScreen.getY());
+                return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+        return false;
     }
 
     @Override

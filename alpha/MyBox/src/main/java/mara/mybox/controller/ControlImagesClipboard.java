@@ -232,9 +232,9 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
     }
 
     @Override
-    protected int clearData() {
+    protected void afterClear() {
         FileDeleteTools.clearDir(new File(AppVariables.getImageClipboardPath()));
-        return tableDefinition.deleteCondition(queryConditions);
+        refreshAction();
     }
 
     @FXML
@@ -332,8 +332,8 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
         browseURI(path.toURI());
     }
 
-    @Override
-    public void loadExamples() {
+    @FXML
+    public void examplesAction() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -361,12 +361,13 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                         }
                         clips.add(clip);
                     }
+                    tableDefinition.insertList(clips);
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    tableDefinition.insertList(clips);
+                    refreshAction();
                 }
             };
             parentController.handling(task);

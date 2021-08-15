@@ -254,8 +254,8 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     @Override
-    public void popAction() {
-        imageController.popAction();
+    public boolean popAction() {
+        return imageController.popAction();
     }
 
     @FXML

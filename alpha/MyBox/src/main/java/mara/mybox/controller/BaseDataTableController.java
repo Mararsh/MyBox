@@ -29,7 +29,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
@@ -553,41 +552,6 @@ public abstract class BaseDataTableController<P> extends BaseController {
     }
 
     @FXML
-    public void examplesAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    loadExamples();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
-                }
-            };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    public void loadExamples() {
-
-    }
-
-    @FXML
     @Override
     public void deleteAction() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
@@ -682,7 +646,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     popInformation(Languages.message("Deleted") + ":" + deletedCount);
                     if (deletedCount > 0) {
                         clearView();
-                        afterDeletion();
+                        afterClear();
                     }
                 }
             };
@@ -696,6 +660,10 @@ public abstract class BaseDataTableController<P> extends BaseController {
             thread.setDaemon(false);
             thread.start();
         }
+    }
+
+    protected void afterClear() {
+        afterDeletion();
     }
 
     protected int clearData() {

@@ -402,11 +402,12 @@ public class MenuMarkdownEditController extends MenuTextEditController {
 
     @FXML
     @Override
-    public void popAction() {
+    public boolean popAction() {
         if (textInput == null) {
-            return;
+            return false;
         }
         MarkdownPopController.open(parentController, textInput.getText());
+        return true;
     }
 
     /*

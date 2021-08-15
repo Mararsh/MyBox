@@ -97,7 +97,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                        <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs" >
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
