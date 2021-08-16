@@ -1310,7 +1310,7 @@ public class DataFileExcelController extends BaseDataFileController {
                 sourceSheet = sourceBook.getSheetAt(0);
                 currentSheetName = sourceSheet.getSheetName();
             }
-            String delimiterString = TextTools.delimiterText(textController.delimiter);
+            String delimiterString = TextTools.delimiterText(sheetDisplayController.textDelimiter);
             Iterator<Row> iterator = sourceSheet.iterator();
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {

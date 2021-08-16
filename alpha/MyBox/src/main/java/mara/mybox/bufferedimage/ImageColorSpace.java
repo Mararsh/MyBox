@@ -20,11 +20,9 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.imagefile.ImageJpgFile.getJpegCompressionTypes;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.rendering.ImageType;
 

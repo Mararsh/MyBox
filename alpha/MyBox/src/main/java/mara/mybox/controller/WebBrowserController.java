@@ -11,13 +11,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.StyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -66,7 +65,7 @@ public class WebBrowserController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(addIcon, new Tooltip(message("Add")));
+            StyleTools.setIconTooltips(addIcon, "iconAdd.png", message("Add"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

@@ -21,18 +21,16 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
-import mara.mybox.color.ColorBase;
-import mara.mybox.data.DoubleRectangle;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.bufferedimage.ImageColor;
 import static mara.mybox.bufferedimage.ImageConvertTools.pixelSizeMm2dpi;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.CropTools;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.color.ColorBase;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import net.sf.image4j.codec.ico.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -40,20 +38,42 @@ import org.w3c.dom.Node;
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:07:27
- *
- * @Description
  * @License Apache License Version 2.0
  */
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileReaders {
 
-    public static ImageReader getReader(ImageInputStream iis) {
+    public static ImageReader getReader(ImageInputStream iis, String format) {
         if (iis == null) {
             return null;
         }
         try {
             Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-            if (readers == null) {
+            if (readers == null || !readers.hasNext()) {
+                return getReader(format);
+            }
+            ImageReader reader = null;
+            while (readers.hasNext()) {
+                reader = readers.next();
+                if (!reader.getClass().toString().contains("TIFFImageReader")
+                        || reader instanceof com.github.jaiimageio.impl.plugins.tiff.TIFFImageReader) {
+                    return reader;
+                }
+            }
+            return reader;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static ImageReader getReader(String format) {
+        if (format == null) {
+            return null;
+        }
+        try {
+            Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(format.toLowerCase());
+            if (readers == null || !readers.hasNext()) {
                 return null;
             }
             ImageReader reader = null;
@@ -105,9 +125,9 @@ public class ImageFileReaders {
             }
 
             int targetIndex = index, targetWidth = width;
-            String targetFormat = FileNameTools.getFileSuffix(file);
+            String format = FileNameTools.getFileSuffix(file);
             BufferedImage bufferedImage = null;
-            if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
+            if ("ico".equals(format) || "icon".equals(format)) {
                 if (fileInfo == null) {
                     fileInfo = new ImageFileInformation(file);
                     ImageFileReaders.readImageFileMetaData(null, fileInfo);
@@ -128,7 +148,7 @@ public class ImageFileReaders {
                 }
             } else {
                 try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-                    ImageReader reader = getReader(iis);
+                    ImageReader reader = getReader(iis, format);
                     if (reader != null) {
                         if (fileInfo == null) {
                             reader.setInput(iis, false, false);
@@ -289,7 +309,7 @@ public class ImageFileReaders {
             return frame;
         }
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            ImageReader reader = getReader(iis);
+            ImageReader reader = getReader(iis, format);
             if (reader == null) {
                 return null;
             }
@@ -374,7 +394,7 @@ public class ImageFileReaders {
             return frame;
         }
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            ImageReader reader = getReader(iis);
+            ImageReader reader = getReader(iis, format);
             if (reader == null) {
                 return null;
             }
@@ -460,7 +480,7 @@ public class ImageFileReaders {
             return frame;
         }
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            ImageReader reader = getReader(iis);
+            ImageReader reader = getReader(iis, format);
             if (reader == null) {
                 return null;
             }
@@ -594,12 +614,12 @@ public class ImageFileReaders {
             return null;
         }
         ImageFileInformation fileInfo = new ImageFileInformation(file);
-        String targetFormat = fileInfo.getImageFormat();
-        if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
+        String format = fileInfo.getImageFormat();
+        if ("ico".equals(format) || "icon".equals(format)) {
             readImageFileMetaData(null, fileInfo);
         } else {
             try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-                ImageReader reader = getReader(iis);
+                ImageReader reader = getReader(iis, format);
                 if (reader == null) {
                     return null;
                 }
@@ -1152,7 +1172,7 @@ public class ImageFileReaders {
     public static IIOMetadata getIIOMetadata(File file) {
         IIOMetadata iioMetaData = null;
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            ImageReader reader = getReader(iis);
+            ImageReader reader = getReader(iis, FileNameTools.getFileSuffix(file).toLowerCase());
             if (reader == null) {
                 return null;
             }

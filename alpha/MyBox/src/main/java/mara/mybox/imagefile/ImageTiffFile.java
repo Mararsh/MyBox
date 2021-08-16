@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -24,16 +23,11 @@ import javax.imageio.plugins.tiff.BaselineTIFFTagSet;
 import javax.imageio.plugins.tiff.TIFFField;
 import javax.imageio.plugins.tiff.TIFFTag;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.CropTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileNameTools;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -50,7 +44,7 @@ public class ImageTiffFile {
         try {
             IIOMetadata metadata;
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                ImageReader reader = ImageFileReaders.getReader(iis);
+                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(file));
                 if (reader == null) {
                     return null;
                 }
@@ -173,86 +167,6 @@ public class ImageTiffFile {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
-        }
-    }
-
-    public static String writeWithInfo(List<ImageInformation> imagesInfo, ImageAttributes attributes, File file) {
-        try {
-            if (imagesInfo == null || imagesInfo.isEmpty() || file == null) {
-                return "InvalidParameters";
-            }
-            ImageWriter writer = getWriter();
-            File tmpFile = TmpFileTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                writer.setOutput(out);
-                ImageWriteParam param = getPara(attributes, writer);
-                writer.prepareWriteSequence(null);
-                for (ImageInformation info : imagesInfo) {
-                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
-                    if (bufferedImage != null) {
-                        bufferedImage = ImageConvertTools.convertColorType(bufferedImage, attributes);
-                        IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
-                        writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                    }
-                }
-                writer.endWriteSequence();
-                out.flush();
-            }
-            writer.dispose();
-            return FileTools.rename(tmpFile, file) ? "" : "Failed";
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return e.toString();
-        }
-    }
-
-    public static boolean writeSplitImages(String sourceFormat, String sourceFile,
-            ImageInformation imageInformation, List<Integer> rows, List<Integer> cols,
-            ImageAttributes attributes, File targetFile) {
-        try {
-            if (sourceFormat == null || sourceFile == null || imageInformation == null
-                    || rows == null || rows.isEmpty()
-                    || cols == null || cols.isEmpty() || targetFile == null) {
-                return false;
-            }
-            ImageWriter writer = getWriter();
-            File tmpFile = TmpFileTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                writer.setOutput(out);
-                ImageWriteParam param = getPara(attributes, writer);
-                writer.prepareWriteSequence(null);
-                int x1, y1, x2, y2;
-                BufferedImage wholeSource = null;
-                if (imageInformation.getImage() != null && !imageInformation.isIsScaled()) {
-                    wholeSource = FxImageTools.toBufferedImage(imageInformation.getImage());
-                }
-                for (int i = 0; i < rows.size() - 1; ++i) {
-                    y1 = rows.get(i);
-                    y2 = rows.get(i + 1);
-                    for (int j = 0; j < cols.size() - 1; ++j) {
-                        x1 = cols.get(j);
-                        x2 = cols.get(j + 1);
-                        BufferedImage bufferedImage;
-                        if (wholeSource != null) {
-                            bufferedImage = CropTools.cropOutside(wholeSource, x1, y1, x2, y2);
-                        } else {
-                            bufferedImage = ImageFileReaders.readFrame(sourceFormat, sourceFile, x1, y1, x2, y2);
-                        }
-                        bufferedImage = ImageConvertTools.convertColorType(bufferedImage, attributes);
-                        IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
-                        writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                    }
-                }
-                writer.endWriteSequence();
-                out.flush();
-            }
-            writer.dispose();
-
-            return FileTools.rename(tmpFile, targetFile);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
         }
     }
 

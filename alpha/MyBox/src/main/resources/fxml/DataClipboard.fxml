@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </children>
                                         </HBox>
-                                        <TabPane fx:id="editTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                             <tabs>
                                                 <Tab fx:id="textsTab" text="%Texts">
                                                     <content>
@@ -61,7 +61,6 @@ License:    Apache License Version 2.0
                                                                     <children>
                                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                                                             <children>
-                                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                                 <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -80,6 +79,25 @@ License:    Apache License Version 2.0
                                                                                         </ImageView>
                                                                                     </graphic>
                                                                                 </Button>
+                                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconMenu.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
+                                                            <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/Red/iconPop.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
                                                                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -234,7 +252,7 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <fx:include fx:id="sheetData" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSheetData.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="sheetDisplay" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSheetDisplay.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

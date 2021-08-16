@@ -27,8 +27,7 @@ public abstract class RecentVisitMenu {
     protected final BaseController_Files controller;
     protected final MouseEvent event;
     protected List<String> examples;
-    protected int SourceFileType, SourcePathType, AddFileType, AddPathType,
-            TargetFileType, TargetPathType;
+    protected int SourceFileType, SourcePathType, AddFileType, AddPathType, TargetFileType, TargetPathType;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter;
     protected String baseName, defaultPath;
 

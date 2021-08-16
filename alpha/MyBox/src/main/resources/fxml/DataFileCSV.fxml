@@ -66,18 +66,18 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </children>
                                                         </FlowPane>
-                                                          <Label fx:id="loadedLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
+                                                        <Label fx:id="loadedLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                              <TitledPane fx:id="formatPane" layoutX="10.0" layoutY="380.0" maxWidth="1.7976931348623157E308" text="%Format">
-                                 <content>
-                                    <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                                          <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                             <children>
+                                        <TitledPane fx:id="formatPane" layoutX="10.0" layoutY="380.0" maxWidth="1.7976931348623157E308" text="%Format">
+                                            <content>
+                                                <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
                                                                 <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTextFile">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -96,19 +96,19 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
                                         <TitledPane fx:id="backupPane" expanded="false" layoutX="10.0" layoutY="742.0" maxWidth="1.7976931348623157E308" text="%Backup">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <fx:include fx:id="backup" source="ControlFileBackup.fxml" />
                                                     </children>
-                                                </VBox>
+                                                </VBox> 
                                             </content>
                                         </TitledPane>
                                         <TitledPane fx:id="saveAsPane" expanded="false" layoutX="10.0" layoutY="604.0" text="%SaveAs">
@@ -230,7 +230,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <fx:include fx:id="sheetData" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSheetData.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="sheetDisplay" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSheetDisplay.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>

@@ -36,7 +36,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-17
  * @License Apache License Version 2.0
  */
-public class BaseMatrixController extends BaseSheetController {
+public class ControlMatrix extends BaseSheetController {
 
     protected ControlMatricesList manager;
     protected TableMatrixCell tableMatrixCell;
@@ -56,7 +56,7 @@ public class BaseMatrixController extends BaseSheetController {
     @FXML
     protected Button save2Button;
 
-    public BaseMatrixController() {
+    public ControlMatrix() {
         baseTitle = Languages.message("MatrixEdit");
         dataType = DataType.Matrix;
         colPrefix = "Column";
@@ -69,13 +69,13 @@ public class BaseMatrixController extends BaseSheetController {
         this.manager = manager;
         baseName = manager.baseName;
         tableMatrix = manager.tableDefinition;
-        initSheetController(this);
+        initDisplay(this);
     }
 
     @Override
-    public void initSheetController(BaseSheetController parent) {
+    public void initDisplay(BaseSheetController parent) {
         try {
-            super.initSheetController(parent);
+            super.initDisplay(parent);
             colsNumber = UserConfig.getInt(baseName + "ColsNumber", 3);
             rowsNumber = UserConfig.getInt(baseName + "RowsNumber", 3);
             scale = (short) UserConfig.getInt(baseName + "Scale", 2);

@@ -30,6 +30,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         try {
             super.initControls();
 
+            initSplitPane();
             initScopeView();
             initSetBox();
             initPointsTab();
@@ -49,6 +50,21 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(Languages.message("EightNeighborCheckComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    protected void initSplitPane() {
+        try {
+            String mv = UserConfig.getString(baseName + "ScopePanePosition", "0.5");
+            splitPane.setDividerPositions(Double.parseDouble(mv));
+
+            splitPane.getDividers().get(0).positionProperty().addListener(
+                    (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                        UserConfig.setString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
+                        paneSize();
+                    });
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

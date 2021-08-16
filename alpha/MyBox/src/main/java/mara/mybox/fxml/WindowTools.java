@@ -378,6 +378,8 @@ public class WindowTools {
                     MyBoxLog.debug("Shut down Derby...");
                     DerbyBase.shutdownEmbeddedDerby();
                 }
+                System.gc();
+                Platform.setImplicitExit(true);
                 Platform.exit(); // Some thread may still be alive after this
                 System.exit(0);  // Go
             }

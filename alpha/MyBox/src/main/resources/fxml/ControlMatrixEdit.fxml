@@ -11,11 +11,14 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -24,7 +27,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BaseMatrixController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMatrix">
     <children>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
@@ -36,6 +39,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
+                                                <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="createMatrixButton" mnemonicParsing="false" onAction="#createAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -45,7 +49,6 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="copyMatrixButton" mnemonicParsing="false" onAction="#copyMatrixAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -294,8 +297,39 @@ License:    Apache License Version 2.0
                                         <CheckBox fx:id="textColumnCheck" mnemonicParsing="false" text="%ColumnName" />
                                         <CheckBox fx:id="textRowCheck" mnemonicParsing="false" text="%RowNumber" />
                                     </children>
-                                </FlowPane> 
-                                <fx:include fx:id="text" source="ControlDataText.fxml" />
+                                </FlowPane>
+                        <SplitPane dividerPositions="0.25" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                           <items>
+                              <ScrollPane fx:id="leftPane1" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                       <children>
+                                          <Label text="%Delimiter" />
+                                          <RadioButton fx:id="blankRadio" mnemonicParsing="false" selected="true" text="%Blank">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="delimiterGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="tabRadio" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="commaRadio" mnemonicParsing="false" text="," toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="blank4Radio" mnemonicParsing="false" text="%Blank4" toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="blank8Radio" mnemonicParsing="false" text="%Blank8" toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="|" toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="sharpRadio" mnemonicParsing="false" text="#" toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="semicolonsRadio" mnemonicParsing="false" text=";" toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="atRadio" mnemonicParsing="false" text="\@" toggleGroup="$delimiterGroup" />
+                                          <RadioButton fx:id="stringRadio" mnemonicParsing="false" text="%String" toggleGroup="$delimiterGroup" />
+                                          <TextField fx:id="delimiterInput" prefWidth="80.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                              <TextArea fx:id="textArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" />
+                           </items>
+                        </SplitPane>
                             </children>
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

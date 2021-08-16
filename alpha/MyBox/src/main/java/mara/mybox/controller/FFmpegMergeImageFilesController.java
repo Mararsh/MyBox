@@ -10,10 +10,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.imagefile.ImageFileReaders.getReader;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -21,8 +20,6 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import net.sf.image4j.codec.ico.ICODecoder;
 
@@ -135,7 +132,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             }
         }
         try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            ImageReader reader = getReader(iis);
+            ImageReader reader = getReader(iis, format);
             if (reader == null) {
                 return Languages.message("Failed");
             }

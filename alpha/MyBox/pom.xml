@@ -19,7 +19,6 @@
     </organization>
 
     <dependencies>
-
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
@@ -230,24 +229,6 @@
             <version>1.13.1</version>
         </dependency>
     </dependencies>
-
-    <!--    <repositories>
-        <repository>
-            <id>central-repo</id>
-            <name>Central Repository</name>
-            <url>http://repo.maven.apache.org/maven2</url>
-        </repository>
-        <repository>
-            <id>aliyun</id>
-            <name>aliyun</name>
-            <url>http://maven.aliyun.com/nexus/content/repositories/central/</url>
-        </repository>
-        <repository>
-            <id>central</id>
-            <name>bintray</name>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
-    </repositories>-->
 
     <build>
         <plugins>

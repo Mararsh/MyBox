@@ -20,8 +20,8 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
-import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
@@ -56,7 +56,7 @@ public class HtmlReadTools {
                 connection.setSSLSocketFactory(sc.getSocketFactory());
                 connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
-                connection.setRequestProperty("User-Agent", WebViewTools.HttpUserAgent);
+                connection.setRequestProperty("User-Agent", AppVariables.HttpUserAgent);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
                     try (final BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
@@ -80,7 +80,7 @@ public class HtmlReadTools {
             } else if ("http".equalsIgnoreCase(url.getProtocol())) {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 //                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", WebViewTools.HttpUserAgent);
+                connection.setRequestProperty("User-Agent", AppVariables.HttpUserAgent);
                 connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
                 connection.setUseCaches(false);
@@ -349,7 +349,7 @@ public class HtmlReadTools {
     }
 
     public static String body(String html, boolean withTag) {
-        if (html == null) {
+        if (html == null || html.isBlank()) {
             return null;
         }
         int from = 0;

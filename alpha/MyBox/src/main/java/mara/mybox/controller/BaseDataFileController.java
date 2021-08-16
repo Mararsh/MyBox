@@ -293,9 +293,10 @@ public abstract class BaseDataFileController extends BaseSheetController {
         savedColumns = null;
         paginationBox.setVisible(false);
         formatBox.setDisable(sourceFile == null);
-        dataChanged(false);
+        sheetDisplayController.sourceFile = sourceFile;
         updateLabel();
         clearSheet();
+        dataChanged(false);
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }

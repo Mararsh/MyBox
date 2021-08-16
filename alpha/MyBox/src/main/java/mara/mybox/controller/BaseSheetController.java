@@ -51,7 +51,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController extends ControlSheetData {
+public abstract class BaseSheetController extends ControlSheetDisplay {
 
     protected TableDataDefinition tableDataDefinition;
     protected TableDataColumn tableDataColumn;
@@ -63,7 +63,7 @@ public abstract class BaseSheetController extends ControlSheetData {
     protected List<String> copiedRow, copiedCol;
     protected SimpleBooleanProperty notify;
     protected int widthChange;
-    protected boolean rowsSelected, colsSelected;
+    protected boolean rowsSelected, colsSelected, dataChanged;
     protected Label noDataLabel;
 
     @FXML
@@ -73,7 +73,7 @@ public abstract class BaseSheetController extends ControlSheetData {
     @FXML
     protected Tab sheetTab;
     @FXML
-    protected ControlSheetData sheetDataController;
+    protected ControlSheetDisplay sheetDisplayController;
 
     public BaseSheetController() {
         baseTitle = Languages.message("DataEdit");
@@ -93,18 +93,11 @@ public abstract class BaseSheetController extends ControlSheetData {
             noDataLabel = new Label(Languages.message("NoData"));
             noDataLabel.setStyle("-fx-text-fill: gray;");
             inputStyle = "-fx-border-radius: 10; -fx-background-radius: 0;";
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
 
-    @Override
-    public void initSheetController(BaseSheetController parent) {
-        try {
-            if (sheetDataController != null) {
-                sheetDataController.initSheetController(parent);
+            sheetController = this;
+            if (sheetDisplayController == null) {
+                sheetDisplayController = this;
             }
-            super.initSheetController(parent);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -127,16 +120,19 @@ public abstract class BaseSheetController extends ControlSheetData {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        initSheetController(this);
+        sheetDisplayController.initDisplay(this);
     }
 
+    @FXML
     @Override
-    protected void setData(String[][] sheet, List<ColumnDefinition> columns) {
-        if (sheetDataController != null) {
-            sheetDataController.setData(sheet, columns);
-        } else {
-            super.setData(sheet, columns);
-        }
+    public boolean popAction() {
+        return sheetDisplayController.popAction();
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        return sheetDisplayController.menuAction();
     }
 
     @Override
@@ -159,14 +155,6 @@ public abstract class BaseSheetController extends ControlSheetData {
         }
         sheet = data;
         return data;
-    }
-
-    @Override
-    protected String textDelimiter() {
-        if (sheetDataController != null) {
-            return sheetDataController.textDelimiter();
-        }
-        return super.textDelimiter();
     }
 
     protected String value(int row, int col) {
@@ -237,7 +225,7 @@ public abstract class BaseSheetController extends ControlSheetData {
         if (sheetBox.getChildren().contains(noDataLabel)) {
             sheetBox.getChildren().remove(noDataLabel);
         }
-        setData(null, columns);
+        sheetDisplayController.setDisplayData(null, columns);
         notify.set(!notify.get());
     }
 
@@ -464,13 +452,28 @@ public abstract class BaseSheetController extends ControlSheetData {
         if (isSettingValues) {
             return;
         }
-        setData(pickData(), columns);
+        sheetDisplayController.setDisplayData(pickData(), columns);
         dataChanged(changed);
         notify.set(!notify.get());
     }
 
     public void sheetChanged() {
         sheetChanged(true);
+    }
+
+    protected void dataChanged(boolean dataChanged) {
+        try {
+            this.dataChanged = dataChanged;
+            if (getMyStage() != null) {
+                String title = baseTitle + " " + titleName();
+                if (dataChanged) {
+                    title += " *";
+                }
+                myStage.setTitle(title);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
     }
 
     // Notice: this does not concern columns names
@@ -522,15 +525,7 @@ public abstract class BaseSheetController extends ControlSheetData {
     @FXML
     @Override
     public void copyText() {
-        if (sheetDataController != null) {
-            sheetDataController.copyText();
-        } else {
-            super.copyText();
-        }
-    }
-
-    public void afterDefChanged(List<ColumnDefinition> columns) {
-        makeSheet(sheet, columns);
+        sheetDisplayController.copyText();
     }
 
     public String askValue(String header, String name, String initValue) {
@@ -750,7 +745,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                         inputs[j][col].setPrefWidth(width);
                     }
                 }
-                makeDataDefintion();
+                makeDefintion();
             });
             items.add(menu);
 
@@ -763,7 +758,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                         inputs[j][col].setPrefWidth(width);
                     }
                 }
-                makeDataDefintion();
+                makeDefintion();
             });
             menu.setDisable(colsCheck[col].getWidth() <= widthChange * 1.5);
             items.add(menu);
@@ -782,7 +777,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                             inputs[j][col].setPrefWidth(width);
                         }
                     }
-                    makeDataDefintion();
+                    makeDefintion();
                 } catch (Exception e) {
                     popError(Languages.message("InvalidData"));
                 }
@@ -804,7 +799,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                     colsCheck[col].setText(value);
                     columns.get(col).setName(value);
                     dataChanged(true);
-                    makeDataDefintion();
+                    makeDefintion();
                 });
                 items.add(menu);
             }
@@ -1123,7 +1118,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             menu = new MenuItem(Languages.message("CopyRow"));
             menu.setOnAction((ActionEvent event) -> {
                 String s = "";
-                String p = TextTools.delimiterText(textDelimiter());
+                String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
                 copiedRow = new ArrayList<>();
                 for (int i = 0; i < colsCheck.length; ++i) {
                     String v = value(row, i);
@@ -1363,7 +1358,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             return;
         }
         String s = null;
-        String p = TextTools.delimiterText(textDelimiter());
+        String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
         rowsNumber = inputs.length;
         colsNumber = inputs[0].length;
         int lines = 0;
@@ -1404,7 +1399,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             return;
         }
         String s = null;
-        String p = TextTools.delimiterText(textDelimiter());
+        String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
         rowsNumber = inputs.length;
         colsNumber = inputs[0].length;
         for (int j = 0; j < rowsNumber; ++j) {
@@ -1447,7 +1442,7 @@ public abstract class BaseSheetController extends ControlSheetData {
             return;
         }
         String s = null;
-        String p = TextTools.delimiterText(textDelimiter());
+        String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
         rowsNumber = inputs.length;
         colsNumber = inputs[0].length;
         for (int j = 0; j < rowsNumber; ++j) {
@@ -1893,7 +1888,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                             inputs[j][i].setPrefWidth(width);
                         }
                     }
-                    makeDataDefintion();
+                    makeDefintion();
                 }
             });
             menu.setDisable(colsCheck == null || colsCheck.length == 0);
@@ -1912,7 +1907,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                             inputs[j][i].setPrefWidth(width);
                         }
                     }
-                    makeDataDefintion();
+                    makeDefintion();
                 }
             });
             menu.setDisable(colsCheck == null || colsCheck.length == 0);
@@ -1934,7 +1929,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                             }
                         }
                     }
-                    makeDataDefintion();
+                    makeDefintion();
                 } catch (Exception e) {
                     popError(Languages.message("InvalidData"));
                 }
@@ -1968,7 +1963,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                         }
                     }
                 }
-                makeDataDefintion();
+                makeDefintion();
             });
             menu.setDisable(!colsSelected);
             items.add(menu);
@@ -1989,7 +1984,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                             inputs[j][i].setPrefWidth(width);
                         }
                     }
-                    makeDataDefintion();
+                    makeDefintion();
                 }
             });
             menu.setDisable(!colsSelected);
@@ -2014,7 +2009,7 @@ public abstract class BaseSheetController extends ControlSheetData {
                             }
                         }
                     }
-                    makeDataDefintion();
+                    makeDefintion();
                 } catch (Exception e) {
                     popError(Languages.message("InvalidData"));
                 }

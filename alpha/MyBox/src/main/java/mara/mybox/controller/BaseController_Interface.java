@@ -309,13 +309,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
 //       MyBoxLog.console(this.getClass() + "  " + node.getClass() + "  " + node.getId());
         Object o = node.getUserData();
         // Controls in embedded fxmls have been initialized by themselves
-        if (o != null && o instanceof BaseController) {
-            if (node != thisPane) {
-                return;
-            }
-            if (o instanceof BaseMapController) {
-
-            }
+        if (o != null && o instanceof BaseController && node != thisPane) {
+            return;
         }
         if (node instanceof TextInputControl) {
             makeEditContextMenu(node);
@@ -807,6 +802,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             BaseController c = (BaseController) o;
             c.cleanPane();
         }
+        node.setUserData(null);
     }
 
     public void cleanPane() {

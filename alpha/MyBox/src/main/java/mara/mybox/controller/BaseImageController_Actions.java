@@ -563,7 +563,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         saveImage(imageFile(), file, imageToSave());
     }
 
-    public void saveImage(File srcFIle, File newfile, Object imageToSave) {
+    public void saveImage(File srcFile, File newfile, Object imageToSave) {
         if (newfile == null || imageToSave == null) {
             return;
         }
@@ -586,9 +586,9 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     if (bufferedImage == null || task == null || isCancelled()) {
                         return false;
                     }
-                    boolean multipleFrames = srcFIle != null && framesNumber > 1;
+                    boolean multipleFrames = srcFile != null && framesNumber > 1;
                     if (multipleFrames) {
-                        error = ImageFileWriters.writeFrame(srcFIle, frameIndex, bufferedImage, newfile, null);
+                        error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, newfile, null);
                         return error == null;
                     } else {
                         return ImageFileWriters.writeImageFile(bufferedImage, newfile);

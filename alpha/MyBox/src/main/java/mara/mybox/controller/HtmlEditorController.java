@@ -524,7 +524,7 @@ public class HtmlEditorController extends BaseWebViewController {
         Platform.runLater(() -> {
             try {
                 webEngine.getLoadWorker().cancel();
-                webEngine.loadContent(html);
+                webEngine.loadContent(styleHtml(html));
                 viewChanged(updated);
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
@@ -544,6 +544,9 @@ public class HtmlEditorController extends BaseWebViewController {
         return WebViewTools.getHtml(webEngine);
     }
 
+    public String styleHtml(String html) {
+        return html;
+    }
 
     /*
         codes
@@ -552,7 +555,7 @@ public class HtmlEditorController extends BaseWebViewController {
         Platform.runLater(() -> {
             try {
                 codesArea.setEditable(false);
-                codesArea.setText(html);
+                codesArea.setText(htmlCodes(html));
                 if (pageLoaded) {
                     codesArea.setEditable(true);
                 }
@@ -588,6 +591,10 @@ public class HtmlEditorController extends BaseWebViewController {
         controller.toFront();
     }
 
+    public String htmlCodes(String html) {
+        return html;
+    }
+
 
     /*
         richText
@@ -599,7 +606,7 @@ public class HtmlEditorController extends BaseWebViewController {
                 if (StringTools.include(html, "<FRAMESET ", true)) {
                     htmlEditor.setHtmlText("<p>" + message("FrameSetAndSelectFrame") + "</p>");
                 } else {
-                    htmlEditor.setHtmlText(html);
+                    htmlEditor.setHtmlText(styleHtml(html));
                 }
                 if (pageLoaded) {
                     htmlEditor.setDisable(false);

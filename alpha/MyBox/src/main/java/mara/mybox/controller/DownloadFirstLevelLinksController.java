@@ -55,7 +55,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mara.mybox.data.DownloadTask;
@@ -64,25 +63,19 @@ import mara.mybox.data.Link.FilenameType;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.HtmlReadTools;
-
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -317,7 +310,6 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
     public void initOptionsTab() {
         try {
-
             relinksCheck.setSelected(UserConfig.getBoolean(baseName + "Relinks", true));
             relinksCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
                 UserConfig.setBoolean(baseName + "Relinks", relinksCheck.isSelected());
@@ -325,8 +317,8 @@ public class DownloadFirstLevelLinksController extends BaseController {
 
             indexCheck.setSelected(UserConfig.getBoolean(baseName + "GenerateIndex", true));
             indexCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setBoolean(baseName + "GenerateIndex", indexCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "GenerateIndex", indexCheck.isSelected());
+            });
 
             pdfTextCheck.setSelected(UserConfig.getBoolean(baseName + "MergeTextPDF", true));
             pdfMarkdownCheck.setSelected(UserConfig.getBoolean(baseName + "MergeMarkdownPDF", false));
@@ -334,30 +326,30 @@ public class DownloadFirstLevelLinksController extends BaseController {
             pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
 
             pdfTextCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setBoolean(baseName + "MergeTextPDF", pdfTextCheck.isSelected());
-                        pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "MergeTextPDF", pdfTextCheck.isSelected());
+                pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
+            });
             pdfMarkdownCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setBoolean(baseName + "MergeMarkdownPDF", pdfMarkdownCheck.isSelected());
-                        pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "MergeMarkdownPDF", pdfMarkdownCheck.isSelected());
+                pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
+            });
             pdfHtmlCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setBoolean(baseName + "MergeHtmlPDF", pdfHtmlCheck.isSelected());
-                        pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "MergeHtmlPDF", pdfHtmlCheck.isSelected());
+                pdfOptionsBox.setDisable(!pdfTextCheck.isSelected() && !pdfMarkdownCheck.isSelected() && !pdfHtmlCheck.isSelected());
+            });
 
             textCheck.setSelected(UserConfig.getBoolean(baseName + "MergeText", true));
             textCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setBoolean(baseName + "MergeText", textCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "MergeText", textCheck.isSelected());
+            });
             htmlCheck.setSelected(UserConfig.getBoolean(baseName + "MergeHtml", true));
             htmlCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setBoolean(baseName + "MergeHtml", htmlCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "MergeHtml", htmlCheck.isSelected());
+            });
             mdCheck.setSelected(UserConfig.getBoolean(baseName + "MergeMarkdown", true));
             mdCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-                        UserConfig.setBoolean(baseName + "MergeMarkdown", mdCheck.isSelected());
-                    });
+                UserConfig.setBoolean(baseName + "MergeMarkdown", mdCheck.isSelected());
+            });
 
             ttfController.name(baseName);
             ttfController.ttfSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -382,20 +374,20 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 maxThreadsNumber = 6;
             }
             threadsSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v >= 0) {
-                                maxThreadsNumber = v;
-                                UserConfig.setInt(baseName + "ThreadsNumber", v);
-                                threadsSelector.getEditor().setStyle(null);
-                                checkThreads();
-                            } else {
-                                threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                            }
-                        } catch (Exception e) {
-                            threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v >= 0) {
+                        maxThreadsNumber = v;
+                        UserConfig.setInt(baseName + "ThreadsNumber", v);
+                        threadsSelector.getEditor().setStyle(null);
+                        checkThreads();
+                    } else {
+                        threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    threadsSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
             threadsSelector.getSelectionModel().select(maxThreadsNumber + "");
 
             retriesSelector.getItems().addAll(Arrays.asList("3", "2", "1", "4", "5", "6"));
@@ -404,19 +396,19 @@ public class DownloadFirstLevelLinksController extends BaseController {
                 maxRetries = 3;
             }
             retriesSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                maxRetries = v;
-                                UserConfig.setInt(baseName + "MaxRetries", v);
-                                retriesSelector.getEditor().setStyle(null);
-                            } else {
-                                retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                            }
-                        } catch (Exception e) {
-                            retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                        }
-                    });
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        maxRetries = v;
+                        UserConfig.setInt(baseName + "MaxRetries", v);
+                        retriesSelector.getEditor().setStyle(null);
+                    } else {
+                        retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                    }
+                } catch (Exception e) {
+                    retriesSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                }
+            });
             retriesSelector.getSelectionModel().select(maxRetries + "");
 
             miaowCheck.setSelected(UserConfig.getBoolean(baseName + "Miaow", true));
@@ -473,6 +465,19 @@ public class DownloadFirstLevelLinksController extends BaseController {
             NodeStyleTools.removeTooltip(equalButton);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+            if (targetPathController.file == null) {
+                tabPane.getSelectionModel().select(optionsTab);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

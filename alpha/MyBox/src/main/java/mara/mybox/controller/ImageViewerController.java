@@ -729,6 +729,7 @@ public class ImageViewerController extends BaseImageController {
                         return false;
                     }
                     boolean multipleFrames = imageFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
+                    MyBoxLog.console(multipleFrames);
                     if (formatController != null) {
                         if (multipleFrames) {
                             error = ImageFileWriters.writeFrame(imageFile, frameIndex, bufferedImage, targetFile, formatController.attributes);

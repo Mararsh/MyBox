@@ -7,6 +7,7 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -75,7 +76,7 @@ public class ImageManufactureScopeController_Colors extends ImageManufactureScop
 
     @Override
     public boolean controlAltK() {
-        if (!colorsTab.isDisable()) {
+        if (tabPane.getTabs().contains(colorsTab)) {
             pickColorCheck.setSelected(!pickColorCheck.isSelected());
         } else {
             isPickingColor = false;
@@ -85,16 +86,29 @@ public class ImageManufactureScopeController_Colors extends ImageManufactureScop
 
     @Override
     protected void startPickingColor() {
-        if (colorsTab.isDisable()) {
+        if (!tabPane.getTabs().contains(colorsTab)) {
             isPickingColor = false;
             stopPickingColor();
             return;
         }
+        imageLabelOriginal = new Label(scopeTips.getText());
+        imageLabelOriginal.setStyle(scopeTips.getStyle());
+        scopeTips.setText(message("PickingColorsForScope"));
+        scopeTips.setStyle(NodeStyleTools.darkRedText);
+        NodeStyleTools.setTooltip(scopeTips, scopeTips.getText());
         popInformation(message("PickingColorsForScope"));
     }
 
     @Override
     protected void stopPickingColor() {
+        if (imageLabelOriginal != null) {
+            scopeTips.setText(imageLabelOriginal.getText());
+            scopeTips.setStyle(imageLabelOriginal.getStyle());
+            imageLabelOriginal = null;
+        } else {
+            scopeTips.setText("");
+        }
+        NodeStyleTools.setTooltip(scopeTips, scopeTips.getText());
     }
 
     public boolean addColor(Color color) {

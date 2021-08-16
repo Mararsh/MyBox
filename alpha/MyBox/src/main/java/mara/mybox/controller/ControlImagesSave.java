@@ -145,6 +145,7 @@ public class ControlImagesSave extends BaseController {
         pdfPane.setExpanded(false);
         pptPane.setExpanded(false);
         convertPane.setExpanded(false);
+        saveImagesLabel.setVisible(false);
         if (imagesRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Image);
             saveImagesLabel.setVisible(true);
@@ -153,18 +154,14 @@ public class ControlImagesSave extends BaseController {
             setTargetFileType(VisitHistory.FileType.Image);
         } else if (tifFileRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Tif);
-            saveImagesLabel.setVisible(false);
         } else if (gifFileRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.Gif);
-            saveImagesLabel.setVisible(false);
             gifPane.setExpanded(true);
         } else if (pdfRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.PDF);
-            saveImagesLabel.setVisible(false);
             pdfPane.setExpanded(true);
         } else if (pptRadio.isSelected()) {
             setTargetFileType(VisitHistory.FileType.PPT);
-            saveImagesLabel.setVisible(false);
             pptPane.setExpanded(true);
         }
     }

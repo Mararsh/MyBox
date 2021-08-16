@@ -4,6 +4,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -11,7 +12,9 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -19,11 +22,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public class ControlDataText extends BaseController {
+public abstract class ControlSheetDisplay_Text extends ControlSheetDisplay_Validation {
 
-    protected ControlSheetData dataController;
-    protected String[][] sheet;
-    protected String delimiter;
+    protected String textDelimiter;
 
     @FXML
     protected TextArea textArea;
@@ -34,15 +35,13 @@ public class ControlDataText extends BaseController {
             lineRadio, atRadio, sharpRadio, semicolonsRadio, stringRadio;
     @FXML
     protected TextField delimiterInput;
+    @FXML
+    protected CheckBox textTitleCheck, textColumnCheck, textRowCheck;
 
-    public void setDataController(ControlSheetData parent) {
+    public void initTextControls() {
         try {
-            dataController = parent;
-            this.parentController = parent;
-            this.baseName = parent.baseName;
-            this.baseTitle = parent.baseTitle;
-            delimiter = UserConfig.getString(baseName + "TargetDelimiter", "Blank");
-            switch (delimiter.toLowerCase()) {
+            textDelimiter = UserConfig.getString(baseName + "TextDelimiter", "Blank");
+            switch (textDelimiter.toLowerCase()) {
                 case "blank":
                     blankRadio.fire();
                     break;
@@ -83,29 +82,29 @@ public class ControlDataText extends BaseController {
                             delimiterInput.setStyle(NodeStyleTools.badStyle);
                             return;
                         }
-                        delimiter = v;
+                        textDelimiter = v;
                         delimiterInput.setStyle(null);
                     } else if (blankRadio.isSelected()) {
-                        delimiter = "Blank";
+                        textDelimiter = "Blank";
                     } else if (blank4Radio.isSelected()) {
-                        delimiter = "Blank4";
+                        textDelimiter = "Blank4";
                     } else if (blank8Radio.isSelected()) {
-                        delimiter = "Blank8";
+                        textDelimiter = "Blank8";
                     } else if (tabRadio.isSelected()) {
-                        delimiter = "Tab";
+                        textDelimiter = "Tab";
                     } else if (commaRadio.isSelected()) {
-                        delimiter = ",";
+                        textDelimiter = ",";
                     } else if (lineRadio.isSelected()) {
-                        delimiter = "|";
+                        textDelimiter = "|";
                     } else if (atRadio.isSelected()) {
-                        delimiter = "@";
+                        textDelimiter = "@";
                     } else if (sharpRadio.isSelected()) {
-                        delimiter = "#";
+                        textDelimiter = "#";
                     } else if (semicolonsRadio.isSelected()) {
-                        delimiter = ";";
+                        textDelimiter = ";";
                     }
-                    UserConfig.setString(baseName + "TargetDelimiter", delimiter);
-                    update(sheet);
+                    UserConfig.setString(baseName + "TextDelimiter", textDelimiter);
+                    updateText();
                 }
             });
             delimiterInput.textProperty().addListener(new ChangeListener<String>() {
@@ -118,11 +117,27 @@ public class ControlDataText extends BaseController {
                         delimiterInput.setStyle(NodeStyleTools.badStyle);
                         return;
                     }
-                    delimiter = newValue;
-                    UserConfig.setString(baseName + "TargetDelimiter", delimiter);
+                    textDelimiter = newValue;
+                    UserConfig.setString(baseName + "TextDelimiter", textDelimiter);
                     delimiterInput.setStyle(null);
-                    update(sheet);
+                    updateText();
                 }
+            });
+
+            textTitleCheck.setSelected(UserConfig.getBoolean(baseName + "TextTitle", true));
+            textTitleCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                updateText();
+                UserConfig.setBoolean(baseName + "TextTitle", newValue);
+            });
+            textColumnCheck.setSelected(UserConfig.getBoolean(baseName + "TextColumn", false));
+            textColumnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                updateText();
+                UserConfig.setBoolean(baseName + "TextColumn", newValue);
+            });
+            textRowCheck.setSelected(UserConfig.getBoolean(baseName + "TextRow", false));
+            textRowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                updateText();
+                UserConfig.setBoolean(baseName + "TextRow", newValue);
             });
 
         } catch (Exception e) {
@@ -130,27 +145,20 @@ public class ControlDataText extends BaseController {
         }
     }
 
-    public void update(String[][] sheet) {
-        update(sheet, delimiter);
-    }
-
-    public void update(String[][] sheet, String delimiter) {
-        this.sheet = sheet;
+    public void updateText() {
         List<String> colsNames = null;
         List<String> rowsNames = null;
-        String title = null;
-        if (dataController != null) {
-            if (dataController.textTitleCheck != null && dataController.textTitleCheck.isSelected()) {
-                title = dataController.titleName();
-            }
-            if (dataController.textColumnCheck != null && dataController.textColumnCheck.isSelected()) {
-                colsNames = dataController.columnNames();
-            }
-            if (dataController.textRowCheck != null && dataController.textRowCheck.isSelected()) {
-                rowsNames = sheet == null ? null : dataController.rowNames(sheet.length);
-            }
+        String title = titleName();
+        if (textTitleCheck.isSelected()) {
+            title = titleName();
         }
-        String text = TextTools.dataText(sheet, delimiter, colsNames, rowsNames);
+        if (textColumnCheck.isSelected()) {
+            colsNames = columnNames();
+        }
+        if (textRowCheck.isSelected()) {
+            rowsNames = sheet == null ? null : rowNames(sheet.length);
+        }
+        String text = TextTools.dataText(sheet, textDelimiter, colsNames, rowsNames);
         if (title != null && !title.isBlank()) {
             textArea.setText(title + "\n\n" + text);
         } else {
@@ -158,4 +166,14 @@ public class ControlDataText extends BaseController {
         }
     }
 
+    @FXML
+    public void copyText() {
+        TextClipboardTools.copyToSystemClipboard(myController, textArea.getText());
+    }
+
+    @FXML
+    public void editText() {
+        TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(textArea.getText());
+    }
 }

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
@@ -77,22 +76,6 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
             colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
     @FXML
     protected Label scopeTips, scopePointsLabel, scopeColorsLabel, pointsSizeLabel, colorsSizeLabel, rectangleLabel;
-
-    protected void initSplitPane() {
-        try {
-            String mv = UserConfig.getString(baseName + "ScopePanePosition", "0.5");
-            splitPane.setDividerPositions(Double.parseDouble(mv));
-
-            splitPane.getDividers().get(0).positionProperty().addListener(
-                    (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                        MyBoxLog.console(newValue);
-                        UserConfig.setString(baseName + "ScopePanePosition", newValue.doubleValue() + "");
-                        paneSize();
-                    });
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
 
     protected void indicateScope() {
         if (isSettingValues || imageView == null || !scopeView.isVisible()) {

@@ -16,7 +16,6 @@ import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**

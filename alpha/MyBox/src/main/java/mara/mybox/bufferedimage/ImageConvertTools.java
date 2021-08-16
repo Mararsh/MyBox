@@ -30,13 +30,10 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.FileExtensions;
 import mara.mybox.value.Languages;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOEncoder;
-import org.apache.pdfbox.rendering.ImageType;
 
 /**
  * @Author Mara
@@ -88,29 +85,6 @@ public class ImageConvertTools {
             return 0;
         }
         return 25.4f / dpi;
-    }
-
-    public static BufferedImage convertColorType(BufferedImage bufferedImage, ImageAttributes attributes) {
-        try {
-            if (bufferedImage == null || attributes == null || attributes.getColorType() == null) {
-                return bufferedImage;
-            }
-            int color = bufferedImage.getType();
-            if (ImageType.BINARY == attributes.getColorType()) {
-                return convertBinary(bufferedImage, attributes);
-
-            } else if (ImageType.GRAY == attributes.getColorType() && color != BufferedImage.TYPE_BYTE_GRAY) {
-                ImageGray imageGray = new ImageGray(bufferedImage);
-                bufferedImage = imageGray.operate();
-
-            } else if (ImageType.RGB == attributes.getColorType()) {
-                bufferedImage = AlphaTools.removeAlpha(bufferedImage);
-            }
-            return bufferedImage;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return bufferedImage;
-        }
     }
 
     public static BufferedImage convertBinary(BufferedImage bufferedImage, ImageAttributes attributes) {
@@ -216,7 +190,7 @@ public class ImageConvertTools {
             File tmpFile = TmpFileTools.getTempFile();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(srcFile);
                      ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                ImageReader reader = ImageFileReaders.getReader(iis);
+                ImageReader reader = ImageFileReaders.getReader(iis, sourceFormat);
                 if (reader == null) {
                     writer.dispose();
                     return false;
@@ -293,7 +267,7 @@ public class ImageConvertTools {
             }
             List<BufferedImage> images = new ArrayList();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(srcFile)))) {
-                ImageReader reader = getReader(iis);
+                ImageReader reader = getReader(iis, FileNameTools.getFileSuffix(srcFile));
                 if (reader == null) {
                     return false;
                 }

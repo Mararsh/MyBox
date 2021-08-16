@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import mara.mybox.MyBox;
@@ -32,6 +33,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.HttpUserAgent;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -142,7 +144,13 @@ public class MyBoxLoadingController implements Initializable {
                     try {
                         Platform.runLater(() -> {
                             infoLabel.setText(message(lang, "InitializingEnv"));
+                            try {
+                                HttpUserAgent = new WebView().getEngine().getUserAgent();
+                            } catch (Exception e) {
+                                HttpUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0";
+                            }
                         });
+
                         ImageColorSpace.registrySupportedImageFormats();
                         ImageIO.setUseCache(true);
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);

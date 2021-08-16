@@ -34,121 +34,106 @@ public class ImageManufactureScopeController_Set extends ImageManufactureScopeCo
     protected void setScopeControls() {
         try {
             setBox.setVisible(scope != null && scope.getScopeType() != ImageScope.ScopeType.All);
-            areaTab.setDisable(true);
-            pointsTab.setDisable(true);
-            colorsTab.setDisable(true);
-            matchTab.setDisable(true);
-            pixTab.setDisable(true);
+            tabPane.getTabs().clear();
             scopeTips.setText("");
+            NodeStyleTools.removeTooltip(scopeTips);
             if (image == null || scope == null) {
-                saveTab.setDisable(true);
                 return;
             }
-            saveTab.setDisable(false);
             isSettingValues = true;
             switch (scope.getScopeType()) {
                 case All:
                     scopeTips.setText(Languages.message("WholeImage"));
-                    saveTab.setDisable(true);
                     break;
                 case Matting:
                     scopeTips.setText(Languages.message("ScopeMattingTips"));
-                    pointsTab.setDisable(false);
-                    matchTab.setDisable(false);
+                    tabPane.getTabs().addAll(pointsTab, matchTab, saveTab);
                     tabPane.getSelectionModel().select(pointsTab);
                     break;
 
                 case Rectangle:
                     scopeTips.setText(Languages.message("ScopeRectangleTips"));
-                    areaTab.setDisable(false);
+                    tabPane.getTabs().addAll(areaTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
                     rectangleLabel.setText(Languages.message("Rectangle"));
-                    tabPane.getSelectionModel().select(areaTab);
                     break;
 
                 case Circle:
                     scopeTips.setText(Languages.message("ScopeCircleTips"));
-                    areaTab.setDisable(false);
+                    tabPane.getTabs().addAll(areaTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(circleBox);
-                    tabPane.getSelectionModel().select(areaTab);
                     break;
 
                 case Ellipse:
                     scopeTips.setText(Languages.message("ScopeEllipseTips"));
-                    areaTab.setDisable(false);
+                    tabPane.getTabs().addAll(areaTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
                     rectangleLabel.setText(Languages.message("Ellipse"));
-                    tabPane.getSelectionModel().select(areaTab);
                     break;
 
                 case Polygon:
-                    pointsTab.setDisable(false);
                     scopeTips.setText(Languages.message("ScopePolygonTips"));
+                    tabPane.getTabs().addAll(pointsTab, saveTab);
                     tabPane.getSelectionModel().select(pointsTab);
                     break;
 
                 case Color:
                     scopeTips.setText(Languages.message("ScopeColorTips"));
-                    colorsTab.setDisable(false);
-                    matchTab.setDisable(false);
+                    tabPane.getTabs().addAll(colorsTab, matchTab, saveTab);
                     tabPane.getSelectionModel().select(colorsTab);
                     break;
 
                 case RectangleColor:
                     scopeTips.setText(Languages.message("ScopeRectangleColorsTips"));
-                    areaTab.setDisable(false);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
-                    colorsTab.setDisable(false);
-                    matchTab.setDisable(false);
                     rectangleLabel.setText(Languages.message("Rectangle"));
-                    tabPane.getSelectionModel().select(areaTab);
                     break;
 
                 case CircleColor:
                     scopeTips.setText(Languages.message("ScopeCircleColorsTips"));
-                    areaTab.setDisable(false);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(circleBox);
-                    colorsTab.setDisable(false);
-                    matchTab.setDisable(false);
-                    tabPane.getSelectionModel().select(areaTab);
                     break;
 
                 case EllipseColor:
                     scopeTips.setText(Languages.message("ScopeEllipseColorsTips"));
-                    areaTab.setDisable(false);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
-                    colorsTab.setDisable(false);
-                    matchTab.setDisable(false);
                     rectangleLabel.setText(Languages.message("Ellipse"));
-                    tabPane.getSelectionModel().select(areaTab);
                     break;
 
                 case PolygonColor:
                     scopeTips.setText(Languages.message("ScopePolygonColorsTips"));
-                    pointsTab.setDisable(false);
-                    colorsTab.setDisable(false);
-                    matchTab.setDisable(false);
+                    tabPane.getTabs().addAll(pointsTab, colorsTab, matchTab, saveTab);
                     tabPane.getSelectionModel().select(pointsTab);
                     break;
 
                 case Outline:
                     scopeTips.setText(Languages.message("ScopeOutlineTips"));
-                    pixTab.setDisable(false);
+                    tabPane.getTabs().addAll(pixTab, saveTab);
+                    tabPane.getSelectionModel().select(pixTab);
                     if (outlinesList.getItems().isEmpty()) {
                         initPixTab();
                     }
-                    tabPane.getSelectionModel().select(pixTab);
                     break;
 
                 default:
                     return;
             }
+            NodeStyleTools.setTooltip(scopeTips, scopeTips.getText());
             setScopeName();
             refreshStyle(tabPane);
             isSettingValues = false;
@@ -259,12 +244,6 @@ public class ImageManufactureScopeController_Set extends ImageManufactureScopeCo
             pickColorCheck.setSelected(false);
             scopeDistanceSelector.getEditor().setStyle(null);
             outlinesList.getSelectionModel().select(null);
-            areaTab.setDisable(true);
-            pointsTab.setDisable(true);
-            colorsTab.setDisable(true);
-            matchTab.setDisable(true);
-            pixTab.setDisable(true);
-            saveTab.setDisable(true);
             pickColorCheck.setSelected(false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

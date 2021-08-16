@@ -47,7 +47,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected Label resultLabel, checkLabel;
     @FXML
-    protected BaseMatrixController resultTableController;
+    protected ControlMatrix resultTableController;
     @FXML
     protected TextArea resultArea;
     @FXML

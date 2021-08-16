@@ -60,6 +60,7 @@ import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.HttpUserAgent;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -251,7 +252,7 @@ public class WeiboSnapRunController extends BaseController {
             webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
             // To avoid 414
-            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
+            webEngine.setUserAgent(HttpUserAgent);
 
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override

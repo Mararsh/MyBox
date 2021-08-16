@@ -19,19 +19,17 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
-
 import mara.mybox.value.FileExtensions;
 import net.sf.image4j.codec.ico.ICOEncoder;
 
@@ -231,7 +229,7 @@ public class ImageFileWriters {
             }
             File tmpFile = TmpFileTools.getTempFile();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(sourcefile)))) {
-                ImageReader reader = ImageFileReaders.getReader(iis);
+                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(sourcefile));
                 if (reader == null) {
                     return "InvalidData";
                 }

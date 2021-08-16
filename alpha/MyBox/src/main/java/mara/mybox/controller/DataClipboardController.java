@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
@@ -48,7 +49,6 @@ public class DataClipboardController extends BaseSheetController {
 
     @FXML
     protected HBox buttonBox;
-
     @FXML
     protected TextArea inputArea;
     @FXML
@@ -208,11 +208,7 @@ public class DataClipboardController extends BaseSheetController {
             this.sourceFile = sourceController.sourceFile;
             makeSheet(sourceController.sheet, sourceController.columns);
 
-            isMatrix = sourceController instanceof BaseMatrixController;
-//            if (isMatrix) {
-//                defaultColumnType = ColumnType.String;
-//                defaultColNotNull = false;
-//            }
+            isMatrix = sourceController instanceof ControlMatrix;
             setControlsStyle();
 
             buttonBox.getChildren().addAll(cancelButton, okButton);
@@ -220,6 +216,7 @@ public class DataClipboardController extends BaseSheetController {
                     && ((BaseDataFileController) sourceController).pagesNumber > 1) {
                 bottomLabel.setText(message("CanNotChangeColumnsNumber"));
             }
+            NodeStyleTools.refreshStyle(buttonBox);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -313,24 +310,27 @@ public class DataClipboardController extends BaseSheetController {
 
     @Override
     protected void dataChanged(boolean dataChanged) {
-        this.dataChanged = dataChanged;
-        if (dataChanged) {
-            isSettingValues = true;
-            inputArea.setText(TextTools.dataText(sheet, sourceDelimiter));
-            isSettingValues = false;
+        try {
+            this.dataChanged = dataChanged;
+            if (dataChanged) {
+                isSettingValues = true;
+                inputArea.setText(TextTools.dataText(sheet, sourceDelimiter));
+                isSettingValues = false;
+            }
+            okButton.setDisable(dataInvalid || inputArea.getText().isBlank());
+            String info = message("RowsNumber") + ": " + rowsNumber + "  " + message("ColumnsNumber") + ": " + colsNumber;
+            if (sourceController != null && sourceController.colsNumber != colsNumber) {
+                info += "    " + message("CanNotChangeColumnsNumber");
+                popError(message("CanNotChangeColumnsNumber"));
+                okButton.setDisable(true);
+                bottomLabel.setStyle(badStyle);
+            } else {
+                bottomLabel.setStyle(null);
+            }
+            bottomLabel.setText(info);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
         }
-        validate();
-        okButton.setDisable(dataInvalid || inputArea.getText().isBlank());
-        String info = message("RowsNumber") + ": " + rowsNumber + "  " + message("ColumnsNumber") + ": " + colsNumber;
-        if (sourceController != null && sourceController.colsNumber != colsNumber) {
-            info += "    " + message("CanNotChangeColumnsNumber");
-            popError(message("CanNotChangeColumnsNumber"));
-            okButton.setDisable(true);
-            bottomLabel.setStyle(badStyle);
-        } else {
-            bottomLabel.setStyle(null);
-        }
-        bottomLabel.setText(info);
     }
 
     @Override
@@ -349,6 +349,42 @@ public class DataClipboardController extends BaseSheetController {
         } else {
             return super.makeSheetDeleteColsMenu();
         }
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        if (inputArea.isFocused()) {
+            TextPopController.open(this, inputArea.getText());
+            return true;
+        }
+        if (sheetDisplayController.popAction()) {
+            return true;
+        }
+        if (tabPane.getSelectionModel().getSelectedItem() == textsTab) {
+            TextPopController.open(this, inputArea.getText());
+            return true;
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        if (inputArea.isFocused()) {
+            Point2D localToScreen = inputArea.localToScreen(inputArea.getWidth() - 80, 80);
+            MenuTextEditController.open(this, inputArea, localToScreen.getX(), localToScreen.getY());
+            return true;
+        }
+        if (sheetDisplayController.menuAction()) {
+            return true;
+        }
+        if (tabPane.getSelectionModel().getSelectedItem() == textsTab) {
+            Point2D localToScreen = inputArea.localToScreen(inputArea.getWidth() - 80, 80);
+            MenuTextEditController.open(this, inputArea, localToScreen.getX(), localToScreen.getY());
+            return true;
+        }
+        return false;
     }
 
     @FXML

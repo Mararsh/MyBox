@@ -92,15 +92,9 @@ public class NoteEditorController extends HtmlEditorController {
                 @Override
                 public void changed(ObservableValue ov, Tab oldTab, Tab newTab) {
                     if (oldTab == styleTab) {
-                        String style = UserConfig.getString(baseName + "Style", null);
-                        if (style != null && !style.isBlank()) {
-                            style = "<style type=\"text/css\">\n" + style + "\n</style>";
-                        } else {
-                            style = "";
-                        }
-//                        String html = style + HtmlReadTools.body(codesController.codes(), false);
-//                        webviewController.loadContents(html);
-//                        htmlEditor.setHtmlText(html);
+                        webEngine.getLoadWorker().cancel();
+                        webEngine.loadContent(styleHtml(htmlInWebview()));
+                        htmlEditor.setHtmlText(styleHtml(htmlByEditor()));
                     }
                 }
             });
@@ -143,20 +137,22 @@ public class NoteEditorController extends HtmlEditorController {
                 idInput.setText(currentNote.getNtid() + "");
                 titleInput.setText(currentNote.getTitle());
                 timeInput.setText(DateTools.datetimeToString(currentNote.getUpdateTime()));
+                String html = currentNote.getHtml();
+                String style = UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle);
+                if (style != null && !style.isBlank()) {
+                    style = "<!DOCTYPE html><html><head><style type=\"text/css\">\n" + style + "\n</style></head></html>";
+                } else {
+                    style = "";
+                }
+                webEngine.getLoadWorker().cancel();
+                webEngine.loadContent(style + html);
             } else {
                 idInput.setText("");
                 timeInput.setText("");
                 titleInput.setText(message("Note"));
+                webEngine.getLoadWorker().cancel();
+                webEngine.loadContent("");
             }
-            String html = currentNote.getHtml();
-            String style = UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle);
-            if (style != null && !style.isBlank()) {
-                style = "<!DOCTYPE html><html><head><style type=\"text/css\">\n" + style + "\n</style></head></html>";
-            } else {
-                style = "";
-            }
-            webEngine.getLoadWorker().cancel();
-            webEngine.loadContent(style + html);
             updateBookOfCurrentNote();
             refreshNoteTags();
         }
@@ -223,6 +219,25 @@ public class NoteEditorController extends HtmlEditorController {
         loadNote();
     }
 
+    /*
+        html
+     */
+    @Override
+    public String styleHtml(String html) {
+        String style = UserConfig.getString(baseName + "Style", null);
+        if (style != null && !style.isBlank()) {
+            style = "<style type=\"text/css\">\n" + style + "\n</style>";
+        } else {
+            style = "";
+        }
+        return style + HtmlReadTools.body(html, false);
+    }
+
+    @Override
+    public String htmlCodes(String html) {
+        return HtmlReadTools.body(html, false);
+    }
+
     @FXML
     @Override
     public void saveAction() {
@@ -242,7 +257,7 @@ public class NoteEditorController extends HtmlEditorController {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         note = new Note();
                         note.setTitle(title);
-                        note.setHtml(HtmlReadTools.body(html));
+                        note.setHtml(HtmlReadTools.body(html, false));
                         note.setUpdateTime(new Date());
                         if (currentNote != null) {
                             note.setNtid(currentNote.getNtid());
@@ -306,19 +321,20 @@ public class NoteEditorController extends HtmlEditorController {
                 protected boolean handle() {
                     try ( Connection conn = DerbyBase.getConnection()) {
                         List<Tag> tags = tableTag.readAll(conn);
-                        if (tags != null && !tags.isEmpty() && currentNote != null) {
-                            List<Long> noteTagIDs = tableNoteTag.readTags(conn, currentNote.getNtid());
-                            if (noteTagIDs != null && !noteTagIDs.isEmpty()) {
-                                noteTags = new ArrayList<>();
-                                for (Tag tag : tags) {
-                                    if (noteTagIDs.contains(tag.getTgid())) {
-                                        noteTags.add(count++, tag);
-                                    } else {
-                                        noteTags.add(tag);
+                        noteTags = tags;
+                        if (tags != null && !tags.isEmpty()) {
+                            if (currentNote != null) {
+                                List<Long> noteTagIDs = tableNoteTag.readTags(conn, currentNote.getNtid());
+                                if (noteTagIDs != null && !noteTagIDs.isEmpty()) {
+                                    noteTags = new ArrayList<>();
+                                    for (Tag tag : tags) {
+                                        if (noteTagIDs.contains(tag.getTgid())) {
+                                            noteTags.add(count++, tag);
+                                        } else {
+                                            noteTags.add(tag);
+                                        }
                                     }
                                 }
-                            } else {
-                                noteTags = tags;
                             }
                         }
                     } catch (Exception e) {

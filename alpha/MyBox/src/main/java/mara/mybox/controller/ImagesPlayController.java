@@ -274,7 +274,7 @@ public class ImagesPlayController extends ImageViewerController {
             return false;
         }
         try ( ImageInputStream iis = ImageIO.createImageInputStream(sourceFile)) {
-            ImageReader reader = ImageFileReaders.getReader(iis);
+            ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(sourceFile));
             if (reader == null) {
                 return false;
             }
@@ -788,7 +788,7 @@ public class ImagesPlayController extends ImageViewerController {
             int targetWidth = loadWidth <= 0 ? imageWidth : loadWidth;
             File file = imageInfo.getFile();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                ImageReader reader = ImageFileReaders.getReader(iis);
+                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.getFileSuffix(file));
                 if (reader == null) {
                     return null;
                 }

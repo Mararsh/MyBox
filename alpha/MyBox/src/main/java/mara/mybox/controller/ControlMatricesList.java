@@ -20,7 +20,7 @@ import mara.mybox.value.Languages;
 public class ControlMatricesList extends BaseDataTableController<Matrix> {
 
     @FXML
-    protected BaseMatrixController editController;
+    protected ControlMatrix editController;
     @FXML
     protected TableColumn<Matrix, Long> mxidColumn;
     @FXML

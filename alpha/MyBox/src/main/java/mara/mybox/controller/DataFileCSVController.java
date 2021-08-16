@@ -660,7 +660,7 @@ public class DataFileCSVController extends BaseDataFileController {
         StringBuilder s = null;
         copiedLines = 0;
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            String delimiterString = TextTools.delimiterText(textController.delimiter);
+            String delimiterString = TextTools.delimiterText(sheetDisplayController.textDelimiter);
             int index = 0;
             for (CSVRecord record : parser) {
                 if (index < currentPageStart || index >= currentPageEnd) {
