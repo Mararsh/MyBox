@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlDataConvert">
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <children>
+        <FlowPane fx:id="formatsPane" hgap="5.0" vgap="5.0">
+            <children>
+                <Label text="%TargetFormats" />
+                <CheckBox fx:id="csvCheck" mnemonicParsing="false" selected="true" text="csv" />
+                <CheckBox fx:id="jsonCheck" layoutX="384.0" layoutY="10.0" mnemonicParsing="false" text="json" />
+                <CheckBox mnemonicParsing="false" text="xlsx(Excel 2007)" fx:id="xlsxCheck" />
+                <CheckBox layoutX="270.0" layoutY="10.0" mnemonicParsing="false" text="xml" fx:id="xmlCheck" />
+                <CheckBox fx:id="htmlCheck" layoutX="164.0" layoutY="10.0" mnemonicParsing="false" text="html" />
+                <CheckBox fx:id="pdfCheck" layoutX="69.0" layoutY="10.0" mnemonicParsing="false" text="PDF" />
+            </children>
+        </FlowPane>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+            <children>
+                <Label text="%SplitFilesSize" />
+                <ComboBox fx:id="maxLinesSelector" editable="true" prefWidth="200.0" />
+            </children>
+        </HBox>
+        <fx:include fx:id="csvWrite" source="ControlCsvWrite.fxml" />
+        <VBox fx:id="columnsWidthBox" spacing="5.0">
+            <children>
+                <Label text="%PdfColumnsWidthPxList" />
+                <TextField fx:id="widthList" maxWidth="1.7976931348623157E308" />
+            </children>
+        </VBox>
+        <VBox fx:id="styleBox" maxHeight="1.7976931348623157E308" spacing="5.0">
+            <children>
+                <Label text="%HtmlStyle" />
+                <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+    </children>
+</VBox>

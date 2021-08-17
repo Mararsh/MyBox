@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+
+
+<FlowPane fx:id="thisPane" alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="1000.0" vgap="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPlay">
+   <children>
+          <Label maxWidth="1.7976931348623157E308" />
+          <Label fx:id="speedLabel" minHeight="-Infinity" text="%IntervalMilliseconds" wrapText="true" />
+          <ComboBox fx:id="intervalSelector" editable="true" prefWidth="100.0" />
+          <Label minHeight="-Infinity" text="%MultipleSpeed" wrapText="true" />
+          <ComboBox fx:id="speedSelector" editable="true" prefWidth="80.0" />
+        <Label minHeight="-Infinity" text="%Frame" wrapText="true" />
+        <ComboBox fx:id="frameSelector" prefWidth="100.0" />
+      <Label fx:id="totalLabel" minHeight="-Infinity" text="/" wrapText="true" />
+        <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseAction">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconPause.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+      <CheckBox fx:id="loopCheck" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Loop" wrapText="true" />
+      <CheckBox fx:id="reverseCheck" minHeight="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Reverse" wrapText="true" />
+      <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconFirst.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconLast.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+        <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconPrevious.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconNext.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+   </children>
+</FlowPane>

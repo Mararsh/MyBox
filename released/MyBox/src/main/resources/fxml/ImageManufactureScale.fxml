@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureScaleController">
+    <children>
+        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+            <children>
+                <RadioButton fx:id="dragRadio" mnemonicParsing="false" selected="true" text="%AdjustByDragging">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="scaleGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="scaleRadio" contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ZoomScale" toggleGroup="$scaleGroup" />
+                <RadioButton fx:id="pixelsRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Pixels" toggleGroup="$scaleGroup" />
+            </children>
+            <VBox.margin>
+                <Insets bottom="10.0" />
+            </VBox.margin>
+        </VBox>
+        <VBox fx:id="setBox" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <VBox fx:id="keepBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                  <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" text="%KeepRatio" />
+                  <VBox fx:id="ratioBox" spacing="5.0">
+                     <children>
+                              <RadioButton fx:id="widthRadio" mnemonicParsing="false" selected="true" text="%BaseOnWidth">
+                                  <toggleGroup>
+                                      <ToggleGroup fx:id="keepGroup" />
+                                  </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="heightRadio" contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnHeight" toggleGroup="$keepGroup" />
+                              <RadioButton fx:id="largerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnLarger" toggleGroup="$keepGroup" />
+                              <RadioButton fx:id="smallerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnSmaller" toggleGroup="$keepGroup" />
+                     </children>
+                  </VBox>
+                    </children>
+                </VBox>
+                <ComboBox fx:id="scaleSelector" editable="true" prefWidth="200.0" />
+                <VBox fx:id="pixelBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label fx:id="label1" text="%Width" />
+                                <TextField fx:id="widthInput" prefWidth="120.0" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Label fx:id="label2" text="%Height" />
+                                <TextField fx:id="heightInput" prefWidth="120.0" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Button fx:id="originalButton" mnemonicParsing="false" onAction="#originalSize">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconOriginalSize.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="calculatorButton" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconCalculator.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            <VBox fx:id="hintsBox" spacing="5.0" VBox.vgrow="NEVER">
+               <children>
+                  <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                        <Label text="%Interpolation" />
+                        <FlowPane hgap="5.0" vgap="5.0">
+                           <children>
+                              <RadioButton fx:id="interpolationNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="interpolationGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="interpolation9Radio" mnemonicParsing="false" text="%Interpolation9" toggleGroup="$interpolationGroup" />
+                              <RadioButton fx:id="interpolation4Radio" mnemonicParsing="false" text="%Interpolation4" toggleGroup="$interpolationGroup" />
+                              <RadioButton fx:id="interpolation1Radio" mnemonicParsing="false" text="%Interpolation1" toggleGroup="$interpolationGroup" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                        <Label text="%Dithering" />
+                        <FlowPane hgap="5.0" vgap="5.0">
+                           <children>
+                              <RadioButton fx:id="ditherNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="ditherGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="ditherOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$ditherGroup" />
+                              <RadioButton fx:id="ditherOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$ditherGroup" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                        <Label text="%AntiAlias" />
+                        <FlowPane hgap="5.0" vgap="5.0">
+                           <children>
+                              <RadioButton fx:id="antiNullRadio" mnemonicParsing="false" selected="true" text="%NotSetting">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="antiAliasGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="antiOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$antiAliasGroup" />
+                              <RadioButton fx:id="antiOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$antiAliasGroup" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                        <Label text="%BestQuality" />
+                        <FlowPane hgap="5.0" vgap="5.0">
+                           <children>
+                              <RadioButton fx:id="qualityNullRadio" mnemonicParsing="false" text="%NotSetting">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="qualityGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="qualityOnRadio" mnemonicParsing="false" selected="true" text="%On" toggleGroup="$qualityGroup" />
+                              <RadioButton fx:id="qualityOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$qualityGroup" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            </children>
+        </VBox>
+        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Label fx:id="commentsLabel" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
+    </children>
+</VBox>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS"
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesTable">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFileAdd.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="pasteContentInSystemClipboardButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#pasteAction">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconPasteSystem.png" />
+                            </image> 
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" onMouseEntered="#popFileInsert">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFileInsert.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="upFilesButton" mnemonicParsing="false" onAction="#upFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconUp.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="downFilesButton" mnemonicParsing="false" onAction="#downFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconDown.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="selectAllFilesButton" mnemonicParsing="false" onAction="#selectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconSelectAll.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="unselectAllFilesButton" mnemonicParsing="false" onAction="#unselectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconSelectNone.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFileDelete.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="clearFilesButton" mnemonicParsing="false" onAction="#clearFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="viewFileButton" mnemonicParsing="false" onAction="#viewFileAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconView.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="editFileButton" mnemonicParsing="false" onAction="#editFileAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconEdit.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#metaAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMeta.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconInfo.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <CheckBox fx:id="tableThumbCheck" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconThumbsList.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconTipsRight.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </HBox>
+        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
+                <TableColumn fx:id="durationColumn" prefWidth="120.0" text="%DurationMillisecondsWrap" />
+                <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
+                <TableColumn fx:id="pixelsColumn" editable="false" prefWidth="120.0" text="%Pixels" />
+                <TableColumn fx:id="colorSpaceColumn" editable="false" prefWidth="100.0" text="%ColorSpace" />
+                <TableColumn fx:id="fileColumn" editable="false" prefWidth="160.0" text="%File" />
+                <TableColumn fx:id="indexColumn" editable="false" prefWidth="70.0" text="%Index" />
+                <TableColumn fx:id="sizeColumn" editable="false" prefWidth="120.0" text="%FileSize" />
+                <TableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifyTime" />
+                <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
+            </columns>
+        </TableView>
+        <FlowPane fx:id="setPDFPane" hgap="5.0" vgap="5.0">
+            <children>
+                <HBox fx:id="fromToBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label text="%DurationMilliseconds" />
+                        <ComboBox fx:id="durationSelector" editable="true" prefWidth="120.0" />
+                    </children>
+                </HBox>
+                <Button fx:id="setAllOrSelectedButton" mnemonicParsing="false" onAction="#setDurationAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconEqual.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Label fx:id="setLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SetAllOrSelected" />
+            </children>
+        </FlowPane>
+        <Label fx:id="tableLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " VBox.vgrow="NEVER" />
+    </children>
+</VBox>

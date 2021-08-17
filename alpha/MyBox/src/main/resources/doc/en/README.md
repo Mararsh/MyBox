@@ -4,11 +4,11 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## What's New            
-2021-7-31 v6.4.7         
+2021-8-17 v6.4.7         
 
-* Add. Text in System Clipboard. Text in MyBox Clipboard. Context menu of all text input controls. Context menu of html.       
-* Improve and fix. Text Editor. Clean of closed windows.          
-* Solved problems.  Can not open microsoft documents(word/excel/ppt). Page number is empty in data tables.            
+* Improve interfaces. Consistent context menus of image/html/text. Better clipboards of image/text/data. Easier editor of Markdown/html/note/image. Integrated PDF viewer.      
+* Optimize codes. Split big classes. Adjust shortcuts. Correct colors of icons.          
+* Solved problems.  Very slow reading of jpg file. Transparency does not work for pen and eraser in Image Manufacture.            
 
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.7)        
    
@@ -93,7 +93,7 @@ Function "Settings" can be used to change configuration values.
 # Documents        
 | Name | Version | Time | Link |        
 | --- | --- | --- |  --- |
-| Development Logs | 6.4.7 | 2021-7-7 | [html](#devLog) |
+| Development Logs | 6.4.7 | 2021-8-17 | [html](#devLog) |
 | Shortcuts | 6.3.9 | 2021-2-11 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
@@ -272,46 +272,54 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 ##  Document Tools <a id="documentTools"></a>
 
 ### Notes<a id="notes" />
-1. Notes are information pieces in html format. Notebook is collection of notes and notebooks. Notebooks are organized as a tree.
-2. Manage notebooks. Export/add/delete/rename/copy/move against any notebook in the tree.
-3. Import notebook. Example is provided.
-4. Export notes:
-	-  Formats: Text(for import), single html, html frameset, xml.
-	-  Charset can be set.
-	-  Html style can be set.
-5. Edit note:
-	-  Write html codes directly or use Rich Text Editor.
-	-  Set tags for note.
-6. Query notes:
+1. Note is a piece of information in html format:
+	-  Note can be edited in 4 modes: "html code", "Rich text", "Markdown", "Texts":
+              - Each edit mode can change the html separately. 
+              - The mode in current tab is "current edit mode".
+              - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+              - Click button "Save"(F2) to save updates in current edit mode and synchronize automatically.
+              - Note' html code should be contents of "body" and have not tags "html", "head" and "body".
+	-  Tags can be set for note.
+	-  Style can be set for note. Style is only for displaying and not saved in note's codes.
+2. Notebook is collection of some notes and some notebooks:
+	-  Notebooks are organized as a tree, that is notebooks can be children of other notebook.
+	-  Notebook's name should not include string " > "(Blank before and after ">").
+	-  Export/add/delete/rename/copy/move can be done against any notebook in the tree.
+	-  Export notes:
+		-  Formats: Text(for import), single html, html frameset, xml.
+		-  Charset can be set.
+		-  Html style can be set.
+	-  Import notebook. Example is provided.
+3. Query notes:
 	-  By notebooks. Option about whether include sub-notebooks.
 	-  By tags.
 	-  By times.
-	-  By strings in title/contents.        
+	-  By strings in title/contents.  
 
 ![Snap-notes](https://mararsh.github.io/MyBox/snap-notes-en.jpg)        
 
 
 ### PDF Tools <a id="PDFTools"></a>
-1. View PDF file in image mode. Each page is converted as an image:        
+1. View PDF file:
 	-  Bookmarks and thumbnails.
-	-  DPI can be set to adjust resolution.
-	-  Page can be cropped as images.
+	-  Each page is converted as an image. DPI can be set to adjust resolution.  
+	-  Extract text in page.
+	-  Convert page as a html page.
 	-  Recognize texts in PDF(OCR).
-2. View PDF in html mode. Browse and edit html page by page.
-3. Convert PDF files in batch：
+2. Convert PDF files in batch：
 	-  Convert pages of PDF as image files. Options like format, density, color space, compression, quality, etc.
 	-  Convert images in selected pages of PDF files, and save as new PDF files.
 	-  Compress images in PDF files, and save as new PDF files. JPEG quality or threshold of black-white can be set.
 	-  Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
-4. Extract data in batch:
+3. Extract data in batch:
 	-  Extract images in PDF file.
 	-  Extract texts in PDF file. Splitting line can be customized.
 	-  Recognize texts(OCR) in images of PDF files.
-5. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
-6. Merge multiple PDF files.
-7. Combine multiple images as PDF file.
-8. Options to write PDF like page size,  image attributes, font file, margin size, header, author, etc.
-9. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.        
+4. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
+5. Merge multiple PDF files.
+6. Combine multiple images as PDF file.
+7. Options to write PDF like page size,  image attributes, font file, margin size, header, author, etc.
+8. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.        
 
 ![Snap-pdf](https://mararsh.github.io/MyBox/snap-pdf-en.jpg)        
 
@@ -342,9 +350,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 ### Markdown Tools<a id="markdownTools" />         
 1. Markdown Editor:
 	-  Provide buttons to help inputting formats.     
-	-  Display, and update synchronously：
-		-  Converted htmls.
-		-  Converted html codes.
+	-  Display converted html and html codes synchronously：
 2. Convert Markdown as html in batch.
 3. Convert Markdown as texts in batch.
 4. Convert Markdown as PDFs in batch.
@@ -364,12 +370,16 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 5. Replace strings in text files in batch.      
 
 ### Html Tools<a id="htmlTools" />       
-1. Html Editor
-	-  Load/Edit local web pages or online pages, and update synchronously：             
-		-  Web broswer.
-		-  Edit rich texts. (Not support FrameSet)
-		-  Edit Html codes. (Support FrameSet)
-		-  Edit Markdown.
+1. Html Editor:    
+	-  Html can be loaded by opening file, creating new file , or inputting address.
+	-  Html can be edited in 4 modes which are "html code", "Rich text", "Markdown", "Texts":
+		-  Each edit mode can change the html separately. 
+		-  The mode in current tab is "current edit mode".
+		-  Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+		-  Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
+		-  Click button "Pop"(CTRL/ALT+p) to display contents in current edit mode in a new window.
+		-  Click button "Menu" or right click edit area to pop buttons menu.
+		-  Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.
 	-  Select frame in frameset to edit.    
 2. Find strings in html.
 3. Find elements in html.
@@ -419,14 +429,15 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 4. In context menu of all text input controls, MyBox Clipboard can be popped for selecting text to paste.
 
 ### Text in System Clipboard<a id="systemTextClipboard" />
-1. Load/Refresh/Delete text in System Clipboard.
-2. Record texts in System Clipboard:
-	-  After button is clicked, new texts in System Clipboard are monitored and saved in MyBox Clipboard.
-	-  Monitor interval can be set.
-	-  Monitored texts can be accumulated in this interface.
-	-  Status of the monitoring is persistent while MyBox is running:
-		-  After started, it continues recording even when this interface is closed. 
-		-  If it is running when MyBox exits, then it will be started automatically when MyBox starts next time.
+Load/Refresh/Delete text in System Clipboard:            
+1. After button is clicked, new texts in System Clipboard are monitored and saved in MyBox Clipboard.
+2. Monitor interval can be set.
+3. Monitored texts can be accumulated in this interface. Separator can be choiced.
+4. This monitoring stops when one of following happens：
+	-  User clicks button "Stop"
+	-  MyBox exits.
+	-  "Copy to MyBox Clipboard" is not checked and this interface is closed.
+5. Option "Start monitoring when MyBox reboots".     
 
 ## Image Tools <a id="imageTools"></a>
 
@@ -486,6 +497,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 	-  Pause/Continue
 	-  Select a frame
  	-  Previous/Next frame
+ 	-  Options "Loop" and "Reverse"
 
 ### Image Manufacture <a id="imageManufacture"></a>
 1. Copy
@@ -543,7 +555,6 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 17. Pop current image. Option: Whether always on top.
 18. Interface in style of "Visible As Need":
 	- Show/Hide left pane(F4), show/hide right pane(F5)
-	- Show/Hide scope pane(F7), show/hide image pane(F8)
 	- Vertical accordion menus
 	- Overlaying tabs to switch
 	- Show/Hide controls as functions
@@ -551,7 +562,6 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 20. Image Manufacture in batch.        
 
 ![Snap-imageManufacture](https://mararsh.github.io/MyBox/snap-imageManufacture-en.jpg)        
-
 
 ### Edit Images<a id="imagesList" />
 1. Add following：
@@ -565,6 +575,7 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 5. Save the list:：
 	-  Select some images by CTRL/SELECT to save, or select none to save whole list.
 	-  Save each item as a supported image file.
+	-  Splice images.
 	-  Merge items as a multipleg-frames tif file.
 	-  Merge items as an animated gif  file.
 	-  Merge items as a PDF file.
@@ -574,9 +585,8 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 
 
 ### Merge images <a id="multipleImages"></a>
-1. Combine images. Options like array ordering, background color, interval, margins, and size.
-2. Combine images in PDF file.
-3. Add Alpha channel.
+1. Splice images. Options like array ordering, background color, interval, margins, and size.
+2. Add Alpha channel.
 
 ### Part image <a id="imagePart"></a>
 1. Split image. By number, by size, or by customizing. Results can be saved as image files, multiple frames Tiff file, or PDF file.
@@ -717,12 +727,18 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 4. Selected image can be copyed in System Clipboard.    
 
 ### Images in System Clipboard<a id="systemImageClipboard" />
-1. Load/Refresh/Delete image in System Clipboard.
-2. Record images in System Clipboard:
-	-  After button is clicked, new images in System Clipboard are monitored.
-	-  Monitor interval can be set.
-	-  Monitored images can be saved as files, or copyed in Mybox Clipboard.
-	-  Width of saved image can be set.          
+Load/Refresh/Delete image in System Clipboard:     
+1. After button is clicked, new images in System Clipboard are monitored.
+2. Monitor interval can be set.
+3. Monitored images can be saved as files, or copyed in Mybox Clipboard.
+4. Width of saved image can be set.          
+5. The monitoring stops when one of following happens：
+	-  User clicks button "Stop"
+	-  MyBox exits.
+	-  All of following are satisfied:
+		- "Copy to MyBox Clipboard" is not checked
+		- "Save as Files" is not checked or target path is invalid
+		- This interface is closed
 
 ![Snap-systemClipboard](https://mararsh.github.io/MyBox/snap-systemClipboard-en.jpg)         
 
@@ -1461,7 +1477,15 @@ Decoding does reverse conversion.
 4. Documents：Help user start download tasks. If MyBox documents are put into data path, MyBox will find them automatically.
 5. About
 
-# Development Logs <a id="devLog"></a>         
+# Development Logs <a id="devLog"></a>           
+2021-8-17 v6.4.7         
+
+* Improve interfaces. Consistent context menus of image/html/text. Better clipboards of image/text/data. Easier editor of Markdown/html/note/image. Integrated PDF viewer.      
+* Optimize codes. Split big classes. Adjust shortcuts. Correct colors of icons.          
+* Solved problems.  Very slow reading of jpg file. Transparency does not work for pen and eraser in Image Manufacture.            
+
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.4.7)         
+
 2021-7-7 v6.4.6         
 
 * Add. Text in System Clipboard. Text in MyBox Clipboard. Context menu of all text input controls. Context menu of html.       

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureEffectsOptionsController">
+    <children>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="80.0" prefWrapLength="200.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+            <VBox.margin>
+                <Insets bottom="10.0" />
+            </VBox.margin>
+            <children>
+                <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" selected="true" text="%Posterizing">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="effectGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="ThresholdingRadio" layoutX="181.0" layoutY="10.0" text="%Thresholding" toggleGroup="$effectGroup">
+                </RadioButton>
+                <RadioButton fx:id="GrayRadio" layoutX="10.0" layoutY="10.0" text="%Gray" toggleGroup="$effectGroup">
+                </RadioButton>
+                <RadioButton fx:id="SepiaRadio" layoutX="10.0" layoutY="35.0" text="%Sepia" toggleGroup="$effectGroup">
+                </RadioButton>
+                <RadioButton fx:id="BlackOrWhiteRadio" layoutX="88.0" layoutY="35.0" text="%BlackOrWhite" toggleGroup="$effectGroup">
+                </RadioButton>
+                <RadioButton fx:id="EdgeDetectionRadio" layoutX="200.0" layoutY="35.0" text="%EdgeDetection" toggleGroup="$effectGroup">
+                </RadioButton>
+                <RadioButton fx:id="EmbossRadio" layoutX="10.0" layoutY="85.0" text="%Emboss" toggleGroup="$effectGroup">
+                </RadioButton>
+                <RadioButton fx:id="effectMosaicRadio" mnemonicParsing="false" text="%Mosaic" toggleGroup="$effectGroup" />
+                <RadioButton fx:id="effectFrostedRadio" mnemonicParsing="false" text="%FrostedGlass" toggleGroup="$effectGroup" />
+            </children>
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </padding>
+        </FlowPane>
+        <VBox fx:id="setBox" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <VBox fx:id="quanBox" layoutX="10.0" layoutY="538.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                              <Label text="%Algorithm" />
+                                <ImageView fx:id="quanTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconTips.png" />
+                                    </image>
+                                </ImageView>
+                     </children>
+                  </HBox>
+                        <RadioButton fx:id="rgbQuanRadio" mnemonicParsing="false" selected="true" text="%RGBUniformQuantization">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="quanGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="hsbQuanRadio" mnemonicParsing="false" text="%HSBUniformQuantization" toggleGroup="$quanGroup" />
+                        <RadioButton fx:id="popularQuanRadio" mnemonicParsing="false" text="%PopularityQuantization" toggleGroup="$quanGroup" />
+                        <RadioButton fx:id="kmeansQuanRadio" layoutX="15.0" layoutY="97.0" mnemonicParsing="false" text="%KMeansClustering" toggleGroup="$quanGroup" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label fx:id="stringLabel1" text="%ColorsNumber" />
+                                <ComboBox fx:id="quanColorsSelector" editable="true" maxWidth="1.7976931348623157E308" prefWidth="140.0" />
+                            </children>
+                        </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="277.0" spacing="5.0">
+                     <children>
+                        <Label fx:id="weightLabel" text="%RGBWeight" />
+                        <ComboBox fx:id="weightSelector" editable="true" prefWidth="160.0" />
+                     </children>
+                  </HBox>
+                        <HBox fx:id="regionBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label fx:id="depthLabel" text="%PreprocessedRegionSize" />
+                                <ComboBox fx:id="regionSizeSelector" editable="true" prefWidth="120.0" />
+                            </children>
+                        </HBox>
+                  <HBox fx:id="loopBox" alignment="CENTER_LEFT" layoutX="15.0" layoutY="277.0" spacing="5.0">
+                     <children>
+                        <Label fx:id="intBoxLabel2" text="%MaximumLoop" />
+                        <ComboBox fx:id="kmeansLoopSelector" editable="true" prefWidth="100.0" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="actualLoopLabel" minHeight="-Infinity" wrapText="true" />
+                          <CheckBox fx:id="ceilCheck" mnemonicParsing="false" selected="true" text="%MathCeil" />
+                  <CheckBox fx:id="quanDitherCheck" mnemonicParsing="false" selected="true" text="%Dithering" />
+                        <CheckBox fx:id="quanDataCheck" mnemonicParsing="false" selected="true" text="%ShowData" />
+                    </children>
+                </VBox>
+                <FlowPane fx:id="stringBoxPane" hgap="5.0" layoutX="32.0" layoutY="421.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="stringLabel" text="%Value" />
+                        <ComboBox fx:id="stringBox" editable="true" maxWidth="1.7976931348623157E308" prefWidth="200.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="intBoxPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="intBoxLabel" text="l" />
+                        <ComboBox fx:id="intBox" editable="true" prefWidth="100.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="intInputPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="intLabel" text="l" />
+                        <TextField fx:id="intInput" prefWidth="80.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="intInputPane2" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="intLabel2" text="l" />
+                        <TextField fx:id="intInput2" prefWidth="80.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="intInputPane3" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="intLabel3" text="l" />
+                        <TextField fx:id="intInput3" prefWidth="80.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="othersPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" vgap="5.0">
+                    <children>
+                        <CheckBox fx:id="valueCheck" mnemonicParsing="false" text="CheckBox" />
+                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconTips.png" />
+                            </image>
+                        </ImageView>
+                        <Button fx:id="button" mnemonicParsing="false" text="Button" />
+                    </children>
+                </FlowPane>
+                <VBox fx:id="bwBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                        <RadioButton fx:id="otsuRadio" mnemonicParsing="false" selected="true" text="%OTSU">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="bwGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="radio2" mnemonicParsing="false" text="%Default" toggleGroup="$bwGroup" />
+                        <RadioButton fx:id="radio3" mnemonicParsing="false" text="%Threshold" toggleGroup="$bwGroup" />
+                    </children>
+                </VBox>
+                <VBox fx:id="edgeBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                        <Label text="%Algorithm" />
+                        <RadioButton fx:id="eightLaplaceRadio" mnemonicParsing="false" selected="true" text="%EightNeighborLaplace">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="edgeGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="eightLaplaceExcludedRadio" mnemonicParsing="false" text="%EightNeighborLaplaceInvert" toggleGroup="$edgeGroup" />
+                        <RadioButton fx:id="fourLaplaceRadio" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$edgeGroup" />
+                        <RadioButton fx:id="fourLaplaceExcludedRadio" layoutX="15.0" layoutY="97.0" mnemonicParsing="false" text="%FourNeighborLaplaceInvert" toggleGroup="$edgeGroup" />
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </children>
+</VBox>

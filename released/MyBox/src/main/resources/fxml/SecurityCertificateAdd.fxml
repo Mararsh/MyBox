@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="thisPane" spacing="20.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SecurityCertificatesAddController">
+    <children>
+        <HBox alignment="CENTER" VBox.vgrow="NEVER">
+            <children>
+                <Label contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%SecurityCertificates" textAlignment="CENTER" VBox.vgrow="NEVER" />
+            </children>
+        </HBox>
+        <HBox fx:id="codeBox1" alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <RadioButton fx:id="fileRadio" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%CertificateFile" wrapText="true">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="typeGroup" />
+                    </toggleGroup></RadioButton>
+                <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOpen.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconView.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <HBox fx:id="codeBox" alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <RadioButton fx:id="addressRadio" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%Address" toggleGroup="$typeGroup" />
+                <TextField fx:id="addressInput" maxWidth="1.7976931348623157E308" text="www." HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+      <CheckBox fx:id="chainCheck" mnemonicParsing="false" text="%WholeCertChain" />
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFlower.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="30.0" left="20.0" right="20.0" top="30.0" />
+    </padding>
+</VBox>

@@ -1,0 +1,322 @@
+package mara.mybox.controller;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+import javafx.stage.Screen;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.CropTools;
+import mara.mybox.fxml.ValidationTools;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.TmpFileTools;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
+
+/**
+ * @Author Mara
+ * @CreateDate 2020-10-20
+ * @License Apache License Version 2.0
+ */
+public class HtmlSnapController extends BaseWebViewController {
+
+    protected int delay, orginalStageWidth, orginalStageHeight, orginalStageX, orginalStageY;
+    protected int lastHtmlLen, lastCodesLen;
+    protected List<File> snaps;
+    protected int cols, rows;
+    protected int lastTextLen;
+    protected SnapshotParameters snapParameters;
+    protected int snapFileWidth, snapFileHeight, snapsTotal,
+            snapImageWidth, snapImageHeight, snapTotalHeight, snapHeight, snapStep;
+    protected double snapScale;
+    protected LoadingController loadingController;
+
+    @FXML
+    protected Button snapshotButton;
+    @FXML
+    protected ComboBox<String> delaySelector;
+
+    public HtmlSnapController() {
+        baseTitle = message("HtmlSnap");
+        TipsLabelKey = "HtmlSnapComments";
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            lastCodesLen = lastHtmlLen = 0;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            delay = UserConfig.getInt(baseName + "Delay", 2000);
+            if (delay <= 0) {
+                delay = 2000;
+            }
+            delaySelector.getItems().addAll(Arrays.asList("2", "3", "5", "1", "10"));
+            delaySelector.getSelectionModel().select(delay + "");
+            delaySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            delay = v * 1000;
+                            UserConfig.setInt(baseName + "Delay", v);
+                            ValidationTools.setEditorNormal(delaySelector);
+                        } else {
+                            ValidationTools.setEditorBadStyle(delaySelector);
+                        }
+                    } catch (Exception e) {
+                        ValidationTools.setEditorBadStyle(delaySelector);
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    public void snapAction() {
+        try {
+            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+            orginalStageWidth = (int) getMyStage().getWidth();
+            orginalStageHeight = (int) getMyStage().getHeight();
+            orginalStageX = (int) myStage.getX();
+            orginalStageY = (int) myStage.getY();
+
+            int pageWidth = (Integer) webEngine.executeScript("document.documentElement.scrollWidth || document.body.scrollWidth;");
+            if (pageWidth > 0) {
+                myStage.setX(0);
+                myStage.setWidth(pageWidth + 40);
+            }
+            myStage.setY(0);
+            myStage.setHeight(primaryScreenBounds.getHeight());
+
+            final int maxDelay = delay * 30;
+            final long startTime = new Date().getTime();
+
+            if (loadingController != null) {
+                loadingController.closeStage();
+                loadingController = null;
+            }
+            loadingController = handling();
+
+            if (timer != null) {
+                timer.cancel();
+            }
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                int lastHeight = 0, newHeight = -1;
+
+                @Override
+                public void run() {
+                    boolean quit = false;
+                    if (isCanceled() || newHeight == lastHeight || new Date().getTime() - startTime > maxDelay) {
+                        quit = true;
+                    }
+                    if (quit) {
+                        this.cancel();
+                        return;
+                    }
+
+                    lastHeight = newHeight;
+                    Platform.runLater(() -> {
+                        try {
+                            newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
+                            loadingController.setInfo(message("CurrentPageHeight") + ": " + newHeight);
+                            if (newHeight == lastHeight) {
+                                loadingController.setInfo(message("ExpandingPage"));
+                                startSnap();
+                            } else {
+                                webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
+                            }
+
+                        } catch (Exception e) {
+                            MyBoxLog.error(e.toString());
+                            stopSnap();
+                        }
+                    });
+
+                }
+            }, 0, delay);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+
+    }
+
+    protected void startSnap() {
+        try {
+            if (isCanceled()) {
+                return;
+            }
+            webEngine.executeScript("window.scrollTo(0,0 );");
+            snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
+            snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
+            snapHeight = 0;
+            webViewLabel.setText(message("SnapingImage..."));
+
+            // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
+            final Bounds bounds = webView.getLayoutBounds();
+            snapScale = dpi / Screen.getPrimary().getDpi();
+            snapScale = snapScale > 1 ? snapScale : 1;
+            snapImageWidth = (int) Math.round(bounds.getWidth() * snapScale);
+            snapImageHeight = (int) Math.round(bounds.getHeight() * snapScale);
+            snapParameters = new SnapshotParameters();
+            snapParameters.setFill(Color.TRANSPARENT);
+            snapParameters.setTransform(javafx.scene.transform.Transform.scale(snapScale, snapScale));
+
+            snaps = new ArrayList<>();
+            snapsTotal = snapTotalHeight % snapStep == 0
+                    ? snapTotalHeight / snapStep : snapTotalHeight / snapStep + 1;
+            snapFileWidth = snapFileHeight = 0;
+
+            if (timer != null) {
+                timer.cancel();
+            }
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        snap();
+                    });
+                }
+            }, 2000);    // make sure page is loaded before snapping
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void snap() {
+        try {
+            if (isCanceled()) {
+                return;
+            }
+            WritableImage snapshot = new WritableImage(snapImageWidth, snapImageHeight);
+            snapshot = webView.snapshot(snapParameters, snapshot);
+            Image cropped;
+            if (snapTotalHeight < snapHeight + snapStep) { // last snap
+                cropped = CropTools.cropOutsideFx(snapshot, 0,
+                        (int) ((snapStep + snapHeight - snapTotalHeight) * snapScale),
+                        (int) snapshot.getWidth() - 1, (int) snapshot.getHeight() - 1);
+            } else {
+                cropped = snapshot;
+            }
+            if (cropped.getWidth() > snapFileWidth) {
+                snapFileWidth = (int) cropped.getWidth();
+            }
+            snapFileHeight += cropped.getHeight();
+            snapHeight += snapStep;
+            File tmpfile = TmpFileTools.getTempFile(".png");
+            ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(cropped, null), "png", tmpfile.getAbsolutePath());
+            snaps.add(tmpfile);
+            if (isCanceled()) {
+                return;
+            }
+            loadingController.setInfo(message("CurrentPageHeight") + ": " + snapHeight
+                    + "\n" + message("Count") + ": " + snaps.size());
+            if (snapTotalHeight > snapHeight) {
+                webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
+                if (timer != null) {
+                    timer.cancel();
+                }
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            if (isCanceled()) {
+                                return;
+                            }
+                            snap();
+                        });
+                    }
+                }, 300);    // make sure page is loaded before snapping
+
+            } else { // last snap
+                if (isCanceled()) {
+                    return;
+                }
+                if (snaps != null && !snaps.isEmpty()) {
+                    ImagesEditorController.open(snaps);
+                }
+                stopSnap();
+
+            }
+
+        } catch (Exception e) {
+            webEngine.executeScript("window.scrollTo(0,0 );");
+            popFailed();
+            stopSnap();
+        }
+
+    }
+
+    protected boolean isCanceled() {
+        if (loadingController == null || loadingController.isIsCanceled()) {
+            stopSnap();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected void stopSnap() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        if (loadingController != null) {
+            loadingController.closeStage();
+            loadingController = null;
+        }
+        snaps = null;
+        webEngine.getLoadWorker().cancel();
+        webEngine.executeScript("window.scrollTo(0,0 );");
+        webViewLabel.setText("");
+        myStage.setX(orginalStageX);
+        myStage.setY(orginalStageY);
+        myStage.setWidth(orginalStageWidth);
+        myStage.setHeight(orginalStageHeight);
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            stopSnap();
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
+}
