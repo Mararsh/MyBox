@@ -37,6 +37,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     protected PdfInformation pdfInformation;
     protected File htmlFile, subPath;
     protected PDFDomTreeConfig domConfig;
+    protected WebView webView;
     protected WebEngine webEngine;
     protected boolean atTop, atBottom, setScroll;
     protected Task htmlTask;
@@ -45,7 +46,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     @FXML
     protected Tab htmlTab;
     @FXML
-    protected WebView webView;
+    protected ControlWebView webViewController;
     @FXML
     protected Label webViewLabel;
 
@@ -76,6 +77,10 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     public void initControls() {
         try {
             super.initControls();
+
+            webViewController.setParent(this);
+            webView = webViewController.webView;
+            webEngine = webViewController.webEngine;
 
             domConfig = PDFDomTreeConfig.createDefaultConfig();
 

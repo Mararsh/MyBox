@@ -1,12 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.stage.Modality;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -26,7 +23,6 @@ public class WordViewController extends BaseWebViewController {
         setFileType(VisitHistory.FileType.WordS, VisitHistory.FileType.Html);
     }
 
-    @Override
     public boolean loadFile(File file) {
         if (file == null) {
             getMyStage().setTitle(getBaseTitle());
@@ -44,7 +40,7 @@ public class WordViewController extends BaseWebViewController {
                 protected boolean handle() {
                     String suffix = FileNameTools.getFileSuffix(file);
                     if ("doc".equalsIgnoreCase(suffix)) {
-                        html = MicrosoftDocumentTools.word2html(file, charset);
+                        html = MicrosoftDocumentTools.word2html(file, getCharset());
                     } else if ("docx".equalsIgnoreCase(suffix)) {
                         String text = MicrosoftDocumentTools.extractText(file);
                         if (text == null) {

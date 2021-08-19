@@ -151,12 +151,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         try {
             if (imageController != null) {
                 imageController.resetImagePane();
-                if (scopeController != null && scopeController.scope != null
-                        && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                    imageController.scopeTab();
-                } else {
-                    imageController.imageTab();
-                }
+                imageController.scopeTab();
             }
 
             clearValues();

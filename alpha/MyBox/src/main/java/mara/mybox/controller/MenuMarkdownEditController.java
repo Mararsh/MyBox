@@ -406,7 +406,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
         if (textInput == null) {
             return false;
         }
-        MarkdownPopController.open(parentController, textInput.getText());
+        MarkdownPopController.open(parentController, textInput);
         return true;
     }
 

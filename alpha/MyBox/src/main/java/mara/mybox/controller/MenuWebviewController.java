@@ -7,8 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.Window;
@@ -31,7 +31,7 @@ public class MenuWebviewController extends MenuController {
 
     protected WebView webView;
     protected Element element;
-    protected BaseWebViewController webViewController;
+    protected ControlWebView webViewController;
 
     @FXML
     protected Button copyToMyBoxClipboardTextButton, copyToMyBoxClipboardHtmlButton,
@@ -48,25 +48,17 @@ public class MenuWebviewController extends MenuController {
         setFileType(VisitHistory.FileType.Html);
     }
 
-    public void setParameters(BaseWebViewController webViewController, WebView webview, Element element) {
+    public void setParameters(ControlWebView webViewController, Element element) {
         try {
             if (webViewController == null) {
                 return;
             }
             this.baseName = webViewController.baseName;
             this.webViewController = webViewController;
-            this.webView = webview;
+            this.webView = webViewController.webView;
             this.element = element;
             if (webView == null) {
                 return;
-            }
-            if (webView.getId() == null) {
-                HTMLEditor editor = WebViewTools.editor(webView);
-                if (editor != null) {
-                    setTitleid(editor.getId());
-                }
-            } else {
-                setTitleid(webView.getId());
             }
 
             webView.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -78,6 +70,12 @@ public class MenuWebviewController extends MenuController {
 
             setControlsStyle();
             checkWebviewPane();
+
+            if (webViewController instanceof ControlHtmlEditor) {
+                setTitleid(((ControlHtmlEditor) webViewController).htmlEditor.getId());
+            } else {
+                setTitleid(webView.getId());
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -156,6 +154,14 @@ public class MenuWebviewController extends MenuController {
     }
 
     @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return webViewController.keyEventsFilter(event);
+        }
+        return true;
+    }
+
+    @Override
     public boolean controlAltT() {
         copyTextToSystemClipboard();
         return true;
@@ -163,30 +169,16 @@ public class MenuWebviewController extends MenuController {
 
     @FXML
     public void copyTextToSystemClipboard() {
-        if (webView == null) {
-            return;
+        if (webViewController.copyTextToSystemClipboard()) {
+            checkWebviewPane();
         }
-        String text = WebViewTools.selectedText(webView.getEngine());
-        if (text == null || text.isEmpty()) {
-            popError(message("SelectedNone"));
-            return;
-        }
-        TextClipboardTools.copyToSystemClipboard(myController, text);
-        checkWebviewPane();
     }
 
     @FXML
     public void copyTextToMyboxClipboard() {
-        if (webView == null) {
-            return;
+        if (webViewController.copyTextToMyboxClipboard()) {
+            checkWebviewPane();
         }
-        String text = WebViewTools.selectedText(webView.getEngine());
-        if (text == null || text.isEmpty()) {
-            popError(message("SelectedNone"));
-            return;
-        }
-        TextClipboardTools.copyToMyBoxClipboard(myController, text);
-        checkWebviewPane();
     }
 
     @Override
@@ -197,73 +189,44 @@ public class MenuWebviewController extends MenuController {
 
     @FXML
     public void copyHtmlToSystemClipboard() {
-        if (webView == null) {
-            return;
+        if (webViewController.copyHtmlToSystemClipboard()) {
+            checkWebviewPane();
         }
-        String html = WebViewTools.selectedHtml(webView.getEngine());
-        if (html == null || html.isEmpty()) {
-            popError(message("SelectedNone"));
-            return;
-        }
-        TextClipboardTools.copyToSystemClipboard(myController, html);
-        checkWebviewPane();
     }
 
     @FXML
     public void copyHtmlToMyboxClipboard() {
-        if (webView == null) {
-            return;
+        if (webViewController.copyHtmlToMyboxClipboard()) {
+            checkWebviewPane();
         }
-        String html = WebViewTools.selectedHtml(webView.getEngine());
-        if (html == null || html.isEmpty()) {
-            popError(message("SelectedNone"));
-            return;
-        }
-        TextClipboardTools.copyToMyBoxClipboard(myController, html);
-        checkWebviewPane();
     }
 
     @FXML
     @Override
     public void popFunctionsMenu(MouseEvent mouseEvent) {
-        if (webViewController == null) {
-            return;
-        }
         webViewController.popFunctionsMenu(mouseEvent);
     }
 
     @FXML
     @Override
     public void findAction() {
-        if (webViewController == null) {
-            return;
-        }
         webViewController.findAction();
     }
 
     @FXML
     @Override
     public void saveAsAction() {
-        if (webViewController == null) {
-            return;
-        }
         webViewController.saveAsAction();
     }
 
     @FXML
     public void editAction() {
-        if (webViewController == null) {
-            return;
-        }
         webViewController.editAction();
     }
 
     @FXML
     @Override
     public boolean popAction() {
-        if (webViewController == null) {
-            return false;
-        }
         webViewController.popAction();
         return true;
     }
@@ -271,12 +234,12 @@ public class MenuWebviewController extends MenuController {
     /*
         static methods
      */
-    public static MenuWebviewController pop(BaseWebViewController parent, WebView webview, Element element, double x, double y) {
+    public static MenuWebviewController pop(ControlWebView parent, Element element, double x, double y) {
         try {
-            if (parent == null || webview == null) {
+            if (parent == null) {
                 return null;
             }
-            Popup popup = PopTools.popWindow(parent, Fxmls.MenuWebviewFxml, webview, x, y);
+            Popup popup = PopTools.popWindow(parent, Fxmls.MenuWebviewFxml, parent.webView, x, y);
             if (popup == null) {
                 return null;
             }
@@ -285,26 +248,8 @@ public class MenuWebviewController extends MenuController {
                 return null;
             }
             MenuWebviewController controller = (MenuWebviewController) object;
-            controller.setParameters(parent, webview, element);
+            controller.setParameters(parent, element);
             return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static MenuWebviewController pop(BaseWebViewController parent, Element element, double x, double y) {
-        try {
-            return pop(parent, parent.webView, element, x, y);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static MenuWebviewController pop(WebView webview, Element element, double x, double y) {
-        try {
-            return pop((BaseWebViewController) (webview.getUserData()), webview, element, x, y);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

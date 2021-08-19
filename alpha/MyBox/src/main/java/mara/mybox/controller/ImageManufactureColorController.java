@@ -228,12 +228,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 commentsLabel.setText(Languages.message("ManufactureWholeImage"));
 
             } else {
-                if (scopeController != null && scopeController.scope != null
-                        && scopeController.scope.getScopeType() != ImageScope.ScopeType.All) {
-                    imageController.scopeTab();
-                } else {
-                    imageController.imageTab();
-                }
+                imageController.scopeTab();
                 okButton.setDisable(true);
                 commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
                 opBox.getChildren().add(scopeButton);

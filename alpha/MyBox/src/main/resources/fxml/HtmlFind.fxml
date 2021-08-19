@@ -67,8 +67,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                <WebView fx:id="webView" minHeight="200.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                                <Label fx:id="webViewLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
+                                <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
@@ -82,20 +81,20 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                             <children>
-                                                              <CheckBox fx:id="regCheck" mnemonicParsing="false" text="%RegularExpression" />
-                                                <Button fx:id="exampleFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconExamples.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </HBox>
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <CheckBox fx:id="regCheck" mnemonicParsing="false" text="%RegularExpression" />
+                                                                <Button fx:id="exampleFindButton" mnemonicParsing="false" onMouseEntered="#popFindExample">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconExamples.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
                                                         <CheckBox fx:id="caseCheck" mnemonicParsing="false" text="%CaseInsensitive" />
                                                         <Label minHeight="-Infinity" text="%String" wrapText="true" />
                                                         <fx:include fx:id="findInput" source="ControlStringSelector.fxml" />

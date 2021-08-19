@@ -49,8 +49,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class HtmlEditorController extends BaseWebViewController {
+public class HtmlEditorController extends WebAddressController {
 
+    protected HTMLEditor htmlEditor;
     protected boolean pageLoaded, codesChanged, heChanged, mdChanged, textsChanged, fileChanged;
     protected MutableDataSet htmlOptions;
     protected FlexmarkHtmlConverter htmlConverter;
@@ -65,11 +66,11 @@ public class HtmlEditorController extends BaseWebViewController {
     @FXML
     protected Tab viewTab, codesTab, editorTab, markdownTab, textsTab, backupTab;
     @FXML
-    protected HTMLEditor htmlEditor;
+    protected ControlHtmlEditor editorController;
     @FXML
     protected TextArea codesArea, markdownArea, textsArea;
     @FXML
-    protected Label codesLabel, editorLabel, markdownLabel, textsLabel;
+    protected Label codesLabel, markdownLabel, textsLabel;
     @FXML
     protected ControlFileBackup backupController;
     @FXML
@@ -112,6 +113,9 @@ public class HtmlEditorController extends BaseWebViewController {
 
     protected void initEdtiorTab() {
         try {
+            htmlEditor = editorController.htmlEditor;
+            editorController.setParent(this);
+
             // https://stackoverflow.com/questions/31894239/javafx-htmleditor-how-to-implement-a-changelistener
             // As my testing, only DragEvent.DRAG_EXITED, KeyEvent.KEY_TYPED, KeyEvent.KEY_RELEASED working for HtmlEdior
             htmlEditor.setOnDragExited(new EventHandler<InputEvent>() {
@@ -330,17 +334,16 @@ public class HtmlEditorController extends BaseWebViewController {
         }
     }
 
-    @Override
     public String currentHtml() {
         return currentHtml(false);
     }
 
     public String currentHtml(boolean synchronize) {
         try {
-            if (framesDoc.isEmpty()) {
-                Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (webViewController.framesDoc.isEmpty()) {
+                Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
 
-                if (tab == viewTab) {
+                if (currentTab == viewTab) {
                     String html = htmlInWebview();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
@@ -350,7 +353,7 @@ public class HtmlEditorController extends BaseWebViewController {
                     }
                     return html;
 
-                } else if (tab == editorTab) {
+                } else if (currentTab == editorTab) {
                     String html = htmlByEditor();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
@@ -360,7 +363,7 @@ public class HtmlEditorController extends BaseWebViewController {
                     }
                     return html;
 
-                } else if (tab == markdownTab) {
+                } else if (currentTab == markdownTab) {
                     String html = htmlByMarkdown();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
@@ -370,7 +373,7 @@ public class HtmlEditorController extends BaseWebViewController {
                     }
                     return html;
 
-                } else if (tab == textsTab) {
+                } else if (currentTab == textsTab) {
                     String html = htmlByText();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
@@ -403,9 +406,9 @@ public class HtmlEditorController extends BaseWebViewController {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            address = null;
+            setAddress(null);
+            setAddressChanged(false);
             sourceFile = null;
-            addressChanged = false;
             urlSelector.getEditor().setText("");
             webEngine.loadContent(HtmlWriteTools.emptyHmtl());
             loadRichEditor("", false);
@@ -423,13 +426,13 @@ public class HtmlEditorController extends BaseWebViewController {
     }
 
     @Override
-    protected void updateTitle() {
+    protected void updateStageTitle() {
         if (myStage == null) {
             return;
         }
         String t = getBaseTitle();
-        if (address != null) {
-            t += "  " + address;
+        if (getAddress() != null) {
+            t += "  " + getAddress();
         } else if (sourceFile != null) {
             t += "  " + sourceFile.getAbsolutePath();
         }
@@ -441,14 +444,14 @@ public class HtmlEditorController extends BaseWebViewController {
 
     protected void updateFileStatus(boolean changed) {
         fileChanged = changed;
-        updateTitle();
+        updateStageTitle();
         if (!changed) {
             viewChanged(false);
             codesChanged(false);
             richTextChanged(false);
             markdownChanged(false);
             textsChanged(false);
-            addressChanged = false;
+            setAddressChanged(false);
         }
     }
 
@@ -473,8 +476,8 @@ public class HtmlEditorController extends BaseWebViewController {
         htmlEditor.setDisable(true);
         markdownArea.setEditable(false);
         textsArea.setEditable(false);
-        if (addressChanged) {
-            String info = address + "\n" + message("Loading...");
+        if (getAddressChanged()) {
+            String info = getAddress() + "\n" + message("Loading...");
             codesArea.setText(info);
             markdownArea.setText(info);
             htmlEditor.setHtmlText(info);
@@ -486,7 +489,7 @@ public class HtmlEditorController extends BaseWebViewController {
     protected void afterPageLoaded() {
         try {
             pageLoaded = true;
-            if (addressChanged) {
+            if (getAddressChanged()) {
                 fileChanged = false;
                 String html = htmlInWebview();
                 loadRichEditor(html, false);
@@ -630,7 +633,7 @@ public class HtmlEditorController extends BaseWebViewController {
         if (c != null && !c.isEmpty()) {
             len = c.length();
         }
-        editorLabel.setText(message("Total") + ": " + StringTools.format(len));
+        editorController.setWebViewLabel(message("Total") + ": " + StringTools.format(len));
         if (changed) {
             updateFileStatus(true);
         }
@@ -757,23 +760,23 @@ public class HtmlEditorController extends BaseWebViewController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == viewTab) {
-                HtmlPopController.html(this, htmlInWebview());
+                HtmlPopController.openWebView(this, webView);
                 return true;
 
             } else if (tab == markdownTab) {
-                MarkdownPopController.open(this, markdownArea.getText());
+                MarkdownPopController.open(this, markdownArea);
                 return true;
 
             } else if (tab == codesTab) {
-                HtmlCodesPopController.open(this, codesArea.getText());
+                HtmlCodesPopController.openInput(this, codesArea);
                 return true;
 
             } else if (tab == editorTab) {
-                HtmlPopController.html(this, htmlByEditor());
+                HtmlPopController.openWebView(this, WebViewTools.webview(htmlEditor));
                 return true;
 
             } else if (tab == textsTab) {
-                TextPopController.open(this, textsArea.getText());
+                TextPopController.openInput(this, textsArea);
                 return true;
 
             }
@@ -854,7 +857,7 @@ public class HtmlEditorController extends BaseWebViewController {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == viewTab) {
                 Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-                MenuWebviewController.pop(this, webView, null, localToScreen.getX(), localToScreen.getY());
+                MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (tab == codesTab) {
@@ -864,7 +867,7 @@ public class HtmlEditorController extends BaseWebViewController {
 
             } else if (tab == editorTab) {
                 Point2D localToScreen = htmlEditor.localToScreen(htmlEditor.getWidth() - 80, 80);
-                MenuWebviewController.pop((BaseWebViewController) (htmlEditor.getUserData()), null, localToScreen.getX(), localToScreen.getY());
+                MenuWebviewController.pop(editorController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (tab == markdownTab) {

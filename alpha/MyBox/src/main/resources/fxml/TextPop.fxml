@@ -19,8 +19,17 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
+            <CheckBox fx:id="sychronizedCheck" mnemonicParsing="false" text="%Synchronized" />
                 <CheckBox fx:id="wrapCheck" mnemonicParsing="false" selected="true" text="%Wrap" />
-            <CheckBox fx:id="openCheck" layoutX="455.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="%OpenAfterSaveAs" />
+            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" onMouseEntered="#popSaveAs">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconRefresh.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -62,22 +62,22 @@ public class ControlSheetDisplay extends ControlSheetDisplay_Html {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
-                HtmlPopController.html(this, webView);
+                HtmlPopController.openWebView(this, webView);
                 return true;
 
             } else if (tab == textsTab) {
-                TextPopController.open(this, textArea.getText());
+                TextPopController.openInput(this, textArea);
                 return true;
 
             } else if (tab == reportTab) {
-                HtmlPopController.html(this, reportView);
+                HtmlPopController.openWebView(this, reportView);
                 return true;
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        return false;
+        return true;
     }
 
     @FXML
@@ -89,17 +89,12 @@ public class ControlSheetDisplay extends ControlSheetDisplay_Html {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
                 Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-                MenuWebviewController.pop((BaseWebViewController) (webView.getUserData()), webView, null, localToScreen.getX(), localToScreen.getY());
+                MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (tab == textsTab) {
                 Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textArea, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            } else if (tab == reportTab) {
-                Point2D localToScreen = reportView.localToScreen(reportView.getWidth() - 80, 80);
-                MenuWebviewController.pop((BaseWebViewController) (reportView.getUserData()), reportView, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             }

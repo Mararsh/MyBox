@@ -122,7 +122,6 @@ public class HtmlFindController extends BaseWebViewController {
         }
     }
 
-    @Override
     public void find(String html) {
         loadedHtml = html;
         foundCount = 0;
@@ -321,8 +320,6 @@ public class HtmlFindController extends BaseWebViewController {
 
     // 1-based
     protected void goItem(int index) {
-        MyBoxLog.console(foundItem);
-        MyBoxLog.console(itemsStyle());
         setStyle(foundItem, itemsStyle());
         foundItem = index;
         if (foundItem < 1) {
@@ -332,8 +329,6 @@ public class HtmlFindController extends BaseWebViewController {
             foundItem = wrapCheck.isSelected() ? 1 : foundCount;
         }
         foundItemSelector.getSelectionModel().select(foundItem + "");
-        MyBoxLog.console(foundItem);
-        MyBoxLog.console(currentStyle());
         scrollTo(foundItem);
         setStyle(foundItem, currentStyle());
     }

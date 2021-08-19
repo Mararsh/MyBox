@@ -250,7 +250,7 @@ public class MenuTextEditController extends MenuTextBaseController {
         if (textInput == null) {
             return false;
         }
-        TextPopController.open(parentController, textInput.getText());
+        TextPopController.openInput(parentController, textInput);
         return true;
     }
 

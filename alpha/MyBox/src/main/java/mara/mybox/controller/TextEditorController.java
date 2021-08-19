@@ -135,7 +135,7 @@ public class TextEditorController extends BaseFileEditorController {
     @FXML
     @Override
     public boolean popAction() {
-        TextPopController.open(this, mainArea.getText());
+        TextPopController.openInput(this, mainArea);
         return true;
     }
 

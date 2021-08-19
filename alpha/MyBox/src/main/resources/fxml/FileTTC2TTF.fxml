@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
         <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
                 <fx:include fx:id="ttc" source="ControlFileInput.fxml" />
-                <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+               <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="5.0">
                     <children>
                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />

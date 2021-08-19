@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
@@ -20,8 +19,6 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class ControlSheetDisplay_Html extends ControlSheetDisplay_Text {
 
-    @FXML
-    protected WebView webView;
     @FXML
     protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck;
 

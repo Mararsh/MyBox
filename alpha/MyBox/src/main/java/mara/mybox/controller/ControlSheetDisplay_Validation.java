@@ -27,7 +27,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheetDisplay_Validation extends BaseController {
+public abstract class ControlSheetDisplay_Validation extends BaseWebViewController {
 
     protected BaseSheetController sheetController;
     protected List<ColumnDefinition> columns;
@@ -43,6 +43,8 @@ public abstract class ControlSheetDisplay_Validation extends BaseController {
     protected Tab defTab, htmlTab, textsTab, reportTab;
     @FXML
     protected WebView reportView;
+    @FXML
+    protected HBox defBottunsBox;
 
     @FXML
     protected VBox defBox;

@@ -375,6 +375,7 @@ public class ImageViewerController extends BaseImageController {
             if (imageFile() != null && nextButton != null) {
                 makeImageNevigator();
             }
+            refinePane();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

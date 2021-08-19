@@ -10,21 +10,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.tools.FileTools;
-
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -32,11 +27,9 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-6-2 10:59:16
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
-public class ChromaticityBaseController extends BaseController {
+public class ChromaticityBaseController extends BaseWebViewController {
 
     protected int scale = 8;
     protected double sourceX, sourceY, sourceZ, targetX, targetY, targetZ;

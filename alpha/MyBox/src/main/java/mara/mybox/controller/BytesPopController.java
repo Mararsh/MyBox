@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
@@ -83,10 +84,8 @@ public class BytesPopController extends TextPopController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    if (openCheck.isSelected()) {
-                        BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
-                        controller.sourceFileChanged(file);
-                    }
+                    BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
+                    controller.sourceFileChanged(file);
                 }
             };
             handling(task);
@@ -100,13 +99,13 @@ public class BytesPopController extends TextPopController {
     /*
         static methods
      */
-    public static BytesPopController open(BaseController parent, String text) {
+    public static BytesPopController open(BaseController parent, TextInputControl textInput) {
         try {
-            if (text == null) {
+            if (textInput == null) {
                 return null;
             }
             BytesPopController controller = (BytesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.BytesPopFxml, false);
-            controller.loadText(text);
+            controller.setSourceInput(textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

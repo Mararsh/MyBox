@@ -424,7 +424,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
         if (textInput == null) {
             return false;
         }
-        HtmlCodesPopController.open(parentController, textInput.getText());
+        HtmlCodesPopController.openInput(parentController, textInput);
         return true;
     }
 

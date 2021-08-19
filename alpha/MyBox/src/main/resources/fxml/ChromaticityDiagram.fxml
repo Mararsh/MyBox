@@ -6,20 +6,31 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
 
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ChromaticityDiagramController">
     <top>
@@ -30,7 +41,7 @@ License:    Apache License Version 2.0
             <children>
                 <TabPane fx:id="displayPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
-                        <Tab fx:id="cieTab" closable="false" text="%ChromaticDiagram">
+                        <Tab fx:id="diaTab" closable="false" text="%ChromaticDiagram">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
@@ -381,22 +392,22 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="d2Tab" closable="false" text="%CIE2Degree1nm">
+                        <Tab fx:id="cie21Tab" closable="false" text="%CIE2Degree1nm">
                             <content>
                                 <fx:include fx:id="d2n1" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
-                        <Tab closable="false" text="%CIE2Degree5nm">
+                        <Tab fx:id="cie25Tab" closable="false" text="%CIE2Degree5nm">
                             <content>
                                 <fx:include fx:id="d2n5" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
-                        <Tab closable="false" text="%CIE10Degree1nm">
+                        <Tab fx:id="cie101Tab" closable="false" text="%CIE10Degree1nm">
                             <content>
                                 <fx:include fx:id="d10n1" source="HtmlTable.fxml" />
                             </content>
                         </Tab>
-                        <Tab closable="false" text="%CIE10Degree5nm">
+                        <Tab fx:id="cie105Tab" closable="false" text="%CIE10Degree5nm">
                             <content>
                                 <fx:include fx:id="d10n5" source="HtmlTable.fxml" />
                             </content>

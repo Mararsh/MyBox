@@ -54,6 +54,7 @@ public class Fxmls {
     public static final String HtmlTableFxml = "/fxml/HtmlTable.fxml";
     public static final String HtmlPopFxml = "/fxml/HtmlPop.fxml";
     public static final String HtmlCodesPopFxml = "/fxml/HtmlCodesPop.fxml";
+    public static final String WebAddressFxml = "/fxml/WebAddress.fxml";
 
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
     public static final String MarkdownToHtmlFxml = "/fxml/MarkdownToHtml.fxml";
@@ -274,7 +275,6 @@ public class Fxmls {
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
 
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
-    public static final String ControlWebViewFxml = "/fxml/ControlWebView.fxml";
 
     public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
 

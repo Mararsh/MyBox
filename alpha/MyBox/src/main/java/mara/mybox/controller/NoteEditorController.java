@@ -127,7 +127,7 @@ public class NoteEditorController extends HtmlEditorController {
         }
         updateFileStatus(false);
         currentNote = note;
-        addressChanged = true;
+        setAddressChanged(true);
         loadNote();
     }
 

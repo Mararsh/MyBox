@@ -198,6 +198,7 @@ public class HtmlElementsController extends BaseWebViewController {
     @FXML
     @Override
     public void recoverAction() {
+        String address = getAddress();
         if (address != null && !address.isBlank()) {
             loadAddress(address);
         } else {

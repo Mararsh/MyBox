@@ -153,16 +153,16 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Button fx:id="clipboardButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#clipboard">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconClipboard.png" />
-                                                    </image> 
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                         <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="editSheetButton" layoutX="207.0" layoutY="10.0" mnemonicParsing="false" onAction="#editPageAllRows">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconEdit.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                         <Button fx:id="sizeSheetButton" mnemonicParsing="false" onMouseEntered="#sheetSizeMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

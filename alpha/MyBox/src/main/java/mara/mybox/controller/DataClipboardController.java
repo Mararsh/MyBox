@@ -207,6 +207,7 @@ public class DataClipboardController extends BaseSheetController {
             this.sourceController = sourceController;
             this.sourceFile = sourceController.sourceFile;
             makeSheet(sourceController.sheet, sourceController.columns);
+//            sheetDisplayController.defBottunsBox.setDisable(true);
 
             isMatrix = sourceController instanceof ControlMatrix;
             setControlsStyle();
@@ -360,14 +361,14 @@ public class DataClipboardController extends BaseSheetController {
     @Override
     public boolean popAction() {
         if (inputArea.isFocused()) {
-            TextPopController.open(this, inputArea.getText());
+            TextPopController.openInput(this, inputArea);
             return true;
         }
         if (sheetDisplayController.popAction()) {
             return true;
         }
         if (tabPane.getSelectionModel().getSelectedItem() == textsTab) {
-            TextPopController.open(this, inputArea.getText());
+            TextPopController.openInput(this, inputArea);
             return true;
         }
         return false;
@@ -469,7 +470,8 @@ public class DataClipboardController extends BaseSheetController {
             return;
         }
         sheet = pickData();
-        if (sheet == null) {
+        if (sheet == null || sheet.length < 1) {
+            popError(message("NoData"));
             return;
         }
         if (sheet[0].length != sourceController.colsCheck.length

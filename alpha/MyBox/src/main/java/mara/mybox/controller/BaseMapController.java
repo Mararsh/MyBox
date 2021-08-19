@@ -163,7 +163,7 @@ public abstract class BaseMapController extends BaseController {
             initSplitPanes();
 
             if (SystemConfig.getBoolean("MapRunFirstTime" + AppValues.AppVersion, true)) {
-                HtmlPopController controller = HtmlPopController.html(parentController, LocationTools.gaodeMap());
+                HtmlPopController controller = HtmlPopController.openHtml(parentController, LocationTools.gaodeMap());
                 controller.handling(message("FirstRunInfo"));
                 new Timer().schedule(new TimerTask() {
                     @Override

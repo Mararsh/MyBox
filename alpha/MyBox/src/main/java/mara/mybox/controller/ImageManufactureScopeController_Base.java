@@ -21,8 +21,6 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -143,41 +141,6 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
             MenuImageScopeController.open((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-        }
-    }
-
-    public void popScope() {
-        synchronized (this) {
-            SingletonTask popTask = new SingletonTask<Void>() {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                scope, PixelsOperation.OperationType.PreOpacity, PixelsOperation.ColorActionType.Set);
-                        pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
-                        pixelsOperation.setIntPara1(255 - (int) (opacity * 255));
-                        pixelsOperation.setExcludeScope(true);
-                        newImage = pixelsOperation.operateFxImage();
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    ImagePopController controller = (ImagePopController) WindowTools.openChildStage(getMyWindow(), Fxmls.ImagePopFxml, false);
-                    controller.loadImage(newImage);
-                }
-            };
-            popTask.setSelf(popTask);
-            Thread thread = new Thread(popTask);
-            thread.setDaemon(false);
-            thread.start();
         }
     }
 

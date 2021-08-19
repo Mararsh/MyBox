@@ -368,7 +368,7 @@ public class BytesEditorController extends BaseFileEditorController {
     @FXML
     @Override
     public boolean popAction() {
-        BytesPopController.open(this, mainArea.getText());
+        BytesPopController.open(this, mainArea);
         return true;
     }
 

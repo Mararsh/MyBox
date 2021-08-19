@@ -47,7 +47,6 @@ public class AppVariables {
     public static StyleData.StyleColor ControlColor;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
-    public static String HttpUserAgent;
 
     public AppVariables() {
     }

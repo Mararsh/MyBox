@@ -182,7 +182,7 @@ public class HtmlSnapController extends BaseWebViewController {
             snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
             snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
             snapHeight = 0;
-            webViewLabel.setText(message("SnapingImage..."));
+            setWebViewLabel(message("SnapingImage..."));
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
@@ -303,7 +303,7 @@ public class HtmlSnapController extends BaseWebViewController {
         snaps = null;
         webEngine.getLoadWorker().cancel();
         webEngine.executeScript("window.scrollTo(0,0 );");
-        webViewLabel.setText("");
+        setWebViewLabel("");
         myStage.setX(orginalStageX);
         myStage.setY(orginalStageY);
         myStage.setWidth(orginalStageWidth);

@@ -29,7 +29,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Window;
@@ -324,10 +323,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             ComboBox cb = (ComboBox) node;
             if (cb.isEditable()) {
                 makeEditContextMenu(cb, cb.getEditor());
-            }
-        } else if (node instanceof WebView && !(this instanceof FunctionsListController)) {
-            if (!(this instanceof BaseWebViewController) || !"webView".equals(node.getId())) {
-                new BaseWebViewController().setParent(myController, (WebView) node);
             }
         } else if (node instanceof SplitPane) {
             for (Node child : ((SplitPane) node).getItems()) {
