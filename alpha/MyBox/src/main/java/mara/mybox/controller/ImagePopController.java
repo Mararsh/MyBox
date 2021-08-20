@@ -32,14 +32,11 @@ public class ImagePopController extends BaseImageController {
 
     @Override
     public void setStageStatus(String prefix, int minSize) {
-        setAsPopup(baseName);
+//        setAsPopup(baseName);
     }
 
-    @Override
-    public void initControls() {
+    public void setControls() {
         try {
-            super.initControls();
-
             saveAsType = SaveAsType.Open;
 
             listener = new ChangeListener<Image>() {
@@ -50,16 +47,6 @@ public class ImagePopController extends BaseImageController {
                     }
                 }
             };
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void setSourceImageView(ImageView sourceImageView) {
-        try {
-            this.sourceImageView = sourceImageView;
-            refreshAction();
 
             sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -78,6 +65,23 @@ public class ImagePopController extends BaseImageController {
             });
             sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
 
+            setAsPopup(baseName);
+            paneSize();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setSourceImageView(String baseName, ImageView sourceImageView) {
+        try {
+            this.baseName = baseName;
+
+            this.sourceImageView = sourceImageView;
+            refreshAction();
+
+            setControls();
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -85,39 +89,30 @@ public class ImagePopController extends BaseImageController {
 
     public void setScopeController(ImageManufactureScopeController scopeController) {
         try {
+            this.baseName = scopeController.baseName;
+
             this.scopeController = scopeController;
             this.sourceImageView = scopeController.scopeView;
 
             refreshAction();
 
-            sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
-                    if (scopeController == null) {
-                        sychronizedCheck.setVisible(false);
-                        refreshButton.setVisible(false);
-                        return;
-                    }
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
-                        sourceImageView.imageProperty().addListener(listener);
-                    } else {
-                        sourceImageView.imageProperty().removeListener(listener);
-                    }
-                }
-            });
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            setControls();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void setImage(Image image) {
+    public void setImage(String baseName, Image image) {
         try {
+            this.baseName = baseName;
+
             sychronizedCheck.setVisible(false);
             refreshButton.setVisible(false);
 
             loadImage(image);
+
+            setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -199,7 +194,7 @@ public class ImagePopController extends BaseImageController {
                 return null;
             }
             ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
-            controller.setImage(image);
+            controller.setImage(parent.baseName, image);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -213,7 +208,7 @@ public class ImagePopController extends BaseImageController {
                 return null;
             }
             ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
-            controller.setSourceImageView(imageView);
+            controller.setSourceImageView(parent.baseName, imageView);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -66,7 +66,8 @@ public class WebAddressController extends BaseWebViewController {
         }
     }
 
-    public void initTab(BaseController parent, Tab tab) {
+    public void initTab(WebBrowserController parent, Tab tab) {
+        webViewController.setParent(parent);
         this.baseName = parent.baseName;
         this.addressTab = tab;
     }

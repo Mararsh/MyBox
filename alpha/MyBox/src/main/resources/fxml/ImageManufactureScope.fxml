@@ -16,6 +16,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -503,25 +504,46 @@ License:    Apache License Version 2.0
                                                       </VBox>
                                                   </content>
                                               </Tab>
-                                    <Tab fx:id="saveTab" text="%Save">
+                                    <Tab fx:id="optionsTab" text="%Options">
                                        <content>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                                              <children>
-                                                          <Label text="%ScopeName">
-                                                              <VBox.margin>
-                                                                  <Insets top="10.0" />
-                                                              </VBox.margin>
-                                                          </Label>
+                                                <FlowPane hgap="5.0" prefWrapLength="700.0" vgap="5.0">
+                                                   <children>
+                                                                    <CheckBox fx:id="areaExcludedCheck" mnemonicParsing="false" text="%AreaExclude" />
+                                                                    <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%ColorExclude" />
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </VBox.margin>
+                                                </FlowPane>
+                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="25.0" prefWrapLength="700.0" vgap="5.0">
+                                                   <children>
+                                                                    <CheckBox fx:id="eightNeighborCheck" mnemonicParsing="false" selected="true" text="%EightNeighbor" />
+                                                                    <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
+                                                   </children>
+                                                </FlowPane>
+                                                <CheckBox fx:id="popImageCheck" mnemonicParsing="false" selected="true" text="%PopImage" />
+                                                <Separator prefWidth="200.0">
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" top="5.0" />
+                                                   </VBox.margin>
+                                                </Separator>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                   <children>
+                                                                <Label text="%ScopeName" />
+                                                                  <Button fx:id="saveScopeButton" mnemonicParsing="false" onAction="#saveScope">
+                                                                      <graphic>
+                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                              <image>
+                                                                                  <Image url="@../buttons/Red/iconSave.png" />
+                                                                              </image>
+                                                                          </ImageView>
+                                                                      </graphic>
+                                                                  </Button>
+                                                   </children>
+                                                </HBox>
                                                             <TextField fx:id="scopeNameInput" prefWidth="240.0" />
-                                                            <Button fx:id="saveScopeButton" mnemonicParsing="false" onAction="#saveScope">
-                                                                <graphic>
-                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                        <image>
-                                                                            <Image url="@../buttons/Red/iconSave.png" />
-                                                                        </image>
-                                                                    </ImageView>
-                                                                </graphic>
-                                                            </Button>
                                              </children>
                                           </VBox>
                                        </content>
@@ -529,14 +551,6 @@ License:    Apache License Version 2.0
       
                                                       </tabs>
                                       </TabPane>
-                              <FlowPane hgap="5.0" prefWrapLength="700.0" vgap="5.0">
-                                 <children>
-                                                  <CheckBox fx:id="areaExcludedCheck" mnemonicParsing="false" text="%AreaExclude" />
-                                                  <CheckBox fx:id="eightNeighborCheck" mnemonicParsing="false" selected="true" text="%EightNeighbor" />
-                                                  <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%ColorExclude" />
-                                                  <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
-                                 </children>
-                              </FlowPane>
                            </children>
                         </VBox>
                             </children>

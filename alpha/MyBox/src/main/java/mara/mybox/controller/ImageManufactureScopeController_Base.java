@@ -35,6 +35,7 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
     protected ImageManufactureScopesSavedController scopesSavedController;
     protected float opacity;
     protected BufferedImage outlineSource;
+    protected ImagePopController imagePopController;
 
     @FXML
     protected ImageView scopeView, scopeTipsView;
@@ -43,7 +44,7 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab areaTab, pointsTab, colorsTab, matchTab, pixTab, saveTab;
+    protected Tab areaTab, pointsTab, colorsTab, matchTab, pixTab, optionsTab;
     @FXML
     protected VBox setBox, areaBox, rectangleBox, circleBox;
     @FXML
@@ -58,7 +59,7 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
     protected ListView<String> pointsList;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
-            ignoreTransparentCheck, squareRootCheck;
+            ignoreTransparentCheck, squareRootCheck, popImageCheck;
     @FXML
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
@@ -115,6 +116,8 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
                     scopeView.setFitHeight(imageView.getFitHeight());
                     scopeView.setLayoutX(imageView.getLayoutX());
                     scopeView.setLayoutY(imageView.getLayoutY());
+
+                    popImage();
                 }
 
             };
@@ -124,6 +127,16 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
             thread.setDaemon(false);
             thread.start();
         }
+    }
+
+    protected void popImage() {
+        if (scopeAllRadio.isSelected() || !popImageCheck.isSelected()) {
+            return;
+        }
+        if (imagePopController != null && imagePopController.getMyWindow().isShowing()) {
+            return;
+        }
+        imagePopController = ImagePopController.openView(imageController, imageController.imageView);
     }
 
     @Override

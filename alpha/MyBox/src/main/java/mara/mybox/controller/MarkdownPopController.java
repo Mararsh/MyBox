@@ -101,7 +101,7 @@ public class MarkdownPopController extends TextPopController {
                 return null;
             }
             MarkdownPopController controller = (MarkdownPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.MarkdownPopFxml, false);
-            controller.setSourceInput(textInput);
+            controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

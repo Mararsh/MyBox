@@ -855,7 +855,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File setAllColValues(int col, String value) {
+    protected File setFileColValues(int col, String value) {
         if (sourceFile == null || col < 0 || value == null) {
             return null;
         }
@@ -922,7 +922,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected StringBuilder copyAllColValues(int col) {
+    protected StringBuilder copyFileColValues(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -978,7 +978,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File pasteAllColValues(int col) {
+    protected File pasteFileColValues(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -1296,12 +1296,11 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected StringBuilder copyAllSelectedCols() {
+    protected String[][] fileSelectedCols() {
         if (sourceFile == null) {
             return null;
         }
-        StringBuilder s = null;
-        copiedLines = 0;
+        List<List<String>> data = new ArrayList<>();
         try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
             Sheet sourceSheet;
             if (currentSheetName != null) {
@@ -1310,7 +1309,6 @@ public class DataFileExcelController extends BaseDataFileController {
                 sourceSheet = sourceBook.getSheetAt(0);
                 currentSheetName = sourceSheet.getSheetName();
             }
-            String delimiterString = TextTools.delimiterText(sheetDisplayController.textDelimiter);
             Iterator<Row> iterator = sourceSheet.iterator();
             if (iterator != null && iterator.hasNext()) {
                 if (sourceWithNames) {
@@ -1325,38 +1323,47 @@ public class DataFileExcelController extends BaseDataFileController {
                     }
                     sourceRowIndex++;
                     if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
-                        String rowString = null;
+                        List<String> col = new ArrayList<>();
                         for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                             if (colsCheck[cellIndex - sourceRow.getFirstCellNum()].isSelected()) {
                                 String cellString = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
                                 cellString = cellString == null ? "" : cellString;
-                                if (rowString == null) {
-                                    rowString = cellString;
-                                } else {
-                                    rowString += delimiterString + cellString;
-                                }
+                                col.add(cellString);
                             }
                         }
-                        rowString = rowString == null ? "" : rowString;
-                        if (s == null) {
-                            s = new StringBuilder();
-                            s.append(rowString);
-                        } else {
-                            s.append("\n").append(rowString);
-                        }
-                        copiedLines++;
+                        data.add(col);
                     } else if (sourceRowIndex == currentPageStart) {
-                        s = copyPageCols(s, delimiterString);
+                        for (TextField[] rowInputs : inputs) {
+                            List<String> col = new ArrayList<>();
+                            for (int i = 0; i < colsCheck.length; i++) {
+                                if (colsCheck[i].isSelected()) {
+                                    String d = rowInputs[i].getText();
+                                    d = d == null ? "" : d;
+                                    col.add(d);
+                                }
+                            }
+                            data.add(col);
+                        }
                     }
                 }
             } else {
-                s = copyPageCols(s, delimiterString);
+                for (TextField[] rowInputs : inputs) {
+                    List<String> col = new ArrayList<>();
+                    for (int i = 0; i < colsCheck.length; i++) {
+                        if (colsCheck[i].isSelected()) {
+                            String d = rowInputs[i].getText();
+                            d = d == null ? "" : d;
+                            col.add(d);
+                        }
+                    }
+                    data.add(col);
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
-        return s;
+        return TextTools.toArray(data);
     }
 
     @Override
@@ -1431,7 +1438,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File setAllSelectedCols(String value) {
+    protected File setFileSelectedCols(String value) {
         if (sourceFile == null) {
             return null;
         }

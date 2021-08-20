@@ -558,4 +558,23 @@ public class TextTools {
         }
     }
 
+    public static String[][] toArray(List<List<String>> data) {
+        try {
+            if (data == null || data.isEmpty()) {
+                return null;
+            }
+            String[][] array = new String[data.size()][data.get(0).size()];
+            for (int r = 0; r < data.size(); r++) {
+                List<String> row = data.get(r);
+                for (int c = 0; c < row.size(); c++) {
+                    array[r][c] = row.get(c);
+                }
+            }
+            return array;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
 }

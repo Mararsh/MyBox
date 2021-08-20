@@ -128,6 +128,9 @@ public class ControlWebView extends BaseController {
         try {
             webEngine = webView.getEngine();
 
+            webView.setCache(false);
+            webEngine.setJavaScriptEnabled(true);
+
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {

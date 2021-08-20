@@ -29,7 +29,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-5-5
  * @License Apache License Version 2.0
  */
-public class HtmlFindController extends BaseWebViewController {
+public class HtmlFindController extends WebAddressController {
 
     protected static final String ItemPrefix = "MyBoxSearchLocation";
     protected int foundCount, foundItem;

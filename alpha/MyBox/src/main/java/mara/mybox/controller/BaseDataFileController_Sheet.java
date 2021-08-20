@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -18,8 +17,12 @@ import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -28,7 +31,7 @@ import mara.mybox.value.Languages;
  */
 public abstract class BaseDataFileController_Sheet extends BaseSheetController {
 
-    protected long totalSize, currentPageStart, currentPageEnd;   // 1-based
+    protected long totalSize, currentPageStart, currentPageEnd;   // // 1-based, excluded
     protected int currentPage, pageSize, pagesNumber, copiedLines;// 1-based
     protected boolean sourceWithNames, totalRead;
     protected List<ColumnDefinition> savedColumns;
@@ -57,11 +60,11 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
 
     protected abstract boolean saveColumns();
 
-    protected abstract File setAllColValues(int col, String value);
+    protected abstract File setFileColValues(int col, String value);
 
-    protected abstract StringBuilder copyAllColValues(int col);
+    protected abstract StringBuilder copyFileColValues(int col);
 
-    protected abstract File pasteAllColValues(int col);
+    protected abstract File pasteFileColValues(int col);
 
     protected abstract File insertFileCol(int col, boolean left, int number);
 
@@ -73,9 +76,9 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
 
     protected abstract File orderFileCol(int col, boolean asc);
 
-    protected abstract StringBuilder copyAllSelectedCols();
+    protected abstract String[][] fileSelectedCols();
 
-    protected abstract File setAllSelectedCols(String value);
+    protected abstract File setFileSelectedCols(String value);
 
     public void backup() {
         if (backupController != null && backupController.isBack()) {
@@ -114,23 +117,23 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
 
                 items.add(new SeparatorMenuItem());
 
-                menu = new MenuItem(Languages.message("SetAllColValues"));
+                menu = new MenuItem(Languages.message("SetFileColValues"));
                 menu.setOnAction((ActionEvent event) -> {
-                    setAllColValuesTask(col);
+                    setFileColValuesTask(col);
                 });
                 menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("CopyAllCol"));
+                menu = new MenuItem(Languages.message("CopyFileCol"));
                 menu.setOnAction((ActionEvent event) -> {
-                    copyAllColValuesTask(col);
+                    copyFileColValuesTask(col);
                 });
                 menu.setDisable(totalSize <= 0);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("PasteAllCol"));
+                menu = new MenuItem(Languages.message("PasteFileCol"));
                 menu.setOnAction((ActionEvent event) -> {
-                    pasteAllColValuesTask(col);
+                    pasteFileColValuesTask(col);
                 });
                 menu.setDisable(copiedCol == null || copiedCol.isEmpty()
                         || (dataChanged && sourceFile != null && pagesNumber > 1));
@@ -167,7 +170,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
         return items;
     }
 
-    protected void setAllColValuesTask(int col) {
+    protected void setFileColValuesTask(int col) {
         if (sourceFile == null || pagesNumber <= 1) {
             SetPageColValues(col);
         }
@@ -188,7 +191,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = setAllColValues(col, value);
+                    File tmpFile = setFileColValues(col, value);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
@@ -212,7 +215,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
         }
     }
 
-    protected void copyAllColValuesTask(int col) {
+    protected void copyFileColValuesTask(int col) {
         if (sourceFile == null || pagesNumber <= 1) {
             copyPageColValues(col);
             return;
@@ -227,7 +230,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
                 @Override
                 protected boolean handle() {
                     copiedCol = new ArrayList<>();
-                    s = copyAllColValues(col);
+                    s = copyFileColValues(col);
                     return s != null;
                 }
 
@@ -255,7 +258,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
         }
     }
 
-    protected void pasteAllColValuesTask(int col) {
+    protected void pasteFileColValuesTask(int col) {
         if (copiedCol == null || copiedCol.isEmpty()) {
             popError(Languages.message("NoData"));
             return;
@@ -279,7 +282,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = pasteAllColValues(col);
+                    File tmpFile = pasteFileColValues(col);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
@@ -518,42 +521,95 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
         }
     }
 
-    protected void copyAllSelectedColsTask() {
+    protected void copyFileSelectedColsToSystemClipboard() {
         if (colsCheck == null) {
+            popError(message("NoData"));
             return;
         }
         if (sourceFile == null || pagesNumber <= 1) {
-            copySelectedCols();
+            copyPageSelectedColsToSystemClipboard();
             return;
         }
-        int cols = 0;
-        for (CheckBox c : colsCheck) {
-            if (c.isSelected()) {
-                cols++;
+        List<String> selectedColumns = new ArrayList<>();
+        for (int c = 0; c < colsCheck.length; c++) {
+            if (colsCheck[c].isSelected()) {
+                selectedColumns.add(columns.get(c).getName());
             }
         }
-        if (cols < 1) {
-            popError(Languages.message("NoData"));
+        if (selectedColumns.isEmpty()) {
+            popError(message("NoData"));
             return;
         }
-        int selectedCols = cols;
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
-                private StringBuilder s;
+
+                private String[][] selectedData;
 
                 @Override
                 protected boolean handle() {
-                    copiedLines = 0;
-                    s = copyAllSelectedCols();
-                    return s != null;
+                    selectedData = fileSelectedCols();
+                    return selectedData != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    TextClipboardTools.copyToSystemClipboard(myController, s.toString());
+                    String delimiterString = TextTools.delimiterText(delimiter());
+                    TextClipboardTools.copyToSystemClipboard(myController,
+                            TextTools.dataText(selectedData, delimiterString, selectedColumns, null));
+                }
+
+            };
+            handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
+
+    protected void copyFileSelectedColsToDataClipboard() {
+        if (colsCheck == null) {
+            popError(message("NoData"));
+            return;
+        }
+        MyBoxLog.console(pagesNumber);
+        if (sourceFile == null || pagesNumber <= 1) {
+            copyPageSelectedColsToSystemClipboard();
+            return;
+        }
+        List<ColumnDefinition> selectedColumns = new ArrayList<>();
+        for (int c = 0; c < colsCheck.length; c++) {
+            if (colsCheck[c].isSelected()) {
+                selectedColumns.add(columns.get(c));
+            }
+        }
+        if (selectedColumns.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        MyBoxLog.console(selectedColumns.size());
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String[][] selectedData;
+
+                @Override
+                protected boolean handle() {
+                    selectedData = fileSelectedCols();
+                    return selectedData != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
+                    controller.makeSheet(selectedData, selectedColumns);
+                    controller.toFront();
                 }
 
             };
@@ -643,7 +699,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
         }
     }
 
-    protected void setAllSelectedColsTask() {
+    protected void setFileSelectedColsTask() {
         if (sourceFile == null || pagesNumber <= 1) {
             setSelectedCols();
             return;
@@ -655,7 +711,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            String value = askValue(Languages.message("NoticeAllChangeUnrecover"), Languages.message("SetAllSelectedColsValues"), defaultColValue);
+            String value = askValue(Languages.message("NoticeAllChangeUnrecover"), Languages.message("SetFileSelectedColsValues"), defaultColValue);
             if (value == null) {
                 return;
             }
@@ -664,7 +720,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = setAllSelectedCols(value);
+                    File tmpFile = setFileSelectedCols(value);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
@@ -743,7 +799,7 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
     public List<MenuItem> makeSheetCopyMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
-            if (pagesNumber <= 1) {
+            if (sourceFile == null || pagesNumber <= 1) {
                 items.addAll(super.makeSheetCopyMenu());
             } else {
                 MenuItem menu;
@@ -767,55 +823,106 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
                     }
                 }
 
-                menu = new MenuItem(Languages.message("CopyPageAll"));
+                menu = new MenuItem(Languages.message("CopyPageRowsToSystemClipboard"));
                 menu.setOnAction((ActionEvent event) -> {
-                    copyText();
+                    CopyPageRowsToSystemClipboard();
                 });
                 menu.setDisable(inputs == null);
                 items.add(menu);
 
-                items.add(new SeparatorMenuItem());
-
-                menu = new MenuItem(Languages.message("CopySelectedRows"));
+                menu = new MenuItem(Languages.message("CopySelectedRowsToSystmClipboard"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (!rowsSelected) {
                         popError(Languages.message("NoData"));
                         return;
                     }
-                    copySelectedRows();
+                    copySelectedRowsToSystemClipboard();
                 });
                 menu.setDisable(!rowsSelected);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("CopyPageSelectedCol"));
+                menu = new MenuItem(Languages.message("CopyPageSelectedColsToSystmClipboard"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (!colsSelected) {
                         popError(Languages.message("NoData"));
                         return;
                     }
-                    copySelectedCols();
+                    copyPageSelectedColsToSystemClipboard();
                 });
                 menu.setDisable(!colsSelected);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("CopyAllSelectedCol"));
+                menu = new MenuItem(Languages.message("CopyFileSelectedColsToSystmClipboard"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (!colsSelected) {
                         popError(Languages.message("NoData"));
                         return;
                     }
-                    copyAllSelectedColsTask();
+                    copyFileSelectedColsToSystemClipboard();
                 });
                 menu.setDisable(!colsSelected);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("CopySelectedRowsCols"));
+                menu = new MenuItem(Languages.message("CopySelectedRowsColsToSystmClipboard"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (!colsSelected || !rowsSelected) {
                         popError(Languages.message("NoData"));
                         return;
                     }
-                    copySelectedRowsCols();
+                    copySelectedRowsColsToSystemClipboard();
+                });
+                menu.setDisable(!colsSelected || !rowsSelected);
+                items.add(menu);
+
+                items.add(new SeparatorMenuItem());
+
+                menu = new MenuItem(Languages.message("CopyPageRowsToDataClipboard"));
+                menu.setOnAction((ActionEvent event) -> {
+                    copyPageRowsToDataClipboard();
+                });
+                menu.setDisable(inputs == null);
+                items.add(menu);
+
+                menu = new MenuItem(Languages.message("CopySelectedRowsToDataClipboard"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (!rowsSelected) {
+                        popError(Languages.message("NoData"));
+                        return;
+                    }
+                    copySelectedRowsToDataClipboard();
+                });
+                menu.setDisable(!rowsSelected);
+                items.add(menu);
+
+                menu = new MenuItem(Languages.message("CopyPageSelectedColsToDataClipboard"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (!colsSelected) {
+                        popError(Languages.message("NoData"));
+                        return;
+                    }
+                    copyPageSelectedColsToDataClipboard();
+                });
+                menu.setDisable(!colsSelected);
+                items.add(menu);
+
+                menu = new MenuItem(Languages.message("CopyFileSelectedColsToDataClipboard"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (!colsSelected) {
+                        popError(Languages.message("NoData"));
+                        return;
+                    }
+                    copyFileSelectedColsToDataClipboard();
+                });
+                menu.setDisable(!colsSelected);
+                items.add(menu);
+
+                menu = new MenuItem(Languages.message("CopySelectedRowsColsToDataClipboard"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (!colsSelected || !rowsSelected) {
+                        popError(Languages.message("NoData"));
+                        return;
+                    }
+                    copySelectedRowsColsToDataClipboard();
                 });
                 menu.setDisable(!colsSelected || !rowsSelected);
                 items.add(menu);
@@ -884,13 +991,13 @@ public abstract class BaseDataFileController_Sheet extends BaseSheetController {
                 menu.setDisable(!colsSelected);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("SetAllSelectedColsValues"));
+                menu = new MenuItem(Languages.message("SetFileSelectedColsValues"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (!colsSelected) {
                         popError(Languages.message("NoData"));
                         return;
                     }
-                    setAllSelectedColsTask();
+                    setFileSelectedColsTask();
                 });
                 menu.setDisable(!colsSelected
                         || (dataChanged && sourceFile != null && pagesNumber > 1));

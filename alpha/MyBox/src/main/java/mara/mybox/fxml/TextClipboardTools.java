@@ -13,7 +13,7 @@ import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.TextClipboardMonitor.DefaultInterval;
 import static mara.mybox.value.AppVariables.textClipboardMonitor;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -120,22 +120,21 @@ public class TextClipboardTools {
     }
 
     public static void copyToSystemClipboard(BaseController controller, String text) {
-        if (controller == null) {
-            return;
-        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 if (text == null || text.isEmpty()) {
-                    controller.popError(Languages.message("CopyNone"));
+                    controller.popError(message("CopyNone"));
                     return;
                 }
                 if (stringToSystemClipboard(text)) {
-                    String info = text.length() > 200 ? text.substring(0, 200) + "\n......" : text;
+                    int len = text.length();
+                    String info = message("Length") + ":" + len + "\n"
+                            + (len > 100 ? text.substring(0, 100) + "\n......" : text);
                     if (TextClipboardTools.isMonitoringCopy()) {
-                        controller.popInformation(Languages.message("CopiedInClipBoards") + "\n----------------------\n" + info);
+                        controller.popInformation(message("CopiedInClipBoards") + "\n----------------------\n" + info);
                     } else {
-                        controller.popInformation(Languages.message("CopiedInSystemClipBoard") + "\n----------------------\n" + info);
+                        controller.popInformation(message("CopiedInSystemClipBoard") + "\n----------------------\n" + info);
                     }
                 } else {
                     controller.popFailed();
@@ -162,12 +161,12 @@ public class TextClipboardTools {
             @Override
             public void run() {
                 if (text == null || text.isEmpty()) {
-                    controller.popError(Languages.message("CopyNone"));
+                    controller.popError(message("CopyNone"));
                     return;
                 }
                 if (stringToMyBoxClipboard(text)) {
                     String info = text.length() > 200 ? text.substring(0, 200) + "\n......" : text;
-                    controller.popInformation(Languages.message("CopiedInMyBoxClipBoard") + "\n----------------------\n" + info);
+                    controller.popInformation(message("CopiedInMyBoxClipBoard") + "\n----------------------\n" + info);
                 } else {
                     controller.popFailed();
                 }

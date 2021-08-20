@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,11 +13,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -23,6 +29,115 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public abstract class BaseSheetController_Copy extends BaseSheetController_ColMenu {
+
+    public String[][] selectedRows() {
+        if (inputs == null || rowsCheck == null) {
+            return null;
+        }
+        int selectedRowsCount = 0;
+        for (CheckBox c : rowsCheck) {
+            if (c.isSelected()) {
+                selectedRowsCount++;
+            }
+        }
+        if (selectedRowsCount == 0) {
+            return null;
+        }
+        rowsNumber = inputs.length;
+        colsNumber = inputs[0].length;
+        int rowIndex = 0;
+        String[][] data = new String[selectedRowsCount][colsNumber];
+        for (int r = 0; r < rowsNumber; ++r) {
+            if (!rowsCheck[r].isSelected()) {
+                continue;
+            }
+            for (int c = 0; c < colsNumber; ++c) {
+                data[rowIndex][c] = value(r, c);
+            }
+            rowIndex++;
+        }
+        return data;
+    }
+
+    public Map<String, Object> pageSelectedCols() {
+        if (inputs == null || colsCheck == null) {
+            return null;
+        }
+        rowsNumber = inputs.length;
+        if (rowsNumber == 0) {
+            return null;
+        }
+        List<ColumnDefinition> selectedColumns = new ArrayList<>();
+        for (int c = 0; c < colsCheck.length; c++) {
+            if (colsCheck[c].isSelected()) {
+                selectedColumns.add(columns.get(c));
+            }
+        }
+        if (selectedColumns.isEmpty()) {
+            return null;
+        }
+        String[][] data = new String[rowsNumber][selectedColumns.size()];
+        for (int r = 0; r < rowsNumber; ++r) {
+            int colIndex = 0;
+            for (int c = 0; c < colsCheck.length; c++) {
+                if (!colsCheck[c].isSelected()) {
+                    continue;
+                }
+                data[r][colIndex] = value(r, c);
+                colIndex++;
+            }
+        }
+        Map<String, Object> selected = new HashMap<>();
+        selected.put("columns", selectedColumns);
+        selected.put("data", data);
+        return selected;
+    }
+
+    public Map<String, Object> selectedRowsCols() {
+        if (inputs == null || colsCheck == null || rowsCheck == null) {
+            return null;
+        }
+        int selectedRowsCount = 0;
+        for (CheckBox c : rowsCheck) {
+            if (c.isSelected()) {
+                selectedRowsCount++;
+            }
+        }
+        if (selectedRowsCount == 0) {
+            return null;
+        }
+        List<ColumnDefinition> selectedColumns = new ArrayList<>();
+        for (int c = 0; c < colsCheck.length; c++) {
+            if (colsCheck[c].isSelected()) {
+                selectedColumns.add(columns.get(c));
+            }
+        }
+        if (selectedColumns.isEmpty()) {
+            return null;
+        }
+        rowsNumber = inputs.length;
+        colsNumber = inputs[0].length;
+        int rowIndex = 0;
+        String[][] data = new String[selectedRowsCount][selectedColumns.size()];
+        for (int r = 0; r < rowsNumber; ++r) {
+            if (!rowsCheck[r].isSelected()) {
+                continue;
+            }
+            int colIndex = 0;
+            for (int c = 0; c < colsNumber; ++c) {
+                if (!colsCheck[c].isSelected()) {
+                    continue;
+                }
+                data[rowIndex][colIndex] = value(r, c);
+                colIndex++;
+            }
+            rowIndex++;
+        }
+        Map<String, Object> selected = new HashMap<>();
+        selected.put("columns", selectedColumns);
+        selected.put("data", data);
+        return selected;
+    }
 
     @FXML
     @Override
@@ -90,44 +205,84 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
                 }
             }
 
-            menu = new MenuItem(Languages.message("CopyAll"));
+            menu = new MenuItem(Languages.message("CopyPageRowsToSystemClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                copyText();
+                CopyPageRowsToSystemClipboard();
             });
             menu.setDisable(inputs == null);
             items.add(menu);
 
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("CopySelectedRows"));
+            menu = new MenuItem(Languages.message("CopySelectedRowsToSystmClipboard"));
             menu.setOnAction((ActionEvent event) -> {
                 if (!rowsSelected) {
                     popError(Languages.message("NoData"));
                     return;
                 }
-                copySelectedRows();
+                copySelectedRowsToSystemClipboard();
             });
             menu.setDisable(!rowsSelected);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("CopySelectedCols"));
+            menu = new MenuItem(Languages.message("CopyPageSelectedColsToSystmClipboard"));
             menu.setOnAction((ActionEvent event) -> {
                 if (!colsSelected) {
                     popError(Languages.message("NoData"));
                     return;
                 }
-                copySelectedCols();
+                copyPageSelectedColsToSystemClipboard();
             });
             menu.setDisable(!colsSelected);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("CopySelectedRowsCols"));
+            menu = new MenuItem(Languages.message("CopySelectedRowsColsToSystmClipboard"));
             menu.setOnAction((ActionEvent event) -> {
                 if (!colsSelected || !rowsSelected) {
                     popError(Languages.message("NoData"));
                     return;
                 }
-                copySelectedRowsCols();
+                copySelectedRowsColsToSystemClipboard();
+            });
+            menu.setDisable(!colsSelected || !rowsSelected);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(Languages.message("CopyPageRowsToDataClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyPageRowsToDataClipboard();
+            });
+            menu.setDisable(inputs == null);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("CopySelectedRowsToDataClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (!rowsSelected) {
+                    popError(Languages.message("NoData"));
+                    return;
+                }
+                copySelectedRowsToDataClipboard();
+            });
+            menu.setDisable(!rowsSelected);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("CopyPageSelectedColsToDataClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (!colsSelected) {
+                    popError(Languages.message("NoData"));
+                    return;
+                }
+                copyPageSelectedColsToDataClipboard();
+            });
+            menu.setDisable(!colsSelected);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("CopySelectedRowsColsToDataClipboard"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (!colsSelected || !rowsSelected) {
+                    popError(Languages.message("NoData"));
+                    return;
+                }
+                copySelectedRowsColsToDataClipboard();
             });
             menu.setDisable(!colsSelected || !rowsSelected);
             items.add(menu);
@@ -138,124 +293,102 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
         return items;
     }
 
-    public void copySelectedRows() {
-        if (inputs == null || rowsCheck == null) {
+    public void CopyPageRowsToSystemClipboard() {
+        if (sheet == null) {
+            popError(message("NoData"));
             return;
         }
-        String s = null;
-        String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
-        rowsNumber = inputs.length;
-        colsNumber = inputs[0].length;
-        int lines = 0;
-        for (int j = 0; j < rowsNumber; ++j) {
-            if (!rowsCheck[j].isSelected()) {
-                continue;
-            }
-            String row = null;
-            for (int i = 0; i < colsNumber; ++i) {
-                if (row == null) {
-                    row = value(j, i);
-                } else {
-                    row += p + value(j, i);
-                }
-            }
-            if (s == null) {
-                s = row;
-            } else {
-                s += "\n" + row;
-            }
-            lines++;
-        }
-        TextClipboardTools.copyToSystemClipboard(myController, s);
+        TextClipboardTools.copyToSystemClipboard(myController,
+                TextTools.dataText(sheet, delimiter(), columnNames(), null));
     }
 
-    public void copySelectedCols() {
-        if (inputs == null || colsCheck == null) {
+    public void copySelectedRowsToSystemClipboard() {
+        String[][] data = selectedRows();
+        if (data == null) {
+            popError(message("NoData"));
             return;
         }
-        int lines = 0, cols = 0;
-        for (CheckBox c : colsCheck) {
-            if (c.isSelected()) {
-                cols++;
-            }
-        }
-        if (cols < 1) {
-            popError(Languages.message("NoData"));
-            return;
-        }
-        String s = null;
-        String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
-        rowsNumber = inputs.length;
-        colsNumber = inputs[0].length;
-        for (int j = 0; j < rowsNumber; ++j) {
-            String row = null;
-            for (int i = 0; i < colsNumber; ++i) {
-                if (!colsCheck[i].isSelected()) {
-                    continue;
-                }
-                if (row == null) {
-                    row = value(j, i);
-                } else {
-                    row += p + value(j, i);
-                }
-            }
-            if (row == null) {
-                break;
-            }
-            if (s == null) {
-                s = row;
-            } else {
-                s += "\n" + row;
-            }
-            lines++;
-        }
-        TextClipboardTools.copyToSystemClipboard(myController, s);
+        TextClipboardTools.copyToSystemClipboard(myController,
+                TextTools.dataText(data, delimiter(), columnNames(), null));
     }
 
-    public void copySelectedRowsCols() {
-        if (inputs == null || colsCheck == null) {
+    public void copyPageSelectedColsToSystemClipboard() {
+        Map<String, Object> selected = pageSelectedCols();
+        if (selected == null) {
+            popError(message("NoData"));
             return;
         }
-        int lines = 0, cols = 0;
-        for (CheckBox c : colsCheck) {
-            if (c.isSelected()) {
-                cols++;
-            }
+        String[][] data = (String[][]) selected.get("data");
+        List<ColumnDefinition> selectedColumns = (List<ColumnDefinition>) selected.get("columns");
+        List<String> colsNames = new ArrayList<>();
+        for (ColumnDefinition c : selectedColumns) {
+            colsNames.add(c.getName());
         }
-        if (cols < 1) {
-            popError(Languages.message("NoData"));
+        TextClipboardTools.copyToSystemClipboard(myController,
+                TextTools.dataText(data, delimiter(), colsNames, null));
+    }
+
+    public void copySelectedRowsColsToSystemClipboard() {
+        Map<String, Object> selected = selectedRowsCols();
+        if (selected == null) {
+            popError(message("NoData"));
             return;
         }
-        String s = null;
-        String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
-        rowsNumber = inputs.length;
-        colsNumber = inputs[0].length;
-        for (int j = 0; j < rowsNumber; ++j) {
-            if (!rowsCheck[j].isSelected()) {
-                continue;
-            }
-            String row = null;
-            for (int i = 0; i < colsNumber; ++i) {
-                if (!colsCheck[i].isSelected()) {
-                    continue;
-                }
-                if (row == null) {
-                    row = value(j, i);
-                } else {
-                    row += p + value(j, i);
-                }
-            }
-            if (row == null) {
-                break;
-            }
-            if (s == null) {
-                s = row;
-            } else {
-                s += "\n" + row;
-            }
-            lines++;
+        String[][] data = (String[][]) selected.get("data");
+        List<ColumnDefinition> selectedColumns = (List<ColumnDefinition>) selected.get("columns");
+        List<String> colsNames = new ArrayList<>();
+        for (ColumnDefinition c : selectedColumns) {
+            colsNames.add(c.getName());
         }
-        TextClipboardTools.copyToSystemClipboard(myController, s);
+        TextClipboardTools.copyToSystemClipboard(myController,
+                TextTools.dataText(data, delimiter(), colsNames, null));
+    }
+
+    public void copyPageRowsToDataClipboard() {
+        if (sheet == null || columns == null) {
+            popError(message("NoData"));
+            return;
+        }
+        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
+        controller.makeSheet(sheet, columns);
+        controller.toFront();
+    }
+
+    public void copySelectedRowsToDataClipboard() {
+        String[][] data = selectedRows();
+        if (data == null) {
+            popError(message("NoData"));
+            return;
+        }
+        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
+        controller.makeSheet(data, columns);
+        controller.toFront();
+    }
+
+    public void copyPageSelectedColsToDataClipboard() {
+        Map<String, Object> selected = pageSelectedCols();
+        if (selected == null) {
+            popError(message("NoData"));
+            return;
+        }
+        String[][] data = (String[][]) selected.get("data");
+        List<ColumnDefinition> selectedColumns = (List<ColumnDefinition>) selected.get("columns");
+        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
+        controller.makeSheet(data, selectedColumns);
+        controller.toFront();
+    }
+
+    public void copySelectedRowsColsToDataClipboard() {
+        Map<String, Object> selected = selectedRowsCols();
+        if (selected == null) {
+            popError(message("NoData"));
+            return;
+        }
+        String[][] data = (String[][]) selected.get("data");
+        List<ColumnDefinition> selectedColumns = (List<ColumnDefinition>) selected.get("columns");
+        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
+        controller.makeSheet(data, selectedColumns);
+        controller.toFront();
     }
 
 }

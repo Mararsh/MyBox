@@ -154,7 +154,7 @@ public class HtmlCodesPopController extends TextPopController {
                 return null;
             }
             HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
-            controller.setSourceInput(textInput);
+            controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

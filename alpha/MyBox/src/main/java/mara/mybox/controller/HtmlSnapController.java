@@ -34,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-20
  * @License Apache License Version 2.0
  */
-public class HtmlSnapController extends BaseWebViewController {
+public class HtmlSnapController extends WebAddressController {
 
     protected int delay, orginalStageWidth, orginalStageHeight, orginalStageX, orginalStageY;
     protected int lastHtmlLen, lastCodesLen;

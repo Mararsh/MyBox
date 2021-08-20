@@ -579,6 +579,13 @@ public abstract class BaseSheetController_Input extends ControlSheetDisplay {
         }
     }
 
+    public String delimiter() {
+        return sheetDisplayController.textDelimiter;
+    }
+
+    /*
+        abstract
+     */
     public abstract void popColMenu(CheckBox label, int col);
 
     public abstract void popRowMenu(CheckBox label, int row);

@@ -105,7 +105,7 @@ public class BytesPopController extends TextPopController {
                 return null;
             }
             BytesPopController controller = (BytesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.BytesPopFxml, false);
-            controller.setSourceInput(textInput);
+            controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

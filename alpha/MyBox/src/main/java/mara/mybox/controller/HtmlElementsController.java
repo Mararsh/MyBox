@@ -35,7 +35,7 @@ import org.w3c.dom.html.HTMLDocument;
  * @CreateDate 2021-5-5
  * @License Apache License Version 2.0
  */
-public class HtmlElementsController extends BaseWebViewController {
+public class HtmlElementsController extends WebAddressController {
 
     protected int foundCount;
     protected HTMLDocument loadedDoc;

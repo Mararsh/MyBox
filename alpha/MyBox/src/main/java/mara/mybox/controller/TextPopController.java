@@ -46,26 +46,13 @@ public class TextPopController extends BaseController {
 
     @Override
     public void setStageStatus(String prefix, int minSize) {
-        setAsPopup(baseName);
+//        setAsPopup(baseName);
     }
 
-    @Override
-    public void initControls() {
+    public void setControls() {
         try {
-            super.initControls();
-
             editButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
             saveAsButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
-
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
-            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    textArea.setWrapText(newValue);
-                }
-            });
-            textArea.setWrapText(wrapCheck.isSelected());
 
             listener = new ChangeListener<String>() {
                 @Override
@@ -75,16 +62,6 @@ public class TextPopController extends BaseController {
                     }
                 }
             };
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    public void setSourceInput(TextInputControl sourceInput) {
-        try {
-            this.sourceInput = sourceInput;
-            refreshAction();
 
             sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -102,6 +79,32 @@ public class TextPopController extends BaseController {
                 }
             });
             sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
+            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Wrap", newValue);
+                    textArea.setWrapText(newValue);
+                }
+            });
+            textArea.setWrapText(wrapCheck.isSelected());
+
+            setAsPopup(baseName);
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void setSourceInput(String baseName, TextInputControl sourceInput) {
+        try {
+            this.baseName = baseName;
+
+            this.sourceInput = sourceInput;
+            refreshAction();
+
+            setControls();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -173,7 +176,7 @@ public class TextPopController extends BaseController {
                 return null;
             }
             TextPopController controller = (TextPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.TextPopFxml, false);
-            controller.setSourceInput(textInput);
+            controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

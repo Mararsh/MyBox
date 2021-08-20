@@ -39,14 +39,11 @@ public class HtmlPopController extends BaseWebViewController {
 
     @Override
     public void setStageStatus(String prefix, int minSize) {
-        setAsPopup(baseName);
+//        setAsPopup(baseName);
     }
 
-    @Override
-    public void initControls() {
+    public void setControls() {
         try {
-            super.initControls();
-
             listener = new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
@@ -73,41 +70,56 @@ public class HtmlPopController extends BaseWebViewController {
                     }
                 }
             });
+            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+
+            setAsPopup(baseName);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void openWebView(WebView sourceWebView, String address) {
+    public void openWebView(String baseName, WebView sourceWebView, String address) {
         try {
+            this.baseName = baseName;
+
             this.sourceWebView = sourceWebView;
             loadContents(address, WebViewTools.getHtml(sourceWebView));
 
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            setControls();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void openHtml(String html, String address) {
+    public void openHtml(String baseName, String html, String address) {
         try {
+            this.baseName = baseName;
+
             sychronizedCheck.setVisible(false);
             refreshButton.setVisible(false);
 
             loadContents(address, html);
+
+            setControls();
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void openAddress(String address) {
+    public void openAddress(String baseName, String address) {
         try {
+            this.baseName = baseName;
+
             sychronizedCheck.setVisible(false);
             refreshButton.setVisible(false);
 
             loadAddress(address);
+
+            setControls();
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -157,9 +169,9 @@ public class HtmlPopController extends BaseWebViewController {
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
-                controller.openWebView(srcWebView, c.getAddress());
+                controller.openWebView(parent.baseName, srcWebView, c.getAddress());
             } else {
-                controller.openWebView(srcWebView, null);
+                controller.openWebView(parent.baseName, srcWebView, null);
             }
             return controller;
         } catch (Exception e) {
@@ -176,9 +188,9 @@ public class HtmlPopController extends BaseWebViewController {
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
-                controller.openHtml(html, c.getAddress());
+                controller.openHtml(parent.baseName, html, c.getAddress());
             } else {
-                controller.openHtml(html, null);
+                controller.openHtml(parent.baseName, html, null);
             }
             return controller;
         } catch (Exception e) {
@@ -193,7 +205,7 @@ public class HtmlPopController extends BaseWebViewController {
                 return null;
             }
             HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
-            controller.openAddress(address);
+            controller.openAddress(parent.baseName, address);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

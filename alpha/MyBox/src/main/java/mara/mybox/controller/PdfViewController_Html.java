@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.web.WebEngine;
@@ -47,8 +46,6 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
     protected Tab htmlTab;
     @FXML
     protected ControlWebView webViewController;
-    @FXML
-    protected Label webViewLabel;
 
     public PdfViewController_Html() {
         checkBottomScript
@@ -106,7 +103,6 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                 }
             });
 
-            webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override

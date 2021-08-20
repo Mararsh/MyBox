@@ -197,7 +197,6 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
         synchronized (this) {
             if (ocrTask != null) {
                 ocrTask.cancel();
-                return;
             }
             ocrTask = new SingletonTask<Void>() {
 

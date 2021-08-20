@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataDefinition;
@@ -444,7 +445,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File setAllColValues(int col, String value) {
+    protected File setFileColValues(int col, String value) {
         if (sourceFile == null || col < 0 || value == null) {
             return null;
         }
@@ -474,7 +475,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected StringBuilder copyAllColValues(int col) {
+    protected StringBuilder copyFileColValues(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -504,7 +505,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File pasteAllColValues(int col) {
+    protected File pasteFileColValues(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -550,11 +551,11 @@ public class DataFileCSVController extends BaseDataFileController {
             if (sourceWithNames) {
                 csvPrinter.printRecord(columnNames());
             }
-            List<String> values = new ArrayList<>();
             List<String> newValues = new ArrayList<>();
-            for (int i = 1; i < number; i++) {
+            for (int i = 0; i < number; i++) {
                 newValues.add(defaultColValue);
             }
+            List<String> values = new ArrayList<>();
             for (CSVRecord record : parser) {
                 for (int i = 0; i < record.size(); i++) {
                     values.add(record.get(i));
@@ -653,46 +654,43 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected StringBuilder copyAllSelectedCols() {
+    protected String[][] fileSelectedCols() {
         if (sourceFile == null) {
             return null;
         }
-        StringBuilder s = null;
-        copiedLines = 0;
+        List<List<String>> data = new ArrayList<>();
         try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            String delimiterString = TextTools.delimiterText(sheetDisplayController.textDelimiter);
             int index = 0;
             for (CSVRecord record : parser) {
-                if (index < currentPageStart || index >= currentPageEnd) {
-                    String rowString = null;
+                if (++index < currentPageStart || index >= currentPageEnd) {
+                    List<String> col = new ArrayList<>();
                     for (int i = 0; i < colsCheck.length; ++i) {
                         if (colsCheck[i].isSelected()) {
                             String d = record.get(i);
                             d = d == null ? "" : d;
-                            if (rowString == null) {
-                                rowString = d;
-                            } else {
-                                rowString += delimiterString + d;
-                            }
+                            col.add(d);
                         }
                     }
-                    rowString = rowString == null ? "" : rowString;
-                    if (s == null) {
-                        s = new StringBuilder();
-                        s.append(rowString);
-                    } else {
-                        s.append("\n").append(rowString);
-                    }
-                    copiedLines++;
+                    data.add(col);
                 } else if (index == currentPageStart) {
-                    s = copyPageCols(s, delimiterString);
+                    for (TextField[] rowInputs : inputs) {
+                        List<String> col = new ArrayList<>();
+                        for (int i = 0; i < colsCheck.length; i++) {
+                            if (colsCheck[i].isSelected()) {
+                                String d = rowInputs[i].getText();
+                                d = d == null ? "" : d;
+                                col.add(d);
+                            }
+                        }
+                        data.add(col);
+                    }
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
-        return s;
+        return TextTools.toArray(data);
     }
 
     @Override
@@ -724,7 +722,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File setAllSelectedCols(String value) {
+    protected File setFileSelectedCols(String value) {
         if (sourceFile == null) {
             return null;
         }
