@@ -3,6 +3,11 @@
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。
 
+## Alpha版本
+2021-8-20 a6.4.8  
+[MyBox-a6.4.8-win10-x64.zip](https://github.com/Mararsh/MyBox/releases/download/alpha/MyBox-a6.4.8-win10-x64.zip)       
+[MyBox-a6.4.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/alpha/MyBox-a6.4.8-win-jar.zip)
+
 ## 新内容
 2021-8-17 版本6.4.7         
 
