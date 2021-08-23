@@ -13,10 +13,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -87,6 +84,7 @@ public class ControlCsvOptions extends BaseController {
                 }
             });
 
+            setDelimiter((char) (UserConfig.getInt(baseName + "Delimiter", ',')));
             delimiterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -104,30 +102,33 @@ public class ControlCsvOptions extends BaseController {
                     UserConfig.setInt(baseName + "Delimiter", delimiter);
                 }
             });
-            delimiter = (char) (UserConfig.getInt(baseName + "Delimiter", ','));
-            switch (delimiter) {
-                case ',':
-                    commaRadio.fire();
-                    break;
-                case '|':
-                    lineRadio.fire();
-                    break;
-                case '@':
-                    atRadio.fire();
-                    break;
-                case '#':
-                    sharpRadio.fire();
-                    break;
-                case ';':
-                    semicolonsRadio.fire();
-                    break;
-                default:
-                    delimiterInput.setText(delimiter + "");
-                    delimiterInputRadio.fire();
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void setDelimiter(char c) {
+        delimiter = c;
+        switch (c) {
+            case ',':
+                commaRadio.fire();
+                break;
+            case '|':
+                lineRadio.fire();
+                break;
+            case '@':
+                atRadio.fire();
+                break;
+            case '#':
+                sharpRadio.fire();
+                break;
+            case ';':
+                semicolonsRadio.fire();
+                break;
+            default:
+                delimiterInput.setText(delimiter + "");
+                delimiterInputRadio.fire();
         }
     }
 

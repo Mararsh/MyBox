@@ -379,6 +379,12 @@ public class StyleButton {
         if (id.startsWith("delimiter")) {
             return new StyleData(id, message("Delimiter"), "", "iconDelimiter.png");
         }
+        if (id.startsWith("comma")) {
+            return new StyleData(id, message("Comma"), "", "iconDelimiter.png");
+        }
+        if (id.startsWith("column")) {
+            return new StyleData(id, message("Column"), "", "iconColumnAdd.png");
+        }
         if (id.startsWith("matrixA")) {
             return new StyleData(id, message("SetAsMatrixA"), "", "iconA.png");
         }

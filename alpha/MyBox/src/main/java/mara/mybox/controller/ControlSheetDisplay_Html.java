@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
@@ -18,9 +16,6 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class ControlSheetDisplay_Html extends ControlSheetDisplay_Text {
-
-    @FXML
-    protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck;
 
     public void initHtmlControls() {
         try {
@@ -47,13 +42,13 @@ public abstract class ControlSheetDisplay_Html extends ControlSheetDisplay_Text 
     protected void updateHtml() {
         try {
             if (sheet == null || sheet.length == 0) {
-                webView.getEngine().loadContent("");
+                htmlViewController.webEngine.loadContent("");
                 return;
             }
             int rNumber = sheet.length;
             int cNumber = sheet[0].length;
             if (cNumber == 0) {
-                webView.getEngine().loadContent("");
+                htmlViewController.webEngine.loadContent("");
                 return;
             }
             List<String> names;
@@ -76,29 +71,23 @@ public abstract class ControlSheetDisplay_Html extends ControlSheetDisplay_Text 
             for (int i = 0; i < rNumber; i++) {
                 List<String> row = new ArrayList<>();
                 if (htmlRowCheck.isSelected()) {
-                    row.add(rowName(i));
+                    row.add(sheetController.rowName(i));
                 }
                 for (int j = 0; j < cNumber; j++) {
                     row.add(sheet[i][j]);
                 }
                 table.add(row);
             }
-            webView.getEngine().loadContent(table.html());
+            htmlViewController.webEngine.loadContent(table.html());
         } catch (Exception e) {
             MyBoxLog.console(e);
-            webView.getEngine().loadContent("");
         }
-    }
-
-    @FXML
-    public void copyHtml() {
-        TextClipboardTools.copyToSystemClipboard(myController, WebViewTools.getHtml(webView));
     }
 
     @FXML
     public void editHtml() {
         HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(WebViewTools.getHtml(webView));
+        controller.loadContents(WebViewTools.getHtml(htmlViewController.webEngine));
     }
 
 }

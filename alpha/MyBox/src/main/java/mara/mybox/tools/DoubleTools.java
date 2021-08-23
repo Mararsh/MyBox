@@ -2,6 +2,7 @@ package mara.mybox.tools;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +16,11 @@ import java.util.Random;
  * @License Apache License Version 2.0
  */
 public class DoubleTools {
+
+    public static String format(double data, int scale) {
+        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(scale(data, scale));
+    }
 
     /*
         https://stackoverflow.com/questions/322749/retain-precision-with-double-in-java

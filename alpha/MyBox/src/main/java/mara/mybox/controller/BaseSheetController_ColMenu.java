@@ -71,9 +71,43 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             MenuItem menu = new MenuItem(Languages.message("Column") + (col + 1) + ": " + colsCheck[col].getText());
             menu.setStyle("-fx-text-fill: #2e598a;");
             items.add(menu);
-            items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("SelectCol"));
+            items.add(new SeparatorMenuItem());
+            items.addAll(colSelectMenu(col));
+
+            items.add(new SeparatorMenuItem());
+            items.addAll(colChangeMenu(col));
+
+            items.add(new SeparatorMenuItem());
+            items.addAll(colDefMenu(col));
+
+            items.add(new SeparatorMenuItem());
+            items.addAll(colOrderMenu(col));
+
+            items.add(new SeparatorMenuItem());
+            items.addAll(colSizeMenu(col));
+
+            if (dataType != DataDefinition.DataType.Matrix) {
+                items.add(new SeparatorMenuItem());
+                items.addAll(colRenameMenu(col));
+            }
+
+            List<MenuItem> moreItems = colMoreMenu(col);
+            if (moreItems != null && !moreItems.isEmpty()) {
+                items.add(new SeparatorMenuItem());
+                items.addAll(moreItems);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    public List<MenuItem> colSelectMenu(int col) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            MenuItem menu = new MenuItem(Languages.message("SelectCol"));
             menu.setOnAction((ActionEvent event) -> {
                 colsCheck[col].setSelected(true);
             });
@@ -84,10 +118,175 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                 colsCheck[col].setSelected(false);
             });
             items.add(menu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
 
-            items.add(new SeparatorMenuItem());
+    public List<MenuItem> colChangeMenu(int col) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            MenuItem menu = new MenuItem(Languages.message("SetPageColValues"));
+            menu.setOnAction((ActionEvent event) -> {
+                setPageColValues(col);
+            });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+            items.add(menu);
 
-            menu = new MenuItem(Languages.message("EnlargerColWidth"));
+            menu = new MenuItem(Languages.message("CopyPageCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                copyPageColValues(col);
+            });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("PastePageCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                pastePageColValues(col);
+            });
+            menu.setDisable(copiedCol == null || copiedCol.isEmpty());
+            items.add(menu);
+
+            if (sourceFile != null && pagesNumber > 1) {
+                items.add(new SeparatorMenuItem());
+
+                menu = new MenuItem(Languages.message("SetFileColValues"));
+                menu.setOnAction((ActionEvent event) -> {
+                    setFileColValues(col);
+                });
+                menu.setDisable(dataChanged);
+                items.add(menu);
+
+                menu = new MenuItem(Languages.message("CopyFileCol"));
+                menu.setOnAction((ActionEvent event) -> {
+                    copyFileColValues(col);
+                });
+                menu.setDisable(rowsTotal() <= 0);
+                items.add(menu);
+
+                menu = new MenuItem(Languages.message("PasteFileCol"));
+                menu.setOnAction((ActionEvent event) -> {
+                    pasteFileColValues(col);
+                });
+                menu.setDisable(copiedCol == null || copiedCol.isEmpty() || dataChanged);
+                items.add(menu);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    public List<MenuItem> colDefMenu(int col) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            MenuItem menu = new MenuItem(Languages.message("InsertColLeft"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (sourceFile != null && pagesNumber > 1) {
+                    insertFileCol(col, true, 1);
+                } else {
+                    insertPageCol(col, true, 1);
+                }
+            });
+            menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("InsertColRight"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (sourceFile != null && pagesNumber > 1) {
+                    insertFileCol(col, false, 1);
+                } else {
+                    insertPageCol(col, false, 1);
+                }
+            });
+            menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("DeleteCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (sourceFile != null && pagesNumber > 1) {
+                    deleteFileCol(col);
+                } else {
+                    deletePageCol(col);
+                }
+            });
+            menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
+            items.add(menu);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    public List<MenuItem> colOrderMenu(int col) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            MenuItem menu = new MenuItem(Languages.message("OrderPageRowsAscByThisCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                orderPageCol(col, true);
+            });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("OrderPageRowsDescByThisCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                orderPageCol(col, false);
+            });
+            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+            items.add(menu);
+
+            rowsSelected = false;
+            int total = rowsCheck == null ? 0 : rowsCheck.length;
+            for (int r = 0; r < total; ++r) {
+                if (rowsCheck[r].isSelected()) {
+                    rowsSelected = true;
+                    break;
+                }
+            }
+
+            menu = new MenuItem(Languages.message("OrderSelectedRowsAscByThisCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                orderSelectedRows(col, true);
+            });
+            menu.setDisable(!rowsSelected);
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("OrderSelectedRowsDescByThisCol"));
+            menu.setOnAction((ActionEvent event) -> {
+                orderSelectedRows(col, false);
+            });
+            menu.setDisable(!rowsSelected);
+            items.add(menu);
+
+            if (sourceFile != null && pagesNumber > 1) {
+                menu = new MenuItem(Languages.message("OrderFileRowsAscByThisCol"));
+                menu.setOnAction((ActionEvent event) -> {
+                    orderFileCol(col, true);
+                });
+                menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+                items.add(menu);
+
+                menu = new MenuItem(Languages.message("OrderFileRowsDescByThisCol"));
+                menu.setOnAction((ActionEvent event) -> {
+                    orderFileCol(col, false);
+                });
+                menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+                items.add(menu);
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+        return items;
+    }
+
+    public List<MenuItem> colSizeMenu(int col) {
+        List<MenuItem> items = new ArrayList<>();
+        try {
+            MenuItem menu = new MenuItem(Languages.message("EnlargerColWidth"));
             menu.setOnAction((ActionEvent event) -> {
                 double width = colsCheck[col].getWidth() + widthChange;
                 colsCheck[col].setPrefWidth(width);
@@ -135,164 +334,28 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             });
             items.add(menu);
 
-            items.add(new SeparatorMenuItem());
-            items.addAll(colModifyMenu(col));
-
-            if (dataType != DataDefinition.DataType.Matrix) {
-                items.add(new SeparatorMenuItem());
-                menu = new MenuItem(Languages.message("Rename"));
-                menu.setOnAction((ActionEvent event) -> {
-                    String value = PopTools.askValue(baseTitle, colsCheck[col].getText(),
-                            Languages.message("Rename"), colsCheck[col].getText());
-                    if (value == null || value.isBlank()) {
-                        return;
-                    }
-                    colsCheck[col].setText(value);
-                    columns.get(col).setName(value);
-                    dataChanged(true);
-                    makeDefintion();
-                });
-                items.add(menu);
-            }
-
-            List<MenuItem> orderItems = colOrderMenu(col);
-            if (orderItems != null && !orderItems.isEmpty()) {
-                items.add(new SeparatorMenuItem());
-                items.addAll(orderItems);
-            }
-
-            List<MenuItem> moreItems = colMoreMenu(col);
-            if (moreItems != null && !moreItems.isEmpty()) {
-                items.add(new SeparatorMenuItem());
-                items.addAll(moreItems);
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return items;
     }
 
-    public List<MenuItem> colModifyMenu(int col) {
+    public List<MenuItem> colRenameMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
-            List<MenuItem> items1 = colModifyValuesMenu(col);
-            if (items1 != null && !items1.isEmpty()) {
-                items.addAll(items1);
-            }
-            List<MenuItem> items2 = colModifyDefMenu(col);
-            if (items2 != null && !items2.isEmpty()) {
-                if (!items.isEmpty()) {
-                    items.add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(Languages.message("Rename"));
+            menu.setOnAction((ActionEvent event) -> {
+                String value = PopTools.askValue(baseTitle, colsCheck[col].getText(),
+                        Languages.message("Rename"), colsCheck[col].getText());
+                if (value == null || value.isBlank()) {
+                    return;
                 }
-                items.addAll(items2);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    public List<MenuItem> colModifyValuesMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(Languages.message("SetColValues"));
-            menu.setOnAction((ActionEvent event) -> {
-                SetPageColValues(col);
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("CopyCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                copyPageColValues(col);
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("Paste"));
-            menu.setOnAction((ActionEvent event) -> {
-                pastePageColValues(col);
-            });
-            menu.setDisable(copiedCol == null || copiedCol.isEmpty());
-            items.add(menu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    public List<MenuItem> colModifyDefMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(Languages.message("InsertColLeft"));
-            menu.setOnAction((ActionEvent event) -> {
-                insertPageCol(col, true, 1);
+                colsCheck[col].setText(value);
+                columns.get(col).setName(value);
+                dataChanged(true);
+                makeDefintion();
             });
             items.add(menu);
-
-            menu = new MenuItem(Languages.message("InsertColRight"));
-            menu.setOnAction((ActionEvent event) -> {
-                insertPageCol(col, false, 1);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("DeleteCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                deletePageCol(col);
-            });
-            items.add(menu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    public List<MenuItem> colOrderMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(Languages.message("OrderPageRowsAscByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderPageRows(col, true);
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("OrderPageRowsDescByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderPageRows(col, false);
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            items.add(menu);
-
-            rowsSelected = false;
-            int total = rowsCheck == null ? 0 : rowsCheck.length;
-            for (int r = 0; r < total; ++r) {
-                if (rowsCheck[r].isSelected()) {
-                    rowsSelected = true;
-                    break;
-                }
-            }
-
-            menu = new MenuItem(Languages.message("OrderSelectedRowsAscByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderSelectedRows(col, true);
-            });
-            menu.setDisable(!rowsSelected);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("OrderSelectedRowsDescByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderSelectedRows(col, false);
-            });
-            menu.setDisable(!rowsSelected);
-            items.add(menu);
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -367,7 +430,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
         makeSheet(null);
     }
 
-    protected void orderPageRows(int col, boolean asc) {
+    protected void orderPageCol(int col, boolean asc) {
         if (inputs == null || columns == null || col < 0 || col >= columns.size()) {
             return;
         }
@@ -436,7 +499,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
         makeSheet(data);
     }
 
-    public void SetPageColValues(int col) {
+    public void setPageColValues(int col) {
         if (colsCheck == null || inputs == null) {
             return;
         }
@@ -457,9 +520,9 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             return;
         }
         String s = "";
-        int rowsNumber = inputs.length;
+        int rNumber = inputs.length;
         copiedCol = new ArrayList<>();
-        for (int j = 0; j < rowsNumber; ++j) {
+        for (int j = 0; j < rNumber; ++j) {
             String v = value(j, col);
             s += v + "\n";
             copiedCol.add(v);
@@ -481,6 +544,33 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
 
     protected List<MenuItem> colMoreMenu(int col) {
         return null;
+    }
+
+    /*
+        Implemented in BaseDataFileController_ColMenu
+     */
+    protected void setFileColValues(int col) {
+        setPageColValues(col);
+    }
+
+    protected void copyFileColValues(int col) {
+        copyPageColValues(col);
+    }
+
+    protected void pasteFileColValues(int col) {
+        pastePageColValues(col);
+    }
+
+    protected void insertFileCol(int col, boolean left, int number) {
+        insertPageCol(col, left, number);
+    }
+
+    protected void deleteFileCol(int col) {
+        deletePageCol(col);
+    }
+
+    protected void orderFileCol(int col, boolean asc) {
+        orderPageCol(col, asc);
     }
 
 }

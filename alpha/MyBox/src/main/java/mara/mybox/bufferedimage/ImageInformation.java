@@ -13,13 +13,11 @@ import javax.imageio.ImageTypeSpecifier;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -274,6 +272,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         if (region == null) {
             return null;
         }
+
         Image regionImage = null;
         try {
             int regionWidth = width <= 0 ? (int) (region.getWidth()) : width;

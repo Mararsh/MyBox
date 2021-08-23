@@ -53,15 +53,14 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -877,8 +876,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 protected void whenSucceeded() {
                     if (file.exists()) {
                         recordFileWritten(file, FileType.Text);
-                        DataFileCSVController controller = (DataFileCSVController) openStage(Fxmls.DataFileCSVFxml);
-                        controller.setFile(file, true);
+                        DataFileCSVController.open(file, true, ',');
                     }
                 }
             };

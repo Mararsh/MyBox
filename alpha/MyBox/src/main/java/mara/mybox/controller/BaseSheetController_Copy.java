@@ -17,9 +17,7 @@ import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -137,16 +135,6 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
         selected.put("columns", selectedColumns);
         selected.put("data", data);
         return selected;
-    }
-
-    @FXML
-    @Override
-    public void copyText() {
-        if (sheetDisplayController == this) {
-            super.copyText();
-        } else {
-            sheetDisplayController.copyText();
-        }
     }
 
     @FXML
@@ -287,6 +275,21 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             menu.setDisable(!colsSelected || !rowsSelected);
             items.add(menu);
 
+            if (sourceFile != null && pagesNumber > 1) {
+                items.add(new SeparatorMenuItem());
+
+                menu = new MenuItem(Languages.message("CopyFileSelectedCols"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (!colsSelected) {
+                        popError(Languages.message("NoData"));
+                        return;
+                    }
+                    copyFileSelectedCols();
+                });
+                menu.setDisable(!colsSelected);
+                items.add(menu);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -349,9 +352,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             popError(message("NoData"));
             return;
         }
-        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
-        controller.makeSheet(sheet, columns);
-        controller.toFront();
+        DataClipboardController.open(sheet, columns);
     }
 
     public void copySelectedRowsToDataClipboard() {
@@ -360,9 +361,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             popError(message("NoData"));
             return;
         }
-        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
-        controller.makeSheet(data, columns);
-        controller.toFront();
+        DataClipboardController.open(data, columns);
     }
 
     public void copyPageSelectedColsToDataClipboard() {
@@ -373,9 +372,11 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
         }
         String[][] data = (String[][]) selected.get("data");
         List<ColumnDefinition> selectedColumns = (List<ColumnDefinition>) selected.get("columns");
-        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
-        controller.makeSheet(data, selectedColumns);
-        controller.toFront();
+        DataClipboardController.open(data, selectedColumns);
+    }
+
+    public void copyFileSelectedCols() {
+        copyPageSelectedColsToDataClipboard();
     }
 
     public void copySelectedRowsColsToDataClipboard() {
@@ -386,9 +387,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
         }
         String[][] data = (String[][]) selected.get("data");
         List<ColumnDefinition> selectedColumns = (List<ColumnDefinition>) selected.get("columns");
-        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
-        controller.makeSheet(data, selectedColumns);
-        controller.toFront();
+        DataClipboardController.open(data, selectedColumns);
     }
 
 }

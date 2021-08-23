@@ -153,7 +153,19 @@ public class ImageOCRProcessController extends ImageViewerController {
     @FXML
     @Override
     public void recoverAction() {
-        loadImage(OCRController.imageView.getImage());
+        loadImage(OCRController.sourceFile, OCRController.imageInformation, OCRController.imageView.getImage(), false);
+    }
+
+    @FXML
+    @Override
+    public void previousAction() {
+        OCRController.previousAction();
+    }
+
+    @FXML
+    @Override
+    public void nextAction() {
+        OCRController.nextAction();
     }
 
     @FXML

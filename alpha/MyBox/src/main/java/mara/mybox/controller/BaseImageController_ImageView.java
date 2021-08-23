@@ -29,6 +29,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.sceneFontSize;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -415,8 +416,14 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 if (sizeText != null) {
                     sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
                     sizeText.setTextAlignment(TextAlignment.LEFT);
-                    sizeText.setX(borderLine.getBoundsInParent().getMinX());
-                    sizeText.setY(borderLine.getBoundsInParent().getMinY() - sizeText.getBoundsInParent().getHeight() - 1);
+                    if (imageView.getImage().getWidth() >= imageView.getImage().getHeight()) {
+                        sizeText.setX(borderLine.getBoundsInParent().getMinX());
+                        sizeText.setY(borderLine.getBoundsInParent().getMinY() - sceneFontSize - 1);
+                    } else {
+                        sizeText.setX(borderLine.getBoundsInParent().getMinX() - sizeText.getBoundsInParent().getWidth() - sceneFontSize);
+                        sizeText.setY(borderLine.getBoundsInParent().getMaxY() - sceneFontSize - 1);
+                    }
+
                 }
             }
         } catch (Exception e) {

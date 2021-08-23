@@ -158,6 +158,7 @@ public class Fxmls {
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
 
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
+    public static final String ImageScopePopFxml = "/fxml/ImageScopePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";

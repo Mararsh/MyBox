@@ -3,29 +3,22 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.table.ColumnDefinition;
-import mara.mybox.db.table.TableDataColumn;
-import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
@@ -38,33 +31,10 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-8-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController_Input extends ControlSheetDisplay {
+public abstract class BaseSheetController_Input extends BaseSheetController_Base {
 
-    protected TableDataDefinition tableDataDefinition;
-    protected TableDataColumn tableDataColumn;
-    protected DataDefinition dataDefinition;
-    protected DataDefinition.DataType dataType;
-
-    protected TextField[][] inputs;
-    protected CheckBox[] colsCheck, rowsCheck;
-    protected List<String> copiedRow, copiedCol;
-    protected SimpleBooleanProperty notify;
-    protected int widthChange;
-    protected boolean rowsSelected, colsSelected, dataChanged;
-    protected Label noDataLabel;
-
-    @FXML
-    protected VBox sheetBox;
-    @FXML
-    protected Button sizeSheetButton, deleteSheetButton, copySheetButton, equalSheetButton, editSheetButton;
-    @FXML
-    protected Tab sheetTab;
-    @FXML
-    protected ControlSheetDisplay sheetDisplayController;
-
-    public BaseSheetController_Input() {
-        baseTitle = Languages.message("DataEdit");
-        dataType = DataDefinition.DataType.DataFile;
+    protected long rowsTotal() {
+        return sheet == null ? 0 : sheet.length;
     }
 
     @Override
@@ -80,9 +50,9 @@ public abstract class BaseSheetController_Input extends ControlSheetDisplay {
             return null;
         }
         String[][] data = new String[inputs.length][inputs[0].length];
-        for (int j = 0; j < rowsNumber; j++) {
-            for (int i = 0; i < colsNumber; i++) {
-                data[j][i] = value(j, i);
+        for (int r = 0; r < rowsNumber; r++) {
+            for (int c = 0; c < colsNumber; c++) {
+                data[r][c] = value(r, c);
             }
         }
         sheet = data;
@@ -93,6 +63,9 @@ public abstract class BaseSheetController_Input extends ControlSheetDisplay {
         String value = null;
         try {
             value = inputs[row][col].getText();
+            if (value != null && columns.get(col).isNumberType()) {
+                value = value.replaceAll(",", "");
+            }
         } catch (Exception e) {
         }
         return value == null ? defaultColValue : value;

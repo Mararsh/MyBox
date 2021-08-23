@@ -392,9 +392,13 @@ public class ImageViewerController extends BaseImageController {
             File currentfile = imageFile();
             if (currentfile == null) {
                 previousFile = null;
-                previousButton.setDisable(true);
+                if (previousButton != null) {
+                    previousButton.setDisable(true);
+                }
                 nextFile = null;
-                nextButton.setDisable(true);
+                if (nextButton != null) {
+                    nextButton.setDisable(true);
+                }
                 return;
             }
             File path = currentfile.getParentFile();
@@ -412,26 +416,38 @@ public class ImageViewerController extends BaseImageController {
                     if (pathFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
                         if (i < pathFiles.size() - 1) {
                             nextFile = pathFiles.get(i + 1);
-                            nextButton.setDisable(false);
+                            if (nextButton != null) {
+                                nextButton.setDisable(false);
+                            }
                         } else {
                             nextFile = null;
-                            nextButton.setDisable(true);
+                            if (nextButton != null) {
+                                nextButton.setDisable(true);
+                            }
                         }
                         if (i > 0) {
                             previousFile = pathFiles.get(i - 1);
-                            previousButton.setDisable(false);
+                            if (previousButton != null) {
+                                previousButton.setDisable(false);
+                            }
                         } else {
                             previousFile = null;
-                            previousButton.setDisable(true);
+                            if (previousButton != null) {
+                                previousButton.setDisable(true);
+                            }
                         }
                         return;
                     }
                 }
             }
             previousFile = null;
-            previousButton.setDisable(true);
+            if (previousButton != null) {
+                previousButton.setDisable(true);
+            }
             nextFile = null;
-            nextButton.setDisable(true);
+            if (nextButton != null) {
+                nextButton.setDisable(true);
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -478,15 +494,13 @@ public class ImageViewerController extends BaseImageController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (nextFile != null) {
-            if (nextFile.exists()) {
-                loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
-            } else {
-                makeImageNevigator();
-                if (nextFile != null) {
-                    loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
-                }
-            }
+        if (nextFile == null || !nextFile.exists()) {
+            makeImageNevigator();
+        }
+        if (nextFile != null && nextFile.exists()) {
+            loadImageFile(nextFile.getAbsoluteFile(), loadWidth, 0);
+        } else {
+            popInformation(message("NoMore"));
         }
     }
 
@@ -496,15 +510,13 @@ public class ImageViewerController extends BaseImageController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (previousFile != null) {
-            if (previousFile.exists()) {
-                loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
-            } else {
-                makeImageNevigator();
-                if (previousFile != null) {
-                    loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
-                }
-            }
+        if (previousFile == null || !previousFile.exists()) {
+            makeImageNevigator();
+        }
+        if (previousFile != null && previousFile.exists()) {
+            loadImageFile(previousFile.getAbsoluteFile(), loadWidth, 0);
+        } else {
+            popInformation(message("NoMore"));
         }
     }
 

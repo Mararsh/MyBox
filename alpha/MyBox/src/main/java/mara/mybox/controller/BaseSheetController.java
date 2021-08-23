@@ -13,8 +13,6 @@ import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -23,13 +21,14 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController extends BaseSheetController_Size {
+public abstract class BaseSheetController extends BaseSheetController_Calculation {
 
     @Override
     public void initValues() {
         try {
             super.initValues();
             widthChange = 10;
+            pagesNumber = 1;
             dataChanged = false;
             columns = new ArrayList<>();
             tableDataDefinition = new TableDataDefinition();
@@ -91,9 +90,7 @@ public abstract class BaseSheetController extends BaseSheetController_Size {
 
     @FXML
     protected void editPageAllRows() {
-        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
-        controller.setSourceController(this);
-        controller.toFront();
+        DataClipboardController.open(this);
     }
 
     @Override

@@ -2,6 +2,8 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +33,12 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -855,7 +858,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File setFileColValues(int col, String value) {
+    protected File setFileColValuesDo(int col, String value) {
         if (sourceFile == null || col < 0 || value == null) {
             return null;
         }
@@ -922,63 +925,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected StringBuilder copyFileColValues(int col) {
-        if (sourceFile == null || col < 0) {
-            return null;
-        }
-        StringBuilder s = null;
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
-            Sheet sourceSheet;
-            if (currentSheetName != null) {
-                sourceSheet = sourceBook.getSheet(currentSheetName);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                currentSheetName = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (sourceWithNames) {
-                    while (iterator.hasNext() && (iterator.next() == null)) {
-                    }
-                }
-                int sourceRowIndex = 0;
-                while (iterator.hasNext()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    sourceRowIndex++;
-                    if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
-                        String v = null;
-                        int cellIndex = sourceRow.getFirstCellNum() + col;
-                        if (cellIndex < sourceRow.getLastCellNum()) {
-                            v = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
-                        }
-                        copiedCol.add(v == null ? "" : v);
-                    } else if (sourceRowIndex == currentPageStart) {
-                        copyPageCol(col);
-                    }
-                }
-            } else {
-                copyPageCol(col);
-            }
-            for (String v : copiedCol) {
-                if (s == null) {
-                    s = new StringBuilder();
-                    s.append(v);
-                } else {
-                    s.append("\n").append(v);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        return s;
-    }
-
-    @Override
-    protected File pasteFileColValues(int col) {
+    protected File pasteFileColValuesDo(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -1046,7 +993,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File insertFileCol(int col, boolean left, int number) {
+    protected File insertFileColDo(int col, boolean left, int number) {
         if (sourceFile == null || col < 0 || number < 1) {
             return null;
         }
@@ -1122,7 +1069,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File DeleteFileCol(int col) {
+    protected File DeleteFileColDo(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -1224,7 +1171,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File orderFileCol(int col, boolean asc) {
+    protected File orderFileColDo(int col, boolean asc) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -1296,12 +1243,19 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected String[][] fileSelectedCols() {
-        if (sourceFile == null) {
+    protected File fileSelectedCols(List<Integer> cols) {
+        if (sourceFile == null || cols == null || cols.isEmpty()) {
             return null;
         }
-        List<List<String>> data = new ArrayList<>();
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            List<String> names = new ArrayList<>();
+            for (int c : cols) {
+                names.add(colsCheck[c].getText());
+            }
+            csvPrinter.printRecord(names);
+
             Sheet sourceSheet;
             if (currentSheetName != null) {
                 sourceSheet = sourceBook.getSheet(currentSheetName);
@@ -1323,51 +1277,46 @@ public class DataFileExcelController extends BaseDataFileController {
                     }
                     sourceRowIndex++;
                     if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
-                        List<String> col = new ArrayList<>();
-                        for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
-                            if (colsCheck[cellIndex - sourceRow.getFirstCellNum()].isSelected()) {
-                                String cellString = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
-                                cellString = cellString == null ? "" : cellString;
-                                col.add(cellString);
-                            }
+                        List<String> values = new ArrayList<>();
+                        for (int c = 0; c < cols.size(); c++) {
+                            String d = MicrosoftDocumentTools.cellString(sourceRow.getCell(cols.get(c) + sourceRow.getFirstCellNum()));
+                            d = d == null ? "" : d;
+                            values.add(d);
                         }
-                        data.add(col);
+                        csvPrinter.printRecord(values);
                     } else if (sourceRowIndex == currentPageStart) {
                         for (TextField[] rowInputs : inputs) {
-                            List<String> col = new ArrayList<>();
-                            for (int i = 0; i < colsCheck.length; i++) {
-                                if (colsCheck[i].isSelected()) {
-                                    String d = rowInputs[i].getText();
-                                    d = d == null ? "" : d;
-                                    col.add(d);
-                                }
+                            List<String> values = new ArrayList<>();
+                            for (int c = 0; c < cols.size(); c++) {
+                                String d = rowInputs[cols.get(c)].getText();
+                                d = d == null ? "" : d;
+                                values.add(d);
                             }
-                            data.add(col);
+                            csvPrinter.printRecord(values);
                         }
+
                     }
                 }
             } else {
                 for (TextField[] rowInputs : inputs) {
-                    List<String> col = new ArrayList<>();
-                    for (int i = 0; i < colsCheck.length; i++) {
-                        if (colsCheck[i].isSelected()) {
-                            String d = rowInputs[i].getText();
-                            d = d == null ? "" : d;
-                            col.add(d);
-                        }
+                    List<String> values = new ArrayList<>();
+                    for (int c = 0; c < cols.size(); c++) {
+                        String d = rowInputs[cols.get(c)].getText();
+                        d = d == null ? "" : d;
+                        values.add(d);
                     }
-                    data.add(col);
+                    csvPrinter.printRecord(values);
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
-        return TextTools.toArray(data);
+        return tmpFile;
     }
 
     @Override
-    protected File deleteFileSelectedCols() {
+    protected File deleteFileSelectedColsDo() {
         if (sourceFile == null) {
             return null;
         }
@@ -1438,7 +1387,7 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    protected File setFileSelectedCols(String value) {
+    protected File setFileSelectedColsDo(String value) {
         if (sourceFile == null) {
             return null;
         }

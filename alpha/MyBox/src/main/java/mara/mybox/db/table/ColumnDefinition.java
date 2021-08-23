@@ -12,8 +12,6 @@ import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.Languages.message;
-import static mara.mybox.value.Languages.tableMessage;
 import mara.mybox.value.Languages;
 
 /**
@@ -247,6 +245,12 @@ public class ColumnDefinition extends BaseData {
         }
         return 1;
     }
+
+    public boolean isNumberType() {
+        return type == ColumnType.Double || type == ColumnType.Float
+                || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
+    }
+
 
     /*
         static methods

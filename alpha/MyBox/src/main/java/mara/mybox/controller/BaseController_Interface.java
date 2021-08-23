@@ -53,7 +53,9 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseController_Interface extends BaseController_Files {
 
+    protected final int minSize = 200;
     protected ChangeListener<Number> leftDividerListener, rightDividerListener;
+
 
     /*
         open fxml
@@ -385,31 +387,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
             getMyScene();
             getMyStage();
 
-            int minSize = 200;
             myStage.setMinWidth(minSize);
             myStage.setMinHeight(minSize);
 
-            if (AppVariables.restoreStagesSize) {
-                String prefix = interfaceKeysPrefix();
-                setStageStatus(prefix, minSize);
-
-                myStage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                        UserConfig.setBoolean(prefix + "FullScreen", myStage.isFullScreen());
-                    }
-                });
-                myStage.maximizedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                        UserConfig.setBoolean(prefix + "Maximized", myStage.isMaximized());
-                    }
-                });
-
-            } else {
-                myStage.sizeToScene();
-                myStage.centerOnScreen();
-            }
+            setStageStatus();
 
             Rectangle2D screen = NodeTools.getScreen();
             if (myStage.getHeight() > screen.getHeight()) {
@@ -428,6 +409,86 @@ public abstract class BaseController_Interface extends BaseController_Files {
             refreshStyle();
             toFront();
 
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public String interfaceKeysPrefix() {
+        return "Interface_" + baseName + (isPop ? "_Pop" : "");
+    }
+
+    public void setStageStatus() {
+        try {
+            isPop = false;
+            if (AppVariables.restoreStagesSize) {
+                String prefix = interfaceKeysPrefix();
+                if (UserConfig.getBoolean(prefix + "FullScreen", false)) {
+                    myStage.setFullScreen(true);
+
+                } else if (UserConfig.getBoolean(prefix + "Maximized", false)) {
+                    NodeTools.setMaximized(myStage, true);
+
+                } else {
+                    int mw = UserConfig.getInt(prefix + "StageWidth", -1);
+                    int mh = UserConfig.getInt(prefix + "StageHeight", -1);
+                    int mx = UserConfig.getInt(prefix + "StageX", -1);
+                    int my = UserConfig.getInt(prefix + "StageY", -1);
+                    if (mw > minSize && mh > minSize) {
+                        myStage.setWidth(mw);
+                        myStage.setHeight(mh);
+                    }
+                    if (mx >= 0 && my >= 0) {
+                        myStage.setX(mx);
+                        myStage.setY(my);
+                    }
+                }
+
+                myStage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                        UserConfig.setBoolean(prefix + "FullScreen", myStage.isFullScreen());
+                    }
+                });
+                myStage.maximizedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                        UserConfig.setBoolean(prefix + "Maximized", myStage.isMaximized());
+                    }
+                });
+
+            } else {
+                myStage.sizeToScene();
+                myStage.centerOnScreen();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setAsPopup(String baseName) {
+        try {
+            isPop = true;
+            this.baseName = baseName;
+            String prefix = interfaceKeysPrefix();
+            int mw = UserConfig.getInt(prefix + "StageWidth", 600);
+            int mh = UserConfig.getInt(prefix + "StageHeight", 500);
+            int mx = UserConfig.getInt(prefix + "StageX", 0);
+            int my = UserConfig.getInt(prefix + "StageY", 0);
+            if (mw > minSize && mh > minSize) {
+                myStage.setWidth(mw);
+                myStage.setHeight(mh);
+            }
+            if (mx >= 0 && my >= 0) {
+                myStage.setX(mx);
+                myStage.setY(my);
+            }
+            if (topCheck != null) {
+                topCheck.setVisible(true);
+                checkAlwaysTop();
+            } else {
+                myStage.setAlwaysOnTop(true);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -455,47 +516,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void setStageStatus(String prefix, int minSize) {
-        setStageStatus(prefix, minSize, -1, -1, -1, -1);
-    }
-
-    public void setStageStatus(String prefix, int minSize, int initX, int initY, int initW, int initH) {
-        if (UserConfig.getBoolean(prefix + "FullScreen", false)) {
-            myStage.setFullScreen(true);
-
-        } else if (UserConfig.getBoolean(prefix + "Maximized", false)) {
-            NodeTools.setMaximized(myStage, true);
-
-        } else {
-            int mw = UserConfig.getInt(prefix + "StageWidth", initW);
-            int mh = UserConfig.getInt(prefix + "StageHeight", initH);
-            int mx = UserConfig.getInt(prefix + "StageX", initX);
-            int my = UserConfig.getInt(prefix + "StageY", initY);
-            if (mw > minSize && mh > minSize) {
-                myStage.setWidth(mw);
-                myStage.setHeight(mh);
-            }
-            if (mx >= 0 && my >= 0) {
-                myStage.setX(mx);
-                myStage.setY(my);
-            }
-        }
-    }
-
-    public void setAsPopup(String baseName) {
-        isPop = true;
-        this.baseName = baseName;
-        setStageStatus(interfaceKeysPrefix(), 200, 0, 0, 600, 500);
-//        hideLeftPane();
-//        hideRightPane();
-        if (topCheck != null) {
-            topCheck.setVisible(true);
-            checkAlwaysTop();
-        } else {
-            myStage.setAlwaysOnTop(true);
         }
     }
 
@@ -559,10 +579,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             fade.setNode(topCheck);
             fade.play();
         }
-    }
-
-    public String interfaceKeysPrefix() {
-        return "Interface_" + baseName;
     }
 
     // Do not call "refreshStyle" in this method, or else endless loop happens

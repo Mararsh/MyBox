@@ -57,7 +57,7 @@ public class MenuController extends BaseController {
     }
 
     @Override
-    public void setStageStatus(String prefix, int minSize) {
+    public void setStageStatus() {
         setAsPopup(baseName);
     }
 

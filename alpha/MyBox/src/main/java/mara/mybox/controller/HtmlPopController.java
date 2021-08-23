@@ -38,8 +38,7 @@ public class HtmlPopController extends BaseWebViewController {
     }
 
     @Override
-    public void setStageStatus(String prefix, int minSize) {
-//        setAsPopup(baseName);
+    public void setStageStatus() {
     }
 
     public void setControls() {

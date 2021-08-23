@@ -282,7 +282,7 @@ public class ControlMatrix extends BaseSheetController {
             for (int row = 0; row < rowsNumber; ++row) {
                 for (int col = 0; col < colsNumber; ++col) {
                     try {
-                        values[row][col] = DoubleTools.scale(matrix[row][col], scale) + "";
+                        values[row][col] = DoubleTools.format(matrix[row][col], scale);
                     } catch (Exception e) {
                         values[row][col] = defaultColValue;
                     }
@@ -467,8 +467,8 @@ public class ControlMatrix extends BaseSheetController {
     }
 
     @Override
-    public List<MenuItem> colModifyMenu(int col) {
-        List<MenuItem> items = super.colModifyMenu(col);
+    public List<MenuItem> colChangeMenu(int col) {
+        List<MenuItem> items = super.colChangeMenu(col);
         items.add(new SeparatorMenuItem());
         try {
             MenuItem menu = new MenuItem(Languages.message("SetColZero"));
@@ -500,7 +500,7 @@ public class ControlMatrix extends BaseSheetController {
                 Random r = new Random();
                 isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
-                    inputs[j][col].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
+                    inputs[j][col].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
                 }
                 isSettingValues = false;
                 sheetChanged();
@@ -546,7 +546,7 @@ public class ControlMatrix extends BaseSheetController {
                 Random r = new Random();
                 isSettingValues = true;
                 for (int i = 0; i < colsNumber; ++i) {
-                    inputs[row][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
+                    inputs[row][i].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
                 }
                 isSettingValues = false;
                 sheetChanged();
@@ -604,7 +604,7 @@ public class ControlMatrix extends BaseSheetController {
                 isSettingValues = true;
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
-                        inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
+                        inputs[j][i].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
                     }
                 }
                 isSettingValues = false;
@@ -637,7 +637,7 @@ public class ControlMatrix extends BaseSheetController {
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
                         double d = dvalue(j, i);
-                        inputs[j][i].setText(DoubleTools.scale(d / sum, scale) + "");
+                        inputs[j][i].setText(DoubleTools.format(d / sum, scale));
                     }
                 }
                 isSettingValues = false;
@@ -655,7 +655,7 @@ public class ControlMatrix extends BaseSheetController {
                 float[][] m = ConvolutionKernel.makeGaussMatrix(rowsNumber / 2);
                 for (int j = 0; j < rowsNumber; ++j) {
                     for (int i = 0; i < colsNumber; ++i) {
-                        inputs[j][i].setText(DoubleTools.scale(m[j][i], scale) + "");
+                        inputs[j][i].setText(DoubleTools.format(m[j][i], scale));
                     }
                 }
                 isSettingValues = false;
@@ -802,7 +802,7 @@ public class ControlMatrix extends BaseSheetController {
                         continue;
                     }
                     for (int i = 0; i < colsNumber; ++i) {
-                        inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
+                        inputs[j][i].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
                     }
                 }
                 isSettingValues = false;
@@ -868,7 +868,7 @@ public class ControlMatrix extends BaseSheetController {
                         continue;
                     }
                     for (int j = 0; j < rowsNumber; ++j) {
-                        inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
+                        inputs[j][i].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
                     }
                 }
                 isSettingValues = false;
@@ -943,7 +943,7 @@ public class ControlMatrix extends BaseSheetController {
                         if (!colsCheck[i].isSelected()) {
                             continue;
                         }
-                        inputs[j][i].setText(DoubleTools.scale(DoubleTools.random(r, maxRandom), scale) + "");
+                        inputs[j][i].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
                     }
                 }
                 isSettingValues = false;

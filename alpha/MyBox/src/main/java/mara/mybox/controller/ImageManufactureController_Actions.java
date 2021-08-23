@@ -247,7 +247,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 return true;
 
             } else if (tab == scopeTab) {
-                ImagePopController.openScope(scopeController);
+                ImageScopePopController.open(scopeController);
                 return true;
 
             } else if (tab == hisTab) {

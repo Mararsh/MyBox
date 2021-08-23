@@ -9,13 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -27,36 +23,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheetDisplay_Validation extends BaseWebViewController {
-
-    protected BaseSheetController sheetController;
-    protected List<ColumnDefinition> columns;
-    protected ColumnDefinition.ColumnType defaultColumnType;
-    protected String dataName, defaultColValue, colPrefix, inputStyle;
-    protected boolean defaultColNotNull, dataInvalid;
-    protected String[][] sheet;
-    protected int colsNumber, rowsNumber;
-
-    @FXML
-    protected TabPane tabPane;
-    @FXML
-    protected Tab defTab, htmlTab, textsTab, reportTab;
-    @FXML
-    protected WebView reportView;
-    @FXML
-    protected HBox defBottunsBox;
-
-    @FXML
-    protected VBox defBox;
-
-    public ControlSheetDisplay_Validation() {
-        baseTitle = message("Data");
-        dataName = "sheet";
-        colPrefix = "Field";
-        defaultColumnType = ColumnDefinition.ColumnType.String;
-        defaultColValue = "";
-        defaultColNotNull = false;
-    }
+public abstract class ControlSheetDisplay_Validation extends ControlSheetDisplay_Base {
 
     protected String titleName() {
         if (sourceFile == null) {
@@ -91,7 +58,7 @@ public abstract class ControlSheetDisplay_Validation extends BaseWebViewControll
         try {
             List<String> names = new ArrayList<>();
             for (int i = 0; i < rows; i++) {
-                names.add(rowName(i));
+                names.add(sheetController.rowName(i));
             }
             return names;
         } catch (Exception e) {
@@ -331,15 +298,15 @@ public abstract class ControlSheetDisplay_Validation extends BaseWebViewControll
             if (dataInvalid) {
                 sheetController.dataIsInvalid();
             }
-            if (reportView == null) {
+            if (reportViewController == null) {
                 return;
             }
-            reportView.getEngine().getLoadWorker().cancel();
+            reportViewController.webEngine.getLoadWorker().cancel();
             if (dataInvalid) {
-                reportView.getEngine().loadContent(table.html());
+                reportViewController.webEngine.loadContent(table.html());
                 tabPane.getSelectionModel().select(reportTab);
             } else {
-                reportView.getEngine().loadContent("<H2 align=\"center\">" + message("DataAreValid") + "</H2>");
+                reportViewController.webEngine.loadContent("<H2 align=\"center\">" + message("DataAreValid") + "</H2>");
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

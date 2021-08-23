@@ -12,7 +12,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public class ControlSheetDisplay extends ControlSheetDisplay_Html {
+public class ControlSheetDisplay extends ControlSheetDisplay_Calculation {
 
     // Should always run this after scene loaded and before input data
     public void initDisplay(BaseSheetController parent) {
@@ -36,6 +36,7 @@ public class ControlSheetDisplay extends ControlSheetDisplay_Html {
 
             initHtmlControls();
             initTextControls();
+            initCalculationControls();
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -51,6 +52,7 @@ public class ControlSheetDisplay extends ControlSheetDisplay_Html {
             validate();
             updateHtml();
             updateText();
+            updateCalculation();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -62,7 +64,7 @@ public class ControlSheetDisplay extends ControlSheetDisplay_Html {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
-                HtmlPopController.openWebView(this, webView);
+                HtmlPopController.openWebView(this, htmlViewController.webView);
                 return true;
 
             } else if (tab == textsTab) {
@@ -70,7 +72,7 @@ public class ControlSheetDisplay extends ControlSheetDisplay_Html {
                 return true;
 
             } else if (tab == reportTab) {
-                HtmlPopController.openWebView(this, reportView);
+                HtmlPopController.openWebView(this, reportViewController.webView);
                 return true;
 
             }
@@ -88,13 +90,18 @@ public class ControlSheetDisplay extends ControlSheetDisplay_Html {
 
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == htmlTab) {
-                Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-                MenuWebviewController.pop(webViewController, null, localToScreen.getX(), localToScreen.getY());
+                Point2D localToScreen = htmlViewController.webView.localToScreen(htmlViewController.webView.getWidth() - 80, 80);
+                MenuWebviewController.pop(htmlViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             } else if (tab == textsTab) {
                 Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textArea, localToScreen.getX(), localToScreen.getY());
+                return true;
+
+            } else if (tab == reportTab) {
+                Point2D localToScreen = reportViewController.webView.localToScreen(reportViewController.webView.getWidth() - 80, 80);
+                MenuWebviewController.pop(reportViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             }

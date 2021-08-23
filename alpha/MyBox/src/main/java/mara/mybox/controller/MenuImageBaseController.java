@@ -58,6 +58,7 @@ public class MenuImageBaseController extends MenuController {
             this.imageController = imageController;
             parentController = imageController;
             baseName = imageController.baseName;
+            sourceFile = imageController.sourceFile;
 
             if (imageController.imageInformation == null) {
                 infoButton.setDisable(true);

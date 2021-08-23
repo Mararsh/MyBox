@@ -7,8 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import mara.mybox.bufferedimage.PixelsOperation;
-import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -23,7 +21,6 @@ public class ImagePopController extends BaseImageController {
 
     protected ImageView sourceImageView;
     protected ChangeListener listener;
-    protected ImageManufactureScopeController scopeController;
 
     @FXML
     protected CheckBox sychronizedCheck;
@@ -31,8 +28,7 @@ public class ImagePopController extends BaseImageController {
     protected Button refreshButton;
 
     @Override
-    public void setStageStatus(String prefix, int minSize) {
-//        setAsPopup(baseName);
+    public void setStageStatus() {
     }
 
     public void setControls() {
@@ -87,22 +83,6 @@ public class ImagePopController extends BaseImageController {
         }
     }
 
-    public void setScopeController(ImageManufactureScopeController scopeController) {
-        try {
-            this.baseName = scopeController.baseName;
-
-            this.scopeController = scopeController;
-            this.sourceImageView = scopeController.scopeView;
-
-            refreshAction();
-
-            setControls();
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
     public void setImage(String baseName, Image image) {
         try {
             this.baseName = baseName;
@@ -120,53 +100,13 @@ public class ImagePopController extends BaseImageController {
 
     @FXML
     public void refreshAction() {
-        if (scopeController != null) {
-            makeScope();
-
-        } else if (sourceImageView != null) {
+        if (sourceImageView != null) {
             loadImage(sourceImageView.getImage());
 
         } else {
             sychronizedCheck.setVisible(false);
             refreshButton.setVisible(false);
 
-        }
-    }
-
-    public void makeScope() {
-        if (scopeController == null) {
-            return;
-        }
-        synchronized (this) {
-            SingletonTask popTask = new SingletonTask<Void>() {
-
-                private Image scopeImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        PixelsOperation pixelsOperation = PixelsOperationFactory.create(scopeController.imageView.getImage(),
-                                scopeController.scope, PixelsOperation.OperationType.PreOpacity, PixelsOperation.ColorActionType.Set);
-                        pixelsOperation.setSkipTransparent(scopeController.ignoreTransparentCheck.isSelected());
-                        pixelsOperation.setIntPara1(255 - (int) (scopeController.opacity * 255));
-                        pixelsOperation.setExcludeScope(true);
-                        scopeImage = pixelsOperation.operateFxImage();
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadImage(scopeImage);
-                }
-            };
-            popTask.setSelf(popTask);
-            Thread thread = new Thread(popTask);
-            thread.setDaemon(false);
-            thread.start();
         }
     }
 
@@ -177,7 +117,6 @@ public class ImagePopController extends BaseImageController {
                 sourceImageView.imageProperty().removeListener(listener);
                 sourceImageView = null;
             }
-            scopeController = null;
             listener = null;
         } catch (Exception e) {
         }
@@ -209,20 +148,6 @@ public class ImagePopController extends BaseImageController {
             }
             ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
             controller.setSourceImageView(parent.baseName, imageView);
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static ImagePopController openScope(ImageManufactureScopeController parent) {
-        try {
-            if (parent == null) {
-                return null;
-            }
-            ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
-            controller.setScopeController(parent);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -91,6 +91,15 @@ public class ImageFileReaders {
         }
     }
 
+    public static ImageInformation readInfo(File file, int width) {
+        Object ret = readFrame(file, false, 0, width, null);
+        if (ret != null && ret instanceof ImageInformation) {
+            return (ImageInformation) ret;
+        } else {
+            return null;
+        }
+    }
+
     public static Object readFrame(File file, boolean onlyInformation, int index, int width, ImageInformation existImageInfo) {
         try {
             if (file == null) {

@@ -12,7 +12,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
@@ -164,11 +163,6 @@ public abstract class ControlSheetDisplay_Text extends ControlSheetDisplay_Valid
         } else {
             textArea.setText(text);
         }
-    }
-
-    @FXML
-    public void copyText() {
-        TextClipboardTools.copyToSystemClipboard(myController, textArea.getText());
     }
 
     @FXML

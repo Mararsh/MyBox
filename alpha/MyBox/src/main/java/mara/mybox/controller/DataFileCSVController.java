@@ -12,7 +12,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -24,7 +23,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -73,10 +71,10 @@ public class DataFileCSVController extends BaseDataFileController {
         }
     }
 
-    public void setFile(File file, boolean withName) {
+    public void setFile(File file, boolean withName, char delimiter) {
         sourceFile = file;
         csvReadController.withNamesCheck.setSelected(withName);
-        csvReadController.commaRadio.fire();
+        csvReadController.setDelimiter(delimiter);
         initCurrentPage();
         loadFile(true);
     }
@@ -445,7 +443,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File setFileColValues(int col, String value) {
+    protected File setFileColValuesDo(int col, String value) {
         if (sourceFile == null || col < 0 || value == null) {
             return null;
         }
@@ -475,37 +473,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected StringBuilder copyFileColValues(int col) {
-        if (sourceFile == null || col < 0) {
-            return null;
-        }
-        StringBuilder s = null;
-        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
-            int index = 0;
-            for (CSVRecord record : parser) {
-                if (++index < currentPageStart || index >= currentPageEnd) {
-                    copiedCol.add(record.get(col));
-                } else if (index == currentPageStart) {
-                    copyPageCol(col);
-                }
-            }
-            for (String v : copiedCol) {
-                if (s == null) {
-                    s = new StringBuilder();
-                    s.append(v);
-                } else {
-                    s.append("\n").append(v);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        return s;
-    }
-
-    @Override
-    protected File pasteFileColValues(int col) {
+    protected File pasteFileColValuesDo(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -541,7 +509,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File insertFileCol(int col, boolean left, int number) {
+    protected File insertFileColDo(int col, boolean left, int number) {
         if (sourceFile == null || col < 0 || number < 1) {
             return null;
         }
@@ -572,7 +540,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File DeleteFileCol(int col) {
+    protected File DeleteFileColDo(int col) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -616,7 +584,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File orderFileCol(int col, boolean asc) {
+    protected File orderFileColDo(int col, boolean asc) {
         if (sourceFile == null || col < 0) {
             return null;
         }
@@ -654,35 +622,37 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected String[][] fileSelectedCols() {
-        if (sourceFile == null) {
+    protected File fileSelectedCols(List<Integer> cols) {
+        if (sourceFile == null || cols == null || cols.isEmpty()) {
             return null;
         }
-        List<List<String>> data = new ArrayList<>();
-        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            List<String> names = new ArrayList<>();
+            for (int c : cols) {
+                names.add(colsCheck[c].getText());
+            }
+            csvPrinter.printRecord(names);
             int index = 0;
             for (CSVRecord record : parser) {
                 if (++index < currentPageStart || index >= currentPageEnd) {
-                    List<String> col = new ArrayList<>();
-                    for (int i = 0; i < colsCheck.length; ++i) {
-                        if (colsCheck[i].isSelected()) {
-                            String d = record.get(i);
-                            d = d == null ? "" : d;
-                            col.add(d);
-                        }
+                    List<String> values = new ArrayList<>();
+                    for (int c : cols) {
+                        String d = record.get(c);
+                        d = d == null ? "" : d;
+                        values.add(d);
                     }
-                    data.add(col);
+                    csvPrinter.printRecord(values);
                 } else if (index == currentPageStart) {
                     for (TextField[] rowInputs : inputs) {
-                        List<String> col = new ArrayList<>();
-                        for (int i = 0; i < colsCheck.length; i++) {
-                            if (colsCheck[i].isSelected()) {
-                                String d = rowInputs[i].getText();
-                                d = d == null ? "" : d;
-                                col.add(d);
-                            }
+                        List<String> values = new ArrayList<>();
+                        for (int c : cols) {
+                            String d = rowInputs[c].getText();
+                            d = d == null ? "" : d;
+                            values.add(d);
                         }
-                        data.add(col);
+                        csvPrinter.printRecord(values);
                     }
                 }
             }
@@ -690,11 +660,11 @@ public class DataFileCSVController extends BaseDataFileController {
             MyBoxLog.error(e);
             return null;
         }
-        return TextTools.toArray(data);
+        return tmpFile;
     }
 
     @Override
-    protected File deleteFileSelectedCols() {
+    protected File deleteFileSelectedColsDo() {
         if (sourceFile == null) {
             return null;
         }
@@ -722,7 +692,7 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    protected File setFileSelectedCols(String value) {
+    protected File setFileSelectedColsDo(String value) {
         if (sourceFile == null) {
             return null;
         }
@@ -751,24 +721,13 @@ public class DataFileCSVController extends BaseDataFileController {
         return tmpFile;
     }
 
-    public static DataFileCSVController oneOpen() {
-        DataFileCSVController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof DataFileCSVController) {
-                try {
-                    controller = (DataFileCSVController) object;
-                    controller.toFront();
-                    break;
-                } catch (Exception e) {
-                }
-            }
-        }
-        if (controller == null) {
-            controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        }
+    /*
+        static
+     */
+    public static DataFileCSVController open(File file, boolean withNames, char delimiter) {
+        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        controller.setFile(file, withNames, delimiter);
+        controller.toFront();
         return controller;
     }
 

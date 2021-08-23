@@ -17,11 +17,13 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
@@ -340,11 +342,11 @@ public class DataClipboardController extends BaseSheetController {
     }
 
     @Override
-    public List<MenuItem> colModifyDefMenu(int col) {
+    public List<MenuItem> colDefMenu(int col) {
         if (sourceController != null) {
             return null;
         } else {
-            return super.colModifyDefMenu(col);
+            return super.colDefMenu(col);
         }
     }
 
@@ -410,51 +412,83 @@ public class DataClipboardController extends BaseSheetController {
 
     @FXML
     public void csvAction() {
-        sheet = pickData();
-        if (sheet == null || sheet.length < 1) {
-            popError(message("NoData"));
-            return;
+        synchronized (this) {
+            SingletonTask csvTask = new SingletonTask<Void>() {
+                File tmpFile;
+
+                @Override
+                protected boolean handle() {
+                    sheet = pickData();
+                    if (sheet == null || sheet.length < 1) {
+                        error = message("NoData");
+                        return false;
+                    }
+                    tmpFile = TmpFileTools.getTempFile(".csv");
+                    tmpFile = TextFileTools.writeFile(tmpFile, TextTools.dataText(sheet, ",", columnNames(), null));
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    return tmpFile != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileCSVController.open(tmpFile, true, ',');
+                }
+
+            };
+            csvTask.setSelf(csvTask);
+            Thread thread = new Thread(csvTask);
+            thread.setDaemon(false);
+            thread.start();
         }
-        File tmpFile = TmpFileTools.getTempFile(".csv");
-        tmpFile = TextFileTools.writeFile(tmpFile, TextTools.dataText(sheet, ","));
-        if (tmpFile == null || !tmpFile.exists()) {
-            popFailed();
-            return;
-        }
-        DataFileCSVController controller = (DataFileCSVController) openStage(Fxmls.DataFileCSVFxml);
-        controller.setFile(tmpFile, false);
     }
 
     @FXML
     public void excelAction() {
-        sheet = pickData();
-        if (sheet == null || sheet.length < 1) {
-            popError(message("NoData"));
-            return;
-        }
-        File tmpFile = TmpFileTools.getTempFile(".xlsx");
-        try ( Workbook targetBook = new XSSFWorkbook();
-                 FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-            Sheet targetSheet = targetBook.createSheet();
-            int index = 0;
-            for (String[] row : sheet) {
-                Row targetRow = targetSheet.createRow(index++);
-                for (int col = 0; col < row.length; col++) {
-                    Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                    targetCell.setCellValue(row[col]);
+        synchronized (this) {
+            SingletonTask excelTask = new SingletonTask<Void>() {
+                File tmpFile;
+
+                @Override
+                protected boolean handle() {
+                    sheet = pickData();
+                    if (sheet == null || sheet.length < 1) {
+                        error = message("NoData");
+                        return false;
+                    }
+                    tmpFile = TmpFileTools.getTempFile(".xlsx");
+                    try ( Workbook targetBook = new XSSFWorkbook();
+                             FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                        Sheet targetSheet = targetBook.createSheet();
+                        int index = 0;
+                        for (String[] row : sheet) {
+                            Row targetRow = targetSheet.createRow(index++);
+                            for (int col = 0; col < row.length; col++) {
+                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
+                                targetCell.setCellValue(row[col]);
+                            }
+                        }
+                        targetBook.write(fileOut);
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return tmpFile != null && tmpFile.exists();
                 }
-            }
-            targetBook.write(fileOut);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return;
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileExcelController controller = (DataFileExcelController) openStage(Fxmls.DataFileExcelFxml);
+                    controller.setFile(tmpFile, false);
+                }
+
+            };
+            excelTask.setSelf(excelTask);
+            Thread thread = new Thread(excelTask);
+            thread.setDaemon(false);
+            thread.start();
         }
-        if (!tmpFile.exists()) {
-            popFailed();
-            return;
-        }
-        DataFileExcelController controller = (DataFileExcelController) openStage(Fxmls.DataFileExcelFxml);
-        controller.setFile(tmpFile, false);
     }
 
     @FXML
@@ -503,6 +537,23 @@ public class DataClipboardController extends BaseSheetController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static DataClipboardController open(String[][] data, List<ColumnDefinition> columns) {
+        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
+        controller.makeSheet(data, columns);
+        controller.toFront();
+        return controller;
+    }
+
+    public static DataClipboardController open(BaseSheetController sheetController) {
+        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
+        controller.setSourceController(sheetController);
+        controller.toFront();
+        return controller;
     }
 
 }

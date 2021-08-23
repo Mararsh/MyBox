@@ -57,8 +57,6 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
     public List<MenuItem> makeSheetEqualMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu;
-
             rowsSelected = false;
             if (rowsCheck != null) {
                 for (int j = 0; j < rowsCheck.length; ++j) {
@@ -78,9 +76,9 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
                 }
             }
 
-            menu = new MenuItem(Languages.message("SetAllValues"));
+            MenuItem menu = new MenuItem(Languages.message("SetPageAll"));
             menu.setOnAction((ActionEvent event) -> {
-                setAllValues();
+                setPageAllValues();
             });
             menu.setDisable(inputs == null);
             items.add(menu);
@@ -96,16 +94,29 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             menu.setDisable(!rowsSelected);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("SetSelectedColsValues"));
+            menu = new MenuItem(Languages.message("SetPageSelectedColsValues"));
             menu.setOnAction((ActionEvent event) -> {
                 if (!colsSelected) {
                     popError(Languages.message("NoData"));
                     return;
                 }
-                setSelectedCols();
+                setPageSelectedCols();
             });
             menu.setDisable(!colsSelected);
             items.add(menu);
+
+            if (sourceFile != null && pagesNumber > 1) {
+                menu = new MenuItem(Languages.message("SetFileSelectedColsValues"));
+                menu.setOnAction((ActionEvent event) -> {
+                    if (!colsSelected) {
+                        popError(Languages.message("NoData"));
+                        return;
+                    }
+                    setFileSelectedCols();
+                });
+                menu.setDisable(!colsSelected || dataChanged);
+                items.add(menu);
+            }
 
             menu = new MenuItem(Languages.message("SetSelectedRowsColsValues"));
             menu.setOnAction((ActionEvent event) -> {
@@ -118,18 +129,17 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             menu.setDisable(!colsSelected || !rowsSelected);
             items.add(menu);
 
-            List<MenuItem> moreItems = equalMoreMenu();
-            if (moreItems != null && !moreItems.isEmpty()) {
-                items.add(new SeparatorMenuItem());
-                items.addAll(moreItems);
-            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return items;
     }
 
-    public void setAllValues() {
+    public List<MenuItem> equalMoreMenu() {
+        return null;
+    }
+
+    public void setPageAllValues() {
         if (inputs == null) {
             return;
         }
@@ -168,7 +178,7 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
 
     }
 
-    public void setSelectedCols() {
+    public void setPageSelectedCols() {
         if (inputs == null || colsCheck == null) {
             return;
         }
@@ -210,8 +220,8 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
         sheetChanged();
     }
 
-    public List<MenuItem> equalMoreMenu() {
-        return null;
+    protected void setFileSelectedCols() {
+        setPageSelectedCols();
     }
 
 }
