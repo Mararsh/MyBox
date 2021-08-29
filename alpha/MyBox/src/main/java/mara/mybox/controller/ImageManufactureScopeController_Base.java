@@ -44,7 +44,7 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab areaTab, pointsTab, colorsTab, matchTab, pixTab, optionsTab;
+    protected Tab areaTab, pointsTab, colorsTab, matchTab, pixTab, optionsTab, saveTab;
     @FXML
     protected VBox setBox, areaBox, rectangleBox, circleBox;
     @FXML

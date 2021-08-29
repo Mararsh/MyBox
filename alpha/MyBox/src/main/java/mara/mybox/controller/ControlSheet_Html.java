@@ -15,7 +15,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheetDisplay_Html extends ControlSheetDisplay_Text {
+public abstract class ControlSheet_Html extends ControlSheet_ColMenu {
 
     public void initHtmlControls() {
         try {
@@ -41,12 +41,12 @@ public abstract class ControlSheetDisplay_Html extends ControlSheetDisplay_Text 
 
     protected void updateHtml() {
         try {
-            if (sheet == null || sheet.length == 0) {
+            if (pageData == null || pageData.length == 0) {
                 htmlViewController.webEngine.loadContent("");
                 return;
             }
-            int rNumber = sheet.length;
-            int cNumber = sheet[0].length;
+            int rNumber = pageData.length;
+            int cNumber = pageData[0].length;
             if (cNumber == 0) {
                 htmlViewController.webEngine.loadContent("");
                 return;
@@ -71,10 +71,10 @@ public abstract class ControlSheetDisplay_Html extends ControlSheetDisplay_Text 
             for (int i = 0; i < rNumber; i++) {
                 List<String> row = new ArrayList<>();
                 if (htmlRowCheck.isSelected()) {
-                    row.add(sheetController.rowName(i));
+                    row.add(rowName(i));
                 }
                 for (int j = 0; j < cNumber; j++) {
-                    row.add(sheet[i][j]);
+                    row.add(pageData[i][j]);
                 }
                 table.add(row);
             }

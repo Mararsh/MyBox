@@ -19,26 +19,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-8-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController_Size extends BaseSheetController_Equal {
-
-    // Notice: this does not concern columns names
-    public void resizeSheet(int rowsNumber, int colsNumber) {
-        if (rowsNumber <= 0 || colsNumber <= 0) {
-            makeSheet(null);
-            return;
-        }
-        String[][] values = new String[rowsNumber][colsNumber];
-        if (inputs != null && inputs.length > 0) {
-            int drow = Math.min(inputs.length, rowsNumber);
-            int dcol = Math.min(inputs[0].length, colsNumber);
-            for (int j = 0; j < drow; ++j) {
-                for (int i = 0; i < dcol; ++i) {
-                    values[j][i] = value(j, i);
-                }
-            }
-        }
-        makeSheet(values);
-    }
+public abstract class ControlSheet_Size extends ControlSheet_Sheet {
 
     @FXML
     public void sheetSizeMenu(MouseEvent mouseEvent) {
@@ -80,12 +61,12 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
                 for (int i = 0; i < colsCheck.length; ++i) {
                     double width = colsCheck[i].getWidth() + widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    if (inputs != null) {
-                        for (int j = 0; j < inputs.length; ++j) {
-                            inputs[j][i].setPrefWidth(width);
+                    if (sheetInputs != null) {
+                        for (int j = 0; j < sheetInputs.length; ++j) {
+                            sheetInputs[j][i].setPrefWidth(width);
                         }
                     }
-                    makeDefintion();
+                    makeDefintionPane();
                 }
             });
             menu.setDisable(colsCheck == null || colsCheck.length == 0);
@@ -99,12 +80,12 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
                     }
                     double width = colsCheck[i].getWidth() - widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    if (inputs != null) {
-                        for (int j = 0; j < inputs.length; ++j) {
-                            inputs[j][i].setPrefWidth(width);
+                    if (sheetInputs != null) {
+                        for (int j = 0; j < sheetInputs.length; ++j) {
+                            sheetInputs[j][i].setPrefWidth(width);
                         }
                     }
-                    makeDefintion();
+                    makeDefintionPane();
                 }
             });
             menu.setDisable(colsCheck == null || colsCheck.length == 0);
@@ -120,13 +101,13 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
                     double width = Double.parseDouble(value);
                     for (int i = 0; i < colsCheck.length; ++i) {
                         colsCheck[i].setPrefWidth(width);
-                        if (inputs != null) {
-                            for (int j = 0; j < inputs.length; ++j) {
-                                inputs[j][i].setPrefWidth(width);
+                        if (sheetInputs != null) {
+                            for (int j = 0; j < sheetInputs.length; ++j) {
+                                sheetInputs[j][i].setPrefWidth(width);
                             }
                         }
                     }
-                    makeDefintion();
+                    makeDefintionPane();
                 } catch (Exception e) {
                     popError(Languages.message("InvalidData"));
                 }
@@ -134,7 +115,7 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
             menu.setDisable(colsCheck == null || colsCheck.length == 0);
             items.add(menu);
 
-            colsSelected = false;
+            boolean colsSelected = false;
             if (colsCheck != null) {
                 for (int j = 0; j < colsCheck.length; ++j) {
                     if (colsCheck[j].isSelected()) {
@@ -154,13 +135,13 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
                     }
                     double width = colsCheck[i].getWidth() + widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    if (inputs != null) {
-                        for (int j = 0; j < inputs.length; ++j) {
-                            inputs[j][i].setPrefWidth(width);
+                    if (sheetInputs != null) {
+                        for (int j = 0; j < sheetInputs.length; ++j) {
+                            sheetInputs[j][i].setPrefWidth(width);
                         }
                     }
                 }
-                makeDefintion();
+                makeDefintionPane();
             });
             menu.setDisable(!colsSelected);
             items.add(menu);
@@ -176,12 +157,12 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
                     }
                     double width = colsCheck[i].getWidth() - widthChange;
                     colsCheck[i].setPrefWidth(width);
-                    if (inputs != null) {
-                        for (int j = 0; j < inputs.length; ++j) {
-                            inputs[j][i].setPrefWidth(width);
+                    if (sheetInputs != null) {
+                        for (int j = 0; j < sheetInputs.length; ++j) {
+                            sheetInputs[j][i].setPrefWidth(width);
                         }
                     }
-                    makeDefintion();
+                    makeDefintionPane();
                 }
             });
             menu.setDisable(!colsSelected);
@@ -200,13 +181,13 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
                             continue;
                         }
                         colsCheck[i].setPrefWidth(width);
-                        if (inputs != null) {
-                            for (int j = 0; j < inputs.length; ++j) {
-                                inputs[j][i].setPrefWidth(width);
+                        if (sheetInputs != null) {
+                            for (int j = 0; j < sheetInputs.length; ++j) {
+                                sheetInputs[j][i].setPrefWidth(width);
                             }
                         }
                     }
-                    makeDefintion();
+                    makeDefintionPane();
                 } catch (Exception e) {
                     popError(Languages.message("InvalidData"));
                 }
@@ -240,7 +221,10 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
         return items;
     }
 
-    @Override
+    public List<MenuItem> sheetSizeMoreMenu() {
+        return null;
+    }
+
     protected void addRowsNumber() {
         if (colsCheck == null || colsCheck.length == 0) {
             return;
@@ -251,17 +235,16 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
         }
         try {
             int number = Integer.parseInt(value);
-            if (inputs == null || inputs.length == 0) {
+            if (sheetInputs == null || sheetInputs.length == 0) {
                 resizeSheet(number, colsCheck.length);
             } else {
-                resizeSheet(inputs.length + number, colsCheck.length);
+                resizeSheet(sheetInputs.length + number, colsCheck.length);
             }
         } catch (Exception e) {
             popError(e.toString());
         }
     }
 
-    @Override
     protected void addColsNumber() {
         String value = askValue("", Languages.message("AddColsNumber"), "1");
         if (value == null) {
@@ -279,8 +262,54 @@ public abstract class BaseSheetController_Size extends BaseSheetController_Equal
         }
     }
 
-    public List<MenuItem> sheetSizeMoreMenu() {
-        return null;
+    // Notice: this does not concern columns names
+    public void resizeSheet(int rowsNumber, int colsNumber) {
+        if (rowsNumber <= 0 || colsNumber <= 0) {
+            makeSheet(null);
+            return;
+        }
+        String[][] values = new String[rowsNumber][colsNumber];
+        if (sheetInputs != null && sheetInputs.length > 0) {
+            int drow = Math.min(sheetInputs.length, rowsNumber);
+            int dcol = Math.min(sheetInputs[0].length, colsNumber);
+            for (int j = 0; j < drow; ++j) {
+                for (int i = 0; i < dcol; ++i) {
+                    values[j][i] = cellString(j, i);
+                }
+            }
+        }
+        makeSheet(values);
+    }
+
+    protected void insertPageCol(int col, boolean left, int number) {
+        if (number < 1) {
+            return;
+        }
+        if (columns == null) {
+            columns = new ArrayList<>();
+        }
+        int base = col + (left ? 0 : 1);
+        makeColumns(base, number);
+        String[][] current = pickData();
+        if (current == null) {
+            makeSheet(null);
+        } else {
+            int rNumber = current.length;
+            int cNumber = current[0].length + number;
+            String[][] values = new String[rNumber][cNumber];
+            for (int j = 0; j < rNumber; ++j) {
+                for (int i = 0; i < base; ++i) {
+                    values[j][i] = current[j][i];
+                }
+                for (int i = base + number; i < cNumber; ++i) {
+                    values[j][i] = current[j][i - 1];
+                }
+                for (int i = base; i < base + number; ++i) {
+                    values[j][i] = defaultColValue;
+                }
+            }
+            makeSheet(values);
+        }
     }
 
 }

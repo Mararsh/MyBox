@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -155,6 +154,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     @FXML
     protected void openManageColors(ActionEvent event) {
         ColorsManageController.oneOpen();
+    }
+
+    @FXML
+    protected void queryColor(ActionEvent event) {
+        loadScene(Fxmls.ColorQueryFxml);
     }
 
     @FXML

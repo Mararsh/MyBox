@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -48,8 +47,6 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
     @FXML
     protected Label titleLabel;
     @FXML
-    protected Button useButton;
-    @FXML
     protected HBox buttonsBox;
 
     public TextClipboardPopController() {
@@ -64,7 +61,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
     @Override
     public void textChanged(String nv) {
         super.textChanged(nv);
-        useButton.setDisable(!inputEditable || copyToSystemClipboardButton.isDisable());
+        pasteButton.setDisable(!inputEditable || copyToSystemClipboardButton.isDisable());
     }
 
     public void setParameters(BaseController parent, Node node, double x, double y) {
@@ -85,12 +82,12 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
                 titleLabel.setText(Languages.message("Target") + ": " + node.getId());
             }
             inputEditable = textInput != null && !textInput.isDisable() && textInput.isEditable();
-            useButton.setDisable(true);
+            pasteButton.setDisable(true);
             if (inputEditable) {
                 NodeStyleTools.setTooltip(tipsView, new Tooltip(message("TextClipboardUseComments")
                         + "\n\n" + message("TextInMyBoxClipboardTips")));
             } else {
-                buttonsBox.getChildren().remove(useButton);
+                buttonsBox.getChildren().remove(pasteButton);
                 NodeStyleTools.setTooltip(tipsView, new Tooltip(message("TextInMyBoxClipboardTips")));
             }
 
@@ -107,14 +104,15 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
 
     @Override
     public void itemDoubleClicked() {
-        useAction();
+        pasteAction();
     }
 
     @FXML
-    public void useAction() {
+    @Override
+    public void pasteAction() {
         if (textInput == null || !inputEditable) {
             inputEditable = false;
-            buttonsBox.getChildren().remove(useButton);
+            buttonsBox.getChildren().remove(pasteButton);
             return;
         }
         String s = textArea.getSelectedText();

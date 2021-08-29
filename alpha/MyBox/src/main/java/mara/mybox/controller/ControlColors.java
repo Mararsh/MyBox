@@ -1007,9 +1007,9 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                         row.add(data.getLchuv());
                     } else if (column.equals(dataColumn)) {
                         if (allColumnsCheck.isSelected()) {
-                            row.add(data.htmlDisplay());
+                            row.add(ColorData.htmlValue(data));
                         } else {
-                            row.add(data.htmlSimpleDisplay());
+                            row.add(ColorData.htmlSimpleValue(data));
                         }
                     }
                 }
@@ -1110,6 +1110,11 @@ public class ControlColors extends BaseDataTableController<ColorData> {
             thread.setDaemon(false);
             thread.start();
         }
+    }
+
+    @FXML
+    public void queryAction() {
+        openStage(Fxmls.ColorQueryFxml);
     }
 
     /*

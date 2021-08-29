@@ -1,4 +1,4 @@
-package mara.mybox.db.table;
+package mara.mybox.db.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,8 +7,6 @@ import java.util.Map;
 import javafx.application.Platform;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.Era;
-import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.StringTools;

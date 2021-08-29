@@ -103,6 +103,15 @@ public class AppVariables {
         return imageClipboardPath;
     }
 
+    public static String getDataClipboardPath() {
+        String dataClipboardPath = MyboxDataPath + File.separator + "dataClipboard";
+        File path = new File(dataClipboardPath);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        return dataClipboardPath;
+    }
+
     public static String getFileBackupsPath(File file) {
         if (file == null) {
             return null;

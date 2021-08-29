@@ -1,15 +1,12 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -46,6 +43,9 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
 
     public static final String Query_unique
             = "SELECT * FROM Data_Definition WHERE data_type=? AND data_name=?";
+
+    public static final String Query_Type
+            = "SELECT * FROM Data_Definition WHERE data_type=?";
 
     public static final String DeleteID
             = "DELETE FROM Data_Definition WHERE dfid=?";

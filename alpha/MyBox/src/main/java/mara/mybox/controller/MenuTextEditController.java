@@ -15,6 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -75,11 +76,12 @@ public class MenuTextEditController extends MenuTextBaseController {
         }
         IndexRange range = textInput.getSelection();
         int selection = range != null ? range.getLength() : 0;
-        String info = message("Length") + ": " + textInput.getLength() + "  ";
+        String info = message("Length") + ": " + StringTools.format(textInput.getLength()) + "  ";
         if (selection > 0) {
-            info += message("Selection") + ": " + (range.getStart() + 1) + "-" + range.getEnd() + "(" + selection + ")";
+            info += message("Selection") + ": " + StringTools.format(range.getStart() + 1)
+                    + "-" + StringTools.format(range.getEnd()) + "(" + StringTools.format(selection) + ")";
         } else {
-            info += message("Cursor") + ": " + (textInput.getAnchor() + 1) + " " + message("Selection") + ": 0";
+            info += message("Cursor") + ": " + StringTools.format(textInput.getAnchor() + 1) + " " + message("Selection") + ": 0";
         }
         bottomLabel.setText(info);
         if (undoButton != null) {

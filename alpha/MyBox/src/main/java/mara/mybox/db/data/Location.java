@@ -6,7 +6,6 @@ import java.util.Date;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Era;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.FxFileTools;

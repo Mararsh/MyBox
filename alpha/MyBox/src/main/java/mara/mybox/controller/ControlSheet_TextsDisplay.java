@@ -4,12 +4,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.TextTools;
@@ -21,104 +16,90 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-26
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheetDisplay_Text extends ControlSheetDisplay_Validation {
-
-    protected String textDelimiter;
-
-    @FXML
-    protected TextArea textArea;
-    @FXML
-    protected ToggleGroup delimiterGroup;
-    @FXML
-    protected RadioButton blankRadio, blank4Radio, blank8Radio, tabRadio, commaRadio,
-            lineRadio, atRadio, sharpRadio, semicolonsRadio, stringRadio;
-    @FXML
-    protected TextField delimiterInput;
-    @FXML
-    protected CheckBox textTitleCheck, textColumnCheck, textRowCheck;
+public abstract class ControlSheet_TextsDisplay extends ControlSheet_Html {
 
     public void initTextControls() {
         try {
-            textDelimiter = UserConfig.getString(baseName + "TextDelimiter", "Blank");
-            switch (textDelimiter.toLowerCase()) {
+            displayDelimiter = UserConfig.getString(baseName + "TextDelimiter", "Blank");
+            switch (displayDelimiter.toLowerCase()) {
                 case "blank":
-                    blankRadio.fire();
+                    blankDisplayRadio.fire();
                     break;
                 case "blank4":
-                    blank4Radio.fire();
+                    blank4DisplayRadio.fire();
                     break;
                 case "blank8":
-                    blank8Radio.fire();
+                    blank8DisplayRadio.fire();
                     break;
                 case "tab":
-                    tabRadio.fire();
+                    tabDisplayRadio.fire();
                     break;
                 case ",":
-                    commaRadio.fire();
+                    commaDisplayRadio.fire();
                     break;
                 case "|":
-                    lineRadio.fire();
+                    lineDisplayRadio.fire();
                     break;
                 case "@":
-                    atRadio.fire();
+                    atDisplayRadio.fire();
                     break;
                 case "#":
-                    sharpRadio.fire();
+                    sharpDisplayRadio.fire();
                     break;
                 case ";":
-                    semicolonsRadio.fire();
+                    semicolonsDisplayRadio.fire();
                     break;
                 default:
-                    stringRadio.fire();
+                    stringDisplayRadio.fire();
             }
-            delimiterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            delimiterDisplayGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    delimiterInput.setStyle(null);
-                    if (stringRadio.isSelected()) {
-                        String v = delimiterInput.getText();
+                    delimiterDisplayInput.setStyle(null);
+                    if (stringDisplayRadio.isSelected()) {
+                        String v = delimiterDisplayInput.getText();
                         if (v == null || v.isBlank()) {
-                            delimiterInput.setStyle(NodeStyleTools.badStyle);
+                            delimiterDisplayInput.setStyle(NodeStyleTools.badStyle);
                             return;
                         }
-                        textDelimiter = v;
-                        delimiterInput.setStyle(null);
-                    } else if (blankRadio.isSelected()) {
-                        textDelimiter = "Blank";
-                    } else if (blank4Radio.isSelected()) {
-                        textDelimiter = "Blank4";
-                    } else if (blank8Radio.isSelected()) {
-                        textDelimiter = "Blank8";
-                    } else if (tabRadio.isSelected()) {
-                        textDelimiter = "Tab";
-                    } else if (commaRadio.isSelected()) {
-                        textDelimiter = ",";
-                    } else if (lineRadio.isSelected()) {
-                        textDelimiter = "|";
-                    } else if (atRadio.isSelected()) {
-                        textDelimiter = "@";
-                    } else if (sharpRadio.isSelected()) {
-                        textDelimiter = "#";
-                    } else if (semicolonsRadio.isSelected()) {
-                        textDelimiter = ";";
+                        displayDelimiter = v;
+                        delimiterDisplayInput.setStyle(null);
+                    } else if (blankDisplayRadio.isSelected()) {
+                        displayDelimiter = "Blank";
+                    } else if (blank4DisplayRadio.isSelected()) {
+                        displayDelimiter = "Blank4";
+                    } else if (blank8DisplayRadio.isSelected()) {
+                        displayDelimiter = "Blank8";
+                    } else if (tabDisplayRadio.isSelected()) {
+                        displayDelimiter = "Tab";
+                    } else if (commaDisplayRadio.isSelected()) {
+                        displayDelimiter = ",";
+                    } else if (lineDisplayRadio.isSelected()) {
+                        displayDelimiter = "|";
+                    } else if (atDisplayRadio.isSelected()) {
+                        displayDelimiter = "@";
+                    } else if (sharpDisplayRadio.isSelected()) {
+                        displayDelimiter = "#";
+                    } else if (semicolonsDisplayRadio.isSelected()) {
+                        displayDelimiter = ";";
                     }
-                    UserConfig.setString(baseName + "TextDelimiter", textDelimiter);
+                    UserConfig.setString(baseName + "TextDelimiter", displayDelimiter);
                     updateText();
                 }
             });
-            delimiterInput.textProperty().addListener(new ChangeListener<String>() {
+            delimiterDisplayInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (!stringRadio.isSelected()) {
+                    if (!stringDisplayRadio.isSelected()) {
                         return;
                     }
                     if (newValue == null || newValue.isBlank()) {
-                        delimiterInput.setStyle(NodeStyleTools.badStyle);
+                        delimiterDisplayInput.setStyle(NodeStyleTools.badStyle);
                         return;
                     }
-                    textDelimiter = newValue;
-                    UserConfig.setString(baseName + "TextDelimiter", textDelimiter);
-                    delimiterInput.setStyle(null);
+                    displayDelimiter = newValue;
+                    UserConfig.setString(baseName + "TextDelimiter", displayDelimiter);
+                    delimiterDisplayInput.setStyle(null);
                     updateText();
                 }
             });
@@ -155,19 +136,19 @@ public abstract class ControlSheetDisplay_Text extends ControlSheetDisplay_Valid
             colsNames = columnNames();
         }
         if (textRowCheck.isSelected()) {
-            rowsNames = sheet == null ? null : rowNames(sheet.length);
+            rowsNames = pageData == null ? null : rowNames(pageData.length);
         }
-        String text = TextTools.dataText(sheet, textDelimiter, colsNames, rowsNames);
+        String text = TextTools.dataText(pageData, displayDelimiter, colsNames, rowsNames);
         if (title != null && !title.isBlank()) {
-            textArea.setText(title + "\n\n" + text);
+            textsDisplayArea.setText(title + "\n\n" + text);
         } else {
-            textArea.setText(text);
+            textsDisplayArea.setText(text);
         }
     }
 
     @FXML
     public void editText() {
         TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-        controller.loadContents(textArea.getText());
+        controller.loadContents(textsDisplayArea.getText());
     }
 }

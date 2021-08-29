@@ -24,7 +24,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;

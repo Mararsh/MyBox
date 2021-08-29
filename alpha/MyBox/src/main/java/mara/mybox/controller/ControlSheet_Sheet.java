@@ -5,22 +5,16 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
-import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.AppVariables;
@@ -28,110 +22,20 @@ import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
- * @CreateDate 2021-8-19
+ * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController_Input extends BaseSheetController_Base {
-
-    protected long rowsTotal() {
-        return sheet == null ? 0 : sheet.length;
-    }
-
-    @Override
-    protected String[][] pickData() {
-        sheet = null;
-        rowsNumber = colsNumber = 0;
-        if (inputs == null || inputs.length == 0) {
-            return null;
-        }
-        rowsNumber = inputs.length;
-        colsNumber = inputs[0].length;
-        if (colsNumber == 0) {
-            return null;
-        }
-        String[][] data = new String[inputs.length][inputs[0].length];
-        for (int r = 0; r < rowsNumber; r++) {
-            for (int c = 0; c < colsNumber; c++) {
-                data[r][c] = value(r, c);
-            }
-        }
-        sheet = data;
-        return data;
-    }
-
-    protected String value(int row, int col) {
-        String value = null;
-        try {
-            value = inputs[row][col].getText();
-            if (value != null && columns.get(col).isNumberType()) {
-                value = value.replaceAll(",", "");
-            }
-        } catch (Exception e) {
-        }
-        return value == null ? defaultColValue : value;
-    }
-
-    protected List<String> row(int row) {
-        List<String> values = new ArrayList<>();
-        try {
-            for (TextField input : inputs[row]) {
-                values.add(input.getText());
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
-        return values;
-    }
-
-    protected List<String> col(int col) {
-        List<String> values = new ArrayList<>();
-        try {
-            for (TextField[] row : inputs) {
-                values.add(row[col].getText());
-            }
-        } catch (Exception e) {
-        }
-        return values;
-    }
-
-    @Override
-    protected String colName(int col) {
-        try {
-            if (columns == null && colsCheck != null) {
-                makeColumns(colsCheck.length);
-            }
-            if (columns == null || columns.size() <= col) {
-                return null;
-            }
-            return columns.get(col).getName();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    protected List<String> columnNames() {
-        try {
-            if (columns == null && colsCheck != null) {
-                makeColumns(colsCheck.length);
-            }
-            return super.columnNames();
-        } catch (Exception e) {
-            return null;
-        }
-    }
+public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
 
     // Sheet itself can be resued and need not clear
     public void clearSheet() {
-        inputs = null;
+        sheetInputs = null;
         colsCheck = null;
         rowsCheck = null;
-        rowsSelected = colsSelected = false;
         if (sheetBox.getChildren().contains(noDataLabel)) {
             sheetBox.getChildren().remove(noDataLabel);
         }
-        sheetDisplayController.setDisplayData(null, columns);
-        notify.set(!notify.get());
+        sheetChanged(true);
     }
 
     public void makeSheet(String[][] data) {
@@ -159,6 +63,7 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
         }
     }
 
+    @Override
     public void makeSheet(String[][] data, List<ColumnDefinition> columns) {
         this.columns = columns;
         makeSheet(data, true);
@@ -238,7 +143,7 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
                 if (colsSize <= 0) {
                     colsCheck = null;
                     rowsCheck = null;
-                    inputs = null;
+                    sheetInputs = null;
                 } else {
                     colsCheck = new CheckBox[colsSize];
                     for (int col = 0; col < colsSize; ++col) {
@@ -267,9 +172,9 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
                     }
                     if (rowsSize <= 0) {
                         rowsCheck = null;
-                        inputs = null;
+                        sheetInputs = null;
                     } else {
-                        inputs = new TextField[rowsSize][colsSize];
+                        sheetInputs = new TextField[rowsSize][colsSize];
                         rowsCheck = new CheckBox[rowsSize];
                         for (int row = 0; row < rowsSize; ++row) {
                             HBox line;
@@ -316,7 +221,13 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
                                     valueInput.textProperty().addListener(new ChangeListener<String>() {
                                         @Override
                                         public void changed(ObservableValue ov, String oldValue, String newValue) {
-                                            valueInputted(rowf, colf);
+                                            cellInputted(rowf, colf);
+                                        }
+                                    });
+                                    valueInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                                        @Override
+                                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                                            cellFocused(rowf, colf);
                                         }
                                     });
                                     line.getChildren().add(valueInput);
@@ -325,22 +236,21 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
                                 v = v == null ? defaultColValue : v;
                                 isSettingValues = true;
                                 valueInput.setText(v);
-                                valueInput.setStyle(inputStyle + (dataValid(col, v) ? "" : NodeStyleTools.badStyle));
+                                valueInput.setStyle(inputStyle + (cellValid(col, v) ? "" : NodeStyleTools.badStyle));
                                 valueInput.setPrefWidth(columns.get(col).getWidth());
                                 isSettingValues = false;
-                                inputs[row][col] = valueInput;
+                                sheetInputs[row][col] = valueInput;
                             }
                         }
 
                     }
                 }
-                if (inputs == null) {
+                if (sheetInputs == null) {
                     noDataLabel.setPrefWidth(rowCheckWidth);
                     noDataLabel.setPrefHeight(header.getHeight());
                     noDataLabel.setAlignment(Pos.CENTER);
                     sheetBox.getChildren().add(noDataLabel);
                 }
-                sheet = pickData();
                 refreshStyle(sheetBox);
                 sheetChanged(changed);
             } catch (Exception e) {
@@ -353,14 +263,25 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
 
     }
 
-    protected void valueInputted(int row, int col) {
+    public void newSheet(int rows, int cols) {
         try {
-            if (isSettingValues) {
+            sourceFile = null;
+            columns = null;
+            sheetBox.getChildren().clear();
+            makeSheet(new String[rows][cols], false);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void cellInputted(int row, int col) {
+        try {
+            if (isSettingValues || sheetInputs == null) {
                 return;
             }
-            TextField input = inputs[row][col];
-            String value = value(row, col);
-            if (dataValid(col, value)) {
+            TextField input = sheetInputs[row][col];
+            String value = cellString(row, col);
+            if (cellValid(col, value)) {
                 input.setStyle(inputStyle);
             } else {
                 input.setStyle(inputStyle + NodeStyleTools.badStyle);
@@ -373,36 +294,30 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
         }
     }
 
-    protected void dataIsInvalid() {
-
+    protected void cellFocused(int row, int col) {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            currentRow = row;
+            currentCol = col;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
-    public void sheetChanged(boolean changed) {
+    public synchronized void sheetChanged(boolean changed) {
         if (isSettingValues) {
             return;
         }
-        sheetDisplayController.setDisplayData(pickData(), columns);
-        dataChanged(changed);
-        notify.set(!notify.get());
+        pickData();
+        dataChangedNotify.set(changed);
+        sheetChangedNotify.set(!sheetChangedNotify.get());
+        setDisplayData();
     }
 
     public void sheetChanged() {
         sheetChanged(true);
-    }
-
-    protected void dataChanged(boolean dataChanged) {
-        try {
-            this.dataChanged = dataChanged;
-            if (getMyStage() != null) {
-                String title = baseTitle + " " + titleName();
-                if (dataChanged) {
-                    title += " *";
-                }
-                myStage.setTitle(title);
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e.toString());
-        }
     }
 
     public String askValue(String header, String name, String initValue) {
@@ -413,160 +328,80 @@ public abstract class BaseSheetController_Input extends BaseSheetController_Base
         return value;
     }
 
-    public void popRowLabelMenu(Label label) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.setStyle("-fx-font-weight: normal;");
-
-            MenuItem menu = new MenuItem(Languages.message("EnlargerColWidth"));
-            menu.setOnAction((ActionEvent event) -> {
-                double width = label.getWidth() + widthChange;
-                label.setPrefWidth(width);
-                if (rowsCheck == null) {
-                    return;
-                }
-                for (int j = 0; j < rowsCheck.length; ++j) {
-                    rowsCheck[j].setPrefWidth(width);
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("ReduceColWidth"));
-            menu.setOnAction((ActionEvent event) -> {
-                double width = label.getWidth() - widthChange;
-                label.setPrefWidth(width);
-                if (rowsCheck == null) {
-                    return;
-                }
-                for (int j = 0; j < rowsCheck.length; ++j) {
-                    rowsCheck[j].setPrefWidth(width);
-                }
-            });
-            menu.setDisable(label.getWidth() <= widthChange * 1.5);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("SetColWidth"));
-            menu.setOnAction((ActionEvent event) -> {
-                String value = askValue("", Languages.message("SetColWidth"), (int) (label.getWidth()) + "");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    double width = Double.parseDouble(value);
-                    label.setPrefWidth(width);
-                    if (rowsCheck == null) {
-                        return;
-                    }
-                    for (int j = 0; j < rowsCheck.length; ++j) {
-                        rowsCheck[j].setPrefWidth(width);
-                    }
-                } catch (Exception e) {
-                    popError(Languages.message("InvalidData"));
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("SelectAllCols"));
-            menu.setOnAction((ActionEvent event) -> {
-                for (int i = 0; i < colsCheck.length; ++i) {
-                    colsCheck[i].setSelected(true);
-                }
-            });
-            menu.setDisable(colsCheck == null || colsCheck.length == 0);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("SelectNoCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                for (int i = 0; i < colsCheck.length; ++i) {
-                    colsCheck[i].setSelected(false);
-                }
-            });
-            menu.setDisable(colsCheck == null || colsCheck.length == 0);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("SelectAllRows"));
-            menu.setOnAction((ActionEvent event) -> {
-                for (int j = 0; j < rowsCheck.length; ++j) {
-                    rowsCheck[j].setSelected(true);
-                }
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("SelectNoRow"));
-            menu.setOnAction((ActionEvent event) -> {
-                for (int j = 0; j < rowsCheck.length; ++j) {
-                    rowsCheck[j].setSelected(false);
-                }
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("AddRowsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                addRowsNumber();
-            });
-            menu.setDisable(colsCheck == null || colsCheck.length < 1);
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("AddColsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                addColsNumber();
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("DeleteAllCols"));
-            menu.setOnAction((ActionEvent event) -> {
-                if (!PopTools.askSure(Languages.message("DeleteAllCols"), Languages.message("SureDeleteAll"))) {
-                    return;
-                }
-                deleteAllCols();
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateCenter(label, popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    protected long rowsTotal() {
+        if (pagesNumber <= 1) {
+            return pageData == null ? 0 : pageData.length;
+        } else {
+            return totalSize;
         }
     }
 
-    public String delimiter() {
-        return sheetDisplayController.textDelimiter;
+    protected List<String> row(int row) {
+        List<String> values = new ArrayList<>();
+        try {
+            for (TextField input : sheetInputs[row]) {
+                values.add(input.getText());
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
+        return values;
+    }
+
+    protected List<String> col(int col) {
+        List<String> values = new ArrayList<>();
+        try {
+            for (TextField[] row : sheetInputs) {
+                values.add(row[col].getText());
+            }
+        } catch (Exception e) {
+        }
+        return values;
+    }
+
+    protected String[][] pickData() {
+        pageData = null;
+        rowsNumber = colsNumber = 0;
+        if (sheetInputs == null || sheetInputs.length == 0) {
+            return null;
+        }
+        rowsNumber = sheetInputs.length;
+        colsNumber = sheetInputs[0].length;
+        if (colsNumber == 0) {
+            return null;
+        }
+        String[][] data = new String[sheetInputs.length][sheetInputs[0].length];
+        for (int r = 0; r < rowsNumber; r++) {
+            for (int c = 0; c < colsNumber; c++) {
+                data[r][c] = cellString(r, c);
+            }
+        }
+        pageData = data;
+        return data;
+    }
+
+    @Override
+    protected String cellString(int row, int col) {
+        String value = null;
+        try {
+            value = sheetInputs[row][col].getText();
+            if (value != null && columns.get(col).isNumberType()) {
+                value = value.replaceAll(",", "");
+            }
+        } catch (Exception e) {
+        }
+        return value == null ? defaultColValue : value;
     }
 
     /*
         abstract
      */
+    protected abstract void setDisplayData();
+
+    public abstract void popRowLabelMenu(Label label);
+
     public abstract void popColMenu(CheckBox label, int col);
 
     public abstract void popRowMenu(CheckBox label, int row);
-
-    protected abstract void addRowsNumber();
-
-    protected abstract void addColsNumber();
-
-    protected abstract void deleteAllCols();
 
 }

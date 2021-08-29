@@ -18,6 +18,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Element;
@@ -104,15 +105,15 @@ public class MenuWebviewController extends MenuController {
         selectButton.setDisable(element == null);
 
         String html = WebViewTools.getHtml(webView);
-        bottomLabel.setText(message("Length") + ": " + (html == null ? "0" : html.length()));
+        bottomLabel.setText(message("Length") + ": " + (html == null ? "0" : StringTools.format(html.length())));
 
         String htmlSelection = WebViewTools.selectedHtml(webView.getEngine());
-        htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : htmlSelection.length()));
+        htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : StringTools.format(htmlSelection.length())));
         copyToSystemClipboardHtmlButton.setDisable(htmlSelection == null || htmlSelection.isBlank());
         copyToMyBoxClipboardHtmlButton.setDisable(copyToSystemClipboardHtmlButton.isDisable());
 
         String textSelection = WebViewTools.selectedText(webView.getEngine());
-        textLabel.setText(message("Selection") + ": " + (textSelection == null ? "0" : textSelection.length()));
+        textLabel.setText(message("Selection") + ": " + (textSelection == null ? "0" : StringTools.format(textSelection.length())));
         copyToSystemClipboardTextButton.setDisable(textSelection == null || textSelection.isBlank());
         copyToMyBoxClipboardTextButton.setDisable(copyToSystemClipboardTextButton.isDisable());
 

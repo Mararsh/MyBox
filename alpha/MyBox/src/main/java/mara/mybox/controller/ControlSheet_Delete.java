@@ -10,7 +10,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
@@ -21,7 +21,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-8-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController_Delete extends BaseSheetController_Copy {
+public abstract class ControlSheet_Delete extends ControlSheet_Equal {
 
     @FXML
     public void sheetDeleteMenu(MouseEvent mouseEvent) {
@@ -159,11 +159,6 @@ public abstract class BaseSheetController_Delete extends BaseSheetController_Cop
         return items;
     }
 
-    @Override
-    protected void deletePageAllRows() {
-        makeSheet(null);
-    }
-
     // columns have been changed before call this
     protected void deleteSelectedCols() {
         if (columns == null || columns.isEmpty()) {
@@ -186,6 +181,17 @@ public abstract class BaseSheetController_Delete extends BaseSheetController_Cop
             }
             makeSheet(values);
         }
+    }
+
+    protected void deletePageAllRows() {
+        makeSheet(null);
+    }
+
+    protected void deleteAllCols() {
+        if (columns != null) {
+            columns.clear();
+        }
+        makeSheet(null);
     }
 
 }

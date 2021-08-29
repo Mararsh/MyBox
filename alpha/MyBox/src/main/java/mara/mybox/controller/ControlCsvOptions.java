@@ -44,9 +44,9 @@ public class ControlCsvOptions extends BaseController {
     public ControlCsvOptions() {
     }
 
-    public void setControls(String name) {
+    public void setControls(String baseName) {
         try {
-            this.baseName = name;
+            this.baseName = baseName;
 
             if (charsetGroup == null) {
                 autoDetermine = false;

@@ -10,20 +10,19 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
-import mara.mybox.db.table.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
- * @CreateDate 2021-8-19
+ * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController_ColMenu extends BaseSheetController_RowMenu {
+public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
 
     // col: 0-based
     @Override
@@ -145,7 +144,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             menu.setOnAction((ActionEvent event) -> {
                 pastePageColValues(col);
             });
-            menu.setDisable(copiedCol == null || copiedCol.isEmpty());
+//            menu.setDisable(copiedCol == null || copiedCol.isEmpty());
             items.add(menu);
 
             if (sourceFile != null && pagesNumber > 1) {
@@ -155,7 +154,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                 menu.setOnAction((ActionEvent event) -> {
                     setFileColValues(col);
                 });
-                menu.setDisable(dataChanged);
+                menu.setDisable(dataChangedNotify.get());
                 items.add(menu);
 
                 menu = new MenuItem(Languages.message("CopyFileCol"));
@@ -169,7 +168,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                 menu.setOnAction((ActionEvent event) -> {
                     pasteFileColValues(col);
                 });
-                menu.setDisable(copiedCol == null || copiedCol.isEmpty() || dataChanged);
+//                menu.setDisable(copiedCol == null || copiedCol.isEmpty() || dataChanged);
                 items.add(menu);
             }
 
@@ -190,7 +189,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                     insertPageCol(col, true, 1);
                 }
             });
-            menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
+            menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
             menu = new MenuItem(Languages.message("InsertColRight"));
@@ -201,7 +200,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                     insertPageCol(col, false, 1);
                 }
             });
-            menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
+            menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
             menu = new MenuItem(Languages.message("DeleteCol"));
@@ -212,7 +211,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                     deletePageCol(col);
                 }
             });
-            menu.setDisable(dataChanged && sourceFile != null && pagesNumber > 1);
+            menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
         } catch (Exception e) {
@@ -238,7 +237,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             items.add(menu);
 
-            rowsSelected = false;
+            boolean rowsSelected = false;
             int total = rowsCheck == null ? 0 : rowsCheck.length;
             for (int r = 0; r < total; ++r) {
                 if (rowsCheck[r].isSelected()) {
@@ -290,12 +289,12 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             menu.setOnAction((ActionEvent event) -> {
                 double width = colsCheck[col].getWidth() + widthChange;
                 colsCheck[col].setPrefWidth(width);
-                if (inputs != null) {
-                    for (int j = 0; j < inputs.length; ++j) {
-                        inputs[j][col].setPrefWidth(width);
+                if (sheetInputs != null) {
+                    for (int j = 0; j < sheetInputs.length; ++j) {
+                        sheetInputs[j][col].setPrefWidth(width);
                     }
                 }
-                makeDefintion();
+                makeDefintionPane();
             });
             items.add(menu);
 
@@ -303,12 +302,12 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             menu.setOnAction((ActionEvent event) -> {
                 double width = colsCheck[col].getWidth() - widthChange;
                 colsCheck[col].setPrefWidth(width);
-                if (inputs != null) {
-                    for (int j = 0; j < inputs.length; ++j) {
-                        inputs[j][col].setPrefWidth(width);
+                if (sheetInputs != null) {
+                    for (int j = 0; j < sheetInputs.length; ++j) {
+                        sheetInputs[j][col].setPrefWidth(width);
                     }
                 }
-                makeDefintion();
+                makeDefintionPane();
             });
             menu.setDisable(colsCheck[col].getWidth() <= widthChange * 1.5);
             items.add(menu);
@@ -322,12 +321,12 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                 try {
                     double width = Double.parseDouble(value);
                     colsCheck[col].setPrefWidth(width);
-                    if (inputs != null) {
-                        for (int j = 0; j < inputs.length; ++j) {
-                            inputs[j][col].setPrefWidth(width);
+                    if (sheetInputs != null) {
+                        for (int j = 0; j < sheetInputs.length; ++j) {
+                            sheetInputs[j][col].setPrefWidth(width);
                         }
                     }
-                    makeDefintion();
+                    makeDefintionPane();
                 } catch (Exception e) {
                     popError(Languages.message("InvalidData"));
                 }
@@ -352,45 +351,13 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                 }
                 colsCheck[col].setText(value);
                 columns.get(col).setName(value);
-                dataChanged(true);
-                makeDefintion();
+                makeDefintionPane();
             });
             items.add(menu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return items;
-    }
-
-    protected void insertPageCol(int col, boolean left, int number) {
-        if (number < 1) {
-            return;
-        }
-        if (columns == null) {
-            columns = new ArrayList<>();
-        }
-        int base = col + (left ? 0 : 1);
-        makeColumns(base, number);
-        String[][] current = pickData();
-        if (current == null) {
-            makeSheet(null);
-        } else {
-            int rNumber = current.length;
-            int cNumber = current[0].length + number;
-            String[][] values = new String[rNumber][cNumber];
-            for (int j = 0; j < rNumber; ++j) {
-                for (int i = 0; i < base; ++i) {
-                    values[j][i] = current[j][i];
-                }
-                for (int i = base + number; i < cNumber; ++i) {
-                    values[j][i] = current[j][i - 1];
-                }
-                for (int i = base; i < base + number; ++i) {
-                    values[j][i] = defaultColValue;
-                }
-            }
-            makeSheet(values);
-        }
     }
 
     protected void deletePageCol(int col) {
@@ -431,11 +398,11 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
     }
 
     protected void orderPageCol(int col, boolean asc) {
-        if (inputs == null || columns == null || col < 0 || col >= columns.size()) {
+        if (sheetInputs == null || columns == null || col < 0 || col >= columns.size()) {
             return;
         }
-        int rNumber = inputs.length;
-        int cNumber = inputs[0].length;
+        int rNumber = sheetInputs.length;
+        int cNumber = sheetInputs[0].length;
         List<Integer> rows = new ArrayList<>();
         for (int i = 0; i < rNumber; i++) {
             rows.add(i);
@@ -444,7 +411,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             @Override
             public int compare(Integer row1, Integer row2) {
                 ColumnDefinition column = columns.get(col);
-                int v = column.compare(value(row1, col), value(row2, col));
+                int v = column.compare(cellString(row1, col), cellString(row2, col));
                 return asc ? v : -v;
             }
         });
@@ -452,18 +419,18 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
         for (int row = 0; row < rows.size(); row++) {
             int drow = rows.get(row);
             for (int c = 0; c < cNumber; c++) {
-                data[row][c] = value(drow, c);
+                data[row][c] = cellString(drow, c);
             }
         }
         makeSheet(data);
     }
 
     protected void orderSelectedRows(int col, boolean asc) {
-        if (inputs == null || columns == null || colsCheck == null || col < 0 || col >= columns.size()) {
+        if (sheetInputs == null || columns == null || colsCheck == null || col < 0 || col >= columns.size()) {
             return;
         }
-        int rowsTotal = inputs.length;
-        int colsTotal = inputs[0].length;
+        int rowsTotal = sheetInputs.length;
+        int colsTotal = sheetInputs[0].length;
         List<Integer> selected = new ArrayList<>();
         for (int r = 0; r < rowsTotal; r++) {
             if (rowsCheck[r].isSelected()) {
@@ -474,7 +441,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
         Collections.sort(selected, new Comparator<Integer>() {
             @Override
             public int compare(Integer row1, Integer row2) {
-                int v = column.compare(value(row1, col), value(row2, col));
+                int v = column.compare(cellString(row1, col), cellString(row2, col));
                 return asc ? v : -v;
             }
         });
@@ -483,7 +450,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
         for (int r = 0; r < selectedTotal; r++) {
             int rowIndex = selected.get(r);
             for (int c = 0; c < colsTotal; c++) {
-                data[r][c] = value(rowIndex, c);
+                data[r][c] = cellString(rowIndex, c);
             }
         }
         int index = selectedTotal;
@@ -492,7 +459,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
                 continue;
             }
             for (int c = 0; c < colsTotal; c++) {
-                data[index][c] = value(r, c);
+                data[index][c] = cellString(r, c);
             }
             index++;
         }
@@ -500,7 +467,7 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
     }
 
     public void setPageColValues(int col) {
-        if (colsCheck == null || inputs == null) {
+        if (colsCheck == null || sheetInputs == null) {
             return;
         }
         String value = askValue(colsCheck[col].getText(), Languages.message("SetPageColValues"), "");
@@ -508,38 +475,38 @@ public abstract class BaseSheetController_ColMenu extends BaseSheetController_Ro
             return;
         }
         isSettingValues = true;
-        for (int j = 0; j < inputs.length; ++j) {
-            inputs[j][col].setText(value);
+        for (int j = 0; j < sheetInputs.length; ++j) {
+            sheetInputs[j][col].setText(value);
         }
         isSettingValues = false;
         sheetChanged();
     }
 
     public void copyPageColValues(int col) {
-        if (inputs == null) {
-            return;
-        }
-        String s = "";
-        int rNumber = inputs.length;
-        copiedCol = new ArrayList<>();
-        for (int j = 0; j < rNumber; ++j) {
-            String v = value(j, col);
-            s += v + "\n";
-            copiedCol.add(v);
-        }
-        TextClipboardTools.copyToSystemClipboard(myController, s);
+//        if (inputs == null) {
+//            return;
+//        }
+//        String s = "";
+//        int rNumber = inputs.length;
+//        copiedCol = new ArrayList<>();
+//        for (int j = 0; j < rNumber; ++j) {
+//            String v = value(j, col);
+//            s += v + "\n";
+//            copiedCol.add(v);
+//        }
+//        TextClipboardTools.copyToSystemClipboard(myController, s);
     }
 
     public void pastePageColValues(int col) {
-        if (inputs == null || copiedCol == null || copiedCol.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        for (int j = 0; j < Math.min(inputs.length, copiedCol.size()); ++j) {
-            inputs[j][col].setText(copiedCol.get(j));
-        }
-        isSettingValues = false;
-        sheetChanged();
+//        if (inputs == null || copiedCol == null || copiedCol.isEmpty()) {
+//            return;
+//        }
+//        isSettingValues = true;
+//        for (int j = 0; j < Math.min(inputs.length, copiedCol.size()); ++j) {
+//            inputs[j][col].setText(copiedCol.get(j));
+//        }
+//        isSettingValues = false;
+//        sheetChanged();
     }
 
     protected List<MenuItem> colMoreMenu(int col) {

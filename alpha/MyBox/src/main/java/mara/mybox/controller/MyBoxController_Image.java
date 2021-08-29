@@ -8,9 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -90,6 +87,11 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             ColorsManageController.oneOpen();
         });
 
+        MenuItem QueryColor = new MenuItem(Languages.message("ColorQuery"));
+        QueryColor.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ColorQueryFxml);
+        });
+
         MenuItem ImagesInMyBoxClipboard = new MenuItem(Languages.message("ImagesInMyBoxClipboard"));
         ImagesInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
             ImageInMyBoxClipboardController.oneOpen();
@@ -116,7 +118,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
                 imageViewer, imagesBrowser, ImageAnalyse, ImagesPlay, new SeparatorMenuItem(),
                 ImageManufacture, manufactureBatchMenu, ImagesEditor, mergeMenu, partMenu, imageConverterBatch, new SeparatorMenuItem(),
                 imageOCR, imageOCRBatch, new SeparatorMenuItem(),
-                ManageColors, csMenu, new SeparatorMenuItem(),
+                ManageColors, QueryColor, csMenu, new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu);
 
         popMenu.getItems().add(new SeparatorMenuItem());

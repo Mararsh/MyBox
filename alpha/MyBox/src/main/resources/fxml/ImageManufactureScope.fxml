@@ -16,7 +16,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -524,25 +523,24 @@ License:    Apache License Version 2.0
                                                    </children>
                                                 </FlowPane>
                                                 <CheckBox fx:id="popImageCheck" mnemonicParsing="false" selected="true" text="%PopImage" />
-                                                <Separator prefWidth="200.0">
-                                                   <VBox.margin>
-                                                      <Insets bottom="5.0" top="5.0" />
-                                                   </VBox.margin>
-                                                </Separator>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                   <children>
-                                                                <Label text="%ScopeName" />
-                                                                  <Button fx:id="saveScopeButton" mnemonicParsing="false" onAction="#saveScope">
-                                                                      <graphic>
-                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                              <image>
-                                                                                  <Image url="@../buttons/Red/iconSave.png" />
-                                                                              </image>
-                                                                          </ImageView>
-                                                                      </graphic>
-                                                                  </Button>
-                                                   </children>
-                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </Tab>
+                                    <Tab fx:id="saveTab" text="%Save">
+                                       <content>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                             <children>
+                                                            <Button fx:id="saveScopeButton" mnemonicParsing="false" onAction="#saveScope">
+                                                                <graphic>
+                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                        <image>
+                                                                            <Image url="@../buttons/Red/iconSave.png" />
+                                                                        </image>
+                                                                    </ImageView>
+                                                                </graphic>
+                                                            </Button>
+                                                          <Label text="%ScopeName" />
                                                             <TextField fx:id="scopeNameInput" prefWidth="240.0" />
                                              </children>
                                           </VBox>

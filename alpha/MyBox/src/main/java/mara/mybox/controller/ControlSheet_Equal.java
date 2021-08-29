@@ -10,17 +10,17 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
- * @CreateDate 2021-8-19
+ * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController_Equal extends BaseSheetController_Delete {
+public abstract class ControlSheet_Equal extends ControlSheet_Size {
 
     @FXML
     public void sheetEqualMenu(MouseEvent mouseEvent) {
@@ -57,7 +57,7 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
     public List<MenuItem> makeSheetEqualMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
-            rowsSelected = false;
+            boolean rowsSelected = false;
             if (rowsCheck != null) {
                 for (int j = 0; j < rowsCheck.length; ++j) {
                     if (rowsCheck[j].isSelected()) {
@@ -66,7 +66,7 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
                     }
                 }
             }
-            colsSelected = false;
+            boolean colsSelected = false;
             if (colsCheck != null) {
                 for (int j = 0; j < colsCheck.length; ++j) {
                     if (colsCheck[j].isSelected()) {
@@ -80,15 +80,11 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             menu.setOnAction((ActionEvent event) -> {
                 setPageAllValues();
             });
-            menu.setDisable(inputs == null);
+            menu.setDisable(sheetInputs == null);
             items.add(menu);
 
             menu = new MenuItem(Languages.message("SetSelectedRowsValues"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!rowsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 setSelectedRows();
             });
             menu.setDisable(!rowsSelected);
@@ -96,10 +92,6 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
 
             menu = new MenuItem(Languages.message("SetPageSelectedColsValues"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!colsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 setPageSelectedCols();
             });
             menu.setDisable(!colsSelected);
@@ -108,22 +100,14 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             if (sourceFile != null && pagesNumber > 1) {
                 menu = new MenuItem(Languages.message("SetFileSelectedColsValues"));
                 menu.setOnAction((ActionEvent event) -> {
-                    if (!colsSelected) {
-                        popError(Languages.message("NoData"));
-                        return;
-                    }
                     setFileSelectedCols();
                 });
-                menu.setDisable(!colsSelected || dataChanged);
+                menu.setDisable(!colsSelected || dataChangedNotify.get());
                 items.add(menu);
             }
 
             menu = new MenuItem(Languages.message("SetSelectedRowsColsValues"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!colsSelected || !rowsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 setSelectedRowsCols();
             });
             menu.setDisable(!colsSelected || !rowsSelected);
@@ -140,7 +124,7 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
     }
 
     public void setPageAllValues() {
-        if (inputs == null) {
+        if (sheetInputs == null) {
             return;
         }
         String value = askValue(Languages.message("All"), Languages.message("SetValue"), defaultColumnType == ColumnDefinition.ColumnType.String ? "v" : "0");
@@ -148,9 +132,9 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             return;
         }
         isSettingValues = true;
-        for (int j = 0; j < inputs.length; ++j) {
-            for (int i = 0; i < inputs[0].length; ++i) {
-                inputs[j][i].setText(value);
+        for (int j = 0; j < sheetInputs.length; ++j) {
+            for (int i = 0; i < sheetInputs[0].length; ++i) {
+                sheetInputs[j][i].setText(value);
             }
         }
         isSettingValues = false;
@@ -158,7 +142,7 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
     }
 
     public void setSelectedRows() {
-        if (inputs == null || rowsCheck == null) {
+        if (sheetInputs == null || rowsCheck == null) {
             return;
         }
         String value = askValue(Languages.message("SelectedRows"), Languages.message("SetValue"), "");
@@ -166,10 +150,10 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             return;
         }
         isSettingValues = true;
-        for (int j = 0; j < inputs.length; ++j) {
+        for (int j = 0; j < sheetInputs.length; ++j) {
             if (rowsCheck[j].isSelected()) {
-                for (int i = 0; i < inputs[0].length; ++i) {
-                    inputs[j][i].setText(value);
+                for (int i = 0; i < sheetInputs[0].length; ++i) {
+                    sheetInputs[j][i].setText(value);
                 }
             }
         }
@@ -179,7 +163,7 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
     }
 
     public void setPageSelectedCols() {
-        if (inputs == null || colsCheck == null) {
+        if (sheetInputs == null || colsCheck == null) {
             return;
         }
         String value = askValue(Languages.message("SelectedCols"), Languages.message("SetValue"), "");
@@ -187,10 +171,10 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             return;
         }
         isSettingValues = true;
-        for (int i = 0; i < inputs[0].length; ++i) {
+        for (int i = 0; i < sheetInputs[0].length; ++i) {
             if (colsCheck[i].isSelected()) {
-                for (int j = 0; j < inputs.length; ++j) {
-                    inputs[j][i].setText(value);
+                for (int j = 0; j < sheetInputs.length; ++j) {
+                    sheetInputs[j][i].setText(value);
                 }
             }
         }
@@ -199,7 +183,7 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
     }
 
     public void setSelectedRowsCols() {
-        if (inputs == null || rowsCheck == null || colsCheck == null) {
+        if (sheetInputs == null || rowsCheck == null || colsCheck == null) {
             return;
         }
         String value = askValue(Languages.message("SetSelectedRowsColsValues"), Languages.message("SetValue"), "");
@@ -207,11 +191,11 @@ public abstract class BaseSheetController_Equal extends BaseSheetController_Dele
             return;
         }
         isSettingValues = true;
-        for (int j = 0; j < inputs.length; ++j) {
+        for (int j = 0; j < sheetInputs.length; ++j) {
             if (rowsCheck[j].isSelected()) {
-                for (int i = 0; i < inputs[0].length; ++i) {
+                for (int i = 0; i < sheetInputs[0].length; ++i) {
                     if (colsCheck[i].isSelected()) {
-                        inputs[j][i].setText(value);
+                        sheetInputs[j][i].setText(value);
                     }
                 }
             }

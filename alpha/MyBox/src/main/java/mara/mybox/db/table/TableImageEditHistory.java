@@ -1,5 +1,6 @@
 package mara.mybox.db.table;
 
+import mara.mybox.db.data.ColumnDefinition;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageEditHistory;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.tools.DateTools;

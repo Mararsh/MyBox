@@ -17,25 +17,19 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.FileTools;
-
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-
-import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -62,7 +56,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
     protected Tab certTab;
 
     public NetworkQueryAddressController() {
-        baseTitle = Languages.message("QueryNetworkAddress");
+        baseTitle = message("QueryNetworkAddress");
     }
 
     @Override
@@ -113,7 +107,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
 
     public void query(String address) {
         if (address == null || address.isBlank()) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
             return;
         }
         synchronized (this) {
@@ -209,7 +203,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
     @FXML
     public void saveCert() {
         if (chain == null || host == null) {
-            popError(Languages.message("NoData"));
+            popError(message("NoData"));
             return;
         }
         File file = chooseSaveFile(VisitHistory.FileType.Cert, host + ".crt");

@@ -3,18 +3,22 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2021-8-23
+ * @CreateDate 2021-8-28
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataFileController_ColMenu extends BaseDataFileController_Base {
+public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
 
-    public abstract void loadPage(int pageNumber);
+    protected abstract File deleteFileSelectedColsDo();
+
+    protected abstract File setFileSelectedColsDo(String value);
 
     protected abstract File setFileColValuesDo(int col, String value);
 
@@ -30,7 +34,209 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
 
     protected abstract File orderFileColDo(int col, boolean asc);
 
-    protected abstract boolean saveColumns();
+    @Override
+    public void newSheet(int rows, int cols) {
+        try {
+            sourceFile = null;
+            initCurrentPage();
+            initFile();
+            super.newSheet(rows, cols);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    // columns have been changed before call this
+    @Override
+    protected void deleteSelectedCols() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.deleteSelectedCols();
+            return;
+        }
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            if (!PopTools.askSure(baseTitle, message("DeleteSelectedCols") + "\n"
+                    + message("NoticeAllChangeUnrecover"))) {
+                return;
+            }
+            task = new BaseController_Attributes.SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    saveColumns();
+                    File tmpFile = deleteFileSelectedColsDo();
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    backup();
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    dataChangedNotify.set(false);
+                    loadPage(currentPage);
+                }
+
+            };
+            handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
+
+    @Override
+    public void copyFileSelectedCols() {
+        if (colsCheck == null) {
+            popError(message("NoData"));
+            return;
+        }
+        if (sourceFile == null || pagesNumber <= 1) {
+            copyPageSelectedColsToDataClipboard();
+            return;
+        }
+        List<ColumnDefinition> selectedColumns = new ArrayList<>();
+        for (int c = 0; c < colsCheck.length; c++) {
+            if (colsCheck[c].isSelected()) {
+                selectedColumns.add(columns.get(c));
+            }
+        }
+        if (selectedColumns.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private File file;
+
+                @Override
+                protected boolean handle() {
+                    file = fileSelectedCols();
+                    return file != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileCSVController.open(file, true, ',');
+                }
+
+            };
+            handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
+
+    @Override
+    protected void addColsNumber() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.addColsNumber();
+            return;
+        }
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            String value = askValue(message("NoticeAllChangeUnrecover"), message("AddColsNumber"), "1");
+            int number;
+            try {
+                number = Integer.parseInt(value);
+            } catch (Exception e) {
+                popError(message("InvalidData"));
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    int col = colsCheck == null ? 0 : colsCheck.length;
+                    makeColumns(col, number);
+                    saveColumns();
+                    File tmpFile = insertFileColDo(col, true, number);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    backup();
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    loadPage(currentPage);
+                }
+
+            };
+            handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
+
+    @Override
+    protected void setFileSelectedCols() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            setPageSelectedCols();
+            return;
+        }
+        if (!checkBeforeNextAction() || totalSize <= 0) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            String value = askValue(message("NoticeAllChangeUnrecover"), message("SetFileSelectedColsValues"), defaultColValue);
+            if (value == null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                StringBuilder s;
+
+                @Override
+                protected boolean handle() {
+                    File tmpFile = setFileSelectedColsDo(value);
+                    if (tmpFile == null || !tmpFile.exists()) {
+                        return false;
+                    }
+                    backup();
+                    return FileTools.rename(tmpFile, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    loadPage(currentPage);
+                }
+
+            };
+            handling(task);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+        }
+    }
 
     @Override
     protected void setFileColValues(int col) {
@@ -46,7 +252,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
             }
             String value = askValue(colName(col) + "\n" + message("NoticeAllChangeUnrecover"),
                     message("SetAllColValues"), defaultColValue);
-            if (!dataValid(col, value)) {
+            if (!cellValid(col, value)) {
                 popError(message("InvalidData"));
                 return;
             }
@@ -65,7 +271,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    dataChanged = false;
+                    dataChangedNotify.set(false);
                     loadPage(currentPage);
                 }
 
@@ -96,7 +302,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
 
                 @Override
                 protected boolean handle() {
-                    copiedCol = new ArrayList<>();
+//                    copiedCol = new ArrayList<>();
                     List<Integer> cols = new ArrayList<>();
                     cols.add(col);
                     file = fileSelectedCols(cols);
@@ -132,10 +338,10 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
 
     @Override
     protected void pasteFileColValues(int col) {
-        if (copiedCol == null || copiedCol.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
+//        if (copiedCol == null || copiedCol.isEmpty()) {
+//            popError(message("NoData"));
+//            return;
+//        }
         if (sourceFile == null || pagesNumber <= 1) {
             pastePageColValues(col);
             return;
@@ -166,7 +372,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    dataChanged = false;
+                    dataChangedNotify.set(false);
                     loadPage(currentPage);
                 }
 
@@ -215,7 +421,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    dataChanged = false;
+                    dataChangedNotify.set(false);
                     loadPage(currentPage);
                 }
 
@@ -270,7 +476,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    dataChanged = false;
+                    dataChangedNotify.set(false);
                     loadPage(currentPage);
                 }
 
@@ -311,7 +517,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    dataChanged = false;
+                    dataChangedNotify.set(false);
                     loadPage(1);
                 }
 
@@ -358,7 +564,7 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    dataChanged = false;
+                    dataChangedNotify.set(false);
                     loadPage(currentPage);
                 }
 
@@ -368,12 +574,6 @@ public abstract class BaseDataFileController_ColMenu extends BaseDataFileControl
             Thread thread = new Thread(task);
             thread.setDaemon(false);
             thread.start();
-        }
-    }
-
-    public void backup() {
-        if (backupController != null && backupController.isBack()) {
-            backupController.addBackup(sourceFile);
         }
     }
 

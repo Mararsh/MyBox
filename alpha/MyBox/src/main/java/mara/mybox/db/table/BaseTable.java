@@ -15,12 +15,12 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.table.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppValues;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -76,7 +76,7 @@ public abstract class BaseTable<D> {
             for (int i = 0; i < columns.size(); ++i) {
                 ColumnDefinition column = columns.get(i);
                 Object value = readColumnValue(results, column);
-                setValue(data, column.name, value);
+                setValue(data, column.getName(), value);
             }
             for (int i = 0; i < foreignColumns.size(); ++i) {
                 ColumnDefinition column = foreignColumns.get(i);
@@ -98,35 +98,35 @@ public abstract class BaseTable<D> {
             if (results == null || column == null) {
                 return null;
             }
-            switch (column.type) {
+            switch (column.getType()) {
                 case String:
                 case Text:
                 case Color:
                 case File:
                 case Image:
-                    return results.getString(column.name);
+                    return results.getString(column.getName());
                 case Double:
-                    return results.getDouble(column.name);
+                    return results.getDouble(column.getName());
                 case Float:
-                    return results.getFloat(column.name);
+                    return results.getFloat(column.getName());
                 case Long:
                 case Era:
-                    return results.getLong(column.name);
+                    return results.getLong(column.getName());
                 case Integer:
-                    return results.getInt(column.name);
+                    return results.getInt(column.getName());
                 case Boolean:
-                    return results.getBoolean(column.name);
+                    return results.getBoolean(column.getName());
                 case Short:
-                    return results.getShort(column.name);
+                    return results.getShort(column.getName());
                 case Datetime:
-                    return results.getTimestamp(column.name);
+                    return results.getTimestamp(column.getName());
                 case Date:
-                    return results.getDate(column.name);
+                    return results.getDate(column.getName());
                 default:
-                    MyBoxLog.debug(column.name + " " + column.getType());
+                    MyBoxLog.debug(column.getName() + " " + column.getType());
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), tableName + " " + column.name);
+            MyBoxLog.debug(e.toString(), tableName + " " + column.getName());
         }
         return null;
     }
@@ -136,10 +136,10 @@ public abstract class BaseTable<D> {
             return false;
         }
         try {
-            Object value = getValue(data, column.name);
-//            MyBoxLog.error(index + " " + column.name + " " + column.type + " " + value);
+            Object value = getValue(data, column.getName());
+//            MyBoxLog.error(index + " " + column.getName() + " " + column.getType() + " " + value);
             // Not check maxValue/minValue.
-            switch (column.type) {
+            switch (column.getType()) {
                 case String:
                 case Text:
                 case Color:
@@ -227,12 +227,12 @@ public abstract class BaseTable<D> {
                     }
                     break;
                 default:
-                    MyBoxLog.debug(column.name + " " + column.getType() + " " + value.toString());
+                    MyBoxLog.debug(column.getName() + " " + column.getType() + " " + value.toString());
                     return false;
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString(), tableName + " " + column.name);
+            MyBoxLog.debug(e.toString(), tableName + " " + column.getName());
             return false;
         }
     }
@@ -316,7 +316,7 @@ public abstract class BaseTable<D> {
     public List<String> importNecessaryFields() {
         List<String> names = new ArrayList<>();
         for (ColumnDefinition column : columns) {
-            if (column.isNotNull() && !column.isID) {
+            if (column.isNotNull() && !column.isIsID()) {
                 names.add(column.getLabel());
             }
         }

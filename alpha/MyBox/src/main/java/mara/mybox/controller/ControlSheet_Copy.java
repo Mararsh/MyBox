@@ -13,7 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import mara.mybox.db.table.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.TextClipboardTools;
@@ -23,13 +23,13 @@ import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2021-8-19
+ * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class BaseSheetController_Copy extends BaseSheetController_ColMenu {
+public abstract class ControlSheet_Copy extends ControlSheet_Delete {
 
     public String[][] selectedRows() {
-        if (inputs == null || rowsCheck == null) {
+        if (sheetInputs == null || rowsCheck == null) {
             return null;
         }
         int selectedRowsCount = 0;
@@ -41,8 +41,8 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
         if (selectedRowsCount == 0) {
             return null;
         }
-        rowsNumber = inputs.length;
-        colsNumber = inputs[0].length;
+        rowsNumber = sheetInputs.length;
+        colsNumber = sheetInputs[0].length;
         int rowIndex = 0;
         String[][] data = new String[selectedRowsCount][colsNumber];
         for (int r = 0; r < rowsNumber; ++r) {
@@ -50,7 +50,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
                 continue;
             }
             for (int c = 0; c < colsNumber; ++c) {
-                data[rowIndex][c] = value(r, c);
+                data[rowIndex][c] = cellString(r, c);
             }
             rowIndex++;
         }
@@ -58,10 +58,10 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
     }
 
     public Map<String, Object> pageSelectedCols() {
-        if (inputs == null || colsCheck == null) {
+        if (sheetInputs == null || colsCheck == null) {
             return null;
         }
-        rowsNumber = inputs.length;
+        rowsNumber = sheetInputs.length;
         if (rowsNumber == 0) {
             return null;
         }
@@ -81,7 +81,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
                 if (!colsCheck[c].isSelected()) {
                     continue;
                 }
-                data[r][colIndex] = value(r, c);
+                data[r][colIndex] = cellString(r, c);
                 colIndex++;
             }
         }
@@ -92,7 +92,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
     }
 
     public Map<String, Object> selectedRowsCols() {
-        if (inputs == null || colsCheck == null || rowsCheck == null) {
+        if (sheetInputs == null || colsCheck == null || rowsCheck == null) {
             return null;
         }
         int selectedRowsCount = 0;
@@ -113,8 +113,8 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
         if (selectedColumns.isEmpty()) {
             return null;
         }
-        rowsNumber = inputs.length;
-        colsNumber = inputs[0].length;
+        rowsNumber = sheetInputs.length;
+        colsNumber = sheetInputs[0].length;
         int rowIndex = 0;
         String[][] data = new String[selectedRowsCount][selectedColumns.size()];
         for (int r = 0; r < rowsNumber; ++r) {
@@ -126,7 +126,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
                 if (!colsCheck[c].isSelected()) {
                     continue;
                 }
-                data[rowIndex][colIndex] = value(r, c);
+                data[rowIndex][colIndex] = cellString(r, c);
                 colIndex++;
             }
             rowIndex++;
@@ -174,7 +174,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
         try {
             MenuItem menu;
 
-            rowsSelected = false;
+            boolean rowsSelected = false;
             if (rowsCheck != null) {
                 for (int j = 0; j < rowsCheck.length; ++j) {
                     if (rowsCheck[j].isSelected()) {
@@ -183,7 +183,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
                     }
                 }
             }
-            colsSelected = false;
+            boolean colsSelected = false;
             if (colsCheck != null) {
                 for (int j = 0; j < colsCheck.length; ++j) {
                     if (colsCheck[j].isSelected()) {
@@ -197,15 +197,11 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             menu.setOnAction((ActionEvent event) -> {
                 CopyPageRowsToSystemClipboard();
             });
-            menu.setDisable(inputs == null);
+            menu.setDisable(sheetInputs == null);
             items.add(menu);
 
             menu = new MenuItem(Languages.message("CopySelectedRowsToSystmClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!rowsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 copySelectedRowsToSystemClipboard();
             });
             menu.setDisable(!rowsSelected);
@@ -213,10 +209,6 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
 
             menu = new MenuItem(Languages.message("CopyPageSelectedColsToSystmClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!colsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 copyPageSelectedColsToSystemClipboard();
             });
             menu.setDisable(!colsSelected);
@@ -224,10 +216,6 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
 
             menu = new MenuItem(Languages.message("CopySelectedRowsColsToSystmClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!colsSelected || !rowsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 copySelectedRowsColsToSystemClipboard();
             });
             menu.setDisable(!colsSelected || !rowsSelected);
@@ -239,15 +227,11 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             menu.setOnAction((ActionEvent event) -> {
                 copyPageRowsToDataClipboard();
             });
-            menu.setDisable(inputs == null);
+            menu.setDisable(sheetInputs == null);
             items.add(menu);
 
             menu = new MenuItem(Languages.message("CopySelectedRowsToDataClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!rowsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 copySelectedRowsToDataClipboard();
             });
             menu.setDisable(!rowsSelected);
@@ -255,10 +239,6 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
 
             menu = new MenuItem(Languages.message("CopyPageSelectedColsToDataClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!colsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 copyPageSelectedColsToDataClipboard();
             });
             menu.setDisable(!colsSelected);
@@ -266,10 +246,6 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
 
             menu = new MenuItem(Languages.message("CopySelectedRowsColsToDataClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                if (!colsSelected || !rowsSelected) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
                 copySelectedRowsColsToDataClipboard();
             });
             menu.setDisable(!colsSelected || !rowsSelected);
@@ -280,10 +256,6 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
 
                 menu = new MenuItem(Languages.message("CopyFileSelectedCols"));
                 menu.setOnAction((ActionEvent event) -> {
-                    if (!colsSelected) {
-                        popError(Languages.message("NoData"));
-                        return;
-                    }
                     copyFileSelectedCols();
                 });
                 menu.setDisable(!colsSelected);
@@ -297,12 +269,12 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
     }
 
     public void CopyPageRowsToSystemClipboard() {
-        if (sheet == null) {
+        if (pageData == null) {
             popError(message("NoData"));
             return;
         }
         TextClipboardTools.copyToSystemClipboard(myController,
-                TextTools.dataText(sheet, delimiter(), columnNames(), null));
+                TextTools.dataText(pageData, displayDelimiter, columnNames(), null));
     }
 
     public void copySelectedRowsToSystemClipboard() {
@@ -312,7 +284,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             return;
         }
         TextClipboardTools.copyToSystemClipboard(myController,
-                TextTools.dataText(data, delimiter(), columnNames(), null));
+                TextTools.dataText(data, displayDelimiter, columnNames(), null));
     }
 
     public void copyPageSelectedColsToSystemClipboard() {
@@ -328,7 +300,7 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             colsNames.add(c.getName());
         }
         TextClipboardTools.copyToSystemClipboard(myController,
-                TextTools.dataText(data, delimiter(), colsNames, null));
+                TextTools.dataText(data, displayDelimiter, colsNames, null));
     }
 
     public void copySelectedRowsColsToSystemClipboard() {
@@ -344,15 +316,15 @@ public abstract class BaseSheetController_Copy extends BaseSheetController_ColMe
             colsNames.add(c.getName());
         }
         TextClipboardTools.copyToSystemClipboard(myController,
-                TextTools.dataText(data, delimiter(), colsNames, null));
+                TextTools.dataText(data, displayDelimiter, colsNames, null));
     }
 
     public void copyPageRowsToDataClipboard() {
-        if (sheet == null || columns == null) {
+        if (pageData == null || columns == null) {
             popError(message("NoData"));
             return;
         }
-        DataClipboardController.open(sheet, columns);
+        DataClipboardController.open(pageData, columns);
     }
 
     public void copySelectedRowsToDataClipboard() {
