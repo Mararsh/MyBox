@@ -812,6 +812,17 @@ public abstract class BaseTable<D> {
         }
     }
 
+    public D queryOne(String sql) {
+        D data = null;
+        try ( Connection conn = DerbyBase.getConnection();
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+            data = query(conn, statement);
+        } catch (Exception e) {
+            MyBoxLog.error(e, sql);
+        }
+        return data;
+    }
+
     public D query(Connection conn, PreparedStatement statement) {
         if (conn == null || statement == null) {
             return null;

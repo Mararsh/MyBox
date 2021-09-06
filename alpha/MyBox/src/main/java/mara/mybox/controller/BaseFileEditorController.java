@@ -36,7 +36,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -47,11 +47,11 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseFileEditorController extends BaseFileEditorController_Assist {
 
     public BaseFileEditorController() {
-        baseTitle = Languages.message("FileEditer");
+        baseTitle = message("FileEditer");
     }
 
     public BaseFileEditorController(Edit_Type editType) {
-        baseTitle = Languages.message("FileEditer");
+        baseTitle = message("FileEditer");
         if (null != editType) {
             switch (editType) {
                 case Text:
@@ -124,17 +124,17 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
 
             if (findReplaceController != null) {
                 if (sourceInformation != null && sourceInformation.getEditType() == Edit_Type.Bytes) {
-                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(Languages.message("FindReplaceBytesTips")));
+                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(message("FindReplaceBytesTips")));
                 } else {
-                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(Languages.message("FindReplaceTextsTips")));
+                    NodeStyleTools.setTooltip(findReplaceController.tipsView, new Tooltip(message("FindReplaceTextsTips")));
                 }
             }
 
             if (encodeSelector != null) {
-                NodeStyleTools.setTooltip(encodeSelector, new Tooltip(Languages.message("EncodeComments")));
+                NodeStyleTools.setTooltip(encodeSelector, new Tooltip(message("EncodeComments")));
             }
             if (targetBomCheck != null) {
-                NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(Languages.message("BOMcomments")));
+                NodeStyleTools.setTooltip(targetBomCheck, new Tooltip(message("BOMcomments")));
             }
 
         } catch (Exception e) {
@@ -284,7 +284,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        popInformation(Languages.message("Saving"));
+                        popInformation(message("Saving"));
                         saveAction();
                     });
                 }
@@ -467,22 +467,31 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                 }
 
             });
+
             mainArea.scrollTopProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    scrollTopPairArea(newValue.doubleValue());
+                    if (UserConfig.getBoolean(baseName + "ScrollSynchronously", false)) {
+                        scrollTopPairArea(newValue.doubleValue());
+                    }
                     isSettingValues = true;
                     lineArea.setScrollTop(newValue.doubleValue());
                     isSettingValues = false;
                 }
             });
+
             mainArea.scrollLeftProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                    scrollLeftPairArea(newValue.doubleValue());
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (UserConfig.getBoolean(baseName + "ScrollSynchronously", false)) {
+                        scrollLeftPairArea(newValue.doubleValue());
+                    }
                 }
             });
             mainArea.selectionProperty().addListener(new ChangeListener<IndexRange>() {
@@ -498,7 +507,8 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
     }
 
     protected void scrollTopPairArea(double value) {
-        if (isSettingValues || pairArea == null || !splitPane.getItems().contains(rightPane)) {
+        if (isSettingValues || pairArea == null
+                || !splitPane.getItems().contains(rightPane)) {
             return;
         }
         isSettingValues = true;
@@ -507,7 +517,8 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
     }
 
     protected void scrollLeftPairArea(double value) {
-        if (isSettingValues || pairArea == null || !splitPane.getItems().contains(rightPane)) {
+        if (isSettingValues || pairArea == null
+                || !splitPane.getItems().contains(rightPane)) {
             return;
         }
         isSettingValues = true;
@@ -578,14 +589,14 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
                 pageEnd += startLinesNumber + linesNumber;
             }
         }
-        String info = Languages.message("SelectionInPage") + ": "
+        String info = message("SelectionInPage") + ": "
                 + StringTools.format(pageStart) + " - " + StringTools.format(pageEnd)
                 + " (" + StringTools.format(currentSelection.getLength() == 0 ? 0 : pageEnd - pageStart + 1) + ")";
         if (sourceInformation != null
                 && sourceInformation.getPagesNumber() > 1 && sourceInformation.getCurrentPage() > 1) {
             long fileStart = sourceInformation.getCurrentPageObjectStart() + pageStart;
             long fileEnd = sourceInformation.getCurrentPageObjectStart() + pageEnd;
-            info += "  " + Languages.message("SelectionInFile") + ": "
+            info += "  " + message("SelectionInFile") + ": "
                     + StringTools.format(fileStart) + " - " + StringTools.format(fileEnd);
         }
         selectionLabel.setText(info);
@@ -641,11 +652,11 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             int v = Integer.valueOf(pageSizeSelector.getValue().replaceAll(",", ""));
             int available = (int) (SystemTools.freeBytes() / 4);
             if (v > available) {
-                popError(Languages.message("MayOutOfMemory"));
+                popError(message("MayOutOfMemory"));
                 v = available;
             } else if (v <= 0) {
                 pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-                popError(Languages.message("InvalidParameters"));
+                popError(message("InvalidParameters"));
                 return;
             }
             pageSizeSelector.getEditor().setStyle(null);
@@ -660,7 +671,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             }
         } catch (Exception e) {
             pageSizeSelector.getEditor().setStyle(NodeStyleTools.badStyle);
-            popError(Languages.message("InvalidParameters"));
+            popError(message("InvalidParameters"));
         }
     }
 
@@ -701,7 +712,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            CheckMenuItem updateMenu = new CheckMenuItem(Languages.message("UpdateSynchronously"));
+            CheckMenuItem updateMenu = new CheckMenuItem(message("UpdateSynchronously"));
             updateMenu.setSelected(UserConfig.getBoolean(baseName + "UpdateSynchronously", false));
             updateMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -714,7 +725,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             });
             popMenu.getItems().add(updateMenu);
 
-            CheckMenuItem scrollMenu = new CheckMenuItem(Languages.message("ScrollSynchronously"));
+            CheckMenuItem scrollMenu = new CheckMenuItem(message("ScrollSynchronously"));
             scrollMenu.setSelected(UserConfig.getBoolean(baseName + "ScrollSynchronously", false));
             scrollMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -729,7 +740,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             popMenu.getItems().add(scrollMenu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(Languages.message("PopupClose"));
+            MenuItem menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -760,11 +771,11 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
+            alert.setContentText(message("NeedSaveBeforeAction"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
-            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);

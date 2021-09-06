@@ -28,12 +28,15 @@ public abstract class ControlSheetFile_columns extends ControlSheetFile_Base {
     public void makeDefintionPane() {
         defBox.getChildren().clear();
         if (sourceFile == null) {
-            defTab.setDisable(true);
-            reportTab.setDisable(true);
+            if (tabPane.getTabs().contains(defTab)) {
+                tabPane.getTabs().removeAll(defTab, reportTab);
+            }
             return;
         }
-        defTab.setDisable(false);
-        reportTab.setDisable(false);
+        if (!tabPane.getTabs().contains(defTab)) {
+            tabPane.getTabs().add(4, defTab);
+            tabPane.getTabs().add(5, reportTab);
+        }
         if (columns == null && pageData != null && pageData.length > 0) {
             makeColumns(pageData[0].length);
         }

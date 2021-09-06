@@ -17,6 +17,7 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 
 import mara.mybox.value.UserConfig;
 
@@ -180,11 +181,11 @@ public class ImageClipboard extends BaseData {
             if (image == null) {
                 return null;
             }
-            String prefix = AppVariables.getImageClipboardPath() + File.separator
+            String prefix = AppPaths.getImageClipboardPath() + File.separator
                     + (new Date().getTime()) + "_" + new Random().nextInt(1000);
             String imageFile = prefix + ".png";
             while (new File(imageFile).exists()) {
-                prefix = AppVariables.getImageClipboardPath() + File.separator
+                prefix = AppPaths.getImageClipboardPath() + File.separator
                         + (new Date().getTime()) + "_" + new Random().nextInt(1000);
                 imageFile = prefix + ".png";
             }

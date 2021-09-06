@@ -12,6 +12,10 @@ import static mara.mybox.value.Languages.message;
  * @Author Mara
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
+ *
+ * ControlSheetFile < ControlSheetFile_Sheet < ControlSheetFile_File <
+ * ControlSheetFile_Pages < ControlSheetFile_columns < ControlSheetFile_Base <
+ * ControlSheet
  */
 public abstract class ControlSheetFile extends ControlSheetFile_Sheet {
 
@@ -20,18 +24,7 @@ public abstract class ControlSheetFile extends ControlSheetFile_Sheet {
         try {
             super.initValues();
 
-            initCurrentPage();
             fileLoadedNotify = new SimpleBooleanProperty(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-            initPagination();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -52,6 +45,18 @@ public abstract class ControlSheetFile extends ControlSheetFile_Sheet {
         this.fileController = fileController;
         this.backupController = fileController.backupController;
         this.baseName = fileController.baseName;
+        setControls();
+    }
+
+    @Override
+    public void setControls() {
+        try {
+            super.setControls();
+            initPagination();
+            reportViewController.setParent(fileController);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML

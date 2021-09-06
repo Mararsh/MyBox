@@ -38,6 +38,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -252,7 +253,7 @@ public abstract class ImageManufactureController_Histories extends ImageManufact
                 return;
             }
             if (imageHistoriesPath == null) {
-                imageHistoriesPath = AppVariables.getImageHisPath();
+                imageHistoriesPath = AppPaths.getImageHisPath();
             }
             synchronized (this) {
                 if (task != null && !task.isQuit()) {

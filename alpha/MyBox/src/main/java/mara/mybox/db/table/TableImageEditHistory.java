@@ -18,6 +18,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -248,7 +249,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                     FileDeleteTools.delete(results.getString("history_location"));
                 }
             }
-            String imageHistoriesPath = AppVariables.getImageHisPath();
+            String imageHistoriesPath = AppPaths.getImageHisPath();
             File path = new File(imageHistoriesPath);
             if (path.exists()) {
                 File[] files = path.listFiles();

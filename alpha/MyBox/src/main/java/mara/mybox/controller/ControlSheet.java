@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -23,6 +24,7 @@ import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,6 +36,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @Author Mara
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
+ *
+ * ControlSheet < ControlSheet_Calculation < ControlSheet_TextsDisplay <
+ * ControlSheet_Html < ControlSheet_ColMenu < ControlSheet_RowMenu <
+ * ControlSheet_Equal < ControlSheet_Size < ControlSheet_Sheet <
+ * ControlSheet_Columns < ControlSheet_Base
+ *
  */
 public abstract class ControlSheet extends ControlSheet_Calculation {
 
@@ -51,28 +59,24 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
             noDataLabel = new Label(Languages.message("NoData"));
             noDataLabel.setStyle("-fx-text-fill: gray;");
             inputStyle = "-fx-border-radius: 10; -fx-background-radius: 0;";
+            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
+            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
 
             pagesNumber = 1;
             pageSize = 50;
             currentRow = currentCol = 0;
+            initCurrentPage();
 
+            parentController = this;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            initHtmlControls();
-            initTextControls();
-            initCalculationControls();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+    public void initCurrentPage() {
+        currentPage = 1;
+        currentPageStart = 1;
+        currentPageEnd = 1;
     }
 
     @Override
@@ -80,13 +84,100 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
         try {
             super.setControlsStyle();
 
-            NodeStyleTools.removeTooltip(sizeSheetButton);
-            NodeStyleTools.removeTooltip(copySheetButton);
-            NodeStyleTools.removeTooltip(equalSheetButton);
-            NodeStyleTools.removeTooltip(deleteSheetButton);
             NodeStyleTools.setTooltip(editSheetButton, message("EditPageRows"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    // parent should call this
+    public void setParent(BaseController parent) {
+        this.parentController = parent;
+        this.baseName = parent.baseName;
+        setControls();
+    }
+
+    // Window should call this when start
+    public void setControls() {
+        try {
+            initHtmlControls();
+            initTextControls();
+            initCalculationControls();
+            initOptions();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void initOptions() {
+        try {
+            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
+            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 1);
+
+            scaleSelector.getItems().addAll(
+                    Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
+            );
+            scaleSelector.setValue(scale + "");
+            scaleSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        checkScale();
+                    });
+
+            randomSelector.getItems().addAll(
+                    Arrays.asList("1", "100", "10", "1000", "10000")
+            );
+            randomSelector.setValue(maxRandom + "");
+            randomSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        try {
+                            int v = Integer.parseInt(newValue);
+                            if (v > 0) {
+                                maxRandom = v;
+                                UserConfig.setInt(baseName + "MaxRandom", v);
+                                randomSelector.getEditor().setStyle(null);
+                            } else {
+                                randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                            }
+                        } catch (Exception e) {
+                            randomSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+                        }
+                    });
+
+            overPopMenuCheck.setSelected(UserConfig.getBoolean(baseName + "OverPop", false));
+            overPopMenuCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        UserConfig.setBoolean(baseName + "OverPop", newValue);
+                    });
+
+            rightClickPopMenuCheck.setSelected(UserConfig.getBoolean(baseName + "RightClickPop", true));
+            rightClickPopMenuCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        UserConfig.setBoolean(baseName + "RightClickPop", newValue);
+                    });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkScale() {
+        if (isSettingValues) {
+            return;
+        }
+        try {
+            int v = Integer.parseInt(scaleSelector.getValue());
+            if (v >= 0 && v <= 15) {
+                scale = (short) v;
+                UserConfig.setInt(baseName + "Scale", v);
+                scaleSelector.getEditor().setStyle(null);
+            } else {
+                scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
+            }
+        } catch (Exception e) {
+            scaleSelector.getEditor().setStyle(NodeStyleTools.badStyle);
         }
     }
 
@@ -98,7 +189,7 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
                 return;
             }
             TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
-            controller.setParameters(this);
+            controller.setParameters(this, message("Table"));
             controller.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

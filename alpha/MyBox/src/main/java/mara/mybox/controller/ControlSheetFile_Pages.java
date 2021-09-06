@@ -60,12 +60,6 @@ public abstract class ControlSheetFile_Pages extends ControlSheetFile_columns {
         }
     }
 
-    public void initCurrentPage() {
-        currentPage = 1;
-        currentPageStart = 1;
-        currentPageEnd = 1;
-    }
-
     public void loadPage(int pageNumber) {
         if (sourceFile == null || columns.isEmpty() || totalSize <= 0) {
             makeSheet(null);

@@ -501,6 +501,12 @@ public class StyleButton {
                     return new StyleData(id, message("Play"), "", "iconPlay.png");
             }
         }
+        if (id.startsWith("sort")) {
+            return new StyleData(id, message("Sort"), "", "iconSort.png");
+        }
+        if (id.startsWith("minus")) {
+            return new StyleData(id, message("Minus"), "", "iconMinus.png");
+        }
         return null;
     }
 
@@ -663,10 +669,6 @@ public class StyleButton {
                 return new StyleData("displayDataButton", message("Display"), "", "iconGraph.png");
             case "valueOkButton":
                 return new StyleData("valueOkButton", message("OK"), "", "iconOK.png");
-            case "plusButton":
-                return new StyleData("plusButton", message("Plus"), "", "iconPlus.png");
-            case "minusButton":
-                return new StyleData("minusButton", message("Minus"), "", "iconMinus.png");
             case "multiplyButton":
                 return new StyleData("multiplyButton", message("Multiply"), "", "iconMultiply.png");
             case "calculateButton":

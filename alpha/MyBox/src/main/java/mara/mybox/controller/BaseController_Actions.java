@@ -373,7 +373,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     public LoadingController handling(Task<?> task, Modality block, String info) {
         try {
-            LoadingController controller = (LoadingController) WindowTools.handling(getMyStage(), Fxmls.LoadingFxml);
+            LoadingController controller = (LoadingController) WindowTools.handling(getMyWindow(), Fxmls.LoadingFxml);
             controller.init(task);
             if (info != null) {
                 controller.setInfo(info);
@@ -399,6 +399,15 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             MyBoxLog.error(e.toString());
             return null;
         }
+    }
+
+    public LoadingController start(SingletonTask<?> task) {
+        LoadingController controller = handling(task);
+        task.setSelf(task);
+        Thread thread = new Thread(task);
+        thread.setDaemon(false);
+        thread.start();
+        return controller;
     }
 
     public void multipleFilesGenerated(final List<String> fileNames) {

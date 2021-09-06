@@ -47,10 +47,9 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
     }
 
     // columns have been changed before call this
-    @Override
     protected void deleteSelectedCols() {
         if (sourceFile == null || pagesNumber <= 1) {
-            super.deleteSelectedCols();
+//            super.deleteSelectedCols();
             return;
         }
         if (!checkBeforeNextAction()) {
@@ -93,14 +92,13 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
         }
     }
 
-    @Override
-    public void copyFileSelectedCols() {
+    public void copyPagesSelectedColsToDataClipboard() {
         if (colsCheck == null) {
             popError(message("NoData"));
             return;
         }
         if (sourceFile == null || pagesNumber <= 1) {
-            copyPageSelectedColsToDataClipboard();
+//            copyPageSelectedColsToDataClipboard();
             return;
         }
         List<ColumnDefinition> selectedColumns = new ArrayList<>();
@@ -193,10 +191,9 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
         }
     }
 
-    @Override
-    protected void setFileSelectedCols() {
+    protected void setPagesSelectedCols() {
         if (sourceFile == null || pagesNumber <= 1) {
-            setPageSelectedCols();
+//            setPageSelectedCols();
             return;
         }
         if (!checkBeforeNextAction() || totalSize <= 0) {
@@ -238,10 +235,9 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
         }
     }
 
-    @Override
-    protected void setFileColValues(int col) {
+    protected void setPagesColValues(int col) {
         if (sourceFile == null || pagesNumber <= 1) {
-            setPageColValues(col);
+//            setPageColValues(col);
         }
         if (!checkBeforeNextAction() || totalSize <= 0) {
             return;
@@ -284,13 +280,12 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
         }
     }
 
-    @Override
-    protected void copyFileColValues(int col) {
+    protected void copyPagesColToDataClipboard(int col) {
         if (col < 0 || col >= colsCheck.length) {
             return;
         }
         if (sourceFile == null || pagesNumber <= 1) {
-            copyPageColValues(col);
+//            copyPageColToSystemClipboard(col);
             return;
         }
         synchronized (this) {
@@ -337,13 +332,13 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
     }
 
     @Override
-    protected void pasteFileColValues(int col) {
+    protected void pastePagesColFromDataClipboard(int col) {
 //        if (copiedCol == null || copiedCol.isEmpty()) {
 //            popError(message("NoData"));
 //            return;
 //        }
         if (sourceFile == null || pagesNumber <= 1) {
-            pastePageColValues(col);
+            pastePageColFromSystemClipboard(col);
             return;
         }
         if (!checkBeforeNextAction() || totalSize <= 0) {
@@ -386,7 +381,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
     }
 
     @Override
-    protected void insertFileCol(int col, boolean left, int number) {
+    protected void insertPagesCol(int col, boolean left, int number) {
         if (number < 1) {
             return;
         }
@@ -434,10 +429,9 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
         }
     }
 
-    @Override
-    protected void deleteFileCol(int col) {
+    protected void deletePagesCol(int col) {
         if (sourceFile == null || pagesNumber <= 1) {
-            deletePageCol(col);
+//            deletePageCol(col);
             return;
         }
         if (columns.size() <= 1) {
@@ -489,8 +483,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
         }
     }
 
-    @Override
-    protected void deleteAllCols() {
+    public void deleteCols() {
         if (sourceFile == null || pagesNumber <= 1) {
             super.deleteAllCols();
             return;
@@ -531,7 +524,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
     }
 
     @Override
-    protected void orderFileCol(int col, boolean asc) {
+    protected void orderPagesCol(int col, boolean asc) {
         if (sourceFile == null || pagesNumber <= 1) {
             orderPageCol(col, asc);
             return;

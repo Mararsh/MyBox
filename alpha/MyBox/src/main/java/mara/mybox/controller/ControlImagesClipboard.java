@@ -32,6 +32,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -233,7 +234,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
 
     @Override
     protected void afterClear() {
-        FileDeleteTools.clearDir(new File(AppVariables.getImageClipboardPath()));
+        FileDeleteTools.clearDir(new File(AppPaths.getImageClipboardPath()));
         refreshAction();
     }
 
@@ -328,7 +329,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
 
     @FXML
     public void clipsPath() {
-        File path = new File(AppVariables.getImageClipboardPath());
+        File path = new File(AppPaths.getImageClipboardPath());
         browseURI(path.toURI());
     }
 

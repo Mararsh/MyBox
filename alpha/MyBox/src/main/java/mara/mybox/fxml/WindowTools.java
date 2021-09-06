@@ -330,11 +330,15 @@ public class WindowTools {
                 window.setUserData(null);
             }
             window.hide();
-            if (Window.getWindows().isEmpty()) {
-                appExit();
-            }
+            checkExit();
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void checkExit() {
+        if (Window.getWindows().isEmpty()) {
+            appExit();
         }
     }
 
@@ -370,6 +374,11 @@ public class WindowTools {
                     AppVariables.executorService.shutdownNow();
                     AppVariables.executorService = null;
                 }
+            }
+
+            if (AppVariables.exitTimer != null) {
+                AppVariables.exitTimer.cancel();
+                AppVariables.exitTimer = null;
             }
 
             if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {

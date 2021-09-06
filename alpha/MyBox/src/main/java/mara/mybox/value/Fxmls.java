@@ -168,6 +168,12 @@ public class Fxmls {
         data
      */
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
+    public static final String DataCopyFxml = "/fxml/DataCopy.fxml";
+    public static final String DataEqualFxml = "/fxml/DataEqual.fxml";
+    public static final String DataDeleteFxml = "/fxml/DataDelete.fxml";
+    public static final String DataSortFxml = "/fxml/DataSort.fxml";
+    public static final String DataSizeFxml = "/fxml/DataSize.fxml";
+    public static final String DataWidthFxml = "/fxml/DataWidth.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";

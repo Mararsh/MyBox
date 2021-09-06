@@ -5,10 +5,13 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -123,9 +126,19 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                     col0Label.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                         if (newValue) {
                             col0Label.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
-                            popRowLabelMenu(col0Label);
+                            if (overPopMenuCheck.isSelected()) {
+                                popRowLabelMenu(col0Label);
+                            }
                         } else {
                             col0Label.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                        }
+                    });
+                    col0Label.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if (event.getButton() == MouseButton.SECONDARY && rightClickPopMenuCheck.isSelected()) {
+                                popRowLabelMenu(col0Label);
+                            }
                         }
                     });
                     header.getChildren().add(col0Label);
@@ -158,9 +171,19 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                             colCheck.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                                 if (newValue) {
                                     colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
-                                    popColMenu(colCheck, colf);
+                                    if (overPopMenuCheck.isSelected()) {
+                                        popColMenu(colCheck, colf);
+                                    }
                                 } else {
                                     colCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                                }
+                            });
+                            colCheck.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                @Override
+                                public void handle(MouseEvent event) {
+                                    if (event.getButton() == MouseButton.SECONDARY && rightClickPopMenuCheck.isSelected()) {
+                                        popColMenu(colCheck, colf);
+                                    }
                                 }
                             });
                             header.getChildren().add(colCheck);
@@ -199,9 +222,19 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
                                 rowCheck.hoverProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                                     if (newValue) {
                                         rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;-fx-text-fill: blue;");
-                                        popRowMenu(rowCheck, rowf);
+                                        if (overPopMenuCheck.isSelected()) {
+                                            popRowMenu(rowCheck, rowf);
+                                        }
                                     } else {
                                         rowCheck.setStyle("-fx-background-color: #E8E8E8;-fx-font-weight: bolder;");
+                                    }
+                                });
+                                rowCheck.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent event) {
+                                        if (event.getButton() == MouseButton.SECONDARY && rightClickPopMenuCheck.isSelected()) {
+                                            popRowMenu(rowCheck, rowf);
+                                        }
                                     }
                                 });
                                 line.getChildren().add(rowCheck);
@@ -336,6 +369,14 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         }
     }
 
+    protected long pageStart() {
+        return currentPageStart;
+    }
+
+    protected long pageEnd() {
+        return pageStart() + (pageData == null ? 0 : pageData.length);
+    }
+
     protected List<String> row(int row) {
         List<String> values = new ArrayList<>();
         try {
@@ -391,6 +432,28 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         } catch (Exception e) {
         }
         return value == null ? defaultColValue : value;
+    }
+
+    public boolean colsSelected() {
+        if (colsCheck != null) {
+            for (int j = 0; j < colsCheck.length; ++j) {
+                if (colsCheck[j].isSelected()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean rowsSelected() {
+        if (rowsCheck != null) {
+            for (int j = 0; j < rowsCheck.length; ++j) {
+                if (rowsCheck[j].isSelected()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /*

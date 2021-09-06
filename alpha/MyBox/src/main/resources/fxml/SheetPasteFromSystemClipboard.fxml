@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Table" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%PasteContentInSystemClipboard" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
         <HBox fx:id="codeBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">

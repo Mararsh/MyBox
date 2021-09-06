@@ -41,14 +41,12 @@ public class ControlMatrix extends ControlSheet {
     protected ControlMatricesList manager;
     protected TableMatrixCell tableMatrixCell;
     protected BaseTable tableMatrix;
-    protected int maxRandom;
-    protected short scale;
     protected String matrixName;
 
     @FXML
     protected TextField nameInput, idInput;
     @FXML
-    protected ComboBox<String> columnsNumberSelector, rowsNumberSelector, scaleSelector, randomSelector;
+    protected ComboBox<String> columnsNumberSelector, rowsNumberSelector;
     @FXML
     protected TextArea commentsArea;
     @FXML
@@ -469,53 +467,6 @@ public class ControlMatrix extends ControlSheet {
     }
 
     @Override
-    public List<MenuItem> colChangeMenu(int col) {
-        List<MenuItem> items = super.colChangeMenu(col);
-        items.add(new SeparatorMenuItem());
-        try {
-            MenuItem menu = new MenuItem(Languages.message("SetColZero"));
-            menu.setOnAction((ActionEvent event) -> {
-                isSettingValues = true;
-                for (int j = 0; j < rowsNumber; ++j) {
-                    sheetInputs[j][col].setText(0d + "");
-                }
-                isSettingValues = false;
-                sheetChanged();
-            });
-            menu.setDisable(sheetInputs == null);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("SetColOne"));
-            menu.setOnAction((ActionEvent event) -> {
-                isSettingValues = true;
-                for (int j = 0; j < rowsNumber; ++j) {
-                    sheetInputs[j][col].setText(1d + "");
-                }
-                isSettingValues = false;
-                sheetChanged();
-            });
-            menu.setDisable(sheetInputs == null);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("SetColRandom"));
-            menu.setOnAction((ActionEvent event) -> {
-                Random r = new Random();
-                isSettingValues = true;
-                for (int j = 0; j < rowsNumber; ++j) {
-                    sheetInputs[j][col].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
-                }
-                isSettingValues = false;
-                sheetChanged();
-            });
-            menu.setDisable(sheetInputs == null);
-            items.add(menu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    @Override
     public List<MenuItem> rowMoreMenu(int row) {
         List<MenuItem> items = new ArrayList<>();
         try {
@@ -562,7 +513,6 @@ public class ControlMatrix extends ControlSheet {
         return items;
     }
 
-    @Override
     public List<MenuItem> equalMoreMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
@@ -925,50 +875,6 @@ public class ControlMatrix extends ControlSheet {
     }
 
     @Override
-    public List<MenuItem> sheetSizeMoreMenu() {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(Languages.message("SetRowsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                String value = askValue("", Languages.message("SetRowsNumber"), sheetInputs == null ? "1" : sheetInputs.length + "");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    int number = Integer.parseInt(value);
-                    resizeSheet(number, colsCheck.length);
-                } catch (Exception e) {
-                    popError(Languages.message("InvalidData"));
-                }
-            });
-            menu.setDisable(colsCheck == null || colsCheck.length < 1);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("SetColumnsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                String value = askValue("", Languages.message("SetColumnsNumber"), colsCheck == null ? "1" : colsCheck.length + "");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    int number = Integer.parseInt(value);
-                    if (sheetInputs == null) {
-                        makeColumns(number);
-                        makeSheet(null);
-                    } else {
-                        resizeSheet(sheetInputs.length, number);
-                    }
-                } catch (Exception e) {
-                    popError(Languages.message("InvalidData"));
-                }
-            });
-            items.add(menu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
     protected boolean saveColumns() {
         return true;
     }

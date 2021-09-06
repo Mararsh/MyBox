@@ -25,6 +25,7 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 
 /**
  * @Author Mara
@@ -437,11 +438,11 @@ public class TableImageScope extends DerbyBase {
         }
         String s = "";
         try {
-            String filename = AppVariables.getImageScopePath() + File.separator
+            String filename = AppPaths.getImageScopePath() + File.separator
                     + scope.getScopeType() + "_" + (new Date().getTime())
                     + "_" + new Random().nextInt(1000) + ".png";
             while (new File(filename).exists()) {
-                filename = AppVariables.getImageScopePath() + File.separator
+                filename = AppPaths.getImageScopePath() + File.separator
                         + scope.getScopeType() + "_" + (new Date().getTime())
                         + "_" + new Random().nextInt(1000) + ".png";
             }

@@ -41,35 +41,38 @@ public abstract class ControlSheet_Base extends BaseController {
     protected TextField[][] sheetInputs;
     protected CheckBox[] colsCheck, rowsCheck;
     protected SimpleBooleanProperty sheetChangedNotify, dataChangedNotify;
-    protected int pagesNumber, widthChange, currentRow, currentCol;
+    protected int currentRow, currentCol; // 0-based
     protected boolean isMatrix2;
     protected Label noDataLabel;
     protected String displayDelimiter;
 
     protected long totalSize, currentPageStart, currentPageEnd;   // // 1-based, excluded
-    protected int currentPage, pageSize;// 1-based
+    protected int pagesNumber, widthChange, currentPage, pageSize;// 1-based
 
     protected ControlFileBackup backupController;
     protected boolean sourceWithNames, totalRead;
     protected List<ColumnDefinition> savedColumns;
     protected String loadError;
 
+    protected int maxRandom;
+    protected short scale;
+
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab sheetTab, htmlTab, textsDisplayTab, calculationTab;
+    protected Tab sheetTab, htmlTab, textsDisplayTab, calculationTab, optionsTab;
     @FXML
     protected VBox sheetBox, calColumnsBox;
     @FXML
-    protected Button sizeSheetButton, deleteSheetButton, copySheetButton, equalSheetButton, editSheetButton,
+    protected Button sizeSheetButton, deleteSheetButton, copySheetButton, pasteSheetButton, equalSheetButton, editSheetButton,
             exampleCalculationColumnsButton, exampleDisplayColumnsButton, calculatorButton;
     @FXML
-    protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck, textTitleCheck, textColumnCheck, textRowCheck;
-
+    protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck, textTitleCheck, textColumnCheck, textRowCheck,
+            overPopMenuCheck, rightClickPopMenuCheck;
     @FXML
     protected TextArea textsDisplayArea, calculationColumnsArea, displayColumnsArea;
     @FXML
-    protected ComboBox<String> rowFromSelector, rowToSelector;
+    protected ComboBox<String> rowFromSelector, rowToSelector, scaleSelector, randomSelector;
     @FXML
     protected ControlWebView htmlViewController;
     @FXML

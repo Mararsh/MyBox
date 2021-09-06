@@ -21,6 +21,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.AppPaths;
 
 /**
  * @Author Mara
@@ -150,7 +151,7 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
 
     @Override
     protected void afterClear() {
-        FileDeleteTools.clearDir(new File(AppVariables.getDataClipboardPath()));
+        FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
         refreshAction();
     }
 

@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
+import mara.mybox.value.AppPaths;
 
 /**
  * @Author Mara
@@ -25,7 +26,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 
             imageLoaded = new SimpleBooleanProperty(false);
             historyIndex = -1;
-            imageHistoriesPath = AppVariables.getImageHisPath();
+            imageHistoriesPath = AppPaths.getImageHisPath();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

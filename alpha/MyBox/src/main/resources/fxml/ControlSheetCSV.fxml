@@ -39,16 +39,7 @@ License:    Apache License Version 2.0
                                 <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label fx:id="sheetLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="sizeSheetButton" mnemonicParsing="false" onMouseEntered="#sheetSizeMenu">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconSplit.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="deleteSheetButton" mnemonicParsing="false" onMouseEntered="#sheetDeleteMenu">
+                                        <Button fx:id="deleteSheetButton" mnemonicParsing="false" onAction="#deleteDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -57,7 +48,16 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="copySheetButton" mnemonicParsing="false" onMouseEntered="#sheetCopyMenu">
+                                        <Button fx:id="pasteSheetButton" layoutX="545.0" layoutY="10.0" mnemonicParsing="false" onAction="#pasteDataAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconPaste.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="copySheetButton" mnemonicParsing="false" onAction="#copyDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -66,7 +66,34 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="equalSheetButton" mnemonicParsing="false" onMouseEntered="#sheetEqualMenu">
+                                        <Button fx:id="sizeSheetButton" mnemonicParsing="false" onAction="#sizeDataAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconSplit.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                              <Button fx:id="widthSheetButton" layoutX="504.0" layoutY="10.0" mnemonicParsing="false" onAction="#widthDataAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconXRuler.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="sortSheetButton" layoutX="422.0" layoutY="10.0" mnemonicParsing="false" onAction="#sortDataAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSort.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                        <Button fx:id="equalSheetButton" mnemonicParsing="false" onAction="#setDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -407,6 +434,31 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </Tab>
+            <Tab fx:id="optionsTab" text="%Options">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label minWidth="-Infinity" text="%DecimalScale" />
+                              <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label minWidth="-Infinity" text="%MaxRandom" />
+                              <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
+                           </children>
+                        </HBox>
+                        <CheckBox fx:id="overPopMenuCheck" mnemonicParsing="false" selected="true" text="%PopMenuWhenMouseOverRowCol" />
+                        <CheckBox fx:id="rightClickPopMenuCheck" layoutX="20.0" layoutY="87.0" mnemonicParsing="false" selected="true" text="%PopMenuWhenMouseRightClickRowCol" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
             </tabs>
         </TabPane>
         <HBox fx:id="paginationBox" alignment="CENTER_LEFT" spacing="2.0">

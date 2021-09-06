@@ -19,6 +19,8 @@ public abstract class ControlSheet_Html extends ControlSheet_ColMenu {
 
     public void initHtmlControls() {
         try {
+            htmlViewController.setParent(parentController);
+
             htmlTitleCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlTitle", true));
             htmlTitleCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
                 updateHtml();

@@ -24,7 +24,6 @@ public class DataFileCSVController extends BaseDataFileController {
 
     @FXML
     protected ControlCsvOptions csvReadController, csvWriteController;
-
     @FXML
     protected ControlSheetCSV sheetController;
 

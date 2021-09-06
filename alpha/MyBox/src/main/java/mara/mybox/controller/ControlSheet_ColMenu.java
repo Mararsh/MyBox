@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,11 +12,14 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.DataClipboard;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.value.Languages;
+import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -45,7 +49,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             popMenu.getItems().addAll(items);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            MenuItem menu = new MenuItem(Languages.message("PopupClose"));
+            MenuItem menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -67,7 +71,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
         }
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(Languages.message("Column") + (col + 1) + ": " + colsCheck[col].getText());
+            MenuItem menu = new MenuItem(message("Column") + (col + 1) + ": " + colsCheck[col].getText());
             menu.setStyle("-fx-text-fill: #2e598a;");
             items.add(menu);
 
@@ -75,7 +79,15 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             items.addAll(colSelectMenu(col));
 
             items.add(new SeparatorMenuItem());
-            items.addAll(colChangeMenu(col));
+            menu = new MenuItem(message("SetValues"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+            items.addAll(colCopyPasteMenu(col));
 
             items.add(new SeparatorMenuItem());
             items.addAll(colDefMenu(col));
@@ -91,12 +103,6 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
                 items.addAll(colRenameMenu(col));
             }
 
-            List<MenuItem> moreItems = colMoreMenu(col);
-            if (moreItems != null && !moreItems.isEmpty()) {
-                items.add(new SeparatorMenuItem());
-                items.addAll(moreItems);
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -106,13 +112,13 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
     public List<MenuItem> colSelectMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(Languages.message("SelectCol"));
+            MenuItem menu = new MenuItem(message("SelectCol"));
             menu.setOnAction((ActionEvent event) -> {
                 colsCheck[col].setSelected(true);
             });
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("UnselectCol"));
+            menu = new MenuItem(message("UnselectCol"));
             menu.setOnAction((ActionEvent event) -> {
                 colsCheck[col].setSelected(false);
             });
@@ -123,53 +129,46 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
         return items;
     }
 
-    public List<MenuItem> colChangeMenu(int col) {
+    public List<MenuItem> colCopyPasteMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(Languages.message("SetPageColValues"));
+            MenuItem menu = new MenuItem(message("Copy") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                setPageColValues(col);
+                DataCopyController controller = (DataCopyController) openChildStage(Fxmls.DataCopyFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
             });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("CopyPageCol"));
+            items.add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PastePageColFromSystemClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                copyPageColValues(col);
+                pastePageColFromSystemClipboard(col);
             });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
+            menu.setDisable(rowsTotal() <= 0);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("PastePageCol"));
+            menu = new MenuItem(message("PastePageColFromDataClipboard"));
             menu.setOnAction((ActionEvent event) -> {
-                pastePageColValues(col);
+                pastePageColFromDataClipboard(col);
             });
-//            menu.setDisable(copiedCol == null || copiedCol.isEmpty());
+            menu.setDisable(rowsTotal() <= 0);
             items.add(menu);
 
             if (sourceFile != null && pagesNumber > 1) {
-                items.add(new SeparatorMenuItem());
-
-                menu = new MenuItem(Languages.message("SetFileColValues"));
+                menu = new MenuItem(message("PastePagesColFromSystemClipboard"));
                 menu.setOnAction((ActionEvent event) -> {
-                    setFileColValues(col);
-                });
-                menu.setDisable(dataChangedNotify.get());
-                items.add(menu);
-
-                menu = new MenuItem(Languages.message("CopyFileCol"));
-                menu.setOnAction((ActionEvent event) -> {
-                    copyFileColValues(col);
+                    pastePagesColFromSystemClipboard(col);
                 });
                 menu.setDisable(rowsTotal() <= 0);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("PasteFileCol"));
+                menu = new MenuItem(message("PastePagesColFromDataClipboard"));
                 menu.setOnAction((ActionEvent event) -> {
-                    pasteFileColValues(col);
+                    pastePagesColFromDataClipboard(col);
                 });
-//                menu.setDisable(copiedCol == null || copiedCol.isEmpty() || dataChanged);
+                menu.setDisable(rowsTotal() <= 0);
                 items.add(menu);
+
             }
 
         } catch (Exception e) {
@@ -181,10 +180,10 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
     public List<MenuItem> colDefMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(Languages.message("InsertColLeft"));
+            MenuItem menu = new MenuItem(message("InsertColLeft"));
             menu.setOnAction((ActionEvent event) -> {
                 if (sourceFile != null && pagesNumber > 1) {
-                    insertFileCol(col, true, 1);
+                    insertPagesCol(col, true, 1);
                 } else {
                     insertPageCol(col, true, 1);
                 }
@@ -192,10 +191,10 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("InsertColRight"));
+            menu = new MenuItem(message("InsertColRight"));
             menu.setOnAction((ActionEvent event) -> {
                 if (sourceFile != null && pagesNumber > 1) {
-                    insertFileCol(col, false, 1);
+                    insertPagesCol(col, false, 1);
                 } else {
                     insertPageCol(col, false, 1);
                 }
@@ -203,13 +202,10 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("DeleteCol"));
+            menu = new MenuItem(message("DeleteCol"));
             menu.setOnAction((ActionEvent event) -> {
-                if (sourceFile != null && pagesNumber > 1) {
-                    deleteFileCol(col);
-                } else {
-                    deletePageCol(col);
-                }
+                DataDeleteController controller = (DataDeleteController) openChildStage(Fxmls.DataDeleteFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
             });
             menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
@@ -223,14 +219,14 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
     public List<MenuItem> colOrderMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(Languages.message("OrderPageRowsAscByThisCol"));
+            MenuItem menu = new MenuItem(message("OrderPageRowsAscByThisCol"));
             menu.setOnAction((ActionEvent event) -> {
                 orderPageCol(col, true);
             });
             menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("OrderPageRowsDescByThisCol"));
+            menu = new MenuItem(message("OrderPageRowsDescByThisCol"));
             menu.setOnAction((ActionEvent event) -> {
                 orderPageCol(col, false);
             });
@@ -246,14 +242,14 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
                 }
             }
 
-            menu = new MenuItem(Languages.message("OrderSelectedRowsAscByThisCol"));
+            menu = new MenuItem(message("OrderSelectedRowsAscByThisCol"));
             menu.setOnAction((ActionEvent event) -> {
                 orderSelectedRows(col, true);
             });
             menu.setDisable(!rowsSelected);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("OrderSelectedRowsDescByThisCol"));
+            menu = new MenuItem(message("OrderSelectedRowsDescByThisCol"));
             menu.setOnAction((ActionEvent event) -> {
                 orderSelectedRows(col, false);
             });
@@ -261,16 +257,16 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             items.add(menu);
 
             if (sourceFile != null && pagesNumber > 1) {
-                menu = new MenuItem(Languages.message("OrderFileRowsAscByThisCol"));
+                menu = new MenuItem(message("OrderPagesRowsAscByThisCol"));
                 menu.setOnAction((ActionEvent event) -> {
-                    orderFileCol(col, true);
+                    orderPagesCol(col, true);
                 });
                 menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
                 items.add(menu);
 
-                menu = new MenuItem(Languages.message("OrderFileRowsDescByThisCol"));
+                menu = new MenuItem(message("OrderPagesRowsDescByThisCol"));
                 menu.setOnAction((ActionEvent event) -> {
-                    orderFileCol(col, false);
+                    orderPagesCol(col, false);
                 });
                 menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
                 items.add(menu);
@@ -285,7 +281,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
     public List<MenuItem> colSizeMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(Languages.message("EnlargerColWidth"));
+            MenuItem menu = new MenuItem(message("EnlargerColWidth"));
             menu.setOnAction((ActionEvent event) -> {
                 double width = colsCheck[col].getWidth() + widthChange;
                 colsCheck[col].setPrefWidth(width);
@@ -298,7 +294,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             });
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("ReduceColWidth"));
+            menu = new MenuItem(message("ReduceColWidth"));
             menu.setOnAction((ActionEvent event) -> {
                 double width = colsCheck[col].getWidth() - widthChange;
                 colsCheck[col].setPrefWidth(width);
@@ -312,9 +308,9 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             menu.setDisable(colsCheck[col].getWidth() <= widthChange * 1.5);
             items.add(menu);
 
-            menu = new MenuItem(Languages.message("SetColWidth"));
+            menu = new MenuItem(message("SetColWidth"));
             menu.setOnAction((ActionEvent event) -> {
-                String value = askValue(colsCheck[col].getText(), Languages.message("SetColWidth"), (int) (colsCheck[col].getWidth()) + "");
+                String value = askValue(colsCheck[col].getText(), message("SetColWidth"), (int) (colsCheck[col].getWidth()) + "");
                 if (value == null) {
                     return;
                 }
@@ -328,7 +324,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
                     }
                     makeDefintionPane();
                 } catch (Exception e) {
-                    popError(Languages.message("InvalidData"));
+                    popError(message("InvalidData"));
                 }
             });
             items.add(menu);
@@ -342,10 +338,10 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
     public List<MenuItem> colRenameMenu(int col) {
         List<MenuItem> items = new ArrayList<>();
         try {
-            MenuItem menu = new MenuItem(Languages.message("Rename"));
+            MenuItem menu = new MenuItem(message("Rename"));
             menu.setOnAction((ActionEvent event) -> {
                 String value = PopTools.askValue(baseTitle, colsCheck[col].getText(),
-                        Languages.message("Rename"), colsCheck[col].getText());
+                        message("Rename"), colsCheck[col].getText());
                 if (value == null || value.isBlank()) {
                     return;
                 }
@@ -358,43 +354,6 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             MyBoxLog.error(e.toString());
         }
         return items;
-    }
-
-    protected void deletePageCol(int col) {
-        if (columns.size() <= 1) {
-            if (!PopTools.askSure(Languages.message("DeleteSelectedCols"), Languages.message("SureDeleteAll"))) {
-                return;
-            }
-            deleteAllCols();
-            return;
-        }
-        columns.remove(col);
-        String[][] current = pickData();
-        if (current == null) {
-            makeSheet(null);
-        } else {
-            int rNumber = current.length;
-            int cNumber = current[0].length;
-            String[][] values = new String[rNumber][cNumber - 1];
-            for (int j = 0; j < rNumber; ++j) {
-                int index = 0;
-                for (int i = 0; i < cNumber; ++i) {
-                    if (i == col) {
-                        continue;
-                    }
-                    values[j][index++] = current[j][i];
-                }
-            }
-            makeSheet(values);
-        }
-    }
-
-    @Override
-    protected void deleteAllCols() {
-        if (columns != null) {
-            columns.clear();
-        }
-        makeSheet(null);
     }
 
     protected void orderPageCol(int col, boolean asc) {
@@ -466,77 +425,102 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
         makeSheet(data);
     }
 
-    public void setPageColValues(int col) {
-        if (colsCheck == null || sheetInputs == null) {
+    protected void pastePageColFromSystemClipboard(int col) {
+        try {
+            if (sheetInputs == null) {
+                popError(message("NoData"));
+                return;
+            }
+            String s = TextClipboardTools.getSystemClipboardString();
+            if (s == null || s.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            String[] values = s.split("\n");
+            if (values.length > sheetInputs.length) {
+                if (!PopTools.askSure(message("PastePageColFromSystemClipboard"),
+                        MessageFormat.format(message("DataInClipboardMoreThanPage"), values.length, sheetInputs.length))) {
+                    return;
+                }
+            } else if (values.length < sheetInputs.length) {
+                if (!PopTools.askSure(message("PastePageColFromSystemClipboard"),
+                        MessageFormat.format(message("DataInClipboardLessThanPage"), values.length, sheetInputs.length))) {
+                    return;
+                }
+            }
+            isSettingValues = true;
+            for (int r = 0; r < Math.min(sheetInputs.length, values.length); ++r) {
+                sheetInputs[r][col].setText(values[r]);
+            }
+            isSettingValues = false;
+            sheetChanged();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
+    protected void pastePageColFromDataClipboard(int col) {
+        if (sheetInputs == null) {
+            popError(message("NoData"));
             return;
         }
-        String value = askValue(colsCheck[col].getText(), Languages.message("SetPageColValues"), "");
-        if (value == null) {
-            return;
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                List<List<String>> data;
+
+                @Override
+                protected boolean handle() {
+                    data = DataClipboard.lastData(tableDataDefinition, sheetInputs.length, 1);
+                    return data != null && !data.isEmpty();
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (data.size() > sheetInputs.length) {
+                        if (!PopTools.askSure(message("PastePageColFromDataClipboard"),
+                                MessageFormat.format(message("DataInClipboardMoreThanPage"), data.size(), sheetInputs.length))) {
+                            return;
+                        }
+                    } else if (data.size() < sheetInputs.length) {
+                        if (!PopTools.askSure(message("PastePageColFromDataClipboard"),
+                                MessageFormat.format(message("DataInClipboardLessThanPage"), data.size(), sheetInputs.length))) {
+                            return;
+                        }
+                    }
+                    isSettingValues = true;
+                    for (int r = 0; r < Math.min(sheetInputs.length, data.size()); ++r) {
+                        List<String> row = data.get(r);
+                        sheetInputs[r][col].setText(row.isEmpty() ? "" : row.get(0));
+                    }
+                    isSettingValues = false;
+                    sheetChanged();
+                }
+
+            };
+            start(task);
         }
-        isSettingValues = true;
-        for (int j = 0; j < sheetInputs.length; ++j) {
-            sheetInputs[j][col].setText(value);
-        }
-        isSettingValues = false;
-        sheetChanged();
-    }
 
-    public void copyPageColValues(int col) {
-//        if (inputs == null) {
-//            return;
-//        }
-//        String s = "";
-//        int rNumber = inputs.length;
-//        copiedCol = new ArrayList<>();
-//        for (int j = 0; j < rNumber; ++j) {
-//            String v = value(j, col);
-//            s += v + "\n";
-//            copiedCol.add(v);
-//        }
-//        TextClipboardTools.copyToSystemClipboard(myController, s);
-    }
-
-    public void pastePageColValues(int col) {
-//        if (inputs == null || copiedCol == null || copiedCol.isEmpty()) {
-//            return;
-//        }
-//        isSettingValues = true;
-//        for (int j = 0; j < Math.min(inputs.length, copiedCol.size()); ++j) {
-//            inputs[j][col].setText(copiedCol.get(j));
-//        }
-//        isSettingValues = false;
-//        sheetChanged();
-    }
-
-    protected List<MenuItem> colMoreMenu(int col) {
-        return null;
     }
 
     /*
         Implemented in BaseDataFileController_ColMenu
      */
-    protected void setFileColValues(int col) {
-        setPageColValues(col);
+    protected void pastePagesColFromSystemClipboard(int col) {
+        pastePageColFromSystemClipboard(col);
     }
 
-    protected void copyFileColValues(int col) {
-        copyPageColValues(col);
+    protected void pastePagesColFromDataClipboard(int col) {
+        pastePagesColFromDataClipboard(col);
     }
 
-    protected void pasteFileColValues(int col) {
-        pastePageColValues(col);
-    }
-
-    protected void insertFileCol(int col, boolean left, int number) {
+    protected void insertPagesCol(int col, boolean left, int number) {
         insertPageCol(col, left, number);
     }
 
-    protected void deleteFileCol(int col) {
-        deletePageCol(col);
-    }
-
-    protected void orderFileCol(int col, boolean asc) {
+    protected void orderPagesCol(int col, boolean asc) {
         orderPageCol(col, asc);
     }
 

@@ -37,6 +37,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -252,7 +253,7 @@ public class ControlFileBackup extends BaseController {
         if (sourceFile == null) {
             return null;
         }
-        File backupFile = new File(AppVariables.getFileBackupsPath(sourceFile)
+        File backupFile = new File(AppPaths.getFileBackupsPath(sourceFile)
                 + FileNameTools.appendName(sourceFile.getName(), "-" + DateTools.nowFileString()));
         return backupFile;
     }
@@ -337,7 +338,7 @@ public class ControlFileBackup extends BaseController {
         if (sourceFile == null) {
             return;
         }
-        File path = new File(AppVariables.getFileBackupsPath(sourceFile));
+        File path = new File(AppPaths.getFileBackupsPath(sourceFile));
         browseURI(path.toURI());
     }
 

@@ -101,6 +101,33 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
     }
 
+    // 0=based
+    public List<Integer> colsIndex(boolean isAll) {
+        if (sheetInputs == null || colsCheck == null) {
+            return null;
+        }
+        List<Integer> cols = new ArrayList<>();
+        for (int c = 0; c < colsCheck.length; c++) {
+            if (isAll || colsCheck[c].isSelected()) {
+                cols.add(c);
+            }
+        }
+        return cols;
+    }
+
+    public List<Integer> rowsIndex(boolean isAll) {
+        if (sheetInputs == null || rowsCheck == null) {
+            return null;
+        }
+        List<Integer> rows = new ArrayList<>();
+        for (int r = 0; r < rowsCheck.length; ++r) {
+            if (isAll || rowsCheck[r].isSelected()) {
+                rows.add(r);
+            }
+        }
+        return rows;
+    }
+
     protected String titleName() {
         if (sourceFile == null) {
             return "";

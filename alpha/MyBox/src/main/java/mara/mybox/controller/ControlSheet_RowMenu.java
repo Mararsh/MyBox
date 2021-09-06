@@ -12,14 +12,16 @@ import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheet_RowMenu extends ControlSheet_Copy {
+public abstract class ControlSheet_RowMenu extends ControlSheet_Paste {
 
     @Override
     public void popRowLabelMenu(Label label) {
@@ -119,20 +121,12 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Copy {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("AddRowsNumber"));
+            menu = new MenuItem(Languages.message("Size") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                addRowsNumber();
+                sizeDataAction();
             });
             menu.setDisable(colsCheck == null || colsCheck.length < 1);
             popMenu.getItems().add(menu);
-
-            menu = new MenuItem(Languages.message("AddColsNumber"));
-            menu.setOnAction((ActionEvent event) -> {
-                addColsNumber();
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(Languages.message("DeleteAllCols"));
             menu.setOnAction((ActionEvent event) -> {
@@ -140,6 +134,15 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Copy {
                     return;
                 }
                 deleteAllCols();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(Languages.message("DeleteAllRows"));
+            menu.setOnAction((ActionEvent event) -> {
+                if (!PopTools.askSure(Languages.message("DeleteAllRows"), Languages.message("SureDeleteAll"))) {
+                    return;
+                }
+                deleteAllRows();
             });
             popMenu.getItems().add(menu);
 
@@ -223,19 +226,13 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Copy {
 
             items.add(new SeparatorMenuItem());
 
-//            menu = new MenuItem(Languages.message("CopyRow"));  // ##############
-//            menu.setOnAction((ActionEvent event) -> {
-//                String s = "";
-//                String p = TextTools.delimiterText(sheetDisplayController.textDelimiter);
-//                copiedRow = new ArrayList<>();
-//                for (int i = 0; i < colsCheck.length; ++i) {
-//                    String v = value(row, i);
-//                    s += v + p;
-//                    copiedRow.add(v);
-//                }
-//                TextClipboardTools.copyToSystemClipboard(myController, s);
-//            });
-//            items.add(menu);
+            menu = new MenuItem(message("Copy") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataCopyController controller = (DataCopyController) openChildStage(Fxmls.DataCopyFxml, false);
+                controller.setParameters((ControlSheet) this, row, -1);
+            });
+            items.add(menu);
+
 //
 //            menu = new MenuItem(Languages.message("Paste"));
 //            menu.setOnAction((ActionEvent event) -> {
@@ -298,45 +295,17 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Copy {
 
             menu = new MenuItem(Languages.message("DeleteRow"));
             menu.setOnAction((ActionEvent event) -> {
-                if (sheetInputs.length <= 1) {
-                    if (!PopTools.askSure(Languages.message("DeleteRow"), Languages.message("SureDeleteAll"))) {
-                        return;
-                    }
-                    deletePageAllRows();
-                    return;
-                }
-                String[][] current = pickData();
-                int rNumber = current.length;
-                int cNumber = current[0].length;
-                String[][] values = new String[rNumber - 1][cNumber];
-                int index = 0;
-                for (int j = 0; j < rNumber; ++j) {
-                    if (j == row) {
-                        continue;
-                    }
-                    for (int i = 0; i < cNumber; ++i) {
-                        values[index][i] = current[j][i];
-                    }
-                    index++;
-                }
-                makeSheet(values);
+                DataDeleteController controller = (DataDeleteController) openChildStage(Fxmls.DataDeleteFxml, false);
+                controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("SetRowValues"));
+            menu = new MenuItem(Languages.message("SetValues"));
             menu.setOnAction((ActionEvent event) -> {
-                String value = askValue(rowsCheck[row].getText(), Languages.message("SetRowValues"), "");
-                if (value == null) {
-                    return;
-                }
-                isSettingValues = true;
-                for (int i = 0; i < colsCheck.length; ++i) {
-                    sheetInputs[row][i].setText(value);
-                }
-                isSettingValues = false;
-                sheetChanged();
+                DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
+                controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);
 
