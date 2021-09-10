@@ -466,53 +466,6 @@ public class ControlMatrix extends ControlSheet {
 
     }
 
-    @Override
-    public List<MenuItem> rowMoreMenu(int row) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(Languages.message("SetRowZero"));
-            menu.setOnAction((ActionEvent event) -> {
-                isSettingValues = true;
-                for (int i = 0; i < colsNumber; ++i) {
-                    sheetInputs[row][i].setText(0d + "");
-                }
-                isSettingValues = false;
-                sheetChanged();
-            });
-            menu.setDisable(sheetInputs == null);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("SetRowOne"));
-            menu.setOnAction((ActionEvent event) -> {
-                isSettingValues = true;
-                for (int i = 0; i < colsNumber; ++i) {
-                    sheetInputs[row][i].setText(1d + "");
-                }
-                isSettingValues = false;
-                sheetChanged();
-            });
-            menu.setDisable(sheetInputs == null);
-            items.add(menu);
-
-            menu = new MenuItem(Languages.message("SetRowRandom"));
-            menu.setOnAction((ActionEvent event) -> {
-                Random r = new Random();
-                isSettingValues = true;
-                for (int i = 0; i < colsNumber; ++i) {
-                    sheetInputs[row][i].setText(DoubleTools.format(DoubleTools.random(r, maxRandom), scale));
-                }
-                isSettingValues = false;
-                sheetChanged();
-            });
-            menu.setDisable(sheetInputs == null);
-            items.add(menu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
     public List<MenuItem> equalMoreMenu() {
         List<MenuItem> items = new ArrayList<>();
         try {
@@ -877,6 +830,21 @@ public class ControlMatrix extends ControlSheet {
     @Override
     protected boolean saveColumns() {
         return true;
+    }
+
+    @Override
+    public void copyCols(List<Integer> cols, boolean withNames, boolean toSystemClipboard) {
+        copyRowsCols(rowsIndex(true), cols, withNames, toSystemClipboard);
+    }
+
+    @Override
+    public void setCols(List<Integer> cols, String value) {
+        setRowsCols(rowsIndex(true), cols, value);
+    }
+
+    @Override
+    public void sort(int col, boolean asc) {
+        sortRows(rowsIndex(true), col, asc);
     }
 
     @Override

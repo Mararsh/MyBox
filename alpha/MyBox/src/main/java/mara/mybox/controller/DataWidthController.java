@@ -23,10 +23,6 @@ public class DataWidthController extends BaseDataOperationController {
     protected TextField widthInput;
 
     @Override
-    public void setStageStatus() {
-    }
-
-    @Override
     public void setParameters(ControlSheet sheetController, int row, int col) {
         try {
             super.setParameters(sheetController, row, col);

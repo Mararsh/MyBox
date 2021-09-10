@@ -19,15 +19,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-2
  * @License Apache License Version 2.0
  */
-public class DataCopyController extends BaseDataOperationController {
+public class DataCopyToSystemClipboardController extends BaseDataOperationController {
 
     protected char delimiter;
 
     @FXML
-    protected ToggleGroup targetGroup, delimiterGroup;
+    protected ToggleGroup delimiterGroup;
     @FXML
-    protected RadioButton commaRadio, lineRadio, atRadio, sharpRadio, semicolonsRadio, delimiterInputRadio,
-            targetSysRadio;
+    protected RadioButton commaRadio, lineRadio, atRadio, sharpRadio, semicolonsRadio, delimiterInputRadio;
     @FXML
     protected CheckBox colNameCheck;
     @FXML
@@ -67,8 +66,6 @@ public class DataCopyController extends BaseDataOperationController {
                 }
             });
 
-            delimiterPane.visibleProperty().bind(targetSysRadio.selectedProperty());
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -103,15 +100,14 @@ public class DataCopyController extends BaseDataOperationController {
     public void okAction() {
         try {
             sheetController.copyDelimiter = delimiter;
-            boolean toSystemClipboard = targetSysRadio.isSelected();
             boolean withNames = colNameCheck.isSelected();
 
             List<Integer> cols = cols();
             if (rowAllRadio.isSelected()) {
-                sheetController.copyCols(cols, withNames, toSystemClipboard);
+                sheetController.copyCols(cols, withNames, true);
 
             } else {
-                sheetController.copyRowsCols(rows(), cols, withNames, toSystemClipboard);
+                sheetController.copyRowsCols(rows(), cols, withNames, true);
             }
 
         } catch (Exception e) {

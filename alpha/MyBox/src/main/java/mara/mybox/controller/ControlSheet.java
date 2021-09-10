@@ -9,9 +9,11 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.db.table.TableDataColumn;
@@ -37,13 +39,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
  *
- * ControlSheet < ControlSheet_Calculation < ControlSheet_TextsDisplay <
- * ControlSheet_Html < ControlSheet_ColMenu < ControlSheet_RowMenu <
- * ControlSheet_Equal < ControlSheet_Size < ControlSheet_Sheet <
+ * ControlSheet < ControlSheet_TextsDisplay < ControlSheet_Html <
+ * ControlSheet_ColMenu < ControlSheet_RowMenu < ControlSheet_Buttons <
+ * ControlSheet_Edit < ControlSheet_Pages < ControlSheet_Sheet <
  * ControlSheet_Columns < ControlSheet_Base
  *
  */
-public abstract class ControlSheet extends ControlSheet_Calculation {
+public abstract class ControlSheet extends ControlSheet_TextsDisplay {
 
     @Override
     public void initValues() {
@@ -84,7 +86,9 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
         try {
             super.setControlsStyle();
 
+            NodeStyleTools.setTooltip(trimColumnsButton, message("RenameAllColumns"));
             NodeStyleTools.setTooltip(editSheetButton, message("EditPageRows"));
+            NodeStyleTools.setTooltip(equalSheetButton, message("SetValues"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -100,10 +104,12 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
     // Window should call this when start
     public void setControls() {
         try {
+            initEdit();
+            initPagination();
             initHtmlControls();
             initTextControls();
-            initCalculationControls();
             initOptions();
+            reportViewController.setParent(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -204,13 +210,14 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
     }
 
     @Override
-    protected void setDisplayData() {
+    protected void afterDataChanged() {
         try {
+            updateEdit();
             makeDefintionPane();
             validate();
             updateHtml();
             updateText();
-            updateCalculation();
+            BaseDataOperationController.update();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -300,6 +307,68 @@ public abstract class ControlSheet extends ControlSheet_Calculation {
     @FXML
     protected void editPageAllRows() {
 //        DataClipboardController.open(this);
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == htmlTab) {
+                HtmlPopController.openWebView(this, htmlViewController.webView);
+                return true;
+
+            } else if (tab == textsDisplayTab) {
+                TextPopController.openInput(this, textsDisplayArea);
+                return true;
+
+            } else if (tab == editTab) {
+                TextPopController.openInput(this, textsEditArea);
+                return true;
+
+            } else if (tab == reportTab) {
+                HtmlPopController.openWebView(this, reportViewController.webView);
+                return true;
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        return true;
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        try {
+            closePopup();
+
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == htmlTab) {
+                Point2D localToScreen = htmlViewController.webView.localToScreen(htmlViewController.webView.getWidth() - 80, 80);
+                MenuWebviewController.pop(htmlViewController, null, localToScreen.getX(), localToScreen.getY());
+                return true;
+
+            } else if (tab == textsDisplayTab) {
+                Point2D localToScreen = textsDisplayArea.localToScreen(textsDisplayArea.getWidth() - 80, 80);
+                MenuTextEditController.open(this, textsDisplayArea, localToScreen.getX(), localToScreen.getY());
+                return true;
+
+            } else if (tab == editTab) {
+                Point2D localToScreen = textsEditArea.localToScreen(textsEditArea.getWidth() - 80, 80);
+                MenuTextEditController.open(this, textsEditArea, localToScreen.getX(), localToScreen.getY());
+                return true;
+
+            } else if (tab == reportTab) {
+                Point2D localToScreen = reportViewController.webView.localToScreen(reportViewController.webView.getWidth() - 80, 80);
+                MenuWebviewController.pop(reportViewController, null, localToScreen.getX(), localToScreen.getY());
+                return true;
+
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+        return false;
     }
 
     @Override

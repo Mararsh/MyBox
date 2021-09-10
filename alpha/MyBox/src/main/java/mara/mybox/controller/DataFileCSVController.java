@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -25,6 +26,8 @@ public class DataFileCSVController extends BaseDataFileController {
     @FXML
     protected ControlCsvOptions csvReadController, csvWriteController;
     @FXML
+    protected VBox mainBox;
+    @FXML
     protected ControlSheetCSV sheetController;
 
     public DataFileCSVController() {
@@ -41,6 +44,7 @@ public class DataFileCSVController extends BaseDataFileController {
     public void initValues() {
         try {
             super.initValues();
+
             dataController = sheetController;
             dataController.setParent(this);
         } catch (Exception e) {

@@ -473,8 +473,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
             String prefix = interfaceKeysPrefix();
             int mw = UserConfig.getInt(prefix + "StageWidth", Math.min(600, (int) myStage.getWidth()));
             int mh = UserConfig.getInt(prefix + "StageHeight", Math.min(500, (int) myStage.getHeight()));
-            int mx = UserConfig.getInt(prefix + "StageX", 0);
-            int my = UserConfig.getInt(prefix + "StageY", 0);
+            int mx = UserConfig.getInt(prefix + "StageX", (int) myStage.getX());
+            int my = UserConfig.getInt(prefix + "StageY", (int) myStage.getY());
             if (mw > minSize && mh > minSize) {
                 myStage.setWidth(mw);
                 myStage.setHeight(mh);

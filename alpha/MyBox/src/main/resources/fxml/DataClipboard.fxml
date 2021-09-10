@@ -47,6 +47,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                              </graphic>
                                           </Button>
+                                          <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#openPath">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconOpen.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
                                           <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                              <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -84,8 +93,8 @@ License:    Apache License Version 2.0
                                  <children>
                                     <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
                                        <children>
-                                          <Label fx:id="dataSizeLabel" />
-                                          <Label fx:id="selectedLabel" />
+                                          <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true" />
+                                          <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true" />
                                        </children>
                                     </HBox>
                                     <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">

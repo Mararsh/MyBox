@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -18,10 +19,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.AppPaths;
 
 /**
  * @Author Mara
@@ -50,6 +50,17 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            sheetController.setParent(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.CSV);
     }
@@ -67,7 +78,7 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
     public void initControls() {
         try {
             super.initControls();
-
+            loadTableData();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -157,6 +168,24 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
 
     @Override
     public void itemClicked() {
+        DataDefinition selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        File file = new File(selected.getDataName());
+        if (!file.exists()) {
+            tableDefinition.deleteData(selected);
+            refreshAction();
+            return;
+        }
+        sheetController.sourceFile = file;
+        sheetController.userSavedDataDefinition = true;
+        sheetController.sourceCharset = Charset.forName(selected.getCharset());
+        sheetController.sourceCsvDelimiter = selected.getDelimiter().charAt(0);
+        sheetController.autoDetermineSourceCharset = false;
+        sheetController.sourceWithNames = selected.isHasHeader();
+        sheetController.initCurrentPage();
+        sheetController.loadFile();
     }
 
     public void loadNull() {
@@ -175,6 +204,15 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
         try {
             loadNull();
             sheetController.createAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void openPath() {
+        try {
+            browseURI(new File(AppPaths.getDataClipboardPath() + File.separator).toURI());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

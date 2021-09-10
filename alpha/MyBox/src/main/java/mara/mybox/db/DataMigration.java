@@ -106,6 +106,9 @@ public class DataMigration {
                         PopTools.alertWarning(null, message("MigrationNotice"));
                     });
                 }
+                if (lastVersion < 6004008) {
+                    updateIn648(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -114,6 +117,24 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn648(Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.4.8...");
+            try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE  Data_Column DROP CONSTRAINT  Data_Column_dataid_fk");
+                conn.commit();
+                statement.executeUpdate("ALTER TABLE  Data_Column ADD  CONSTRAINT  Data_Column_dataid_fk "
+                        + " FOREIGN KEY ( dataid ) REFERENCES  Data_Definition ( dfid ) ON DELETE Cascade");
+                conn.commit();
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
+            }
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn645(Connection conn) {

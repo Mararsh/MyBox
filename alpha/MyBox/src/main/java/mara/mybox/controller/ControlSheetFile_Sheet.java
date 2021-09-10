@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.DataClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
 
@@ -16,23 +18,19 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
 
-    protected abstract File deleteFileSelectedColsDo();
+    protected abstract File fileCopyCols(List<Integer> cols, boolean withNames);
 
-    protected abstract File setFileSelectedColsDo(String value);
+    protected abstract File fileSetCols(List<Integer> cols, String value);
 
-    protected abstract File setFileColValuesDo(int col, String value);
+    protected abstract File fileSortCol(int col, boolean asc);
 
-    protected abstract File fileSelectedCols(List<Integer> cols);
+    protected abstract File fileAddCols(int col, boolean left, int number);
+
+    protected abstract File fileDeleteAll(boolean keepCols);
+
+    protected abstract File fileDeleteCols(List<Integer> cols);
 
     protected abstract File pasteFileColValuesDo(int col);
-
-    protected abstract File insertFileColDo(int col, boolean left, int number);
-
-    protected abstract File DeleteFileColDo(int col);
-
-    protected abstract File deleteFileAllCols();
-
-    protected abstract File orderFileColDo(int col, boolean asc);
 
     @Override
     public void newSheet(int rows, int cols) {
@@ -46,69 +44,14 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
         }
     }
 
-    // columns have been changed before call this
-    protected void deleteSelectedCols() {
-        if (sourceFile == null || pagesNumber <= 1) {
-//            super.deleteSelectedCols();
-            return;
-        }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (!PopTools.askSure(baseTitle, message("DeleteSelectedCols") + "\n"
-                    + message("NoticeAllChangeUnrecover"))) {
-                return;
-            }
-            task = new BaseController_Attributes.SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    saveColumns();
-                    File tmpFile = deleteFileSelectedColsDo();
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    backup();
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChangedNotify.set(false);
-                    loadPage(currentPage);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    public void copyPagesSelectedColsToDataClipboard() {
-        if (colsCheck == null) {
+    @Override
+    public void copyCols(List<Integer> cols, boolean withNames, boolean toSystemClipboard) {
+        if (cols == null || cols.isEmpty()) {
             popError(message("NoData"));
             return;
         }
         if (sourceFile == null || pagesNumber <= 1) {
-//            copyPageSelectedColsToDataClipboard();
-            return;
-        }
-        List<ColumnDefinition> selectedColumns = new ArrayList<>();
-        for (int c = 0; c < colsCheck.length; c++) {
-            if (colsCheck[c].isSelected()) {
-                selectedColumns.add(columns.get(c));
-            }
-        }
-        if (selectedColumns.isEmpty()) {
-            popError(message("NoData"));
+            copyRowsCols(rowsIndex(true), cols, withNames, toSystemClipboard);
             return;
         }
         synchronized (this) {
@@ -121,28 +64,31 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
 
                 @Override
                 protected boolean handle() {
-                    file = fileSelectedCols();
-                    return file != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    DataFileCSVController.open(file, true, ',');
+                    file = fileCopyCols(cols, withNames);
+                    if (file == null || !file.exists()) {
+                        return false;
+                    }
+                    if (toSystemClipboard) {
+                        TextClipboardTools.copyFileToSystemClipboard(parentController, file);
+                    } else {
+                        DataClipboard.createFile(tableDataDefinition, file, withNames);
+                    }
+                    return true;
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
     @Override
-    protected void addColsNumber() {
+    public void setCols(List<Integer> cols, String value) {
+        if (cols == null || cols.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
         if (sourceFile == null || pagesNumber <= 1) {
-            super.addColsNumber();
+            setRowsCols(rowsIndex(true), cols, value);
             return;
         }
         if (!checkBeforeNextAction()) {
@@ -152,23 +98,139 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            String value = askValue(message("NoticeAllChangeUnrecover"), message("AddColsNumber"), "1");
-            int number;
-            try {
-                number = Integer.parseInt(value);
-            } catch (Exception e) {
-                popError(message("InvalidData"));
-                return;
-            }
             task = new SingletonTask<Void>() {
-                StringBuilder s;
+
+                private File file;
 
                 @Override
                 protected boolean handle() {
-                    int col = colsCheck == null ? 0 : colsCheck.length;
-                    makeColumns(col, number);
+                    file = fileSetCols(cols, value);
+                    if (file == null || !file.exists()) {
+                        return false;
+                    }
+                    backup();
+                    return FileTools.rename(file, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    loadPage(currentPage);
+                }
+
+            };
+            start(task);
+        }
+    }
+
+    @Override
+    public void sort(int col, boolean asc) {
+        if (sourceFile == null || pagesNumber <= 1) {
+            sortRows(rowsIndex(true), col, asc);
+            return;
+        }
+        if (columns == null || col < 0 || col >= columns.size()
+                || !checkBeforeNextAction() || totalSize <= 0) {
+            return;
+        }
+        if (!PopTools.askSure(baseTitle, colName(col) + " - "
+                + (asc ? message("Ascending") : message("Descending")) + "\n"
+                + message("DataFileOrderNotice"))) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private File file;
+
+                @Override
+                protected boolean handle() {
+                    file = fileSortCol(col, asc);
+                    if (file == null || !file.exists()) {
+                        return false;
+                    }
+                    backup();
+                    return FileTools.rename(file, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    loadPage(currentPage);
+                }
+
+            };
+            start(task);
+        }
+    }
+
+    @Override
+    public void deleteAllRows() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            deletePageRows();
+            return;
+        }
+        deleteAll(true);
+    }
+
+    public void deleteAll(boolean keepCols) {
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private File file;
+
+                @Override
+                protected boolean handle() {
+                    file = fileDeleteAll(keepCols);
+                    if (file == null || !file.exists()) {
+                        return false;
+                    }
+                    backup();
+                    return FileTools.rename(file, sourceFile);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessful();
+                    loadFile();
+                }
+
+            };
+            start(task);
+        }
+    }
+
+    @Override
+    protected void addCols(int col, boolean left, int number) {
+        if (number < 1) {
+            return;
+        }
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.addCols(col, left, number);
+            return;
+        }
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                String[][] data;
+
+                @Override
+                protected boolean handle() {
+                    int base = col + (left ? 0 : 1);
+                    makeColumns(base, number);
                     saveColumns();
-                    File tmpFile = insertFileColDo(col, true, number);
+                    File tmpFile = fileAddCols(col, left, number);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
@@ -179,84 +241,53 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    loadPage(currentPage);
+                    loadFile();
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
-    protected void setPagesSelectedCols() {
+    @Override
+    public void deleteAllCols() {
         if (sourceFile == null || pagesNumber <= 1) {
-//            setPageSelectedCols();
+            super.deleteAllCols();
             return;
         }
-        if (!checkBeforeNextAction() || totalSize <= 0) {
+        deleteAll(false);
+    }
+
+    @Override
+    public void deleteCols(List<Integer> cols) {
+        if (sourceFile == null || pagesNumber <= 1) {
+            super.deleteCols(cols);
+            return;
+        }
+        if (cols == null || cols.isEmpty()) {
+            popError(message("NoSelection"));
+            return;
+        }
+        if (!checkBeforeNextAction()) {
             return;
         }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            String value = askValue(message("NoticeAllChangeUnrecover"), message("SetFileSelectedColsValues"), defaultColValue);
-            if (value == null) {
-                return;
-            }
             task = new SingletonTask<Void>() {
-                StringBuilder s;
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = setFileSelectedColsDo(value);
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
+                    List<ColumnDefinition> leftColumns = new ArrayList<>();
+                    for (int i = 0; i < columns.size(); ++i) {
+                        if (!cols.contains(i)) {
+                            leftColumns.add(columns.get(i));
+                        }
                     }
-                    backup();
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    loadPage(currentPage);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    protected void setPagesColValues(int col) {
-        if (sourceFile == null || pagesNumber <= 1) {
-//            setPageColValues(col);
-        }
-        if (!checkBeforeNextAction() || totalSize <= 0) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            String value = askValue(colName(col) + "\n" + message("NoticeAllChangeUnrecover"),
-                    message("SetAllColValues"), defaultColValue);
-            if (!cellValid(col, value)) {
-                popError(message("InvalidData"));
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = setFileColValuesDo(col, value);
+                    columns = leftColumns;
+                    saveColumns();
+                    File tmpFile = fileDeleteCols(cols);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
@@ -272,63 +303,8 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
-    }
-
-    protected void copyPagesColToDataClipboard(int col) {
-        if (col < 0 || col >= colsCheck.length) {
-            return;
-        }
-        if (sourceFile == null || pagesNumber <= 1) {
-//            copyPageColToSystemClipboard(col);
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                File file;
-
-                @Override
-                protected boolean handle() {
-//                    copiedCol = new ArrayList<>();
-                    List<Integer> cols = new ArrayList<>();
-                    cols.add(col);
-                    file = fileSelectedCols(cols);
-                    return file != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    DataFileCSVController.open(file, true, ',');
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    protected File fileSelectedCols() {
-        if (sourceFile == null) {
-            return null;
-        }
-        List<Integer> cols = new ArrayList<>();
-        for (int c = 0; c < colsCheck.length; ++c) {
-            if (colsCheck[c].isSelected()) {
-                cols.add(c);
-            }
-        }
-        return fileSelectedCols(cols);
     }
 
     @Override
@@ -357,196 +333,6 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                 @Override
                 protected boolean handle() {
                     File tmpFile = pasteFileColValuesDo(col);
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    backup();
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChangedNotify.set(false);
-                    loadPage(currentPage);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @Override
-    protected void insertPagesCol(int col, boolean left, int number) {
-        if (number < 1) {
-            return;
-        }
-        if (sourceFile == null || pagesNumber <= 1) {
-            insertPageCol(col, left, number);
-            return;
-        }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-
-            task = new SingletonTask<Void>() {
-                String[][] data;
-
-                @Override
-                protected boolean handle() {
-                    int base = col + (left ? 0 : 1);
-                    makeColumns(base, number);
-                    saveColumns();
-                    File tmpFile = insertFileColDo(col, left, number);
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    backup();
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChangedNotify.set(false);
-                    loadPage(currentPage);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    protected void deletePagesCol(int col) {
-        if (sourceFile == null || pagesNumber <= 1) {
-//            deletePageCol(col);
-            return;
-        }
-        if (columns.size() <= 1) {
-            if (!PopTools.askSure(message("DeleteCol"), message("SureDeleteAll"))) {
-                return;
-            }
-            deleteAllCols();
-            return;
-        }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (!PopTools.askSure(baseTitle, colName(col) + " - " + message("DeleteCol") + "\n"
-                    + message("NoticeAllChangeUnrecover"))) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                String[][] data;
-
-                @Override
-                protected boolean handle() {
-                    columns.remove(col);
-                    saveColumns();
-                    File tmpFile = DeleteFileColDo(col);
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    backup();
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChangedNotify.set(false);
-                    loadPage(currentPage);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    public void deleteCols() {
-        if (sourceFile == null || pagesNumber <= 1) {
-            super.deleteAllCols();
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                String[][] data;
-
-                @Override
-                protected boolean handle() {
-                    columns.clear();
-                    saveColumns();
-                    File tmpFile = deleteFileAllCols();
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    backup();
-                    return FileTools.rename(tmpFile, sourceFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    dataChangedNotify.set(false);
-                    loadPage(1);
-                }
-
-            };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
-        }
-    }
-
-    @Override
-    protected void orderPagesCol(int col, boolean asc) {
-        if (sourceFile == null || pagesNumber <= 1) {
-            orderPageCol(col, asc);
-            return;
-        }
-        if (columns == null || col < 0 || col >= columns.size()
-                || !checkBeforeNextAction() || totalSize <= 0) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (!PopTools.askSure(baseTitle, colName(col) + " - "
-                    + (asc ? message("Ascending") : message("Descending")) + "\n"
-                    + message("DataFileOrderNotice"))) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = orderFileColDo(col, asc);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }

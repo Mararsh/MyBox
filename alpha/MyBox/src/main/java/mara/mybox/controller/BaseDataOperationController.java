@@ -11,6 +11,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.stage.Window;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 
@@ -33,7 +34,7 @@ public abstract class BaseDataOperationController extends BaseController {
     protected HBox rowBox, colBox;
     @FXML
     protected RadioButton rowCheckedRadio, rowCurrentPageRadio, rowAllRadio, rowSelectRadio,
-            colCheckedRadio, colAllRadio, colSelectRadio, targetSysRadio, targetDataRadio;
+            colCheckedRadio, colAllRadio, colSelectRadio;
 
     @Override
     public void setStageStatus() {
@@ -43,6 +44,7 @@ public abstract class BaseDataOperationController extends BaseController {
     public void setParameters(ControlSheet sheetController, int row, int col) {
         try {
             this.sheetController = sheetController;
+            myStage.setTitle(sheetController.getTitle());
 
             updateControls();
             if (rowsListView != null) {
@@ -95,10 +97,13 @@ public abstract class BaseDataOperationController extends BaseController {
             if (rowGroup != null) {
                 if (!sheetController.rowsSelected()) {
                     rowCheckedRadio.setDisable(true);
-                    rowCurrentPageRadio.fire();
+                    if (rowCheckedRadio.isSelected()) {
+                        rowCurrentPageRadio.fire();
+                    }
                 } else {
                     rowCheckedRadio.setDisable(false);
                 }
+                rowAllRadio.setDisable(sheetController.pagesNumber <= 1 || sheetController.dataChangedNotify.get());
             }
             if (rowsListView != null) {
                 List<Integer> rows = new ArrayList<>();
@@ -111,7 +116,9 @@ public abstract class BaseDataOperationController extends BaseController {
             if (colGroup != null) {
                 if (!sheetController.colsSelected()) {
                     colCheckedRadio.setDisable(true);
-                    colAllRadio.fire();
+                    if (colCheckedRadio.isSelected()) {
+                        colAllRadio.fire();
+                    }
                 } else {
                     colCheckedRadio.setDisable(false);
                 }
@@ -183,14 +190,28 @@ public abstract class BaseDataOperationController extends BaseController {
     @Override
     public void okAction() {
         try {
-            List<Integer> cols = cols();
-
-            List<Integer> rows = rows();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
 
+    /*
+        static
+     */
+    public static void update() {
+        try {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object != null && object instanceof BaseDataOperationController) {
+                    ((BaseDataOperationController) object).updateControls();
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

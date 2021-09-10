@@ -121,13 +121,6 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Paste {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("Size") + "...");
-            menu.setOnAction((ActionEvent event) -> {
-                sizeDataAction();
-            });
-            menu.setDisable(colsCheck == null || colsCheck.length < 1);
-            popMenu.getItems().add(menu);
-
             menu = new MenuItem(Languages.message("DeleteAllCols"));
             menu.setOnAction((ActionEvent event) -> {
                 if (!PopTools.askSure(Languages.message("DeleteAllCols"), Languages.message("SureDeleteAll"))) {
@@ -224,105 +217,77 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Paste {
             });
             items.add(menu);
 
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Copy") + "...");
-            menu.setOnAction((ActionEvent event) -> {
-                DataCopyController controller = (DataCopyController) openChildStage(Fxmls.DataCopyFxml, false);
-                controller.setParameters((ControlSheet) this, row, -1);
-            });
-            items.add(menu);
-
-//
-//            menu = new MenuItem(Languages.message("Paste"));
-//            menu.setOnAction((ActionEvent event) -> {
-//                isSettingValues = true;
-//                for (int i = 0; i < Math.min(colsCheck.length, copiedRow.size()); ++i) {
-//                    inputs[row][i].setText(copiedRow.get(i));
-//                }
-//                isSettingValues = false;
-//                sheetChanged();
-//            });
-//            menu.setDisable(copiedRow == null || copiedRow.isEmpty());
-//            items.add(menu);
-            items.add(new SeparatorMenuItem());
-
             menu = new MenuItem(Languages.message("InsertRowAbove"));
             menu.setOnAction((ActionEvent event) -> {
-                String[][] current = pickData();
-                int rNumber = current.length;
-                int cNumber = current[0].length;
-                String[][] values = new String[++rNumber][cNumber];
-                for (int j = 0; j < row; ++j) {
-                    for (int i = 0; i < cNumber; ++i) {
-                        values[j][i] = current[j][i];
-                    }
-                }
-                for (int i = 0; i < cNumber; ++i) {
-                    values[row][i] = defaultColValue;
-                }
-                for (int j = row + 1; j < rNumber; ++j) {
-                    for (int i = 0; i < cNumber; ++i) {
-                        values[j][i] = current[j - 1][i];
-                    }
-                }
-                makeSheet(values);
+                addRows(row, true, 1);
             });
             items.add(menu);
 
             menu = new MenuItem(Languages.message("InsertRowBelow"));
             menu.setOnAction((ActionEvent event) -> {
-                String[][] current = pickData();
-                int rNumber = current.length;
-                int cNumber = current[0].length;
-                String[][] values = new String[++rNumber][cNumber];
-                for (int j = 0; j <= row; ++j) {
-                    for (int i = 0; i < cNumber; ++i) {
-                        values[j][i] = current[j][i];
-                    }
-                }
-                for (int i = 0; i < cNumber; ++i) {
-                    values[row + 1][i] = defaultColValue;
-                }
-                for (int j = row + 2; j < rNumber; ++j) {
-                    for (int i = 0; i < cNumber; ++i) {
-                        values[j][i] = current[j - 1][i];
-                    }
-                }
-                makeSheet(values);
+                addRows(row, false, 1);
             });
             items.add(menu);
 
             menu = new MenuItem(Languages.message("DeleteRow"));
             menu.setOnAction((ActionEvent event) -> {
-                DataDeleteController controller = (DataDeleteController) openChildStage(Fxmls.DataDeleteFxml, false);
-                controller.setParameters((ControlSheet) this, row, -1);
+                List<Integer> rows = new ArrayList<>();
+                rows.add(row);
+                deleteRows(rows);
             });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(Languages.message("SetValues"));
+            menu = new MenuItem(Languages.message("SetValues") + "...");
             menu.setOnAction((ActionEvent event) -> {
                 DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
                 controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);
 
-            List<MenuItem> moreItems = rowMoreMenu(row);
-            if (moreItems != null && !moreItems.isEmpty()) {
-                items.add(new SeparatorMenuItem());
-                items.addAll(moreItems);
-            }
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("CopyToSystemClipboard") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataCopyToSystemClipboardController controller = (DataCopyToSystemClipboardController) openChildStage(Fxmls.DataCopyToSystemClipboardFxml, false);
+                controller.setParameters((ControlSheet) this, row, -1);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("CopyToMyBoxClipboard") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataCopyToMyBoxClipboardController controller = (DataCopyToMyBoxClipboardController) openChildStage(Fxmls.DataCopyToMyBoxClipboardFxml, false);
+                controller.setParameters((ControlSheet) this, row, -1);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Paste") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+
+            });
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("Add") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataRowsAddController controller = (DataRowsAddController) openChildStage(Fxmls.DataRowsAddFxml, false);
+                controller.setParameters((ControlSheet) this, row, -1);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("Delete") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataRowsDeleteController controller = (DataRowsDeleteController) openChildStage(Fxmls.DataRowsDeleteFxml, false);
+                controller.setParameters((ControlSheet) this, row, -1);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return items;
-    }
-
-    public List<MenuItem> rowMoreMenu(int row) {
-        return null;
     }
 
 }

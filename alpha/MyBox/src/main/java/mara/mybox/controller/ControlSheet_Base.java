@@ -13,6 +13,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
@@ -60,31 +61,34 @@ public abstract class ControlSheet_Base extends BaseController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab sheetTab, htmlTab, textsDisplayTab, calculationTab, optionsTab;
+    protected Tab sheetTab, editTab, htmlTab, textsDisplayTab, optionsTab, defTab, reportTab;
     @FXML
-    protected VBox sheetBox, calColumnsBox;
+    protected VBox sheetBox, defBox;
     @FXML
-    protected Button sizeSheetButton, deleteSheetButton, copySheetButton, pasteSheetButton, equalSheetButton, editSheetButton,
-            exampleCalculationColumnsButton, exampleDisplayColumnsButton, calculatorButton;
+    protected Button sizeSheetButton, deleteSheetButton, copySheetButton, pasteSheetButton, equalSheetButton, editSheetButton;
     @FXML
     protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck, textTitleCheck, textColumnCheck, textRowCheck,
             overPopMenuCheck, rightClickPopMenuCheck;
     @FXML
-    protected TextArea textsDisplayArea, calculationColumnsArea, displayColumnsArea;
+    protected TextArea textsDisplayArea;
     @FXML
-    protected ComboBox<String> rowFromSelector, rowToSelector, scaleSelector, randomSelector;
+    protected ComboBox<String> scaleSelector, randomSelector, pageSizeSelector, pageSelector;
     @FXML
-    protected ControlWebView htmlViewController;
+    protected ControlWebView htmlViewController, reportViewController;
     @FXML
-    protected ToggleGroup calGroup, delimiterDisplayGroup;
+    protected ToggleGroup delimiterDisplayGroup;
     @FXML
     protected RadioButton sumRadio, addRadio, subRadio, multiplyRadio, mergeRadio, ascendingRadio, descendingRadio, copyRadio,
             blankDisplayRadio, blank4DisplayRadio, blank8DisplayRadio, tabDisplayRadio, commaDisplayRadio,
             lineDisplayRadio, atDisplayRadio, sharpDisplayRadio, semicolonsDisplayRadio, stringDisplayRadio;
     @FXML
-    protected Label calColumnsLabel;
-    @FXML
     protected TextField delimiterDisplayInput;
+    @FXML
+    protected Button trimColumnsButton;
+    @FXML
+    protected HBox defBottunsBox, paginationBox;
+    @FXML
+    protected Label pageLabel, totalLabel;
 
     public ControlSheet_Base() {
         baseTitle = message("Data");

@@ -192,7 +192,7 @@ public class PopTools {
 
     public static Popup makePopWindow(BaseController parent, String fxml) {
         try {
-            BaseController controller = WindowTools.setScene(fxml);
+            BaseController controller = WindowTools.loadFxml(fxml);
             if (controller == null) {
                 return null;
             }

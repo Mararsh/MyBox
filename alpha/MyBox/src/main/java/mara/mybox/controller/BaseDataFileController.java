@@ -37,15 +37,6 @@ public abstract class BaseDataFileController extends BaseController {
             initBackupsTab();
             initSaveAsTab();
 
-            dataController.fileLoadedNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        fileLoaded();
-                    });
-            dataController.sheetChangedNotify.addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        sheetChanged();
-                    });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -88,7 +79,17 @@ public abstract class BaseDataFileController extends BaseController {
         try {
             super.afterSceneLoaded();
 
-            dataController.newSheet(3, 3);
+            if (dataController != null) {
+                dataController.fileLoadedNotify.addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                            fileLoaded();
+                        });
+                dataController.sheetChangedNotify.addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                            sheetChanged();
+                        });
+                dataController.newSheet(3, 3);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

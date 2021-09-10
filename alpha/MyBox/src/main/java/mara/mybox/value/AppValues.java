@@ -31,6 +31,8 @@ public class AppValues {
     public static final double InvalidDouble = Double.MAX_VALUE;
     public static final int InvalidInteger = Integer.MIN_VALUE;
 
+    public static final String MyBoxRandomFlag = "MyBox##random#MyBox";
+
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
     public static final String TianDiTuWebKey = "0ddeb917def62b4691500526cc30a9b1";

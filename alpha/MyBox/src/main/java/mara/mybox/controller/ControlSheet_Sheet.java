@@ -22,6 +22,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -38,7 +39,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         if (sheetBox.getChildren().contains(noDataLabel)) {
             sheetBox.getChildren().remove(noDataLabel);
         }
-        sheetChanged(true);
+//        sheetChanged(true);
     }
 
     public void makeSheet(String[][] data) {
@@ -77,10 +78,10 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
             return;
         }
         LoadingController loading;
-        if (sheetTab != null && !sheetTab.isSelected()) {
-            loading = null;
-        } else {
+        if (sheetTab.isSelected()) {
             loading = handling();
+        } else {
+            loading = null;
         }
         Platform.runLater(() -> {
             try {
@@ -346,7 +347,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         pickData();
         dataChangedNotify.set(changed);
         sheetChangedNotify.set(!sheetChangedNotify.get());
-        setDisplayData();
+        sheetTab.setText(message("Sheet") + (changed ? " *" : ""));
+        afterDataChanged();
     }
 
     public void sheetChanged() {
@@ -380,8 +382,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     protected List<String> row(int row) {
         List<String> values = new ArrayList<>();
         try {
-            for (TextField input : sheetInputs[row]) {
-                values.add(input.getText());
+            for (int c = 0; c < sheetInputs[row].length; c++) {
+                values.add(cellString(row, c));
             }
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -392,8 +394,8 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
     protected List<String> col(int col) {
         List<String> values = new ArrayList<>();
         try {
-            for (TextField[] row : sheetInputs) {
-                values.add(row[col].getText());
+            for (int r = 0; r < sheetInputs.length; r++) {
+                values.add(cellString(r, col));
             }
         } catch (Exception e) {
         }
@@ -456,10 +458,38 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         return false;
     }
 
+    // Notice: this does not concern columns names
+    public void resizeSheet(int rowsNumber, int colsNumber) {
+        if (sheetInputs != null) {
+            if (sheetInputs.length > rowsNumber || sheetInputs[0].length > colsNumber) {
+                if (!PopTools.askSure(baseTitle, message("DataReduceWarn"))) {
+                    return;
+                }
+            }
+        }
+        if (rowsNumber <= 0 || colsNumber <= 0) {
+            makeSheet(null);
+            return;
+        }
+        String[][] values = new String[rowsNumber][colsNumber];
+        if (sheetInputs != null && sheetInputs.length > 0) {
+            int drow = Math.min(sheetInputs.length, rowsNumber);
+            int dcol = Math.min(sheetInputs[0].length, colsNumber);
+            for (int j = 0; j < drow; ++j) {
+                for (int i = 0; i < dcol; ++i) {
+                    values[j][i] = cellString(j, i);
+                }
+            }
+        }
+        makeSheet(values);
+        popSuccessful();
+    }
+
+
     /*
         abstract
      */
-    protected abstract void setDisplayData();
+    protected abstract void afterDataChanged();
 
     public abstract void popRowLabelMenu(Label label);
 

@@ -305,8 +305,81 @@ public class ControlSheetExcel extends ControlSheetFile {
     }
 
     @Override
-    protected File setFileColValuesDo(int col, String value) {
-        if (sourceFile == null || col < 0 || value == null) {
+    protected File fileCopyCols(List<Integer> cols, boolean withNames) {
+        if (sourceFile == null || cols == null || cols.isEmpty()) {
+            return null;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
+                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            if (withNames) {
+                List<String> names = new ArrayList<>();
+                for (int c : cols) {
+                    names.add(colsCheck[c].getText());
+                }
+                csvPrinter.printRecord(names);
+            }
+            Sheet sourceSheet;
+            if (currentSheetName != null) {
+                sourceSheet = sourceBook.getSheet(currentSheetName);
+            } else {
+                sourceSheet = sourceBook.getSheetAt(0);
+                currentSheetName = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (sourceWithNames) {
+                    while (iterator.hasNext() && (iterator.next() == null)) {
+                    }
+                }
+                int sourceRowIndex = 0;
+                while (iterator.hasNext()) {
+                    Row sourceRow = iterator.next();
+                    if (sourceRow == null) {
+                        continue;
+                    }
+                    sourceRowIndex++;
+                    if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
+                        List<String> values = new ArrayList<>();
+                        for (int c = 0; c < cols.size(); c++) {
+                            String d = MicrosoftDocumentTools.cellString(sourceRow.getCell(cols.get(c) + sourceRow.getFirstCellNum()));
+                            d = d == null ? "" : d;
+                            values.add(d);
+                        }
+                        csvPrinter.printRecord(values);
+                    } else if (sourceRowIndex == currentPageStart) {
+                        for (TextField[] rowInputs : sheetInputs) {
+                            List<String> values = new ArrayList<>();
+                            for (int c = 0; c < cols.size(); c++) {
+                                String d = rowInputs[cols.get(c)].getText();
+                                d = d == null ? "" : d;
+                                values.add(d);
+                            }
+                            csvPrinter.printRecord(values);
+                        }
+                    }
+                }
+            } else {
+                for (TextField[] rowInputs : sheetInputs) {
+                    List<String> values = new ArrayList<>();
+                    for (int c = 0; c < cols.size(); c++) {
+                        String d = rowInputs[cols.get(c)].getText();
+                        d = d == null ? "" : d;
+                        values.add(d);
+                    }
+                    csvPrinter.printRecord(values);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return tmpFile;
+    }
+
+    @Override
+    protected File fileSetCols(List<Integer> cols, String value) {
+        if (sourceFile == null || cols == null || cols.isEmpty()) {
             return null;
         }
         File tmpTargetFile = TmpFileTools.getTempFile();
@@ -343,15 +416,15 @@ public class ControlSheetExcel extends ControlSheetFile {
                         continue;
                     }
                     Row targetRow = targetSheet.createRow(targetRowIndex++);
-                    int targetIndex = col + sourceRow.getFirstCellNum();
-                    for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
+                    int firstIndex = sourceRow.getFirstCellNum();
+                    for (int cellIndex = firstIndex; cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
                         CellType type = CellType.STRING;
                         Cell sourceCell = sourceRow.getCell(cellIndex);
                         if (sourceCell != null) {
                             type = sourceCell.getCellType();
                         }
                         Cell targetCell = targetRow.createCell(cellIndex, type);
-                        if (targetIndex == cellIndex) {
+                        if (cols.contains(cellIndex - firstIndex)) {
                             MicrosoftDocumentTools.setCell(targetCell, type, value);
                         } else {
                             MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
@@ -369,6 +442,78 @@ public class ControlSheetExcel extends ControlSheetFile {
         FileDeleteTools.delete(tmpDataFile);
         return tmpTargetFile;
 
+    }
+
+    @Override
+    protected File fileSortCol(int col, boolean asc) {
+        if (sourceFile == null || col < 0) {
+            return null;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        File tmpDataFile = TmpFileTools.getTempFile();
+        FileCopyTools.copyFile(sourceFile, tmpDataFile);
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
+                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+            Sheet sourceSheet;
+            if (currentSheetName != null) {
+                sourceSheet = sourceBook.getSheet(currentSheetName);
+            } else {
+                sourceSheet = sourceBook.getSheetAt(0);
+                currentSheetName = sourceSheet.getSheetName();
+            }
+
+            int index = targetBook.getSheetIndex(currentSheetName);
+            targetBook.removeSheetAt(index);
+            Sheet targetSheet = targetBook.createSheet(currentSheetName);
+            targetBook.setSheetOrder(currentSheetName, index);
+
+            List<Row> records = new ArrayList<>();
+            Iterator<Row> iterator = sourceSheet.iterator();
+            if (iterator != null && iterator.hasNext()) {
+                if (sourceWithNames) {
+                    while (iterator.hasNext() && (iterator.next() == null)) {
+                    }
+                }
+                while (iterator.hasNext()) {
+                    Row sourceRow = iterator.next();
+                    if (sourceRow == null) {
+                        continue;
+                    }
+                    records.add(sourceRow);
+                }
+            }
+            if (records.isEmpty()) {
+                return null;
+            }
+            Collections.sort(records, new Comparator<Row>() {
+                @Override
+                public int compare(Row row1, Row row2) {
+                    ColumnDefinition column = columns.get(col);
+                    int v = column.compare(MicrosoftDocumentTools.cellString(row1.getCell(col)), MicrosoftDocumentTools.cellString(row2.getCell(col)));
+                    return asc ? v : -v;
+                }
+            });
+            int targetRowIndex = 0;
+            if (sourceWithNames) {
+                Row targetRow = targetSheet.createRow(targetRowIndex++);
+                for (int i = 0; i < columns.size(); i++) {
+                    Cell targetCell = targetRow.createCell(i);
+                    targetCell.setCellValue(columns.get(i).getName());
+                }
+            }
+            for (Row sourceRow : records) {
+                Row targetRow = targetSheet.createRow(targetRowIndex++);
+                MicrosoftDocumentTools.copyRow(sourceRow, targetRow);
+            }
+            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                targetBook.write(fileOut);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        FileDeleteTools.delete(tmpDataFile);
+        return tmpFile;
     }
 
     @Override
@@ -440,7 +585,7 @@ public class ControlSheetExcel extends ControlSheetFile {
     }
 
     @Override
-    protected File insertFileColDo(int col, boolean left, int number) {
+    protected File fileAddCols(int col, boolean left, int number) {
         if (sourceFile == null || col < 0 || number < 1) {
             return null;
         }
@@ -516,79 +661,7 @@ public class ControlSheetExcel extends ControlSheetFile {
     }
 
     @Override
-    protected File DeleteFileColDo(int col) {
-        if (sourceFile == null || col < 0) {
-            return null;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        File tmpDataFile = TmpFileTools.getTempFile();
-        FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
-            Sheet sourceSheet;
-            if (currentSheetName != null) {
-                sourceSheet = sourceBook.getSheet(currentSheetName);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                currentSheetName = sourceSheet.getSheetName();
-            }
-
-            columns.remove(col);
-            saveColumns();
-
-            int index = targetBook.getSheetIndex(currentSheetName);
-            targetBook.removeSheetAt(index);
-            Sheet targetSheet = targetBook.createSheet(currentSheetName);
-            targetBook.setSheetOrder(currentSheetName, index);
-
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                int targetRowIndex = 0;
-                if (sourceWithNames) {
-                    Row targetRow = targetSheet.createRow(targetRowIndex++);
-                    for (int i = 0; i < columns.size(); i++) {
-                        Cell targetCell = targetRow.createCell(i);
-                        targetCell.setCellValue(columns.get(i).getName());
-                    }
-                    while (iterator.hasNext() && (iterator.next() == null)) {
-                    }
-                }
-                while (iterator.hasNext()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    Row targetRow = targetSheet.createRow(targetRowIndex++);
-                    int targetCol = 0;
-                    Cell targetCell;
-                    int targetIndex = col + sourceRow.getFirstCellNum();
-                    for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
-                        if (targetIndex == cellIndex) {
-                            continue;
-                        }
-                        CellType type = CellType.STRING;
-                        Cell sourceCell = sourceRow.getCell(cellIndex);
-                        if (sourceCell != null) {
-                            type = sourceCell.getCellType();
-                        }
-                        targetCell = targetRow.createCell(targetCol++, type);
-                        MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
-                    }
-                }
-            }
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                targetBook.write(fileOut);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        FileDeleteTools.delete(tmpDataFile);
-        return tmpFile;
-    }
-
-    @Override
-    protected File deleteFileAllCols() {
+    protected File fileDeleteAll(boolean keepCols) {
         if (sourceFile == null) {
             return null;
         }
@@ -597,87 +670,24 @@ public class ControlSheetExcel extends ControlSheetFile {
         FileCopyTools.copyFile(sourceFile, tmpDataFile);
         try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
                  Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
-            if (currentSheetName == null) {
-                currentSheetName = sourceBook.getSheetName(0);
-            }
-
-            int index = targetBook.getSheetIndex(currentSheetName);
-            targetBook.removeSheetAt(index);
-            targetBook.createSheet(currentSheetName);
-            targetBook.setSheetOrder(currentSheetName, index);
-
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                targetBook.write(fileOut);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        FileDeleteTools.delete(tmpDataFile);
-        return tmpFile;
-    }
-
-    @Override
-    protected File orderFileColDo(int col, boolean asc) {
-        if (sourceFile == null || col < 0) {
-            return null;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        File tmpDataFile = TmpFileTools.getTempFile();
-        FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet sourceSheet;
-            if (currentSheetName != null) {
-                sourceSheet = sourceBook.getSheet(currentSheetName);
-            } else {
+            if (currentSheetName == null) {
                 sourceSheet = sourceBook.getSheetAt(0);
                 currentSheetName = sourceSheet.getSheetName();
             }
-
             int index = targetBook.getSheetIndex(currentSheetName);
             targetBook.removeSheetAt(index);
             Sheet targetSheet = targetBook.createSheet(currentSheetName);
             targetBook.setSheetOrder(currentSheetName, index);
 
-            List<Row> records = new ArrayList<>();
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (sourceWithNames) {
-                    while (iterator.hasNext() && (iterator.next() == null)) {
-                    }
-                }
-                while (iterator.hasNext()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    records.add(sourceRow);
-                }
-            }
-            if (records.isEmpty()) {
-                return null;
-            }
-            Collections.sort(records, new Comparator<Row>() {
-                @Override
-                public int compare(Row row1, Row row2) {
-                    ColumnDefinition column = columns.get(col);
-                    int v = column.compare(MicrosoftDocumentTools.cellString(row1.getCell(col)), MicrosoftDocumentTools.cellString(row2.getCell(col)));
-                    return asc ? v : -v;
-                }
-            });
-            int targetRowIndex = 0;
-            if (sourceWithNames) {
-                Row targetRow = targetSheet.createRow(targetRowIndex++);
+            if (sourceWithNames && keepCols) {
+                Row targetRow = targetSheet.createRow(0);
                 for (int i = 0; i < columns.size(); i++) {
                     Cell targetCell = targetRow.createCell(i);
                     targetCell.setCellValue(columns.get(i).getName());
                 }
             }
-            for (Row sourceRow : records) {
-                Row targetRow = targetSheet.createRow(targetRowIndex++);
-                MicrosoftDocumentTools.copyRow(sourceRow, targetRow);
-            }
+
             try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }
@@ -690,81 +700,8 @@ public class ControlSheetExcel extends ControlSheetFile {
     }
 
     @Override
-    protected File fileSelectedCols(List<Integer> cols) {
+    protected File fileDeleteCols(List<Integer> cols) {
         if (sourceFile == null || cols == null || cols.isEmpty()) {
-            return null;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
-            List<String> names = new ArrayList<>();
-            for (int c : cols) {
-                names.add(colsCheck[c].getText());
-            }
-            csvPrinter.printRecord(names);
-
-            Sheet sourceSheet;
-            if (currentSheetName != null) {
-                sourceSheet = sourceBook.getSheet(currentSheetName);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                currentSheetName = sourceSheet.getSheetName();
-            }
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                if (sourceWithNames) {
-                    while (iterator.hasNext() && (iterator.next() == null)) {
-                    }
-                }
-                int sourceRowIndex = 0;
-                while (iterator.hasNext()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    sourceRowIndex++;
-                    if (sourceRowIndex < currentPageStart || sourceRowIndex >= currentPageEnd) {
-                        List<String> values = new ArrayList<>();
-                        for (int c = 0; c < cols.size(); c++) {
-                            String d = MicrosoftDocumentTools.cellString(sourceRow.getCell(cols.get(c) + sourceRow.getFirstCellNum()));
-                            d = d == null ? "" : d;
-                            values.add(d);
-                        }
-                        csvPrinter.printRecord(values);
-                    } else if (sourceRowIndex == currentPageStart) {
-                        for (TextField[] rowInputs : sheetInputs) {
-                            List<String> values = new ArrayList<>();
-                            for (int c = 0; c < cols.size(); c++) {
-                                String d = rowInputs[cols.get(c)].getText();
-                                d = d == null ? "" : d;
-                                values.add(d);
-                            }
-                            csvPrinter.printRecord(values);
-                        }
-
-                    }
-                }
-            } else {
-                for (TextField[] rowInputs : sheetInputs) {
-                    List<String> values = new ArrayList<>();
-                    for (int c = 0; c < cols.size(); c++) {
-                        String d = rowInputs[cols.get(c)].getText();
-                        d = d == null ? "" : d;
-                        values.add(d);
-                    }
-                    csvPrinter.printRecord(values);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        return tmpFile;
-    }
-
-    @Override
-    protected File deleteFileSelectedColsDo() {
-        if (sourceFile == null) {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
@@ -791,7 +728,7 @@ public class ControlSheetExcel extends ControlSheetFile {
                 if (sourceWithNames) {
                     Row targetRow = targetSheet.createRow(targetRowIndex++);
                     for (int col = 0; col < colsCheck.length; col++) {
-                        if (colsCheck[col].isSelected()) {
+                        if (cols.contains(col)) {
                             continue;
                         }
                         Cell targetCell = targetRow.createCell(col);
@@ -809,7 +746,7 @@ public class ControlSheetExcel extends ControlSheetFile {
                     int targetCol = 0;
                     Cell targetCell;
                     for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
-                        if (colsCheck[cellIndex - sourceRow.getFirstCellNum()].isSelected()) {
+                        if (cols.contains(cellIndex - sourceRow.getFirstCellNum())) {
                             continue;
                         }
                         CellType type = CellType.STRING;
@@ -819,73 +756,6 @@ public class ControlSheetExcel extends ControlSheetFile {
                         }
                         targetCell = targetRow.createCell(targetCol++, type);
                         MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
-                    }
-                }
-            }
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                targetBook.write(fileOut);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-        FileDeleteTools.delete(tmpDataFile);
-        return tmpFile;
-    }
-
-    @Override
-    protected File setFileSelectedColsDo(String value) {
-        if (sourceFile == null) {
-            return null;
-        }
-        File tmpFile = TmpFileTools.getTempFile();
-        File tmpDataFile = TmpFileTools.getTempFile();
-        FileCopyTools.copyFile(sourceFile, tmpDataFile);
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile);
-                 Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
-            Sheet sourceSheet;
-            if (currentSheetName != null) {
-                sourceSheet = sourceBook.getSheet(currentSheetName);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                currentSheetName = sourceSheet.getSheetName();
-            }
-
-            int index = targetBook.getSheetIndex(currentSheetName);
-            targetBook.removeSheetAt(index);
-            Sheet targetSheet = targetBook.createSheet(currentSheetName);
-            targetBook.setSheetOrder(currentSheetName, index);
-
-            Iterator<Row> iterator = sourceSheet.iterator();
-            if (iterator != null && iterator.hasNext()) {
-                int targetRowIndex = 0;
-                if (sourceWithNames) {
-                    Row targetRow = targetSheet.createRow(targetRowIndex++);
-                    for (int col = 0; col < colsCheck.length; col++) {
-                        Cell targetCell = targetRow.createCell(col);
-                        targetCell.setCellValue(colsCheck[col].getText());
-                    }
-                    while (iterator.hasNext() && (iterator.next() == null)) {
-                    }
-                }
-                while (iterator.hasNext()) {
-                    Row sourceRow = iterator.next();
-                    if (sourceRow == null) {
-                        continue;
-                    }
-                    Row targetRow = targetSheet.createRow(targetRowIndex++);
-                    for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
-                        CellType type = CellType.STRING;
-                        Cell sourceCell = sourceRow.getCell(cellIndex);
-                        if (sourceCell != null) {
-                            type = sourceCell.getCellType();
-                        }
-                        Cell targetCell = targetRow.createCell(cellIndex, type);
-                        if (colsCheck[cellIndex - sourceRow.getFirstCellNum()].isSelected()) {
-                            MicrosoftDocumentTools.setCell(targetCell, type, value);
-                        } else {
-                            MicrosoftDocumentTools.copyCell(sourceCell, targetCell, type);
-                        }
                     }
                 }
             }
@@ -985,9 +855,9 @@ public class ControlSheetExcel extends ControlSheetFile {
                     popInformation(Languages.message("Saved"));
                     recordFileWritten(file);
                     if (sourceFile == null || saveAsType == SaveAsType.Load) {
-                        if (fileController != null) {
+                        if (parentController != null) {
                             dataChangedNotify.set(false);
-                            fileController.sourceFileChanged(file);
+                            parentController.sourceFileChanged(file);
                         } else {
                             DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
                             controller.sourceFileChanged(file);

@@ -1,5 +1,6 @@
 package mara.mybox.fxml;
 
+import java.io.File;
 import java.sql.Connection;
 import javafx.application.Platform;
 import javafx.scene.control.TextInputControl;
@@ -12,6 +13,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.TextClipboardMonitor.DefaultInterval;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.AppVariables.textClipboardMonitor;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -139,6 +141,19 @@ public class TextClipboardTools {
                 } else {
                     controller.popFailed();
                 }
+            }
+        });
+    }
+
+    public static void copyFileToSystemClipboard(BaseController controller, File file) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (file == null || !file.exists()) {
+                    controller.popError(message("CopyNone"));
+                    return;
+                }
+                copyToSystemClipboard(controller, TextFileTools.readTexts(file));
             }
         });
     }

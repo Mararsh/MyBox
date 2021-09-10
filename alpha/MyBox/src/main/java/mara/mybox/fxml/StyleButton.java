@@ -206,6 +206,8 @@ public class StyleButton {
                     return new StyleData(id, message("PasteTextAsHtml"), "", "iconPaste.png");
                 case "pasteContentInSystemClipboardButton":
                     return new StyleData(id, message("PasteContentInSystemClipboard"), "", "iconPasteSystem.png");
+                case "pasteContentInDataClipboardButton":
+                    return new StyleData(id, message("PasteContentInDataClipboard"), "", "iconPaste.png");
                 default:
                     return new StyleData(id, message("Paste"), "", "iconPaste.png");
             }
@@ -382,9 +384,6 @@ public class StyleButton {
         if (id.startsWith("comma")) {
             return new StyleData(id, message("Comma"), "", "iconDelimiter.png");
         }
-        if (id.startsWith("column")) {
-            return new StyleData(id, message("Column"), "", "iconColumnAdd.png");
-        }
         if (id.startsWith("matrixA")) {
             return new StyleData(id, message("SetAsMatrixA"), "", "iconA.png");
         }
@@ -506,6 +505,21 @@ public class StyleButton {
         }
         if (id.startsWith("minus")) {
             return new StyleData(id, message("Minus"), "", "iconMinus.png");
+        }
+        if (id.startsWith("calculate")) {
+            return new StyleData(id, message("Calculate"), "", "iconCalculator.png");
+        }
+        if (id.startsWith("columnsAdd")) {
+            return new StyleData(id, message("AddColumns"), "", "iconColumnAdd.png");
+        }
+        if (id.startsWith("columnsDelete")) {
+            return new StyleData(id, message("DeleteColumns"), "", "iconColumnDelete.png");
+        }
+        if (id.startsWith("rowsAdd")) {
+            return new StyleData(id, message("AddRows"), "", "iconRowAdd.png");
+        }
+        if (id.startsWith("rowsDelete")) {
+            return new StyleData(id, message("DeleteRows"), "", "iconRowDelete.png");
         }
         return null;
     }
@@ -663,18 +677,12 @@ public class StyleButton {
                 return new StyleData("calculateXYZButton", message("Calculate"), "", "iconCalculator.png");
             case "calculateXYButton":
                 return new StyleData("calculateXYButton", message("Calculate"), "", "iconCalculator.png");
-            case "calculateDisplayButton":
-                return new StyleData("calculateDisplayButton", message("Display"), "", "iconGraph.png");
             case "displayDataButton":
                 return new StyleData("displayDataButton", message("Display"), "", "iconGraph.png");
             case "valueOkButton":
                 return new StyleData("valueOkButton", message("OK"), "", "iconOK.png");
             case "multiplyButton":
                 return new StyleData("multiplyButton", message("Multiply"), "", "iconMultiply.png");
-            case "calculateButton":
-                return new StyleData("calculateButton", message("Calculate"), "", "iconCalculator.png");
-            case "calculateAllButton":
-                return new StyleData("calculateAllButton", message("Calculate"), "", "iconCalculator.png");
             case "iccSelectButton":
                 return new StyleData("iccSelectButton", message("Select"), "", "iconOpen.png");
             case "ocrPathButton":

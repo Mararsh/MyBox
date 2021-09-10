@@ -76,7 +76,8 @@ public class DataClipboard extends DataDefinition {
         if (tableDataDefinition == null) {
             return null;
         }
-        String condition = "data_type=" + DataDefinition.dataType(DataDefinition.DataType.DataClipboard);
+        String condition = "data_type=" + DataDefinition.dataType(DataDefinition.DataType.DataClipboard)
+                + " ORDER BY dfid DESC ";
         return tableDataDefinition.queryConditions(condition, start, size);
     }
 
@@ -120,13 +121,16 @@ public class DataClipboard extends DataDefinition {
         }
     }
 
-    public static DataDefinition create(TableDataDefinition tableDataDefinition, String[][] data) {
+    public static DataDefinition createData(TableDataDefinition tableDataDefinition, List<String> colsNames, String[][] data) {
         try {
             if (tableDataDefinition == null || data == null || data.length == 0) {
                 return null;
             }
             File tmpFile = TmpFileTools.getTempFile();
             try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), CSVFormat.DEFAULT)) {
+                if (colsNames != null) {
+                    csvPrinter.printRecord(colsNames);
+                }
                 for (String[] r : data) {
                     csvPrinter.printRecord(Arrays.asList(r));
                 }
@@ -137,12 +141,24 @@ public class DataClipboard extends DataDefinition {
             if (tmpFile == null || !tmpFile.exists()) {
                 return null;
             }
+            return createFile(tableDataDefinition, tmpFile, colsNames != null);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static DataDefinition createFile(TableDataDefinition tableDataDefinition, File csvFile, boolean withNames) {
+        try {
+            if (tableDataDefinition == null || csvFile == null || !csvFile.exists()) {
+                return null;
+            }
             File dpFile = new File(AppPaths.getDataClipboardPath() + File.separator + (new Date()).getTime() + ".csv");
-            if (!FileTools.rename(tmpFile, dpFile)) {
+            if (!FileTools.rename(csvFile, dpFile)) {
                 return null;
             }
             DataDefinition df = DataDefinition.create()
-                    .setDataType(DataType.DataClipboard).setHasHeader(false)
+                    .setDataType(DataType.DataClipboard).setHasHeader(withNames)
                     .setCharset("UTF-8").setDelimiter(",")
                     .setDataName(dpFile.getAbsolutePath());
             return tableDataDefinition.writeData(df);

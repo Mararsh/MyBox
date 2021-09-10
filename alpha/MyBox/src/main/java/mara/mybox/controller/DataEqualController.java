@@ -9,7 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -33,18 +33,33 @@ public class DataEqualController extends BaseDataOperationController {
         try {
             super.setParameters(sheetController, row, col);
 
-            setValue(UserConfig.getString(baseName + "Value", "0"));
+            value = UserConfig.getString(baseName + "Value", "0");
+            switch (value) {
+                case "0":
+                    zeroRadio.fire();
+                    break;
+                case "1":
+                    oneRadio.fire();
+                    break;
+                case "blank":
+                    blankRadio.fire();
+                    break;
+                case AppValues.MyBoxRandomFlag:
+                    randomRadio.fire();
+                    break;
+                default:
+                    valueInput.setText(value);
+                    setRadio.fire();
+            }
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     valueInput.setStyle(null);
                     if (setRadio.isSelected()) {
-                        String v = valueInput.getText();
-                        if (v == null || v.isBlank()) {
-                            valueInput.setStyle(NodeStyleTools.badStyle);
-                            return;
-                        }
-                        value = v;
+                        value = valueInput.getText();
                     } else if (zeroRadio.isSelected()) {
                         value = "0";
                     } else if (oneRadio.isSelected()) {
@@ -52,7 +67,7 @@ public class DataEqualController extends BaseDataOperationController {
                     } else if (blankRadio.isSelected()) {
                         value = " ";
                     } else if (randomRadio.isSelected()) {
-                        value = "random";
+                        value = AppValues.MyBoxRandomFlag;
                     }
                     UserConfig.setString(baseName + "Value", value);
                 }
@@ -63,34 +78,22 @@ public class DataEqualController extends BaseDataOperationController {
         }
     }
 
-    protected void setValue(String v) {
-        value = v;
-        switch (value) {
-            case "0":
-                zeroRadio.fire();
-                break;
-            case "1":
-                oneRadio.fire();
-                break;
-            case "blank":
-                blankRadio.fire();
-                break;
-            case "random":
-                randomRadio.fire();
-                break;
-            default:
-                valueInput.setText(value);
-                setRadio.fire();
-        }
-    }
-
     @FXML
     @Override
     public void okAction() {
         try {
-            if (randomRadio.isSelected()) {
-                value = null;
+            if (setRadio.isSelected()) {
+                value = valueInput.getText();
+            } else if (zeroRadio.isSelected()) {
+                value = "0";
+            } else if (oneRadio.isSelected()) {
+                value = "1";
+            } else if (blankRadio.isSelected()) {
+                value = " ";
+            } else if (randomRadio.isSelected()) {
+                value = AppValues.MyBoxRandomFlag;
             }
+            UserConfig.setString(baseName + "Value", value);
 
             List<Integer> cols = cols();
             if (rowAllRadio.isSelected()) {

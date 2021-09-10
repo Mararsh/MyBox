@@ -8,33 +8,26 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataDeleteController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataCopyToSystemClipboardController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Delete" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%CopyToSystemClipboard" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-      <HBox fx:id="codeBox11" layoutX="30.0" layoutY="55.0" spacing="5.0">
-         <children>
-            <RadioButton fx:id="deleteRowsRadio" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%DeleteRows">
-               <toggleGroup>
-                  <ToggleGroup fx:id="deleteGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="deleteColsRadio" mnemonicParsing="false" text="%DeleteCols" toggleGroup="$deleteGroup" />
-         </children>
-      </HBox>
-        <HBox fx:id="rowBox" layoutX="30.0" layoutY="55.0" spacing="5.0">
+        <HBox fx:id="codeBox1" layoutX="30.0" layoutY="55.0" spacing="5.0">
             <children>
                 <Label minHeight="-Infinity" minWidth="-Infinity" text="%Rows" />
                 <RadioButton fx:id="rowCheckedRadio" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Selected">
@@ -48,7 +41,7 @@ License:    Apache License Version 2.0
                 <ListView fx:id="rowsListView" prefHeight="100.0" prefWidth="150.0" />
             </children>
         </HBox>
-        <HBox fx:id="colBox" spacing="5.0" VBox.vgrow="NEVER">
+        <HBox fx:id="codeBox" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label minHeight="-Infinity" minWidth="-Infinity" text="%Columns" />
                 <RadioButton fx:id="colCheckedRadio" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Selected">
@@ -61,6 +54,23 @@ License:    Apache License Version 2.0
                 <ListView fx:id="colsListView" prefHeight="100.0" prefWidth="200.0" />
             </children>
         </HBox>
+        <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />
+        <FlowPane fx:id="delimiterPane" hgap="5.0" vgap="5.0">
+            <children>
+                <Label text="%Delimiter" />
+                <RadioButton fx:id="commaRadio" mnemonicParsing="false" selected="true" text=",">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="delimiterGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="|" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="atRadio" mnemonicParsing="false" text="\@" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="sharpRadio" mnemonicParsing="false" text="#" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="semicolonsRadio" mnemonicParsing="false" text=";" toggleGroup="$delimiterGroup" />
+                <RadioButton fx:id="delimiterInputRadio" mnemonicParsing="false" text="%Character" toggleGroup="$delimiterGroup" />
+                <TextField fx:id="delimiterInput" prefWidth="40.0" />
+            </children>
+        </FlowPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
@@ -72,15 +82,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="refreshButton" layoutX="338.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconRefresh.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="refreshButton" layoutX="338.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconRefresh.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

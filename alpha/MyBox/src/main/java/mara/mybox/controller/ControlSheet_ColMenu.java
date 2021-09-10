@@ -19,6 +19,7 @@ import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -76,43 +77,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
-            items.addAll(colSelectMenu(col));
-
-            items.add(new SeparatorMenuItem());
-            menu = new MenuItem(message("SetValues"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
-                controller.setParameters((ControlSheet) this, -1, col);
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-            items.addAll(colCopyPasteMenu(col));
-
-            items.add(new SeparatorMenuItem());
-            items.addAll(colDefMenu(col));
-
-            items.add(new SeparatorMenuItem());
-            items.addAll(colOrderMenu(col));
-
-            items.add(new SeparatorMenuItem());
-            items.addAll(colSizeMenu(col));
-
-            if (dataType != DataDefinition.DataType.Matrix) {
-                items.add(new SeparatorMenuItem());
-                items.addAll(colRenameMenu(col));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    public List<MenuItem> colSelectMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(message("SelectCol"));
+            menu = new MenuItem(message("SelectCol"));
             menu.setOnAction((ActionEvent event) -> {
                 colsCheck[col].setSelected(true);
             });
@@ -123,265 +88,107 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
                 colsCheck[col].setSelected(false);
             });
             items.add(menu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
 
-    public List<MenuItem> colCopyPasteMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(message("Copy") + "...");
+            menu = new MenuItem(message("InsertColLeft"));
             menu.setOnAction((ActionEvent event) -> {
-                DataCopyController controller = (DataCopyController) openChildStage(Fxmls.DataCopyFxml, false);
-                controller.setParameters((ControlSheet) this, -1, col);
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PastePageColFromSystemClipboard"));
-            menu.setOnAction((ActionEvent event) -> {
-                pastePageColFromSystemClipboard(col);
-            });
-            menu.setDisable(rowsTotal() <= 0);
-            items.add(menu);
-
-            menu = new MenuItem(message("PastePageColFromDataClipboard"));
-            menu.setOnAction((ActionEvent event) -> {
-                pastePageColFromDataClipboard(col);
-            });
-            menu.setDisable(rowsTotal() <= 0);
-            items.add(menu);
-
-            if (sourceFile != null && pagesNumber > 1) {
-                menu = new MenuItem(message("PastePagesColFromSystemClipboard"));
-                menu.setOnAction((ActionEvent event) -> {
-                    pastePagesColFromSystemClipboard(col);
-                });
-                menu.setDisable(rowsTotal() <= 0);
-                items.add(menu);
-
-                menu = new MenuItem(message("PastePagesColFromDataClipboard"));
-                menu.setOnAction((ActionEvent event) -> {
-                    pastePagesColFromDataClipboard(col);
-                });
-                menu.setDisable(rowsTotal() <= 0);
-                items.add(menu);
-
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    public List<MenuItem> colDefMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(message("InsertColLeft"));
-            menu.setOnAction((ActionEvent event) -> {
-                if (sourceFile != null && pagesNumber > 1) {
-                    insertPagesCol(col, true, 1);
-                } else {
-                    insertPageCol(col, true, 1);
-                }
+                addCols(col, true, 1);
             });
             menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
             menu = new MenuItem(message("InsertColRight"));
             menu.setOnAction((ActionEvent event) -> {
-                if (sourceFile != null && pagesNumber > 1) {
-                    insertPagesCol(col, false, 1);
-                } else {
-                    insertPageCol(col, false, 1);
-                }
+                addCols(col, false, 1);
             });
             menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
             menu = new MenuItem(message("DeleteCol"));
             menu.setOnAction((ActionEvent event) -> {
-                DataDeleteController controller = (DataDeleteController) openChildStage(Fxmls.DataDeleteFxml, false);
-                controller.setParameters((ControlSheet) this, -1, col);
+                List<Integer> cols = new ArrayList<>();
+                cols.add(col);
+                deleteCols(cols);
             });
             menu.setDisable(dataChangedNotify.get() && sourceFile != null && pagesNumber > 1);
             items.add(menu);
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    public List<MenuItem> colOrderMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(message("OrderPageRowsAscByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderPageCol(col, true);
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            items.add(menu);
-
-            menu = new MenuItem(message("OrderPageRowsDescByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderPageCol(col, false);
-            });
-            menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-            items.add(menu);
-
-            boolean rowsSelected = false;
-            int total = rowsCheck == null ? 0 : rowsCheck.length;
-            for (int r = 0; r < total; ++r) {
-                if (rowsCheck[r].isSelected()) {
-                    rowsSelected = true;
-                    break;
-                }
-            }
-
-            menu = new MenuItem(message("OrderSelectedRowsAscByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderSelectedRows(col, true);
-            });
-            menu.setDisable(!rowsSelected);
-            items.add(menu);
-
-            menu = new MenuItem(message("OrderSelectedRowsDescByThisCol"));
-            menu.setOnAction((ActionEvent event) -> {
-                orderSelectedRows(col, false);
-            });
-            menu.setDisable(!rowsSelected);
-            items.add(menu);
-
-            if (sourceFile != null && pagesNumber > 1) {
-                menu = new MenuItem(message("OrderPagesRowsAscByThisCol"));
+            if (dataType != DataDefinition.DataType.Matrix) {
+                menu = new MenuItem(message("Rename"));
                 menu.setOnAction((ActionEvent event) -> {
-                    orderPagesCol(col, true);
-                });
-                menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-                items.add(menu);
-
-                menu = new MenuItem(message("OrderPagesRowsDescByThisCol"));
-                menu.setOnAction((ActionEvent event) -> {
-                    orderPagesCol(col, false);
-                });
-                menu.setDisable(rowsCheck == null || rowsCheck.length == 0);
-                items.add(menu);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
-
-    public List<MenuItem> colSizeMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(message("EnlargerColWidth"));
-            menu.setOnAction((ActionEvent event) -> {
-                double width = colsCheck[col].getWidth() + widthChange;
-                colsCheck[col].setPrefWidth(width);
-                if (sheetInputs != null) {
-                    for (int j = 0; j < sheetInputs.length; ++j) {
-                        sheetInputs[j][col].setPrefWidth(width);
+                    String value = PopTools.askValue(baseTitle, colsCheck[col].getText(),
+                            message("Rename"), colsCheck[col].getText());
+                    if (value == null || value.isBlank()) {
+                        return;
                     }
-                }
-                makeDefintionPane();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("ReduceColWidth"));
-            menu.setOnAction((ActionEvent event) -> {
-                double width = colsCheck[col].getWidth() - widthChange;
-                colsCheck[col].setPrefWidth(width);
-                if (sheetInputs != null) {
-                    for (int j = 0; j < sheetInputs.length; ++j) {
-                        sheetInputs[j][col].setPrefWidth(width);
-                    }
-                }
-                makeDefintionPane();
-            });
-            menu.setDisable(colsCheck[col].getWidth() <= widthChange * 1.5);
-            items.add(menu);
-
-            menu = new MenuItem(message("SetColWidth"));
-            menu.setOnAction((ActionEvent event) -> {
-                String value = askValue(colsCheck[col].getText(), message("SetColWidth"), (int) (colsCheck[col].getWidth()) + "");
-                if (value == null) {
-                    return;
-                }
-                try {
-                    double width = Double.parseDouble(value);
-                    colsCheck[col].setPrefWidth(width);
-                    if (sheetInputs != null) {
-                        for (int j = 0; j < sheetInputs.length; ++j) {
-                            sheetInputs[j][col].setPrefWidth(width);
-                        }
-                    }
+                    colsCheck[col].setText(value);
+                    columns.get(col).setName(value);
                     makeDefintionPane();
-                } catch (Exception e) {
-                    popError(message("InvalidData"));
-                }
-            });
-            items.add(menu);
+                });
+                items.add(menu);
+            }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return items;
-    }
+            items.add(new SeparatorMenuItem());
 
-    public List<MenuItem> colRenameMenu(int col) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-            MenuItem menu = new MenuItem(message("Rename"));
+            menu = new MenuItem(message("SetValues") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                String value = PopTools.askValue(baseTitle, colsCheck[col].getText(),
-                        message("Rename"), colsCheck[col].getText());
-                if (value == null || value.isBlank()) {
-                    return;
-                }
-                colsCheck[col].setText(value);
-                columns.get(col).setName(value);
-                makeDefintionPane();
+                DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);
+
+            menu = new MenuItem(message("CopyToSystemClipboard") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataCopyToSystemClipboardController controller = (DataCopyToSystemClipboardController) openChildStage(Fxmls.DataCopyToSystemClipboardFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("CopyToMyBoxClipboard") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataCopyToMyBoxClipboardController controller = (DataCopyToMyBoxClipboardController) openChildStage(Fxmls.DataCopyToMyBoxClipboardFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Paste") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+//                DataCopyController controller = (DataCopyController) openChildStage(Fxmls.DataCopyFxml, false);
+//                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Width") + " ...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataWidthController controller = (DataWidthController) openChildStage(Fxmls.DataWidthFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Order") + " ...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataSortController controller = (DataSortController) openChildStage(Fxmls.DataSortFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("Add") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataColumnsAddController controller = (DataColumnsAddController) openChildStage(Fxmls.DataColumnsAddFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(Languages.message("Delete") + "...");
+            menu.setOnAction((ActionEvent event) -> {
+                DataColumnsDeleteController controller = (DataColumnsDeleteController) openChildStage(Fxmls.DataColumnsDeleteFxml, false);
+                controller.setParameters((ControlSheet) this, -1, col);
+            });
+            items.add(menu);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return items;
-    }
-
-    protected void orderPageCol(int col, boolean asc) {
-        if (sheetInputs == null || columns == null || col < 0 || col >= columns.size()) {
-            return;
-        }
-        int rNumber = sheetInputs.length;
-        int cNumber = sheetInputs[0].length;
-        List<Integer> rows = new ArrayList<>();
-        for (int i = 0; i < rNumber; i++) {
-            rows.add(i);
-        }
-        Collections.sort(rows, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer row1, Integer row2) {
-                ColumnDefinition column = columns.get(col);
-                int v = column.compare(cellString(row1, col), cellString(row2, col));
-                return asc ? v : -v;
-            }
-        });
-        String[][] data = new String[rNumber][cNumber];
-        for (int row = 0; row < rows.size(); row++) {
-            int drow = rows.get(row);
-            for (int c = 0; c < cNumber; c++) {
-                data[row][c] = cellString(drow, c);
-            }
-        }
-        makeSheet(data);
     }
 
     protected void orderSelectedRows(int col, boolean asc) {
@@ -505,6 +312,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
 
     }
 
+
     /*
         Implemented in BaseDataFileController_ColMenu
      */
@@ -514,14 +322,6 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
 
     protected void pastePagesColFromDataClipboard(int col) {
         pastePagesColFromDataClipboard(col);
-    }
-
-    protected void insertPagesCol(int col, boolean left, int number) {
-        insertPageCol(col, left, number);
-    }
-
-    protected void orderPagesCol(int col, boolean asc) {
-        orderPageCol(col, asc);
     }
 
 }

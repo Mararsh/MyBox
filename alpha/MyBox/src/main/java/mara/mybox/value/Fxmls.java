@@ -167,13 +167,19 @@ public class Fxmls {
     /*
         data
      */
+    public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
-    public static final String DataCopyFxml = "/fxml/DataCopy.fxml";
+    public static final String DataCopyToSystemClipboardFxml = "/fxml/DataCopyToSystemClipboard.fxml";
+    public static final String DataCopyToMyBoxClipboardFxml = "/fxml/DataCopyToMyBoxClipboard.fxml";
+    public static final String DataPasteFxml = "/fxml/DataPaste.fxml";
     public static final String DataEqualFxml = "/fxml/DataEqual.fxml";
-    public static final String DataDeleteFxml = "/fxml/DataDelete.fxml";
+    public static final String DataColumnsAddFxml = "/fxml/DataColumnsAdd.fxml";
+    public static final String DataColumnsDeleteFxml = "/fxml/DataColumnsDelete.fxml";
+    public static final String DataRowsDeleteFxml = "/fxml/DataRowsDelete.fxml";
+    public static final String DataRowsAddFxml = "/fxml/DataRowsAdd.fxml";
     public static final String DataSortFxml = "/fxml/DataSort.fxml";
-    public static final String DataSizeFxml = "/fxml/DataSize.fxml";
     public static final String DataWidthFxml = "/fxml/DataWidth.fxml";
+    public static final String DataCalculateFxml = "/fxml/DataCalculate.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";

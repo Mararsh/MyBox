@@ -15,9 +15,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-22
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheetFile_Pages extends ControlSheetFile_columns {
-
-    protected abstract String[][] readPageData();
+public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
 
     protected void initPagination() {
         try {
@@ -193,6 +191,10 @@ public abstract class ControlSheetFile_Pages extends ControlSheetFile_columns {
             pageSelector.getEditor().setStyle(NodeStyleTools.badStyle);
             return false;
         }
+    }
+
+    protected String[][] readPageData() {
+        return null;
     }
 
     @FXML

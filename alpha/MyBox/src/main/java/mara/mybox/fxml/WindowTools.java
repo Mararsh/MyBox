@@ -1,5 +1,7 @@
 package mara.mybox.fxml;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -132,12 +134,36 @@ public class WindowTools {
         return initController(controller, scene, newStage(), null);
     }
 
-    public static BaseController setScene(String fxml) {
+    public static BaseController loadFxml(String fxml) {
         try {
             if (fxml == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(WindowTools.class.getResource(fxml), AppVariables.currentBundle);
+            return loadURL(WindowTools.class.getResource(fxml));
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController loadFile(File file) {
+        try {
+            if (file == null || !file.exists()) {
+                return null;
+            }
+            return loadURL(file.toURI().toURL());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController loadURL(URL url) {
+        try {
+            if (url == null) {
+                return null;
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(url, AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             try {
                 pane.getStylesheets().add(WindowTools.class.getResource(UserConfig.getStyle()).toExternalForm());
@@ -148,7 +174,6 @@ public class WindowTools {
             BaseController controller = (BaseController) fxmlLoader.getController();
             controller.setMyScene(scene);
             controller.refreshStyle();
-
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

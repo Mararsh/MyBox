@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.db.data.ColumnDefinition;
 import static mara.mybox.value.Languages.message;
 
@@ -9,7 +10,10 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-28
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheetFile_File extends ControlSheetFile_Pages {
+public abstract class ControlSheetFile_File extends ControlSheet {
+
+    protected SimpleBooleanProperty fileLoadedNotify;
+    protected boolean userSavedDataDefinition;
 
     protected abstract boolean readDataDefinition();
 

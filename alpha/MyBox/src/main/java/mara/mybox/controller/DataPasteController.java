@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -9,7 +8,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.value.UserConfig;
@@ -19,21 +17,18 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-2
  * @License Apache License Version 2.0
  */
-public class DataCopyController extends BaseDataOperationController {
+public class DataPasteController extends BaseDataOperationController {
 
     protected char delimiter;
 
     @FXML
-    protected ToggleGroup targetGroup, delimiterGroup;
+    protected ToggleGroup delimiterGroup;
     @FXML
-    protected RadioButton commaRadio, lineRadio, atRadio, sharpRadio, semicolonsRadio, delimiterInputRadio,
-            targetSysRadio;
-    @FXML
-    protected CheckBox colNameCheck;
+    protected RadioButton commaRadio, lineRadio, atRadio, sharpRadio, semicolonsRadio, delimiterInputRadio;
     @FXML
     protected TextField delimiterInput;
     @FXML
-    protected FlowPane delimiterPane;
+    protected CheckBox skipFirstLineCheck;
 
     @Override
     public void setParameters(ControlSheet sheetController, int row, int col) {
@@ -59,15 +54,13 @@ public class DataCopyController extends BaseDataOperationController {
                 }
             });
 
-            colNameCheck.setSelected(UserConfig.getBoolean(baseName + "Names", true));
-            colNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            skipFirstLineCheck.setSelected(UserConfig.getBoolean(baseName + "SkipFirstLine", false));
+            skipFirstLineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Names", newValue);
+                    UserConfig.setBoolean(baseName + "SkipFirstLine", newValue);
                 }
             });
-
-            delimiterPane.visibleProperty().bind(targetSysRadio.selectedProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -103,17 +96,15 @@ public class DataCopyController extends BaseDataOperationController {
     public void okAction() {
         try {
             sheetController.copyDelimiter = delimiter;
-            boolean toSystemClipboard = targetSysRadio.isSelected();
-            boolean withNames = colNameCheck.isSelected();
+            boolean withNames = skipFirstLineCheck.isSelected();
 
-            List<Integer> cols = cols();
-            if (rowAllRadio.isSelected()) {
-                sheetController.copyCols(cols, withNames, toSystemClipboard);
-
-            } else {
-                sheetController.copyRowsCols(rows(), cols, withNames, toSystemClipboard);
-            }
-
+//            List<Integer> cols = cols();
+//            if (rowAllRadio.isSelected()) {
+//                sheetController.copyCols(cols, withNames, toSystemClipboard);
+//
+//            } else {
+//                sheetController.copyRowsCols(rows(), cols, withNames, toSystemClipboard);
+//            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

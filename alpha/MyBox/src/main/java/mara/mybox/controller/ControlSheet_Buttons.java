@@ -7,12 +7,10 @@ import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.fxml.PopTools;
+import mara.mybox.db.data.DataClipboard;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -21,50 +19,92 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheet_Buttons extends ControlSheet_Sheet {
+public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
 
     protected char copyDelimiter = ',';
 
+    public abstract void copyCols(List<Integer> cols, boolean withNames, boolean toSystemClipboard);
+
+    public abstract void setCols(List<Integer> cols, String value);
+
+    public abstract void sort(int col, boolean asc);
+
     @FXML
-    public void copyDataAction() {
-        DataCopyController controller = (DataCopyController) openChildStage(Fxmls.DataCopyFxml, false);
+    @Override
+    public void copyToSystemClipboard() {
+        DataCopyToSystemClipboardController controller = (DataCopyToSystemClipboardController) openChildStage(Fxmls.DataCopyToSystemClipboardFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
-    public boolean copyRowsCols(List<Integer> rows, List<Integer> cols, boolean withNames, boolean toSystemClipboard) {
-        if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty()) {
-            popError(message("NoData"));
-            return false;
-        }
-
-        String[][] data = new String[rows.size()][cols.size()];
-        for (int r = 0; r < rows.size(); ++r) {
-            int row = rows.get(r);
-            for (int c = 0; c < cols.size(); c++) {
-                data[r][c] = cellString(row, cols.get(c));
-            }
-        }
-        List<String> colsNames = null;
-        if (withNames) {
-            colsNames = new ArrayList<>();
-            for (int c = 0; c < cols.size(); c++) {
-                colsNames.add(colsCheck[cols.get(c)].getText());
-            }
-        }
-        if (toSystemClipboard) {
-            TextClipboardTools.copyToSystemClipboard(myController,
-                    TextTools.dataText(data, copyDelimiter + "", colsNames, null));
-        }
-        return true;
+    @FXML
+    @Override
+    public void copyToMyBoxClipboard() {
+        DataCopyToMyBoxClipboardController controller = (DataCopyToMyBoxClipboardController) openChildStage(Fxmls.DataCopyToMyBoxClipboardFxml, false);
+        controller.setParameters((ControlSheet) this, -1, -1);
     }
 
-    public boolean copyCols(List<Integer> cols, boolean withNames, boolean toSystemClipboard) {
-        return copyRowsCols(rowsIndex(true), cols, withNames, toSystemClipboard);
+    public void copyRowsCols(List<Integer> rows, List<Integer> cols, boolean withNames, boolean toSystemClipboard) {
+        if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty() || colsCheck == null) {
+            popError(message("NoData"));
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String[][] data;
+                private List<String> colsNames;
+
+                @Override
+                protected boolean handle() {
+                    colsNames = null;
+                    if (withNames) {
+                        colsNames = new ArrayList<>();
+                        for (int c = 0; c < cols.size(); c++) {
+                            colsNames.add(colsCheck[cols.get(c)].getText());
+                        }
+                    }
+                    data = new String[rows.size()][cols.size()];
+                    for (int r = 0; r < rows.size(); ++r) {
+                        int row = rows.get(r);
+                        for (int c = 0; c < cols.size(); c++) {
+                            data[r][c] = cellString(row, cols.get(c));
+                        }
+                    }
+                    if (toSystemClipboard) {
+                        return data != null;
+                    } else {
+                        return DataClipboard.createData(tableDataDefinition, colsNames, data) != null;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (toSystemClipboard) {
+                        TextClipboardTools.copyToSystemClipboard(myController,
+                                TextTools.dataText(data, copyDelimiter + "", colsNames, null));
+                    } else {
+                        popSuccessful();
+                    }
+                }
+
+            };
+            start(task);
+        }
     }
 
     @FXML
-    public void pasteDataAction() {
+    @Override
+    public void pasteContentInSystemClipboard() {
         DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
+        controller.setParameters((ControlSheet) this, -1, -1);
+    }
+
+    @FXML
+    public void pasteContentInDataClipboard() {
+        DataPasteController controller = (DataPasteController) openChildStage(Fxmls.DataPasteFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -74,25 +114,23 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Sheet {
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
-    public boolean setRowsCols(List<Integer> rows, List<Integer> cols, String value) {
-        if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty()) {
+    public void setRowsCols(List<Integer> rows, List<Integer> cols, String value) {
+        if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty() || sheetInputs == null || columns == null) {
             popError(message("NoData"));
-            return false;
+            return;
         }
         isSettingValues = true;
-        Random random = new Random();
+        Random random = null;
         for (int r = 0; r < rows.size(); ++r) {
             int row = rows.get(r);
             for (int c = 0; c < cols.size(); ++c) {
                 int col = cols.get(c);
                 String v = value;
-                if (value == null) {
-                    ColumnType type = columns.get(col).getType();
-                    if (type == ColumnType.Double || type == ColumnType.Float) {
-                        v = DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
-                    } else {
-                        v = StringTools.format(random.nextInt(maxRandom));
+                if (AppValues.MyBoxRandomFlag.equals(value)) {
+                    if (random == null) {
+                        random = new Random();
                     }
+                    v = columns.get(col).random(random, maxRandom, scale);
                 }
                 sheetInputs[row][col].setText(v);
             }
@@ -100,11 +138,6 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Sheet {
         isSettingValues = false;
         sheetChanged();
         popSuccessful();
-        return true;
-    }
-
-    public boolean setCols(List<Integer> cols, String value) {
-        return setRowsCols(rowsIndex(true), cols, value);
     }
 
     @FXML
@@ -113,136 +146,192 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Sheet {
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
-    protected boolean sortRows(List<Integer> rows, int col, boolean asc) {
-        if (sheetInputs == null || columns == null || colsCheck == null || col < 0 || col >= columns.size()) {
-            return false;
+    protected void sortRows(List<Integer> rows, int col, boolean asc) {
+        if (sheetInputs == null || columns == null
+                || rows == null || rows.isEmpty() || col < 0 || col >= columns.size()) {
+            popError(message("NoData"));
+            return;
         }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
-        Collections.sort(rows, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer row1, Integer row2) {
-                if (row1 > row2) {
-                    return 1;
-                } else if (row1 < row2) {
-                    return -1;
-                } else {
-                    return 0;
+                private String[][] sortedData;
+
+                @Override
+                protected boolean handle() {
+                    Collections.sort(rows, new Comparator<Integer>() {
+                        @Override
+                        public int compare(Integer row1, Integer row2) {
+                            if (row1 > row2) {
+                                return 1;
+                            } else if (row1 < row2) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+
+                    List<Integer> sortedRows = new ArrayList<>();
+                    sortedRows.addAll(rows);
+                    ColumnDefinition column = columns.get(col);
+                    Collections.sort(sortedRows, new Comparator<Integer>() {
+                        @Override
+                        public int compare(Integer row1, Integer row2) {
+                            int v = column.compare(cellString(row1, col), cellString(row2, col));
+                            return asc ? v : -v;
+                        }
+                    });
+                    int colsTotal = colsCheck.length;
+                    int rowsSize = sortedRows.size();
+                    sortedData = new String[rowsSize][colsTotal];
+                    for (int r = 0; r < rowsSize; r++) {
+                        int row = sortedRows.get(r);
+                        for (int c = 0; c < colsTotal; c++) {
+                            sortedData[r][c] = cellString(row, c);
+                        }
+                    }
+                    return true;
                 }
-            }
-        });
 
-        List<Integer> sortedRows = new ArrayList<>();
-        sortedRows.addAll(rows);
-        ColumnDefinition column = columns.get(col);
-        Collections.sort(sortedRows, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer row1, Integer row2) {
-                int v = column.compare(cellString(row1, col), cellString(row2, col));
-                return asc ? v : -v;
-            }
-        });
+                @Override
+                protected void whenSucceeded() {
+                    isSettingValues = true;
+                    int colsTotal = colsCheck.length;
+                    for (int r = 0; r < rows.size(); r++) {
+                        int row = rows.get(r);
+                        for (int c = 0; c < colsTotal; c++) {
+                            sheetInputs[row][c].setText(sortedData[r][c]);
+                        }
+                    }
+                    isSettingValues = false;
+                    sheetChanged();
+                    popSuccessful();
+                }
 
-        int colsTotal = colsCheck.length;
-        int rowsSize = sortedRows.size();
-        String[][] sortedData = new String[rowsSize][colsTotal];
-        for (int r = 0; r < rowsSize; r++) {
-            int row = sortedRows.get(r);
-            for (int c = 0; c < colsTotal; c++) {
-                sortedData[r][c] = cellString(row, c);
-            }
+            };
+            start(task);
         }
-        isSettingValues = true;
-        for (int r = 0; r < rows.size(); r++) {
-            int row = rows.get(r);
-            for (int c = 0; c < colsTotal; c++) {
-                sheetInputs[row][c].setText(sortedData[r][c]);
-            }
-        }
-        isSettingValues = false;
-        sheetChanged();
-        popSuccessful();
-        return true;
-    }
-
-    public boolean sort(int col, boolean asc) {
-        return sortRows(rowsIndex(true), col, asc);
     }
 
     @FXML
-    public void sizeDataAction() {
-        DataSizeController controller = (DataSizeController) openChildStage(Fxmls.DataSizeFxml, false);
-        controller.setParameters((ControlSheet) this);
+    public void widthDataAction() {
+        DataWidthController controller = (DataWidthController) openChildStage(Fxmls.DataWidthFxml, false);
+        controller.setParameters((ControlSheet) this, -1, -1);
     }
 
-    // Notice: this does not concern columns names
-    public void resizeSheet(int rowsNumber, int colsNumber) {
-        if (sheetInputs != null) {
-            if (sheetInputs.length > rowsNumber || sheetInputs[0].length > colsNumber) {
-                if (!PopTools.askSure(baseTitle, message("DataReduceWarn"))) {
-                    return;
-                }
-            }
-        }
-        if (rowsNumber <= 0 || colsNumber <= 0) {
-            makeSheet(null);
+    public void widthCols(List<Integer> cols, int width) {
+        if (cols == null || cols.isEmpty() || colsCheck == null || columns == null) {
+            popError(message("NoData"));
             return;
         }
-        String[][] values = new String[rowsNumber][colsNumber];
-        if (sheetInputs != null && sheetInputs.length > 0) {
-            int drow = Math.min(sheetInputs.length, rowsNumber);
-            int dcol = Math.min(sheetInputs[0].length, colsNumber);
-            for (int j = 0; j < drow; ++j) {
-                for (int i = 0; i < dcol; ++i) {
-                    values[j][i] = cellString(j, i);
+        for (int c = 0; c < cols.size(); ++c) {
+            int col = cols.get(c);
+            columns.get(col).setWidth(width);
+            colsCheck[col].setPrefWidth(width);
+            if (sheetInputs != null) {
+                for (int r = 0; r < sheetInputs.length; ++r) {
+                    sheetInputs[r][col].setPrefWidth(width);
                 }
             }
+        }
+        makeDefintionPane();
+        popSuccessful();
+    }
+
+    @FXML
+    public void rowsAddAction() {
+        DataRowsAddController controller = (DataRowsAddController) openChildStage(Fxmls.DataRowsAddFxml, false);
+        controller.setParameters((ControlSheet) this, -1, -1);
+    }
+
+    protected void addRows(int row, boolean above, int number) {
+        if (number < 1 || columns == null || columns.isEmpty()) {
+            return;
+        }
+        String[][] current = pickData();
+        String[][] values;
+        int cNumber = columns.size();
+        if (current == null) {
+            values = new String[number][cNumber];
+            for (int r = 0; r < number; ++r) {
+                for (int c = 0; c < cNumber; ++c) {
+                    values[r][c] = defaultColValue;
+                }
+            }
+        } else {
+            int rNumber = current.length;
+            values = new String[rNumber + number][cNumber];
+            int base = row + (above ? 0 : 1);
+            for (int r = 0; r < base; ++r) {
+                for (int c = 0; c < cNumber; ++c) {
+                    values[r][c] = current[r][c];
+                }
+            }
+            for (int r = 0; r < number; ++r) {
+                for (int c = 0; c < cNumber; ++c) {
+                    values[base + r][c] = defaultColValue;
+                }
+            }
+            for (int r = base; r < rNumber; ++r) {
+                for (int c = 0; c < cNumber; ++c) {
+                    values[r + number][c] = current[r][c];
+                }
+            }
+        }
+        makeSheet(values);
+    }
+
+    @FXML
+    public void rowsDeleteAction() {
+        DataRowsDeleteController controller = (DataRowsDeleteController) openChildStage(Fxmls.DataRowsDeleteFxml, false);
+        controller.setParameters((ControlSheet) this, -1, -1);
+    }
+
+    public void deleteRows(List<Integer> rows) {
+        if (rows == null || rows.isEmpty()) {
+            popError(message("NoSelection"));
+            return;
+        }
+        if (rowsCheck == null || columns == null || columns.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        String[][] values = null;
+        values = new String[rowsCheck.length - rows.size()][columns.size()];
+        int rowIndex = 0;
+        for (int r = 0; r < rowsCheck.length; ++r) {
+            if (rows.contains(r)) {
+                continue;
+            }
+            for (int c = 0; c < columns.size(); ++c) {
+                values[rowIndex][c] = cellString(r, c);
+            }
+            rowIndex++;
         }
         makeSheet(values);
         popSuccessful();
     }
 
-    protected void addRowsNumber() {
-        if (colsCheck == null || colsCheck.length == 0) {
-            return;
-        }
-        String value = askValue("", message("AddRowsNumber"), "1");
-        if (value == null) {
-            return;
-        }
-        try {
-            int number = Integer.parseInt(value);
-            if (sheetInputs == null || sheetInputs.length == 0) {
-                resizeSheet(number, colsCheck.length);
-            } else {
-                resizeSheet(sheetInputs.length + number, colsCheck.length);
-            }
-        } catch (Exception e) {
-            popError(e.toString());
-        }
+    public void deletePageRows() {
+        makeSheet(null);
+        popSuccessful();
     }
 
-    protected void addColsNumber() {
-        String value = askValue("", message("AddColsNumber"), "1");
-        if (value == null) {
-            return;
-        }
-        try {
-            int number = Integer.parseInt(value);
-            if (colsCheck == null || colsCheck.length == 0) {
-                insertPageCol(0, true, number);
-            } else {
-                insertPageCol(colsCheck.length - 1, false, number);
-            }
-        } catch (Exception e) {
-            popError(e.toString());
-        }
+    public void deleteAllRows() {
+        deletePageRows();
     }
 
-    public void setSize(int rowsNumber, int colsNumber) {
-        resizeSheet(rowsNumber, colsNumber);
+    @FXML
+    public void columnsAddAction() {
+        DataColumnsAddController controller = (DataColumnsAddController) openChildStage(Fxmls.DataColumnsAddFxml, false);
+        controller.setParameters((ControlSheet) this, -1, -1);
     }
 
-    protected void insertPageCol(int col, boolean left, int number) {
+    protected void addCols(int col, boolean left, int number) {
         if (number < 1) {
             return;
         }
@@ -274,61 +363,15 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Sheet {
     }
 
     @FXML
-    public void widthDataAction() {
-        DataWidthController controller = (DataWidthController) openChildStage(Fxmls.DataWidthFxml, false);
+    public void columnsDeleteAction() {
+        DataColumnsDeleteController controller = (DataColumnsDeleteController) openChildStage(Fxmls.DataColumnsDeleteFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
-    public boolean widthCols(List<Integer> cols, int width) {
-        if (cols == null || cols.isEmpty()) {
-            popError(message("NoData"));
-            return false;
-        }
-        for (int c = 0; c < cols.size(); ++c) {
-            int col = cols.get(c);
-            colsCheck[col].setPrefWidth(width);
-            if (sheetInputs != null) {
-                for (int r = 0; r < sheetInputs.length; ++r) {
-                    sheetInputs[r][col].setPrefWidth(width);
-                }
-            }
-        }
-        makeDefintionPane();
-        popSuccessful();
-        return true;
-    }
-
-    @FXML
-    public void deleteDataAction() {
-        DataDeleteController controller = (DataDeleteController) openChildStage(Fxmls.DataDeleteFxml, false);
-        controller.setParameters((ControlSheet) this, -1, -1);
-    }
-
-    protected boolean deleteRows(List<Integer> rows) {
-        if (rows == null || rows.isEmpty()) {
-            popError(message("NoData"));
-            return false;
-        }
-        String[][] values = new String[rowsCheck.length - rows.size()][columns.size()];
-        int rowIndex = 0;
-        for (int r = 0; r < rowsCheck.length; ++r) {
-            if (!rows.contains(r)) {
-                continue;
-            }
-            for (int c = 0; c < columns.size(); ++c) {
-                values[rowIndex][c] = cellString(r, c);
-            }
-            rowIndex++;
-        }
-        makeSheet(values);
-        popSuccessful();
-        return true;
-    }
-
-    public boolean deleteCols(List<Integer> cols) {
-        if (cols == null || cols.isEmpty()) {
-            popError(message("NoData"));
-            return false;
+    public void deleteCols(List<Integer> cols) {
+        if (cols == null || cols.isEmpty() || columns == null || columns.isEmpty()) {
+            popError(message("NoSelection"));
+            return;
         }
         List<ColumnDefinition> leftColumns = new ArrayList<>();
         List<Integer> leftColumnsIndex = new ArrayList<>();
@@ -338,35 +381,31 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Sheet {
                 leftColumns.add(columns.get(c));
             }
         }
-        String[][] values = new String[rowsCheck.length][leftColumns.size()];
-        for (int r = 0; r < rowsCheck.length; ++r) {
-            for (int c = 0; c < leftColumnsIndex.size(); ++c) {
-                values[r][c] = cellString(r, leftColumnsIndex.get(c));
+        String[][] values = null;
+        if (rowsCheck != null) {
+            values = new String[rowsCheck.length][leftColumns.size()];
+            for (int r = 0; r < rowsCheck.length; ++r) {
+                for (int c = 0; c < leftColumnsIndex.size(); ++c) {
+                    values[r][c] = cellString(r, leftColumnsIndex.get(c));
+                }
             }
         }
         makeSheet(values, leftColumns);
         popSuccessful();
-        return true;
     }
 
-    public boolean deleteAllCols() {
+    public void deleteAllCols() {
         if (columns != null) {
             columns.clear();
         }
         makeSheet(null);
         popSuccessful();
-        return true;
     }
 
-    public boolean deletePageRows() {
-        makeSheet(null);
-        popSuccessful();
-        return true;
-    }
-
-    public boolean deleteAllRows() {
-        popSuccessful();
-        return deletePageRows();
+    @FXML
+    public void calculateDataAction() {
+        DataCalculateController controller = (DataCalculateController) openChildStage(Fxmls.DataCalculateFxml, false);
+        controller.setParameters((ControlSheet) this, -1, -1);
     }
 
 }

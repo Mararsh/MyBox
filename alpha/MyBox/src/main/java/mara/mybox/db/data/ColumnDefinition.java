@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import javafx.application.Platform;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.Era;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 
@@ -249,6 +251,22 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
     }
 
+    public String random(Random random, int maxRandom, short scale) {
+        if (random == null) {
+            random = new Random();
+        }
+        switch (type) {
+            case Double:
+            case Float:
+                return DoubleTools.format(DoubleTools.random(random, maxRandom), scale);
+            case Integer:
+            case Long:
+            case Short:
+                return StringTools.format(random.nextInt(maxRandom));
+            default:
+                return (char) ('a' + random.nextInt(25)) + "";
+        }
+    }
 
     /*
         static methods
