@@ -155,7 +155,7 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
             }
             String s = textsEditArea.getText();
             String[] lines = s.split("\n");
-            rowsNumber = colsNumber = 0;
+            int colsSize = 0;
             List<List<String>> data = new ArrayList<>();
             for (String line : lines) {
                 line = line.trim();
@@ -194,21 +194,24 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
                 if (size == 0) {
                     continue;
                 }
-                if (size > colsNumber) {
-                    colsNumber = size;
+                if (size > colsSize) {
+                    colsSize = size;
                 }
                 data.add(row);
             }
-            rowsNumber = data.size();
-            if (rowsNumber == 0 || colsNumber == 0) {
+            int rowsSize = data.size();
+            if (pagesNumber > 1) {
+                colsSize = columns == null ? 0 : columns.size();
+            }
+            if (rowsSize == 0 || colsSize == 0) {
                 makeSheet(null);
                 return true;
             }
-            pageData = new String[rowsNumber][colsNumber];
-            for (int i = 0; i < rowsNumber; i++) {
-                List<String> row = data.get(i);
-                for (int j = 0; j < row.size(); j++) {
-                    pageData[i][j] = row.get(j);
+            pageData = new String[rowsSize][colsSize];
+            for (int r = 0; r < rowsSize; r++) {
+                List<String> row = data.get(r);
+                for (int c = 0; c < Math.min(colsSize, row.size()); c++) {
+                    pageData[r][c] = row.get(c);
                 }
             }
             makeSheet(pageData, true);

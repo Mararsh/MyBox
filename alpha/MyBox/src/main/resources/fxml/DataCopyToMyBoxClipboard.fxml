@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="rowCurrentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowGroup" />
                 <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowGroup" />
                 <RadioButton fx:id="rowSelectRadio" layoutX="77.0" layoutY="14.0" mnemonicParsing="false" text="%Select" toggleGroup="$rowGroup" />
-                <ListView fx:id="rowsListView" prefHeight="100.0" prefWidth="150.0" />
+                <fx:include fx:id="rowsList" prefHeight="150.0" prefWidth="100.0" source="ControlListCheckBox.fxml" />
             </children>
         </HBox>
         <HBox fx:id="codeBox" spacing="5.0" VBox.vgrow="NEVER">
@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
                 </RadioButton>
                 <RadioButton fx:id="colAllRadio" mnemonicParsing="false" text="%All" toggleGroup="$colGroup" />
                 <RadioButton fx:id="colSelectRadio" layoutX="77.0" layoutY="14.0" mnemonicParsing="false" text="%Select" toggleGroup="$colGroup" />
-                <ListView fx:id="colsListView" prefHeight="100.0" prefWidth="200.0" />
+                <fx:include fx:id="colsList" prefHeight="150.0" prefWidth="200.0" source="ControlListCheckBox.fxml" />
             </children>
         </HBox>
         <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />

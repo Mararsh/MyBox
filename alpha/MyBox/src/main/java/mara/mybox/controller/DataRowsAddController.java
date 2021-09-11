@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -67,12 +66,16 @@ public class DataRowsAddController extends BaseDataOperationController {
     @Override
     public void okAction() {
         try {
-            List<Integer> rows = selectedRows();
-            if (rows == null || rows.isEmpty() || number < 1) {
+            if (number < 1) {
                 popError(message("InvalidParameters"));
                 return;
             }
-            sheetController.addRows(rows.get(0), aboveRadio.isSelected(), number);
+            int row = rowSelector.getSelectionModel().getSelectedIndex();
+            if (row < 0) {
+                popError(message("NoSelection"));
+                return;
+            }
+            sheetController.addRows(row, aboveRadio.isSelected(), number);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

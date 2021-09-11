@@ -402,7 +402,14 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public LoadingController start(SingletonTask<?> task) {
-        LoadingController controller = handling(task);
+        return start(task, true);
+    }
+
+    public LoadingController start(SingletonTask<?> task, boolean handling) {
+        LoadingController controller = null;
+        if (handling) {
+            controller = handling(task);
+        }
         task.setSelf(task);
         Thread thread = new Thread(task);
         thread.setDaemon(false);

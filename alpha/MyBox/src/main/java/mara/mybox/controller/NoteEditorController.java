@@ -16,10 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
@@ -74,7 +71,7 @@ public class NoteEditorController extends HtmlEditorController {
     @FXML
     protected Button okNoteTagsButton, addNoteTagButton;
     @FXML
-    protected ListView<Tag> noteTagsList;
+    protected ControlListCheckBox tagsListController;
 
     public void setParameters(NotesController notesController) {
         try {
@@ -87,6 +84,7 @@ public class NoteEditorController extends HtmlEditorController {
             tableNoteTag = notesController.tableNoteTag;
             saveButton = notesController.saveButton;
             currentNote = null;
+            tagsListController.setParent(notesController);
 
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
@@ -101,20 +99,6 @@ public class NoteEditorController extends HtmlEditorController {
 
             titleInput.setText(message("Note"));
             styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle));
-
-            noteTagsList.setCellFactory(p -> new ListCell<Tag>() {
-                @Override
-                public void updateItem(Tag item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setGraphic(null);
-                    if (empty || item == null) {
-                        setText(null);
-                        return;
-                    }
-                    setText(item.getTag());
-                }
-            });
-            noteTagsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -311,27 +295,29 @@ public class NoteEditorController extends HtmlEditorController {
     @FXML
     public void refreshNoteTags() {
         synchronized (this) {
-            noteTagsList.getItems().clear();
+            tagsListController.clear();
             noteTagsPane.setDisable(true);
             SingletonTask noteTagsTask = new SingletonTask<Void>() {
-                private List<Tag> noteTags = null;
-                private int count = 0;
+                private List<String> tagsString;
+                private List<Integer> selected;
 
                 @Override
                 protected boolean handle() {
+                    tagsString = new ArrayList<>();
+                    selected = new ArrayList<>();
                     try ( Connection conn = DerbyBase.getConnection()) {
                         List<Tag> tags = tableTag.readAll(conn);
-                        noteTags = tags;
                         if (tags != null && !tags.isEmpty()) {
+                            for (Tag tag : tags) {
+                                tagsString.add(tag.getTag());
+                            }
                             if (currentNote != null) {
                                 List<Long> noteTagIDs = tableNoteTag.readTags(conn, currentNote.getNtid());
                                 if (noteTagIDs != null && !noteTagIDs.isEmpty()) {
-                                    noteTags = new ArrayList<>();
-                                    for (Tag tag : tags) {
+                                    for (int i = 0; i < tags.size(); i++) {
+                                        Tag tag = tags.get(i);
                                         if (noteTagIDs.contains(tag.getTgid())) {
-                                            noteTags.add(count++, tag);
-                                        } else {
-                                            noteTags.add(tag);
+                                            selected.add(i);
                                         }
                                     }
                                 }
@@ -346,10 +332,8 @@ public class NoteEditorController extends HtmlEditorController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (noteTags != null) {
-                        noteTagsList.getItems().setAll(noteTags);
-                        noteTagsList.getSelectionModel().selectRange(0, count);
-                    }
+                    tagsListController.setValues(tagsString);
+                    tagsListController.selectIndex(selected);
                 }
 
                 @Override
@@ -358,21 +342,18 @@ public class NoteEditorController extends HtmlEditorController {
                 }
 
             };
-            noteTagsTask.setSelf(noteTagsTask);
-            Thread thread = new Thread(noteTagsTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(noteTagsTask, false);
         }
     }
 
     @FXML
     public void selectAllNoteTags() {
-        noteTagsList.getSelectionModel().selectAll();
+        tagsListController.selectAll();
     }
 
     @FXML
     public void selectNoneNoteTags() {
-        noteTagsList.getSelectionModel().clearSelection();
+        tagsListController.selectNone();
     }
 
     @FXML
@@ -391,21 +372,24 @@ public class NoteEditorController extends HtmlEditorController {
 
                 @Override
                 protected boolean handle() {
-                    List<Tag> selected = noteTagsList.getSelectionModel().getSelectedItems();
-                    List<Long> tags = new ArrayList();
-                    if (selected != null) {
-                        for (Tag tag : selected) {
-                            tags.add(tag.getTgid());
-                        }
-                    }
+                    List<String> selected = tagsListController.getSelectedValues();
                     long noteid = currentNote.getNtid();
                     try ( Connection conn = DerbyBase.getConnection();
-                             PreparedStatement statement = conn.prepareStatement(TableNoteTag.DeleteNoteTags)) {
-                        statement.setLong(1, noteid);
-                        statement.executeUpdate();
-                        conn.setAutoCommit(false);
-                        for (Long tagid : tags) {
-                            tableNoteTag.insertData(conn, new NoteTag(noteid, tagid));
+                             PreparedStatement query = conn.prepareStatement(TableTag.QueryTag);
+                             PreparedStatement delete = conn.prepareStatement(TableNoteTag.DeleteNoteTags)) {
+                        delete.setLong(1, noteid);
+                        delete.executeUpdate();
+                        conn.commit();
+                        if (selected != null) {
+                            List<NoteTag> noteTags = new ArrayList<>();
+                            for (String value : selected) {
+                                Tag tag = tableTag.query(conn, query, value);
+                                if (tag == null) {
+                                    continue;
+                                }
+                                noteTags.add(new NoteTag(noteid, tag.getTgid()));
+                            }
+                            tableNoteTag.insertList(conn, noteTags);
                         }
                         conn.commit();
                     } catch (Exception e) {

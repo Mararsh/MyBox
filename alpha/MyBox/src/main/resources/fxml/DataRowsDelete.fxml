@@ -24,15 +24,15 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%DeleteRows" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-          <RadioButton fx:id="rowCheckedRadio" mnemonicParsing="false" selected="true" text="%Selected">
-              <toggleGroup>
-                  <ToggleGroup fx:id="rowGroup" />
-              </toggleGroup>
-          </RadioButton>
-          <RadioButton fx:id="rowCurrentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowGroup" />
-          <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowGroup" />
-        <RadioButton fx:id="rowSelectRadio" mnemonicParsing="false" text="%Select" toggleGroup="$rowGroup" />
-        <ListView fx:id="rowsListView" prefHeight="300.0" prefWidth="200.0" />
+        <RadioButton fx:id="rowCheckedRadio" mnemonicParsing="false" selected="true" text="%Selected">
+            <toggleGroup>
+                <ToggleGroup fx:id="rowGroup" />
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton fx:id="rowCurrentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowGroup" />
+        <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowGroup" />
+        <RadioButton fx:id="rowSelectRadio" mnemonicParsing="false" text="%Select" toggleGroup="$rowGroup" /> 
+        <fx:include fx:id="rowsList" prefHeight="150.0" prefWidth="100.0" source="ControlListCheckBox.fxml" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

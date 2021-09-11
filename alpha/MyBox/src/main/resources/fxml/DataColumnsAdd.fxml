@@ -8,8 +8,8 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -25,7 +25,7 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%AddColumns" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="30.0">
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="30.0" spacing="2.0">
             <children>
                 <RadioButton fx:id="beforeRadio" mnemonicParsing="false" selected="true" text="%Before">
                     <toggleGroup>
@@ -34,9 +34,13 @@ License:    Apache License Version 2.0
                 </RadioButton>
                 <RadioButton layoutX="63.0" layoutY="10.0" mnemonicParsing="false" text="%After" toggleGroup="$locationGroup" />
             </children>
+        </HBox> 
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="55.0" spacing="2.0">
+            <children>
+                <Label text="%Column" />
+                <ComboBox fx:id="colSelector" prefWidth="200.0" />
+            </children>
         </HBox>
-        <Label text="%Column" />
-        <ListView fx:id="colsListView" prefHeight="200.0" prefWidth="200.0" />
         <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="55.0" spacing="2.0">
             <children>
                 <Label text="%ColumnsNumber" />

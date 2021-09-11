@@ -169,21 +169,22 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
             });
 
-            palettesController.palettesList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends ColorPaletteName> ov, ColorPaletteName t, ColorPaletteName t1) -> {
-                if (isSettingValues) {
-                    return;
-                }
-                currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
-                boolean isAll = isAllColors();
-                deletePaletteButton.setDisable(isAll);
-                renamePaletteButton.setDisable(isAll);
-                copyPaletteButton.setDisable(isAll);
-                trimButton.setDisable(isAll);
-                if (!isAll) {
-                    UserConfig.setString(baseName + "Palette", currentPalette.getName());
-                }
-                refreshPalette();
-            });
+            palettesController.palettesList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends ColorPaletteName> ov, ColorPaletteName t, ColorPaletteName t1) -> {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
+                        boolean isAll = isAllColors();
+                        deletePaletteButton.setDisable(isAll);
+                        renamePaletteButton.setDisable(isAll);
+                        copyPaletteButton.setDisable(isAll);
+                        trimButton.setDisable(isAll);
+                        if (!isAll) {
+                            UserConfig.setString(baseName + "Palette", currentPalette.getName());
+                        }
+                        refreshPalette();
+                    });
 
             paletteTabPane.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) -> {

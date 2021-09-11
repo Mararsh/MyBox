@@ -60,13 +60,13 @@ License:    Apache License Version 2.0
                 <HBox fx:id="codeBox1" spacing="5.0">
                     <children>
                         <Label minHeight="-Infinity" minWidth="-Infinity" text="%Rows" />
-                        <ListView fx:id="rowsListView" prefHeight="100.0" prefWidth="150.0" />
+                        <fx:include fx:id="rowsList" prefHeight="150.0" prefWidth="100.0" source="ControlListCheckBox.fxml" />
                     </children>
                 </HBox>
                 <HBox fx:id="codeBox" spacing="5.0">
                     <children>
                         <Label minHeight="-Infinity" minWidth="-Infinity" text="%Columns" />
-                        <ListView fx:id="colsListView" prefHeight="100.0" prefWidth="150.0" />
+                        <fx:include fx:id="colsList" prefHeight="150.0" prefWidth="200.0" source="ControlListCheckBox.fxml" />
                     </children>
                 </HBox>
             </children>

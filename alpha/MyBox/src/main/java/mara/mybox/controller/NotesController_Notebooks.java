@@ -219,9 +219,8 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                 @Override
                 protected void whenSucceeded() {
                     tagsList.getItems().add(0, tag);
-                    noteEditorController.noteTagsList.getItems().add(0, tag);
                     if (updateCurrent) {
-                        noteEditorController.noteTagsList.getSelectionModel().selectFirst();
+                        noteEditorController.refreshNoteTags();
                     }
                     popSuccessful();
                 }
@@ -324,7 +323,7 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                 @Override
                 protected void whenSucceeded() {
                     tagsList.getItems().clear();
-                    noteEditorController.noteTagsList.getItems().clear();
+                    noteEditorController.tagsListController.clear();
                     popSuccessful();
                 }
 

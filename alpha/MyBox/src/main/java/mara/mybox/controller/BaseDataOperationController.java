@@ -1,13 +1,13 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -25,9 +25,9 @@ public abstract class BaseDataOperationController extends BaseController {
     protected ControlSheet sheetController;
 
     @FXML
-    protected ListView<Integer> rowsListView;
+    protected ControlListCheckBox rowsListController, colsListController;
     @FXML
-    protected ListView<String> colsListView;
+    protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected ToggleGroup colGroup, rowGroup;
     @FXML
@@ -47,44 +47,56 @@ public abstract class BaseDataOperationController extends BaseController {
             myStage.setTitle(sheetController.getTitle());
 
             updateControls();
-            if (rowsListView != null) {
-                rowsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-                if (row >= 0) {
-                    if (rowSelectRadio != null) {
-                        rowSelectRadio.fire();
-                    }
-                    rowsListView.getSelectionModel().select(row);
+
+            if (rowsListController != null) {
+                rowsListController.setParent(sheetController);
+            }
+            if (colsListController != null) {
+                colsListController.setParent(sheetController);
+            }
+
+            if (row >= 0) {
+                if (rowSelectRadio != null) {
+                    rowSelectRadio.fire();
+                }
+                if (rowSelector != null) {
+                    rowSelector.setValue(row + "");
+                }
+                if (rowsListController != null) {
+                    rowsListController.selectIndex(Arrays.asList(row));
                 }
             }
 
-            if (colsListView != null) {
-                colsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-                if (col >= 0) {
-                    if (colSelectRadio != null) {
-                        colSelectRadio.fire();
-                    }
-                    colsListView.getSelectionModel().select(sheetController.columns.get(col).getName());
+            if (col >= 0) {
+                if (colSelectRadio != null) {
+                    colSelectRadio.fire();
+                }
+                if (colSelector != null) {
+                    colSelector.setValue(sheetController.columns.get(col).getName());
+                }
+                if (colsListController != null) {
+                    colsListController.selectIndex(Arrays.asList(col));
                 }
             }
 
-            if (rowGroup != null && rowsListView != null && rowSelectRadio != null) {
+            if (rowGroup != null && rowsListController != null && rowSelectRadio != null) {
                 rowGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        rowsListView.setDisable(!rowSelectRadio.isSelected());
+                        rowsListController.listView.setDisable(!rowSelectRadio.isSelected());
                     }
                 });
-                rowsListView.setDisable(!rowSelectRadio.isSelected());
+                rowsListController.listView.setDisable(!rowSelectRadio.isSelected());
             }
 
-            if (colGroup != null && colsListView != null && colSelectRadio != null) {
+            if (colGroup != null && colsListController != null && colSelectRadio != null) {
                 colGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
                     public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        colsListView.setDisable(!colSelectRadio.isSelected());
+                        colsListController.listView.setDisable(!colSelectRadio.isSelected());
                     }
                 });
-                colsListView.setDisable(!colSelectRadio.isSelected());
+                colsListController.listView.setDisable(!colSelectRadio.isSelected());
             }
 
         } catch (Exception e) {
@@ -105,12 +117,19 @@ public abstract class BaseDataOperationController extends BaseController {
                 }
                 rowAllRadio.setDisable(sheetController.pagesNumber <= 1 || sheetController.dataChangedNotify.get());
             }
-            if (rowsListView != null) {
-                List<Integer> rows = new ArrayList<>();
-                for (long i = sheetController.pageStart(); i < sheetController.pageEnd(); i++) {
-                    rows.add((int) i);
+            List<String> rows = new ArrayList<>();
+            for (long i = sheetController.pageStart(); i < sheetController.pageEnd(); i++) {
+                rows.add(i + "");
+            }
+            if (rowSelector != null) {
+                String v = rowSelector.getValue();
+                rowSelector.getItems().setAll(rows);
+                if (v != null && rows.contains(v)) {
+                    rowSelector.setValue(v);
                 }
-                rowsListView.getItems().setAll(rows);
+            }
+            if (rowsListController != null) {
+                rowsListController.setValues(rows);
             }
 
             if (colGroup != null) {
@@ -123,13 +142,21 @@ public abstract class BaseDataOperationController extends BaseController {
                     colCheckedRadio.setDisable(false);
                 }
             }
-            if (colsListView != null) {
-                List<String> cols = new ArrayList<>();
-                for (ColumnDefinition c : sheetController.columns) {
-                    cols.add(c.getName());
-                }
-                colsListView.getItems().setAll(cols);
+            List<String> cols = new ArrayList<>();
+            for (ColumnDefinition c : sheetController.columns) {
+                cols.add(c.getName());
             }
+            if (colSelector != null) {
+                String v = colSelector.getValue();
+                colSelector.getItems().setAll(cols);
+                if (v != null && cols.contains(v)) {
+                    colSelector.setValue(v);
+                }
+            }
+            if (colsListController != null) {
+                colsListController.setValues(cols);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -147,9 +174,7 @@ public abstract class BaseDataOperationController extends BaseController {
     }
 
     public List<Integer> selectedCols() {
-        List<Integer> cols = new ArrayList<>();
-        cols.addAll(colsListView.getSelectionModel().getSelectedIndices());// 0-based
-        return cols;
+        return colsListController.getSelectedIndex();
     }
 
     public List<Integer> cols() {
@@ -165,9 +190,7 @@ public abstract class BaseDataOperationController extends BaseController {
     }
 
     public List<Integer> selectedRows() {
-        List<Integer> rows = new ArrayList<>(); // 0-based
-        rows.addAll(rowsListView.getSelectionModel().getSelectedIndices());// 0-based
-        return rows;
+        return rowsListController.getSelectedIndex();
     }
 
     public List<Integer> rows() {
