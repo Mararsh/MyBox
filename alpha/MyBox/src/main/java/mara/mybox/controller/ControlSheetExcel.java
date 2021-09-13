@@ -348,27 +348,11 @@ public class ControlSheetExcel extends ControlSheetFile {
                         }
                         csvPrinter.printRecord(values);
                     } else if (sourceRowIndex == currentPageStart) {
-                        for (TextField[] rowInputs : sheetInputs) {
-                            List<String> values = new ArrayList<>();
-                            for (int c = 0; c < cols.size(); c++) {
-                                String d = rowInputs[cols.get(c)].getText();
-                                d = d == null ? "" : d;
-                                values.add(d);
-                            }
-                            csvPrinter.printRecord(values);
-                        }
+                        copyPageData(csvPrinter, cols);
                     }
                 }
             } else {
-                for (TextField[] rowInputs : sheetInputs) {
-                    List<String> values = new ArrayList<>();
-                    for (int c = 0; c < cols.size(); c++) {
-                        String d = rowInputs[cols.get(c)].getText();
-                        d = d == null ? "" : d;
-                        values.add(d);
-                    }
-                    csvPrinter.printRecord(values);
-                }
+                copyPageData(csvPrinter, cols);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -978,7 +962,7 @@ public class ControlSheetExcel extends ControlSheetFile {
                 return e.toString();
             }
         }
-        if (FileTools.rename(tmpFile, file)) {
+        if (FileTools.rename(tmpFile, file, false)) {
             saveColumns(file, sheetNameSaved, otherSheetNames, withName);
             return null;
         } else {

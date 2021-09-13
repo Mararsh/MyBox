@@ -9,14 +9,10 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -24,53 +20,27 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%PasteContentInSystemClipboard" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Paste" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-            <children>
-                <Label minHeight="-Infinity" minWidth="-Infinity" text="%DataInSystemClipboard" />
-                <HBox fx:id="codeBox11" alignment="CENTER_LEFT" spacing="5.0">
-                    <children>
-                        <Label fx:id="sizeLabel" minHeight="-Infinity" minWidth="-Infinity" text="%Size" />
-                    </children>
-                </HBox>
-                <FlowPane hgap="5.0" vgap="5.0">
-                    <children>
-                        <Label text="%Delimiter" />
-                        <RadioButton fx:id="commaRadio" mnemonicParsing="false" selected="true" text=",">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="delimiterGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="|" toggleGroup="$delimiterGroup" />
-                        <RadioButton fx:id="atRadio" mnemonicParsing="false" text="\@" toggleGroup="$delimiterGroup" />
-                        <RadioButton fx:id="sharpRadio" mnemonicParsing="false" text="#" toggleGroup="$delimiterGroup" />
-                        <RadioButton fx:id="semicolonsRadio" mnemonicParsing="false" text=";" toggleGroup="$delimiterGroup" />
-                        <RadioButton fx:id="delimiterInputRadio" mnemonicParsing="false" text="%Character" toggleGroup="$delimiterGroup" />
-                        <TextField fx:id="delimiterInput" prefWidth="40.0" />
-                    </children>
-                </FlowPane>
-                <CheckBox fx:id="skipFirstLineCheck" mnemonicParsing="false" text="%SkipFirstLine" />
-            </children>
-        </VBox>
-        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+        <VBox spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
                 <Label minHeight="-Infinity" minWidth="-Infinity" text="%PasteLocation" />
-                <HBox fx:id="codeBox1" spacing="5.0">
-                    <children>
-                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%Rows" />
-                        <fx:include fx:id="rowsList" prefHeight="150.0" prefWidth="100.0" source="ControlListCheckBox.fxml" />
-                    </children>
-                </HBox>
-                <HBox fx:id="codeBox" spacing="5.0">
-                    <children>
-                        <Label minHeight="-Infinity" minWidth="-Infinity" text="%Columns" />
-                        <fx:include fx:id="colsList" prefHeight="150.0" prefWidth="200.0" source="ControlListCheckBox.fxml" />
-                    </children>
-                </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <Label text="%Row" />
+                  <ComboBox fx:id="rowSelector" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%Column" />
+                  <ComboBox fx:id="colSelector" prefWidth="200.0" />
+               </children>
+            </HBox>
             </children>
         </VBox>
+          <CheckBox fx:id="enlargeCheck" minWidth="-Infinity" mnemonicParsing="false" text="%EnlargeTargetSheetWhenDataOut" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

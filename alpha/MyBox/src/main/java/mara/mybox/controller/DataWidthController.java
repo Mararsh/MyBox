@@ -64,12 +64,12 @@ public class DataWidthController extends BaseDataOperationController {
     }
 
     @FXML
-    public void plusWidth() {
+    public void plusAction() {
         widthInput.setText((width + 1) + "");
     }
 
     @FXML
-    public void minusWidth() {
+    public void minusAction() {
         if (width <= 1) {
             return;
         }

@@ -230,4 +230,20 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
         editTab.setText(message("EditText"));
     }
 
+    public void loadText(String text) {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            tabPane.getSelectionModel().select(editTab);
+            isSettingValues = true;
+            textsEditArea.setText(text);
+            isSettingValues = false;
+            editTab.setText(message("EditText") + " *");
+            synchronizeAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
 }

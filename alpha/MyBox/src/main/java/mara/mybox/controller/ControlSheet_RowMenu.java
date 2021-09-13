@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheet_RowMenu extends ControlSheet_Paste {
+public abstract class ControlSheet_RowMenu extends ControlSheet_Buttons {
 
     @Override
     public void popRowLabelMenu(Label label) {

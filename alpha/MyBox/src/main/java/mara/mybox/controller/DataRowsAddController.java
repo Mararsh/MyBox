@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
@@ -24,6 +25,8 @@ public class DataRowsAddController extends BaseDataOperationController {
     protected RadioButton aboveRadio;
     @FXML
     protected TextField numberInput;
+    @FXML
+    protected VBox rowsBox;
 
     @Override
     public void setParameters(ControlSheet sheetController, int row, int col) {
@@ -62,6 +65,31 @@ public class DataRowsAddController extends BaseDataOperationController {
         }
     }
 
+    @Override
+    public void updateControls() {
+        try {
+            super.updateControls();
+
+            rowsBox.setVisible(sheetController.sheetInputs != null && sheetController.sheetInputs.length > 0);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void plusAction() {
+        numberInput.setText((number + 1) + "");
+    }
+
+    @FXML
+    public void minusAction() {
+        if (number <= 1) {
+            return;
+        }
+        numberInput.setText((number - 1) + "");
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -70,10 +98,14 @@ public class DataRowsAddController extends BaseDataOperationController {
                 popError(message("InvalidParameters"));
                 return;
             }
-            int row = rowSelector.getSelectionModel().getSelectedIndex();
-            if (row < 0) {
-                popError(message("NoSelection"));
-                return;
+            int row;
+            if (rowsBox.isVisible()) {
+                row = rowSelector.getSelectionModel().getSelectedIndex();
+                if (row < 0) {
+                    row = rowSelector.getItems().size() - 1;
+                }
+            } else {
+                row = 0;
             }
             sheetController.addRows(row, aboveRadio.isSelected(), number);
         } catch (Exception e) {

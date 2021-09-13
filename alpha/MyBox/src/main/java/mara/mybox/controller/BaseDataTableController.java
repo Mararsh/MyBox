@@ -290,13 +290,11 @@ public abstract class BaseDataTableController<P> extends BaseController {
                 items.add(menu);
             }
 
-            if (refreshButton != null && refreshButton.isVisible() && !refreshButton.isDisabled()) {
-                menu = new MenuItem(Languages.message("Refresh"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    refreshAction();
-                });
-                items.add(menu);
-            }
+            menu = new MenuItem(Languages.message("Refresh"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                refreshAction();
+            });
+            items.add(menu);
 
             return items;
 

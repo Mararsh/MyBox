@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,6 +9,7 @@ import java.util.Random;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataClipboard;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppValues;
@@ -97,15 +99,71 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
 
     @FXML
     @Override
-    public void pasteContentInSystemClipboard() {
-        DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
-        controller.setParameters((ControlSheet) this, -1, -1);
+    public void myBoxClipBoard() {
+        DataClipboardPopController.open((ControlSheet) this);
     }
 
-    @FXML
-    public void pasteContentInDataClipboard() {
-        DataPasteController controller = (DataPasteController) openChildStage(Fxmls.DataPasteFxml, false);
-        controller.setParameters((ControlSheet) this, -1, -1);
+    public void paste(String[][] data, int row, int col, boolean enlarge) {
+        try {
+            if (data == null || data.length == 0) {
+                popError(message("NoData"));
+                return;
+            }
+            pickData();
+            if (pageData == null) {
+                if (enlarge) {
+                    makeSheet(data);
+                }
+                return;
+            }
+            if (row < 0 || row > rowsNumber - 1) {
+                row = rowsNumber - 1;
+            }
+            if (col < 0 || col > colsNumber - 1) {
+                col = colsNumber - 1;
+            }
+            int dataRowsSize = data.length, rowsSize = rowsNumber;
+            int dataColsSize = data[0].length, colsSize = colsNumber;
+            if (row + dataRowsSize > rowsNumber && enlarge) {
+                rowsSize = row + dataRowsSize;
+            }
+            if (col + dataColsSize > colsNumber && enlarge) {
+                colsSize = col + dataColsSize;
+            }
+            String[][] values = new String[rowsSize][colsSize];
+            for (int r = 0; r < rowsSize; r++) {
+                for (int c = 0; c < colsSize; c++) {
+                    if (r >= row && r < row + dataRowsSize && c >= col && c < col + dataColsSize) {
+                        values[r][c] = data[r - row][c - col];
+                    } else if (r < rowsNumber && c < colsNumber) {
+                        values[r][c] = pageData[r][c];
+                    } else {
+                        values[r][c] = defaultColValue;
+                    }
+                }
+            }
+            makeSheet(values);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
+    public void paste(File file, int row, int col, boolean enlarge) {
+        try {
+            if (file == null) {
+                popError(message("NoData"));
+                return;
+            }
+
+//            isSettingValues = true;
+//            for (int r = 0; r < Math.min(sheetInputs.length, values.length); ++r) {
+//                sheetInputs[r][col].setText(values[r]);
+//            }
+//            isSettingValues = false;
+//            sheetChanged();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
     }
 
     @FXML
@@ -265,20 +323,25 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
         } else {
             int rNumber = current.length;
             values = new String[rNumber + number][cNumber];
-            int base = row + (above ? 0 : 1);
+            int base;
+            if (row < 0) {
+                base = 0;
+            } else {
+                base = row + (above ? 0 : 1);
+            }
             for (int r = 0; r < base; ++r) {
                 for (int c = 0; c < cNumber; ++c) {
                     values[r][c] = current[r][c];
                 }
             }
-            for (int r = 0; r < number; ++r) {
+            for (int r = base; r < base + number; ++r) {
                 for (int c = 0; c < cNumber; ++c) {
-                    values[base + r][c] = defaultColValue;
+                    values[r][c] = defaultColValue;
                 }
             }
-            for (int r = base; r < rNumber; ++r) {
+            for (int r = base + number; r < rNumber + number; ++r) {
                 for (int c = 0; c < cNumber; ++c) {
-                    values[r + number][c] = current[r][c];
+                    values[r][c] = current[r - number][c];
                 }
             }
         }
@@ -338,28 +401,33 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
         if (columns == null) {
             columns = new ArrayList<>();
         }
-        int base = col + (left ? 0 : 1);
+        int base;
+        if (col < 0) {
+            base = 0;
+        } else {
+            base = col + (left ? 0 : 1);
+        }
         makeColumns(base, number);
         String[][] current = pickData();
         if (current == null) {
             makeSheet(null);
-        } else {
-            int rNumber = current.length;
-            int cNumber = current[0].length + number;
-            String[][] values = new String[rNumber][cNumber];
-            for (int j = 0; j < rNumber; ++j) {
-                for (int i = 0; i < base; ++i) {
-                    values[j][i] = current[j][i];
-                }
-                for (int i = base + number; i < cNumber; ++i) {
-                    values[j][i] = current[j][i - 1];
-                }
-                for (int i = base; i < base + number; ++i) {
-                    values[j][i] = defaultColValue;
-                }
-            }
-            makeSheet(values);
+            return;
         }
+        int rNumber = current.length;
+        int cNumber = current[0].length + number;
+        String[][] values = new String[rNumber][cNumber];
+        for (int r = 0; r < rNumber; ++r) {
+            for (int c = 0; c < base; ++c) {
+                values[r][c] = current[r][c];
+            }
+            for (int c = base; c < base + number; ++c) {
+                values[r][c] = defaultColValue;
+            }
+            for (int c = base + number; c < cNumber; ++c) {
+                values[r][c] = current[r][c - number];
+            }
+        }
+        makeSheet(values);
     }
 
     @FXML

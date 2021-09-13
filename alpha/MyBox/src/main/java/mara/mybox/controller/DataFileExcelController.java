@@ -100,9 +100,8 @@ public class DataFileExcelController extends BaseDataFileController {
     }
 
     @Override
-    public void loadFile() {
+    public void pickOptions() {
         sheetController.sourceWithNames = sourceWithNamesCheck.isSelected();
-        super.loadFile();
     }
 
     public void setFile(File file, boolean withName) {

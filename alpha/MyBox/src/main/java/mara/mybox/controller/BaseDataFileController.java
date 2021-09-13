@@ -95,6 +95,14 @@ public abstract class BaseDataFileController extends BaseController {
         }
     }
 
+    public void pickOptions() {
+        try {
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @FXML
     @Override
     public void createAction() {
@@ -103,6 +111,7 @@ public abstract class BaseDataFileController extends BaseController {
                 return;
             }
             sourceFile = null;
+            pickOptions();
             dataController.createAction();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -115,8 +124,8 @@ public abstract class BaseDataFileController extends BaseController {
             return;
         }
         sourceFile = file;
-        dataController.userSavedDataDefinition = true;
         dataController.initCurrentPage();
+        dataController.userSavedDataDefinition = true;
         loadFile();
     }
 
@@ -130,6 +139,7 @@ public abstract class BaseDataFileController extends BaseController {
     }
 
     public void loadFile() {
+        pickOptions();
         dataController.sourceFile = sourceFile;
         dataController.loadFile();
     }
@@ -167,7 +177,11 @@ public abstract class BaseDataFileController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        dataController.saveFile();
+        if (sourceFile == null) {
+            saveAsAction();
+        } else {
+            dataController.saveFile();
+        }
     }
 
     @Override

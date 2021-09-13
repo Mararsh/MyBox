@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
@@ -24,6 +25,8 @@ public class DataColumnsAddController extends BaseDataOperationController {
     protected RadioButton beforeRadio;
     @FXML
     protected TextField numberInput;
+    @FXML
+    protected VBox colsBox;
 
     @Override
     public void setParameters(ControlSheet sheetController, int row, int col) {
@@ -62,6 +65,31 @@ public class DataColumnsAddController extends BaseDataOperationController {
         }
     }
 
+    @Override
+    public void updateControls() {
+        try {
+            super.updateControls();
+
+            colsBox.setVisible(sheetController.columns != null && !sheetController.columns.isEmpty());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void plusAction() {
+        numberInput.setText((number + 1) + "");
+    }
+
+    @FXML
+    public void minusAction() {
+        if (number <= 1) {
+            return;
+        }
+        numberInput.setText((number - 1) + "");
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -70,10 +98,14 @@ public class DataColumnsAddController extends BaseDataOperationController {
                 popError(message("InvalidParameters"));
                 return;
             }
-            int col = colSelector.getSelectionModel().getSelectedIndex();
-            if (col < 0) {
-                popError(message("NoSelection"));
-                return;
+            int col;
+            if (sheetController.columns == null || sheetController.columns.isEmpty()) {
+                col = 0;
+            } else {
+                col = colSelector.getSelectionModel().getSelectedIndex();
+                if (col < 0) {
+                    col = colSelector.getItems().size() - 1;
+                }
             }
             sheetController.addCols(col, beforeRadio.isSelected(), number);
         } catch (Exception e) {

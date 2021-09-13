@@ -169,7 +169,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
     }
 
     protected void updateLabel() {
-        totalLabel.setText(message("Total") + ":" + totalSize);
+        totalLabel.setText(message("Total") + ":" + rowsTotal());
     }
 
     protected boolean checkCurrentPage() {

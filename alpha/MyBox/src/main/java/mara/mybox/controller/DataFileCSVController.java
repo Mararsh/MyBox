@@ -8,6 +8,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
@@ -66,12 +68,15 @@ public class DataFileCSVController extends BaseDataFileController {
     }
 
     @Override
-    public void loadFile() {
-        sheetController.sourceCharset = csvReadController.charset;
-        sheetController.sourceCsvDelimiter = csvReadController.delimiter;
-        sheetController.autoDetermineSourceCharset = csvReadController.autoDetermine;
-        sheetController.sourceWithNames = csvReadController.withNamesCheck.isSelected();
-        super.loadFile();
+    public void pickOptions() {
+        try {
+            sheetController.sourceCharset = csvReadController.charset;
+            sheetController.sourceCsvDelimiter = csvReadController.delimiter;
+            sheetController.autoDetermineSourceCharset = csvReadController.autoDetermine;
+            sheetController.sourceWithNames = csvReadController.withNamesCheck.isSelected();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public void setFile(File file, boolean withName, char delimiter) {
@@ -85,13 +90,24 @@ public class DataFileCSVController extends BaseDataFileController {
         if (sourceFile == null) {
             fileInfoLabel.setText("");
         } else {
-            fileInfoLabel.setText(message("File") + ": " + sourceFile.getAbsolutePath() + "\n"
+            String info;
+            info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
+                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
                     + message("Charset") + ": " + sheetController.sourceCharset + "\n"
                     + message("Delimiter") + ": " + sheetController.sourceCsvDelimiter + "\n"
-                    + message("RowsNumber") + ": " + sheetController.totalSize + "\n"
+                    + message("RowsNumber") + ": " + sheetController.rowsTotal() + "\n"
                     + (sheetController.columns == null ? "" : message("ColumnsNumber") + ": " + sheetController.columns.size() + "\n")
                     + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n"
-                    + message("Load") + ": " + DateTools.nowString());
+                    + message("CurrentPage") + ": " + StringTools.format(sheetController.currentPage)
+                    + " / " + StringTools.format(sheetController.pagesNumber) + "\n";
+            if (sheetController.pagesNumber > 1 && sheetController.sheetInputs != null) {
+                info += message("RowsRangeInPage")
+                        + ": " + StringTools.format(sheetController.currentPageStart) + " - "
+                        + StringTools.format(sheetController.currentPageStart + sheetController.sheetInputs.length - 1)
+                        + " ( " + StringTools.format(sheetController.sheetInputs.length) + " )\n";
+            }
+            info += message("PageModifyTime") + ": " + DateTools.nowString();
+            fileInfoLabel.setText(info);
         }
     }
 
@@ -111,7 +127,6 @@ public class DataFileCSVController extends BaseDataFileController {
         sheetController.sourceFile = sourceFile;
         sheetController.targetCharset = csvWriteController.charset;
         sheetController.targetCsvDelimiter = csvWriteController.delimiter;
-        sheetController.autoDetermineTargetCharset = csvWriteController.autoDetermine;
         sheetController.targetWithNames = csvWriteController.withNamesCheck.isSelected();
         sheetController.saveAsType = saveAsType;
         sheetController.saveAs();

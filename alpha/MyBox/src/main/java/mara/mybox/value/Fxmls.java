@@ -169,6 +169,7 @@ public class Fxmls {
      */
     public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
+    public static final String DataClipboardPopFxml = "/fxml/DataClipboardPop.fxml";
     public static final String DataCopyToSystemClipboardFxml = "/fxml/DataCopyToSystemClipboard.fxml";
     public static final String DataCopyToMyBoxClipboardFxml = "/fxml/DataCopyToMyBoxClipboard.fxml";
     public static final String DataPasteFxml = "/fxml/DataPaste.fxml";

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -36,14 +35,6 @@ public abstract class ControlSheetFile extends ControlSheetFile_Sheet {
             this.baseTitle = parent.baseTitle;
         }
         setControls();
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        if (parentController != null) {
-            parentController.saveAction();
-        }
     }
 
 }

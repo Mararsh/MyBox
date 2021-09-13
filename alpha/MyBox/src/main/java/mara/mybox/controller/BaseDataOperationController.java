@@ -10,7 +10,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -30,8 +29,6 @@ public abstract class BaseDataOperationController extends BaseController {
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
     protected ToggleGroup colGroup, rowGroup;
-    @FXML
-    protected HBox rowBox, colBox;
     @FXML
     protected RadioButton rowCheckedRadio, rowCurrentPageRadio, rowAllRadio, rowSelectRadio,
             colCheckedRadio, colAllRadio, colSelectRadio;
@@ -126,6 +123,8 @@ public abstract class BaseDataOperationController extends BaseController {
                 rowSelector.getItems().setAll(rows);
                 if (v != null && rows.contains(v)) {
                     rowSelector.setValue(v);
+                } else if (!rows.isEmpty()) {
+                    rowSelector.getSelectionModel().select(0);
                 }
             }
             if (rowsListController != null) {
@@ -143,14 +142,18 @@ public abstract class BaseDataOperationController extends BaseController {
                 }
             }
             List<String> cols = new ArrayList<>();
-            for (ColumnDefinition c : sheetController.columns) {
-                cols.add(c.getName());
+            if (sheetController.columns != null) {
+                for (ColumnDefinition c : sheetController.columns) {
+                    cols.add(c.getName());
+                }
             }
             if (colSelector != null) {
                 String v = colSelector.getValue();
                 colSelector.getItems().setAll(cols);
                 if (v != null && cols.contains(v)) {
                     colSelector.setValue(v);
+                } else if (!cols.isEmpty()) {
+                    colSelector.getSelectionModel().select(0);
                 }
             }
             if (colsListController != null) {

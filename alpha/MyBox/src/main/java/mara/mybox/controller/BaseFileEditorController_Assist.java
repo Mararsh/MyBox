@@ -45,7 +45,7 @@ import mara.mybox.tools.TextTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -134,7 +134,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            bottomLabel.setText(Languages.message("CheckingEncoding"));
+            bottomLabel.setText(message("CheckingEncoding"));
             task = new SingletonTask<Void>() {
 
                 @Override
@@ -180,7 +180,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                         }
                         if (sourceInformation.isWithBom()) {
                             encodeSelector.setDisable(true);
-                            bomLabel.setText(Languages.message("WithBom"));
+                            bomLabel.setText(message("WithBom"));
                             if (targetBomCheck != null) {
                                 targetBomCheck.setSelected(true);
                             }
@@ -219,7 +219,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
         }
         if (lineBreak == Line_Break.Value && lineBreakValue == null
                 || lineBreak == Line_Break.Width && lineBreakWidth <= 0) {
-            popError(Languages.message("WrongLineBreak"));
+            popError(message("WrongLineBreak"));
             breakLinePane.setExpanded(true);
             return;
         }
@@ -372,7 +372,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            bottomLabel.setText(Languages.message("ReadingFile"));
+            bottomLabel.setText(message("ReadingFile"));
             task = new SingletonTask<Void>() {
 
                 private String text;
@@ -467,7 +467,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
 
         if (changed && !validMainArea()) {
             if (editLabel != null) {
-                editLabel.setText(Languages.message("InvalidData"));
+                editLabel.setText(message("InvalidData"));
             }
             mainArea.setStyle(NodeStyleTools.badStyle);
 //            popError(message("InvalidData"));
@@ -506,7 +506,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 && sourceInformation.getFindReplace().getFileRange() != null) {
             FindReplaceFile findReplaceFile = sourceInformation.getFindReplace();
             findReplaceController.lastFileRange = findReplaceFile.getFileRange();
-            String info = Languages.message("RangeInFile") + ":"
+            String info = message("RangeInFile") + ":"
                     + (findReplaceController.lastFileRange.getStart() / findReplaceFile.getUnit() + 1) + "-"
                     + (findReplaceController.lastFileRange.getEnd() / findReplaceFile.getUnit());
 
@@ -530,7 +530,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
                 mainArea.selectRange(start, end);
                 findReplaceController.lastStringRange = range;
-                info += "\n" + Languages.message("RangeInPage") + ":" + (range.getStart() + 1) + "-" + (range.getEnd());
+                info += "\n" + message("RangeInPage") + ":" + (range.getStart() + 1) + "-" + (range.getEnd());
             }
             findReplaceController.findLabel.setText(info);
         }
@@ -584,7 +584,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                     locateObjectButton.setDisable(true);
                     locateLineButton.setDisable(true);
                 }
-                fileInfo = Languages.message("CountingTotalNumber") + "\n\n";
+                fileInfo = message("CountingTotalNumber") + "\n\n";
             } else {
                 fileObjectNumber = sourceInformation.getObjectsNumber();
                 fileLinesNumber = sourceInformation.getLinesNumber();
@@ -595,34 +595,34 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
                 sourceInformation.setPagesNumber(pagesNumber);
             }
-            fileInfo += Languages.message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
-                    + Languages.message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
-                    + (editType == Edit_Type.Bytes ? Languages.message("BytesNumberInFile") : Languages.message("CharactersNumberInFile"))
+            fileInfo += message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
+                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
+                    + (editType == Edit_Type.Bytes ? message("BytesNumberInFile") : message("CharactersNumberInFile"))
                     + ": " + StringTools.format(fileObjectNumber) + "\n"
-                    + Languages.message("LinesNumberInFile") + ": " + StringTools.format(fileLinesNumber) + "\n"
-                    + (editType == Edit_Type.Bytes ? Languages.message("PageSizeBytes") : Languages.message("PageSizeCharacters"))
+                    + message("LinesNumberInFile") + ": " + StringTools.format(fileLinesNumber) + "\n"
+                    + (editType == Edit_Type.Bytes ? message("PageSizeBytes") : message("PageSizeCharacters"))
                     + ": " + StringTools.format(pageSize) + "\n"
-                    + Languages.message("CurrentPage") + ": " + StringTools.format(currentPage)
+                    + message("CurrentPage") + ": " + StringTools.format(currentPage)
                     + " / " + StringTools.format(pagesNumber) + "\n";
         }
 
         String objectInfo, lineInfo;
         if (pagesNumber > 1) {
-            objectInfo = editType == Edit_Type.Bytes ? Languages.message("BytesRangeInPage") : Languages.message("CharactersRangeInPage");
+            objectInfo = editType == Edit_Type.Bytes ? message("BytesRangeInPage") : message("CharactersRangeInPage");
             objectInfo += ": " + StringTools.format(pageObjectStart) + " - " + StringTools.format(pageObjectEnd)
                     + " ( " + StringTools.format(pageObjectsNumber) + " )\n";
-            lineInfo = Languages.message("LinesRangeInPage")
+            lineInfo = message("LinesRangeInPage")
                     + ": " + StringTools.format(pageLineStart) + " - " + StringTools.format(pageLineEnd)
                     + " ( " + StringTools.format(pageLinesNumber) + " )\n";
         } else {
-            objectInfo = editType == Edit_Type.Bytes ? Languages.message("BytesNumberInPage") : Languages.message("CharactersNumberInPage");
+            objectInfo = editType == Edit_Type.Bytes ? message("BytesNumberInPage") : message("CharactersNumberInPage");
             objectInfo += ": " + StringTools.format(pageObjectsNumber) + "\n";
-            lineInfo = Languages.message("LinesNumberInPage") + ": " + StringTools.format(pageLinesNumber) + "\n";
+            lineInfo = message("LinesNumberInPage") + ": " + StringTools.format(pageLinesNumber) + "\n";
         }
-        fileInfo += Languages.message("CurrentFileLineBreak") + ": " + sourceInformation.lineBreakName() + "\n"
-                + Languages.message("CurrentFileCharset") + ": " + sourceInformation.getCharset().name() + "\n"
+        fileInfo += message("CurrentFileLineBreak") + ": " + sourceInformation.lineBreakName() + "\n"
+                + message("CurrentFileCharset") + ": " + sourceInformation.getCharset().name() + "\n"
                 + objectInfo + lineInfo
-                + Languages.message("PageModifyTime") + ": " + DateTools.nowString();
+                + message("PageModifyTime") + ": " + DateTools.nowString();
         fileLabel.setText(fileInfo);
 
         pageBox.setDisable(changed);
@@ -890,11 +890,11 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
         if (confirmCheck.isVisible() && confirmCheck.isSelected() && (autoSaveTimer == null)) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(Languages.message("SureOverrideFile"));
+            alert.setContentText(message("SureOverrideFile"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
-            ButtonType buttonSaveAs = new ButtonType(Languages.message("SaveAs"));
-            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
@@ -1022,7 +1022,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
         if (sourceFile == null || sourceInformation.getPagesNumber() <= 1) {
             String[] lines = mainArea.getText().split("\n");
             if (lineLocation > lines.length) {
-                popError(Languages.message("NoData"));
+                popError(message("NoData"));
                 return;
             }
             mainArea.requestFocus();
@@ -1035,7 +1035,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
 
         } else {
             if (lineLocation > sourceInformation.getLinesNumber()) {
-                popError(Languages.message("NoData"));
+                popError(message("NoData"));
                 return;
             }
             if (sourceInformation.getCurrentPageLineStart() <= lineLocation
@@ -1121,7 +1121,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
             return;
         }
         if (filterController.filterStrings == null || filterController.filterStrings.length == 0) {
-            popError(Languages.message("InvalidParameters"));
+            popError(message("InvalidParameters"));
             return;
         }
         if (fileChanged.get() && sourceInformation.getPagesNumber() > 1
@@ -1160,7 +1160,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                     if (filterConditionsString == null || filterConditionsString.isEmpty()) {
                         finalCondition = filterInfo.getFile().getAbsolutePath() + "\n" + conditions;
                     } else {
-                        finalCondition = filterConditionsString + "\n" + Languages.message("And") + conditions;
+                        finalCondition = filterConditionsString + "\n" + message("And") + conditions;
                     }
                     filteredFile = filterInfo.filter(filterController.filterLineNumberCheck.isSelected());
                     return filteredFile != null;
@@ -1169,7 +1169,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     if (filteredFile.length() == 0) {
-                        popInformation(Languages.message("NoData"));
+                        popInformation(message("NoData"));
                         return;
                     }
                     TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);

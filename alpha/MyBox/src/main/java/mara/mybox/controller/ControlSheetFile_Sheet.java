@@ -10,6 +10,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -227,7 +228,12 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
 
                 @Override
                 protected boolean handle() {
-                    int base = col + (left ? 0 : 1);
+                    int base;
+                    if (col < 0) {
+                        base = 0;
+                    } else {
+                        base = col + (left ? 0 : 1);
+                    }
                     makeColumns(base, number);
                     saveColumns();
                     File tmpFile = fileAddCols(col, left, number);
@@ -353,6 +359,23 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             Thread thread = new Thread(task);
             thread.setDaemon(false);
             thread.start();
+        }
+    }
+
+    protected void copyPageData(CSVPrinter csvPrinter, List<Integer> cols) {
+        try {
+            if (csvPrinter == null || sheetInputs == null || cols == null || cols.isEmpty()) {
+                return;
+            }
+            for (int r = 0; r < sheetInputs.length; r++) {
+                List<String> values = new ArrayList<>();
+                for (int c : cols) {
+                    values.add(cellString(r, c));
+                }
+                csvPrinter.printRecord(values);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 

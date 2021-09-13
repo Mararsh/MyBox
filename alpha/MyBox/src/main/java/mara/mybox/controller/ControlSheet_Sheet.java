@@ -39,7 +39,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         if (sheetBox.getChildren().contains(noDataLabel)) {
             sheetBox.getChildren().remove(noDataLabel);
         }
-//        sheetChanged(true);
+//        sheetChanged(false);
     }
 
     public void makeSheet(String[][] data) {
@@ -355,6 +355,10 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
         sheetChanged(true);
     }
 
+    public void sheetSaved() {
+        sheetChanged(false);
+    }
+
     public String askValue(String header, String name, String initValue) {
         String value = PopTools.askValue(baseTitle, header, name, initValue);
         if (value == null) {
@@ -365,7 +369,7 @@ public abstract class ControlSheet_Sheet extends ControlSheet_Columns {
 
     protected long rowsTotal() {
         if (pagesNumber <= 1) {
-            return pageData == null ? 0 : pageData.length;
+            return sheetInputs == null ? 0 : sheetInputs.length;
         } else {
             return totalSize;
         }

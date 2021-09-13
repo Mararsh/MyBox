@@ -87,7 +87,6 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             super.setControlsStyle();
 
             NodeStyleTools.setTooltip(trimColumnsButton, message("RenameAllColumns"));
-            NodeStyleTools.setTooltip(editSheetButton, message("EditPageRows"));
             NodeStyleTools.setTooltip(equalSheetButton, message("SetValues"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -217,6 +216,19 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             validate();
             updateHtml();
             updateText();
+
+            boolean noRows = sheetInputs == null || sheetInputs.length == 0;
+            boolean noCols = columns == null || columns.isEmpty();
+            rowsAddButton.setDisable(noCols);
+            rowsDeleteButton.setDisable(noRows);
+            columnsDeleteButton.setDisable(noCols);
+            widthSheetButton.setDisable(noCols);
+            copyToSystemClipboardButton.setDisable(noRows);
+            copyToMyBoxClipboardButton.setDisable(noRows);
+            equalSheetButton.setDisable(noRows);
+            sortSheetButton.setDisable(noRows);
+            calculateSheetButton.setDisable(noRows);
+
             BaseDataOperationController.update();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -391,7 +403,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonSave) {
-                saveAction();
+                parentController.saveAction();
                 goOn = false;
             } else {
                 goOn = result.get() == buttonNotSave;

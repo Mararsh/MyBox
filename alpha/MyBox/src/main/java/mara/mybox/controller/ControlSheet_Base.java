@@ -65,7 +65,8 @@ public abstract class ControlSheet_Base extends BaseController {
     @FXML
     protected VBox sheetBox, defBox;
     @FXML
-    protected Button sizeSheetButton, deleteSheetButton, copySheetButton, pasteSheetButton, equalSheetButton, editSheetButton;
+    protected Button rowsAddButton, rowsDeleteButton, columnsAddButton, columnsDeleteButton, widthSheetButton,
+            calculateSheetButton, sortSheetButton, deleteSheetButton, equalSheetButton;
     @FXML
     protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck, textTitleCheck, textColumnCheck, textRowCheck,
             overPopMenuCheck, rightClickPopMenuCheck;
