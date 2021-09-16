@@ -24,6 +24,7 @@ License:    Apache License Version 2.0
                 <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%DeleteColumns" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
+        <Label fx:id="targetLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="%Target" textAlignment="CENTER" wrapText="true" />
         <RadioButton fx:id="colCheckedRadio" mnemonicParsing="false" selected="true" text="%Selected">
             <toggleGroup>
                 <ToggleGroup fx:id="colGroup" />

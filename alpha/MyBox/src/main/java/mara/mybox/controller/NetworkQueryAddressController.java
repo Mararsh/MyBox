@@ -182,11 +182,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
                     certArea.setText(certString);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -249,11 +245,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

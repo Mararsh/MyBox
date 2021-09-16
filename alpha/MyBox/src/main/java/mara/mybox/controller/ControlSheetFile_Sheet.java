@@ -31,7 +31,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
 
     protected abstract File fileDeleteCols(List<Integer> cols);
 
-    protected abstract File pasteFileColValuesDo(int col);
+    protected abstract File filePaste(ControlSheetCSV sourceController, int row, int col, boolean enlarge);
 
     @Override
     public void newSheet(int rows, int cols) {
@@ -70,11 +70,25 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                         return false;
                     }
                     if (toSystemClipboard) {
-                        TextClipboardTools.copyFileToSystemClipboard(parentController, file);
+                        return true;
                     } else {
-                        DataClipboard.createFile(tableDataDefinition, file, withNames);
+                        List<ColumnDefinition> dColumns = new ArrayList<>();
+                        for (int c : cols) {
+                            dColumns.add(columns.get(c));
+                        }
+                        DataClipboard.create(tableDataDefinition, tableDataColumn, file, dColumns);
                     }
                     return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (toSystemClipboard) {
+                        TextClipboardTools.copyFileToSystemClipboard(parentController, file);
+                    } else {
+                        popSuccessful();
+                        DataClipboardController.update();
+                    }
                 }
 
             };
@@ -213,7 +227,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             return;
         }
         if (sourceFile == null || pagesNumber <= 1) {
-            super.addCols(col, left, number);
+            addCols(col, left, number);
             return;
         }
         if (!checkBeforeNextAction()) {
@@ -235,7 +249,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                         base = col + (left ? 0 : 1);
                     }
                     makeColumns(base, number);
-                    saveColumns();
+                    saveDefinition();
                     File tmpFile = fileAddCols(col, left, number);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
@@ -292,7 +306,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                         }
                     }
                     columns = leftColumns;
-                    saveColumns();
+                    saveDefinition();
                     File tmpFile = fileDeleteCols(cols);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
@@ -314,20 +328,16 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
     }
 
     @Override
-    protected void pastePagesColFromDataClipboard(int col) {
-//        if (copiedCol == null || copiedCol.isEmpty()) {
-//            popError(message("NoData"));
-//            return;
-//        }
-        if (sourceFile == null || pagesNumber <= 1) {
-            pastePageColFromSystemClipboard(col);
+    public void pasteFile(ControlSheetCSV sourceController, int row, int col, boolean enlarge) {
+        if (sourceController == null || sourceController.rowsTotal() == 0) {
+            popError(message("NoData"));
             return;
         }
-        if (!checkBeforeNextAction() || totalSize <= 0) {
+        if (sourceFile == null || (pagesNumber > 1 && !checkBeforeNextAction())) {
             return;
         }
-        if (!PopTools.askSure(baseTitle, colName(col) + " - " + message("PasteFileCol") + "\n"
-                + message("NoticeAllChangeUnrecover"))) {
+        if (sourceController.sourceFile == null
+                || (sourceController.pagesNumber > 1 && !sourceController.checkBeforeNextAction())) {
             return;
         }
         synchronized (this) {
@@ -338,7 +348,14 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = pasteFileColValuesDo(col);
+                    if (enlarge) {
+                        int diff = col + sourceController.colsNumber - colsNumber;
+                        if (diff > 0) {
+                            makeColumns(col, diff);
+                            saveDefinition();
+                        }
+                    }
+                    File tmpFile = filePaste(sourceController, row, col, enlarge);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
@@ -354,11 +371,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -369,7 +382,11 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             }
             for (int r = 0; r < sheetInputs.length; r++) {
                 List<String> values = new ArrayList<>();
+                int colsSize = sheetInputs[r].length;
                 for (int c : cols) {
+                    if (c > colsSize) {
+                        break;
+                    }
                     values.add(cellString(r, c));
                 }
                 csvPrinter.printRecord(values);

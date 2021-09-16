@@ -181,11 +181,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                     }
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 
@@ -215,11 +211,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
 //                    loadScopes();
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 
@@ -245,11 +237,7 @@ public class ImageManufactureScopesSavedController extends ImageViewerController
                     scopesList.refresh();
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 

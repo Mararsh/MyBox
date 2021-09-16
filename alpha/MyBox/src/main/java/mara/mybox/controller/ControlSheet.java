@@ -88,6 +88,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
 
             NodeStyleTools.setTooltip(trimColumnsButton, message("RenameAllColumns"));
             NodeStyleTools.setTooltip(equalSheetButton, message("SetValues"));
+            NodeStyleTools.setTooltip(synchronizeEditButton, message("SynchronizeChangesToOtherPanes"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -211,7 +212,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
     @Override
     protected void afterDataChanged() {
         try {
-            updateEdit();
+            textApplyAction();
             makeDefintionPane();
             validate();
             updateHtml();
@@ -262,10 +263,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
                 }
 
             };
-            csvTask.setSelf(csvTask);
-            Thread thread = new Thread(csvTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(csvTask, false);
         }
     }
 
@@ -309,10 +307,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
                 }
 
             };
-            excelTask.setSelf(excelTask);
-            Thread thread = new Thread(excelTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(excelTask, false);
         }
     }
 
@@ -384,6 +379,12 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
     }
 
     @Override
+    public boolean controlAltM() {
+        myBoxClipBoard();
+        return true;
+    }
+
+    @Override
     public boolean checkBeforeNextAction() {
         boolean goOn;
         if (!dataChangedNotify.get()) {
@@ -391,6 +392,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
+            alert.setHeaderText(getMyStage().getTitle());
             alert.setContentText(Languages.message("NeedSaveBeforeAction"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(Languages.message("Save"));

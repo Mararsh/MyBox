@@ -260,11 +260,7 @@ public class ControlMatrix extends ControlSheet {
                     loadMatrix(values);
                 }
             };
-//            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+//            start(task);
         }
 
     }
@@ -445,11 +441,7 @@ public class ControlMatrix extends ControlSheet {
                     dataChanged(false);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -828,7 +820,7 @@ public class ControlMatrix extends ControlSheet {
     }
 
     @Override
-    protected boolean saveColumns() {
+    protected boolean saveDefinition() {
         return true;
     }
 
@@ -845,6 +837,11 @@ public class ControlMatrix extends ControlSheet {
     @Override
     public void sort(int col, boolean asc) {
         sortRows(rowsIndex(true), col, asc);
+    }
+
+    @Override
+    public void pasteFile(ControlSheetCSV sourceController, int row, int col, boolean enlarge) {
+
     }
 
     @Override

@@ -279,11 +279,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     setSourceClip(clipImage);
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -389,11 +385,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     imageController.operation = ImageOperation.Paste;
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
 
     }

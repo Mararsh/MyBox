@@ -11,14 +11,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -36,8 +33,8 @@ License:    Apache License Version 2.0
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                             <children>
-                        <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                           <children>
+                                <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+                                    <children>
                                         <Label fx:id="sheetLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
                                         <Button fx:id="calculateSheetButton" mnemonicParsing="false" onAction="#calculateDataAction">
                                             <graphic>
@@ -48,15 +45,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
-                                 <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconClipboard.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconClipboard.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="copyToMyBoxClipboardButton" mnemonicParsing="false" onAction="#copyToMyBoxClipboard">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -66,15 +63,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="copyToSystemClipboardButton" layoutX="127.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyToSystemClipboard">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/iconCopySystem.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="copyToSystemClipboardButton" layoutX="127.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyToSystemClipboard">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconCopySystem.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="widthSheetButton" mnemonicParsing="false" onAction="#widthDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -84,15 +81,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="columnsDeleteButton" layoutX="203.0" layoutY="10.0" mnemonicParsing="false" onAction="#columnsDeleteAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconColumnDelete.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="columnsDeleteButton" layoutX="203.0" layoutY="10.0" mnemonicParsing="false" onAction="#columnsDeleteAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconColumnDelete.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="columnsAddButton" mnemonicParsing="false" onAction="#columnsAddAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -102,24 +99,24 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="rowsDeleteButton" layoutX="280.0" layoutY="10.0" mnemonicParsing="false" onAction="#rowsDeleteAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRowDelete.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="rowsAddButton" layoutX="203.0" layoutY="10.0" mnemonicParsing="false" onAction="#rowsAddAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconRowAdd.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="rowsDeleteButton" layoutX="280.0" layoutY="10.0" mnemonicParsing="false" onAction="#rowsDeleteAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRowDelete.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="rowsAddButton" layoutX="203.0" layoutY="10.0" mnemonicParsing="false" onAction="#rowsAddAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRowAdd.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="sortSheetButton" mnemonicParsing="false" onAction="#sortDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -138,8 +135,8 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                           </children>
-                        </FlowPane>
+                                    </children>
+                                </FlowPane>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
                                         <VBox fx:id="sheetBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="1.0">
@@ -177,15 +174,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="synchronizeEditButton" mnemonicParsing="false" onAction="#synchronizeAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconSynchronize.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
+                              <Button fx:id="synchronizeEditButton" mnemonicParsing="false" onAction="#synchronizeEdit">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconSynchronize.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </HBox>
                                 <SplitPane dividerPositions="0.25" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -194,22 +191,13 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <Label text="%SourceDelimiter" />
-                                                        <RadioButton fx:id="commaSourceRadio" mnemonicParsing="false" selected="true" text=",">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="delimiterSourceGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton fx:id="blankSourceRadio" mnemonicParsing="false" text="%Blank" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="tabSourceRadio" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="blank4SourceRadio" mnemonicParsing="false" text="%Blank4" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="blank8SourceRadio" mnemonicParsing="false" text="%Blank8" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="lineSourceRadio" mnemonicParsing="false" text="|" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="sharpSourceRadio" mnemonicParsing="false" text="#" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="semicolonsSourceRadio" mnemonicParsing="false" text=";" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="atSourceRadio" mnemonicParsing="false" text="\@" toggleGroup="$delimiterSourceGroup" />
-                                                        <RadioButton fx:id="stringSourceRadio" mnemonicParsing="false" text="%String" toggleGroup="$delimiterSourceGroup" />
-                                                        <TextField fx:id="delimiterSourceInput" prefWidth="80.0" />
+                                                        <fx:include fx:id="editDelimiter" source="ControlTextDelimiter.fxml" />
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Button mnemonicParsing="false" onAction="#textApplyAction" text="%Change">
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -317,22 +305,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <Label text="%Delimiter" />
-                                                        <RadioButton fx:id="blankDisplayRadio" mnemonicParsing="false" selected="true" text="%Blank">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="delimiterDisplayGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton fx:id="tabDisplayRadio" mnemonicParsing="false" text="%Tab" toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="commaDisplayRadio" mnemonicParsing="false" text="," toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="blank4DisplayRadio" mnemonicParsing="false" text="%Blank4" toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="blank8DisplayRadio" mnemonicParsing="false" text="%Blank8" toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="lineDisplayRadio" mnemonicParsing="false" text="|" toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="sharpDisplayRadio" mnemonicParsing="false" text="#" toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="semicolonsDisplayRadio" mnemonicParsing="false" text=";" toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="atDisplayRadio" mnemonicParsing="false" text="\@" toggleGroup="$delimiterDisplayGroup" />
-                                                        <RadioButton fx:id="stringDisplayRadio" mnemonicParsing="false" text="%String" toggleGroup="$delimiterDisplayGroup" />
-                                                        <TextField fx:id="delimiterDisplayInput" prefWidth="80.0" />
+                                                        <fx:include fx:id="displayDelimiter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTextDelimiter.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

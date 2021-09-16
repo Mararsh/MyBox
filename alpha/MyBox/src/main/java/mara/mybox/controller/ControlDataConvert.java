@@ -19,13 +19,8 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ValidationTools;
-
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.HtmlStyles;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import org.apache.commons.csv.CSVFormat;
@@ -48,13 +43,13 @@ public class ControlDataConvert extends BaseController {
 
     protected BaseTaskController parent;
     protected List<String> names;
-    protected boolean firstRow, toCsv, toHtml, toXml, toJson, toXlsx, toPdf;
-    protected File csvFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile;
+    protected boolean firstRow, toCsv, toText, toHtml, toXml, toJson, toXlsx, toPdf;
+    protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile;
     protected CSVPrinter csvPrinter;
-    protected FileWriter htmlWriter, xmlWriter, jsonWriter;
+    protected FileWriter textWriter, htmlWriter, xmlWriter, jsonWriter;
     protected XSSFWorkbook xssfBook;
     protected XSSFSheet xssfSheet;
-    protected String indent = "    ", filePrefix;
+    protected String indent = "    ", filePrefix, textDelimiter;
     protected List<Integer> columnWidths;
     protected PaginatedPdfTable pdfTable;
     protected List<List<String>> pageRows;
@@ -66,15 +61,17 @@ public class ControlDataConvert extends BaseController {
     @FXML
     protected ControlCsvOptions csvWriteController;
     @FXML
-    protected ComboBox<String> maxLinesSelector;
+    protected ComboBox<String> maxLinesSelector, targetTextCharsetSelector;
     @FXML
-    protected CheckBox csvCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, xlsxCheck;
+    protected CheckBox csvCheck, textCheck, pdfCheck, htmlCheck, xmlCheck, jsonCheck, xlsxCheck, targetTextWithNamesCheck;
     @FXML
     protected TextArea cssArea;
     @FXML
     protected TextField widthList;
     @FXML
     protected VBox columnsWidthBox, styleBox;
+    @FXML
+    protected ControlTextWriteOptions textWriteOptionsController;
 
     public ControlDataConvert() {
         baseTitle = Languages.message("dataConvert");
@@ -82,19 +79,21 @@ public class ControlDataConvert extends BaseController {
     }
 
     public void setControls(BaseTaskController parent, ControlPdfWriteOptions pdfOptionsController) {
-        setControls(parent, pdfOptionsController, true, true, true, true, true, true);
+        setControls(parent, pdfOptionsController, true, true, true, true, true, true, true);
     }
 
     public void setControls(BaseTaskController parent, ControlPdfWriteOptions pdfOptionsController,
-            boolean toCsv, boolean toJson, boolean toXml, boolean toXlsx, boolean toHtml, boolean toPdf) {
+            boolean toCsv, boolean toText, boolean toJson, boolean toXml, boolean toXlsx, boolean toHtml, boolean toPdf) {
         try {
             this.parent = parent;
             baseName = parent.baseName;
+
             this.pdfOptionsController = pdfOptionsController;
             if (pdfOptionsController != null) {
                 pdfOptionsController.set(baseName, false);
             }
             this.toCsv = toCsv;
+            this.toText = toText;
             this.toJson = toJson;
             this.toXml = toXml;
             this.toXlsx = toXlsx;
@@ -102,6 +101,8 @@ public class ControlDataConvert extends BaseController {
             this.toPdf = toPdf;
             formatsPane.getChildren().clear();
             csvWriteController.setControls(baseName + "Write");
+            textWriteOptionsController.setControls(baseName);
+
             if (toCsv) {
                 formatsPane.getChildren().add(csvCheck);
                 csvCheck.setSelected(UserConfig.getBoolean(baseName + "CSV", true));
@@ -112,6 +113,18 @@ public class ControlDataConvert extends BaseController {
                     }
                 });
             }
+
+            if (toText) {
+                formatsPane.getChildren().add(textCheck);
+                textCheck.setSelected(UserConfig.getBoolean(baseName + "Text", true));
+                textCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "Text", textCheck.isSelected());
+                    }
+                });
+            }
+
             if (toJson) {
                 formatsPane.getChildren().add(jsonCheck);
                 jsonCheck.setSelected(UserConfig.getBoolean(baseName + "Json", false));
@@ -174,27 +187,27 @@ public class ControlDataConvert extends BaseController {
             maxLinesSelector.getItems().addAll(Arrays.asList(Languages.message("NotSplit"), "1000", "500", "200", "300", "800", "2000", "3000", "5000", "8000"
             ));
             maxLinesSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue == null || newValue.isEmpty()) {
-                            return;
-                        }
-                        UserConfig.setString(baseName + "ExportMaxLines", newValue);
-                        if (Languages.message("NotSplit").equals(newValue)) {
-                            maxLines = -1;
-                            ValidationTools.setEditorNormal(maxLinesSelector);
-                            return;
-                        }
-                        try {
-                            int v = Integer.valueOf(newValue);
-                            if (v > 0) {
-                                maxLines = v;
-                                ValidationTools.setEditorNormal(maxLinesSelector);
-                            } else {
-                                ValidationTools.setEditorBadStyle(maxLinesSelector);
-                            }
-                        } catch (Exception e) {
-                            ValidationTools.setEditorBadStyle(maxLinesSelector);
-                        }
-                    });
+                if (newValue == null || newValue.isEmpty()) {
+                    return;
+                }
+                UserConfig.setString(baseName + "ExportMaxLines", newValue);
+                if (Languages.message("NotSplit").equals(newValue)) {
+                    maxLines = -1;
+                    ValidationTools.setEditorNormal(maxLinesSelector);
+                    return;
+                }
+                try {
+                    int v = Integer.valueOf(newValue);
+                    if (v > 0) {
+                        maxLines = v;
+                        ValidationTools.setEditorNormal(maxLinesSelector);
+                    } else {
+                        ValidationTools.setEditorBadStyle(maxLinesSelector);
+                    }
+                } catch (Exception e) {
+                    ValidationTools.setEditorBadStyle(maxLinesSelector);
+                }
+            });
             maxLinesSelector.getSelectionModel().select(UserConfig.getString(baseName + "ExportMaxLines", Languages.message("NotSplit")));
 
         } catch (Exception e) {
@@ -256,6 +269,10 @@ public class ControlDataConvert extends BaseController {
             if (toCsv && csvCheck.isSelected() && csvWriteController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)) {
                 return false;
             }
+            if (toText && textCheck.isSelected()
+                    && textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(NodeStyleTools.badStyle)) {
+                return false;
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -277,6 +294,7 @@ public class ControlDataConvert extends BaseController {
         jsonWriter = null;
         xssfSheet = null;
         csvFile = null;
+        textFile = null;
         htmlFile = null;
         xmlFile = null;
         xlsxFile = null;

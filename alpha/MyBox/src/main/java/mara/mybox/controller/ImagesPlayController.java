@@ -254,11 +254,7 @@ public class ImagesPlayController extends ImageViewerController {
                     playImages();
                 }
             };
-            loading = handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
 
     }
@@ -582,11 +578,7 @@ public class ImagesPlayController extends ImageViewerController {
                     playImages();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -767,11 +759,7 @@ public class ImagesPlayController extends ImageViewerController {
                 controller.loadImages(infos);
             }
         };
-        editTask.setSelf(editTask);
-        Thread thread = new Thread(editTask);
-        thread.setDaemon(false);
-        thread.start();
-
+        start(editTask, false);
     }
 
     /*

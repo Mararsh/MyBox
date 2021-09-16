@@ -31,7 +31,6 @@ public abstract class ControlSheetFile_File extends ControlSheet {
         totalSize = 0;
         pagesNumber = 1;
         totalRead = false;
-        loadError = null;
         savedColumns = null;
         paginationBox.setVisible(false);
         clearSheet();
@@ -104,8 +103,6 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                     }
                     if (error != null) {
                         popError(message(error));
-                    } else if (loadError != null) {
-                        popError(message(loadError));
                     } else {
                         popFailed();
                     }
@@ -119,11 +116,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                 }
 
             };
-            task.setSelf(task);
-            handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -163,8 +156,6 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                     }
                     if (error != null) {
                         popError(message(error));
-                    } else if (loadError != null) {
-                        popError(message(loadError));
                     } else {
                         popFailed();
                     }
@@ -177,10 +168,7 @@ public abstract class ControlSheetFile_File extends ControlSheet {
                 }
 
             };
-            backgroundTask.setSelf(backgroundTask);
-            Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(backgroundTask, false);
         }
 
     }

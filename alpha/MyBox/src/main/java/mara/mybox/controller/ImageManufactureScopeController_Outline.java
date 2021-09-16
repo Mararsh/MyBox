@@ -153,11 +153,7 @@ public class ImageManufactureScopeController_Outline extends ImageManufactureSco
                 }
 
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
 
     }
@@ -237,11 +233,7 @@ public class ImageManufactureScopeController_Outline extends ImageManufactureSco
                     }
 
                 };
-                parentController.handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                parentController.start(task);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -282,11 +274,7 @@ public class ImageManufactureScopeController_Outline extends ImageManufactureSco
                     scopeView.setFitHeight(outlineImage.getHeight() * radio);
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
 
     }

@@ -62,11 +62,7 @@ public class WordViewController extends BaseWebViewController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
             return true;
         }
     }

@@ -223,11 +223,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -379,11 +375,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                     }
 
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

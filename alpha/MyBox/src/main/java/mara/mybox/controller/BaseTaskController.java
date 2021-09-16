@@ -106,10 +106,7 @@ public class BaseTaskController extends BaseController {
                         + " " + DateTools.datetimeMsDuration(new Date(), startTime));
             }
         };
-        task.setSelf(task);
-        Thread thread = new Thread(task);
-        thread.setDaemon(false);
-        thread.start();
+        start(task, false, null);
     }
 
     protected boolean doTask() {

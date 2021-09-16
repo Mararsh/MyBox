@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
@@ -22,6 +23,8 @@ public class DataClipboardPopController extends DataClipboardController {
 
     @FXML
     protected Label targetLabel;
+    @FXML
+    protected Button pasteDataButton;
 
     public void setParameters(ControlSheet parent) {
         try {
@@ -32,6 +35,14 @@ public class DataClipboardPopController extends DataClipboardController {
             targetController.sheetChangedNotify.addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                         updateTitle();
+                    });
+
+            clipboardController.sheetController.dataChangedNotify.addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        pasteDataButton.setDisable(
+                                clipboardController.sheetController.rowsTotal() == 0
+                                || (clipboardController.sheetController.pagesNumber > 1
+                                && clipboardController.sheetController.dataChangedNotify.get()));
                     });
 
         } catch (Exception e) {
@@ -46,6 +57,14 @@ public class DataClipboardPopController extends DataClipboardController {
     @FXML
     @Override
     public void pasteAction() {
+        if (clipboardController.sheetController.rowsTotal() == 0) {
+            popError(message("NoData"));
+            return;
+        }
+        if (clipboardController.sheetController.pagesNumber > 1
+                && !clipboardController.sheetController.checkBeforeNextAction()) {
+            return;
+        }
         DataPasteController controller = (DataPasteController) openChildStage(Fxmls.DataPasteFxml, false);
         controller.setParameters(clipboardController.sheetController, targetController);
     }
@@ -71,11 +90,8 @@ public class DataClipboardPopController extends DataClipboardController {
     /*
         static methods
      */
-    public static DataClipboardPopController open(ControlSheet parent) {
+    public static void closeAll() {
         try {
-            if (parent == null) {
-                return null;
-            }
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
@@ -84,6 +100,17 @@ public class DataClipboardPopController extends DataClipboardController {
                     ((DataClipboardPopController) object).close();
                 }
             }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static DataClipboardPopController open(ControlSheet parent) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            closeAll();
             DataClipboardPopController controller
                     = (DataClipboardPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.DataClipboardPopFxml, false);
             controller.setParameters(parent);

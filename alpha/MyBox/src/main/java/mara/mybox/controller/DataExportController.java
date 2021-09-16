@@ -18,13 +18,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.table.DataFactory;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.EpidemicReport;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.table.DataFactory;
 import mara.mybox.db.table.TableEpidemicReport;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
@@ -413,10 +413,7 @@ public class DataExportController extends BaseTaskController {
                     startButton.setUserData(null);
                 }
             };
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false);
         }
     }
 

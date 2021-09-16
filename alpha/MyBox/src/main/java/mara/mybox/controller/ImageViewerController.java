@@ -549,11 +549,7 @@ public class ImageViewerController extends BaseImageController {
                     }
 
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -675,11 +671,7 @@ public class ImageViewerController extends BaseImageController {
                     }
 
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -775,11 +767,7 @@ public class ImageViewerController extends BaseImageController {
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

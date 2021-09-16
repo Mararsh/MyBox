@@ -189,11 +189,7 @@ public class WebBrowserController extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -239,10 +235,10 @@ public class WebBrowserController extends BaseController {
         return controller;
     }
 
-    public static WebBrowserController oneOpen(String address) {
+    public static WebBrowserController oneOpen(String address, boolean focus) {
         WebBrowserController controller = oneOpen();
         if (controller != null && address != null) {
-            controller.loadAddress(address, true);
+            controller.loadAddress(address, focus);
         }
         return controller;
     }

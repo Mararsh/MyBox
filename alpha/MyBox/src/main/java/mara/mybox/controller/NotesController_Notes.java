@@ -129,10 +129,7 @@ public class NotesController_Notes extends NotesController_Notebooks {
                     notesConditionBox.applyCss();
                 }
             };
-            bookTask.setSelf(bookTask);
-            Thread thread = new Thread(bookTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(bookTask, false);
         }
 
     }

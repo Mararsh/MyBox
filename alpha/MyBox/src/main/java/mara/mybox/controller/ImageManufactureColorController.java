@@ -500,11 +500,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             colorOperationType.name(), colorActionType.name(), newImage, cost);
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -660,10 +656,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             }
 
         };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
-
+        start(demoTask, false);
     }
 
     @Override

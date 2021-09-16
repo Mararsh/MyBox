@@ -241,11 +241,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

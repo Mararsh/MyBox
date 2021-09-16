@@ -323,11 +323,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                         showResults();
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -706,11 +702,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                         showFrames(probeResult.getFrames());
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -860,11 +852,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                         showPackets(probeResult.getPackets());
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {

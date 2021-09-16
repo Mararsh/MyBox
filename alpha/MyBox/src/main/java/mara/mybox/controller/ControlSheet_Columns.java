@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,10 +15,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
+import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -151,7 +156,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                 return false;
             }
             ColumnDefinition column = columns.get(col);
-            return column.valid(value);
+            return column.validValue(value);
         } catch (Exception e) {
         }
         return false;
@@ -332,7 +337,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
     }
 
-    protected StringTable validate() {
+    protected void validate() {
         try {
             dataInvalid = false;
             List<String> names = new ArrayList<>();
@@ -354,33 +359,103 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                     }
                 }
             }
-            dataInvalid = !table.isEmpty();
+
+            List<String> colsNames = new ArrayList<>();
+            List<String> tNames = new ArrayList<>();
+            tNames.addAll(Arrays.asList(message("ID"), message("Name"), message("Reason")));
+            StringTable colsTable = new StringTable(tNames, message("InvalidColumns"));
+            if (columns != null) {
+                for (int c = 0; c < columns.size(); c++) {
+                    ColumnDefinition column = columns.get(c);
+                    if (!column.valid()) {
+                        List<String> row = new ArrayList<>();
+                        row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Invalid")));
+                        colsTable.add(row);
+                    }
+                    if (colsNames.contains(column.getName())) {
+                        List<String> row = new ArrayList<>();
+                        row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Duplicated")));
+                        colsTable.add(row);
+                    }
+                    colsNames.add(column.getName());
+                }
+            }
+
+            dataInvalid = !table.isEmpty() || !colsTable.isEmpty();
             if (saveButton != null) {
                 saveButton.setDisable(dataInvalid);
-            }
-            if (dataInvalid) {
-
             }
             if (reportViewController != null) {
                 reportViewController.webEngine.getLoadWorker().cancel();
                 if (dataInvalid) {
-                    reportViewController.webEngine.loadContent(table.html());
+                    String body = "";
+                    if (!colsTable.isEmpty()) {
+                        body += colsTable.div();
+                    }
+                    if (!table.isEmpty()) {
+                        body += table.div();
+                    }
+                    reportViewController.webEngine.loadContent(HtmlWriteTools.html(null, body));
 //                tabPane.getSelectionModel().select(reportTab);
                 } else {
                     reportViewController.webEngine.loadContent("<H2 align=\"center\">" + message("DataAreValid") + "</H2>");
                 }
             }
-            return table;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return null;
+        }
+    }
+
+    protected boolean saveDefinition(String dataName, DataDefinition.DataType dataType,
+            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
+        if (dataName == null) {
+            return false;
+        }
+        try ( Connection conn = DerbyBase.getConnection()) {
+            return saveDefinition(conn, dataName, dataType, charset, delimiterName, withName, columns);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    protected boolean saveDefinition(Connection conn, String dataName, DataDefinition.DataType dataType,
+            Charset charset, String delimiterName, boolean withName, List<ColumnDefinition> columns) {
+        if (conn == null || dataName == null) {
+            return false;
+        }
+        try {
+            DataDefinition def = tableDataDefinition.read(conn, dataType, dataName);
+            if (def == null) {
+                def = DataDefinition.create()
+                        .setDataName(dataName).setDataType(dataType)
+                        .setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
+                tableDataDefinition.insertData(conn, def);
+            } else {
+                def.setCharset(charset.name()).setHasHeader(withName).setDelimiter(delimiterName);
+                tableDataDefinition.updateData(conn, def);
+                tableDataColumn.clear(conn, def.getDfid());
+            }
+            if (columns != null && !columns.isEmpty()) {
+                if (ColumnDefinition.valid(this, columns)) {
+                    tableDataColumn.save(conn, def.getDfid(), columns);
+                    conn.commit();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
     /*
         abstract
      */
-    protected boolean saveColumns() {
+    protected boolean saveDefinition() {
         return true;
     }
 

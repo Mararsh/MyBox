@@ -120,11 +120,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
                 }
 
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 }

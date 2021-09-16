@@ -29,10 +29,9 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -157,11 +156,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                 }
 
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 
@@ -193,15 +188,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                     }
 
                 };
-                if (parentController != null) {
-                    parentController.handling(task);
-                } else {
-                    handling(task);
-                }
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -281,15 +268,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                     controller.loadImage(selectedImage);
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -319,11 +298,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                     ImageClipboardTools.copyToSystemClipboard(parentController, selectedImage);
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 
@@ -371,11 +346,7 @@ public class ControlImagesClipboard extends BaseDataTableController<ImageClipboa
                     refreshAction();
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
         }
     }
 

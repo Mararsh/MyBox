@@ -96,4 +96,9 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
         loadScene(Fxmls.DataFileCSVMergeFxml);
     }
 
+    @FXML
+    protected void openDataText(ActionEvent event) {
+        loadScene(Fxmls.DataFileTextFxml);
+    }
+
 }

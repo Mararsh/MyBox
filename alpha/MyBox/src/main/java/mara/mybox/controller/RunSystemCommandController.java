@@ -9,13 +9,10 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.StyleTools;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.HtmlWriteTools;
-
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -129,10 +126,7 @@ public class RunSystemCommandController extends HtmlTableController {
                     cancel();
                 }
             };
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false);
         }
     }
 

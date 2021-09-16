@@ -7,7 +7,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.stage.Modality;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
@@ -158,15 +157,7 @@ public class GeographyCodeMapController extends BaseMapController {
 
                     }
                 };
-                if (dataController != null) {
-                    dataController.handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                } else {
-                    handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                }
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task, "Loading map data");
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

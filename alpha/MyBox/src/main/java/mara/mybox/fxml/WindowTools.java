@@ -362,9 +362,14 @@ public class WindowTools {
     }
 
     public static void checkExit() {
-        if (Window.getWindows().isEmpty()) {
-            appExit();
+        try {
+            if (Window.getWindows().isEmpty()) {
+                appExit();
+            }
+        } catch (Exception e) {
+//            MyBoxLog.error(e.toString());
         }
+
     }
 
     public static void appExit() {

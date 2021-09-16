@@ -367,11 +367,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

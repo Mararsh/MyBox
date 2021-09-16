@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                     </image>
                 </ImageView>
                 <Label fx:id="targetLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                <Button fx:id="pasteContentInDataClipboard2Button" mnemonicParsing="false" onAction="#pasteAction">
+                <Button fx:id="pasteDataButton" mnemonicParsing="false" onAction="#pasteAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

@@ -7,9 +7,6 @@ import java.util.Date;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -90,10 +87,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                     }
 
                 };
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task, false);
             }
 
         } catch (Exception e) {

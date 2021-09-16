@@ -224,11 +224,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                     tableView.refresh();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -358,11 +354,7 @@ public class EpidemicReportsEditController extends BaseDataTableController<Epide
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

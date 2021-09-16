@@ -12,7 +12,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.ColumnDefinition;
@@ -45,7 +44,7 @@ public abstract class ControlSheet_Base extends BaseController {
     protected int currentRow, currentCol; // 0-based
     protected boolean isMatrix2;
     protected Label noDataLabel;
-    protected String displayDelimiter;
+    protected String fileDelimiterName, editDelimiterName, displayDelimiterName;
 
     protected long totalSize, currentPageStart, currentPageEnd;   // // 1-based, excluded
     protected int pagesNumber, widthChange, currentPage, pageSize;// 1-based
@@ -53,7 +52,6 @@ public abstract class ControlSheet_Base extends BaseController {
     protected ControlFileBackup backupController;
     protected boolean sourceWithNames, totalRead;
     protected List<ColumnDefinition> savedColumns;
-    protected String loadError;
 
     protected int maxRandom;
     protected short scale;
@@ -65,7 +63,7 @@ public abstract class ControlSheet_Base extends BaseController {
     @FXML
     protected VBox sheetBox, defBox;
     @FXML
-    protected Button rowsAddButton, rowsDeleteButton, columnsAddButton, columnsDeleteButton, widthSheetButton,
+    protected Button synchronizeEditButton, rowsAddButton, rowsDeleteButton, columnsAddButton, columnsDeleteButton, widthSheetButton,
             calculateSheetButton, sortSheetButton, deleteSheetButton, equalSheetButton;
     @FXML
     protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck, textTitleCheck, textColumnCheck, textRowCheck,
@@ -77,13 +75,9 @@ public abstract class ControlSheet_Base extends BaseController {
     @FXML
     protected ControlWebView htmlViewController, reportViewController;
     @FXML
-    protected ToggleGroup delimiterDisplayGroup;
+    protected ControlTextDelimiter displayDelimiterController;
     @FXML
-    protected RadioButton sumRadio, addRadio, subRadio, multiplyRadio, mergeRadio, ascendingRadio, descendingRadio, copyRadio,
-            blankDisplayRadio, blank4DisplayRadio, blank8DisplayRadio, tabDisplayRadio, commaDisplayRadio,
-            lineDisplayRadio, atDisplayRadio, sharpDisplayRadio, semicolonsDisplayRadio, stringDisplayRadio;
-    @FXML
-    protected TextField delimiterDisplayInput;
+    protected RadioButton sumRadio, addRadio, subRadio, multiplyRadio, mergeRadio, ascendingRadio, descendingRadio, copyRadio;
     @FXML
     protected Button trimColumnsButton;
     @FXML

@@ -121,11 +121,7 @@ public class ImageManufactureScopeController_Base extends ImageViewerController 
                 }
 
             };
-//            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+//            parentController.start(task);
         }
     }
 

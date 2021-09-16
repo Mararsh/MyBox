@@ -23,7 +23,6 @@ public class DataFileCSVController extends BaseDataFileController {
 
     protected Charset sourceCharset;
     protected CSVFormat sourceCsvFormat;
-    protected char sourceDelimiter;
 
     @FXML
     protected ControlCsvOptions csvReadController, csvWriteController;
@@ -94,7 +93,7 @@ public class DataFileCSVController extends BaseDataFileController {
             info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
                     + message("Charset") + ": " + sheetController.sourceCharset + "\n"
-                    + message("Delimiter") + ": " + sheetController.sourceCsvDelimiter + "\n"
+                    + message("Delimiter") + ": " + sheetController.sourceCsvFormat.getDelimiter() + "\n"
                     + message("RowsNumber") + ": " + sheetController.rowsTotal() + "\n"
                     + (sheetController.columns == null ? "" : message("ColumnsNumber") + ": " + sheetController.columns.size() + "\n")
                     + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n"
@@ -109,16 +108,6 @@ public class DataFileCSVController extends BaseDataFileController {
             info += message("PageModifyTime") + ": " + DateTools.nowString();
             fileInfoLabel.setText(info);
         }
-    }
-
-    @FXML
-    public void editTextFile() {
-        if (sourceFile == null) {
-            return;
-        }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.openTextFile(sourceFile);
-        controller.toFront();
     }
 
     @FXML

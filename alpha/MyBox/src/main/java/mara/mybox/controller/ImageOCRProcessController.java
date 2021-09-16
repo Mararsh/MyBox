@@ -199,11 +199,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -240,11 +236,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            handling(task);
-            OCRController.task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -404,11 +396,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -577,10 +565,7 @@ public class ImageOCRProcessController extends ImageViewerController {
             }
 
         };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
-
+        start(demoTask, false);
     }
 
     @FXML
@@ -615,11 +600,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 
@@ -698,11 +679,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
 
             };
-            OCRController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            OCRController.start(task);
         }
     }
 

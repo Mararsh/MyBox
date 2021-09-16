@@ -267,15 +267,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 }
 
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

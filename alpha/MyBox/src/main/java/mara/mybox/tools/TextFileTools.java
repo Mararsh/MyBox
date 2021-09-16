@@ -47,9 +47,9 @@ public class TextFileTools {
         }
         file.getParentFile().mkdirs();
         Charset fileCharset = charset != null ? charset : Charset.forName("utf-8");
-        try ( BufferedWriter out = new BufferedWriter(new FileWriter(file, fileCharset, false))) {
-            out.write(data);
-            out.flush();
+        try ( BufferedWriter writer = new BufferedWriter(new FileWriter(file, fileCharset, false))) {
+            writer.write(data);
+            writer.flush();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

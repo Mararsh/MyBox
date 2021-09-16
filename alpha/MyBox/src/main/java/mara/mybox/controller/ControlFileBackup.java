@@ -23,21 +23,16 @@ import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.table.TableFileBackup;
 import static mara.mybox.db.table.TableFileBackup.Default_Max_Backups;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -216,10 +211,7 @@ public class ControlFileBackup extends BaseController {
                 }
 
             };
-            Thread thread = new Thread(task);
-//        handling(loadTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false, null);
         }
 
     }

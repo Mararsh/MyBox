@@ -259,9 +259,9 @@ public class ControlWebView extends BaseController {
             webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
-//                    javafx.event.EventTarget t = ev.getTarget();
-//                    MyBoxLog.console("here:" + ev.getData());
-//                    webViewLabel.setText(ev.getData());
+                    if (webViewLabel != null) {
+                        webViewLabel.setText(ev.getData());
+                    }
                 }
             });
 
@@ -346,8 +346,9 @@ public class ControlWebView extends BaseController {
 
                 @Override
                 public void handle(WebErrorEvent event) {
-//                    popError(event.getMessage());
-                    MyBoxLog.debug(event.getMessage());
+                    if (webViewLabel != null) {
+                        webViewLabel.setText(event.getMessage());
+                    }
                 }
             });
 
@@ -586,21 +587,17 @@ public class ControlWebView extends BaseController {
 
         items.add(new SeparatorMenuItem());
 
-        if (parentController instanceof WebBrowserController) {
-            menu = new MenuItem(message("OpenLinkInNewTab"));
-            menu.setOnAction((ActionEvent event) -> {
-                WebBrowserController c = (WebBrowserController) parentController;
-                c.loadAddress(finalAddress, false);
-            });
-            items.add(menu);
+        menu = new MenuItem(message("OpenLinkInNewTab"));
+        menu.setOnAction((ActionEvent event) -> {
+            WebBrowserController.oneOpen(address, false);
+        });
+        items.add(menu);
 
-            menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
-            menu.setOnAction((ActionEvent event) -> {
-                WebBrowserController c = (WebBrowserController) parentController;
-                c.loadAddress(finalAddress, true);
-            });
-            items.add(menu);
-        }
+        menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
+        menu.setOnAction((ActionEvent event) -> {
+            WebBrowserController.oneOpen(address, true);
+        });
+        items.add(menu);
 
         menu = new MenuItem(message("OpenLinkByCurrent"));
         menu.setOnAction((ActionEvent event) -> {
@@ -620,14 +617,6 @@ public class ControlWebView extends BaseController {
             controller.loadAddress(finalAddress);
         });
         items.add(menu);
-
-        if (!(parentController instanceof WebBrowserController)) {
-            menu = new MenuItem(message("OpenLinkByBrowser"));
-            menu.setOnAction((ActionEvent event) -> {
-                WebBrowserController.oneOpen(finalAddress);
-            });
-            items.add(menu);
-        }
 
         items.add(new SeparatorMenuItem());
 
@@ -784,10 +773,7 @@ public class ControlWebView extends BaseController {
                 }
 
             };
-            copyTask.setSelf(copyTask);
-            Thread thread = new Thread(copyTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(copyTask, false);
         }
     }
 
@@ -1046,15 +1032,13 @@ public class ControlWebView extends BaseController {
 
                 menu = new MenuItem(message("OpenLinkInNewTab"));
                 menu.setOnAction((ActionEvent event) -> {
-                    WebBrowserController c = WebBrowserController.oneOpen();
-                    c.loadAddress(address, false);
+                    WebBrowserController.oneOpen(address, false);
                 });
                 items.add(menu);
 
                 menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
                 menu.setOnAction((ActionEvent event) -> {
-                    WebBrowserController c = WebBrowserController.oneOpen();
-                    c.loadAddress(address, true);
+                    WebBrowserController.oneOpen(address, true);
                 });
                 items.add(menu);
             }
@@ -1283,11 +1267,7 @@ public class ControlWebView extends BaseController {
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

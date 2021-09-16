@@ -205,11 +205,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -357,10 +353,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
 
             };
-            backgroundTask.setSelf(backgroundTask);
-            Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(backgroundTask, false, null);
         }
     }
 
@@ -409,11 +402,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -878,11 +867,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -942,11 +927,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -991,11 +972,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -1075,11 +1052,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                             updateInterface(false);
                         }
                     };
-                    handling(task);
-                    task.setSelf(task);
-                    Thread thread = new Thread(task);
-                    thread.setDaemon(false);
-                    thread.start();
+                    start(task);
                 }
             }
         }
@@ -1179,10 +1152,7 @@ public abstract class BaseFileEditorController_Assist extends BaseController {
                     controller.filterPane.setExpanded(true);
                 }
             };
-            filterTask.setSelf(filterTask);
-            Thread thread = new Thread(filterTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(filterTask, false, null);
         }
     }
 

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
@@ -11,15 +10,11 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.table.TableGeographyCode;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -137,15 +132,7 @@ public class GeographyCodeSelectorController extends BaseController {
                     }
                 }
             };
-            if (userController != null) {
-                loading = userController.handling(task);
-            } else {
-                loading = handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
     }
 
@@ -255,15 +242,7 @@ public class GeographyCodeSelectorController extends BaseController {
                     addNodes(parent, children, haveChildren);
                 }
             };
-            if (userController != null) {
-                loading = userController.handling(task);
-            } else {
-                loading = handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
     }
 

@@ -24,7 +24,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
@@ -33,7 +32,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
@@ -64,7 +63,7 @@ public class PdfViewController extends PdfViewController_Html {
     protected TreeView outlineTree;
 
     public PdfViewController() {
-        baseTitle = Languages.message("PdfView");
+        baseTitle = message("PdfView");
         TipsLabelKey = "PdfViewTips";
     }
 
@@ -293,7 +292,7 @@ public class PdfViewController extends PdfViewController_Html {
                 protected void whenFailed() {
                     if (pop) {
                         TextInputDialog dialog = new TextInputDialog();
-                        dialog.setContentText(Languages.message("UserPassword"));
+                        dialog.setContentText(message("UserPassword"));
                         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
                         stage.setAlwaysOnTop(true);
                         stage.toFront();
@@ -304,18 +303,14 @@ public class PdfViewController extends PdfViewController_Html {
                         return;
                     }
                     if (error != null) {
-                        popError(Languages.message(error));
+                        popError(message(error));
                     } else {
                         popFailed();
                     }
                 }
 
             };
-            handling(task, Modality.WINDOW_MODAL, Languages.message("LoadingFileInfo"));
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, message("LoadingFileInfo"));
         }
     }
 
@@ -377,7 +372,7 @@ public class PdfViewController extends PdfViewController_Html {
                 protected void whenSucceeded() {
                     try {
                         PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                        TreeItem outlineRoot = new TreeItem<>(Languages.message("Bookmarks"));
+                        TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
                         outlineRoot.setExpanded(true);
                         outlineTree.setRoot(outlineRoot);
                         if (outline != null) {
@@ -399,10 +394,7 @@ public class PdfViewController extends PdfViewController_Html {
                 }
 
             };
-            handling(outlineTask);
-            Thread thread = new Thread(outlineTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(outlineTask);
         }
     }
 

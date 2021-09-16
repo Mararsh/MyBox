@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
-import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
@@ -71,11 +70,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
                     textsPage = frameIndex;
                 }
             };
-            handling(textsTask, Modality.WINDOW_MODAL,
-                    MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-            Thread thread = new Thread(textsTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(textsTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
         }
 
     }

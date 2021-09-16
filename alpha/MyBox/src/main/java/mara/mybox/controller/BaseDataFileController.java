@@ -7,6 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -184,9 +186,33 @@ public abstract class BaseDataFileController extends BaseController {
         }
     }
 
+    @FXML
+    @Override
+    public void saveAsAction() {
+        dataController.sourceFile = sourceFile;
+        dataController.saveAsType = saveAsType;
+        dataController.saveAs();
+    }
+
+    @FXML
+    public void editTextFile() {
+        if (sourceFile == null) {
+            return;
+        }
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.openTextFile(sourceFile);
+        controller.toFront();
+    }
+
     @Override
     public boolean checkBeforeNextAction() {
         return dataController.checkBeforeNextAction();
+    }
+
+    @Override
+    public boolean controlAltM() {
+        dataController.myBoxClipBoard();
+        return true;
     }
 
 }

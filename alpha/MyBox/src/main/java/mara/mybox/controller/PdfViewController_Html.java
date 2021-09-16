@@ -12,7 +12,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
@@ -202,11 +201,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                     htmlPage = frameIndex;
                 }
             };
-            handling(htmlTask, Modality.WINDOW_MODAL,
-                    MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-            Thread thread = new Thread(htmlTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(htmlTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
         }
     }
 

@@ -174,10 +174,7 @@ public class NoteEditorController extends HtmlEditorController {
                     notebookLabel.setText(chainName);
                 }
             };
-            noteTask.setSelf(noteTask);
-            Thread thread = new Thread(noteTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(noteTask, false);
         }
     }
 
@@ -281,10 +278,7 @@ public class NoteEditorController extends HtmlEditorController {
                 }
 
             };
-            saveTask.setSelf(saveTask);
-            Thread thread = new Thread(saveTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(saveTask, false);
         }
     }
 
@@ -342,7 +336,7 @@ public class NoteEditorController extends HtmlEditorController {
                 }
 
             };
-            start(noteTagsTask, false);
+            start(noteTagsTask, false, null);
         }
     }
 
@@ -409,10 +403,7 @@ public class NoteEditorController extends HtmlEditorController {
                 }
 
             };
-            noteTagsTask.setSelf(noteTagsTask);
-            Thread thread = new Thread(noteTagsTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(noteTagsTask, false);
         }
     }
 

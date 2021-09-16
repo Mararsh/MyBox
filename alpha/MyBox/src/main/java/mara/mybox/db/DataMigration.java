@@ -123,6 +123,8 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.4.8...");
             try ( Statement statement = conn.createStatement()) {
+                statement.executeUpdate("ALTER TABLE Data_Definition  alter  column  delimiter set data type VARCHAR(128)");
+                conn.commit();
                 statement.executeUpdate("ALTER TABLE  Data_Column DROP CONSTRAINT  Data_Column_dataid_fk");
                 conn.commit();
                 statement.executeUpdate("ALTER TABLE  Data_Column ADD  CONSTRAINT  Data_Column_dataid_fk "

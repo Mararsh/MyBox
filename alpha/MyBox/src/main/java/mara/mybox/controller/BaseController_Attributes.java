@@ -322,6 +322,9 @@ public abstract class BaseController_Attributes {
 
         @Override
         protected void whenFailed() {
+            if (isCancelled()) {
+                return;
+            }
             if (error != null) {
                 popError(error);
             } else {

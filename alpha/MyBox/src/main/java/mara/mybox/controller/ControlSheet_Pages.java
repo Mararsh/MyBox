@@ -77,7 +77,7 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
                 protected boolean handle() {
                     countPagination(pageNumber);
                     data = readPageData();
-                    return !isCancelled() && error == null && loadError == null;
+                    return !isCancelled() && error == null;
                 }
 
                 @Override
@@ -87,30 +87,12 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
                 }
 
                 @Override
-                protected void whenFailed() {
-                    if (isCancelled()) {
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else if (loadError != null) {
-                        popError(message(loadError));
-                    } else {
-                        popFailed();
-                    }
-                }
-
-                @Override
                 protected void finalAction() {
                     updateLabel();
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

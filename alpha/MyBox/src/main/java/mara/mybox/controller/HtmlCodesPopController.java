@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker.State;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextInputControl;
@@ -17,7 +18,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -56,30 +56,39 @@ public class HtmlCodesPopController extends TextPopController {
         }
     }
 
-    public void setWebView(WebView sourceWebView) {
+    public void setWebView(String baseName, WebView sourceWebView) {
         try {
+            this.baseName = baseName;
             this.sourceWebView = sourceWebView;
-            textArea.setText(WebViewTools.getHtml(sourceWebView));
+            refreshAction();
 
-            sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
-                    if (sourceWebView == null) {
-                        sychronizedCheck.setVisible(false);
-                        refreshButton.setVisible(false);
-                        return;
-                    }
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
-                        sourceWebView.getEngine().getLoadWorker().stateProperty().addListener(listener);
-                    } else {
-                        sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
-                    }
-                }
-            });
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            setControls();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void checkSychronize() {
+        if (sourceWebView != null) {
+            if (listener == null) {
+                listener = new ChangeListener<State>() {
+                    @Override
+                    public void changed(ObservableValue ov, State oldv, State newv) {
+                        if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                            refreshAction();
+                        }
+                    }
+                };
+            }
+            if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                sourceWebView.getEngine().getLoadWorker().stateProperty().addListener(listener);
+            } else {
+                sourceWebView.getEngine().getLoadWorker().stateProperty().removeListener(listener);
+            }
+        } else {
+            super.checkSychronize();
         }
     }
 
@@ -137,11 +146,7 @@ public class HtmlCodesPopController extends TextPopController {
                     controller.sourceFileChanged(file);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -168,7 +173,7 @@ public class HtmlCodesPopController extends TextPopController {
                 return null;
             }
             HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
-            controller.setWebView(srcWebView);
+            controller.setWebView(parent.baseName, srcWebView);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

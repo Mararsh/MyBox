@@ -26,7 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
 import javafx.stage.Screen;
 import mara.mybox.controller.ControlMapOptions.MapName;
 import mara.mybox.db.data.BaseData;
@@ -280,15 +279,7 @@ public class LocationDataMapController extends BaseMapController {
                         }, 0, 1); // Interface may be blocked if put all points in map altogether.
                     }
                 };
-                if (parentController != null) {
-                    parentController.handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                } else {
-                    handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                }
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {
@@ -514,15 +505,7 @@ public class LocationDataMapController extends BaseMapController {
                         drawFrames();
                     }
                 };
-                if (parentController != null) {
-                    parentController.handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                } else {
-                    handling(task, Modality.WINDOW_MODAL, "Loading map data");
-                }
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
 
         } catch (Exception e) {

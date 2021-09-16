@@ -1,12 +1,12 @@
 package mara.mybox.db.table;
 
-import mara.mybox.db.data.ColumnDefinition;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.data.DataDefinition.DataType;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -33,7 +33,7 @@ public class TableDataDefinition extends BaseTable<DataDefinition> {
         addColumn(new ColumnDefinition("data_type", ColumnType.Short, true));
         addColumn(new ColumnDefinition("data_name", ColumnType.String, true).setLength(32672));
         addColumn(new ColumnDefinition("charset", ColumnType.String).setLength(32));
-        addColumn(new ColumnDefinition("delimiter", ColumnType.String).setLength(4));
+        addColumn(new ColumnDefinition("delimiter", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("has_header", ColumnType.Boolean));
         return this;
     }

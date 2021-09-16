@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,12 +11,10 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataClipboard;
 import mara.mybox.db.data.DataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -120,9 +117,14 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
                     if (value == null || value.isBlank()) {
                         return;
                     }
+                    if (columnNames().contains(value)) {
+                        popError(message("Duplicated"));
+                        return;
+                    }
                     colsCheck[col].setText(value);
                     columns.get(col).setName(value);
                     makeDefintionPane();
+                    sheetChanged(true);
                 });
                 items.add(menu);
             }
@@ -152,8 +154,7 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
 
             menu = new MenuItem(message("Paste") + "...");
             menu.setOnAction((ActionEvent event) -> {
-//                DataCopyController controller = (DataCopyController) openChildStage(Fxmls.DataCopyFxml, false);
-//                controller.setParameters((ControlSheet) this, -1, col);
+                myBoxClipBoard();
             });
             items.add(menu);
 
@@ -230,98 +231,6 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
             index++;
         }
         makeSheet(data);
-    }
-
-    protected void pastePageColFromSystemClipboard(int col) {
-        try {
-            if (sheetInputs == null) {
-                popError(message("NoData"));
-                return;
-            }
-            String s = TextClipboardTools.getSystemClipboardString();
-            if (s == null || s.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            String[] values = s.split("\n");
-            if (values.length > sheetInputs.length) {
-                if (!PopTools.askSure(message("PastePageColFromSystemClipboard"),
-                        MessageFormat.format(message("DataInClipboardMoreThanPage"), values.length, sheetInputs.length))) {
-                    return;
-                }
-            } else if (values.length < sheetInputs.length) {
-                if (!PopTools.askSure(message("PastePageColFromSystemClipboard"),
-                        MessageFormat.format(message("DataInClipboardLessThanPage"), values.length, sheetInputs.length))) {
-                    return;
-                }
-            }
-            isSettingValues = true;
-            for (int r = 0; r < Math.min(sheetInputs.length, values.length); ++r) {
-                sheetInputs[r][col].setText(values[r]);
-            }
-            isSettingValues = false;
-            sheetChanged();
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-    }
-
-    protected void pastePageColFromDataClipboard(int col) {
-        if (sheetInputs == null) {
-            popError(message("NoData"));
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                List<List<String>> data;
-
-                @Override
-                protected boolean handle() {
-                    data = DataClipboard.lastData(tableDataDefinition, sheetInputs.length, 1);
-                    return data != null && !data.isEmpty();
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (data.size() > sheetInputs.length) {
-                        if (!PopTools.askSure(message("PastePageColFromDataClipboard"),
-                                MessageFormat.format(message("DataInClipboardMoreThanPage"), data.size(), sheetInputs.length))) {
-                            return;
-                        }
-                    } else if (data.size() < sheetInputs.length) {
-                        if (!PopTools.askSure(message("PastePageColFromDataClipboard"),
-                                MessageFormat.format(message("DataInClipboardLessThanPage"), data.size(), sheetInputs.length))) {
-                            return;
-                        }
-                    }
-                    isSettingValues = true;
-                    for (int r = 0; r < Math.min(sheetInputs.length, data.size()); ++r) {
-                        List<String> row = data.get(r);
-                        sheetInputs[r][col].setText(row.isEmpty() ? "" : row.get(0));
-                    }
-                    isSettingValues = false;
-                    sheetChanged();
-                }
-
-            };
-            start(task);
-        }
-
-    }
-
-
-    /*
-        Implemented in BaseDataFileController_ColMenu
-     */
-    protected void pastePagesColFromSystemClipboard(int col) {
-        pastePageColFromSystemClipboard(col);
-    }
-
-    protected void pastePagesColFromDataClipboard(int col) {
-        pastePagesColFromDataClipboard(col);
     }
 
 }

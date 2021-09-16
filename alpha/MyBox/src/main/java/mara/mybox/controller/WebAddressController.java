@@ -67,7 +67,6 @@ public class WebAddressController extends BaseWebViewController {
     }
 
     public void initTab(WebBrowserController parent, Tab tab) {
-        webViewController.setParent(parent);
         this.baseName = parent.baseName;
         this.addressTab = tab;
     }
@@ -91,15 +90,16 @@ public class WebAddressController extends BaseWebViewController {
 
     @Override
     public void addressChanged() {
+        String address = getAddress();
         if (urlSelector != null) {
             Platform.runLater(() -> {
-                tableWebHistory.insertData(makeHis(getAddress()));
+                tableWebHistory.insertData(makeHis(address));
                 urlSelector.getItems().clear();
                 List<String> urls = tableWebHistory.recent(20);
                 if (!urls.isEmpty()) {
                     urlSelector.getItems().addAll(urls);
-                    urlSelector.getEditor().setText(getAddress());
                 }
+                urlSelector.getEditor().setText(address);
             });
         }
     }

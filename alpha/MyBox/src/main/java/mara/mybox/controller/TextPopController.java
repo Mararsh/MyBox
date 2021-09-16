@@ -48,36 +48,31 @@ public class TextPopController extends BaseController {
     public void setStageStatus() {
     }
 
+    public void setSourceInput(String baseName, TextInputControl sourceInput) {
+        try {
+            this.baseName = baseName;
+            this.sourceInput = sourceInput;
+            refreshAction();
+
+            setControls();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void setControls() {
         try {
             editButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
             saveAsButton.disableProperty().bind(Bindings.isEmpty(textArea.textProperty()));
 
-            listener = new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldv, String newv) {
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
-                        refreshAction();
-                    }
-                }
-            };
-
+            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            checkSychronize();
             sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
-                    if (sourceInput == null) {
-                        sychronizedCheck.setVisible(false);
-                        refreshButton.setVisible(false);
-                        return;
-                    }
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
-                        sourceInput.textProperty().addListener(listener);
-                    } else {
-                        sourceInput.textProperty().removeListener(listener);
-                    }
+                    checkSychronize();
                 }
             });
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
 
             wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
             wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -96,17 +91,26 @@ public class TextPopController extends BaseController {
         }
     }
 
-    public void setSourceInput(String baseName, TextInputControl sourceInput) {
-        try {
-            this.baseName = baseName;
-
-            this.sourceInput = sourceInput;
-            refreshAction();
-
-            setControls();
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+    public void checkSychronize() {
+        if (sourceInput == null) {
+            sychronizedCheck.setVisible(false);
+            refreshButton.setVisible(false);
+            return;
+        }
+        if (listener == null) {
+            listener = new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldv, String newv) {
+                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+                        refreshAction();
+                    }
+                }
+            };
+        }
+        if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+            sourceInput.textProperty().addListener(listener);
+        } else {
+            sourceInput.textProperty().removeListener(listener);
         }
     }
 
@@ -158,11 +162,7 @@ public class TextPopController extends BaseController {
                     controller.sourceFileChanged(file);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

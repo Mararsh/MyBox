@@ -348,7 +348,7 @@ public abstract class ControlSheet_Calculation extends ControlSheet_TextsDisplay
                     data[r][c + calSize + 1] = pageData[r + from - 2][colIndex];
                 }
             }
-            DataClipboardController.open(data, dataColumns);
+//            DataClipboardController.open(data, dataColumns);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

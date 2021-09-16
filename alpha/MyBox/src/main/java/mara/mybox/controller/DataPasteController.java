@@ -12,7 +12,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class DataPasteController extends BaseDataOperationController {
 
-    protected ControlSheetFile sourceController;
+    protected ControlSheetCSV sourceController;
     protected ControlSheet targetController;
 
     @FXML
@@ -20,7 +20,7 @@ public class DataPasteController extends BaseDataOperationController {
     @FXML
     protected CheckBox enlargeCheck;
 
-    public void setParameters(ControlSheetFile sourceController, ControlSheet targetController) {
+    public void setParameters(ControlSheetCSV sourceController, ControlSheet targetController) {
         try {
             super.setParameters(targetController, -1, -1);
 
@@ -46,15 +46,7 @@ public class DataPasteController extends BaseDataOperationController {
                 col = colSelector.getItems().size() - 1;
             }
 
-            targetController.paste(sourceController.pageData, row, col, enlarge);
-
-//            List<Integer> cols = cols();
-//            if (rowAllRadio.isSelected()) {
-//                sheetController.copyCols(cols, withNames, toSystemClipboard);
-//
-//            } else {
-//                sheetController.copyRowsCols(rows(), cols, withNames, toSystemClipboard);
-//            }
+            targetController.paste(sourceController, row, col, enlarge);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

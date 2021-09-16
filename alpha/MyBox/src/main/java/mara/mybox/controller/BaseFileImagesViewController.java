@@ -7,7 +7,6 @@ import java.util.Map;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -20,13 +19,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -38,7 +36,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
 
     protected final int ThumbWidth = 200;
     protected int percent;
-    protected Task thumbTask;
+    protected SingletonTask thumbTask;
     protected LoadingController loading;
     protected Process process;
 
@@ -293,7 +291,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         imageView.setPreserveRatio(true);
         imageView.setImage(image);
         this.image = image;
-        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath() + " - " + Languages.message("Page") + " " + frameIndex);
+        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath() + " - " + message("Page") + " " + frameIndex);
         if (percent == 0) {
             paneSize();
         } else {
@@ -386,11 +384,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                     setImage(image, percent);
                 }
             };
-            handling(task, Modality.WINDOW_MODAL, MessageFormat.format(Languages.message("LoadingPageNumber"), (frameIndex + 1) + ""));
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
         }
     }
 
@@ -461,10 +455,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 }
 
             };
-            handling(thumbTask);
-            Thread thread = new Thread(thumbTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(thumbTask);
         }
     }
 

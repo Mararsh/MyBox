@@ -172,10 +172,7 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                 }
 
             };
-            tagsTask.setSelf(tagsTask);
-            Thread thread = new Thread(tagsTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(tagsTask, false);
         }
     }
 
@@ -231,10 +228,7 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                 }
 
             };
-            tagTask.setSelf(tagTask);
-            Thread thread = new Thread(tagTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(tagTask, false);
         }
     }
 
@@ -280,11 +274,7 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -328,11 +318,7 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -366,11 +352,7 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -402,10 +384,7 @@ public class NotesController_Notebooks extends BaseDataTableController<Note> {
                 }
 
             };
-            timesTask.setSelf(timesTask);
-            Thread thread = new Thread(timesTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(timesTask, false);
         }
     }
 

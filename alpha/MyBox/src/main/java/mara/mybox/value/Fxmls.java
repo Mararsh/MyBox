@@ -191,6 +191,8 @@ public class Fxmls {
     public static final String DataFileExcelExtractTextsFxml = "/fxml/DataFileExcelExtractTexts.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
+    public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
+
     public static final String MatricesManageFxml = "/fxml/MatricesManage.fxml";
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";

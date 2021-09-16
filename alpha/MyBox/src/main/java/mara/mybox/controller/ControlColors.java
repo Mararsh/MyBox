@@ -453,11 +453,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -502,11 +498,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -563,11 +555,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -670,11 +658,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -720,11 +704,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -881,11 +861,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -937,11 +913,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                                 displayHtml(atitle, data);
                             }
                         };
-                        handling(task);
-                        task.setSelf(task);
-                        Thread thread = new Thread(task);
-                        thread.setDaemon(false);
-                        thread.start();
+                        start(task);
                     }
                 }
             }
@@ -1058,11 +1030,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                         }
                     }
                 };
-                handling(task);
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task);
             }
         }
     }
@@ -1105,11 +1073,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -1220,11 +1184,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -1291,10 +1251,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                     colorsPane.setVisible(true);
                 }
             };
-            colorsTask.setSelf(colorsTask);
-            Thread thread = new Thread(colorsTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(colorsTask, false);
         }
     }
 
@@ -1491,11 +1448,7 @@ public class ControlColors extends BaseDataTableController<ColorData> {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

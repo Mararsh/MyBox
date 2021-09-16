@@ -200,6 +200,7 @@ public class TextInMyBoxClipboardController extends BaseDataTableController<Text
             if (object instanceof TextInMyBoxClipboardController) {
                 controller = (TextInMyBoxClipboardController) object;
                 controller.toFront();
+                controller.refreshAction();
                 break;
             }
         }

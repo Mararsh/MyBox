@@ -236,11 +236,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -269,11 +265,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -342,11 +334,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     controller.loadImage(areaImage);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -529,11 +517,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -607,11 +591,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

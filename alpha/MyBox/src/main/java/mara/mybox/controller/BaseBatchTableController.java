@@ -441,11 +441,7 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
                 }
 
             };
-            super.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            super.start(task);
         }
 
     }
@@ -792,10 +788,7 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
                 }
 
             };
-            backgroundTask.setSelf(backgroundTask);
-            Thread thread = new Thread(backgroundTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(backgroundTask, false, null);
         }
     }
 
@@ -892,10 +885,7 @@ public abstract class BaseBatchTableController<P> extends BaseBatchTableControll
             if (parentController != null) {
                 parentController.handling(task);
             }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false, null);
         }
 
     }

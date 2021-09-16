@@ -126,7 +126,11 @@ public class ColumnDefinition extends BaseData {
         return sql;
     }
 
-    public boolean valid(String value) {
+    public boolean valid() {
+        return valid(this);
+    }
+
+    public boolean validValue(String value) {
         try {
             if (value == null || value.isBlank()) {
                 return !notNull;

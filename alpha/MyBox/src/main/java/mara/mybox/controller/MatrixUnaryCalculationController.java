@@ -350,11 +350,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 }

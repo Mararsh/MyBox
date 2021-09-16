@@ -230,10 +230,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 }
 
             };
-            Thread thread = new Thread(viewTask);
-            handling(viewTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(viewTask);
         }
     }
 
@@ -307,10 +304,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
                 }
 
             };
-            Thread thread = new Thread(viewTask);
-            handling(viewTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(viewTask);
         }
     }
 

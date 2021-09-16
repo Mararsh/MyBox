@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheet_RowMenu extends ControlSheet_Buttons {
+public abstract class ControlSheet_RowMenu extends ControlSheet_Operations {
 
     @Override
     public void popRowLabelMenu(Label label) {
@@ -264,7 +264,7 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Buttons {
 
             menu = new MenuItem(message("Paste") + "...");
             menu.setOnAction((ActionEvent event) -> {
-
+                myBoxClipBoard();
             });
             items.add(menu);
 

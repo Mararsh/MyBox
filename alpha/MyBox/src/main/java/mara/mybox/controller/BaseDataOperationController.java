@@ -7,12 +7,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Window;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -23,6 +25,8 @@ public abstract class BaseDataOperationController extends BaseController {
 
     protected ControlSheet sheetController;
 
+    @FXML
+    protected Label targetLabel;
     @FXML
     protected ControlListCheckBox rowsListController, colsListController;
     @FXML
@@ -41,7 +45,7 @@ public abstract class BaseDataOperationController extends BaseController {
     public void setParameters(ControlSheet sheetController, int row, int col) {
         try {
             this.sheetController = sheetController;
-            myStage.setTitle(sheetController.getTitle());
+            myStage.setTitle(sheetController.getBaseTitle());
 
             updateControls();
 
@@ -158,6 +162,12 @@ public abstract class BaseDataOperationController extends BaseController {
             }
             if (colsListController != null) {
                 colsListController.setValues(cols);
+            }
+
+            if (sheetController.sourceFile != null) {
+                targetLabel.setText(message("File") + ": " + sheetController.sourceFile.getAbsolutePath());
+            } else {
+                targetLabel.setText("");
             }
 
         } catch (Exception e) {

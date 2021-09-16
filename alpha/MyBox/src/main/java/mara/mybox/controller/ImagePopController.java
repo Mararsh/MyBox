@@ -44,28 +44,33 @@ public class ImagePopController extends BaseImageController {
                 }
             };
 
+            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
+            checkSychronize();
             sychronizedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
-                    if (sourceImageView == null) {
-                        sychronizedCheck.setVisible(false);
-                        refreshButton.setVisible(false);
-                        return;
-                    }
-                    if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
-                        sourceImageView.imageProperty().addListener(listener);
-                    } else {
-                        sourceImageView.imageProperty().removeListener(listener);
-                    }
+                    checkSychronize();
                 }
             });
-            sychronizedCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
 
             setAsPopup(baseName);
             paneSize();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void checkSychronize() {
+        if (sourceImageView == null) {
+            sychronizedCheck.setVisible(false);
+            refreshButton.setVisible(false);
+            return;
+        }
+        if (sychronizedCheck.isVisible() && sychronizedCheck.isSelected()) {
+            sourceImageView.imageProperty().addListener(listener);
+        } else {
+            sourceImageView.imageProperty().removeListener(listener);
         }
     }
 

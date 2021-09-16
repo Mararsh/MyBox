@@ -414,7 +414,6 @@ public class FxImageTools {
         Thread thread = new Thread(demoTask);
         thread.setDaemon(false);
         thread.start();
-
     }
 
 }

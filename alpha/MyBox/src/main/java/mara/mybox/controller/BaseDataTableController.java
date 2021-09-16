@@ -22,7 +22,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
@@ -32,6 +31,7 @@ import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -437,15 +437,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     postLoadedTableData();
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task, Modality.WINDOW_MODAL, Languages.message("LoadingTableData"));
-            } else {
-                handling(task, Modality.WINDOW_MODAL, Languages.message("LoadingTableData"));
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, message("LoadingTableData"));
         }
     }
 
@@ -583,15 +575,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     }
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -648,15 +632,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     }
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -745,15 +721,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     refreshAction();
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -787,15 +755,7 @@ public abstract class BaseDataTableController<P> extends BaseController {
                     ControllerTools.openTextEditer(null, file);
                 }
             };
-            if (parentController != null) {
-                parentController.handling(task);
-            } else {
-                handling(task);
-            }
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

@@ -59,11 +59,7 @@ public class ImageManufactureScopeController_Save extends ImageManufactureScopeC
                     scopesSavedController.loadScopes();
                 }
             };
-            parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            parentController.start(task);
 
         }
     }

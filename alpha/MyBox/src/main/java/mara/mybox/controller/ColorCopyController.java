@@ -111,11 +111,7 @@ public class ColorCopyController extends ControlColorPaletteSelector {
                     afterCopied(palette, count);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -157,11 +153,7 @@ public class ColorCopyController extends ControlColorPaletteSelector {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }

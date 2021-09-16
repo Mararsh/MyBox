@@ -34,7 +34,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import mara.mybox.color.IccHeader;
 import mara.mybox.color.IccProfile;
 import mara.mybox.color.IccTag;
@@ -45,15 +44,14 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
 import static mara.mybox.fxml.NodeStyleTools.badStyle;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.ByteTools;
 import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -779,11 +777,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     }
 
                 };
-                handling(task, Modality.WINDOW_MODAL, inputName + " " + Languages.message("Loading..."));
-                task.setSelf(task);
-                Thread thread = new Thread(task);
-                thread.setDaemon(false);
-                thread.start();
+                start(task, inputName + " " + Languages.message("Loading..."));
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -835,11 +829,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
 
             };
-            handling(task, Modality.WINDOW_MODAL, Languages.message("Loading..."));
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -1114,11 +1104,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
         return true;
     }
@@ -1708,11 +1694,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -1819,11 +1801,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -1902,11 +1880,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -2025,11 +1999,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

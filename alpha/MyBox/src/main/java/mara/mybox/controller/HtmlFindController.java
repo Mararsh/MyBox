@@ -19,7 +19,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
-import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -33,7 +32,7 @@ public class HtmlFindController extends WebAddressController {
 
     protected static final String ItemPrefix = "MyBoxSearchLocation";
     protected int foundCount, foundItem;
-    protected String loadedHtml, resultsHtml;
+    protected String sourceHtml;
     protected LoadingController loading;
 
     @FXML
@@ -123,7 +122,7 @@ public class HtmlFindController extends WebAddressController {
     }
 
     public void find(String html) {
-        loadedHtml = html;
+        sourceHtml = html;
         foundCount = 0;
         loadContents(html);
     }
@@ -132,7 +131,7 @@ public class HtmlFindController extends WebAddressController {
     @Override
     public void goAction() {
         foundCount = 0;
-        loadedHtml = null;
+        sourceHtml = null;
         super.goAction();
     }
 
@@ -141,8 +140,9 @@ public class HtmlFindController extends WebAddressController {
         try {
             super.afterPageLoaded();
 
-            if (loadedHtml == null) {
-                loadedHtml = WebViewTools.getHtml(webEngine);
+            if (sourceHtml == null) {
+                sourceHtml = WebViewTools.getHtml(webEngine);
+
             } else {
                 popInformation(message("Found") + ": " + foundCount);
 
@@ -160,10 +160,10 @@ public class HtmlFindController extends WebAddressController {
                 task.cancel();
                 task = null;
             }
-            if (loadedHtml == null) {
-                loadedHtml = WebViewTools.getHtml(webEngine);
+            if (sourceHtml == null) {
+                sourceHtml = WebViewTools.getHtml(webEngine);
             }
-            if (loadedHtml == null || loadedHtml.isBlank()) {
+            if (sourceHtml == null || sourceHtml.isBlank()) {
                 popError(message("NoData"));
                 return;
             }
@@ -201,11 +201,17 @@ public class HtmlFindController extends WebAddressController {
                         FindReplaceString finder = FindReplaceString.create()
                                 .setOperation(FindReplaceString.Operation.FindNext).setFindString(findString)
                                 .setIsRegex(regCheck.isSelected()).setCaseInsensitive(caseCheck.isSelected()).setMultiline(true);
-                        String inputString = HtmlReadTools.body(loadedHtml, false);
+                        String inputString = sourceHtml;
                         String replaceSuffix = " style=\"" + itemsStyle() + "\" >" + findString + "</span>";
 
                         results = new StringBuilder();
                         String texts;
+
+                        textsChecker.setInputString(inputString).setFindString("</head>").setAnchor(0).run();
+                        if (textsChecker.getStringRange() != null) {
+                            results.append(inputString.substring(0, textsChecker.getLastEnd()));
+                            inputString = inputString.substring(textsChecker.getLastEnd());
+                        }
                         while (!inputString.isBlank()) {
                             textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).run();
                             if (textsChecker.getStringRange() == null) {
@@ -248,6 +254,15 @@ public class HtmlFindController extends WebAddressController {
                             results.append(r.toString());
                         }
                         results.append(inputString);
+
+//                        String prehead = HtmlReadTools.preHtml(sourceHtml);
+//                        String head = HtmlReadTools.tag(sourceHtml, "head", true);
+//                        html = (prehead != null ? prehead : "")
+//                                + "<html>\n"
+//                                + (head != null ? head : "")
+//                                + "\n<body>\n"
+//                                + results.toString()
+//                                + "\n</body>\n</html>";
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
@@ -284,11 +299,7 @@ public class HtmlFindController extends WebAddressController {
                 }
 
             };
-            task.setSelf(task);
-            loading = handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = start(task);
         }
     }
 
@@ -305,17 +316,23 @@ public class HtmlFindController extends WebAddressController {
     }
 
     protected void setStyle(int id, String style) {
-        if (id <= 0 || id > foundCount) {
-            return;
+        try {
+            if (id <= 0 || id > foundCount) {
+                return;
+            }
+            webEngine.executeScript("document.getElementById('" + ItemPrefix + id + "').setAttribute('style', '" + style + "');");
+        } catch (Exception e) {
         }
-        webEngine.executeScript("document.getElementById('" + ItemPrefix + id + "').setAttribute('style', '" + style + "');");
     }
 
     protected void scrollTo(int id) {
-        if (id <= 0 || id > foundCount) {
-            return;
+        try {
+            if (id <= 0 || id > foundCount) {
+                return;
+            }
+            webEngine.executeScript("document.getElementById('" + ItemPrefix + id + "').scrollIntoView();");
+        } catch (Exception e) {
         }
-        webEngine.executeScript("document.getElementById('" + ItemPrefix + id + "').scrollIntoView();");
     }
 
     // 1-based

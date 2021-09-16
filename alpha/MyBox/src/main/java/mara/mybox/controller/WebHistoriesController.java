@@ -18,9 +18,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableImageFileCell;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -144,10 +141,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
                 }
 
             };
-            timesTask.setSelf(timesTask);
-            Thread thread = new Thread(timesTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(timesTask, false);
         }
     }
 
@@ -225,7 +219,7 @@ public class WebHistoriesController extends BaseDataTableController<WebHistory> 
         if (selected == null) {
             return;
         }
-        WebBrowserController.oneOpen(selected.getAddress());
+        WebBrowserController.oneOpen(selected.getAddress(), true);
     }
 
     /*

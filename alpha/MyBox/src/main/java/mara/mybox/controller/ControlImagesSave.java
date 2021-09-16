@@ -476,11 +476,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -526,11 +522,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -602,10 +594,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -667,10 +656,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -736,10 +722,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 
@@ -796,10 +779,7 @@ public class ControlImagesSave extends BaseController {
                 }
 
             };
-            loading = parentController.handling(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loading = parentController.start(task);
         }
     }
 

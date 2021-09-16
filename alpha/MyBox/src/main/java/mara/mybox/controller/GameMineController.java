@@ -485,11 +485,7 @@ public class GameMineController extends BaseController {
                     hisView.getEngine().loadContent(html);
                 }
             };
-//            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+//            start(task);
         }
     }
 
@@ -516,11 +512,7 @@ public class GameMineController extends BaseController {
                     hisView.getEngine().loadContent("");
                 }
             };
-//            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+//            start(task);
         }
     }
 
@@ -817,11 +809,7 @@ public class GameMineController extends BaseController {
                     loadRecords();
                 }
             };
-//            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+//            start(task);
         }
 
     }

@@ -120,11 +120,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                             newImage, cost);
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -156,11 +152,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 }
 
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -190,11 +182,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 }
 
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -224,11 +212,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 }
 
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -258,11 +242,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 }
 
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -298,11 +278,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                     imageController.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 

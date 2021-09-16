@@ -19,16 +19,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Modality;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -303,12 +298,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                     formatsTask = null;
                 }
             };
-
-            handling(formatsTask);
-            Thread thread = new Thread(formatsTask);
-            thread.setDaemon(false);
-            thread.start();
-
+            start(formatsTask);
         }
     }
 
@@ -395,12 +385,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                     codecsTask = null;
                 }
             };
-
-            handling(codecsTask);
-            Thread thread = new Thread(codecsTask);
-            thread.setDaemon(false);
-            thread.start();
-
+            start(codecsTask);
         }
     }
 
@@ -482,12 +467,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                     filtersTask = null;
                 }
             };
-
-            handling(filtersTask);
-            Thread thread = new Thread(filtersTask);
-            thread.setDaemon(false);
-            thread.start();
-
+            start(filtersTask);
         }
     }
 
@@ -559,12 +539,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                     queryTask = null;
                 }
             };
-
-            handling(queryTask);
-            Thread thread = new Thread(queryTask);
-            thread.setDaemon(false);
-            thread.start();
-
+            start(queryTask);
         }
     }
 

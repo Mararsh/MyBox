@@ -154,11 +154,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageController.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
                 }
             };
-            imageController.handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            imageController.start(task);
         }
     }
 
@@ -310,10 +306,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
             }
 
         };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
-
+        start(demoTask, false);
     }
 
 }

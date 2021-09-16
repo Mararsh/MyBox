@@ -2,11 +2,10 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.DataDefinition;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -16,13 +15,17 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-3-11
  * @License Apache License Version 2.0
  */
-public class DataClipboardController extends BaseDataTableController<DataDefinition> {
+public class DataClipboardController extends BaseController {
 
     @FXML
     protected ControlDataClipboard clipboardController;
 
     public DataClipboardController() {
         baseTitle = message("DataClipboard");
+    }
+
+    public void refreshAction() {
+        clipboardController.refreshAction();
     }
 
     @Override
@@ -33,10 +36,16 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
         return true;
     }
 
+    @Override
+    public boolean controlAltM() {
+        clipboardController.sheetController.myBoxClipBoard();
+        return true;
+    }
+
     /*
         static
      */
-    public static DataClipboardController oneOpen() {
+    public static DataClipboardController open() {
         DataClipboardController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
@@ -46,6 +55,7 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
                 try {
                     controller = (DataClipboardController) object;
                     controller.toFront();
+                    controller.refreshAction();
                     break;
                 } catch (Exception e) {
                 }
@@ -57,10 +67,23 @@ public class DataClipboardController extends BaseDataTableController<DataDefinit
         return controller;
     }
 
-    public static DataClipboardController open(String[][] data, List<ColumnDefinition> columns) {
-        DataClipboardController controller = oneOpen();
-        controller.clipboardController.load(data, columns);
-        return controller;
+    public static void update() {
+        Platform.runLater(() -> {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                Object object = window.getUserData();
+                if (object == null) {
+                    continue;
+                }
+                if (object instanceof DataClipboardController) {
+                    ((DataClipboardController) object).refreshAction();
+                }
+                if (object instanceof DataClipboardPopController) {
+                    ((DataClipboardPopController) object).refreshAction();
+                }
+            }
+        });
     }
 
 }

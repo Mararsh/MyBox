@@ -147,11 +147,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                     isSettingValues = false;
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -400,11 +396,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 }
             }
         };
-        handling(task);
-        task.setSelf(task);
-        Thread thread = new Thread(task);
-        thread.setDaemon(false);
-        thread.start();
+        start(task);
     }
 
 }

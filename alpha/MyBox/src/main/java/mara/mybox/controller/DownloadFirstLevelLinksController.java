@@ -551,11 +551,7 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
                     setValues(title);
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -620,11 +616,7 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
 
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -679,11 +671,7 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
                     return true;
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -929,10 +917,7 @@ public class DownloadFirstLevelLinksController extends WebAddressController {
             }
 
         };
-        Thread thread = new Thread(infoTask);
-        handling(infoTask);
-        thread.setDaemon(false);
-        thread.start();
+        start(infoTask);
     }
 
     @FXML

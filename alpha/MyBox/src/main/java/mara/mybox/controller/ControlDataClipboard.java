@@ -19,6 +19,7 @@ import javafx.util.Callback;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataClipboard;
 import mara.mybox.db.data.DataDefinition;
+import mara.mybox.db.data.DataDefinition.DataType;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
@@ -75,6 +76,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
             sheetController.targetCsvDelimiter = ',';
             sheetController.targetWithNames = false;
             sheetController.saveAsType = saveAsType;
+            sheetController.dataType = DataType.DataClipboard;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -86,7 +88,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
         tableDataColumn = sheetController.tableDataColumn;
         tableDefinition = tableDataDefinition;
 
-        tableDataDefinition.setOrderColumns("dfid");
+        tableDataDefinition.setOrderColumns("dfid DESC");
     }
 
     @Override
@@ -371,7 +373,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
                 return;
             }
             task = new SingletonTask<Void>() {
-                private DataDefinition df;
+                private DataDefinition def;
 
                 @Override
                 protected boolean handle() {
@@ -383,8 +385,8 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
                     if (error != null) {
                         return false;
                     }
-                    df = DataClipboard.createFile(tableDataDefinition, file, false);
-                    return df != null;
+                    def = DataClipboard.create(tableDataDefinition, tableDataColumn, file, sheetController.columns);
+                    return def != null;
                 }
 
                 @Override
@@ -392,7 +394,7 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
                     popInformation(message("Saved"));
                     sheetController.dataChangedNotify.set(false);
                     loadTableData();
-                    loadData(df);
+                    loadData(def);
                 }
 
             };

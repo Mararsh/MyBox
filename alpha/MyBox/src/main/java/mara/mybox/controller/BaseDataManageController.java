@@ -751,11 +751,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
                     }
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
 
     }
@@ -798,11 +794,7 @@ public abstract class BaseDataManageController<P> extends BaseDataTableControlle
                 }
 
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 

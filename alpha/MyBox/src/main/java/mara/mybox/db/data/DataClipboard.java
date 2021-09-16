@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
@@ -121,51 +122,49 @@ public class DataClipboard extends DataDefinition {
         }
     }
 
-    public static DataDefinition createData(TableDataDefinition tableDataDefinition, List<String> colsNames, String[][] data) {
-        try {
-            if (tableDataDefinition == null || data == null || data.length == 0) {
-                return null;
+    public static File writeFile(String[][] data) {
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        File tmpFile = TmpFileTools.getTempFile();
+        try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), CSVFormat.DEFAULT)) {
+            for (String[] r : data) {
+                csvPrinter.printRecord(Arrays.asList(r));
             }
-            File tmpFile = TmpFileTools.getTempFile();
-            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), CSVFormat.DEFAULT)) {
-                if (colsNames != null) {
-                    csvPrinter.printRecord(colsNames);
-                }
-                for (String[] r : data) {
-                    csvPrinter.printRecord(Arrays.asList(r));
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                return null;
-            }
-            if (tmpFile == null || !tmpFile.exists()) {
-                return null;
-            }
-            return createFile(tableDataDefinition, tmpFile, colsNames != null);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
+        return tmpFile;
     }
 
-    public static DataDefinition createFile(TableDataDefinition tableDataDefinition, File csvFile, boolean withNames) {
-        try {
-            if (tableDataDefinition == null || csvFile == null || !csvFile.exists()) {
-                return null;
-            }
-            File dpFile = new File(AppPaths.getDataClipboardPath() + File.separator + (new Date()).getTime() + ".csv");
-            if (!FileTools.rename(csvFile, dpFile)) {
-                return null;
-            }
-            DataDefinition df = DataDefinition.create()
-                    .setDataType(DataType.DataClipboard).setHasHeader(withNames)
-                    .setCharset("UTF-8").setDelimiter(",")
-                    .setDataName(dpFile.getAbsolutePath());
-            return tableDataDefinition.writeData(df);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+    public static DataDefinition create(TableDataDefinition tableDataDefinition, TableDataColumn tableDataColumn,
+            File csvFile, List<ColumnDefinition> columns) {
+        if (tableDataDefinition == null || tableDataColumn == null || csvFile == null || !csvFile.exists()) {
             return null;
         }
+        File dpFile = new File(AppPaths.getDataClipboardPath() + File.separator + (new Date()).getTime() + ".csv");
+        if (!FileTools.rename(csvFile, dpFile)) {
+            return null;
+        }
+        DataDefinition def = null;
+        try ( Connection conn = DerbyBase.getConnection()) {
+            String dname = dpFile.getAbsolutePath();
+            tableDataDefinition.clear(conn, DataType.DataClipboard, dname);
+            def = DataDefinition.create()
+                    .setDataType(DataType.DataClipboard).setDataName(dname)
+                    .setHasHeader(false).setCharset("UTF-8").setDelimiter(",");
+            tableDataDefinition.insertData(conn, def);
+            if (columns != null && !columns.isEmpty()) {
+                if (ColumnDefinition.valid(null, columns)) {
+                    tableDataColumn.save(conn, def.getDfid(), columns);
+                    conn.commit();
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return def;
     }
 
 }

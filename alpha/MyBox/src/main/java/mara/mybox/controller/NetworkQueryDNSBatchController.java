@@ -106,11 +106,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
                 }
 
             };
-            loadingController = handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            loadingController = start(task);
         }
     }
 

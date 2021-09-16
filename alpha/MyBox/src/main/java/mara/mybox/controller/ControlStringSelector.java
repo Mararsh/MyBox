@@ -131,10 +131,7 @@ public class ControlStringSelector extends BaseController {
                 }
 
             };
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task, false);
         }
 
     }

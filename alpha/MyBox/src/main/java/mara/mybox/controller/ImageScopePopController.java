@@ -60,10 +60,7 @@ public class ImageScopePopController extends ImagePopController {
                     loadImage(scopeImage);
                 }
             };
-            popTask.setSelf(popTask);
-            Thread thread = new Thread(popTask);
-            thread.setDaemon(false);
-            thread.start();
+            start(popTask, false);
         }
     }
 

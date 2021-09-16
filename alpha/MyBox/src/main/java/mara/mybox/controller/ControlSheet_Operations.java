@@ -9,7 +9,7 @@ import java.util.Random;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataClipboard;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.db.data.DataDefinition;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppValues;
@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-24
  * @License Apache License Version 2.0
  */
-public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
+public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     protected char copyDelimiter = ',';
 
@@ -30,6 +30,8 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
     public abstract void setCols(List<Integer> cols, String value);
 
     public abstract void sort(int col, boolean asc);
+
+    public abstract void pasteFile(ControlSheetCSV sourceController, int row, int col, boolean enlarge);
 
     @FXML
     @Override
@@ -57,17 +59,9 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
             task = new SingletonTask<Void>() {
 
                 private String[][] data;
-                private List<String> colsNames;
 
                 @Override
                 protected boolean handle() {
-                    colsNames = null;
-                    if (withNames) {
-                        colsNames = new ArrayList<>();
-                        for (int c = 0; c < cols.size(); c++) {
-                            colsNames.add(colsCheck[cols.get(c)].getText());
-                        }
-                    }
                     data = new String[rows.size()][cols.size()];
                     for (int r = 0; r < rows.size(); ++r) {
                         int row = rows.get(r);
@@ -78,17 +72,31 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
                     if (toSystemClipboard) {
                         return data != null;
                     } else {
-                        return DataClipboard.createData(tableDataDefinition, colsNames, data) != null;
+                        File dFile = DataClipboard.writeFile(data);
+                        List<ColumnDefinition> dColumns = new ArrayList<>();
+                        for (int c : cols) {
+                            dColumns.add(columns.get(c));
+                        }
+                        DataDefinition def = DataClipboard.create(tableDataDefinition, tableDataColumn, dFile, dColumns);
+                        return def != null;
                     }
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     if (toSystemClipboard) {
+                        List<String> colsNames = null;
+                        if (withNames) {
+                            colsNames = new ArrayList<>();
+                            for (int c : cols) {
+                                colsNames.add(colsCheck[c].getText());
+                            }
+                        }
                         TextClipboardTools.copyToSystemClipboard(myController,
                                 TextTools.dataText(data, copyDelimiter + "", colsNames, null));
                     } else {
                         popSuccessful();
+                        DataClipboardController.update();
                     }
                 }
 
@@ -103,67 +111,77 @@ public abstract class ControlSheet_Buttons extends ControlSheet_Edit {
         DataClipboardPopController.open((ControlSheet) this);
     }
 
-    public void paste(String[][] data, int row, int col, boolean enlarge) {
-        try {
-            if (data == null || data.length == 0) {
-                popError(message("NoData"));
-                return;
-            }
-            pickData();
-            if (pageData == null) {
-                if (enlarge) {
-                    makeSheet(data);
+    public void paste(ControlSheetCSV sourceController, int row, int col, boolean enlarge) {
+        if (sourceController == null || sourceController.rowsTotal() == 0) {
+            popError(message("NoData"));
+            return;
+        }
+        if (sourceController.pagesNumber > 1 && !sourceController.checkBeforeNextAction()) {
+            return;
+        }
+        String[][] data;
+        pickData();
+        sourceController.pickData();
+        if (pageData == null) {
+            if (enlarge) {
+                if (sourceController.pagesNumber <= 1) {
+                    data = sourceController.pageData;
+                } else {
+                    data = sourceController.readAll();
                 }
-                return;
+                makeSheet(data);
             }
-            if (row < 0 || row > rowsNumber - 1) {
-                row = rowsNumber - 1;
-            }
-            if (col < 0 || col > colsNumber - 1) {
-                col = colsNumber - 1;
-            }
-            int dataRowsSize = data.length, rowsSize = rowsNumber;
-            int dataColsSize = data[0].length, colsSize = colsNumber;
-            if (row + dataRowsSize > rowsNumber && enlarge) {
-                rowsSize = row + dataRowsSize;
-            }
-            if (col + dataColsSize > colsNumber && enlarge) {
-                colsSize = col + dataColsSize;
-            }
-            String[][] values = new String[rowsSize][colsSize];
-            for (int r = 0; r < rowsSize; r++) {
-                for (int c = 0; c < colsSize; c++) {
-                    if (r >= row && r < row + dataRowsSize && c >= col && c < col + dataColsSize) {
-                        values[r][c] = data[r - row][c - col];
-                    } else if (r < rowsNumber && c < colsNumber) {
-                        values[r][c] = pageData[r][c];
-                    } else {
-                        values[r][c] = defaultColValue;
-                    }
-                }
-            }
-            makeSheet(values);
-        } catch (Exception e) {
-            MyBoxLog.console(e);
+            return;
+        }
+        if (row < 0 || row > rowsNumber - 1) {
+            row = rowsNumber - 1;
+        }
+        if (col < 0 || col > colsNumber - 1) {
+            col = colsNumber - 1;
+        }
+        int sourceRowsSize = (int) sourceController.rowsTotal();
+        int sourceColsSize = sourceController.colsNumber;
+        if (pagesNumber <= 1
+                || (row + sourceRowsSize <= rowsNumber && col + sourceColsSize <= colsNumber)) {
+            pastePage(sourceController, row, col, enlarge);
+        } else {
+            pasteFile(sourceController, row, col, enlarge);
         }
     }
 
-    public void paste(File file, int row, int col, boolean enlarge) {
-        try {
-            if (file == null) {
-                popError(message("NoData"));
-                return;
+    public void pastePage(ControlSheetCSV sourceController, int row, int col, boolean enlarge) {
+        String[][] source;
+        if (sourceController.pagesNumber <= 1) {
+            source = sourceController.pageData;
+        } else {
+            if (enlarge) {
+                source = sourceController.readAll();
+            } else {
+                source = sourceController.read(rowsNumber - row, colsNumber - col);
             }
-
-//            isSettingValues = true;
-//            for (int r = 0; r < Math.min(sheetInputs.length, values.length); ++r) {
-//                sheetInputs[r][col].setText(values[r]);
-//            }
-//            isSettingValues = false;
-//            sheetChanged();
-        } catch (Exception e) {
-            MyBoxLog.console(e);
         }
+        int sourceRowsSize = source.length, targetRowsSize = rowsNumber;
+        int sourceColsSize = source[0].length, targetColsSize = colsNumber;
+        if (enlarge && row + sourceRowsSize > rowsNumber) {
+            targetRowsSize = row + sourceRowsSize;
+        }
+        if (enlarge && col + sourceColsSize > colsNumber) {
+            targetColsSize = col + sourceColsSize;
+        }
+        String[][] values = new String[targetRowsSize][targetColsSize];
+        for (int r = 0; r < targetRowsSize; r++) {
+            for (int c = 0; c < targetColsSize; c++) {
+                if (r >= row && r < row + sourceRowsSize && c >= col && c < col + sourceColsSize) {
+                    values[r][c] = source[r - row][c - col];
+                } else if (r < rowsNumber && c < colsNumber) {
+                    values[r][c] = pageData[r][c];
+                } else {
+                    values[r][c] = defaultColValue;
+                }
+            }
+        }
+        makeSheet(values);
+        popSuccessful();
     }
 
     @FXML

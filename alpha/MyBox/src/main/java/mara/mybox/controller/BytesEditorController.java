@@ -331,10 +331,7 @@ public class BytesEditorController extends BaseFileEditorController {
                 pairArea.setDisable(false);
             }
         };
-        pairTask.setSelf(pairTask);
-        Thread thread = new Thread(pairTask);
-        thread.setDaemon(false);
-        thread.start();
+        start(pairTask, false, null);
     }
 
     @Override

@@ -46,7 +46,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (address == null || address.isBlank()) {
             return;
         }
-        WebBrowserController.oneOpen(address);
+        WebBrowserController.oneOpen(address, true);
     }
 
     public void openLink(File file) {
@@ -133,6 +133,10 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     public void myBoxClipBoard() {
         if (this instanceof BaseImageController) {
             ImageInMyBoxClipboardController.oneOpen();
+
+        } else if (this instanceof ControlSheet) {
+            DataClipboardPopController.open((ControlSheet) this);
+
         } else {
             TextInMyBoxClipboardController.oneOpen();
         }
@@ -331,11 +335,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                     popSuccessful();
                 }
             };
-            handling(task);
-            task.setSelf(task);
-            Thread thread = new Thread(task);
-            thread.setDaemon(false);
-            thread.start();
+            start(task);
         }
     }
 
@@ -371,6 +371,10 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         return handling(task, Modality.WINDOW_MODAL, null);
     }
 
+    public LoadingController handling(Task<?> task, String info) {
+        return handling(task, Modality.WINDOW_MODAL, info);
+    }
+
     public LoadingController handling(Task<?> task, Modality block, String info) {
         try {
             LoadingController controller = (LoadingController) WindowTools.handling(getMyWindow(), Fxmls.LoadingFxml);
@@ -401,16 +405,27 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         }
     }
 
-    public LoadingController start(SingletonTask<?> task) {
-        return start(task, true);
+    public LoadingController start(Task<?> task) {
+        return start(task, true, null);
     }
 
-    public LoadingController start(SingletonTask<?> task, boolean handling) {
+    public LoadingController start(Task<?> task, String info) {
+        return start(task, true, info);
+    }
+
+    public LoadingController start(Task<?> task, boolean handling) {
+        return start(task, handling, null);
+    }
+
+    public LoadingController start(Task<?> task, boolean handling, String info) {
         LoadingController controller = null;
         if (handling) {
-            controller = handling(task);
+            controller = handling(task, info);
         }
-        task.setSelf(task);
+        if (task instanceof SingletonTask) {
+            SingletonTask sTask = (SingletonTask) task;
+            sTask.setSelf(sTask);
+        }
         Thread thread = new Thread(task);
         thread.setDaemon(false);
         thread.start();
