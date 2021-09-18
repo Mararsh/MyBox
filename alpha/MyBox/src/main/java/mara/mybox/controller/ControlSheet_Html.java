@@ -8,6 +8,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -36,12 +37,27 @@ public abstract class ControlSheet_Html extends ControlSheet_ColMenu {
                 updateHtml();
                 UserConfig.setBoolean(baseName + "HtmlRow", newValue);
             });
+            if (htmlAllCheck != null) {
+//            htmlAllCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlAll", false));
+                htmlAllCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    updateHtml();
+//                UserConfig.setBoolean(baseName + "HtmlAll", newValue);
+                });
+            }
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
 
     protected void updateHtml() {
+        if (pagesNumber > 1 && htmlAllCheck != null && htmlAllCheck.isSelected()) {
+            displayAllHtml();
+        } else {
+            displayPageHtml();
+        }
+    }
+
+    protected void displayPageHtml() {
         try {
             if (pageData == null || pageData.length == 0) {
                 htmlViewController.webEngine.loadContent("");
@@ -84,6 +100,30 @@ public abstract class ControlSheet_Html extends ControlSheet_ColMenu {
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
+    }
+
+    protected void displayAllHtml() {
+        displayPageHtml();
+    }
+
+    protected int pageHtml(StringTable table, int inIndex) {
+        int index = inIndex;
+        try {
+            if (sheetInputs != null) {
+                for (int r = 0; r < sheetInputs.length; r++) {
+                    List<String> values = new ArrayList<>();
+                    if (htmlRowCheck.isSelected()) {
+                        values.add(message("Row") + (index + 1));
+                    }
+                    values.addAll(row(r));
+                    table.add(values);
+                    index++;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return index;
     }
 
     @FXML

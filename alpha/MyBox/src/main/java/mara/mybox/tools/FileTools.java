@@ -63,7 +63,7 @@ public class FileTools {
     }
 
     public static boolean rename(File sourceFile, File targetFile) {
-        return rename(sourceFile, targetFile, true);
+        return rename(sourceFile, targetFile, false);
     }
 
     public static boolean rename(File sourceFile, File targetFile, boolean noEmpty) {

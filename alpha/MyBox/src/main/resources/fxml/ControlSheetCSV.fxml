@@ -35,7 +35,6 @@ License:    Apache License Version 2.0
                             <children>
                                 <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                     <children>
-                                        <Label fx:id="sheetLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
                                         <Button fx:id="calculateSheetButton" mnemonicParsing="false" onAction="#calculateDataAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -45,6 +44,24 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportSheetAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconExport.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="analyseSheetButton" layoutX="12.0" layoutY="10.0" mnemonicParsing="false" onAction="#validateData">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconAnalyse.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                         <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -192,12 +209,6 @@ License:    Apache License Version 2.0
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <fx:include fx:id="editDelimiter" source="ControlTextDelimiter.fxml" />
-                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <Button mnemonicParsing="false" onAction="#textApplyAction" text="%Change">
-                                                                </Button>
-                                                            </children>
-                                                        </HBox>
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -251,6 +262,7 @@ License:    Apache License Version 2.0
                                         <CheckBox fx:id="htmlTitleCheck" mnemonicParsing="false" text="%Title" />
                                         <CheckBox fx:id="htmlColumnCheck" mnemonicParsing="false" text="%ColumnName" />
                                         <CheckBox fx:id="htmlRowCheck" mnemonicParsing="false" text="%RowNumber" />
+                              <CheckBox fx:id="htmlAllCheck" mnemonicParsing="false" text="%AllData" />
                                     </children>
                                 </FlowPane>
                                 <fx:include fx:id="htmlView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
@@ -297,6 +309,7 @@ License:    Apache License Version 2.0
                                         <CheckBox fx:id="textTitleCheck" mnemonicParsing="false" text="%Title" />
                                         <CheckBox fx:id="textColumnCheck" mnemonicParsing="false" text="%ColumnName" />
                                         <CheckBox fx:id="textRowCheck" mnemonicParsing="false" text="%RowNumber" />
+                              <CheckBox fx:id="textAllCheck" layoutX="221.0" layoutY="16.0" mnemonicParsing="false" text="%AllData" />
                                     </children>
                                 </FlowPane>
                                 <SplitPane dividerPositions="0.25" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -380,40 +393,6 @@ License:    Apache License Version 2.0
                                         </VBox>
                                     </content>
                                 </ScrollPane>
-                            </children>
-                            <padding>
-                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                            </padding>
-                        </VBox>
-                    </content>
-                </Tab>
-                <Tab fx:id="reportTab" text="%ValidationReport">
-                    <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
-                            <children>
-                                <FlowPane hgap="2.0" prefWrapLength="600.0" vgap="2.0">
-                                    <children>
-                                        <Button fx:id="menuReportButton" mnemonicParsing="false" onAction="#menuAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconMenu.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="popReportButton" mnemonicParsing="false" onAction="#popAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconPop.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </FlowPane>
-                                <fx:include fx:id="reportView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

@@ -20,7 +20,7 @@ import mara.mybox.value.Languages;
 public class ControlMatricesList extends BaseDataTableController<Matrix> {
 
     @FXML
-    protected ControlMatrix editController;
+    protected ControlMatrixEdit editController;
     @FXML
     protected TableColumn<Matrix, Long> mxidColumn;
     @FXML
@@ -64,7 +64,7 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
     public void initControls() {
         try {
             super.initControls();
-            editController.initManager(this);
+            editController.setParent(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

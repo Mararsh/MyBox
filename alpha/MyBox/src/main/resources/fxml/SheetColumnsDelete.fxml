@@ -17,23 +17,22 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataRowsDeleteController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SheetColumnsDeleteController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%DeleteRows" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%DeleteColumns" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
         <Label fx:id="targetLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="%Target" textAlignment="CENTER" wrapText="true" />
-        <RadioButton fx:id="rowCheckedRadio" mnemonicParsing="false" selected="true" text="%Selected">
+        <RadioButton fx:id="colCheckedRadio" mnemonicParsing="false" selected="true" text="%Selected">
             <toggleGroup>
-                <ToggleGroup fx:id="rowGroup" />
+                <ToggleGroup fx:id="colGroup" />
             </toggleGroup>
         </RadioButton>
-        <RadioButton fx:id="rowCurrentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowGroup" />
-        <RadioButton fx:id="rowAllRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowGroup" />
-        <RadioButton fx:id="rowSelectRadio" mnemonicParsing="false" text="%Select" toggleGroup="$rowGroup" /> 
-        <fx:include fx:id="rowsList" prefHeight="150.0" prefWidth="100.0" source="ControlListCheckBox.fxml" />
+        <RadioButton fx:id="colAllRadio" mnemonicParsing="false" text="%All" toggleGroup="$colGroup" />
+        <RadioButton fx:id="colSelectRadio" mnemonicParsing="false" text="%Select" toggleGroup="$colGroup" />
+        <fx:include fx:id="colsList" prefHeight="150.0" prefWidth="200.0" source="ControlListCheckBox.fxml" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

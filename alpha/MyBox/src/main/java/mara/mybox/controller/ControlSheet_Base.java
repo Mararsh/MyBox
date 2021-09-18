@@ -34,7 +34,7 @@ public abstract class ControlSheet_Base extends BaseController {
     protected List<ColumnDefinition> columns;
     protected ColumnDefinition.ColumnType defaultColumnType;
     protected String dataName, defaultColValue, colPrefix, inputStyle;
-    protected boolean defaultColNotNull, dataInvalid;
+    protected boolean defaultColNotNull;
     protected String[][] pageData;
     protected int colsNumber, rowsNumber;
 
@@ -44,7 +44,7 @@ public abstract class ControlSheet_Base extends BaseController {
     protected int currentRow, currentCol; // 0-based
     protected boolean isMatrix2;
     protected Label noDataLabel;
-    protected String fileDelimiterName, editDelimiterName, displayDelimiterName;
+    protected String sourceDelimiterName, editDelimiterName, displayDelimiterName;
 
     protected long totalSize, currentPageStart, currentPageEnd;   // // 1-based, excluded
     protected int pagesNumber, widthChange, currentPage, pageSize;// 1-based
@@ -59,21 +59,22 @@ public abstract class ControlSheet_Base extends BaseController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab sheetTab, editTab, htmlTab, textsDisplayTab, optionsTab, defTab, reportTab;
+    protected Tab sheetTab, editTab, htmlTab, textsDisplayTab, optionsTab, defTab;
     @FXML
     protected VBox sheetBox, defBox;
     @FXML
-    protected Button synchronizeEditButton, rowsAddButton, rowsDeleteButton, columnsAddButton, columnsDeleteButton, widthSheetButton,
+    protected Button analyseSheetButton, synchronizeEditButton,
+            rowsAddButton, rowsDeleteButton, columnsAddButton, columnsDeleteButton, widthSheetButton,
             calculateSheetButton, sortSheetButton, deleteSheetButton, equalSheetButton;
     @FXML
     protected CheckBox htmlTitleCheck, htmlColumnCheck, htmlRowCheck, textTitleCheck, textColumnCheck, textRowCheck,
-            overPopMenuCheck, rightClickPopMenuCheck;
+            htmlAllCheck, textAllCheck, overPopMenuCheck, rightClickPopMenuCheck;
     @FXML
     protected TextArea textsDisplayArea;
     @FXML
     protected ComboBox<String> scaleSelector, randomSelector, pageSizeSelector, pageSelector;
     @FXML
-    protected ControlWebView htmlViewController, reportViewController;
+    protected ControlWebView htmlViewController;
     @FXML
     protected ControlTextDelimiter displayDelimiterController;
     @FXML

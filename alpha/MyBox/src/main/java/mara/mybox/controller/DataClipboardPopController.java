@@ -65,7 +65,7 @@ public class DataClipboardPopController extends DataClipboardController {
                 && !clipboardController.sheetController.checkBeforeNextAction()) {
             return;
         }
-        DataPasteController controller = (DataPasteController) openChildStage(Fxmls.DataPasteFxml, false);
+        SheetPasteController controller = (SheetPasteController) openChildStage(Fxmls.SheetPasteFxml, false);
         controller.setParameters(clipboardController.sheetController, targetController);
     }
 

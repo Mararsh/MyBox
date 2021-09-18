@@ -17,7 +17,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class DataEqualController extends BaseDataOperationController {
+public class SheetEqualController extends BaseDataOperationController {
 
     protected String value;
 

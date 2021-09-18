@@ -107,7 +107,9 @@ public class DataFileExcelController extends BaseDataFileController {
     public void setFile(File file, boolean withName) {
         sourceFile = file;
         sourceWithNamesCheck.setSelected(withName);
-        sourceFileChanged(file);
+        sheetController.initCurrentPage();
+        sheetController.userSavedDataDefinition = false;
+        loadFile();
     }
 
     @Override

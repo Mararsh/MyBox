@@ -5,14 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import javafx.application.Platform;
-import mara.mybox.controller.BaseController;
 import mara.mybox.data.Era;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -450,51 +450,36 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
-    public static boolean valid(BaseController controller, List<ColumnDefinition> columns) {
-        if (columns == null || columns.isEmpty()) {
-            return false;
-        }
-        List<String> names = new ArrayList<>();
-        for (ColumnDefinition column : columns) {
-            if (!valid(column)) {
-                if (controller != null) {
-                    Platform.runLater(() -> {
-                        controller.alertError(Languages.message("ColumnNameEmptyOrDuplicate") + "\n"
-                                + Languages.message("Column") + " " + (names.size() + 1) + ": " + column.getName());
-                    });
-                }
-                return false;
+    public static StringTable validate(List<ColumnDefinition> columns) {
+        try {
+            if (columns == null || columns.isEmpty()) {
+                return null;
             }
-            if (names.contains(column.getName())) {
-                if (controller != null) {
-                    Platform.runLater(() -> {
-                        controller.alertError(Languages.message("ColumnNameEmptyOrDuplicate") + "\n"
-                                + Languages.message("Column") + " " + (names.size() + 1) + ": " + column.getName());
-                    });
+            List<String> colsNames = new ArrayList<>();
+            List<String> tNames = new ArrayList<>();
+            tNames.addAll(Arrays.asList(message("ID"), message("Name"), message("Reason")));
+            StringTable colsTable = new StringTable(tNames, message("InvalidColumns"));
+            for (int c = 0; c < columns.size(); c++) {
+                ColumnDefinition column = columns.get(c);
+                if (!column.valid()) {
+                    List<String> row = new ArrayList<>();
+                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Invalid")));
+                    colsTable.add(row);
                 }
-                return false;
+                if (colsNames.contains(column.getName())) {
+                    List<String> row = new ArrayList<>();
+                    row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Duplicated")));
+                    colsTable.add(row);
+                }
+                colsNames.add(column.getName());
             }
-            names.add(column.getName());
+            return colsTable;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        return true;
     }
 
-    public static boolean valid(String[] columns) {
-        if (columns == null || columns.length < 1) {
-            return false;
-        }
-        List<String> valid = new ArrayList<>();
-        for (String column : columns) {
-            if (column == null || column.isBlank()) {
-                return false;
-            }
-            if (valid.contains(column)) {
-                return false;
-            }
-            valid.add(column);
-        }
-        return true;
-    }
 
     /*
         customized get/set

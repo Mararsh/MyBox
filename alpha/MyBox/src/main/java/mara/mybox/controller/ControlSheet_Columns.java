@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -21,7 +22,6 @@ import mara.mybox.db.data.DataDefinition;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -169,13 +169,12 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         defBox.getChildren().clear();
         if (sourceFile == null) {
             if (tabPane.getTabs().contains(defTab)) {
-                tabPane.getTabs().removeAll(defTab, reportTab);
+                tabPane.getTabs().remove(defTab);
             }
             return;
         }
         if (!tabPane.getTabs().contains(defTab)) {
             tabPane.getTabs().add(4, defTab);
-            tabPane.getTabs().add(5, reportTab);
         }
         if (columns == null && pageData != null && pageData.length > 0) {
             makeColumns(pageData[0].length);
@@ -306,7 +305,8 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
 
             if (ok) {
                 newValues.add(column);
-                if (!ColumnDefinition.valid(this, newValues)) {
+
+                if (!validateColumns(newValues)) {
                     return;
                 }
             }
@@ -337,9 +337,36 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
         }
     }
 
-    protected void validate() {
+    public boolean validateColumns(List<ColumnDefinition> columns) {
+        if (columns == null || columns.isEmpty()) {
+            return false;
+        }
         try {
-            dataInvalid = false;
+            StringTable validateTable = ColumnDefinition.validate(columns);
+            if (validateTable != null && validateTable.isEmpty()) {
+                return true;
+            }
+            if (validateTable != null) {
+                Platform.runLater(() -> {
+                    validateTable.htmlTable();
+                });
+            }
+            if (task != null) {
+                task.setError(message("InvalidColumns"));
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return false;
+    }
+
+    @FXML
+    public void validateData() {
+        validateData(true);
+    }
+
+    public void validateData(boolean reportValid) {
+        try {
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Reason")));
             StringTable table = new StringTable(names, message("InvalidData"));
@@ -359,47 +386,10 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                     }
                 }
             }
-
-            List<String> colsNames = new ArrayList<>();
-            List<String> tNames = new ArrayList<>();
-            tNames.addAll(Arrays.asList(message("ID"), message("Name"), message("Reason")));
-            StringTable colsTable = new StringTable(tNames, message("InvalidColumns"));
-            if (columns != null) {
-                for (int c = 0; c < columns.size(); c++) {
-                    ColumnDefinition column = columns.get(c);
-                    if (!column.valid()) {
-                        List<String> row = new ArrayList<>();
-                        row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Invalid")));
-                        colsTable.add(row);
-                    }
-                    if (colsNames.contains(column.getName())) {
-                        List<String> row = new ArrayList<>();
-                        row.addAll(Arrays.asList(c + 1 + "", column.getName(), message("Duplicated")));
-                        colsTable.add(row);
-                    }
-                    colsNames.add(column.getName());
-                }
-            }
-
-            dataInvalid = !table.isEmpty() || !colsTable.isEmpty();
-            if (saveButton != null) {
-                saveButton.setDisable(dataInvalid);
-            }
-            if (reportViewController != null) {
-                reportViewController.webEngine.getLoadWorker().cancel();
-                if (dataInvalid) {
-                    String body = "";
-                    if (!colsTable.isEmpty()) {
-                        body += colsTable.div();
-                    }
-                    if (!table.isEmpty()) {
-                        body += table.div();
-                    }
-                    reportViewController.webEngine.loadContent(HtmlWriteTools.html(null, body));
-//                tabPane.getSelectionModel().select(reportTab);
-                } else {
-                    reportViewController.webEngine.loadContent("<H2 align=\"center\">" + message("DataAreValid") + "</H2>");
-                }
+            if (!table.isEmpty()) {
+                table.htmlTable();
+            } else if (reportValid) {
+                popInformation(message("DataAreValid"));
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -437,7 +427,7 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
                 tableDataColumn.clear(conn, def.getDfid());
             }
             if (columns != null && !columns.isEmpty()) {
-                if (ColumnDefinition.valid(this, columns)) {
+                if (validateColumns(columns)) {
                     tableDataColumn.save(conn, def.getDfid(), columns);
                     conn.commit();
                     return true;
@@ -448,6 +438,9 @@ public abstract class ControlSheet_Columns extends ControlSheet_Base {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            }
             return false;
         }
     }

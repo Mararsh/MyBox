@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
@@ -20,7 +21,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
+import static mara.mybox.tools.TextTools.delimiterValue;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
@@ -54,15 +57,15 @@ public class ControlSheetText extends ControlSheetFile {
             if (userSavedDataDefinition && dataDefinition != null) {
                 sourceWithNames = dataDefinition.isHasHeader();
                 sourceCharset = Charset.forName(dataDefinition.getCharset());
-                fileDelimiterName = dataDefinition.getDelimiter();
-                editDelimiterController.setDelimiter(fileDelimiterName);
+                sourceDelimiterName = dataDefinition.getDelimiter();
+                editDelimiterController.setDelimiter(sourceDelimiterName);
             }
-            if (fileDelimiterName == null) {
-                fileDelimiterName = editDelimiterName;
+            if (sourceDelimiterName == null) {
+                sourceDelimiterName = editDelimiterName;
             }
             if (dataDefinition == null) {
                 dataDefinition = DataDefinition.create().setDataName(dataName).setDataType(dataType)
-                        .setDelimiter(fileDelimiterName)
+                        .setDelimiter(sourceDelimiterName)
                         .setCharset(sourceCharset.name())
                         .setHasHeader(sourceWithNames);
                 tableDataDefinition.insertData(conn, dataDefinition);
@@ -70,7 +73,7 @@ public class ControlSheetText extends ControlSheetFile {
             } else {
                 if (!userSavedDataDefinition) {
                     dataDefinition.setCharset(sourceCharset.name())
-                            .setDelimiter(fileDelimiterName)
+                            .setDelimiter(sourceDelimiterName)
                             .setHasHeader(sourceWithNames);
                     tableDataDefinition.updateData(conn, dataDefinition);
                     conn.commit();
@@ -135,8 +138,13 @@ public class ControlSheetText extends ControlSheetFile {
                     columns.add(column);
                 }
             }
-            if (ColumnDefinition.valid(this, columns)) {
-                tableDataColumn.save(dataDefinition.getDfid(), columns);
+            if (columns != null && !columns.isEmpty()) {
+                if (validateColumns(columns)) {
+                    tableDataColumn.save(dataDefinition.getDfid(), columns);
+                    return true;
+                } else {
+                    return false;
+                }
             }
         } catch (Exception e) {
             if (task != null) {
@@ -230,7 +238,7 @@ public class ControlSheetText extends ControlSheetFile {
     }
 
     protected List<String> parseFileLine(String line) {
-        return TextTools.parseLine(line, fileDelimiterName);
+        return TextTools.parseLine(line, sourceDelimiterName);
     }
 
     @Override
@@ -286,9 +294,9 @@ public class ControlSheetText extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
-            String delimiter = TextTools.delimiterValue(fileDelimiterName);
+            String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             if (sourceWithNames) {
-                writeRow(writer, readNames(reader), delimiter);
+                TextFileTools.writeLine(writer, readNames(reader), delimiter);
             }
             String line;
             Random random = null;
@@ -328,28 +336,6 @@ public class ControlSheetText extends ControlSheetFile {
         return tmpFile;
     }
 
-    protected void writeRow(BufferedWriter writer, List<String> values, String delimiter) {
-        try {
-            if (writer == null || values == null || delimiter == null) {
-                return;
-            }
-            int end = values.size() - 1;
-            String row = "";
-            for (int c = 0; c <= end; c++) {
-                row += values.get(c);
-                if (c < end) {
-                    row += delimiter;
-                }
-            }
-            writer.write(row + "\n");
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.console(e);
-        }
-    }
-
     @Override
     public File filePaste(ControlSheetCSV sourceController, int row, int col, boolean enlarge) {
         if (sourceController == null || sourceController.sourceFile == null || sourceFile == null || row < 0 || col < 0) {
@@ -359,9 +345,9 @@ public class ControlSheetText extends ControlSheetFile {
         try ( CSVParser sourceParser = CSVParser.parse(sourceController.sourceFile, sourceController.sourceCharset, sourceController.sourceCsvFormat);
                  BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
-            String delimiter = TextTools.delimiterValue(fileDelimiterName);
+            String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             if (sourceWithNames) {
-                writeRow(writer, readNames(reader), delimiter);
+                TextFileTools.writeLine(writer, readNames(reader), delimiter);
             }
             Iterator<CSVRecord> sourceIterator = sourceParser.iterator();
             List<String> values = new ArrayList<>();
@@ -385,13 +371,13 @@ public class ControlSheetText extends ControlSheetFile {
                     continue;
                 }
                 makeRow(rowData, colsSize, values);
-                writeRow(writer, values, delimiter);
+                TextFileTools.writeLine(writer, values, delimiter);
                 rowsIndex++;
             }
             while (rowsIndex >= row && rowsIndex < rowsSize && rowsIndex < row + sourceRowsSize && sourceIterator.hasNext()) {
-                List<String> rowData = TextTools.parseLine(reader.readLine(), fileDelimiterName);
+                List<String> rowData = TextTools.parseLine(reader.readLine(), sourceDelimiterName);
                 makeRow(sourceIterator.next(), rowData, col, colsSize, values);
-                writeRow(writer, values, delimiter);
+                TextFileTools.writeLine(writer, values, delimiter);
                 rowsIndex++;
             }
             while (rowsIndex < rowsSize && (line = reader.readLine()) != null) {
@@ -400,7 +386,7 @@ public class ControlSheetText extends ControlSheetFile {
                     continue;
                 }
                 makeRow(rowData, colsSize, values);
-                writeRow(writer, values, delimiter);
+                TextFileTools.writeLine(writer, values, delimiter);
                 rowsIndex++;
             }
             writer.flush();
@@ -469,7 +455,7 @@ public class ControlSheetText extends ControlSheetFile {
             }
             String line;
             while ((line = reader.readLine()) != null) {
-                List<String> row = TextTools.parseLine(reader.readLine(), fileDelimiterName);
+                List<String> row = TextTools.parseLine(line, sourceDelimiterName);
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
@@ -496,12 +482,12 @@ public class ControlSheetText extends ControlSheetFile {
         });
         File tmpFile = TmpFileTools.getTempFile();
         try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
-            String delimiter = TextTools.delimiterValue(fileDelimiterName);
+            String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             if (sourceWithNames) {
-                writeRow(writer, names, delimiter);
+                TextFileTools.writeLine(writer, names, delimiter);
             }
             for (List<String> record : records) {
-                writeRow(writer, record, delimiter);
+                TextFileTools.writeLine(writer, record, delimiter);
             }
             writer.flush();
         } catch (Exception e) {
@@ -519,10 +505,10 @@ public class ControlSheetText extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
-            String delimiter = TextTools.delimiterValue(fileDelimiterName);
+            String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             if (sourceWithNames) {
                 if (readNames(reader) != null) {
-                    writeRow(writer, columnNames(), delimiter);
+                    TextFileTools.writeLine(writer, columnNames(), delimiter);
                 }
             }
             List<String> newValues = new ArrayList<>();
@@ -538,13 +524,13 @@ public class ControlSheetText extends ControlSheetFile {
             }
             String line;
             while ((line = reader.readLine()) != null) {
-                List<String> row = TextTools.parseLine(reader.readLine(), fileDelimiterName);
+                List<String> row = TextTools.parseLine(line, sourceDelimiterName);
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
                 values.addAll(row);
                 values.addAll(index, newValues);
-                writeRow(writer, values, delimiter);
+                TextFileTools.writeLine(writer, values, delimiter);
                 values.clear();
             }
             writer.flush();
@@ -563,8 +549,8 @@ public class ControlSheetText extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
             if (sourceWithNames && keepCols) {
-                String delimiter = TextTools.delimiterValue(fileDelimiterName);
-                writeRow(writer, columnNames(), delimiter);
+                String delimiter = TextTools.delimiterValue(sourceDelimiterName);
+                TextFileTools.writeLine(writer, columnNames(), delimiter);
                 writer.flush();
             }
         } catch (Exception e) {
@@ -582,10 +568,10 @@ public class ControlSheetText extends ControlSheetFile {
         File tmpFile = TmpFileTools.getTempFile();
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
                  BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceCharset, false))) {
-            String delimiter = TextTools.delimiterValue(fileDelimiterName);
+            String delimiter = TextTools.delimiterValue(sourceDelimiterName);
             List<String> colsNames = columnNames();
             if (sourceWithNames) {
-                writeRow(writer, colsNames, delimiter);
+                TextFileTools.writeLine(writer, colsNames, delimiter);
             }
             List<String> values = new ArrayList<>();
             List<Integer> indexs = new ArrayList<>();
@@ -596,14 +582,14 @@ public class ControlSheetText extends ControlSheetFile {
             }
             String line;
             while ((line = reader.readLine()) != null) {
-                List<String> row = TextTools.parseLine(reader.readLine(), fileDelimiterName);
+                List<String> row = TextTools.parseLine(line, sourceDelimiterName);
                 if (row == null || row.isEmpty()) {
                     continue;
                 }
                 for (int i = 0; i < indexs.size(); ++i) {
                     values.add(row.get(indexs.get(i)));
                 }
-                writeRow(writer, values, delimiter);
+                TextFileTools.writeLine(writer, values, delimiter);
                 values.clear();
             }
             writer.flush();
@@ -630,8 +616,7 @@ public class ControlSheetText extends ControlSheetFile {
                 @Override
                 protected boolean handle() {
                     backup();
-                    error = save(sourceFile, sourceCharset, fileDelimiterName, sourceWithNames);
-                    return error == null;
+                    return save(sourceFile, sourceCharset, sourceDelimiterName, sourceWithNames);
                 }
 
                 @Override
@@ -662,8 +647,7 @@ public class ControlSheetText extends ControlSheetFile {
 
                 @Override
                 protected boolean handle() {
-                    error = save(file, targetCharset, targetDelimiterName, targetWithNames);
-                    return error == null;
+                    return save(file, targetCharset, targetDelimiterName, targetWithNames);
                 }
 
                 @Override
@@ -686,34 +670,31 @@ public class ControlSheetText extends ControlSheetFile {
         }
     }
 
-    public String save(File tfile, Charset charset, String delimiterName, boolean withNames) {
-
+    public boolean save(File tfile, Charset charset, String delimiterName, boolean withNames) {
         if (columns == null) {
             makeColumns(colsCheck.length);
         }
-        MyBoxLog.console("delimiterName: >>" + delimiterName + "<<");
         File tmpFile = TmpFileTools.getTempFile();
         String delimiter = TextTools.delimiterValue(delimiterName);
         if (sourceFile != null) {
             try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset));
                      BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
-
                 List<String> colsNames = columnNames();
                 if (sourceWithNames) {
                     readNames(reader);
                 }
                 if (withNames) {
-                    writeRow(writer, colsNames, delimiter);
+                    TextFileTools.writeLine(writer, colsNames, delimiter);
                 }
                 long rowIndex = 0;
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    List<String> row = TextTools.parseLine(reader.readLine(), fileDelimiterName);
+                    List<String> row = TextTools.parseLine(line, sourceDelimiterName);
                     if (row == null || row.isEmpty()) {
                         continue;
                     }
                     if (++rowIndex < currentPageStart || rowIndex >= currentPageEnd) {    // 1-based, excluded
-                        writeRow(writer, row, delimiter);
+                        TextFileTools.writeLine(writer, row, delimiter);
                     } else if (rowIndex == currentPageStart) {
                         writePageData(writer, delimiter);
                     }
@@ -724,25 +705,33 @@ public class ControlSheetText extends ControlSheetFile {
                 writer.flush();
             } catch (Exception e) {
                 MyBoxLog.console(e);
-                return e.toString();
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                return false;
             }
         } else {
             try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, charset, false))) {
                 List<String> colsNames = columnNames();
                 if (withNames) {
-                    writeRow(writer, colsNames, delimiter);
+                    TextFileTools.writeLine(writer, colsNames, delimiter);
                 }
                 writePageData(writer, delimiter);
             } catch (Exception e) {
                 MyBoxLog.console(e);
-                return e.toString();
+                if (task != null) {
+                    task.setError(e.toString());
+                }
+                return false;
             }
         }
         if (FileTools.rename(tmpFile, tfile, false)) {
-            saveDefinition(tfile.getAbsolutePath(), dataType, charset, delimiterName, withNames, columns);
-            return null;
+            return saveDefinition(tfile.getAbsolutePath(), dataType, charset, delimiterName, withNames, columns);
         } else {
-            return "Failed";
+            if (task != null) {
+                task.setError(message("Failed"));
+            }
+            return false;
         }
     }
 
@@ -756,7 +745,7 @@ public class ControlSheetText extends ControlSheetFile {
                 for (int c = 0; c < sheetInputs[r].length; c++) {
                     rowData.add(cellString(r, c));
                 }
-                writeRow(writer, rowData, delimiter);
+                TextFileTools.writeLine(writer, rowData, delimiter);
             }
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -765,7 +754,97 @@ public class ControlSheetText extends ControlSheetFile {
 
     @Override
     protected boolean saveDefinition() {
-        return saveDefinition(sourceFile.getAbsolutePath(), dataType, sourceCharset, fileDelimiterName, sourceWithNames, columns);
+        return saveDefinition(sourceFile.getAbsolutePath(), dataType, sourceCharset, sourceDelimiterName, sourceWithNames, columns);
+    }
+
+    @Override
+    protected String fileText() {
+        if (sourceFile == null) {
+            return null;
+        }
+        String delimiter = delimiterValue(displayDelimiterName);
+        StringBuilder s = new StringBuilder();
+        if (textTitleCheck.isSelected()) {
+            s.append(titleName()).append("\n\n");
+        }
+        if (textColumnCheck.isSelected()) {
+            rowText(s, -1, columnNames(), delimiter);
+        }
+        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset))) {
+            if (sourceWithNames) {
+                readNames(reader);
+            }
+            String line;
+            int fileIndex = 0, dataIndex = 0;
+            while ((line = reader.readLine()) != null) {
+                List<String> row = TextTools.parseLine(line, sourceDelimiterName);
+                if (row == null || row.isEmpty()) {
+                    continue;
+                }
+                if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    rowText(s, dataIndex++, row, delimiter);
+                } else if (fileIndex == currentPageStart) {
+                    dataIndex = pageText(s, dataIndex, delimiter);
+                }
+            }
+            if (fileIndex == 0) {
+                pageText(s, dataIndex, delimiter);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return s.toString();
+    }
+
+    @Override
+    protected String fileHtml() {
+        if (sourceFile == null) {
+            return null;
+        }
+        StringBuilder s = new StringBuilder();
+        List<String> names = null;
+        if (htmlColumnCheck.isSelected()) {
+            names = new ArrayList<>();
+            if (htmlRowCheck.isSelected()) {
+                names.add("");
+            }
+            names.addAll(columnNames());
+        }
+        String title = null;
+        if (htmlTitleCheck.isSelected()) {
+            title = titleName();
+        }
+        StringTable table = new StringTable(names, title);
+        try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, sourceCharset))) {
+            if (sourceWithNames) {
+                readNames(reader);
+            }
+            String line;
+            int fileIndex = 0, dataIndex = 0;
+            while ((line = reader.readLine()) != null) {
+                List<String> row = TextTools.parseLine(line, sourceDelimiterName);
+                if (row == null || row.isEmpty()) {
+                    continue;
+                }
+                if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    if (htmlRowCheck.isSelected()) {
+                        row.add(0, message("Row") + (dataIndex + 1));
+                    }
+                    table.add(row);
+                    dataIndex++;
+                } else if (fileIndex == currentPageStart) {
+                    dataIndex = pageHtml(table, dataIndex);
+                }
+            }
+            if (fileIndex == 0) {
+                pageHtml(table, dataIndex);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return table.html();
     }
 
 }

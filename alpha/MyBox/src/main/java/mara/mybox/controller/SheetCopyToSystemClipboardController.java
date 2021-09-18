@@ -19,7 +19,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-2
  * @License Apache License Version 2.0
  */
-public class DataCopyToSystemClipboardController extends BaseDataOperationController {
+public class SheetCopyToSystemClipboardController extends BaseDataOperationController {
 
     protected char delimiter;
 

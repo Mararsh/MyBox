@@ -57,6 +57,7 @@ public class NoteEditorController extends HtmlEditorController {
     protected TableNoteTag tableNoteTag;
     protected Note currentNote;
     protected Notebook bookOfCurrentNote;
+    protected boolean tagsChanged;
 
     @FXML
     protected Label notebookLabel;
@@ -84,7 +85,6 @@ public class NoteEditorController extends HtmlEditorController {
             tableNoteTag = notesController.tableNoteTag;
             saveButton = notesController.saveButton;
             currentNote = null;
-            tagsListController.setParent(notesController);
 
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
@@ -100,6 +100,7 @@ public class NoteEditorController extends HtmlEditorController {
             titleInput.setText(message("Note"));
             styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.DefaultStyle));
 
+            initTagsTab();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -286,6 +287,22 @@ public class NoteEditorController extends HtmlEditorController {
     /*
         Note tags
      */
+    public void initTagsTab() {
+        try {
+            tagsListController.setParent(notesController);
+
+            tagsListController.changedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldV, Boolean newV) {
+                    tagsTab.setText(message("Tags") + " *");
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     @FXML
     public void refreshNoteTags() {
         synchronized (this) {
@@ -328,6 +345,7 @@ public class NoteEditorController extends HtmlEditorController {
                 protected void whenSucceeded() {
                     tagsListController.setValues(tagsString);
                     tagsListController.selectIndex(selected);
+                    tagsChanged(false);
                 }
 
                 @Override
@@ -343,11 +361,13 @@ public class NoteEditorController extends HtmlEditorController {
     @FXML
     public void selectAllNoteTags() {
         tagsListController.selectAll();
+        tagsChanged(true);
     }
 
     @FXML
     public void selectNoneNoteTags() {
         tagsListController.selectNone();
+        tagsChanged(true);
     }
 
     @FXML
@@ -395,6 +415,7 @@ public class NoteEditorController extends HtmlEditorController {
                 @Override
                 protected void whenSucceeded() {
                     popSaved();
+                    tagsChanged(false);
                 }
 
                 @Override
@@ -405,6 +426,11 @@ public class NoteEditorController extends HtmlEditorController {
             };
             start(noteTagsTask, false);
         }
+    }
+
+    public void tagsChanged(boolean changed) {
+        tagsChanged = changed;
+        tagsTab.setText(message("Tags") + (changed ? " *" : ""));
     }
 
     protected void bookChanged(Notebook book) {

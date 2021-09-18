@@ -521,6 +521,16 @@ public class StyleButton {
         if (id.startsWith("rowsDelete")) {
             return new StyleData(id, message("DeleteRows"), "", "iconRowDelete.png");
         }
+        if (id.startsWith("set")) {
+            switch (id) {
+                case "setButton":
+                    return new StyleData("setButton", message("Set"), "F1", "iconEqual.png");
+                case "setAllOrSelectedButton":
+                    return new StyleData(id, message("SetAllOrSelected"), "", "iconEqual.png");
+                default:
+                    return new StyleData(id, message("Set"), "", "iconEqual.png");
+            }
+        }
         return null;
     }
 
@@ -549,8 +559,7 @@ public class StyleButton {
                 return new StyleData(id, message("Newline"), "", "iconBr.png");
             case "statisticButton":
                 return new StyleData("statisticButton", message("Statistic"), "", "iconStatistic.png");
-            case "setButton":
-                return new StyleData("setButton", message("Set"), "F1", "iconEqual.png");
+
             case "firstButton":
                 return new StyleData("firstButton", message("First"), "ALT+HOME", "iconFirst.png");
             case "lastButton":
@@ -599,8 +608,7 @@ public class StyleButton {
                 return new StyleData("mirrorVButton", message("MirrorVertical"), "", "iconVertical.png");
             case "shearButton":
                 return new StyleData("shearButton", message("Shear"), "", "iconShear.png");
-            case "setAllOrSelectedButton":
-                return new StyleData(id, message("SetAllOrSelected"), "", "iconEqual.png");
+
             case "testButton":
                 return new StyleData("testButton", message("Test"), "", "iconGo.png");
             case "openForeImageButton":
@@ -691,14 +699,7 @@ public class StyleButton {
                 return new StyleData("blackwhiteButton", message("BlackOrWhite"), "", "iconBlackWhite.png");
             case "greyButton":
                 return new StyleData("greyButton", message("Greyscale"), "", "iconGreyscale.png");
-            case "setEnhanceButton":
-                return new StyleData("setEnhanceButton", message("Set"), "", "iconEqual.png");
-            case "setScaleButton":
-                return new StyleData("setScaleButton", message("Set"), "", "iconEqual.png");
-            case "setBinaryButton":
-                return new StyleData("setBinaryButton", message("Set"), "", "iconEqual.png");
-            case "setRotateButton":
-                return new StyleData("setRotateButton", message("Set"), "", "iconEqual.png");
+
             case "deskewButton":
                 return new StyleData("deskewButton", "", message("Deskew"), "", "iconShear.png");
             case "moveUpButton":

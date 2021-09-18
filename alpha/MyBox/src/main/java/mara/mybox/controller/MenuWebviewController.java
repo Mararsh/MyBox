@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -87,36 +88,41 @@ public class MenuWebviewController extends MenuController {
         if (webView == null) {
             return;
         }
-        String tag;
-        if (element != null) {
-            tag = element.getTagName();
-            tagLabel.setText(message("Tag") + ": " + tag);
-        } else {
-            tagLabel.setText("");
-        }
-        if (TextClipboardTools.isMonitoringCopy()) {
-            NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
-            NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
-        } else {
-            NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
-            NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+h / ALT+h"));
-        }
-        NodeStyleTools.setTooltip(selectButton, new Tooltip(message("SelectNode") + "\nCTRL+u / ALT+u"));
-        selectButton.setDisable(element == null);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                String tag;
+                if (element != null) {
+                    tag = element.getTagName();
+                    tagLabel.setText(message("Tag") + ": " + tag);
+                } else {
+                    tagLabel.setText("");
+                }
+                if (TextClipboardTools.isMonitoringCopy()) {
+                    NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
+                } else {
+                    NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+h / ALT+h"));
+                }
+                NodeStyleTools.setTooltip(selectButton, new Tooltip(message("SelectNode") + "\nCTRL+u / ALT+u"));
+                selectButton.setDisable(element == null);
 
-        String html = WebViewTools.getHtml(webView);
-        bottomLabel.setText(message("Length") + ": " + (html == null ? "0" : StringTools.format(html.length())));
+                String html = WebViewTools.getHtml(webView);
+                bottomLabel.setText(message("Length") + ": " + (html == null ? "0" : StringTools.format(html.length())));
 
-        String htmlSelection = WebViewTools.selectedHtml(webView.getEngine());
-        htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : StringTools.format(htmlSelection.length())));
-        copyToSystemClipboardHtmlButton.setDisable(htmlSelection == null || htmlSelection.isBlank());
-        copyToMyBoxClipboardHtmlButton.setDisable(copyToSystemClipboardHtmlButton.isDisable());
+                String htmlSelection = WebViewTools.selectedHtml(webView.getEngine());
+                htmlLabel.setText(message("Selection") + ": " + (htmlSelection == null ? "0" : StringTools.format(htmlSelection.length())));
+                copyToSystemClipboardHtmlButton.setDisable(htmlSelection == null || htmlSelection.isBlank());
+                copyToMyBoxClipboardHtmlButton.setDisable(copyToSystemClipboardHtmlButton.isDisable());
 
-        String textSelection = WebViewTools.selectedText(webView.getEngine());
-        textLabel.setText(message("Selection") + ": " + (textSelection == null ? "0" : StringTools.format(textSelection.length())));
-        copyToSystemClipboardTextButton.setDisable(textSelection == null || textSelection.isBlank());
-        copyToMyBoxClipboardTextButton.setDisable(copyToSystemClipboardTextButton.isDisable());
+                String textSelection = WebViewTools.selectedText(webView.getEngine());
+                textLabel.setText(message("Selection") + ": " + (textSelection == null ? "0" : StringTools.format(textSelection.length())));
+                copyToSystemClipboardTextButton.setDisable(textSelection == null || textSelection.isBlank());
+                copyToMyBoxClipboardTextButton.setDisable(copyToSystemClipboardTextButton.isDisable());
 
+            }
+        });
     }
 
     public void setElement(Element element) {

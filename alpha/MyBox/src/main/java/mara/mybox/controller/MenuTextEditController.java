@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -74,66 +75,71 @@ public class MenuTextEditController extends MenuTextBaseController {
         if (textInput == null) {
             return;
         }
-        IndexRange range = textInput.getSelection();
-        int selection = range != null ? range.getLength() : 0;
-        String info = message("Length") + ": " + StringTools.format(textInput.getLength()) + "  ";
-        if (selection > 0) {
-            info += message("Selection") + ": " + StringTools.format(range.getStart() + 1)
-                    + "-" + StringTools.format(range.getEnd()) + "(" + StringTools.format(selection) + ")";
-        } else {
-            info += message("Cursor") + ": " + StringTools.format(textInput.getAnchor() + 1) + " " + message("Selection") + ": 0";
-        }
-        bottomLabel.setText(info);
-        if (undoButton != null) {
-            undoButton.setDisable(!textInput.isEditable() || textInput.isDisable() || !textInput.isUndoable());
-        }
-        if (redoButton != null) {
-            redoButton.setDisable(!textInput.isEditable() || textInput.isDisable() || !textInput.isRedoable());
-        }
-        boolean selectNone = selection < 1;
-        if (cropButton != null) {
-            cropButton.setDisable(!textInput.isEditable() || textInput.isDisable() || selectNone);
-        }
-        if (deleteButton != null) {
-            deleteButton.setDisable(!textInput.isEditable() || textInput.isDisable() || selectNone);
-        }
-        if (clearButton != null) {
-            clearButton.setDisable(!textInput.isEditable() || textInput.isDisable());
-        }
-        if (pasteContentInSystemClipboardButton != null) {
-            pasteContentInSystemClipboardButton.setDisable(!textInput.isEditable() || textInput.isDisable()
-                    || !TextClipboardTools.systemClipboardHasString());
-        }
-        boolean empty = textInput.getLength() < 1;
-        if (selectAllButton != null) {
-            selectAllButton.setDisable(empty);
-        }
-        if (selectNoneButton != null) {
-            selectNoneButton.setDisable(empty);
-        }
-        if (editButton != null) {
-            editButton.setDisable(empty);
-        }
-        if (copyToSystemClipboardButton != null) {
-            copyToSystemClipboardButton.setDisable(empty);
-        }
-        if (copyToMyBoxClipboardButton != null) {
-            copyToMyBoxClipboardButton.setDisable(empty);
-        }
-        if (saveAsButton != null) {
-            saveAsButton.setDisable(empty);
-        }
-        if (findButton != null) {
-            findButton.setDisable(empty);
-        }
-        if (replaceButton != null) {
-            replaceButton.setDisable(empty || !textInput.isEditable() || textInput.isDisable());
-        }
-        if (TextClipboardTools.isMonitoringCopy()) {
-            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
-        } else {
-            NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
-        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                IndexRange range = textInput.getSelection();
+                int selection = range != null ? range.getLength() : 0;
+                String info = message("Length") + ": " + StringTools.format(textInput.getLength()) + "  ";
+                if (selection > 0) {
+                    info += message("Selection") + ": " + StringTools.format(range.getStart() + 1)
+                            + "-" + StringTools.format(range.getEnd()) + "(" + StringTools.format(selection) + ")";
+                } else {
+                    info += message("Cursor") + ": " + StringTools.format(textInput.getAnchor() + 1) + " " + message("Selection") + ": 0";
+                }
+                bottomLabel.setText(info);
+                if (undoButton != null) {
+                    undoButton.setDisable(!textInput.isEditable() || textInput.isDisable() || !textInput.isUndoable());
+                }
+                if (redoButton != null) {
+                    redoButton.setDisable(!textInput.isEditable() || textInput.isDisable() || !textInput.isRedoable());
+                }
+                boolean selectNone = selection < 1;
+                if (cropButton != null) {
+                    cropButton.setDisable(!textInput.isEditable() || textInput.isDisable() || selectNone);
+                }
+                if (deleteButton != null) {
+                    deleteButton.setDisable(!textInput.isEditable() || textInput.isDisable() || selectNone);
+                }
+                if (clearButton != null) {
+                    clearButton.setDisable(!textInput.isEditable() || textInput.isDisable());
+                }
+                if (pasteContentInSystemClipboardButton != null) {
+                    pasteContentInSystemClipboardButton.setDisable(!textInput.isEditable() || textInput.isDisable()
+                            || !TextClipboardTools.systemClipboardHasString());
+                }
+                boolean empty = textInput.getLength() < 1;
+                if (selectAllButton != null) {
+                    selectAllButton.setDisable(empty);
+                }
+                if (selectNoneButton != null) {
+                    selectNoneButton.setDisable(empty);
+                }
+                if (editButton != null) {
+                    editButton.setDisable(empty);
+                }
+                if (copyToSystemClipboardButton != null) {
+                    copyToSystemClipboardButton.setDisable(empty);
+                }
+                if (copyToMyBoxClipboardButton != null) {
+                    copyToMyBoxClipboardButton.setDisable(empty);
+                }
+                if (saveAsButton != null) {
+                    saveAsButton.setDisable(empty);
+                }
+                if (findButton != null) {
+                    findButton.setDisable(empty);
+                }
+                if (replaceButton != null) {
+                    replaceButton.setDisable(empty || !textInput.isEditable() || textInput.isDisable());
+                }
+                if (TextClipboardTools.isMonitoringCopy()) {
+                    NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c"));
+                } else {
+                    NodeStyleTools.setTooltip(copyToSystemClipboardButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c"));
+                }
+            }
+        });
     }
 
     @FXML

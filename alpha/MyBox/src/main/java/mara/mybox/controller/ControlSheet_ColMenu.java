@@ -133,21 +133,21 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
 
             menu = new MenuItem(message("SetValues") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
+                SheetEqualController controller = (SheetEqualController) openChildStage(Fxmls.SheetEqualFxml, false);
                 controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);
 
             menu = new MenuItem(message("CopyToSystemClipboard") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataCopyToSystemClipboardController controller = (DataCopyToSystemClipboardController) openChildStage(Fxmls.DataCopyToSystemClipboardFxml, false);
+                SheetCopyToSystemClipboardController controller = (SheetCopyToSystemClipboardController) openChildStage(Fxmls.SheetCopyToSystemClipboardFxml, false);
                 controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);
 
             menu = new MenuItem(message("CopyToMyBoxClipboard") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataCopyToMyBoxClipboardController controller = (DataCopyToMyBoxClipboardController) openChildStage(Fxmls.DataCopyToMyBoxClipboardFxml, false);
+                SheetCopyToMyBoxClipboardController controller = (SheetCopyToMyBoxClipboardController) openChildStage(Fxmls.SheetCopyToMyBoxClipboardFxml, false);
                 controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);
@@ -160,28 +160,28 @@ public abstract class ControlSheet_ColMenu extends ControlSheet_RowMenu {
 
             menu = new MenuItem(message("Width") + " ...");
             menu.setOnAction((ActionEvent event) -> {
-                DataWidthController controller = (DataWidthController) openChildStage(Fxmls.DataWidthFxml, false);
+                SheetWidthController controller = (SheetWidthController) openChildStage(Fxmls.SheetWidthFxml, false);
                 controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);
 
             menu = new MenuItem(message("Order") + " ...");
             menu.setOnAction((ActionEvent event) -> {
-                DataSortController controller = (DataSortController) openChildStage(Fxmls.DataSortFxml, false);
+                SheetSortController controller = (SheetSortController) openChildStage(Fxmls.SheetSortFxml, false);
                 controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);
 
             menu = new MenuItem(Languages.message("Add") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataColumnsAddController controller = (DataColumnsAddController) openChildStage(Fxmls.DataColumnsAddFxml, false);
+                SheetColumnsAddController controller = (SheetColumnsAddController) openChildStage(Fxmls.SheetColumnsAddFxml, false);
                 controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);
 
             menu = new MenuItem(Languages.message("Delete") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataColumnsDeleteController controller = (DataColumnsDeleteController) openChildStage(Fxmls.DataColumnsDeleteFxml, false);
+                SheetColumnsDeleteController controller = (SheetColumnsDeleteController) openChildStage(Fxmls.SheetColumnsDeleteFxml, false);
                 controller.setParameters((ControlSheet) this, -1, col);
             });
             items.add(menu);

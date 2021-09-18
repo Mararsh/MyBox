@@ -45,7 +45,6 @@ public abstract class BaseDataOperationController extends BaseController {
     public void setParameters(ControlSheet sheetController, int row, int col) {
         try {
             this.sheetController = sheetController;
-            myStage.setTitle(sheetController.getBaseTitle());
 
             updateControls();
 
@@ -107,6 +106,9 @@ public abstract class BaseDataOperationController extends BaseController {
 
     public void updateControls() {
         try {
+            getMyStage().setTitle(sheetController.getBaseTitle());
+            sourceFile = sheetController.sourceFile;
+
             if (rowGroup != null) {
                 if (!sheetController.rowsSelected()) {
                     rowCheckedRadio.setDisable(true);
@@ -164,8 +166,8 @@ public abstract class BaseDataOperationController extends BaseController {
                 colsListController.setValues(cols);
             }
 
-            if (sheetController.sourceFile != null) {
-                targetLabel.setText(message("File") + ": " + sheetController.sourceFile.getAbsolutePath());
+            if (sourceFile != null) {
+                targetLabel.setText(message("File") + ": " + sourceFile.getAbsolutePath());
             } else {
                 targetLabel.setText("");
             }

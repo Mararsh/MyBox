@@ -10,6 +10,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVFormat;
@@ -78,10 +79,14 @@ public class DataFileCSVController extends BaseDataFileController {
         }
     }
 
-    public void setFile(File file, boolean withName, char delimiter) {
+    public void setFile(File file, Charset charset, boolean withName, char delimiter) {
+        sourceFile = file;
         csvReadController.withNamesCheck.setSelected(withName);
         csvReadController.setDelimiter(delimiter);
-        sourceFileChanged(file);
+        csvReadController.setCharset(charset);
+        sheetController.initCurrentPage();
+        sheetController.userSavedDataDefinition = false;
+        loadFile();
     }
 
     @Override
@@ -93,7 +98,7 @@ public class DataFileCSVController extends BaseDataFileController {
             info = message("FileSize") + ": " + FileTools.showFileSize(sourceFile.length()) + "\n"
                     + message("FileModifyTime") + ": " + DateTools.datetimeToString(sourceFile.lastModified()) + "\n"
                     + message("Charset") + ": " + sheetController.sourceCharset + "\n"
-                    + message("Delimiter") + ": " + sheetController.sourceCsvFormat.getDelimiter() + "\n"
+                    + message("Delimiter") + ": " + TextTools.delimiterMessage(sheetController.sourceDelimiterName) + "\n"
                     + message("RowsNumber") + ": " + sheetController.rowsTotal() + "\n"
                     + (sheetController.columns == null ? "" : message("ColumnsNumber") + ": " + sheetController.columns.size() + "\n")
                     + message("FirstLineAsNames") + ": " + (sheetController.sourceWithNames ? message("Yes") : message("No")) + "\n"
@@ -125,10 +130,9 @@ public class DataFileCSVController extends BaseDataFileController {
     /*
         static
      */
-    public static DataFileCSVController open(File file, boolean withNames, char delimiter) {
+    public static DataFileCSVController open(File file, Charset charset, boolean withNames, char delimiter) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.setFile(file, withNames, delimiter);
-        controller.toFront();
+        controller.setFile(file, charset, withNames, delimiter);
         return controller;
     }
 

@@ -8,6 +8,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -24,7 +25,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem EditExcel = new MenuItem(message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DataFileExcelFxml);
+            DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+            controller.dataController.newSheet(3, 3);
         });
 
         MenuItem ExcelConvert = new MenuItem(message("ExcelConvert"));
@@ -44,7 +46,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem EditCSV = new MenuItem(message("EditCSV"));
         EditCSV.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DataFileCSVFxml);
+            DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+            controller.dataController.newSheet(3, 3);
         });
 
         MenuItem CsvConvert = new MenuItem(message("CsvConvert"));
@@ -58,15 +61,26 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         });
 
         MenuItem TextData = new MenuItem(message("EditTextDataFile"));
-        CsvMerge.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DataFileTextFxml);
+        TextData.setOnAction((ActionEvent event1) -> {
+            DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+            controller.dataController.newSheet(3, 3);
+        });
+
+        MenuItem TextDataConvert = new MenuItem(message("TextDataConvert"));
+        TextDataConvert.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DataFileTextConvertFxml);
+        });
+
+        MenuItem TextDataMerge = new MenuItem(message("TextDataMerge"));
+        TextDataMerge.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DataFileTextMergeFxml);
         });
 
         Menu DataFile = new Menu(message("DataFile"));
         DataFile.getItems().addAll(
                 EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
                 EditExcel, ExcelConvert, ExcelMerge, ExtractTextsFromMS, new SeparatorMenuItem(),
-                TextData
+                TextData, TextDataConvert, TextDataMerge
         );
 
         MenuItem DataClipboard = new MenuItem(message("DataClipboard"));

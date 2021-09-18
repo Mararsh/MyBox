@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataDefinition;
@@ -17,6 +18,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
+import static mara.mybox.tools.TextTools.delimiterValue;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
@@ -49,23 +51,23 @@ public class ControlSheetCSV extends ControlSheetFile {
             dataName = sourceFile.getAbsolutePath();
             dataDefinition = tableDataDefinition.read(conn, dataType, dataName);
             if (userSavedDataDefinition && dataDefinition != null) {
-                fileDelimiterName = dataDefinition.getDelimiter();
-                sourceCsvDelimiter = fileDelimiterName.charAt(0);
+                sourceDelimiterName = dataDefinition.getDelimiter();
+                sourceCsvDelimiter = sourceDelimiterName.charAt(0);
                 sourceWithNames = dataDefinition.isHasHeader();
                 sourceCharset = Charset.forName(dataDefinition.getCharset());
             }
             if (dataDefinition == null) {
-                fileDelimiterName = sourceCsvDelimiter + "";
+                sourceDelimiterName = sourceCsvDelimiter + "";
                 dataDefinition = DataDefinition.create().setDataName(dataName).setDataType(dataType)
                         .setCharset(sourceCharset.name()).setHasHeader(sourceWithNames)
-                        .setDelimiter(fileDelimiterName);
+                        .setDelimiter(sourceDelimiterName);
                 tableDataDefinition.insertData(conn, dataDefinition);
                 conn.commit();
             } else {
                 if (!userSavedDataDefinition) {
-                    fileDelimiterName = sourceCsvDelimiter + "";
+                    sourceDelimiterName = sourceCsvDelimiter + "";
                     dataDefinition.setCharset(sourceCharset.name())
-                            .setDelimiter(fileDelimiterName)
+                            .setDelimiter(sourceDelimiterName)
                             .setHasHeader(sourceWithNames);
                     tableDataDefinition.updateData(conn, dataDefinition);
                     conn.commit();
@@ -114,8 +116,13 @@ public class ControlSheetCSV extends ControlSheetFile {
                     columns.add(column);
                 }
             }
-            if (ColumnDefinition.valid(this, columns)) {
-                tableDataColumn.save(dataDefinition.getDfid(), columns);
+            if (columns != null && !columns.isEmpty()) {
+                if (validateColumns(columns)) {
+                    tableDataColumn.save(dataDefinition.getDfid(), columns);
+                    return true;
+                } else {
+                    return false;
+                }
             }
         } catch (Exception e) {
             if (task != null) {
@@ -283,26 +290,25 @@ public class ControlSheetCSV extends ControlSheetFile {
                 }
                 csvPrinter.printRecord(names);
             }
-            if (parser.iterator() == null || !parser.iterator().hasNext()) {
-                copyPageData(csvPrinter, cols);
-            } else {
-                int index = 0;
-                for (CSVRecord record : parser) {
-                    if (++index < currentPageStart || index >= currentPageEnd) {
-                        List<String> values = new ArrayList<>();
-                        for (int c : cols) {
-                            if (c >= record.size()) {
-                                break;
-                            }
-                            String d = record.get(c);
-                            d = d == null ? "" : d;
-                            values.add(d);
+            int index = 0;
+            for (CSVRecord record : parser) {
+                if (++index < currentPageStart || index >= currentPageEnd) {
+                    List<String> values = new ArrayList<>();
+                    for (int c : cols) {
+                        if (c >= record.size()) {
+                            break;
                         }
-                        csvPrinter.printRecord(values);
-                    } else if (index == currentPageStart) {
-                        copyPageData(csvPrinter, cols);
+                        String d = record.get(c);
+                        d = d == null ? "" : d;
+                        values.add(d);
                     }
+                    csvPrinter.printRecord(values);
+                } else if (index == currentPageStart) {
+                    copyPageData(csvPrinter, cols);
                 }
+            }
+            if (index == 0) {
+                copyPageData(csvPrinter, cols);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -665,17 +671,16 @@ public class ControlSheetCSV extends ControlSheetFile {
                 if (withName) {
                     csvPrinter.printRecord(columnNames());
                 }
-                if (parser.iterator() == null || !parser.iterator().hasNext()) {
-                    writePageData(csvPrinter);
-                } else {
-                    long index = 0;
-                    for (CSVRecord record : parser) {
-                        if (++index < currentPageStart || index >= currentPageEnd) {    // 1-based, excluded
-                            csvPrinter.printRecord(record);
-                        } else if (index == currentPageStart) {
-                            writePageData(csvPrinter);
-                        }
+                long index = 0;
+                for (CSVRecord record : parser) {
+                    if (++index < currentPageStart || index >= currentPageEnd) {    // 1-based, excluded
+                        csvPrinter.printRecord(record);
+                    } else if (index == currentPageStart) {
+                        writePageData(csvPrinter);
                     }
+                }
+                if (index == 0) {
+                    writePageData(csvPrinter);
                 }
             } catch (Exception e) {
                 MyBoxLog.console(e);
@@ -716,7 +721,89 @@ public class ControlSheetCSV extends ControlSheetFile {
     @Override
     protected boolean saveDefinition() {
         return saveDefinition(sourceFile.getAbsolutePath(), dataType,
-                sourceCharset, fileDelimiterName, sourceWithNames, columns);
+                sourceCharset, sourceDelimiterName, sourceWithNames, columns);
+    }
+
+    @Override
+    protected String fileText() {
+        if (sourceFile == null) {
+            return null;
+        }
+        String delimiter = delimiterValue(displayDelimiterName);
+        StringBuilder s = new StringBuilder();
+        if (textTitleCheck.isSelected()) {
+            s.append(titleName()).append("\n\n");
+        }
+        if (textColumnCheck.isSelected()) {
+            rowText(s, -1, columnNames(), delimiter);
+        }
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
+            int fileIndex = 0, dataIndex = 0;
+            for (CSVRecord record : parser) {
+                if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    List<String> values = new ArrayList<>();
+                    for (String v : record) {
+                        values.add(v);
+                    }
+                    rowText(s, dataIndex++, values, delimiter);
+                } else if (fileIndex == currentPageStart) {
+                    dataIndex = pageText(s, dataIndex, delimiter);
+                }
+            }
+            if (fileIndex == 0) {
+                pageText(s, dataIndex, delimiter);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return s.toString();
+    }
+
+    @Override
+    protected String fileHtml() {
+        if (sourceFile == null) {
+            return null;
+        }
+        StringBuilder s = new StringBuilder();
+        List<String> names = null;
+        if (htmlColumnCheck.isSelected()) {
+            names = new ArrayList<>();
+            if (htmlRowCheck.isSelected()) {
+                names.add("");
+            }
+            names.addAll(columnNames());
+        }
+        String title = null;
+        if (htmlTitleCheck.isSelected()) {
+            title = titleName();
+        }
+        StringTable table = new StringTable(names, title);
+        try ( CSVParser parser = CSVParser.parse(sourceFile, sourceCharset, sourceCsvFormat)) {
+            int fileIndex = 0, dataIndex = 0;
+            for (CSVRecord record : parser) {
+                if (++fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                    List<String> values = new ArrayList<>();
+                    if (htmlRowCheck.isSelected()) {
+                        values.add(message("Row") + (dataIndex + 1));
+                    }
+                    for (String v : record) {
+                        values.add(v);
+                    }
+                    table.add(values);
+                    dataIndex++;
+                } else if (fileIndex == currentPageStart) {
+                    dataIndex = pageHtml(table, dataIndex);
+                }
+            }
+            if (fileIndex == 0) {
+                pageHtml(table, dataIndex);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return table.html();
     }
 
 }

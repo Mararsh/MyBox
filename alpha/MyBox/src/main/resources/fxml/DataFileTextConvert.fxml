@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileCSVConvertController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileTextConvertController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -44,7 +44,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                             <children>
-                                                <fx:include fx:id="csvRead" source="ControlCsvRead.fxml" />
+                                    <fx:include fx:id="readOptions" source="ControlTextReadOptions.fxml" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -58,7 +58,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="convertVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0" VBox.vgrow="ALWAYS">
                                             <content>
                                                 <fx:include fx:id="convert" source="ControlDataConvert.fxml" />
                                             </content>
@@ -161,7 +161,7 @@ License:    Apache License Version 2.0
                         </Tab>
                     </tabs>
                 </TabPane>
-                <fx:include fx:id="operationBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="Operation.fxml" VBox.vgrow="ALWAYS" />
+                <fx:include fx:id="operationBar" source="Operation.fxml" />
             </children>
         </VBox>
     </center>

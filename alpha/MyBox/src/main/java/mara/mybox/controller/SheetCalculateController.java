@@ -12,7 +12,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-9-7
  * @License Apache License Version 2.0
  */
-public class DataCalculateController extends BaseDataOperationController {
+public class SheetCalculateController extends BaseDataOperationController {
 
     protected String value;
 

@@ -19,6 +19,8 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
 
     protected void initPagination() {
         try {
+            initCurrentPage();
+
             if (pageSelector == null) {
                 return;
             }
@@ -56,6 +58,12 @@ public abstract class ControlSheet_Pages extends ControlSheet_Sheet {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void initCurrentPage() {
+        currentPage = 1;
+        currentPageStart = 1;
+        currentPageEnd = 1;
     }
 
     public void loadPage(int pageNumber) {

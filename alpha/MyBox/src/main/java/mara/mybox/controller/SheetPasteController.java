@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-9-2
  * @License Apache License Version 2.0
  */
-public class DataPasteController extends BaseDataOperationController {
+public class SheetPasteController extends BaseDataOperationController {
 
     protected ControlSheetCSV sourceController;
     protected ControlSheet targetController;

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import javafx.application.Platform;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
@@ -156,9 +158,15 @@ public class DataClipboard extends DataDefinition {
                     .setHasHeader(false).setCharset("UTF-8").setDelimiter(",");
             tableDataDefinition.insertData(conn, def);
             if (columns != null && !columns.isEmpty()) {
-                if (ColumnDefinition.valid(null, columns)) {
+                StringTable validateTable = ColumnDefinition.validate(columns);
+                if (validateTable != null && validateTable.isEmpty()) {
                     tableDataColumn.save(conn, def.getDfid(), columns);
                     conn.commit();
+                }
+                if (validateTable != null) {
+                    Platform.runLater(() -> {
+                        validateTable.htmlTable();
+                    });
                 }
             }
         } catch (Exception e) {

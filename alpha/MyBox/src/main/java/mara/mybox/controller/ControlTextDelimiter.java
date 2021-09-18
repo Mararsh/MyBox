@@ -38,7 +38,7 @@ public class ControlTextDelimiter extends BaseController {
         try {
             this.baseName = baseName;
 
-            setDelimiter(UserConfig.getString(baseName + "Delimiter", ","));
+            setDelimiter(UserConfig.getString(baseName + "TextDelimiter", ","));
 
             delimiterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -73,7 +73,7 @@ public class ControlTextDelimiter extends BaseController {
                     } else if (semicolonsRadio.isSelected()) {
                         delimiterName = ";";
                     }
-                    UserConfig.setString(baseName + "Delimiter", delimiterName);
+                    UserConfig.setString(baseName + "TextDelimiter", delimiterName);
                     changedNotify.set(!changedNotify.get());
                 }
             });
@@ -89,7 +89,7 @@ public class ControlTextDelimiter extends BaseController {
                         return;
                     }
                     delimiterName = newValue;
-                    UserConfig.setString(baseName + "Delimiter", delimiterName);
+                    UserConfig.setString(baseName + "TextDelimiter", delimiterName);
                     delimiterInput.setStyle(null);
                     changedNotify.set(!changedNotify.get());
                 }

@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -20,19 +18,10 @@ import mara.mybox.db.table.TableDataColumn;
 import mara.mybox.db.table.TableDataDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TextTools;
-import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @Author Mara
@@ -61,24 +50,14 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             noDataLabel = new Label(Languages.message("NoData"));
             noDataLabel.setStyle("-fx-text-fill: gray;");
             inputStyle = "-fx-border-radius: 10; -fx-background-radius: 0;";
-            scale = (short) UserConfig.getInt(baseName + "Scale", 2);
-            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
-
             pagesNumber = 1;
             pageSize = 50;
             currentRow = currentCol = 0;
-            initCurrentPage();
 
             parentController = this;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void initCurrentPage() {
-        currentPage = 1;
-        currentPageStart = 1;
-        currentPageEnd = 1;
     }
 
     @Override
@@ -89,6 +68,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             NodeStyleTools.setTooltip(trimColumnsButton, message("RenameAllColumns"));
             NodeStyleTools.setTooltip(equalSheetButton, message("SetValues"));
             NodeStyleTools.setTooltip(synchronizeEditButton, message("SynchronizeChangesToOtherPanes"));
+            NodeStyleTools.setTooltip(analyseSheetButton, message("Validate"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -109,7 +89,6 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             initHtmlControls();
             initTextControls();
             initOptions();
-            reportViewController.setParent(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -118,7 +97,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
     public void initOptions() {
         try {
             scale = (short) UserConfig.getInt(baseName + "Scale", 2);
-            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 1);
+            maxRandom = UserConfig.getInt(baseName + "MaxRandom", 100000);
 
             scaleSelector.getItems().addAll(
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
@@ -130,7 +109,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
                     });
 
             randomSelector.getItems().addAll(
-                    Arrays.asList("1", "100", "10", "1000", "10000")
+                    Arrays.asList("1", "100", "10", "1000", "10000", "1000000", "10000000")
             );
             randomSelector.setValue(maxRandom + "");
             randomSelector.getSelectionModel().selectedItemProperty().addListener(
@@ -212,9 +191,9 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
     @Override
     protected void afterDataChanged() {
         try {
-            textApplyAction();
+            updateEdit();
             makeDefintionPane();
-            validate();
+            validateData(false);
             updateHtml();
             updateText();
 
@@ -237,86 +216,6 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
     }
 
     @FXML
-    public void csvAction() {
-        synchronized (this) {
-            SingletonTask csvTask = new SingletonTask<Void>() {
-                File tmpFile;
-
-                @Override
-                protected boolean handle() {
-                    pageData = pickData();
-                    if (pageData == null || pageData.length < 1) {
-                        error = message("NoData");
-                        return false;
-                    }
-                    tmpFile = TmpFileTools.getTempFile(".csv");
-                    tmpFile = TextFileTools.writeFile(tmpFile, TextTools.dataText(pageData, ",", columnNames(), null));
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    return tmpFile != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    DataFileCSVController.open(tmpFile, true, ',');
-                }
-
-            };
-            start(csvTask, false);
-        }
-    }
-
-    @FXML
-    public void excelAction() {
-        synchronized (this) {
-            SingletonTask excelTask = new SingletonTask<Void>() {
-                File tmpFile;
-
-                @Override
-                protected boolean handle() {
-                    pageData = pickData();
-                    if (pageData == null || pageData.length < 1) {
-                        error = message("NoData");
-                        return false;
-                    }
-                    tmpFile = TmpFileTools.getTempFile(".xlsx");
-                    try ( Workbook targetBook = new XSSFWorkbook();
-                             FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                        Sheet targetSheet = targetBook.createSheet();
-                        int index = 0;
-                        for (String[] row : pageData) {
-                            Row targetRow = targetSheet.createRow(index++);
-                            for (int col = 0; col < row.length; col++) {
-                                Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                                targetCell.setCellValue(row[col]);
-                            }
-                        }
-                        targetBook.write(fileOut);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return tmpFile != null && tmpFile.exists();
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    DataFileExcelController controller = (DataFileExcelController) openStage(Fxmls.DataFileExcelFxml);
-//                    controller.setFile(tmpFile, false);
-                }
-
-            };
-            start(excelTask, false);
-        }
-    }
-
-    @FXML
-    protected void editPageAllRows() {
-//        DataClipboardController.open(this);
-    }
-
-    @FXML
     @Override
     public boolean popAction() {
         try {
@@ -331,10 +230,6 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
 
             } else if (tab == editTab) {
                 TextPopController.openInput(this, textsEditArea);
-                return true;
-
-            } else if (tab == reportTab) {
-                HtmlPopController.openWebView(this, reportViewController.webView);
                 return true;
 
             }
@@ -364,11 +259,6 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
             } else if (tab == editTab) {
                 Point2D localToScreen = textsEditArea.localToScreen(textsEditArea.getWidth() - 80, 80);
                 MenuTextEditController.open(this, textsEditArea, localToScreen.getX(), localToScreen.getY());
-                return true;
-
-            } else if (tab == reportTab) {
-                Point2D localToScreen = reportViewController.webView.localToScreen(reportViewController.webView.getWidth() - 80, 80);
-                MenuWebviewController.pop(reportViewController, null, localToScreen.getX(), localToScreen.getY());
                 return true;
 
             }

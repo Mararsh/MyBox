@@ -47,7 +47,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected Label resultLabel, checkLabel;
     @FXML
-    protected ControlMatrix resultTableController;
+    protected ControlMatrixEdit resultTableController;
     @FXML
     protected TextArea resultArea;
     @FXML
@@ -61,7 +61,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     public void initControls() {
         try {
             super.initControls();
-            resultTableController.initManager(listController);
+            resultTableController.setParent(listController);
             resultBox.getChildren().clear();
 
             row = UserConfig.getInt(baseName + "Row", 1);

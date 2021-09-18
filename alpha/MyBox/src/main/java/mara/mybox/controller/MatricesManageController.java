@@ -18,7 +18,7 @@ import mara.mybox.value.Languages;
  */
 public class MatricesManageController extends BaseController {
 
-    protected ControlMatrix editController;
+    protected ControlMatrixEdit editController;
 
     @FXML
     protected ControlMatricesList listController;

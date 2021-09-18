@@ -158,7 +158,7 @@ License:    Apache License Version 2.0
                                         <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
-                                  <fx:include fx:id="edit" source="ControlMatrixEdit.fxml" />
+                                  <fx:include fx:id="edit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlMatrixEdit.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

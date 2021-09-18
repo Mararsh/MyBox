@@ -15,7 +15,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-6
  * @License Apache License Version 2.0
  */
-public class DataWidthController extends BaseDataOperationController {
+public class SheetWidthController extends BaseDataOperationController {
 
     protected int width;
 

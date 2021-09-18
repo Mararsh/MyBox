@@ -17,7 +17,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class DataColumnsAddController extends BaseDataOperationController {
+public class SheetColumnsAddController extends BaseDataOperationController {
 
     protected int number;
 

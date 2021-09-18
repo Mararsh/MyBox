@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -43,13 +44,28 @@ public abstract class ControlSheet_TextsDisplay extends ControlSheet_Html {
                 updateText();
                 UserConfig.setBoolean(baseName + "TextRow", newValue);
             });
+            if (textAllCheck != null) {
+//            textAllCheck.setSelected(UserConfig.getBoolean(baseName + "TextAll", false));
+                textAllCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                    updateText();
+//                UserConfig.setBoolean(baseName + "TextAll", newValue);
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
     }
 
-    public void updateText() {
+    protected void updateText() {
+        if (pagesNumber > 1 && textAllCheck != null && textAllCheck.isSelected()) {
+            displayAllText();
+        } else {
+            displayPageText();
+        }
+    }
+
+    protected void displayPageText() {
         List<String> colsNames = null;
         List<String> rowsNames = null;
         String title = null;
@@ -68,6 +84,46 @@ public abstract class ControlSheet_TextsDisplay extends ControlSheet_Html {
         } else {
             textsDisplayArea.setText(text);
         }
+    }
+
+    protected void displayAllText() {
+        displayPageText();
+    }
+
+    protected void rowText(StringBuilder s, int index, List<String> values, String delimiter) {
+        try {
+            if (textRowCheck.isSelected()) {
+                if (index == -1) {
+                    s.append(delimiter);
+                } else if (index >= 0) {
+                    s.append(message("Row")).append(index + 1).append(delimiter);
+                }
+            }
+            int end = values.size() - 1;
+            for (int c = 0; c <= end; c++) {
+                s.append(values.get(c));
+                if (c < end) {
+                    s.append(delimiter);
+                }
+            }
+            s.append("\n");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected int pageText(StringBuilder s, int inIndex, String delimiter) {
+        int index = inIndex;
+        try {
+            if (sheetInputs != null) {
+                for (int r = 0; r < sheetInputs.length; r++) {
+                    rowText(s, index++, row(r), delimiter);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return index;
     }
 
     @FXML

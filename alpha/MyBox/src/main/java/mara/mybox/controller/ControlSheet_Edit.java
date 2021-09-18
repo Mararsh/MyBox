@@ -2,12 +2,18 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -16,6 +22,8 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public abstract class ControlSheet_Edit extends ControlSheet_Pages {
+
+    protected boolean textChanged;
 
     @FXML
     protected ControlTextDelimiter editDelimiterController;
@@ -27,9 +35,36 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
             editDelimiterController.setControls(baseName + "Source", true);
             editDelimiterName = editDelimiterController.delimiterName;
             editDelimiterController.changedNotify.addListener(new ChangeListener<Boolean>() {
+                private boolean isAsking;
+
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (isAsking) {
+                        return;
+                    }
+                    if (textChanged) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle(getMyStage().getTitle());
+                        alert.setHeaderText(getMyStage().getTitle());
+                        alert.setContentText(Languages.message("SheetEditSureChangeDelimiter"));
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        ButtonType buttonChange = new ButtonType(Languages.message("Change"));
+                        ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+                        alert.getButtonTypes().setAll(buttonChange, buttonCancel);
+                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                        stage.setAlwaysOnTop(true);
+                        stage.toFront();
+
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() != buttonChange) {
+                            isAsking = true;
+                            editDelimiterController.setDelimiter(editDelimiterName);
+                            isAsking = false;
+                            return;
+                        }
+                    }
                     editDelimiterName = editDelimiterController.delimiterName;
+                    updateEdit();
                 }
             });
 
@@ -39,7 +74,7 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
                     if (isSettingValues) {
                         return;
                     }
-                    editTab.setText(message("EditText") + " *");
+                    textChanged(true);
                 }
             });
 
@@ -48,14 +83,22 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
         }
     }
 
-    @FXML
-    public void textApplyAction() {
+    public void updateEdit() {
         try {
             String text = TextTools.dataText(pageData, editDelimiterName);
             isSettingValues = true;
             textsEditArea.setText(text);
             isSettingValues = false;
-            editTab.setText(message("EditText"));
+            textChanged(false);
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString());
+        }
+    }
+
+    public void textChanged(boolean changed) {
+        try {
+            textChanged = changed;
+            editTab.setText(message("EditText") + (changed ? " *" : ""));
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -116,7 +159,6 @@ public abstract class ControlSheet_Edit extends ControlSheet_Pages {
             isSettingValues = true;
             textsEditArea.setText(text);
             isSettingValues = false;
-            editTab.setText(message("EditText") + " *");
             synchronizeEdit();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

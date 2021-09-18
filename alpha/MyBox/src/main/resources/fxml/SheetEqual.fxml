@@ -11,35 +11,22 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataCalculateController">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SheetEqualController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Calculate" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                <Label fx:id="titleLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%SetValues" textAlignment="CENTER" VBox.vgrow="NEVER" />
             </children>
         </HBox>
-        <HBox fx:id="codeBox11" layoutX="30.0" layoutY="82.0" spacing="5.0">
-            <children>
-                <RadioButton fx:id="sumRadio" mnemonicParsing="false" selected="true" text="%Summation">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="calGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton fx:id="addRadio" mnemonicParsing="false" text="%Addition" toggleGroup="$calGroup" />
-                <RadioButton fx:id="subRadio" mnemonicParsing="false" text="%Subtraction" toggleGroup="$calGroup" />
-                <RadioButton fx:id="multiplyRadio" mnemonicParsing="false" text="%Multiplication" toggleGroup="$calGroup" />
-                <RadioButton fx:id="ascendingRadio" mnemonicParsing="false" text="%Ascending" toggleGroup="$calGroup" />
-                <RadioButton fx:id="descendingRadio" mnemonicParsing="false" text="%Descending" toggleGroup="$calGroup" />
-                <RadioButton fx:id="mergeRadio" mnemonicParsing="false" text="%Merge" toggleGroup="$calGroup" />
-                <RadioButton fx:id="copyRadio" mnemonicParsing="false" text="%Copy" toggleGroup="$calGroup" />
-            </children>
-        </HBox>
+        <Label fx:id="targetLabel" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="%Target" textAlignment="CENTER" wrapText="true" />
         <HBox fx:id="codeBox1" layoutX="30.0" layoutY="55.0" spacing="5.0">
             <children>
                 <Label minHeight="-Infinity" minWidth="-Infinity" text="%Rows" />
@@ -56,7 +43,7 @@ License:    Apache License Version 2.0
         </HBox>
         <HBox fx:id="codeBox" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label minHeight="-Infinity" minWidth="-Infinity" text="%ColumnsCalculation" />
+                <Label minHeight="-Infinity" minWidth="-Infinity" text="%Columns" />
                 <RadioButton fx:id="colCheckedRadio" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Selected">
                     <toggleGroup>
                         <ToggleGroup fx:id="colGroup" />
@@ -67,19 +54,21 @@ License:    Apache License Version 2.0
                 <fx:include fx:id="colsList" prefHeight="150.0" prefWidth="200.0" source="ControlListCheckBox.fxml" />
             </children>
         </HBox>
-        <HBox fx:id="codeBox2" layoutX="30.0" layoutY="192.0" spacing="5.0">
+        <FlowPane hgap="5.0" vgap="5.0">
             <children>
-                <Label minHeight="-Infinity" minWidth="-Infinity" text="%ColumnsDisplay" />
-                <RadioButton fx:id="colCheckedRadio1" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Selected">
+                <Label text="%Value" />
+                <RadioButton fx:id="zeroRadio" mnemonicParsing="false" selected="true" text="0">
                     <toggleGroup>
-                        <ToggleGroup fx:id="colGroup1" />
+                        <ToggleGroup fx:id="valueGroup" />
                     </toggleGroup>
                 </RadioButton>
-                <RadioButton fx:id="colAllRadio1" mnemonicParsing="false" text="%All" toggleGroup="$colGroup1" />
-                <RadioButton fx:id="colSelectRadio1" layoutX="77.0" layoutY="14.0" mnemonicParsing="false" text="%Select" toggleGroup="$colGroup1" />
-                <ListView fx:id="colsListView1" prefHeight="100.0" prefWidth="200.0" />
+                <RadioButton fx:id="oneRadio" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
+                <RadioButton fx:id="blankRadio" mnemonicParsing="false" text="%Blank" toggleGroup="$valueGroup" />
+                <RadioButton fx:id="randomRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%Random" toggleGroup="$valueGroup" />
+                <RadioButton fx:id="setRadio" mnemonicParsing="false" text="%Set" toggleGroup="$valueGroup" />
+                <TextField fx:id="valueInput" prefWidth="100.0" />
             </children>
-        </HBox>
+        </FlowPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
@@ -100,11 +89,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="calculatorButton" mnemonicParsing="false" onAction="#calculationAction">
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconCalculator.png" />
+                                <Image url="@../buttons/Red/iconOK.png" />
                             </image>
                         </ImageView>
                     </graphic>

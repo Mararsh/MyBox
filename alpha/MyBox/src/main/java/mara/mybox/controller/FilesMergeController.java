@@ -9,12 +9,9 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import static mara.mybox.fxml.NodeStyleTools.badStyle;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -39,7 +36,6 @@ public class FilesMergeController extends BaseBatchFileController {
                 try {
                     targetFile = new File(newValue);
                     targetFileInput.setStyle(null);
-                    recordFileWritten(targetFile.getParent());
                 } catch (Exception e) {
                     targetFile = null;
                     targetFileInput.setStyle(NodeStyleTools.badStyle);
@@ -74,10 +70,15 @@ public class FilesMergeController extends BaseBatchFileController {
 
     @Override
     public boolean makeMoreParameters() {
-        if (!openWriter()) {
+        try {
+            if (targetFile == null || !openWriter()) {
+                return false;
+            }
+            return super.makeMoreParameters();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
             return false;
         }
-        return super.makeMoreParameters();
     }
 
     protected boolean openWriter() {

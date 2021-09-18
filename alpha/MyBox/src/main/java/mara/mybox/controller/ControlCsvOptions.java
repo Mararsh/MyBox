@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.nio.charset.Charset;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -33,7 +32,8 @@ public class ControlCsvOptions extends BaseController {
     @FXML
     protected ToggleGroup delimiterGroup;
     @FXML
-    protected RadioButton commaRadio, lineRadio, atRadio, sharpRadio, semicolonsRadio, delimiterInputRadio;
+    protected RadioButton charsetAutoRadio, charsetKnownRadio,
+            commaRadio, lineRadio, atRadio, sharpRadio, semicolonsRadio, delimiterInputRadio;
     @FXML
     protected TextField delimiterInput;
     @FXML
@@ -48,6 +48,14 @@ public class ControlCsvOptions extends BaseController {
         try {
             this.baseName = baseName;
 
+            withNamesCheck.setSelected(UserConfig.getBoolean(baseName + "CsvWithNames", true));
+            withNamesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "CsvWithNames", newValue);
+                }
+            });
+
             if (charsetGroup == null) {
                 autoDetermine = false;
             } else {
@@ -60,19 +68,9 @@ public class ControlCsvOptions extends BaseController {
                     }
                 });
             }
-
-            withNamesCheck.setSelected(UserConfig.getBoolean(baseName + "Names", true));
-            withNamesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Names", newValue);
-                }
-            });
-
-            List<String> setNames = TextTools.getCharsetNames();
-            charsetSelector.getItems().addAll(setNames);
+            charsetSelector.getItems().addAll(TextTools.getCharsetNames());
             try {
-                charset = Charset.forName(UserConfig.getString(baseName + "Charset", Charset.defaultCharset().name()));
+                charset = Charset.forName(UserConfig.getString(baseName + "CsvCharset", Charset.defaultCharset().name()));
             } catch (Exception e) {
                 charset = Charset.defaultCharset();
             }
@@ -84,7 +82,7 @@ public class ControlCsvOptions extends BaseController {
                 }
             });
 
-            setDelimiter((char) (UserConfig.getInt(baseName + "Delimiter", ',')));
+            setDelimiter((char) (UserConfig.getInt(baseName + "CsvDelimiter", ',')));
             delimiterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -99,7 +97,7 @@ public class ControlCsvOptions extends BaseController {
                     } else {
                         delimiter = ((RadioButton) (delimiterGroup.getSelectedToggle())).getText().charAt(0);
                     }
-                    UserConfig.setInt(baseName + "Delimiter", delimiter);
+                    UserConfig.setInt(baseName + "CsvDelimiter", delimiter);
                 }
             });
 
@@ -147,7 +145,16 @@ public class ControlCsvOptions extends BaseController {
                 charsetSelector.setDisable(false);
             }
         }
-        UserConfig.setString(baseName + "Charset", charset.name());
+        UserConfig.setString(baseName + "CsvCharset", charset.name());
+    }
+
+    protected void setCharset(Charset charset) {
+        if (charsetKnownRadio != null) {
+            charsetKnownRadio.fire();
+        }
+        if (charset != null) {
+            charsetSelector.setValue(charset.name());
+        }
     }
 
 }

@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,11 +13,21 @@ import javafx.fxml.FXML;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataClipboard;
 import mara.mybox.db.data.DataDefinition;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @Author Mara
@@ -33,17 +46,19 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     public abstract void pasteFile(ControlSheetCSV sourceController, int row, int col, boolean enlarge);
 
+    public abstract boolean exportCols(SheetExportController exportController, List<Integer> cols);
+
     @FXML
     @Override
     public void copyToSystemClipboard() {
-        DataCopyToSystemClipboardController controller = (DataCopyToSystemClipboardController) openChildStage(Fxmls.DataCopyToSystemClipboardFxml, false);
+        SheetCopyToSystemClipboardController controller = (SheetCopyToSystemClipboardController) openChildStage(Fxmls.SheetCopyToSystemClipboardFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
     @FXML
     @Override
     public void copyToMyBoxClipboard() {
-        DataCopyToMyBoxClipboardController controller = (DataCopyToMyBoxClipboardController) openChildStage(Fxmls.DataCopyToMyBoxClipboardFxml, false);
+        SheetCopyToMyBoxClipboardController controller = (SheetCopyToMyBoxClipboardController) openChildStage(Fxmls.SheetCopyToMyBoxClipboardFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -186,7 +201,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void setDataAction() {
-        DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
+        SheetEqualController controller = (SheetEqualController) openChildStage(Fxmls.SheetEqualFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -218,7 +233,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void sortDataAction() {
-        DataSortController controller = (DataSortController) openChildStage(Fxmls.DataSortFxml, false);
+        SheetSortController controller = (SheetSortController) openChildStage(Fxmls.SheetSortFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -295,7 +310,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void widthDataAction() {
-        DataWidthController controller = (DataWidthController) openChildStage(Fxmls.DataWidthFxml, false);
+        SheetWidthController controller = (SheetWidthController) openChildStage(Fxmls.SheetWidthFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -320,7 +335,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void rowsAddAction() {
-        DataRowsAddController controller = (DataRowsAddController) openChildStage(Fxmls.DataRowsAddFxml, false);
+        SheetRowsAddController controller = (SheetRowsAddController) openChildStage(Fxmls.SheetRowsAddFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -368,7 +383,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void rowsDeleteAction() {
-        DataRowsDeleteController controller = (DataRowsDeleteController) openChildStage(Fxmls.DataRowsDeleteFxml, false);
+        SheetRowsDeleteController controller = (SheetRowsDeleteController) openChildStage(Fxmls.SheetRowsDeleteFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -408,7 +423,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void columnsAddAction() {
-        DataColumnsAddController controller = (DataColumnsAddController) openChildStage(Fxmls.DataColumnsAddFxml, false);
+        SheetColumnsAddController controller = (SheetColumnsAddController) openChildStage(Fxmls.SheetColumnsAddFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -450,7 +465,7 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void columnsDeleteAction() {
-        DataColumnsDeleteController controller = (DataColumnsDeleteController) openChildStage(Fxmls.DataColumnsDeleteFxml, false);
+        SheetColumnsDeleteController controller = (SheetColumnsDeleteController) openChildStage(Fxmls.SheetColumnsDeleteFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
     }
 
@@ -490,8 +505,139 @@ public abstract class ControlSheet_Operations extends ControlSheet_Edit {
 
     @FXML
     public void calculateDataAction() {
-        DataCalculateController controller = (DataCalculateController) openChildStage(Fxmls.DataCalculateFxml, false);
+        SheetCalculateController controller = (SheetCalculateController) openChildStage(Fxmls.SheetCalculateFxml, false);
         controller.setParameters((ControlSheet) this, -1, -1);
+    }
+
+    @FXML
+    public void exportSheetAction() {
+        SheetExportController controller = (SheetExportController) openChildStage(Fxmls.SheetExportFxml, false);
+        controller.dataController.setParameters((ControlSheet) this, -1, -1);
+    }
+
+    public boolean exportRowsCols(SheetExportController exportController, List<Integer> rows, List<Integer> cols) {
+        try {
+            if (exportController == null) {
+                return false;
+            }
+            if (rows == null || rows.isEmpty() || cols == null || cols.isEmpty()) {
+                if (exportController.task != null) {
+                    exportController.task.setError(message("NoData"));
+                }
+                return false;
+            }
+            List<String> names = new ArrayList<>();
+            for (int c : cols) {
+                names.add(columns.get(c).getName());
+            }
+            exportController.convertController.names = names;
+            exportController.convertController.openWriters(exportController.filePrefix);
+            for (int r = 0; r < rows.size(); ++r) {
+                if (exportController.task == null || exportController.task.isCancelled()) {
+                    return false;
+                }
+                int row = rows.get(r);
+                List<String> rowData = new ArrayList<>();
+                for (int c = 0; c < cols.size(); c++) {
+                    rowData.add(cellString(row, cols.get(c)));
+                }
+                exportController.convertController.writeRow(rowData);
+            }
+            exportController.convertController.closeWriters();
+            return true;
+        } catch (Exception e) {
+            if (exportController.task != null) {
+                exportController.task.setError(e.toString());
+            }
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    @FXML
+    public void csvAction() {
+        if (sheetInputs == null || sheetInputs.length < 1) {
+            popError(message("NoData"));
+            return;
+        }
+        synchronized (this) {
+            SingletonTask csvTask = new SingletonTask<Void>() {
+                File tmpFile;
+
+                @Override
+                protected boolean handle() {
+                    tmpFile = TmpFileTools.getTempFile(".csv");
+                    CSVFormat csvFormat = CSVFormat.DEFAULT
+                            .withDelimiter(',').withFirstRecordAsHeader()
+                            .withIgnoreEmptyLines().withTrim().withNullString("");
+                    try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), csvFormat)) {
+                        csvPrinter.printRecord(columnNames());
+                        for (int r = 0; r < sheetInputs.length; r++) {
+                            csvPrinter.printRecord(row(r));
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return tmpFile != null && tmpFile.exists();
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileCSVController.open(tmpFile, Charset.forName("UTF-8"), true, ',');
+                }
+
+            };
+            start(csvTask, false);
+        }
+    }
+
+    @FXML
+    public void excelAction() {
+        if (sheetInputs == null || sheetInputs.length < 1) {
+            popError(message("NoData"));
+            return;
+        }
+        synchronized (this) {
+            SingletonTask excelTask = new SingletonTask<Void>() {
+                File tmpFile;
+
+                @Override
+                protected boolean handle() {
+                    tmpFile = TmpFileTools.getTempFile(".xlsx");
+                    try ( Workbook targetBook = new XSSFWorkbook();
+                             FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                        Sheet targetSheet = targetBook.createSheet();
+                        int index = 0;
+                        List<String> names = columnNames();
+                        Row targetRow = targetSheet.createRow(index++);
+                        for (int c = 0; c < names.size(); c++) {
+                            Cell targetCell = targetRow.createCell(c, CellType.STRING);
+                            targetCell.setCellValue(names.get(c));
+                        }
+                        for (int r = 0; r < sheetInputs.length; r++) {
+                            targetRow = targetSheet.createRow(index++);
+                            for (int c = 0; c < sheetInputs[r].length; c++) {
+                                Cell targetCell = targetRow.createCell(c, CellType.STRING);
+                                targetCell.setCellValue(cellString(r, c));
+                            }
+                        }
+                        targetBook.write(fileOut);
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                    return tmpFile != null && tmpFile.exists();
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    DataFileExcelController.open(tmpFile, true);
+                }
+
+            };
+            start(excelTask, false);
+        }
     }
 
 }

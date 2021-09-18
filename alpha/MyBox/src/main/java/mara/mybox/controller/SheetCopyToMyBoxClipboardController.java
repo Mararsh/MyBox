@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-9-2
  * @License Apache License Version 2.0
  */
-public class DataCopyToMyBoxClipboardController extends BaseDataOperationController {
+public class SheetCopyToMyBoxClipboardController extends BaseDataOperationController {
 
     protected char delimiter;
 

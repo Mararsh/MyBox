@@ -9,8 +9,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 import org.apache.poi.ss.usermodel.Row;
@@ -67,6 +65,9 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                 updateLogs(Languages.message("Reading") + " " + Languages.message("Sheet") + ":" + sheet.getSheetName());
                 convertController.names = new ArrayList<>();
                 for (Row row : sheet) {
+                    if (task == null || task.isCancelled()) {
+                        return message("Cancelled");
+                    }
                     if (row == null) {
                         continue;
                     }

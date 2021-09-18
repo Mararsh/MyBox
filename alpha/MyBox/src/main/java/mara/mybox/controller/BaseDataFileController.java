@@ -36,8 +36,24 @@ public abstract class BaseDataFileController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
+            initFormatTab();
             initBackupsTab();
             initSaveAsTab();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected void initFormatTab() {
+        try {
+            if (formatPane == null) {
+                return;
+            }
+            formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", true));
+            formatPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -90,7 +106,6 @@ public abstract class BaseDataFileController extends BaseController {
                         (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                             sheetChanged();
                         });
-                dataController.newSheet(3, 3);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

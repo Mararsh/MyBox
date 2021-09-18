@@ -10,7 +10,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class DataColumnsDeleteController extends BaseDataOperationController {
+public class SheetRowsDeleteController extends BaseDataOperationController {
 
     @FXML
     @Override
@@ -19,14 +19,17 @@ public class DataColumnsDeleteController extends BaseDataOperationController {
             if (!PopTools.askSure(message("Delete"), message("SureDelete"))) {
                 return;
             }
-            if (colCheckedRadio.isSelected()) {
-                sheetController.deleteCols(sheetController.colsIndex(false));
+            if (rowCheckedRadio.isSelected()) {
+                sheetController.deleteRows(sheetController.rowsIndex(false));
 
-            } else if (colAllRadio.isSelected()) {
-                sheetController.deleteAllCols();
+            } else if (rowCurrentPageRadio.isSelected()) {
+                sheetController.deletePageRows();
 
-            } else if (colSelectRadio.isSelected()) {
-                sheetController.deleteCols(selectedCols());
+            } else if (rowAllRadio.isSelected()) {
+                sheetController.deleteAllRows();
+
+            } else if (rowSelectRadio.isSelected()) {
+                sheetController.deleteRows(selectedRows());
             }
 
         } catch (Exception e) {

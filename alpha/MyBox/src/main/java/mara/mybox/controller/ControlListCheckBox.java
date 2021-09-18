@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -20,12 +21,14 @@ import mara.mybox.dev.MyBoxLog;
 public class ControlListCheckBox extends BaseController {
 
     protected List<Integer> selectedIndexs;
+    protected SimpleBooleanProperty changedNotify;
 
     @FXML
     protected ListView<String> listView;
 
     public ControlListCheckBox() {
         baseTitle = "ColorImport";
+        changedNotify = new SimpleBooleanProperty(false);
     }
 
     public void setParent(BaseController parent) {
@@ -61,6 +64,7 @@ public class ControlListCheckBox extends BaseController {
                                             selectedIndexs.remove(index);
                                         }
                                     }
+                                    changedNotify.set(!changedNotify.get());
                                 }
                             });
                         }
@@ -68,7 +72,7 @@ public class ControlListCheckBox extends BaseController {
                         @Override
                         public void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
-                            index = getIndex();
+                            index = (Integer) getIndex();
                             if (empty || item == null) {
                                 setGraphic(null);
                                 setText(null);

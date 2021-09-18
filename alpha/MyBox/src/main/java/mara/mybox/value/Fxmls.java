@@ -170,17 +170,18 @@ public class Fxmls {
     public static final String ControlSheetFxml = "/fxml/ControlSheet.fxml";
     public static final String DataClipboardFxml = "/fxml/DataClipboard.fxml";
     public static final String DataClipboardPopFxml = "/fxml/DataClipboardPop.fxml";
-    public static final String DataCopyToSystemClipboardFxml = "/fxml/DataCopyToSystemClipboard.fxml";
-    public static final String DataCopyToMyBoxClipboardFxml = "/fxml/DataCopyToMyBoxClipboard.fxml";
-    public static final String DataPasteFxml = "/fxml/DataPaste.fxml";
-    public static final String DataEqualFxml = "/fxml/DataEqual.fxml";
-    public static final String DataColumnsAddFxml = "/fxml/DataColumnsAdd.fxml";
-    public static final String DataColumnsDeleteFxml = "/fxml/DataColumnsDelete.fxml";
-    public static final String DataRowsDeleteFxml = "/fxml/DataRowsDelete.fxml";
-    public static final String DataRowsAddFxml = "/fxml/DataRowsAdd.fxml";
-    public static final String DataSortFxml = "/fxml/DataSort.fxml";
-    public static final String DataWidthFxml = "/fxml/DataWidth.fxml";
-    public static final String DataCalculateFxml = "/fxml/DataCalculate.fxml";
+    public static final String SheetCopyToSystemClipboardFxml = "/fxml/SheetCopyToSystemClipboard.fxml";
+    public static final String SheetCopyToMyBoxClipboardFxml = "/fxml/SheetCopyToMyBoxClipboard.fxml";
+    public static final String SheetPasteFxml = "/fxml/SheetPaste.fxml";
+    public static final String SheetEqualFxml = "/fxml/SheetEqual.fxml";
+    public static final String SheetColumnsAddFxml = "/fxml/SheetColumnsAdd.fxml";
+    public static final String SheetColumnsDeleteFxml = "/fxml/SheetColumnsDelete.fxml";
+    public static final String SheetRowsDeleteFxml = "/fxml/SheetRowsDelete.fxml";
+    public static final String SheetRowsAddFxml = "/fxml/SheetRowsAdd.fxml";
+    public static final String SheetSortFxml = "/fxml/SheetSort.fxml";
+    public static final String SheetWidthFxml = "/fxml/SheetWidth.fxml";
+    public static final String SheetCalculateFxml = "/fxml/SheetCalculate.fxml";
+    public static final String SheetExportFxml = "/fxml/SheetExport.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -192,6 +193,8 @@ public class Fxmls {
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
     public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
+    public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
+    public static final String DataFileTextMergeFxml = "/fxml/DataFileTextMerge.fxml";
 
     public static final String MatricesManageFxml = "/fxml/MatricesManage.fxml";
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";

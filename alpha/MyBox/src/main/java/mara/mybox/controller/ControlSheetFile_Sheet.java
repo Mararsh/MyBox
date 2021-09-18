@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.data.ColumnDefinition;
@@ -10,7 +11,10 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -32,6 +36,10 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
     protected abstract File fileDeleteCols(List<Integer> cols);
 
     protected abstract File filePaste(ControlSheetCSV sourceController, int row, int col, boolean enlarge);
+
+    protected abstract String fileText();
+
+    protected abstract String fileHtml();
 
     @Override
     public void newSheet(int rows, int cols) {
@@ -56,10 +64,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
             return;
         }
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
+            SingletonTask copyTask = new SingletonTask<Void>() {
 
                 private File file;
 
@@ -92,7 +97,7 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
                 }
 
             };
-            start(task);
+            start(copyTask, false);
         }
     }
 
@@ -372,6 +377,96 @@ public abstract class ControlSheetFile_Sheet extends ControlSheetFile_File {
 
             };
             start(task);
+        }
+    }
+
+    @Override
+    public boolean exportCols(SheetExportController exportController, List<Integer> cols) {
+        if (exportController == null) {
+            return false;
+        }
+        File file = fileCopyCols(cols, true);
+        if (file == null || !file.exists()) {
+            if (exportController.task != null) {
+                exportController.task.setError(message("NoData"));
+            }
+            return false;
+        }
+        CSVFormat csvFormat = CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',')
+                .withIgnoreEmptyLines().withTrim().withNullString("");
+        try ( CSVParser parser = CSVParser.parse(file, Charset.forName("UTF-8"), csvFormat)) {
+            List<String> names = parser.getHeaderNames();
+            exportController.convertController.openWriters(exportController.filePrefix);
+            for (CSVRecord record : parser) {
+                if (exportController.task == null || exportController.task.isCancelled()) {
+                    return false;
+                }
+                List<String> rowData = new ArrayList<>();
+                for (String name : names) {
+                    rowData.add(record.get(name));
+                }
+                exportController.convertController.writeRow(rowData);
+            }
+            exportController.convertController.closeWriters();
+        } catch (Exception e) {
+            if (exportController.task != null) {
+                exportController.task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected void displayAllText() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            displayPageText();
+            return;
+        }
+        synchronized (this) {
+            SingletonTask textTask = new SingletonTask<Void>() {
+                String text;
+
+                @Override
+                protected boolean handle() {
+                    text = fileText();
+                    return text != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    textsDisplayArea.setText(text);
+                }
+
+            };
+            start(textTask, false);
+        }
+    }
+
+    @Override
+    protected void displayAllHtml() {
+        if (sourceFile == null || pagesNumber <= 1) {
+            displayPageHtml();
+            return;
+        }
+        synchronized (this) {
+            SingletonTask textTask = new SingletonTask<Void>() {
+                String html;
+
+                @Override
+                protected boolean handle() {
+                    html = fileHtml();
+                    return html != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    htmlViewController.webEngine.loadContent(html);
+                }
+
+            };
+            start(textTask, false);
         }
     }
 

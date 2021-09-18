@@ -571,9 +571,10 @@ public class TextTools {
                 if (rowsNames != null) {
                     s.append(delimiter);
                 }
-                for (int j = 0; j < colsNumber; j++) {
-                    s.append(colsNames.get(j));
-                    if (j < colsNumber - 1) {
+                int end = colsNumber - 1;
+                for (int c = 0; c <= end; c++) {
+                    s.append(colsNames.get(c));
+                    if (c < end) {
                         s.append(delimiter);
                     }
                 }
@@ -583,9 +584,10 @@ public class TextTools {
                 if (rowsNames != null) {
                     s.append(rowsNames.get(i)).append(delimiter);
                 }
-                for (int j = 0; j < colsNumber; j++) {
-                    s.append(data[i][j]);
-                    if (j < colsNumber - 1) {
+                int end = colsNumber - 1;
+                for (int c = 0; c <= end; c++) {
+                    s.append(data[i][c]);
+                    if (c < end) {
                         s.append(delimiter);
                     }
                 }

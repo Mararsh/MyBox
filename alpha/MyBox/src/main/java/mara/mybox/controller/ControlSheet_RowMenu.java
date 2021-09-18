@@ -241,7 +241,7 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Operations {
 
             menu = new MenuItem(Languages.message("SetValues") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataEqualController controller = (DataEqualController) openChildStage(Fxmls.DataEqualFxml, false);
+                SheetEqualController controller = (SheetEqualController) openChildStage(Fxmls.SheetEqualFxml, false);
                 controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);
@@ -250,14 +250,14 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Operations {
 
             menu = new MenuItem(message("CopyToSystemClipboard") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataCopyToSystemClipboardController controller = (DataCopyToSystemClipboardController) openChildStage(Fxmls.DataCopyToSystemClipboardFxml, false);
+                SheetCopyToSystemClipboardController controller = (SheetCopyToSystemClipboardController) openChildStage(Fxmls.SheetCopyToSystemClipboardFxml, false);
                 controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);
 
             menu = new MenuItem(message("CopyToMyBoxClipboard") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataCopyToMyBoxClipboardController controller = (DataCopyToMyBoxClipboardController) openChildStage(Fxmls.DataCopyToMyBoxClipboardFxml, false);
+                SheetCopyToMyBoxClipboardController controller = (SheetCopyToMyBoxClipboardController) openChildStage(Fxmls.SheetCopyToMyBoxClipboardFxml, false);
                 controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);
@@ -270,14 +270,14 @@ public abstract class ControlSheet_RowMenu extends ControlSheet_Operations {
 
             menu = new MenuItem(Languages.message("Add") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataRowsAddController controller = (DataRowsAddController) openChildStage(Fxmls.DataRowsAddFxml, false);
+                SheetRowsAddController controller = (SheetRowsAddController) openChildStage(Fxmls.SheetRowsAddFxml, false);
                 controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);
 
             menu = new MenuItem(Languages.message("Delete") + "...");
             menu.setOnAction((ActionEvent event) -> {
-                DataRowsDeleteController controller = (DataRowsDeleteController) openChildStage(Fxmls.DataRowsDeleteFxml, false);
+                SheetRowsDeleteController controller = (SheetRowsDeleteController) openChildStage(Fxmls.SheetRowsDeleteFxml, false);
                 controller.setParameters((ControlSheet) this, row, -1);
             });
             items.add(menu);

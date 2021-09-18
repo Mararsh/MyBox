@@ -10,7 +10,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-5
  * @License Apache License Version 2.0
  */
-public class DataSortController extends BaseDataOperationController {
+public class SheetSortController extends BaseDataOperationController {
 
     @FXML
     protected RadioButton ascRadio;

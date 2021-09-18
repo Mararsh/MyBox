@@ -101,4 +101,26 @@ public class TextFileTools {
         return true;
     }
 
+    public static void writeLine(BufferedWriter writer, List<String> values, String delimiter) {
+        try {
+            if (writer == null || values == null || values.isEmpty() || delimiter == null) {
+                return;
+            }
+            int end = values.size() - 1;
+            String line = "";
+            for (int c = 0; c <= end; c++) {
+                String value = values.get(c);
+                if (value != null) {
+                    line += values.get(c);
+                }
+                if (c < end) {
+                    line += delimiter;
+                }
+            }
+            writer.write(line + "\n");
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
 }

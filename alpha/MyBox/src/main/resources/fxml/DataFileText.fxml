@@ -8,8 +8,6 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -23,8 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" 
-            xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileTextController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileTextController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -79,23 +76,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <VBox fx:id="thisPane1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <VBox layoutX="32.0" layoutY="271.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                    <children>
-                                                                        <Label text="%Charset" />
-                                                                        <RadioButton fx:id="autoCharsetRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DetermainAutomatically" wrapText="true">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="sourceCharsetGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <FlowPane hgap="5.0" vgap="5.0">
-                                                                            <children>
-                                                                                <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%Known" toggleGroup="$sourceCharsetGroup" wrapText="true" />
-                                                                                <ComboBox fx:id="sourceCharsetSelector" prefWidth="150.0" />
-                                                                            </children>
-                                                                        </FlowPane>
-                                                                    </children>
-                                                                </VBox>
-                                                                <CheckBox fx:id="sourceWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
+                                                <fx:include fx:id="readOptions" source="ControlTextReadOptions.fxml" />
                                                             </children>
                                                         </VBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -139,8 +120,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <fx:include fx:id="writeOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" 
-                                                                            source="ControlTextWriteOptions.fxml" VBox.vgrow="ALWAYS" />
+                                                                <fx:include fx:id="writeOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTextWriteOptions.fxml" VBox.vgrow="ALWAYS" />
                                                             </children>
                                                         </VBox>
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

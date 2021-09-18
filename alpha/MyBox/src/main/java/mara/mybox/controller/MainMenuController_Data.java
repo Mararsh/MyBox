@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 
 /**
@@ -68,12 +69,14 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openDataCsv(ActionEvent event) {
-        loadScene(Fxmls.DataFileCSVFxml);
+        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+        controller.dataController.newSheet(3, 3);
     }
 
     @FXML
     protected void openDataExcel(ActionEvent event) {
-        loadScene(Fxmls.DataFileExcelFxml);
+        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+        controller.dataController.newSheet(3, 3);
     }
 
     @FXML
@@ -98,7 +101,18 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openDataText(ActionEvent event) {
-        loadScene(Fxmls.DataFileTextFxml);
+        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+        controller.dataController.newSheet(3, 3);
+    }
+
+    @FXML
+    protected void openTextDataConvert(ActionEvent event) {
+        loadScene(Fxmls.DataFileTextConvertFxml);
+    }
+
+    @FXML
+    protected void openTextDataMerge(ActionEvent event) {
+        loadScene(Fxmls.DataFileTextMergeFxml);
     }
 
 }

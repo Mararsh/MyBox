@@ -493,38 +493,50 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public boolean makeMoreParameters() {
-        if (tableData == null || tableData.isEmpty()) {
-            actualParameters = null;
+        try {
+            if (tableData == null || tableData.isEmpty()) {
+                actualParameters = null;
+                return false;
+            }
+            for (int i = 0; i < tableData.size(); ++i) {
+                FileInformation d = tableController.fileInformation(i);
+                if (d == null) {
+                    continue;
+                }
+                d.setHandled("");
+                File file = d.getFile();
+                if (!isPreview && !sourceFiles.contains(file)) {
+                    sourceFiles.add(file);
+                }
+            }
+            if (isPreview) {
+                int index = 0;
+                ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+                if (selected != null && !selected.isEmpty()) {
+                    index = selected.get(0);
+                }
+                File file = tableController.file(index);
+                if (!sourceFiles.contains(file)) {
+                    sourceFiles.add(file);
+                }
+            }
+
+            if (targetFile != null) {
+                targetFile = makeTargetFile(targetFile.getName(), targetFile.getParentFile());
+                if (targetFile == null) {
+                    return false;
+                }
+            }
+
+            initLogs();
+            totalFilesHandled = totalItemsHandled = 0;
+            processStartTime = new Date();
+            fileStartTime = new Date();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
             return false;
         }
-        for (int i = 0; i < tableData.size(); ++i) {
-            FileInformation d = tableController.fileInformation(i);
-            if (d == null) {
-                continue;
-            }
-            d.setHandled("");
-            File file = d.getFile();
-            if (!isPreview && !sourceFiles.contains(file)) {
-                sourceFiles.add(file);
-            }
-        }
-        if (isPreview) {
-            int index = 0;
-            ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-            if (selected != null && !selected.isEmpty()) {
-                index = selected.get(0);
-            }
-            File file = tableController.file(index);
-            if (!sourceFiles.contains(file)) {
-                sourceFiles.add(file);
-            }
-        }
-
-        initLogs();
-        totalFilesHandled = totalItemsHandled = 0;
-        processStartTime = new Date();
-        fileStartTime = new Date();
-        return true;
     }
 
     public boolean makePreviewParameters() {

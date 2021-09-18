@@ -38,7 +38,7 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
     protected double[][] result;
 
     @FXML
-    protected ControlMatrix edit2Controller, resultTableController;
+    protected ControlMatrixEdit edit2Controller, resultTableController;
     @FXML
     protected ToggleGroup opGroup;
     @FXML
@@ -127,9 +127,9 @@ public class MatricesBinaryCalculationController extends ControlMatricesList {
         super.afterSceneLoaded();
 
         loadTableData();
-        editController.initManager(this);
-        edit2Controller.initManager(this);
-        resultTableController.initManager(this);
+        editController.setParent(this);
+        edit2Controller.setParent(this);
+        resultTableController.setParent(this);
         editController.sheetChangedNotify.addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     checkMatrices();

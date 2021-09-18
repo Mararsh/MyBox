@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import javafx.scene.control.TextField;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -23,6 +24,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
+import static mara.mybox.tools.TextTools.delimiterValue;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
@@ -205,8 +207,13 @@ public class ControlSheetExcel extends ControlSheetFile {
                     columns.add(column);
                 }
             }
-            if (ColumnDefinition.valid(this, columns)) {
-                tableDataColumn.save(dataDefinition.getDfid(), columns);
+            if (columns != null && !columns.isEmpty()) {
+                if (validateColumns(columns)) {
+                    tableDataColumn.save(dataDefinition.getDfid(), columns);
+                    return true;
+                } else {
+                    return false;
+                }
             }
         } catch (Exception e) {
             if (task != null) {
@@ -1048,7 +1055,7 @@ public class ControlSheetExcel extends ControlSheetFile {
             }
         }
         if (FileTools.rename(tmpFile, file, false)) {
-            saveColumns(file, sheetNameSaved, otherSheetNames, withName);
+            saveDefinition(file, sheetNameSaved, otherSheetNames, withName);
             return null;
         } else {
             return "Failed";
@@ -1089,7 +1096,7 @@ public class ControlSheetExcel extends ControlSheetFile {
                 Charset.defaultCharset(), ",", sourceWithNames, columns);
     }
 
-    protected void saveColumns(File file, String currentSheetName, List<String> otherSheetNames, boolean withName) {
+    protected void saveDefinition(File file, String currentSheetName, List<String> otherSheetNames, boolean withName) {
         try ( Connection conn = DerbyBase.getConnection()) {
             if (currentSheetName != null) {
                 saveDefinition(conn, file.getAbsolutePath() + "-" + currentSheetName,
@@ -1129,6 +1136,128 @@ public class ControlSheetExcel extends ControlSheetFile {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    protected String fileText() {
+        if (sourceFile == null) {
+            return null;
+        }
+        String delimiter = delimiterValue(displayDelimiterName);
+        StringBuilder s = new StringBuilder();
+        if (textTitleCheck.isSelected()) {
+            s.append(titleName()).append("\n\n");
+        }
+        if (textColumnCheck.isSelected()) {
+            rowText(s, -1, columnNames(), delimiter);
+        }
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
+            Sheet sourceSheet;
+            if (currentSheetName != null) {
+                sourceSheet = sourceBook.getSheet(currentSheetName);
+            } else {
+                sourceSheet = sourceBook.getSheetAt(0);
+                currentSheetName = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            int fileIndex = 0, dataIndex = 0;
+            if (iterator != null && iterator.hasNext()) {
+                if (sourceWithNames) {
+                    while (iterator.hasNext() && (iterator.next() == null)) {
+                    }
+                }
+                while (iterator.hasNext()) {
+                    Row sourceRow = iterator.next();
+                    if (sourceRow == null) {
+                        continue;
+                    }
+                    fileIndex++;
+                    if (fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                        List<String> values = new ArrayList<>();
+                        for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
+                            String d = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
+                            d = d == null ? "" : d;
+                            values.add(d);
+                        }
+                        rowText(s, dataIndex++, values, delimiter);
+                    } else if (fileIndex == currentPageStart) {
+                        dataIndex = pageText(s, dataIndex, delimiter);
+                    }
+                }
+            } else {
+                pageText(s, dataIndex, delimiter);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return s.toString();
+    }
+
+    @Override
+    protected String fileHtml() {
+        if (sourceFile == null) {
+            return null;
+        }
+        StringBuilder s = new StringBuilder();
+        List<String> names = null;
+        if (htmlColumnCheck.isSelected()) {
+            names = new ArrayList<>();
+            if (htmlRowCheck.isSelected()) {
+                names.add("");
+            }
+            names.addAll(columnNames());
+        }
+        String title = null;
+        if (htmlTitleCheck.isSelected()) {
+            title = titleName();
+        }
+        StringTable table = new StringTable(names, title);
+        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
+            Sheet sourceSheet;
+            if (currentSheetName != null) {
+                sourceSheet = sourceBook.getSheet(currentSheetName);
+            } else {
+                sourceSheet = sourceBook.getSheetAt(0);
+                currentSheetName = sourceSheet.getSheetName();
+            }
+            Iterator<Row> iterator = sourceSheet.iterator();
+            int fileIndex = 0, dataIndex = 0;
+            if (iterator != null && iterator.hasNext()) {
+                if (sourceWithNames) {
+                    while (iterator.hasNext() && (iterator.next() == null)) {
+                    }
+                }
+                while (iterator.hasNext()) {
+                    Row sourceRow = iterator.next();
+                    if (sourceRow == null) {
+                        continue;
+                    }
+                    fileIndex++;
+                    if (fileIndex < currentPageStart || fileIndex >= currentPageEnd) {
+                        List<String> values = new ArrayList<>();
+                        if (htmlRowCheck.isSelected()) {
+                            values.add(message("Row") + (dataIndex + 1));
+                        }
+                        for (int cellIndex = sourceRow.getFirstCellNum(); cellIndex < sourceRow.getLastCellNum(); cellIndex++) {
+                            String d = MicrosoftDocumentTools.cellString(sourceRow.getCell(cellIndex));
+                            d = d == null ? "" : d;
+                            values.add(d);
+                        }
+                        table.add(values);
+                        dataIndex++;
+                    } else if (fileIndex == currentPageStart) {
+                        dataIndex = pageHtml(table, dataIndex);
+                    }
+                }
+            } else {
+                pageHtml(table, dataIndex);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+        return table.html();
     }
 
 }
