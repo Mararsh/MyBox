@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -183,7 +184,7 @@ public abstract class BaseDataFileController extends BaseController {
         if (dataController.dataChangedNotify.get()) {
             title += " *";
         }
-        myStage.setTitle(title);
+        getMyStage().setTitle(title);
         updateInfoLabel();
     }
 
@@ -215,7 +216,7 @@ public abstract class BaseDataFileController extends BaseController {
             return;
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.openTextFile(sourceFile);
+        controller.sourceFileChanged(sourceFile);
         controller.toFront();
     }
 
@@ -225,8 +226,10 @@ public abstract class BaseDataFileController extends BaseController {
     }
 
     @Override
-    public boolean controlAltM() {
-        dataController.myBoxClipBoard();
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return dataController.keyEventsFilter(event);
+        }
         return true;
     }
 

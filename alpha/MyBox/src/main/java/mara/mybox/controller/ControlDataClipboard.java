@@ -502,10 +502,4 @@ public class ControlDataClipboard extends BaseDataTableController<DataDefinition
         return controller;
     }
 
-//    public static DataClipboardController open(BaseSheetController sheetController) {
-//        DataClipboardController controller = (DataClipboardController) WindowTools.openStage(Fxmls.DataClipboardFxml);
-////        controller.setSourceController(sheetController);
-//        controller.toFront();
-//        return controller;
-//    }
 }

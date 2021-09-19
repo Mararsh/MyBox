@@ -280,11 +280,11 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 ### Notes<a id="notes" />
 1. Note is a piece of information in html format:
 	-  Note can be edited in 4 modes: "html code", "Rich text", "Markdown", "Texts":
-              - Each edit mode can change the html separately. 
-              - The mode in current tab is "current edit mode".
-              - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
-              - Click button "Save"(F2) to save updates in current edit mode and synchronize automatically.
-              - Note' html code should be contents of "body" and have not tags "html", "head" and "body".
+		-  Each edit mode can change the html separately. 
+		-  The mode in current tab is "current edit mode".
+		-  Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+		-  Click button "Save"(F2) to save updates in current edit mode and synchronize automatically.
+		-  Note' html code should be contents of "body" and have not tags "html", "head" and "body".
 	-  Tags can be set for note.
 	-  Style can be set for note. Style is only for displaying and not saved in note's codes.
 2. Notebook is collection of some notes and some notebooks:
@@ -435,7 +435,8 @@ Example,  the new language is named as “aa”, and its resource files are Mess
 4. In context menu of all text input controls, MyBox Clipboard can be popped for selecting text to paste.
 
 ### Text in System Clipboard<a id="systemTextClipboard" />
-Load/Refresh/Delete text in System Clipboard:            
+Load/Refresh/Delete text in System Clipboard:             
+
 1. After button is clicked, new texts in System Clipboard are monitored and saved in MyBox Clipboard.
 2. Monitor interval can be set.
 3. Monitored texts can be accumulated in this interface. Separator can be choiced.
@@ -733,7 +734,8 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
 4. Selected image can be copyed in System Clipboard.    
 
 ### Images in System Clipboard<a id="systemImageClipboard" />
-Load/Refresh/Delete image in System Clipboard:     
+Load/Refresh/Delete image in System Clipboard:        
+
 1. After button is clicked, new images in System Clipboard are monitored.
 2. Monitor interval can be set.
 3. Monitored images can be saved as files, or copyed in Mybox Clipboard.
@@ -845,8 +847,7 @@ Load/Refresh/Delete image in System Clipboard:
  	  	   	- Date and Time with Milliseconds, like: 2014-06-11 13:51:33.261
  	  	   	- Date and Time with zone, like: 2020-09-27 12:29:29 +0800
   	  	   	- Date and Time with Milliseconds and zone, like: 2020-09-27 12:29:29.713 +0800
-  	  	   	- "T" can be written or omitted between date and time. "2014-06-11T13:51:33" equals to "2014-06-11 13:51:33".
- 	  	- Era:       
+  	  	   	- "T"	  	- Era:       
  	  	 	  	 "0 AD" = "1 BC" = "0" = "-0" = "0000" = "-0000"  = "0001-01-01 00:00:00 BC" =  "公元前1" = "公元前0001-01-01 00:00:00"       
  	  	 	  	 "1 AD" =  "1"  = "0001" = "0001-01-01 00:00:00" = "0001-01-01 00:00:00 AD" =  "公元1" = "公元0001-01-01 00:00:00"       
  	  	 	  	 "202 BC" = "-203" = "-0203" = "-0203-01-01 00:00:00"  = "0202-01-01 00:00:00 BC" = "公元前202" =  "公元前0202-01-01 00:00:00"       
@@ -943,8 +944,6 @@ Load/Refresh/Delete image in System Clipboard:
   	-  DPI can be set.
   	-  Current map and data in map can be saved and displayed in html.
 10. Keys of map can be changed in "Settings".  The default keys are free and shared by all MyBox users.
-11. When display map, all hosts of the map provider are trusted.
-
 
 
 ### Geography Code<a id="geographyCode" />
@@ -1283,7 +1282,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 ![Snap-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer-en.jpg)       
 
 ### Wrap Functions of ffmpeg<a id="ffmpeg" />
-Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)       
+Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)        
 
 1. When handle media:       
 	-  All parameters can be selected/set, including format, codec, subtitle, frame rate, sample rate, change volumn, etc.
@@ -1449,7 +1448,6 @@ Decoding does reverse conversion.
 	-  Font size, color, duration of popped messages.
 2. Base:
 	-  Maximum memory usage of JVM
-	-  Whether close dpi-aware
 3. Data:
 	-  Data path
 	-  Derby driver mode
@@ -1626,7 +1624,7 @@ This version is for my mom. Wish all mothers loving and being loved.
 
 2020-3-3 v6.2.1  Improve "Epidemic Reports".  Node "Except for China": query and display data of countries other than China.            
 Filled Data are shown in different color.  Change filled data as normal status by editing or click button "Sure".      
-Support  structure of "Country-cities" which does not include province level and is used by countries other than China.      
+Support  structure of "Country-cities" whi level and is used by countries other than China.      
 Solved problems. Editors of "Geography Codes" and "Epidemic Reports" work incorrectly.  May cost too much memroy when make snapshot.       
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2.1)              
             

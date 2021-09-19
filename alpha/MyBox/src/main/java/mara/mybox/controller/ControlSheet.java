@@ -217,6 +217,12 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
 
     @FXML
     @Override
+    public void saveAction() {
+        parentController.saveAction();
+    }
+
+    @FXML
+    @Override
     public boolean popAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
@@ -295,7 +301,7 @@ public abstract class ControlSheet extends ControlSheet_TextsDisplay {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonSave) {
-                parentController.saveAction();
+                saveAction();
                 goOn = false;
             } else {
                 goOn = result.get() == buttonNotSave;

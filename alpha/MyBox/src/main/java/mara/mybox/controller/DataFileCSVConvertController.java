@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
@@ -80,7 +81,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         try ( CSVParser parser = CSVParser.parse(srcFile, fileCharset, csvFormat)) {
             List<String> names = parser.getHeaderNames();
             convertController.names = names;
-            String filePrefix = FileNameTools.getFilePrefix(srcFile.getName());
+            String filePrefix = FileNameTools.getFilePrefix(srcFile.getName()) + "_" + new Date().getTime();
             convertController.openWriters(filePrefix);
             for (CSVRecord record : parser) {
                 if (task == null || task.isCancelled()) {
@@ -123,8 +124,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                         names.add(message("col") + i);
                     }
                     convertController.names = names;
-                    String filePrefix = FileNameTools.getFilePrefix(srcFile.getName());
-                    convertController.openWriters(filePrefix);
+                    convertController.openWriters(filePrefix(srcFile));
                 }
                 List<String> rowData = new ArrayList<>();
                 for (int i = 0; i < record.size(); i++) {

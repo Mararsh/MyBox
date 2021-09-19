@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
 import java.util.Date;
+import java.util.List;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.Matrix;
 import mara.mybox.db.table.TableMatrix;
 import mara.mybox.dev.MyBoxLog;
@@ -61,17 +64,6 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
-            editController.setParent(this);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
     public void itemClicked() {
         editAction(null);
     }
@@ -91,15 +83,41 @@ public class ControlMatricesList extends BaseDataTableController<Matrix> {
     }
 
     @Override
-    protected void afterDeletion() {
-        loadTableData();
-        editController.createAction();
+    protected int deleteData(List<Matrix> data) {
+        int ret = super.deleteData(data);
+        if (ret <= 0) {
+            return ret;
+        }
+        long currentid = -1;
+        try {
+            currentid = Long.parseLong(editController.idInput.getText());
+        } catch (Exception e) {
+        }
+        if (currentid < 0) {
+            return ret;
+        }
+        for (Matrix m : data) {
+            if (m.getId() == currentid) {
+                Platform.runLater(() -> {
+                    editController.loadNull();
+                });
+                break;
+            }
+        }
+        return ret;
     }
 
-    @FXML
     @Override
-    public void refreshAction() {
-        loadTableData();
+    protected void afterClear() {
+        editController.loadNull();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            return editController.keyEventsFilter(event);
+        }
+        return true;
     }
 
 }

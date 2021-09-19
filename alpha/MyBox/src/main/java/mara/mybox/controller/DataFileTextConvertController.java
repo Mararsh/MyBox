@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
@@ -90,8 +89,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
                         }
                     }
                     convertController.names = names;
-                    String filePrefix = FileNameTools.getFilePrefix(srcFile.getName());
-                    convertController.openWriters(filePrefix);
+                    convertController.openWriters(filePrefix(srcFile));
                     if (sourceWithName) {
                         continue;
                     }

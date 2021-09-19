@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import mara.mybox.controller.BaseController;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -34,33 +35,37 @@ public class NodeStyleTools {
     public static String selectedData = "-fx-background-color:  #0096C9; -fx-text-background-color: white;";
 
     public static void applyStyle(Node node) {
-        if (node == null) {
-            return;
-        }
-        // Base styles are width in first
-        StyleTools.setStyle(node);
-        if (node instanceof SplitPane) {
-            for (Node child : ((SplitPane) node).getItems()) {
-                applyStyle(child);
+        try {
+            if (node == null) {
+                return;
             }
-        } else if (node instanceof ScrollPane) {
-            applyStyle(((ScrollPane) node).getContent());
-        } else if (node instanceof TitledPane) {
-            applyStyle(((TitledPane) node).getContent());
-        } else if (node instanceof TabPane) {
-            for (Tab tab : ((TabPane) node).getTabs()) {
-                applyStyle(tab.getContent());
+            // Base styles are width in first
+            StyleTools.setStyle(node);
+            if (node instanceof SplitPane) {
+                for (Node child : ((SplitPane) node).getItems()) {
+                    applyStyle(child);
+                }
+            } else if (node instanceof ScrollPane) {
+                applyStyle(((ScrollPane) node).getContent());
+            } else if (node instanceof TitledPane) {
+                applyStyle(((TitledPane) node).getContent());
+            } else if (node instanceof TabPane) {
+                for (Tab tab : ((TabPane) node).getTabs()) {
+                    applyStyle(tab.getContent());
+                }
+            } else if (node instanceof Parent) {
+                for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
+                    applyStyle(child);
+                }
             }
-        } else if (node instanceof Parent) {
-            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
-                applyStyle(child);
+            // Special styles are deep in first
+            Object o = node.getUserData();
+            if (o != null && o instanceof BaseController) {
+                BaseController c = (BaseController) o;
+                c.setControlsStyle();
             }
-        }
-        // Special styles are deep in first
-        Object o = node.getUserData();
-        if (o != null && o instanceof BaseController) {
-            BaseController c = (BaseController) o;
-            c.setControlsStyle();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

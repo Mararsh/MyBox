@@ -286,6 +286,7 @@ public class NotesController_Notes extends NotesController_Notebooks {
     @FXML
     protected void clearNotes() {
         clearAction();
+        noteEditorController.editNote(null);
         refreshTimes();
     }
 

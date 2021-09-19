@@ -59,18 +59,18 @@ public class SheetExportController extends BaseTaskController {
                 popError(message("NoData"));
                 return false;
             }
+
             if (dataController.sheetController.sourceFile == null) {
                 if (dataController.sheetController instanceof ControlMatrixEdit) {
                     filePrefix = ((ControlMatrixEdit) (dataController.sheetController)).nameInput.getText();
-                    if (filePrefix == null || filePrefix.isBlank()) {
-                        filePrefix = new Date().getTime() + "";
-                    }
-                } else {
-                    filePrefix = new Date().getTime() + "";
                 }
             } else {
-                filePrefix = FileNameTools.getFilePrefix(dataController.sourceFile.getName()) + "_" + new Date().getTime();
+                filePrefix = FileNameTools.getFilePrefix(dataController.sourceFile.getName());
             }
+            if (filePrefix == null || filePrefix.isBlank()) {
+                filePrefix = "";
+            }
+            filePrefix += "_" + new Date().getTime();
 
             return convertController.initParameters();
         } catch (Exception e) {

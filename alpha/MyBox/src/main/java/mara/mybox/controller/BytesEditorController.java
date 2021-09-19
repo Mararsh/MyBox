@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.nio.charset.Charset;
-import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,7 +18,6 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
-import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -40,7 +38,6 @@ public class BytesEditorController extends BaseFileEditorController {
     public BytesEditorController() {
         baseTitle = Languages.message("BytesEditer");
         TipsLabelKey = "BytesEditerTips";
-
     }
 
     @Override
@@ -48,10 +45,26 @@ public class BytesEditorController extends BaseFileEditorController {
         setBytesType();
     }
 
+    @FXML
     @Override
-    protected void initLineBreakTab() {
+    public void refreshAction() {
         try {
-            super.initLineBreakTab();
+            if (sourceFile == null) {
+                validMainArea();
+                updateInterface(false);
+            } else {
+                sourceInformation.setTotalNumberRead(false);
+                openFile(sourceFile);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
+    @Override
+    protected void initFormatTab() {
+        try {
+            super.initFormatTab();
 
             lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -131,14 +144,6 @@ public class BytesEditorController extends BaseFileEditorController {
             checkBytesNumber();
             isSettingValues = false;
 
-            if (sourceFile == null) {
-                validMainArea();
-                updateInterface(false);
-            } else {
-                sourceInformation.setTotalNumberRead(false);
-                openFile(sourceFile);
-
-            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -213,24 +218,6 @@ public class BytesEditorController extends BaseFileEditorController {
     }
 
     @Override
-    protected void initCharsetTab() {
-        List<String> setNames = TextTools.getCharsetNames();
-        encodeSelector.getItems().addAll(setNames);
-        encodeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                sourceInformation.setCharset(Charset.forName(newValue));
-                UserConfig.setString(baseName + "Charset", newValue);
-                charsetByUser = true;
-                refreshPairAction();
-                updateNumbers(fileChanged.get());
-
-            }
-        });
-        encodeSelector.getSelectionModel().select(UserConfig.getString(baseName + "Charset", "UTF-8"));
-    }
-
-    @Override
     protected boolean validMainArea() {
         return ByteTools.isBytesHex(mainArea.getText());
     }
@@ -278,6 +265,11 @@ public class BytesEditorController extends BaseFileEditorController {
         if (pairArea.isDisable() || !splitPane.getItems().contains(rightPane)) {
             return;
         }
+        String c = charsetSelector.getSelectionModel().getSelectedItem();
+        if (c == null) {
+            return;
+        }
+        sourceInformation.setCharset(Charset.forName(c));
         pairArea.setDisable(true);
         SingletonTask pairTask = new SingletonTask<Void>() {
 
@@ -324,6 +316,7 @@ public class BytesEditorController extends BaseFileEditorController {
                     isSettingValues = false;
                     setPairAreaSelection();
                 }
+                updateNumbers(fileChanged.get());
             }
 
             @Override

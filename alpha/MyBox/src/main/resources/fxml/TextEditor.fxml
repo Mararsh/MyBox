@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1646.0" prefViewportWidth="527.0">
                             <content>
@@ -75,8 +75,38 @@ License:    Apache License Version 2.0
                                                     </children>
                                                 </VBox>
                                             </content>
+                                        </TitledPane> 
+                                        <TitledPane fx:id="formatPane" maxWidth="1.7976931348623157E308" text="%Format">
+                                            <content>
+                                                <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                            <children>
+                                                                <Label text="%LineBreak" />
+                                                                <TextField fx:id="currentLineBreak" disable="true" editable="false" prefWidth="80.0" text="LF" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <Label text="%Charset" />
+                                                        <ComboBox fx:id="charsetSelector" prefWidth="150.0" />
+                                                        <Label fx:id="bomLabel" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="savePane" expanded="false" layoutX="10.0" layoutY="266.0" text="%Save">
+                                        <TitledPane fx:id="savePane" layoutX="10.0" layoutY="266.0" text="%Save">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
@@ -111,6 +141,25 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
+                                                                <Label text="%Charset" />
+                                                                <ComboBox fx:id="targetCharsetSelector" prefWidth="150.0" />
+                                                                <CheckBox fx:id="targetBomCheck" mnemonicParsing="false" text="BOM" />
+                                                            </children>
+                                                        </VBox> 
+                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <Label prefWidth="400.0" text="%LineBreak" wrapText="true" />
+                                                                <RadioButton fx:id="lfRadio" mnemonicParsing="false" selected="true" text="%LF">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="lineBreakGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="crRadio" mnemonicParsing="false" text="%CR" toggleGroup="$lineBreakGroup" />
+                                                                <RadioButton fx:id="crlfRadio" mnemonicParsing="false" text="%CRLF" toggleGroup="$lineBreakGroup" />
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
                                                                 <RadioButton fx:id="saveLoadRadio" mnemonicParsing="false" selected="true" text="%LoadAfterSaveAs">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="saveAsGroup" />
@@ -136,7 +185,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="findPane" expanded="false" layoutX="10.0" layoutY="10.0" text="%FindReplace">
+                                        <TitledPane fx:id="findPane" layoutX="10.0" layoutY="10.0" text="%FindReplace">
                                             <content>
                                                 <fx:include fx:id="findReplace" source="ControlFindReplace.fxml" />
                                             </content>
@@ -197,50 +246,6 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane fx:id="encodePane" expanded="false" layoutX="10.0" layoutY="515.0" text="%Encode" VBox.vgrow="NEVER">
-                                            <content>
-                                                <VBox spacing="5.0">
-                                                    <children>
-                                                        <FlowPane hgap="5.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%CurrentFileCharset" />
-                                                                <ComboBox fx:id="encodeSelector" prefWidth="150.0" />
-                                                                <Label fx:id="bomLabel" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%ChangeAsWhenSave" />
-                                                                <ComboBox fx:id="targetEncodeSelector" prefWidth="150.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <CheckBox fx:id="targetBomCheck" mnemonicParsing="false" text="BOM" VBox.vgrow="NEVER" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane fx:id="breakLinePane" expanded="false" layoutX="10.0" layoutY="613.0" text="%BreakLine">
-                                            <content>
-                                                <VBox spacing="5.0">
-                                                    <children>
-                                                        <FlowPane hgap="5.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%CurrentFileLineBreak" />
-                                                                <TextField fx:id="currentLineBreak" disable="true" editable="false" prefWidth="80.0" text="LF" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <Label prefWidth="400.0" text="%ChangeAsWhenSave" wrapText="true" />
-                                                        <RadioButton fx:id="lfRadio" mnemonicParsing="false" selected="true" text="%LF">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="lineBreakGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton fx:id="crRadio" mnemonicParsing="false" text="%CR" toggleGroup="$lineBreakGroup" />
-                                                        <RadioButton fx:id="crlfRadio" mnemonicParsing="false" text="%CRLF" toggleGroup="$lineBreakGroup" />
                                                     </children>
                                                 </VBox>
                                             </content>

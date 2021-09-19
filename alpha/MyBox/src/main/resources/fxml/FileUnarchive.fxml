@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                         <HBox fx:id="encodingHBox" alignment="CENTER_LEFT" spacing="5.0">
                             <children>
                                 <Label text="%EntriesNameEncoding" />
-                                <ComboBox fx:id="encodeSelector" prefWidth="150.0" />
+                                <ComboBox fx:id="charsetSelector" prefWidth="150.0" />
                             </children>
                         </HBox>
                     </children>

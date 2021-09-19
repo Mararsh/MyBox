@@ -51,13 +51,13 @@ License:    Apache License Version 2.0
                 <Tab fx:id="optionsTab" text="%TargetFormat">
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                        <VBox fx:id="formatVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                           <children>
-                                      <fx:include fx:id="convert" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataConvert.fxml" VBox.vgrow="ALWAYS" />
-                           </children>
-                        </VBox>
-                     </content>
+                            <content>
+                                <VBox fx:id="formatVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <children>
+                                        <fx:include fx:id="convert" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataConvert.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </content>
                         </ScrollPane>
                     </content>
                 </Tab>
@@ -157,7 +157,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction">
+                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction"  styleClass="big" stylesheets="@../styles/MyBox.css" >
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

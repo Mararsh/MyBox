@@ -422,7 +422,8 @@ MyBox v5.3以前的版本均基于Java 8。
 4. 在所有文本输入控件的右键菜单中，可以弹出MyBox粘贴板以供选用粘贴。
 
 ### 系统粘贴板中的文本<a id="systemTextClipboard" />
-加载/刷新/删除系统粘贴板中的文本：          
+加载/刷新/删除系统粘贴板中的文本：         
+ 
 1. 点击按钮后，开始监视系统粘贴板的新文本，将它们保存到MyBox粘贴板中。
 2. 可以设置监视间隔。
 3. 在监视界面上可以累加监视到文本。分隔符可选。
@@ -715,7 +716,8 @@ MyBox v5.3以前的版本均基于Java 8。
 
 
 ### 系统粘贴板中的图像<a id="systemImageClipboard" />
-加载/刷新/删除系统粘贴板中的图像：       
+加载/刷新/删除系统粘贴板中的图像：        
+
 1. 点击按钮后，开始监视系统粘贴板的新图像。
 2. 可以设置监视间隔。
 3. 把监视到的新图像保存为文件、或者复制到MyBox粘贴板。
@@ -928,7 +930,6 @@ MyBox v5.3以前的版本均基于Java 8。
   	-  可设置截图分辨率。
   	-  把当前地图和图中数据截取为html
 10. 地图的数据密钥可以在“设置”里修改。 缺省的密钥是所有MyBox用户共享的免费密钥。
-11. 显示地图时，信任地图服务商的所有主机地址。
 
 
 ### 地理编码<a id="geographyCode" />
@@ -1532,7 +1533,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 2021-2-11 版本6.3.9                  
 -  改进：查看/编辑多帧图像时可选择帧。读取CSV/Excel时总是使用iterator。修改PDF属性时可选清除安全属性。
 -  解决的主要问题：编辑保存CSV/Excel后总是回到第一页。解档文件总是失败。解档zip时非英文解析为乱码。          
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.9)                   
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+isue+i+is%3Aclosed+milestone%3Av6.3.9)                   
 春节快乐！牛年大吉！         
 
 2021-1-27 版本6.3.8                  

@@ -1,14 +1,9 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
 import javafx.scene.input.ContextMenuEvent;
-import mara.mybox.data.FileEditInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
@@ -45,42 +40,6 @@ public class TextEditorController extends BaseFileEditorController {
                 }
             });
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    protected void initLineBreakTab() {
-        try {
-            super.initLineBreakTab();
-            if (lineBreakGroup == null) {
-                return;
-            }
-            lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkLineBreakGroup();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void checkLineBreakGroup() {
-        try {
-            RadioButton selected = (RadioButton) lineBreakGroup.getSelectedToggle();
-            if (Languages.message("LF").equals(selected.getText())) {
-                targetInformation.setLineBreak(FileEditInformation.Line_Break.LF);
-            } else if (Languages.message("CR").equals(selected.getText())) {
-                targetInformation.setLineBreak(FileEditInformation.Line_Break.CR);
-            } else if (Languages.message("CRLF").equals(selected.getText())) {
-                targetInformation.setLineBreak(FileEditInformation.Line_Break.CRLF);
-            }
-            targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
